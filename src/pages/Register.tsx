@@ -521,7 +521,7 @@ export default function Register() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                {platform === 'DIASPORA' && (
+                {platform === 'DIASPORA' ? (
                   <div className="space-y-3">
                     <label htmlFor="selectedCountry" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
                       Country of Residence <span className="text-[#CE1126]">*</span>
@@ -539,7 +539,7 @@ export default function Register() {
                       ))}
                     </select>
                   </div>
-                )}
+                ) : null}
 
                 <div className="space-y-3">
                   <label htmlFor="contactNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
@@ -566,27 +566,27 @@ export default function Register() {
                     />
                   </div>
                 </div>
-              </div>
 
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label htmlFor="ageRange" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                    Age Bracket <span className="text-[#CE1126]">*</span>
-                  </label>
-                  <select 
-                    id="ageRange"
-                    required
-                    value={formData.ageRange} 
-                    onChange={(e) => handleChange('ageRange', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                    style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                  >
-                    <option value="">Select Age</option>
-                    {ageRanges.map((range) => (
-                      <option key={range} value={range}>{range}</option>
-                    ))}
-                  </select>
-                </div>
+                {platform === 'GHANA' && (
+                  <div className="space-y-3">
+                    <label htmlFor="ageRange" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                      Age Bracket <span className="text-[#CE1126]">*</span>
+                    </label>
+                    <select 
+                      id="ageRange"
+                      required
+                      value={formData.ageRange} 
+                      onChange={(e) => handleChange('ageRange', e.target.value)}
+                      className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
+                      style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                    >
+                      <option value="">Select Age</option>
+                      {ageRanges.map((range) => (
+                        <option key={range} value={range}>{range}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -666,7 +666,9 @@ export default function Register() {
                     ))}
                   </select>
                 </div>
+              </div>
 
+              <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
                   <label htmlFor="constituency" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Constituency</label>
                   {formData.region && regionConstituencies[formData.region] ? (
@@ -704,7 +706,9 @@ export default function Register() {
                     className="w-full form-understate p-4 text-charcoal-dark text-sm"
                   />
                 </div>
+              </div>
 
+              <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
                   <label htmlFor="chapter" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Assigned Chapter <span className="text-[#CE1126]">*</span></label>
                   <input
@@ -728,7 +732,9 @@ export default function Register() {
                     ))}
                   </div>
                 </div>
+              </div>
 
+              <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
                   <label htmlFor="education" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Education Level <span className="text-[#CE1126]">*</span></label>
                   <select 
