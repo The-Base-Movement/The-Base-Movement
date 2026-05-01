@@ -83,9 +83,6 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen bg-white pb-20">
-      {/* Top Reading Progress (additional to global one for emphasis) */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F] sticky top-[72px] z-40"></div>
-
       <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <Link 
