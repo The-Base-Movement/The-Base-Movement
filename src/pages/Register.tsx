@@ -537,11 +537,11 @@ export default function Register() {
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'GHANA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                    <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => setPlatform('GHANA')} className="hidden" />
+                    <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
                     Base Ghana
                   </label>
                   <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'DIASPORA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                    <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => setPlatform('DIASPORA')} className="hidden" />
+                    <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
                     Base Diaspora
                   </label>
                 </div>
