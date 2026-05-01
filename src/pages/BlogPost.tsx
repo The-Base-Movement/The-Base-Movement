@@ -1,6 +1,6 @@
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { Calendar, Clock, ChevronLeft, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { CommentSection } from '@/components/CommentSection'
 
 // Mock data for the authoritative blog post

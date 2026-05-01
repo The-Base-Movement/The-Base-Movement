@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { MapPin, Search, Plus, Filter, Building2, Send } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ChapterCard } from '@/components/ChapterCard'
 import { allChapters } from '@/data/chaptersData'

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Printer, Share2, ShoppingBag } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 
 export default function OrderSummary() {
   // In a real app, we'd fetch this from state or an API

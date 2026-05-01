@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { MapPin, Users, Globe, ShieldCheck, Calendar, Share2, Mail, Phone, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { allChapters } from '@/data/chaptersData'
 import { useState } from 'react'

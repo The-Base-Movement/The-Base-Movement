@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { BlogPostCard } from '@/components/BlogPostCard'
 
 const posts = [
