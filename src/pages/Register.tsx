@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, ArrowDownToLine, CheckCircle2, X } from 'lucide-react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
+import MembershipCard from '../components/MembershipCard'
 
 const ageRanges = ['16-25', '26-40', '41-60', '60+']
 const educationLevels = [
@@ -223,7 +224,7 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (formStep < 3) {
+    if (formStep < 4) {
       setFormStep(prev => prev + 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
@@ -253,6 +254,10 @@ export default function Register() {
             constituency: formData.constituency,
             chapter: formData.chapter,
             profession: formData.profession,
+            education_level: formData.educationLevel,
+            emergency_contact_name: formData.emergencyContactName,
+            emergency_relationship: formData.emergencyRelationship,
+            emergency_phone: formData.emergencyNumber,
             avatar_url: photoUrl
           })
         })
@@ -280,87 +285,86 @@ export default function Register() {
 
   if (submitted) {
     return (
-      <main className="bg-surface-warm font-body-md min-h-screen flex flex-col items-center justify-center py-12 px-4 relative overflow-hidden">
-        {/* Background elements */}
-        <div className="absolute top-0 right-0 w-full h-full bg-[url('/hero-bg.png')] bg-cover bg-center opacity-[0.03] pointer-events-none mix-blend-luminosity"></div>
-
-        <div className="max-w-2xl w-full z-10 flex flex-col items-center">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-charcoal-dark mb-2 font-meta uppercase tracking-tight">Registration Complete</h2>
-            <p className="text-slate-600 font-body-md max-w-md mx-auto">
-              Welcome to the movement. Your official membership card has been generated.
-            </p>
+      <main className="bg-surface-warm font-body-md min-h-screen py-12 px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-green/10 text-brand-green mb-6 animate-bounce">
+              <CheckCircle2 className="w-8 h-8" />
+            </div>
+            <h1 className="text-3xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">Registration Complete</h1>
+            <p className="text-slate-500 font-meta uppercase tracking-widest text-xs">Welcome to the movement, patriot.</p>
           </div>
 
-          {/* Membership Card */}
-          <div className="w-full max-w-[400px] aspect-[1.58/1] relative overflow-hidden bg-white shadow-2xl border border-slate-200 rounded-xl mb-10 flex flex-col transform transition-transform hover:scale-105 duration-500">
-            {/* Top Stripe */}
-            <div className="bg-brand-green text-white px-4 py-3 flex items-center justify-between z-10 shadow-sm">
-              <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="The Base" className="h-6 w-auto brightness-0 invert" />
-                <span className="font-meta font-bold tracking-widest text-sm uppercase">The Base</span>
+          <div className="space-y-8">
+            {/* Membership Card Preview */}
+            <div className="bg-white border border-slate-200 p-2 shadow-2xl relative">
+              <div className="border-b border-slate-100 pb-3 mb-4 px-4 pt-2">
+                <h3 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-[0.2em]">Official Membership Card</h3>
               </div>
-              <span className="font-meta tracking-widest text-[10px] uppercase opacity-80 border border-white/30 px-2 py-0.5 rounded-sm">Membership Card</span>
-            </div>
-
-            {/* Background Watermark */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none z-0">
-              <img src="/logo.png" alt="Watermark" className="w-48 h-48 grayscale" />
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 p-5 flex gap-5 z-10">
-              {/* Photo */}
-              <div className="w-[30%] shrink-0 flex flex-col gap-2">
-                <div className="w-full aspect-[3/4] bg-slate-100 border border-slate-300 rounded overflow-hidden">
-                  {photoUrl ? (
-                    <img src={photoUrl} alt={formData.fullName} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-300">
-                      <User className="w-8 h-8" />
-                    </div>
-                  )}
-                </div>
+              
+              <div className="max-w-md mx-auto py-4">
+                <MembershipCard 
+                  userName={formData.fullName}
+                  avatarUrl={photoUrl}
+                  userRegNo={regNumber}
+                  initials={formData.fullName.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('')}
+                  gender={formData.gender + ' / ' + formData.ageRange}
+                  joinedDate={new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  status="Active & Verified"
+                  region={formData.region}
+                  constituency={formData.constituency}
+                  country={formData.selectedCountry}
+                  chapter={formData.chapter}
+                />
               </div>
 
-              {/* Details */}
-              <div className="flex-1 flex flex-col justify-center space-y-3">
-                <div>
-                  <p className="text-[9px] font-meta text-slate-500 uppercase tracking-wider mb-0.5">Full Name</p>
-                  <p className="font-meta font-bold text-charcoal-dark uppercase text-sm leading-tight">{formData.fullName || 'Member Name'}</p>
-                </div>
-                
-                <div className="flex gap-4">
+              <div className="bg-slate-50 p-6 mt-4 border-t border-slate-100">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                   <div>
-                    <p className="text-[9px] font-meta text-slate-500 uppercase tracking-wider mb-0.5">Reg. No.</p>
-                    <p className="font-meta font-bold text-brand-green uppercase text-xs">{regNumber}</p>
+                    <h4 className="font-meta font-bold text-xs text-charcoal-dark uppercase tracking-wider mb-1">Registration Number</h4>
+                    <p className="font-meta font-black text-xl text-brand-green tracking-tight">{regNumber}</p>
                   </div>
-                  <div>
-                    <p className="text-[9px] font-meta text-slate-500 uppercase tracking-wider mb-0.5">Platform</p>
-                    <p className="font-meta font-bold text-charcoal-dark uppercase text-xs">{platform}</p>
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => window.print()}
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-warm-gold text-charcoal-dark font-meta font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition-all shadow-md"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">print</span>
+                      Print Card
+                    </button>
+                    <button 
+                      onClick={() => setSubmitted(false)}
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-charcoal-dark font-meta font-black uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all shadow-sm"
+                    >
+                      <ArrowLeft className="w-4 h-4" /> Edit Info
+                    </button>
                   </div>
                 </div>
-
-                <div>
-                  <p className="text-[9px] font-meta text-slate-500 uppercase tracking-wider mb-0.5">Assigned Chapter</p>
-                  <p className="font-meta font-bold text-charcoal-dark uppercase text-[10px] truncate">
-                    {formData.chapter || 'National Chapter'}
-                  </p>
-                </div>
               </div>
             </div>
 
-            {/* Bottom Stripe */}
-            <div className="h-2 bg-warm-gold w-full absolute bottom-0 z-10"></div>
-          </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white border border-slate-200 p-8 shadow-sm">
+                <h4 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-widest mb-4">Membership Verification</h4>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-brand-green animate-pulse"></div>
+                  <p className="text-xs font-bold text-charcoal-dark font-meta uppercase tracking-tight">Status: Active & Verified</p>
+                </div>
+                <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
+                  Your official records have been synchronized with the movement's hub. You can now access the member dashboard.
+                </p>
+              </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-[400px]">
-            <Link to="/dashboard" className="flex-1 bg-brand-green text-white font-meta font-bold uppercase tracking-wider py-4 hover:opacity-90 transition-all flex justify-center items-center text-sm shadow-md">
-              Go to Dashboard
-            </Link>
-            <button onClick={() => window.print()} className="flex-1 bg-charcoal-dark text-white font-meta font-bold uppercase tracking-wider py-4 hover:bg-black transition-all flex justify-center items-center text-sm shadow-md">
-              <ArrowDownToLine className="w-4 h-4 mr-2" /> Download
-            </button>
+              <div className="bg-brand-green text-white p-8 flex flex-col justify-between">
+                <div>
+                  <h4 className="font-meta font-bold text-[10px] text-white/60 uppercase tracking-widest mb-4">Next Step</h4>
+                  <p className="text-sm font-bold font-meta uppercase leading-tight mb-4">Access your leadership dashboard to join a chapter.</p>
+                </div>
+                <Link to="/login" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-white/10 hover:bg-white/20 p-3 text-center justify-center transition-colors">
+                  Enter Dashboard <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -495,10 +499,19 @@ export default function Register() {
                 <div className={`absolute top-4 left-1/2 w-full h-1 ${formStep >= 3 ? 'bg-brand-green' : 'bg-slate-200'}`}></div>
               </div>
 
-              {/* Step 3 */}
+               {/* Step 3 */}
               <div className="relative flex flex-col items-center flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta z-10 ${formStep >= 3 ? 'bg-brand-green text-white' : 'bg-slate-200 text-slate-500'}`}>
-                  3
+                  {formStep > 3 ? <CheckCircle2 className="w-5 h-5" /> : 3}
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-wider font-meta mt-2 text-slate-500 hidden sm:block absolute top-10 whitespace-nowrap">Emergency</div>
+                <div className={`absolute top-4 left-1/2 w-full h-1 ${formStep >= 4 ? 'bg-brand-green' : 'bg-slate-200'}`}></div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="relative flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta z-10 ${formStep >= 4 ? 'bg-brand-green text-white' : 'bg-slate-200 text-slate-500'}`}>
+                  {formStep > 4 ? <CheckCircle2 className="w-5 h-5" /> : 4}
                 </div>
                 <div className="text-[10px] font-bold uppercase tracking-wider font-meta mt-2 text-slate-500 hidden sm:block absolute top-10 whitespace-nowrap">Verification</div>
               </div>
@@ -807,11 +820,61 @@ export default function Register() {
             </div>
           )}
 
-          {/* STEP 3: Verification Photo & Declaration */}
+          {/* STEP 3: Emergency Contact (Optional) */}
           {formStep === 3 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                <h3 className="font-meta font-bold uppercase tracking-tight text-xl text-charcoal-dark">Step 3: Verification & Oath</h3>
+                <h3 className="font-meta font-bold uppercase tracking-tight text-xl text-charcoal-dark">Step 3: Emergency Contact</h3>
+                <p className="text-sm text-slate-500 font-body-md mt-1">Information for administrative safety and emergency protocols.</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <label htmlFor="emergencyContactName" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Emergency Contact Name</label>
+                  <input
+                    id="emergencyContactName"
+                    placeholder="Emergency contact name"
+                    value={formData.emergencyContactName}
+                    onChange={(e) => handleChange('emergencyContactName', e.target.value)}
+                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="emergencyRelationship" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Relationship</label>
+                  <input
+                    id="emergencyRelationship"
+                    placeholder="e.g. Father, Mother, Sibling"
+                    value={formData.emergencyRelationship}
+                    onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
+                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="emergencyNumber" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Contact Number</label>
+                  <input
+                    id="emergencyNumber"
+                    type="tel"
+                    placeholder="Phone number"
+                    value={formData.emergencyNumber}
+                    onChange={(e) => handleChange('emergencyNumber', e.target.value)}
+                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 text-center">
+                <p className="text-xs text-slate-400 font-meta tracking-wider uppercase">Providing this information is optional but highly recommended.</p>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4: Verification Photo & Declaration */}
+          {formStep === 4 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                <h3 className="font-meta font-bold uppercase tracking-tight text-xl text-charcoal-dark">Step 4: Verification & Oath</h3>
                 <p className="text-sm text-slate-500 font-body-md mt-1">Final steps to complete your registration to the movement.</p>
               </div>
 
@@ -902,10 +965,10 @@ export default function Register() {
             
             <button
               type="submit"
-              disabled={formStep === 3 && !agreed}
-              className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all ${formStep === 1 ? 'w-full' : 'flex-1'} ${formStep === 3 && !agreed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-brand-green text-white hover:opacity-90 active:scale-[0.99]'}`}
+              disabled={formStep === 4 && !agreed}
+              className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all ${formStep === 1 ? 'w-full' : 'flex-1'} ${formStep === 4 && !agreed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-brand-green text-white hover:opacity-90 active:scale-[0.99]'}`}
             >
-              {formStep < 3 ? (
+              {formStep < 4 ? (
                 <>Next Step <ArrowRight className="w-5 h-5" /></>
               ) : (
                 <>Submit Official Registration <ArrowRight className="w-5 h-5" /></>
