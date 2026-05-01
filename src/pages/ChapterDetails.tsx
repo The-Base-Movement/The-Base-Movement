@@ -178,40 +178,41 @@ export default function ChapterDetails() {
                 </div>
               </div>
             </div>
-
-            {/* Verification Card */}
-            <div className="bg-charcoal-dark p-8 rounded-none text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <ShieldCheck className="w-24 h-24 text-brand-green" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-warm-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Official Verification</h3>
-                <p className="text-sm leading-relaxed text-stone-300 mb-6">
-                  This chapter is officially recognized and verified by The Base National Headquarters. All activities are coordinated with the central movement agenda.
-                </p>
-                <span className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-medium border border-green-100 w-fit">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  Verified
-                </span>
-              </div>
-            </div>
-
-            {/* Quick Support */}
-            <div className="bg-stone-100 p-8 rounded-none border border-stone-200">
-              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-4">Support Local</h3>
-              <p className="text-xs text-stone-500 leading-relaxed mb-6">
-                Your donations to this specific chapter help fund local townhalls and community outreach programs in {chapter.city_or_region}.
-              </p>
-              <Link to="/dashboard/donate">
-                <Button className="w-full bg-brand-green hover:bg-brand-green/90 text-white rounded-none">
-                  Donate to Chapter
-                </Button>
-              </Link>
-            </div>
-
           </div>
+
+          {/* Verification Card */}
+          <div className="bg-charcoal-dark p-8 rounded-none text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <ShieldCheck className="w-24 h-24 text-brand-green" />
+            </div>
+            <div className="relative z-10">
+              <h3 className="text-warm-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Official Verification</h3>
+              <p className="text-sm leading-relaxed text-stone-300 mb-6">
+                This chapter is officially recognized and verified by The Base National Headquarters. All activities are coordinated with the central movement agenda.
+              </p>
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-medium border border-green-100 w-fit">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Verified
+              </span>
+            </div>
+          </div>
+
+          {/* Quick Support */}
+          <div className="bg-stone-100 p-8 rounded-none border border-stone-200">
+            <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-4">Support Local</h3>
+            <p className="text-xs text-stone-500 leading-relaxed mb-6">
+              Your donations to this specific chapter help fund local townhalls and community outreach programs in {chapter.city_or_region}.
+            </p>
+            <Link to="/dashboard/donate">
+              <Button className="w-full bg-brand-green hover:bg-brand-green/90 text-white rounded-none">
+                Donate to Chapter
+              </Button>
+            </Link>
+          </div>
+
         </div>
-      </main>
-    </div>
-  )
+      </div>
+    </main>
+  </div>
+)
 }
