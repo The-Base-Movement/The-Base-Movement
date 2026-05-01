@@ -136,7 +136,7 @@ export default function Navbar() {
                   <div className="border-t border-slate-100 mt-1 pt-1">
                     <button 
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-[#CE1126] hover:bg-red-50 font-meta transition-colors"
+                      className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-[var(--brand-red)] hover:bg-red-50 font-meta transition-colors"
                     >
                       <LogOut className="w-4 h-4" /> Logout
                     </button>
@@ -178,7 +178,7 @@ export default function Navbar() {
               <>
                 <Link to="/dashboard" className="flex items-center gap-2 py-2 text-emerald-800 font-bold"><User className="w-4 h-4"/> Dashboard</Link>
                 <Link to="/settings" className="flex items-center gap-2 py-2 text-slate-600"><Settings className="w-4 h-4"/> Profile Settings</Link>
-                <button onClick={handleLogout} className="flex items-center gap-2 py-2 text-[#CE1126] font-bold text-left"><LogOut className="w-4 h-4"/> Logout</button>
+                <button onClick={handleLogout} className="flex items-center gap-2 py-2 text-[var(--brand-red)] font-bold text-left"><LogOut className="w-4 h-4"/> Logout</button>
               </>
             ) : (
               <>

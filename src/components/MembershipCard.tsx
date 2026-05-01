@@ -31,10 +31,10 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   chapter
 }) => {
   return (
-    <div className="relative aspect-[1.6/1] w-full overflow-hidden bg-white flex flex-col font-meta shadow-2xl border-l-[3px] border-r-[3px] border-l-brand-green border-r-brand-green border-t-[3px] border-t-[#CE1126] border-b-[3px] border-b-warm-gold rounded-[8px]">
+    <div className="relative aspect-[1.6/1] w-full overflow-hidden bg-white flex flex-col font-meta shadow-2xl border-l-[3px] border-r-[3px] border-l-brand-green border-r-brand-green border-t-[3px] border-t-[var(--brand-red)] border-b-[3px] border-b-warm-gold rounded-[8px]">
       
       {/* Card Header (Red Section) */}
-      <div className="bg-[#CE1126] p-3 sm:p-4 flex justify-between items-start">
+      <div className="bg-[var(--brand-red)] p-3 sm:p-4 flex justify-between items-start">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-[8px] p-1 shadow-md">
             <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
@@ -54,7 +54,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
       {/* Card Body */}
       <div className="flex-1 p-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4 relative overflow-hidden">
         {/* Photo Frame with Gradient Border - Center-aligned */}
-        <div className="w-24 h-28 sm:w-34 sm:h-42 p-[1.5px] shrink-0 bg-gradient-to-b from-[#CE1126] via-[#DAA520] to-[#006B3F] shadow-lg relative z-10 rounded-[4px]">
+        <div className="w-24 h-28 sm:w-34 sm:h-42 p-[1.5px] shrink-0 bg-gradient-to-b from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] shadow-lg relative z-10 rounded-[4px]">
           <div className="w-full h-full p-1 bg-slate-50 rounded-[3px]">
             <div 
               className={`w-full h-full bg-slate-200 overflow-hidden relative group rounded-[2px] ${onPhotoClick ? 'cursor-pointer' : ''}`}
@@ -79,7 +79,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         {/* Member Details - Center-aligned with photo */}
         <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0">
           <div>
-            <h5 className="text-[#1a1a1a] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-tight truncate pr-16">{userName || 'Member Name'}</h5>
+            <h5 className="text-[var(--brand-black)] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-tight truncate pr-16">{userName || 'Member Name'}</h5>
             <div className="h-0.5 w-6 sm:w-12 bg-brand-green mt-0.5"></div>
           </div>
 

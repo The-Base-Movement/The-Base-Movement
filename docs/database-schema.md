@@ -146,4 +146,9 @@ Stores authoritative contact information and brand identity details for the move
 | `hq_city` | VARCHAR(100) | City of headquarters |
 | `hq_region` | VARCHAR(100) | Region/State |
 | `hq_country` | VARCHAR(100) | Headquarters country |
+| `brand_green` | VARCHAR(7) | Primary brand green hex code |
+| `brand_gold` | VARCHAR(7) | Primary brand gold hex code |
+| `brand_red` | VARCHAR(7) | Primary brand red hex code |
+| `brand_yellow` | VARCHAR(7) | Brand yellow/gold hex code |
+| `brand_black` | VARCHAR(7) | Brand black hex code |
 | `updated_at` | TIMESTAMP | Last configuration update |
