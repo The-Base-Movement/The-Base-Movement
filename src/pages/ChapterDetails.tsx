@@ -101,7 +101,8 @@ export default function ChapterDetails() {
                   <p className="text-sm font-bold text-stone-800">Every First Saturday of the Month</p>
                 </div>
               </div>
-            </section>
+            </div>
+          </section>
 
             {/* Recent Activities */}
             <section>
