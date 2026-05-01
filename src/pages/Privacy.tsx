@@ -1,0 +1,81 @@
+import { Shield, Lock, Eye, Server } from 'lucide-react'
+
+export default function Privacy() {
+  return (
+    <div className="py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-8">
+          <div className="w-12 h-12 bg-[#006B3C]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Shield className="w-6 h-6 text-[#006B3C]" />
+          </div>
+          <h1 className="text-3xl font-bold text-[#1a1a1a] mb-2">Privacy Agreement</h1>
+          <p className="text-gray-600">How we protect and handle your data</p>
+        </div>
+
+        <div className="space-y-6">
+          <div className="flex gap-4">
+            <div className="w-10 h-10 bg-[#006B3C]/10 rounded-full flex items-center justify-center shrink-0">
+              <Lock className="w-5 h-5 text-[#006B3C]" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-[#1a1a1a] mb-2">Data Protection</h2>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                The Base is committed to protecting your personal information. We collect only the data necessary for membership administration and movement coordination. All information is stored securely and accessed only by authorized personnel.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="w-10 h-10 bg-[#D4A017]/10 rounded-full flex items-center justify-center shrink-0">
+              <Eye className="w-5 h-5 text-[#D4A017]" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-[#1a1a1a] mb-2">Information We Collect</h2>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                We collect your name, contact details, location, and platform preference to connect you with the appropriate chapter and keep you informed about movement activities. Optional information helps us understand our membership better.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="w-10 h-10 bg-[#CE1126]/10 rounded-full flex items-center justify-center shrink-0">
+              <Server className="w-5 h-5 text-[#CE1126]" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-[#1a1a1a] mb-2">Data Storage</h2>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Your data is stored on secure servers with encryption. We do not sell, rent, or share your personal information with third parties for marketing purposes. Your information is used solely for The Base membership administration and internal communication.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mt-6">
+            <h3 className="font-semibold text-[#1a1a1a] mb-3">Your Rights</h3>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006B3C] mt-1.5 shrink-0"></span>
+                <span>Request access to your personal data</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006B3C] mt-1.5 shrink-0"></span>
+                <span>Request correction of inaccurate information</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006B3C] mt-1.5 shrink-0"></span>
+                <span>Request deletion of your data (right to be forgotten)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006B3C] mt-1.5 shrink-0"></span>
+                <span>Opt out of communications at any time</span>
+              </li>
+            </ul>
+          </div>
+
+          <p className="text-sm text-gray-500 text-center pt-4">
+            Last updated: April 2026. If you have questions about this privacy agreement, please <a href="/contact" className="text-[#006B3C] hover:underline">contact us</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
