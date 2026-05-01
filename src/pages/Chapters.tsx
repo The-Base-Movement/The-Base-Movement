@@ -1,9 +1,19 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin, Users, Search, Plus, Filter, ArrowRight } from 'lucide-react'
+import { MapPin, Users, Search, Plus, Filter, ArrowRight, Building2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { allChapters } from '@/data/chaptersData'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 // Flag mapping for diaspora chapters
 const countryFlags: Record<string, string> = {
@@ -65,12 +75,34 @@ export default function Chapters() {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<'ghana' | 'diaspora'>('ghana')
   const [requestSent, setRequestSent] = useState<Record<string, boolean>>({})
+  
+  // Request Modal State
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
+  const [chapterLocation, setChapterLocation] = useState('')
+  const [chapterDescription, setChapterDescription] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submissionSuccess, setSubmissionSuccess] = useState(false)
 
   const handleJoinRequest = (e: React.MouseEvent, chapterId: string) => {
     e.preventDefault();
     e.stopPropagation();
     setRequestSent(prev => ({ ...prev, [chapterId]: true }));
     // In a real app, this would send an API request to be approved by a leader
+  }
+
+  const handleSubmitRequest = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    setIsSubmitting(false)
+    setSubmissionSuccess(true)
+    setTimeout(() => {
+      setIsRequestModalOpen(false)
+      setSubmissionSuccess(false)
+      setChapterLocation('')
+      setChapterDescription('')
+    }, 2000)
   }
 
   const filteredChapters = (activeTab === 'ghana' ? ghanaChapters : diasporaChapters).filter(c => 
@@ -95,8 +127,11 @@ export default function Chapters() {
               </p>
             </div>
             <div className="flex gap-3">
-              <Button className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold tracking-widest text-xs h-12 px-6 rounded-none">
-                <Plus className="w-4 h-4 mr-2" /> Start a Chapter
+              <Button 
+                onClick={() => setIsRequestModalOpen(true)}
+                className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold tracking-widest text-xs h-12 px-6 rounded-none"
+              >
+                <Plus className="w-4 h-4 mr-2" /> Request a Chapter
               </Button>
             </div>
           </div>
@@ -223,6 +258,79 @@ export default function Chapters() {
           </div>
         </div>
       </main>
+
+      {/* Request Chapter Modal */}
+      <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
+        <DialogContent className="sm:max-w-[500px] border-none rounded-none p-0 overflow-hidden bg-white">
+          <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F]"></div>
+            <div className="flex items-center gap-3 mb-2">
+              <Building2 className="w-5 h-5 text-brand-green" />
+              <DialogTitle className="text-xl font-bold tracking-tight uppercase font-meta">Request a Chapter</DialogTitle>
+            </div>
+            <DialogDescription className="text-stone-400 text-xs">
+              Propose a new chapter for your region. Requests are reviewed by the National Executive Committee for strategic alignment and leadership verification.
+            </DialogDescription>
+          </DialogHeader>
+
+          {submissionSuccess ? (
+            <div className="p-12 text-center flex flex-col items-center justify-center space-y-4">
+              <div className="w-16 h-16 bg-emerald-50 rounded-none flex items-center justify-center mb-2">
+                <Send className="w-8 h-8 text-brand-green" />
+              </div>
+              <h3 className="text-lg font-bold text-stone-900 tracking-tight">Request Submitted Successfully</h3>
+              <p className="text-xs text-stone-500 max-w-xs mx-auto">
+                Your proposal for the <span className="font-bold text-brand-green">{chapterLocation}</span> chapter has been logged. Our regional coordinators will contact you shortly.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmitRequest} className="p-8 space-y-6">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Chapter Location / Country</label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
+                  <Input 
+                    required
+                    placeholder="e.g. Kumasi, Ashanti Region or London, UK"
+                    value={chapterLocation}
+                    onChange={(e) => setChapterLocation(e.target.value)}
+                    className="pl-10 h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Why start a chapter here?</label>
+                <Textarea 
+                  required
+                  placeholder="Describe the local interest and your vision for organizing this hub..."
+                  value={chapterDescription}
+                  onChange={(e) => setChapterDescription(e.target.value)}
+                  className="min-h-[120px] bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm p-4"
+                />
+              </div>
+
+              <DialogFooter className="pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setIsRequestModalOpen(false)}
+                  className="h-12 border-stone-200 text-stone-600 font-bold text-[10px] uppercase tracking-widest rounded-none"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="h-12 bg-brand-green hover:bg-brand-green/90 text-white font-bold text-[10px] uppercase tracking-widest rounded-none min-w-[140px]"
+                >
+                  {isSubmitting ? 'Processing...' : 'Submit Request'}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
