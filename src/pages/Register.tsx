@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, ArrowDownToLine, CheckCircle2, X } from 'lucide-react'
 import Cropper from 'react-easy-crop'
