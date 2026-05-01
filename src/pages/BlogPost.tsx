@@ -50,7 +50,7 @@ export default function BlogPost() {
       {/* Top Reading Progress (additional to global one for emphasis) */}
       <div className="h-1.5 w-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F] sticky top-[72px] z-40"></div>
 
-      <main className="max-w-[1000px] mx-auto px-6 md:px-8 pt-12">
+      <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <Link 
             to="/blog" 
@@ -70,7 +70,7 @@ export default function BlogPost() {
 
         <article className="space-y-12">
           {/* Header */}
-          <header className="space-y-6">
+          <header className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
               <span className="px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-bold uppercase tracking-widest">
                 {post.category}
@@ -101,9 +101,9 @@ export default function BlogPost() {
           </div>
 
           {/* Content & Sidebar */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-16">
             {/* Left Sidebar: Author Info */}
-            <aside className="lg:col-span-3 space-y-8 order-2 lg:order-1">
+            <aside className="lg:col-span-1 space-y-8 order-2 lg:order-1">
               <div className="sticky top-32 space-y-8">
                 <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Authored By</p>
@@ -151,7 +151,7 @@ export default function BlogPost() {
             </aside>
 
             {/* Main Content Body */}
-            <div className="lg:col-span-9 order-1 lg:order-2">
+            <div className="lg:col-span-3 order-1 lg:order-2">
               <div 
                 className="prose prose-stone prose-lg max-w-none 
                   prose-headings:font-meta prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-stone-900
