@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, ArrowDownToLine, CheckCircle2, X } from 'lucide-react'
 import Cropper from 'react-easy-crop'
@@ -21,6 +21,62 @@ const ghanaRegions = [
   'Ahafo', 'Ashanti', 'Bono', 'Bono East', 'Central', 'Eastern', 'Greater Accra',
   'North East', 'Northern', 'Oti', 'Savannah', 'Upper East', 'Upper West', 'Volta', 'Western', 'Western North'
 ]
+
+const diasporaCountries = [
+  'United Kingdom', 'United States', 'Canada', 'Germany', 'France', 'Australia', 'South Africa', 'United Arab Emirates', 'Netherlands', 'Italy', 'Austria', 'Belgium', 'Brazil', 'Burkina Faso', 'Cameroon', 'China', 'Czech Republic', 'Denmark', 'Egypt', 'Finland', 'India', 'Ireland', 'Israel', 'Japan', 'Kenya', 'Kuwait', 'Luxembourg', 'Malaysia', 'Mexico', 'Morocco', 'New Zealand', 'Nigeria', 'Norway', 'Poland', 'Portugal', 'Qatar', 'Russia', 'Saudi Arabia', 'Senegal', 'Singapore', 'South Korea', 'Spain', 'Sweden', 'Switzerland', 'Tanzania', 'Thailand', 'Togo', 'Turkey'
+]
+
+const countryCodes: Record<string, string> = {
+  'Ghana': '+233',
+  'United Kingdom': '+44',
+  'United States': '+1',
+  'Canada': '+1',
+  'Germany': '+49',
+  'France': '+33',
+  'Australia': '+61',
+  'South Africa': '+27',
+  'United Arab Emirates': '+971',
+  'Netherlands': '+31',
+  'Italy': '+39',
+  'Austria': '+43',
+  'Belgium': '+32',
+  'Brazil': '+55',
+  'Burkina Faso': '+226',
+  'Cameroon': '+237',
+  'China': '+86',
+  'Czech Republic': '+420',
+  'Denmark': '+45',
+  'Egypt': '+20',
+  'Finland': '+358',
+  'India': '+91',
+  'Ireland': '+353',
+  'Israel': '+972',
+  'Japan': '+81',
+  'Kenya': '+254',
+  'Kuwait': '+965',
+  'Luxembourg': '+352',
+  'Malaysia': '+60',
+  'Mexico': '+52',
+  'Morocco': '+212',
+  'New Zealand': '+64',
+  'Nigeria': '+234',
+  'Norway': '+47',
+  'Poland': '+48',
+  'Portugal': '+351',
+  'Qatar': '+974',
+  'Russia': '+7',
+  'Saudi Arabia': '+966',
+  'Senegal': '+221',
+  'Singapore': '+65',
+  'South Korea': '+82',
+  'Spain': '+34',
+  'Sweden': '+46',
+  'Switzerland': '+41',
+  'Tanzania': '+255',
+  'Thailand': '+66',
+  'Togo': '+228',
+  'Turkey': '+90'
+}
 
 const regionConstituencies: Record<string, string[]> = {
   'Ahafo': [
@@ -103,6 +159,8 @@ export default function Register() {
 
   const [formData, setFormData] = useState({
     fullName: '',
+    countryCode: '+233',
+    selectedCountry: 'Ghana',
     contactNumber: '',
     ageRange: '',
     gender: 'Male',
@@ -119,6 +177,22 @@ export default function Register() {
     emergencyRelationship: '',
     emergencyNumber: '',
   })
+
+  // Sync country code with platform
+  useEffect(() => {
+    if (platform === 'GHANA') {
+      setFormData(prev => ({ ...prev, selectedCountry: 'Ghana', countryCode: '+233' }))
+    } else {
+      setFormData(prev => ({ ...prev, selectedCountry: diasporaCountries[0], countryCode: countryCodes[diasporaCountries[0]] || '+1' }))
+    }
+  }, [platform])
+
+  // Sync country code with country selection
+  useEffect(() => {
+    if (formData.selectedCountry && countryCodes[formData.selectedCountry]) {
+      setFormData(prev => ({ ...prev, countryCode: countryCodes[formData.selectedCountry] }))
+    }
+  }, [formData.selectedCountry])
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => {
@@ -151,7 +225,9 @@ export default function Register() {
             full_name: formData.fullName,
             registration_number: regNo,
             platform: platform,
-            phone_number: formData.contactNumber,
+            country: formData.selectedCountry,
+            country_code: formData.countryCode,
+            phone_number: formData.countryCode + formData.contactNumber,
             age_range: formData.ageRange,
             gender: formData.gender,
             email: formData.email,
@@ -445,16 +521,43 @@ export default function Register() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
+                {platform === 'DIASPORA' && (
+                  <div className="space-y-3">
+                    <label htmlFor="selectedCountry" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                      Country of Residence <span className="text-[#CE1126]">*</span>
+                    </label>
+                    <select 
+                      id="selectedCountry"
+                      required
+                      value={formData.selectedCountry} 
+                      onChange={(e) => handleChange('selectedCountry', e.target.value)}
+                      className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
+                      style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                    >
+                      {diasporaCountries.map((country) => (
+                        <option key={country} value={country}>{country}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div className="space-y-3">
                   <label htmlFor="contactNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
                     Contact Number <span className="text-[#CE1126]">*</span>
                   </label>
                   <div className="flex">
-                    <span className="flex items-center px-4 bg-surface-warm border-y border-l border-slate-300 font-meta font-bold text-charcoal-dark text-sm">
-                      +233
-                    </span>
+                    <select
+                      value={formData.countryCode}
+                      onChange={(e) => handleChange('countryCode', e.target.value)}
+                      className="flex items-center px-2 bg-surface-warm border-y border-l border-slate-300 font-meta font-bold text-charcoal-dark text-xs appearance-none focus:outline-none"
+                    >
+                      {Object.entries(countryCodes).sort((a, b) => a[0].localeCompare(b[0])).map(([name, code]) => (
+                        <option key={name} value={code}>{code} ({name})</option>
+                      ))}
+                    </select>
                     <input
                       id="contactNumber"
+                      type="tel"
                       placeholder="Phone number"
                       required
                       value={formData.contactNumber}
@@ -463,7 +566,9 @@ export default function Register() {
                     />
                   </div>
                 </div>
+              </div>
 
+              <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
                   <label htmlFor="ageRange" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
                     Age Bracket <span className="text-[#CE1126]">*</span>
