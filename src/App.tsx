@@ -22,6 +22,7 @@ import OrderSummary from './pages/OrderSummary'
 import Impact from './pages/Impact'
 import Chapters from './pages/Chapters'
 import ChapterDetails from './pages/ChapterDetails'
+import BlogPost from './pages/BlogPost'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import AdminLogin from './pages/AdminLogin'
@@ -48,6 +49,7 @@ export default function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/our-agenda" element={<OurAgenda />} />
           <Route path="/register" element={<Register />} />
           <Route path="/contact" element={<Contact />} />
