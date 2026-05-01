@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 import { ChevronDown } from 'lucide-react'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 import MembershipCard from '../components/MembershipCard'
 
 const ghanaRegions = [
@@ -104,6 +106,7 @@ export default function ProfileSettings() {
   )
   const [saved, setSaved] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
 
   const [form, setForm] = useState(() => {
     const name = localStorage.getItem('userName') || ''
@@ -159,6 +162,64 @@ export default function ProfileSettings() {
     setTimeout(() => setSaved(false), 3000)
   }
 
+  const handleDownload = async () => {
+    if (!cardRef.current) return
+    
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      })
+      
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: [85.6, 54] // Standard ID card size
+      })
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, 85.6, 54)
+      pdf.save(`THE-BASE-CARD-${userRegNo || 'MEMBER'}.pdf`)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+    }
+  }
+
+  const handlePrint = async () => {
+    if (!cardRef.current) return
+    
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      })
+      
+      const imgData = canvas.toDataURL('image/png')
+      const printWindow = window.open('', '_blank')
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Print Membership Card</title>
+              <style>
+                body { margin: 0; display: flex; items-center; justify-center; height: 100vh; }
+                img { width: 85.6mm; height: 54mm; }
+              </style>
+            </head>
+            <body>
+              <img src="${imgData}" onload="window.print();window.close()" />
+            </body>
+          </html>
+        `)
+        printWindow.document.close()
+      }
+    } catch (error) {
+      console.error('Error printing card:', error)
+    }
+  }
+
   return (
     <div className="max-w-full py-12">
       
@@ -178,20 +239,22 @@ export default function ProfileSettings() {
             <h3 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-[0.2em] mb-4 pl-2">Membership Card Preview</h3>
             
             {/* The Membership Card Component */}
-            <MembershipCard 
-              userName={form.fullName}
-              avatarUrl={avatarUrl}
-              userRegNo={userRegNo}
-              initials={initials}
-              gender={form.gender}
-              joinedDate={form.joinedDate}
-              status={form.status}
-              region={form.region}
-              constituency={form.constituency}
-              country={form.country}
-              profession={form.profession}
-              onPhotoClick={() => fileRef.current?.click()}
-            />
+            <div ref={cardRef}>
+              <MembershipCard 
+                userName={form.fullName}
+                avatarUrl={avatarUrl}
+                userRegNo={userRegNo}
+                initials={initials}
+                gender={form.gender}
+                joinedDate={form.joinedDate}
+                status={form.status}
+                region={form.region}
+                constituency={form.constituency}
+                country={form.country}
+                chapter={form.chapter}
+                onPhotoClick={() => fileRef.current?.click()}
+              />
+            </div>
 
             {/* Photo Input (Hidden) */}
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
@@ -199,11 +262,17 @@ export default function ProfileSettings() {
 
           {/* Action Buttons for Card */}
           <div className="grid grid-cols-2 gap-2 sm:gap-4">
-            <button className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-warm-gold text-charcoal-dark font-meta font-black uppercase tracking-widest text-[9px] sm:text-[10px] hover:opacity-90 transition-all shadow-md leading-tight">
+            <button 
+              onClick={handlePrint}
+              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-warm-gold text-charcoal-dark font-meta font-black uppercase tracking-widest text-[9px] sm:text-[10px] hover:opacity-90 transition-all shadow-md leading-tight"
+            >
               <span className="material-symbols-outlined text-[16px] sm:text-[18px]">print</span>
               Print Card
             </button>
-            <button className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-white border border-slate-200 text-charcoal-dark font-meta font-black uppercase tracking-widest text-[9px] sm:text-[10px] hover:bg-slate-50 transition-all shadow-sm leading-tight">
+            <button 
+              onClick={handleDownload}
+              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-white border border-slate-200 text-charcoal-dark font-meta font-black uppercase tracking-widest text-[9px] sm:text-[10px] hover:bg-slate-50 transition-all shadow-sm leading-tight"
+            >
               <span className="material-symbols-outlined text-[16px] sm:text-[18px]">download</span>
               Download PDF
             </button>
@@ -304,11 +373,11 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Profession</label>
+                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Assigned Chapter</label>
                   <input
-                    value={form.profession}
-                    onChange={e => handleChange('profession', e.target.value)}
-                    placeholder="E.g. Teacher, Engineer, Student"
+                    value={form.chapter}
+                    onChange={e => handleChange('chapter', e.target.value)}
+                    placeholder="E.g. The Base - Accra Chapter"
                     className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
