@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { WelcomeModal } from '@/components/WelcomeModal'
+import { ShareModal } from '@/components/ShareModal'
 
 
 
@@ -28,6 +29,16 @@ export default function Dashboard() {
   const [member, setMember] = useState<MemberData | null>(null)
   const [loading, setLoading] = useState(true)
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [shareData, setShareData] = useState({ title: '', url: '' })
+
+  const handleShare = () => {
+    setShareData({
+      title: 'Join "The Base" Movement - Ghana First!',
+      url: `https://thebase.gh/join/${member?.full_name.toLowerCase().replace(/\s+/g, '') || 'member'}`
+    })
+    setIsShareModalOpen(true)
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -197,11 +208,20 @@ export default function Dashboard() {
                 type="text" 
                 value={`https://thebase.gh/join/${member?.full_name.toLowerCase().replace(/\s+/g, '') || 'member'}`} 
               />
-              <button className="absolute right-1 top-1/2 -translate-y-1/2 p-2 text-primary-fixed hover:text-white transition-colors bg-primary/40 rounded-sm">
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(`https://thebase.gh/join/${member?.full_name.toLowerCase().replace(/\s+/g, '') || 'member'}`)
+                  // Optional: add toast notification here
+                }}
+                className="absolute right-1 top-1/2 -translate-y-1/2 p-2 text-primary-fixed hover:text-white transition-colors bg-primary/40 rounded-sm"
+              >
                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>content_copy</span>
               </button>
             </div>
-            <button className="w-full bg-secondary-container hover:bg-secondary-fixed-dim text-on-secondary-fixed font-bold py-4 rounded-sm transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+            <button 
+              onClick={handleShare}
+              className="w-full bg-secondary-container hover:bg-secondary-fixed-dim text-on-secondary-fixed font-bold py-4 rounded-sm transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
+            >
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>share</span>
               Invite & Share
             </button>
@@ -253,6 +273,13 @@ export default function Dashboard() {
           <p className="text-white max-w-2xl mb-0">Ghana First is more than a slogan—it's a commitment to our shared prosperity and civic responsibility.</p>
         </div>
       </section>
+
+      <ShareModal 
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        title={shareData.title}
+        url={shareData.url}
+      />
     </div>
   )
 }
