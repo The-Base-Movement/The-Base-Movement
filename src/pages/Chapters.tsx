@@ -64,6 +64,14 @@ const diasporaChapters = allChapters.filter(c => c.country !== 'Ghana');
 export default function Chapters() {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<'ghana' | 'diaspora'>('ghana')
+  const [requestSent, setRequestSent] = useState<Record<string, boolean>>({})
+
+  const handleJoinRequest = (e: React.MouseEvent, chapterId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setRequestSent(prev => ({ ...prev, [chapterId]: true }));
+    // In a real app, this would send an API request to be approved by a leader
+  }
 
   const filteredChapters = (activeTab === 'ghana' ? ghanaChapters : diasporaChapters).filter(c => 
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -142,9 +150,13 @@ export default function Chapters() {
                     {chapter.country === 'Ghana' ? <MapPin className="w-6 h-6" /> : <span className="text-2xl">{countryFlags[chapter.country] || '🌍'}</span>}
                   </div>
                   <span className={`px-3 py-1 rounded-none text-[10px] font-semibold tracking-widest ${
-                    chapter.status === 'Active' || chapter.status === 'Member' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                    requestSent[chapter.id] 
+                      ? 'bg-amber-50 text-amber-600'
+                      : chapter.status === 'Active' || chapter.status === 'Member' 
+                        ? 'bg-emerald-50 text-emerald-600' 
+                        : 'bg-stone-50 text-stone-600'
                   }`}>
-                    {chapter.status}
+                    {requestSent[chapter.id] ? 'Request Pending' : chapter.status}
                   </span>
                 </div>
                 
@@ -165,9 +177,22 @@ export default function Chapters() {
                   </div>
                 </div>
                 
-                <div className="w-full mt-8 h-12 border border-stone-100 rounded-none text-[10px] font-semibold tracking-widest text-stone-400 group-hover:bg-brand-green group-hover:text-white group-hover:border-brand-green transition-all flex items-center justify-center gap-2">
-                  {chapter.status === 'Join Chapter' ? 'Join Chapter' : 'View Details'} <ArrowRight className="w-3 h-3" />
-                </div>
+                {chapter.status === 'Join Chapter' && !requestSent[chapter.id] ? (
+                  <button 
+                    onClick={(e) => handleJoinRequest(e, chapter.id)}
+                    className="w-full mt-8 h-12 border border-brand-green bg-brand-green text-white rounded-none text-[10px] font-semibold tracking-widest hover:bg-white hover:text-brand-green transition-all flex items-center justify-center gap-2"
+                  >
+                    Join Chapter <ArrowRight className="w-3 h-3" />
+                  </button>
+                ) : (
+                  <div className={`w-full mt-8 h-12 border rounded-none text-[10px] font-semibold tracking-widest transition-all flex items-center justify-center gap-2 ${
+                    requestSent[chapter.id] 
+                      ? 'border-amber-200 bg-amber-50 text-amber-600' 
+                      : 'border-stone-100 text-stone-400 group-hover:bg-brand-green group-hover:text-white group-hover:border-brand-green'
+                  }`}>
+                    {requestSent[chapter.id] ? 'Request Sent' : 'View Details'} <ArrowRight className="w-3 h-3" />
+                  </div>
+                )}
               </div>
             </Link>
           ))}

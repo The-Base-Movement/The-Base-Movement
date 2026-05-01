@@ -46,6 +46,20 @@ Tracks user involvement in specific movement chapters.
 | `role` | VARCHAR(50) | `MEMBER`, `LEADER`, `COORDINATOR`. |
 | `joined_at` | TIMESTAMP | Date member joined this chapter. |
 
+### `chapter_join_requests`
+Handles the membership approval workflow where chapter leaders must verify and approve new members.
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `id` | UUID (PK) | Unique identifier. |
+| `user_id` | UUID (FK) | Reference to `users.id`. |
+| `chapter_id` | UUID (FK) | Reference to `chapters.id`. |
+| `status` | ENUM | `PENDING`, `APPROVED`, `REJECTED`. |
+| `message` | TEXT | Optional note from the member. |
+| `requested_at` | TIMESTAMP | Time request was submitted. |
+| `processed_at` | TIMESTAMP | Time leader approved/rejected the request. |
+| `processed_by` | UUID (FK) | Reference to `users.id` (the leader/coordinator). |
+
 ## 3. Product & Store Management (`products`)
 Authoritative schema for movement merchandise and resources.
 
