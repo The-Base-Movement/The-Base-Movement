@@ -481,7 +481,8 @@ export default function Register() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 p-8 md:p-12 shadow-sm">
+        <div className="bg-white border border-slate-200 p-8 md:p-12 shadow-sm">
+          <form onSubmit={handleSubmit}>
           
           {/* STEP 1: Primary Details */}
           {formStep === 1 && (
@@ -875,7 +876,8 @@ export default function Register() {
             </button>
           </div>
 
-        </form>
+          </form>
+        </div>
       </div>
     </main>
   )
