@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { Calendar, Clock, ChevronLeft, Share2, MessageSquare, Facebook, Mail, Bookmark, ChevronRight } from 'lucide-react'
+import { Calendar, Clock, ChevronLeft, Share2, MessageSquare, Facebook, Mail, Bookmark, ChevronRight, Twitter, Linkedin, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 // Mock data for the authoritative blog post
@@ -45,6 +45,39 @@ export default function BlogPost() {
   // In a real app, you would fetch the post by id. Here we use the mock data.
   const post = blogPost
 
+  const handleShare = (platform?: string) => {
+    const url = window.location.href
+    const title = post.title
+    
+    let shareUrl = ""
+    switch(platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
+        break
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`
+        break
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
+        break
+      case 'whatsapp':
+        shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title + " " + url)}`
+        break
+      case 'telegram':
+        shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`
+        break
+      default:
+        if (navigator.share) {
+          navigator.share({ title, url }).catch(() => {})
+        } else {
+          navigator.clipboard.writeText(url)
+          alert("Link copied to clipboard")
+        }
+        return
+    }
+    window.open(shareUrl, '_blank', 'width=600,height=400')
+  }
+
   return (
     <div className="min-h-screen bg-white pb-20">
       {/* Top Reading Progress (additional to global one for emphasis) */}
@@ -59,7 +92,11 @@ export default function BlogPost() {
             <ChevronLeft className="w-4 h-4" /> Back to Insights
           </Link>
           <div className="flex items-center gap-3">
-             <Button variant="outline" className="h-10 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-[10px] font-bold uppercase tracking-widest">
+             <Button 
+              onClick={() => handleShare()}
+              variant="outline" 
+              className="h-10 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-[10px] font-bold uppercase tracking-widest"
+             >
               <Share2 className="w-4 h-4 mr-2" /> Share
             </Button>
             <Button variant="outline" className="h-10 w-10 p-0 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none">
@@ -123,9 +160,21 @@ export default function BlogPost() {
 
                 <div className="space-y-4">
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Share this Insight</p>
-                  <div className="flex gap-2">
-                    {[Facebook, MessageSquare, Mail].map((Icon, i) => (
-                      <Button key={i} variant="outline" className="h-10 w-10 p-0 border-stone-200 text-stone-500 hover:text-brand-green hover:border-brand-green rounded-none">
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { Icon: Facebook, key: 'facebook' },
+                      { Icon: Twitter, key: 'twitter' },
+                      { Icon: Linkedin, key: 'linkedin' },
+                      { Icon: MessageSquare, key: 'whatsapp' },
+                      { Icon: Send, key: 'telegram' },
+                      { Icon: Mail, key: 'email' }
+                    ].map(({ Icon, key }, i) => (
+                      <Button 
+                        key={i} 
+                        onClick={() => handleShare(key)}
+                        variant="outline" 
+                        className="h-10 w-10 p-0 border-stone-200 text-stone-500 hover:text-brand-green hover:border-brand-green rounded-none"
+                      >
                         <Icon className="w-4 h-4" />
                       </Button>
                     ))}
