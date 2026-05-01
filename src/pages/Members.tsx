@@ -111,9 +111,9 @@ export default function Members() {
             <h1 className="text-white">Member <span className="text-brand-green">Directory</span></h1>
           </div>
           <div className="flex h-1 w-24 mb-6">
-            <div className="flex-1 bg-[#CE1126]"></div>
-            <div className="flex-1 bg-[#DAA520]"></div>
-            <div className="flex-1 bg-[#006B3F]"></div>
+            <div className="flex-1 bg-[var(--brand-red)]"></div>
+            <div className="flex-1 bg-[var(--brand-gold)]"></div>
+            <div className="flex-1 bg-[var(--brand-green)]"></div>
           </div>
           <p className="text-white/60 max-w-xl mb-0">
             The Base movement is built by its people. Connect with brothers and sisters committed to Ghana's prosperity, both at home and in the diaspora.

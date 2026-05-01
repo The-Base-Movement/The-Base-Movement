@@ -63,10 +63,10 @@ const shareOptions = [
   { 
     name: 'Email', 
     icon: Mail, 
-    color: 'bg-[#CE1126]', 
-    hover: 'hover:bg-[#CE1126]/10',
-    textColor: 'text-[#CE1126]',
-    borderColor: 'border-[#CE1126]/20',
+    color: 'bg-[var(--brand-red)]', 
+    hover: 'hover:bg-[var(--brand-red)]/10',
+    textColor: 'text-[var(--brand-red)]',
+    borderColor: 'border-[var(--brand-red)]/20',
     link: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}` 
   },
 ]
@@ -149,9 +149,9 @@ const shareOptions = [
 
         {/* Brand Footer */}
         <div className="flex h-1.5 w-full">
-          <div className="flex-1 bg-[#CE1126]"></div>
-          <div className="flex-1 bg-[#DAA520]"></div>
-          <div className="flex-1 bg-[#006B3F]"></div>
+          <div className="flex-1 bg-[var(--brand-red)]"></div>
+          <div className="flex-1 bg-[var(--brand-gold)]"></div>
+          <div className="flex-1 bg-[var(--brand-green)]"></div>
         </div>
       </div>
     </div>

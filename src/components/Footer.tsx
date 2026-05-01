@@ -81,9 +81,9 @@ export default function Footer() {
       <div className="max-w-[1280px] mx-auto px-8 mt-16 pt-8 border-t border-stone-200 flex flex-col md:flex-row items-center justify-between gap-4">
         <p className="text-xs text-stone-500 mb-0 font-bold uppercase tracking-widest">© 2026 The Base. All rights reserved.</p>
         <div className="flex gap-1">
-          <div className="w-8 h-2 bg-[#CE1126]"></div>
-          <div className="w-8 h-2 bg-[#DAA520]"></div>
-          <div className="w-8 h-2 bg-[#006B3F]"></div>
+          <div className="w-8 h-2 bg-[var(--brand-red)]"></div>
+          <div className="w-8 h-2 bg-[var(--brand-gold)]"></div>
+          <div className="w-8 h-2 bg-[var(--brand-green)]"></div>
         </div>
       </div>
     </footer>

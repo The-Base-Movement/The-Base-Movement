@@ -24,7 +24,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
       className="group relative p-[1px] transition-all duration-500 hover:scale-[1.02] cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-brand-green/10"
     >
       {/* Ghana First Gradient Border */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#CE1126] via-[#DAA520] to-[#006B3F] opacity-30 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] opacity-30 group-hover:opacity-100 transition-opacity duration-500"></div>
       
       <Card className="relative border-none shadow-none bg-white rounded-none overflow-hidden h-full">
         <CardContent className="p-6">

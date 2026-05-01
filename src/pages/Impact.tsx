@@ -124,9 +124,9 @@ export default function Impact() {
             Our Collective <span className="text-brand-green">Impact</span>
           </h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
-            <div className="flex-1 bg-[#CE1126]"></div>
-            <div className="flex-1 bg-[#DAA520]"></div>
-            <div className="flex-1 bg-[#006B3F]"></div>
+            <div className="flex-1 bg-[var(--brand-red)]"></div>
+            <div className="flex-1 bg-[var(--brand-gold)]"></div>
+            <div className="flex-1 bg-[var(--brand-green)]"></div>
           </div>
           <p className="text-white/60 max-w-2xl mx-auto mb-0 leading-relaxed font-medium">
             Real-time data reflecting the pulse of "The Base" movement. Every registration and contribution brings us closer to a unified, prosperous Ghana.

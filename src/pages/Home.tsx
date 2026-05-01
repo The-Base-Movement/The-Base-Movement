@@ -32,9 +32,9 @@ function AnimatedCounter({ target, duration = 2000 }: { target: number; duration
   }, [started, target, duration])
 
   const getColor = (val: number) => {
-    if (val <= 100000) return '#CE1126' // Red
-    if (val <= 200001) return '#DAA520' // Gold
-    return '#006B3F' // Green
+    if (val <= 100000) return 'var(--brand-red)' // Red
+    if (val <= 200001) return 'var(--brand-gold)' // Gold
+    return 'var(--brand-green)' // Green
   }
 
   return (
@@ -84,7 +84,7 @@ export default function Home() {
               A global political movement uniting people worldwide to build a stronger, more prosperous Ghana.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
-              <Link to="/register" className="bg-[#CE1126] hover:bg-[#b30f20] text-white font-meta font-bold uppercase tracking-wider px-10 py-5 flex items-center justify-center gap-3 transition-transform hover:-translate-y-1 shadow-lg w-full sm:w-auto">
+              <Link to="/register" className="bg-[var(--brand-red)] hover:bg-[#b30f20] text-white font-meta font-bold uppercase tracking-wider px-10 py-5 flex items-center justify-center gap-3 transition-transform hover:-translate-y-1 shadow-lg w-full sm:w-auto">
                 Register Now <ArrowRight className="w-5 h-5" />
               </Link>
               <Link to="/our-agenda" className="border-2 border-white/30 text-white hover:bg-white hover:text-charcoal-dark font-meta font-bold uppercase tracking-wider px-10 py-5 transition-all w-full sm:w-auto text-center">
@@ -139,7 +139,7 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-12">
-            <div className="border-l-2 border-[#CE1126] pl-6">
+            <div className="border-l-2 border-[var(--brand-red)] pl-6">
               <span className="text-[var(--brand-red)] font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Mission</span>
               <h3 className="text-2xl font-meta font-bold mb-4 uppercase tracking-tight text-white">Actionable Agenda</h3>
               <p className="text-slate-400 leading-relaxed font-body-md text-sm">

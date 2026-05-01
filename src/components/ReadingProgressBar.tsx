@@ -18,7 +18,7 @@ export default function ReadingProgressBar() {
   return (
     <div className="fixed top-0 left-0 w-full h-[4px] z-[100] pointer-events-none">
       <div 
-        className="h-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F] transition-all duration-150 ease-out"
+        className="h-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] transition-all duration-150 ease-out"
         style={{ width: `${scrollProgress}%` }}
       />
     </div>
