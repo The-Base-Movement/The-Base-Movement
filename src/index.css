@@ -4,21 +4,29 @@
 
 @layer base {
   :root {
+    /* Core Brand Colors */
+    --brand-green: #006B3F;
+    --brand-gold: #DAA520;
+    --brand-red: #CE1126;
+    --brand-yellow: #FDB913; /* Alternative gold/yellow */
+    
     --background: 40 20% 97%;
     --foreground: 220 15% 15%;
     --card: 0 0% 100%;
     --card-foreground: 220 15% 15%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 15%;
-    --primary: 150 80% 22%;
+    
+    /* Mapping shadcn variables to brand colors where possible */
+    --primary: 150 80% 22%; /* Approx #006B3F */
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 90% 45%;
+    --secondary: 45 90% 45%; /* Approx #DAA520 */
     --secondary-foreground: 0 0% 100%;
     --muted: 40 10% 93%;
     --muted-foreground: 220 10% 45%;
     --accent: 45 90% 45%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 72% 45%;
+    --destructive: 0 72% 45%; /* Approx #CE1126 */
     --destructive-foreground: 0 0% 100%;
     --border: 40 10% 88%;
     --input: 40 10% 88%;
@@ -138,15 +146,15 @@
 }
 .form-understate:focus {
   outline: none;
-  border-color: #006B3F;
+  border-color: var(--brand-green);
   box-shadow: inset 0 0 0 2px rgba(0, 107, 63, 0.1);
 }
 
 /* Navigation Utilities */
 .sticky-nav-active {
-  border-left: 3px solid #006B3F;
+  border-left: 3px solid var(--brand-green);
   padding-left: 1rem;
-  color: #006B3F;
+  color: var(--brand-green);
   font-weight: 700;
 }
 
@@ -155,7 +163,7 @@
   transition: all 0.3s ease;
 }
 .pillar-card:hover {
-  border-left: 4px solid #DAA520;
+  border-left: 4px solid var(--brand-gold);
 }
 
 .civic-card-shadow {
@@ -170,7 +178,7 @@
   background: #f1f5ee;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #CE1126, #DAA520, #006B3F);
+  background: linear-gradient(to bottom, var(--brand-red), var(--brand-gold), var(--brand-green));
   border-radius: 4px;
 }
 
@@ -184,6 +192,6 @@
 }
 
 .sidebar-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #CE1126, #FDB913, #006B3F);
+  background: linear-gradient(to bottom, var(--brand-red), var(--brand-yellow), var(--brand-green));
   border-radius: 10px;
 }
