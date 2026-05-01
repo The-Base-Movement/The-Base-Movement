@@ -34,6 +34,7 @@ Our visual identity is governed by the national colors and the authoritative voi
 
 - **Red (#CE1126)**: Our immediate call to action and actionable agenda.
 - **Gold (#DAA520)**: Our guiding values of Patriotism, Honesty, and Discipline.
+- **Black (#000000)**: The Black Star of Ghana—representing the strength and unity of our citizens.
 - **Green (#006B3F)**: Our long-term vision for a transformed nation.
 
 Every component—from the high-fidelity **Membership Card** to the **Our Agenda** pillars—is designed to provide clear, professional orientation for our global supporters.

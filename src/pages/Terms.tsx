@@ -61,11 +61,11 @@ export default function Terms() {
                 <span>Promote the values of The Base within your community</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#006B3F] mt-1.5 shrink-0"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#000000] mt-1.5 shrink-0"></span>
                 <span>Engage respectfully with other members</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-green mt-1.5 shrink-0"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#006B3F] mt-1.5 shrink-0"></span>
                 <span>Uphold the principles of 'Ghana First'</span>
               </li>
             </ul>
