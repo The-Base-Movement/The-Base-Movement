@@ -42,6 +42,8 @@ export default function DashboardLayout() {
   const getPageTitle = () => {
     const path = location.pathname
     if (path === '/dashboard') return 'Dashboard'
+    if (path === '/dashboard/blog') return 'Insights'
+    if (path.startsWith('/dashboard/blog/')) return 'Insight Article'
     if (path === '/dashboard/agenda') return 'Agenda'
     if (path === '/dashboard/impact') return 'Impact'
     if (path === '/dashboard/polls') return 'Polls'
@@ -96,6 +98,13 @@ export default function DashboardLayout() {
             >
               <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>dashboard</span>
               Dashboard
+            </Link>
+            <Link 
+              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/blog') || location.pathname.startsWith('/dashboard/blog/') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
+              to="/dashboard/blog"
+            >
+              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>article</span>
+              Insights
             </Link>
             <Link 
               className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/agenda') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 

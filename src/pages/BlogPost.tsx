@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useLocation } from 'react-router-dom'
 import { Calendar, Clock, ChevronLeft, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -41,6 +41,9 @@ const slugify = (text: string) => {
 
 export default function BlogPost() {
   useParams<{ id: string }>()
+  const location = useLocation()
+  const isDashboard = location.pathname.startsWith('/dashboard')
+  const baseUrl = isDashboard ? '/dashboard/blog' : '/blog'
 
   // In a real app, you would fetch the post by id. Here we use the mock data.
   const post = blogPost
@@ -86,7 +89,7 @@ export default function BlogPost() {
       <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <Link 
-            to="/blog" 
+            to={baseUrl} 
             className="flex items-center gap-2 text-stone-400 hover:text-brand-green transition-colors text-[10px] font-bold uppercase tracking-widest"
           >
             <ChevronLeft className="w-4 h-4" /> Back to Insights
@@ -258,7 +261,7 @@ export default function BlogPost() {
                     { id: '4', title: 'Accountability Starts at Home', category: 'Integrity', image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80' },
                     { id: '5', title: "Ghana's Resource Wealth Analysis", category: 'Economy', image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&q=80' }
                   ].map((related) => (
-                    <Link to={`/blog/${slugify(related.title)}`} key={related.id} className="block group">
+                    <Link to={`${baseUrl}/${slugify(related.title)}`} key={related.id} className="block group">
                       <article className="group cursor-pointer">
                         <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
                           <img src={related.image} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />

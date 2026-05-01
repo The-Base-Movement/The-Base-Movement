@@ -71,6 +71,8 @@ export default function App() {
         {/* ── Dashboard routes (Sidebar + Topbar) ── */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/blog" element={<Blog />} />
+          <Route path="/dashboard/blog/:id" element={<BlogPost />} />
           <Route path="/dashboard/agenda" element={<OurAgenda />} />
           <Route path="/dashboard/impact" element={<Impact />} />
           <Route path="/dashboard/polls" element={<Polls />} />

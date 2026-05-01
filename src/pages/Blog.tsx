@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
 const posts = [
@@ -88,6 +88,9 @@ const slugify = (text: string) => {
 
 export default function Blog() {
   const [featured, ...rest] = posts
+  const location = useLocation()
+  const isDashboard = location.pathname.startsWith('/dashboard')
+  const baseUrl = isDashboard ? '/dashboard/blog' : '/blog'
 
   return (
     <div className="bg-surface-warm font-body-md min-h-screen">
@@ -124,7 +127,7 @@ export default function Blog() {
                 </span>
                 <span className="text-xs text-slate-400 font-meta">{featured.date}</span>
               </div>
-              <Link to={`/blog/${slugify(featured.title)}`}>
+              <Link to={`${baseUrl}/${slugify(featured.title)}`}>
                 <h2 className="font-meta font-black text-2xl text-charcoal-dark uppercase tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
                   {featured.title}
                 </h2>
@@ -135,7 +138,7 @@ export default function Blog() {
                   {featured.author} · {featured.readTime}
                 </div>
                 <Link
-                  to={`/blog/${slugify(featured.title)}`}
+                  to={`${baseUrl}/${slugify(featured.title)}`}
                   className="flex items-center gap-1.5 text-xs font-meta font-bold text-brand-green uppercase tracking-wider hover:underline"
                 >
                   Read Article
@@ -171,7 +174,7 @@ export default function Blog() {
                         </span>
                         <span className="text-[10px] text-slate-400 font-meta">{post.date}</span>
                       </div>
-                      <Link to={`/blog/${slugify(post.title)}`}>
+                      <Link to={`${baseUrl}/${slugify(post.title)}`}>
                         <h3 className="font-meta font-black text-base text-charcoal-dark uppercase tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
                           {post.title}
                         </h3>
@@ -180,7 +183,7 @@ export default function Blog() {
                       <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
                         <span className="text-[10px] font-meta text-slate-400 uppercase tracking-wider">{post.readTime}</span>
                         <Link
-                          to={`/blog/${slugify(post.title)}`}
+                          to={`${baseUrl}/${slugify(post.title)}`}
                           className="text-[10px] font-meta font-bold text-brand-green uppercase tracking-wider hover:underline flex items-center gap-1"
                         >
                           Read
