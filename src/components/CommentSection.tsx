@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { User, Send, MessageSquare } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 
 interface Comment {
   id: string
