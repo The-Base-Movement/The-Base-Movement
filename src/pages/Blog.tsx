@@ -116,16 +116,18 @@ export default function Blog() {
                 </span>
                 <span className="text-xs text-slate-400 font-meta">{featured.date}</span>
               </div>
-              <h2 className="font-meta font-black text-2xl text-charcoal-dark uppercase tracking-tight leading-tight mb-4">
-                {featured.title}
-              </h2>
+              <Link to={`/blog/${featured.id}`}>
+                <h2 className="font-meta font-black text-2xl text-charcoal-dark uppercase tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
+                  {featured.title}
+                </h2>
+              </Link>
               <p className="text-slate-500 text-sm leading-relaxed mb-6">{featured.excerpt}</p>
               <div className="flex items-center justify-between">
                 <div className="text-xs font-meta text-slate-400 uppercase tracking-wider">
                   {featured.author} · {featured.readTime}
                 </div>
                 <Link
-                  to="#"
+                  to={`/blog/${featured.id}`}
                   className="flex items-center gap-1.5 text-xs font-meta font-bold text-brand-green uppercase tracking-wider hover:underline"
                 >
                   Read Article
@@ -159,14 +161,16 @@ export default function Blog() {
                     </span>
                     <span className="text-[10px] text-slate-400 font-meta">{post.date}</span>
                   </div>
-                  <h3 className="font-meta font-black text-base text-charcoal-dark uppercase tracking-tight leading-tight mb-3">
-                    {post.title}
-                  </h3>
+                  <Link to={`/blog/${post.id}`}>
+                    <h3 className="font-meta font-black text-base text-charcoal-dark uppercase tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
+                      {post.title}
+                    </h3>
+                  </Link>
                   <p className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>
                   <div className="flex items-center justify-between border-t border-slate-100 pt-4">
                     <span className="text-[10px] font-meta text-slate-400 uppercase tracking-wider">{post.readTime}</span>
                     <Link
-                      to="#"
+                      to={`/blog/${post.id}`}
                       className="text-[10px] font-meta font-bold text-brand-green uppercase tracking-wider hover:underline flex items-center gap-1"
                     >
                       Read
