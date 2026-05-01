@@ -9,7 +9,13 @@ const posts = [
     title: 'Ghana First: Why Civic Participation Has Never Mattered More',
     excerpt:
       'As Ghana faces mounting economic pressure, the call for organised, disciplined citizen action has never been louder. Here is why The Base believes collective effort is the only path forward.',
-    author: 'The Base Editorial',
+    author: 'Dr. George Oti Bonsu',
+    authorProfile: {
+      name: 'Dr. George Oti Bonsu',
+      role: 'Founder, The Base',
+      bio: 'Visionary leader and advocate for the industrial transformation of Ghana. Dedicated to empowering the youth through disciplined civic engagement.',
+      image: '/founder.jpg'
+    },
     readTime: '5 min read',
     image: 'https://images.unsplash.com/photo-1589519160732-576f165b9aad?w=800&q=80',
   },
@@ -20,7 +26,13 @@ const posts = [
     title: 'Jobs, Skills and the Next Generation: Our Policy Position',
     excerpt:
       'Youth unemployment in Ghana sits at a critical juncture. The Base outlines a comprehensive position on technical education, apprenticeships, and entrepreneurship incentives.',
-    author: 'Policy Desk',
+    author: 'Kwame Mensah',
+    authorProfile: {
+      name: 'Kwame Mensah',
+      role: 'Head of Policy Research',
+      bio: 'Economic strategist with a focus on labor market reforms and technical vocational training across West Africa.',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80'
+    },
     readTime: '7 min read',
     image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80',
   },
@@ -31,7 +43,13 @@ const posts = [
     title: 'How Ghanaians Abroad Are Reshaping the Movement',
     excerpt:
       'From London to Toronto, diaspora members are not just sending remittances — they are becoming the organisational backbone of a nationwide civic transformation.',
-    author: 'Diaspora Desk',
+    author: 'Ama Serwaa',
+    authorProfile: {
+      name: 'Ama Serwaa',
+      role: 'Diaspora Relations Lead',
+      bio: 'Expert in international relations and community organizing, bridging the gap between Ghanaians abroad and home-based initiatives.',
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80'
+    },
     readTime: '6 min read',
     image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80',
   },
@@ -42,7 +60,13 @@ const posts = [
     title: 'Accountability Starts at Home: Building a Culture of Discipline',
     excerpt:
       'Systemic change requires individual transformation first. The Base\'s framework for civic virtue starts with personal accountability before demanding it from public officers.',
-    author: 'The Base Editorial',
+    author: 'Dr. George Oti Bonsu',
+    authorProfile: {
+      name: 'Dr. George Oti Bonsu',
+      role: 'Founder, The Base',
+      bio: 'Visionary leader and advocate for the industrial transformation of Ghana. Dedicated to empowering the youth through disciplined civic engagement.',
+      image: '/founder.jpg'
+    },
     readTime: '4 min read',
     image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
   },
@@ -53,7 +77,13 @@ const posts = [
     title: "Ghana's Resource Wealth and Who It Should Serve",
     excerpt:
       'Gold, bauxite, cocoa — Ghana is rich. Yet millions remain below the poverty line. The Base examines why resource revenue must be restructured for people-first outcomes.',
-    author: 'Research Unit',
+    author: 'Ekow Amissah',
+    authorProfile: {
+      name: 'Ekow Amissah',
+      role: 'Chief Economist',
+      bio: 'Specialist in natural resource management and sovereign wealth fund strategy with over 15 years of experience in fiscal policy.',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80'
+    },
     readTime: '9 min read',
     image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&q=80',
   },
@@ -64,7 +94,13 @@ const posts = [
     title: 'The Power of Local Chapters: Building from the Ground Up',
     excerpt:
       'National change flows from community roots. A look at how The Base chapter model is driving tangible development from Tamale to Takoradi.',
-    author: 'Field Reports',
+    author: 'Abena Ofori',
+    authorProfile: {
+      name: 'Abena Ofori',
+      role: 'Field Operations Director',
+      bio: 'Community development expert focused on grassroots mobilization and regional economic integration.',
+      image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80'
+    },
     readTime: '5 min read',
     image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800&q=80',
   },
@@ -135,7 +171,7 @@ export default function Blog() {
               <p className="text-slate-500 text-sm leading-relaxed mb-6">{featured.excerpt}</p>
               <div className="flex items-center justify-between">
                 <div className="text-xs font-meta text-slate-400 uppercase tracking-wider">
-                  {featured.author} · {featured.readTime}
+                  {featured.authorProfile?.name || featured.author} · {featured.readTime}
                 </div>
                 <Link
                   to={`${baseUrl}/${slugify(featured.title)}`}
@@ -181,7 +217,9 @@ export default function Blog() {
                       </Link>
                       <p className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>
                       <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
-                        <span className="text-[10px] font-meta text-slate-400 uppercase tracking-wider">{post.readTime}</span>
+                        <span className="text-[10px] font-meta text-slate-400 uppercase tracking-wider">
+                          {post.authorProfile?.name || post.author} · {post.readTime}
+                        </span>
                         <Link
                           to={`${baseUrl}/${slugify(post.title)}`}
                           className="text-[10px] font-meta font-bold text-brand-green uppercase tracking-wider hover:underline flex items-center gap-1"

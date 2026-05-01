@@ -24,6 +24,12 @@ const blogPost = {
     <p>Join us as we embark on this historic journey. Together, we will build a Ghana that works for every citizen, where every young person has the opportunity to thrive and contribute to our collective greatness.</p>
   `,
   author: "Dr. George Oti Bonsu",
+  authorProfile: {
+    name: "Dr. George Oti Bonsu",
+    role: "Founder, The Base",
+    bio: "Visionary leader and advocate for the industrial transformation of Ghana. Dedicated to empowering the youth through disciplined civic engagement.",
+    image: "/founder.jpg"
+  },
   authorRole: "Founder, The Base",
   date: "October 28, 2024",
   readTime: "8 min read",
@@ -145,16 +151,18 @@ export default function BlogPost() {
                 <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Authored By</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-charcoal-dark rounded-none flex items-center justify-center text-warm-gold text-lg font-black">
-                      {post.author.charAt(0)}
-                    </div>
+                    <img 
+                      src={post.authorProfile?.image || '/founder.jpg'} 
+                      alt={post.authorProfile?.name} 
+                      className="w-12 h-12 bg-charcoal-dark rounded-none object-cover"
+                    />
                     <div>
-                      <p className="text-sm font-bold text-stone-900 leading-none">{post.author}</p>
-                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5">{post.authorRole}</p>
+                      <p className="text-sm font-bold text-stone-900 leading-none">{post.authorProfile?.name}</p>
+                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5">{post.authorProfile?.role}</p>
                     </div>
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed pt-2">
-                    Committed to the industrialization and economic transformation of Ghana through disciplined leadership.
+                    {post.authorProfile?.bio}
                   </p>
                 </div>
 
