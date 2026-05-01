@@ -13,7 +13,7 @@ interface MembershipCardProps {
   country?: string
   region?: string
   constituency?: string
-  profession?: string
+  chapter?: string
 }
 
 const MembershipCard: React.FC<MembershipCardProps> = ({
@@ -28,7 +28,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   country,
   region,
   constituency,
-  profession
+  chapter
 }) => {
   return (
     <div className="relative aspect-[1.6/1] w-full overflow-hidden bg-white flex flex-col font-meta shadow-2xl border-l-[3px] border-r-[3px] border-l-brand-green border-r-brand-green border-t-[3px] border-t-[#CE1126] border-b-[3px] border-b-warm-gold rounded-[8px]">
@@ -112,8 +112,8 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
             )}
 
             <div className="flex items-center gap-1 sm:gap-2">
-              <span className="text-[5px] sm:text-[8px] font-black text-slate-400 uppercase w-10 sm:w-16 shrink-0">Prof.</span>
-              <span className="text-[6px] sm:text-[9px] font-bold uppercase truncate">{profession || 'Not Specified'}</span>
+              <span className="text-[5px] sm:text-[8px] font-black text-slate-400 uppercase w-10 sm:w-16 shrink-0">Chapter</span>
+              <span className="text-[6px] sm:text-[9px] font-bold uppercase truncate">{chapter || 'Not Specified'}</span>
             </div>
 
             <div className="flex items-center gap-1 sm:gap-2">
