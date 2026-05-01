@@ -79,7 +79,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         {/* Member Details */}
         <div className="flex-1 space-y-1 sm:space-y-3 min-w-0">
           <div>
-            <h5 className="text-[#1a1a1a] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-tight truncate">{userName || 'Stiffler Bernard Awuah'}</h5>
+            <h5 className="text-[#1a1a1a] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-tight truncate">{userName || 'Member Name'}</h5>
             <div className="h-0.5 w-8 sm:w-16 bg-brand-green mt-0.5 sm:mt-1"></div>
           </div>
 
