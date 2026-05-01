@@ -148,7 +148,7 @@ export default function BlogPost() {
               </div>
 
               {/* Engagement Call to Action */}
-              <div className="mt-20 p-10 bg-charcoal-dark text-white relative overflow-hidden">
+              <div className="mt-24 p-10 bg-charcoal-dark text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-brand-green/10 -mr-32 -mt-32 blur-3xl"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                   <div className="text-center md:text-left">
@@ -165,6 +165,29 @@ export default function BlogPost() {
                   <div className="flex-1 bg-[#CE1126]"></div>
                   <div className="flex-1 bg-[#DAA520]"></div>
                   <div className="flex-1 bg-[#006B3F]"></div>
+                </div>
+              </div>
+
+              {/* Related Insights Section */}
+              <div className="mt-24">
+                <p className="font-meta text-xs text-warm-gold uppercase tracking-widest mb-10">Related Insights</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {[
+                    { id: '2', title: 'Jobs, Skills and the Next Generation', category: 'Youth', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80' },
+                    { id: '4', title: 'Accountability Starts at Home', category: 'Integrity', image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80' },
+                    { id: '5', title: "Ghana's Resource Wealth Analysis", category: 'Economy', image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&q=80' }
+                  ].map((related) => (
+                    <article key={related.id} className="group cursor-pointer">
+                      <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
+                        <img src={related.image} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                        <div className="absolute top-0 left-0 w-full h-1 bg-brand-green scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                      </div>
+                      <span className="text-[9px] font-bold text-brand-green uppercase tracking-widest">{related.category}</span>
+                      <h4 className="text-sm font-bold text-stone-900 mt-2 group-hover:text-brand-green transition-colors leading-tight">
+                        {related.title}
+                      </h4>
+                    </article>
+                  ))}
                 </div>
               </div>
             </div>

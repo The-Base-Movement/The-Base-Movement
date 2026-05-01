@@ -138,48 +138,87 @@ export default function Blog() {
           </div>
         </section>
 
-        {/* All Posts Grid */}
+        {/* All Posts Grid & Sidebar */}
         <section>
-          <p className="font-meta text-xs text-warm-gold uppercase tracking-widest mb-6">Latest Articles</p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {rest.map((post) => (
-              <article
-                key={post.id}
-                className="bg-white border border-slate-200 overflow-hidden group hover:shadow-md transition-shadow"
-              >
-                <div className="h-44 overflow-hidden">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-meta font-bold uppercase tracking-wider ${categoryColors[post.category] ?? ''}`}>
-                      {post.category}
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-meta">{post.date}</span>
-                  </div>
-                  <Link to={`/blog/${post.id}`}>
-                    <h3 className="font-meta font-black text-base text-charcoal-dark uppercase tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
-                      {post.title}
-                    </h3>
-                  </Link>
-                  <p className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>
-                  <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-                    <span className="text-[10px] font-meta text-slate-400 uppercase tracking-wider">{post.readTime}</span>
-                    <Link
-                      to={`/blog/${post.id}`}
-                      className="text-[10px] font-meta font-bold text-brand-green uppercase tracking-wider hover:underline flex items-center gap-1"
+          <div className="flex flex-col lg:flex-row gap-12">
+            <div className="lg:w-2/3">
+              <p className="font-meta text-xs text-warm-gold uppercase tracking-widest mb-6">Latest Articles</p>
+              <div className="grid sm:grid-cols-2 gap-8">
+                {rest.map((post) => (
+                  <article
+                    key={post.id}
+                    className="bg-white border border-slate-200 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full"
+                  >
+                    <div className="h-44 overflow-hidden">
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-meta font-bold uppercase tracking-wider ${categoryColors[post.category] ?? ''}`}>
+                          {post.category}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-meta">{post.date}</span>
+                      </div>
+                      <Link to={`/blog/${post.id}`}>
+                        <h3 className="font-meta font-black text-base text-charcoal-dark uppercase tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
+                          {post.title}
+                        </h3>
+                      </Link>
+                      <p className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>
+                      <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
+                        <span className="text-[10px] font-meta text-slate-400 uppercase tracking-wider">{post.readTime}</span>
+                        <Link
+                          to={`/blog/${post.id}`}
+                          className="text-[10px] font-meta font-bold text-brand-green uppercase tracking-wider hover:underline flex items-center gap-1"
+                        >
+                          Read
+                          <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_forward</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <aside className="lg:w-1/3 space-y-12">
+              <div>
+                <p className="font-meta text-xs text-warm-gold uppercase tracking-widest mb-6">Categories</p>
+                <div className="bg-white border border-slate-200 p-8 space-y-2">
+                  {Object.keys(categoryColors).map((cat) => (
+                    <button 
+                      key={cat} 
+                      className="w-full flex items-center justify-between p-3 text-xs font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:text-brand-green transition-all group"
                     >
-                      Read
-                      <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_forward</span>
-                    </Link>
-                  </div>
+                      {cat}
+                      <span className="text-[10px] text-slate-300 font-meta group-hover:text-brand-green transition-colors">12 Posts</span>
+                    </button>
+                  ))}
                 </div>
-              </article>
-            ))}
+              </div>
+
+              <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
+                <h4 className="font-meta font-black text-lg uppercase tracking-tight mb-4">The Base Weekly</h4>
+                <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                  Get the movement's authoritative policy briefs and news delivered directly to your inbox every week.
+                </p>
+                <div className="space-y-3">
+                  <input 
+                    type="email" 
+                    placeholder="Email Address" 
+                    className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors"
+                  />
+                  <Button className="w-full bg-brand-green hover:bg-brand-green/90 text-white text-[10px] font-bold uppercase tracking-widest h-12">
+                    Subscribe
+                  </Button>
+                </div>
+              </div>
+            </aside>
           </div>
         </section>
 
