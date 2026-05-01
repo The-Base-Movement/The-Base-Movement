@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { Calendar, Clock, ChevronLeft, Share2, MessageSquare, Facebook, Mail, Bookmark } from 'lucide-react'
+import { Calendar, Clock, ChevronLeft, Share2, MessageSquare, Facebook, Mail, Bookmark, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 // Mock data for the authoritative blog post
