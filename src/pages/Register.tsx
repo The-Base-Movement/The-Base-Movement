@@ -747,7 +747,6 @@ export default function Register() {
                   />
                 </div>
               </div>
-              </div>
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
