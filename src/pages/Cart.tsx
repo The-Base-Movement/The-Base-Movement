@@ -101,7 +101,7 @@ export default function Cart() {
 
                       <button 
                         onClick={() => removeItem(item.id)}
-                        className="flex items-center gap-2 text-stone-400 hover:text-[#CE1126] transition-colors text-[10px] font-bold uppercase tracking-widest"
+                        className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold uppercase tracking-widest"
                       >
                         <Trash2 className="w-4 h-4" />
                         Remove

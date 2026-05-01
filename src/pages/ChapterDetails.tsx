@@ -83,7 +83,7 @@ export default function ChapterDetails() {
             
             {/* About Section */}
             <section className="bg-white border border-stone-200 rounded-none overflow-hidden flex flex-col">
-              <div className="h-1.5 w-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F]"></div>
+              <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
               <div className="p-10">
                 <h2 className="text-xl font-bold text-stone-900 tracking-tight font-meta mb-6 flex items-center gap-3">
                 <Globe className="w-5 h-5 text-brand-green" />
@@ -150,7 +150,7 @@ export default function ChapterDetails() {
             
             {/* Leadership Card */}
             <div className="bg-white border border-stone-200 rounded-none overflow-hidden flex flex-col">
-              <div className="h-1.5 w-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F]"></div>
+              <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
               <div className="p-8">
                 <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-6 border-b border-stone-100 pb-4">Chapter Leadership</h3>
               <div className="space-y-6">

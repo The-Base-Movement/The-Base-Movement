@@ -254,9 +254,9 @@ export default function BlogPost() {
                   </Link>
                 </div>
                 <div className="mt-10 flex h-1 w-full">
-                  <div className="flex-1 bg-[#CE1126]"></div>
-                  <div className="flex-1 bg-[#DAA520]"></div>
-                  <div className="flex-1 bg-[#006B3F]"></div>
+                  <div className="flex-1 bg-[var(--brand-red)]"></div>
+                  <div className="flex-1 bg-[var(--brand-gold)]"></div>
+                  <div className="flex-1 bg-[var(--brand-green)]"></div>
                 </div>
               </div>
 

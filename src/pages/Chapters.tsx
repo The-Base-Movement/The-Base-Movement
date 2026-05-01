@@ -200,9 +200,7 @@ export default function Chapters() {
                 "Our strength lies in our unity across borders. Together, we build the foundations of a new Ghana."
               </p>
               <div className="flex gap-2">
-                <div className="w-8 h-1 bg-[#CE1126]"></div>
-                <div className="w-8 h-1 bg-[#DAA520]"></div>
-                <div className="w-8 h-1 bg-[#006B3F]"></div>
+                <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
               </div>
             </div>
           </div>
@@ -213,7 +211,7 @@ export default function Chapters() {
       <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
         <DialogContent className="sm:max-w-[500px] border-none rounded-none p-0 overflow-hidden bg-white">
           <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F]"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
             <div className="flex items-center gap-3 mb-2">
               <Building2 className="w-5 h-5 text-brand-green" />
               <DialogTitle className="text-xl font-bold tracking-tight uppercase font-meta">Request a Chapter</DialogTitle>
@@ -265,7 +263,7 @@ export default function Chapters() {
                   type="button" 
                   variant="outline" 
                   onClick={() => setIsRequestModalOpen(false)}
-                  className="h-12 border-stone-200 text-stone-600 font-bold text-[10px] uppercase tracking-widest rounded-none"
+                  className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold uppercase tracking-widest rounded-none"
                 >
                   Cancel
                 </Button>
