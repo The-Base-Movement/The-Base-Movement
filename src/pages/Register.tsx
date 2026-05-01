@@ -378,7 +378,7 @@ export default function Register() {
           <div className="text-center mb-10">
             <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6" />
             <h1 className="text-3xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
-            <div className="w-16 h-1 bg-[#CE1126] mx-auto mb-4"></div>
+            <div className="w-16 h-1 bg-[var(--brand-red)] mx-auto mb-4"></div>
             <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest font-meta">Membership Registration</h2>
           </div>
 
@@ -437,7 +437,7 @@ export default function Register() {
           <div className="text-center mb-8">
             <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-4" />
             <h1 className="text-2xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
-            <div className="w-16 h-1 bg-[#CE1126] mx-auto mb-4"></div>
+            <div className="w-16 h-1 bg-[var(--brand-red)] mx-auto mb-4"></div>
             <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest font-meta mb-4">Upload Paper Form</h2>
             
             <button
@@ -472,9 +472,9 @@ export default function Register() {
           
           {/* Ghana Flag Gradient Line */}
           <div className="w-24 h-1.5 mx-auto mb-4 flex">
-            <div className="flex-1 bg-[#CE1126]"></div>
-            <div className="flex-1 bg-[#DAA520]"></div>
-            <div className="flex-1 bg-[#006B3F]"></div>
+            <div className="flex-1 bg-[var(--brand-red)]"></div>
+            <div className="flex-1 bg-[var(--brand-gold)]"></div>
+            <div className="flex-1 bg-[var(--brand-green)]"></div>
           </div>
           
           <h2 className="text-slate-500 mb-8">Official Registration Form</h2>
@@ -537,7 +537,7 @@ export default function Register() {
 
                   <div className="space-y-3">
                     <label htmlFor="fullName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Full Name <span className="text-[#CE1126]">*</span>
+                      Full Name <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <input
                       id="fullName"
@@ -551,7 +551,7 @@ export default function Register() {
 
                   <div className="space-y-3">
                     <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                      Select Platform <span className="text-[#CE1126]">*</span>
+                      Select Platform <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
                       <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'GHANA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
@@ -569,7 +569,7 @@ export default function Register() {
                     {platform === 'DIASPORA' ? (
                       <div className="space-y-3">
                         <label htmlFor="selectedCountry" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                          Country of Residence <span className="text-[#CE1126]">*</span>
+                          Country of Residence <span className="text-[var(--brand-red)]">*</span>
                         </label>
                         <select 
                           id="selectedCountry"
@@ -588,7 +588,7 @@ export default function Register() {
 
                     <div className="space-y-3">
                       <label htmlFor="contactNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Contact Number <span className="text-[#CE1126]">*</span>
+                        Contact Number <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <div className="flex">
                         <select
@@ -615,7 +615,7 @@ export default function Register() {
 
                   <div className="space-y-3">
                     <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Account Password <span className="text-[#CE1126]">*</span>
+                      Account Password <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -651,7 +651,7 @@ export default function Register() {
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                        Age Range <span className="text-[#CE1126]">*</span>
+                        Age Range <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {ageRanges.map(range => (
@@ -665,7 +665,7 @@ export default function Register() {
 
                     <div className="space-y-3">
                       <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                        Gender <span className="text-[#CE1126]">*</span>
+                        Gender <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {['Male', 'Female'].map(g => (
@@ -680,7 +680,7 @@ export default function Register() {
 
                   <div className="space-y-3">
                     <label htmlFor="residentialAddress" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Residential Address <span className="text-[#CE1126]">*</span>
+                      Residential Address <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <input
                       id="residentialAddress"
@@ -697,7 +697,7 @@ export default function Register() {
                       <>
                         <div className="space-y-3">
                           <label htmlFor="region" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                            Region <span className="text-[#CE1126]">*</span>
+                            Region <span className="text-[var(--brand-red)]">*</span>
                           </label>
                           <select 
                             id="region"
@@ -715,7 +715,7 @@ export default function Register() {
                         </div>
                         <div className="space-y-3">
                           <label htmlFor="constituency" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                            Constituency <span className="text-[#CE1126]">*</span>
+                            Constituency <span className="text-[var(--brand-red)]">*</span>
                           </label>
                           <select 
                             id="constituency"
@@ -736,7 +736,7 @@ export default function Register() {
                     ) : (
                       <div className="space-y-3">
                         <label htmlFor="chapter" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                          Assigned Chapter <span className="text-[#CE1126]">*</span>
+                          Assigned Chapter <span className="text-[var(--brand-red)]">*</span>
                         </label>
                         <input
                           id="chapter"
@@ -762,7 +762,7 @@ export default function Register() {
 
                   <div className="space-y-3">
                     <label htmlFor="emergencyContactName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Emergency Contact Name <span className="text-[#CE1126]">*</span>
+                      Emergency Contact Name <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <input
                       id="emergencyContactName"
@@ -777,7 +777,7 @@ export default function Register() {
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <label htmlFor="emergencyRelationship" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Relationship <span className="text-[#CE1126]">*</span>
+                        Relationship <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <input
                         id="emergencyRelationship"
@@ -790,7 +790,7 @@ export default function Register() {
                     </div>
                     <div className="space-y-3">
                       <label htmlFor="emergencyNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Emergency Contact Number <span className="text-[#CE1126]">*</span>
+                        Emergency Contact Number <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <input
                         id="emergencyNumber"
@@ -807,7 +807,7 @@ export default function Register() {
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <label htmlFor="profession" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Profession / Occupation <span className="text-[#CE1126]">*</span>
+                        Profession / Occupation <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <input
                         id="profession"
@@ -820,7 +820,7 @@ export default function Register() {
                     </div>
                     <div className="space-y-3">
                       <label htmlFor="educationLevel" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Education Level <span className="text-[#CE1126]">*</span>
+                        Education Level <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <select 
                         id="educationLevel"
@@ -850,7 +850,7 @@ export default function Register() {
 
                   <div className="space-y-6">
                     <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Passport Photo <span className="text-[#CE1126]">*</span>
+                      Passport Photo <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     
                     {!photoUrl ? (
@@ -891,7 +891,7 @@ export default function Register() {
                           <button
                             type="button"
                             onClick={() => setPhotoUrl(null)}
-                            className="shrink-0 p-2 bg-slate-200 text-charcoal-dark hover:bg-[#CE1126] hover:text-white transition-colors"
+                            className="shrink-0 p-2 bg-slate-200 text-charcoal-dark hover:bg-[var(--brand-red)] hover:text-white transition-colors"
                             title="Remove photo"
                           >
                             <X className="w-5 h-5" />
@@ -918,7 +918,7 @@ export default function Register() {
                         className="mt-1 w-5 h-5 shrink-0 text-brand-green bg-charcoal-dark border-slate-500 rounded-none focus:ring-brand-green cursor-pointer"
                       />
                       <label htmlFor="privacy" className="text-sm text-slate-300 cursor-pointer leading-tight font-medium">
-                        I accept this declaration and agree to the <Link to="/privacy" className="text-warm-gold hover:underline font-bold">Privacy Policy</Link> <span className="text-[#CE1126]">*</span>
+                        I accept this declaration and agree to the <Link to="/privacy" className="text-warm-gold hover:underline font-bold">Privacy Policy</Link> <span className="text-[var(--brand-red)]">*</span>
                       </label>
                     </div>
                   </div>

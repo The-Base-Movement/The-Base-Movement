@@ -85,7 +85,7 @@ export default function Dashboard() {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-off-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-brand-green border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-[var(--brand-green)] border-t-transparent rounded-full animate-spin"></div>
           <p className="font-meta text-stone-500 uppercase tracking-widest text-xs animate-pulse">Synchronizing Live Data...</p>
         </div>
       </div>

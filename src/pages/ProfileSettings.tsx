@@ -246,7 +246,7 @@ export default function ProfileSettings() {
       {/* Page Title - Now with horizontal padding only for content alignment */}
       <div className="mb-10 border-b border-divider-gold pb-6 px-4 md:px-10">
         <p className="font-meta text-warm-gold uppercase tracking-widest text-xs mb-1">Account</p>
-        <h2 className="font-meta font-black text-3xl text-primary uppercase tracking-tight">Profile Settings</h2>
+        <h2 className="font-meta font-black text-3xl text-[var(--brand-green)] uppercase tracking-tight">Profile Settings</h2>
         <p className="text-muted-gray text-sm mt-1">Manage your identity, download your card and update your details.</p>
       </div>
 
@@ -302,7 +302,7 @@ export default function ProfileSettings() {
           <div className="bg-white border border-slate-200 p-8 shadow-sm">
             <h4 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-widest mb-4">Membership Verification</h4>
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-brand-green animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-[var(--brand-green)] animate-pulse"></div>
               <p className="text-xs font-bold text-charcoal-dark font-meta uppercase tracking-tight">Status: Active & Verified</p>
             </div>
             <p className="text-[11px] sm:text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
@@ -326,14 +326,14 @@ export default function ProfileSettings() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                 <div className="space-y-2">
                   <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">
-                    Full Name <span className="text-red-500">*</span>
+                    Full Name <span className="text-[var(--brand-red)]">*</span>
                   </label>
                   <input
                     required
                     value={form.fullName}
                     onChange={e => handleChange('fullName', e.target.value)}
                     placeholder="Full name as on official ID"
-                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
 
@@ -344,7 +344,7 @@ export default function ProfileSettings() {
                     value={form.email}
                     onChange={e => handleChange('email', e.target.value)}
                     placeholder="Email address (e.g. you@example.com)"
-                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
 
@@ -398,7 +398,7 @@ export default function ProfileSettings() {
                     value={form.profession}
                     onChange={e => handleChange('profession', e.target.value)}
                     placeholder="E.g. Teacher, Engineer, Student"
-                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
 
@@ -408,7 +408,7 @@ export default function ProfileSettings() {
                     value={form.chapter}
                     onChange={e => handleChange('chapter', e.target.value)}
                     placeholder="E.g. The Base - Accra Chapter"
-                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
 
@@ -495,14 +495,14 @@ export default function ProfileSettings() {
             <div className="flex flex-col sm:flex-row items-center gap-6 pt-4">
               <button
                 type="submit"
-                className="w-full sm:w-auto flex items-center justify-center gap-3 px-16 py-6 bg-brand-green text-white font-meta font-black uppercase tracking-[0.3em] text-xs hover:opacity-95 active:scale-[0.98] transition-all shadow-2xl shadow-brand-green/20"
+                className="w-full sm:w-auto flex items-center justify-center gap-3 px-16 py-6 bg-[var(--brand-green)] text-white font-meta font-black uppercase tracking-[0.3em] text-xs hover:opacity-95 active:scale-[0.98] transition-all shadow-2xl shadow-brand-green/20"
               >
                 <span className="material-symbols-outlined text-[18px]">lock_reset</span>
                 Save Changes
               </button>
 
               {saved && (
-                <div className="flex items-center gap-3 text-brand-green text-[10px] font-meta font-black uppercase tracking-widest animate-in fade-in slide-in-from-left-2 duration-500">
+                <div className="flex items-center gap-3 text-[var(--brand-green)] text-[10px] font-meta font-black uppercase tracking-widest animate-in fade-in slide-in-from-left-2 duration-500">
                   <span className="material-symbols-outlined text-[20px]">verified</span>
                   Information Synchronized
                 </div>
@@ -513,7 +513,7 @@ export default function ProfileSettings() {
             <section className="mt-16 p-10 border-2 border-dashed border-red-100 bg-red-50/20">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
                 <div>
-                  <h4 className="font-meta font-bold text-xs text-red-600 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                  <h4 className="font-meta font-bold text-xs text-[var(--brand-red)] uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px]">warning</span>
                     Danger Zone
                   </h4>
@@ -521,7 +521,7 @@ export default function ProfileSettings() {
                 </div>
                 <button
                   type="button"
-                  className="w-full lg:w-auto px-8 py-3.5 border-2 border-red-200 text-red-600 text-[10px] font-meta font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                  className="w-full lg:w-auto px-8 py-3.5 border-2 border-red-200 text-[var(--brand-red)] text-[10px] font-meta font-black uppercase tracking-widest hover:bg-[var(--brand-red)] hover:text-white transition-all shadow-sm"
                 >
                   Deactivate Membership
                 </button>

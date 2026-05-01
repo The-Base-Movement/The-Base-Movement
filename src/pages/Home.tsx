@@ -140,7 +140,7 @@ export default function Home() {
           
           <div className="grid md:grid-cols-3 gap-12">
             <div className="border-l-2 border-[#CE1126] pl-6">
-              <span className="text-[#CE1126] font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Mission</span>
+              <span className="text-[var(--brand-red)] font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Mission</span>
               <h3 className="text-2xl font-meta font-bold mb-4 uppercase tracking-tight text-white">Actionable Agenda</h3>
               <p className="text-slate-400 leading-relaxed font-body-md text-sm">
                 To deliver an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians, covering education, governance, industrialisation, infrastructure, institutional reform, and agriculture.
@@ -169,12 +169,12 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="grid md:grid-cols-2 gap-16 md:gap-8 items-center">
             <div className="pl-8 relative">
-              <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-[#CE1126] via-[#DAA520] to-[#006B3F]" />
+              <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]" />
               <AnimatedCounter target={355482} />
               <p className="text-xl text-slate-500 mt-4 uppercase tracking-widest font-meta font-bold">Citizens Joined</p>
             </div>
             <div className="pl-8 relative">
-              <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-[#CE1126] via-[#DAA520] to-[#006B3F]" />
+              <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]" />
               <AnimatedCounter target={2} />
               <p className="text-xl text-slate-500 mt-4 uppercase tracking-widest font-meta font-bold">Global Platforms</p>
             </div>
@@ -251,7 +251,7 @@ export default function Home() {
             Join over 355,482 people who are building a better future for Ghana. Your voice, your community, your movement.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link to="/register" className="bg-[#CE1126] hover:bg-[#b30f20] text-white font-meta font-bold uppercase tracking-widest px-12 py-6 text-lg transition-transform hover:-translate-y-1 shadow-2xl flex items-center justify-center gap-3">
+            <Link to="/register" className="bg-[var(--brand-red)] hover:bg-[#b30f20] text-white font-meta font-bold uppercase tracking-widest px-12 py-6 text-lg transition-transform hover:-translate-y-1 shadow-2xl flex items-center justify-center gap-3">
               Join The Base <ArrowRight className="w-6 h-6" />
             </Link>
           </div>

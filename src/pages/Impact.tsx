@@ -3,10 +3,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Target, Users, Heart, TrendingUp, ArrowUpRight, MapPin, Activity, Calendar, X } from 'lucide-react'
 
 const impactStats = [
-  { icon: Heart, label: 'Donations Received', value: 'GHS 128,450', color: '#CE1126', trend: '+GHS 4,280 today' },
-  { icon: Target, label: 'Chapters Active', value: '76', color: '#DAA520', trend: 'Growing rapidly' },
-  { icon: Users, label: 'Members Joined', value: '355,482', color: '#000000', trend: '+12,450 this month' },
-  { icon: TrendingUp, label: 'Countries Reached', value: '32', color: '#006B3F', trend: 'Global Network' }
+  { icon: Heart, label: 'Donations Received', value: 'GHS 128,450', color: 'var(--brand-red)', trend: '+GHS 4,280 today' },
+  { icon: Target, label: 'Chapters Active', value: '76', color: 'var(--brand-gold)', trend: 'Growing rapidly' },
+  { icon: Users, label: 'Members Joined', value: '355,482', color: 'var(--brand-black)', trend: '+12,450 this month' },
+  { icon: TrendingUp, label: 'Countries Reached', value: '32', color: 'var(--brand-green)', trend: 'Global Network' }
 ]
 
 const recentContributions = {
