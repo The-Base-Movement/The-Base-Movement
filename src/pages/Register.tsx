@@ -231,6 +231,7 @@ export default function Register() {
             age_range: formData.ageRange,
             gender: formData.gender,
             email: formData.email,
+            residential_address: formData.residentialAddress,
             region: formData.region,
             constituency: formData.constituency,
             chapter: formData.chapter,
@@ -670,7 +671,7 @@ export default function Register() {
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <label htmlFor="constituency" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Constituency</label>
+                  <label htmlFor="constituency" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Voting Constituency in Ghana</label>
                   {formData.region && regionConstituencies[formData.region] ? (
                     <select 
                       id="constituency"
@@ -696,6 +697,20 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-3">
+                  <label htmlFor="residentialAddress" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Residential Address <span className="text-[#CE1126]">*</span></label>
+                  <input
+                    id="residentialAddress"
+                    placeholder="House No, Street Name, City"
+                    required
+                    value={formData.residentialAddress}
+                    onChange={(e) => handleChange('residentialAddress', e.target.value)}
+                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-3">
                   <label htmlFor="profession" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Profession / Skill <span className="text-[#CE1126]">*</span></label>
                   <input
                     id="profession"
@@ -706,7 +721,6 @@ export default function Register() {
                     className="w-full form-understate p-4 text-charcoal-dark text-sm"
                   />
                 </div>
-              </div>
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
