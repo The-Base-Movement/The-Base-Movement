@@ -1,4 +1,4 @@
-import { X, Copy, Check, MessageSquare, Facebook, Twitter, Mail } from 'lucide-react'
+import { X, Copy, Check, Facebook, Mail } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
