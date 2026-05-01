@@ -3,10 +3,13 @@ import { MapPin, Users, Globe, ShieldCheck, Calendar, Share2, Mail, Phone, Chevr
 import { Button } from '@/components/ui/button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { allChapters } from '@/data/chaptersData'
+import { useState } from 'react'
+import { ShareModal } from '@/components/ShareModal'
 
 export default function ChapterDetails() {
   const { id } = useParams<{ id: string }>()
   const chapter = allChapters.find(c => c.id === id)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
 
   if (!chapter) {
     return (
@@ -57,7 +60,11 @@ export default function ChapterDetails() {
             </div>
             
             <div className="flex gap-3">
-              <Button variant="outline" className="border-stone-200 text-stone-600 rounded-none h-12 px-6">
+              <Button 
+                variant="outline" 
+                className="border-stone-200 text-stone-600 rounded-none h-12 px-6"
+                onClick={() => setIsShareModalOpen(true)}
+              >
                 <Share2 className="w-4 h-4 mr-2" /> Share
               </Button>
               <Button className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold tracking-widest text-xs h-12 px-8 rounded-none">
@@ -213,6 +220,13 @@ export default function ChapterDetails() {
         </div>
       </div>
     </main>
+
+    <ShareModal 
+      isOpen={isShareModalOpen}
+      onClose={() => setIsShareModalOpen(false)}
+      title={`Join ${chapter.name}`}
+      url={window.location.href}
+    />
   </div>
 )
 }
