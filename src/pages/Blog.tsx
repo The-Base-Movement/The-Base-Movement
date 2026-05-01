@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { BlogPostCard } from '@/components/BlogPostCard'
 
 const posts = [
   {
@@ -193,44 +194,13 @@ export default function Blog() {
               <h2 className="text-stone-900 uppercase tracking-widest mb-6">Latest Articles</h2>
               <div className="grid sm:grid-cols-2 gap-8">
                 {rest.map((post) => (
-                  <article
-                    key={post.id}
-                    className="bg-white border border-slate-200 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full"
-                  >
-                    <div className="h-44 overflow-hidden">
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    </div>
-                    <div className="p-6 flex flex-col flex-1">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-meta font-bold uppercase tracking-wider ${categoryColors[post.category] ?? ''}`}>
-                          {post.category}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-meta">{post.date}</span>
-                      </div>
-                      <Link to={`${baseUrl}/${slugify(post.title)}`}>
-                        <h3 className="text-sm font-bold text-charcoal-dark uppercase tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
-                          {post.title}
-                        </h3>
-                      </Link>
-                      <p className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>
-                      <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
-                        <span className="text-[10px] font-meta text-slate-400 uppercase tracking-wider">
-                          {post.authorProfile?.name || post.author} · {post.readTime}
-                        </span>
-                        <Link
-                          to={`${baseUrl}/${slugify(post.title)}`}
-                          className="text-[9px] font-bold text-brand-green uppercase tracking-widest hover:underline flex items-center gap-1"
-                        >
-                          Read
-                          <ArrowRight className="w-3 h-3" />
-                        </Link>
-                      </div>
-                    </div>
-                  </article>
+                  <BlogPostCard 
+                    key={post.id} 
+                    post={post} 
+                    baseUrl={baseUrl} 
+                    slugify={slugify} 
+                    categoryColors={categoryColors} 
+                  />
                 ))}
               </div>
             </div>

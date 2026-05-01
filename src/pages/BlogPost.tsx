@@ -1,6 +1,7 @@
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { Calendar, Clock, ChevronLeft, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CommentSection } from '@/components/CommentSection'
 
 // Mock data for the authoritative blog post
 const blogPost = {
@@ -168,7 +169,7 @@ export default function BlogPost() {
 
                 <div className="space-y-4">
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Share this Insight</p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     {[
                       { brandColor: '#1877F2', key: 'facebook', icon: <Facebook className="w-4 h-4" /> },
                       { brandColor: '#000000', key: 'twitter', icon: (
@@ -190,7 +191,7 @@ export default function BlogPost() {
                         onClick={() => handleShare(key)}
                         variant="outline" 
                         style={{ color: brandColor, borderColor: `${brandColor}20` }}
-                        className="h-10 w-10 p-0 border hover:bg-stone-50 rounded-none transition-all duration-300 hover:scale-105"
+                        className="h-12 w-full p-0 border hover:bg-stone-50 rounded-none transition-all duration-300 hover:scale-105"
                       >
                         {icon}
                       </Button>
@@ -235,6 +236,8 @@ export default function BlogPost() {
                   </span>
                 ))}
               </div>
+
+              <CommentSection />
 
               {/* Engagement Call to Action */}
               <div className="mt-24 p-10 bg-charcoal-dark text-white relative overflow-hidden">

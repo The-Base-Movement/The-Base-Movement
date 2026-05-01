@@ -1,0 +1,79 @@
+import { Link } from 'react-router-dom'
+import { MapPin, Users, ArrowRight } from 'lucide-react'
+
+interface Chapter {
+  id: string
+  name: string
+  city_or_region: string
+  country: string
+  membersCount: number
+  status: string
+}
+
+interface ChapterCardProps {
+  chapter: Chapter
+  requestSent: Record<string, boolean>
+  countryFlags: Record<string, string>
+  handleJoinRequest: (e: React.MouseEvent, chapterId: string) => void
+}
+
+export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequest }: ChapterCardProps) {
+  return (
+    <Link 
+      to={`/dashboard/chapters/${chapter.id}`}
+      className="group bg-white border border-stone-200 rounded-none overflow-hidden hover:shadow-xl hover:border-brand-green transition-all duration-500 flex flex-col"
+    >
+      <div className="h-1.5 w-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+      <div className="p-8 flex-1 flex flex-col">
+        <div className="flex justify-between items-start mb-6">
+          <div className="w-12 h-12 bg-stone-50 rounded-none flex items-center justify-center text-stone-400 group-hover:text-brand-green transition-colors">
+            {chapter.country === 'Ghana' ? <MapPin className="w-6 h-6" /> : <span className="text-2xl">{countryFlags[chapter.country] || '🌍'}</span>}
+          </div>
+          <span className={`px-3 py-1 rounded-none text-[10px] font-semibold tracking-widest ${
+            requestSent[chapter.id] 
+              ? 'bg-amber-50 text-amber-600'
+              : chapter.status === 'Active' || chapter.status === 'Member' 
+                ? 'bg-emerald-50 text-emerald-600' 
+                : 'bg-stone-50 text-stone-600'
+          }`}>
+            {requestSent[chapter.id] ? 'Request Pending' : chapter.status}
+          </span>
+        </div>
+        
+        <h3 className="text-stone-900 mb-1 group-hover:text-brand-green transition-colors text-lg">
+          {chapter.name}
+        </h3>
+        <p className="text-stone-400 text-[10px] font-bold tracking-[0.2em] mb-6 uppercase">
+          {chapter.city_or_region}, {chapter.country}
+        </p>
+        
+        <div className="space-y-4 pt-6 border-t border-stone-50 mt-auto">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Strength</span>
+            <div className="flex items-center gap-2">
+              <Users className="w-3 h-3 text-brand-green" />
+              <span className="text-sm font-bold text-stone-700">{chapter.membersCount}</span>
+            </div>
+          </div>
+        </div>
+        
+        {chapter.status === 'Join Chapter' && !requestSent[chapter.id] ? (
+          <button 
+            onClick={(e) => handleJoinRequest(e, chapter.id)}
+            className="w-full mt-8 h-12 border border-brand-green bg-brand-green text-white rounded-none text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-brand-green transition-all flex items-center justify-center gap-2"
+          >
+            Join Chapter <ArrowRight className="w-3 h-3" />
+          </button>
+        ) : (
+          <div className={`w-full mt-8 h-12 border rounded-none text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+            requestSent[chapter.id] 
+              ? 'border-amber-200 bg-amber-50 text-amber-600' 
+              : 'border-stone-100 text-stone-400 group-hover:bg-brand-green group-hover:text-white group-hover:border-brand-green'
+          }`}>
+            {requestSent[chapter.id] ? 'Request Sent' : 'View Details'} <ArrowRight className="w-3 h-3" />
+          </div>
+        )}
+      </div>
+    </Link>
+  )
+}
