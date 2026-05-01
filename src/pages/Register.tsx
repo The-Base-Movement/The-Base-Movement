@@ -726,11 +726,10 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-3">
-                  <label htmlFor="residentialAddress" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Residential Address <span className="text-[#CE1126]">*</span></label>
+                  <label htmlFor="residentialAddress" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Residential Address <span className="text-[10px] lowercase normal-case opacity-70 tracking-normal font-meta">(Optional)</span></label>
                   <input
                     id="residentialAddress"
                     placeholder="House No, Street Name, City"
-                    required
                     value={formData.residentialAddress}
                     onChange={(e) => handleChange('residentialAddress', e.target.value)}
                     className="w-full form-understate p-4 text-charcoal-dark text-sm"
@@ -783,11 +782,10 @@ export default function Register() {
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <label htmlFor="chapter" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Assigned Chapter <span className="text-[#CE1126]">*</span></label>
+                  <label htmlFor="chapter" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Assigned Chapter <span className="text-[10px] lowercase normal-case opacity-70 tracking-normal font-meta">(Optional)</span></label>
                   <input
                     id="chapter"
-                    placeholder="E.g. The Base - Accra Chapter"
-                    required
+                    placeholder="E.g. Accra Chapter (Optional)"
                     value={formData.chapter}
                     onChange={(e) => handleChange('chapter', e.target.value)}
                     className="w-full form-understate p-4 text-charcoal-dark text-sm"
