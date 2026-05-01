@@ -111,7 +111,7 @@ export default function Register() {
     residentialAddress: '',
     region: '',
     constituency: '',
-    profession: '',
+    chapter: '',
     employment: '',
     educationLevel: '',
     emergencyContactName: '',
@@ -156,7 +156,7 @@ export default function Register() {
             email: formData.email,
             region: formData.region,
             constituency: formData.constituency,
-            profession: formData.profession,
+            chapter: formData.chapter,
             avatar_url: photoUrl
           })
         })
@@ -246,9 +246,9 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <p className="text-[9px] font-meta text-slate-500 uppercase tracking-wider mb-0.5">Region / Constituency</p>
+                  <p className="text-[9px] font-meta text-slate-500 uppercase tracking-wider mb-0.5">Assigned Chapter</p>
                   <p className="font-meta font-bold text-charcoal-dark uppercase text-[10px] truncate">
-                    {formData.region || 'N/A'} {formData.constituency ? `— ${formData.constituency}` : ''}
+                    {formData.chapter || 'National Chapter'}
                   </p>
                 </div>
               </div>
@@ -587,13 +587,13 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-3">
-                  <label htmlFor="profession" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Profession / Skill <span className="text-[#CE1126]">*</span></label>
+                  <label htmlFor="chapter" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Assigned Chapter <span className="text-[#CE1126]">*</span></label>
                   <input
-                    id="profession"
-                    placeholder="E.g. Teacher, Artisan"
+                    id="chapter"
+                    placeholder="E.g. The Base - Accra Chapter"
                     required
-                    value={formData.profession}
-                    onChange={(e) => handleChange('profession', e.target.value)}
+                    value={formData.chapter}
+                    onChange={(e) => handleChange('chapter', e.target.value)}
                     className="w-full form-understate p-4 text-charcoal-dark text-sm"
                   />
                 </div>
