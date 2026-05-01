@@ -32,6 +32,13 @@ const blogPost = {
   tags: ["Industrialization", "Youth Employment", "Ghana First", "Economic Reform"]
 }
 
+const slugify = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/[^\w ]+/g, '')
+    .replace(/ +/g, '-')
+}
+
 export default function BlogPost() {
   useParams<{ id: string }>()
 
@@ -177,16 +184,18 @@ export default function BlogPost() {
                     { id: '4', title: 'Accountability Starts at Home', category: 'Integrity', image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80' },
                     { id: '5', title: "Ghana's Resource Wealth Analysis", category: 'Economy', image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&q=80' }
                   ].map((related) => (
-                    <article key={related.id} className="group cursor-pointer">
-                      <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
-                        <img src={related.image} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                        <div className="absolute top-0 left-0 w-full h-1 bg-brand-green scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-                      </div>
-                      <span className="text-[9px] font-bold text-brand-green uppercase tracking-widest">{related.category}</span>
-                      <h4 className="text-sm font-bold text-stone-900 mt-2 group-hover:text-brand-green transition-colors leading-tight">
-                        {related.title}
-                      </h4>
-                    </article>
+                    <Link to={`/blog/${slugify(related.title)}`} key={related.id} className="block group">
+                      <article className="group cursor-pointer">
+                        <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
+                          <img src={related.image} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                          <div className="absolute top-0 left-0 w-full h-1 bg-brand-green scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                        </div>
+                        <span className="text-[9px] font-bold text-brand-green uppercase tracking-widest">{related.category}</span>
+                        <h4 className="text-sm font-bold text-stone-900 mt-2 group-hover:text-brand-green transition-colors leading-tight">
+                          {related.title}
+                        </h4>
+                      </article>
+                    </Link>
                   ))}
                 </div>
               </div>
