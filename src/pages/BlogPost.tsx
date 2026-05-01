@@ -1,7 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
-import { Calendar, User, Clock, ChevronLeft, Share2, MessageSquare, Facebook, Mail, Bookmark } from 'lucide-react'
+import { Calendar, Clock, ChevronLeft, Share2, MessageSquare, Facebook, Mail, Bookmark } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 // Mock data for the authoritative blog post
 const blogPost = {
@@ -34,7 +33,7 @@ const blogPost = {
 }
 
 export default function BlogPost() {
-  const { id } = useParams<{ id: string }>()
+  useParams<{ id: string }>()
 
   // In a real app, you would fetch the post by id. Here we use the mock data.
   const post = blogPost
