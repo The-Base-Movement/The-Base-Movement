@@ -679,9 +679,10 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-3">
-                  <label htmlFor="region" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Region</label>
+                  <label htmlFor="region" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Region {platform === 'GHANA' && <span className="text-[#CE1126]">*</span>}</label>
                   <select 
                     id="region"
+                    required={platform === 'GHANA'}
                     value={formData.region} 
                     onChange={(e) => handleChange('region', e.target.value)}
                     className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
@@ -697,10 +698,11 @@ export default function Register() {
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <label htmlFor="constituency" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Voting Constituency in Ghana</label>
+                  <label htmlFor="constituency" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Voting Constituency in Ghana {platform === 'GHANA' && <span className="text-[#CE1126]">*</span>}</label>
                   {formData.region && regionConstituencies[formData.region] ? (
                     <select 
                       id="constituency"
+                      required={platform === 'GHANA'}
                       value={formData.constituency} 
                       onChange={(e) => handleChange('constituency', e.target.value)}
                       className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
@@ -715,6 +717,7 @@ export default function Register() {
                     <input
                       id="constituency"
                       placeholder="E.g. Ayawaso West"
+                      required={platform === 'GHANA'}
                       value={formData.constituency}
                       onChange={(e) => handleChange('constituency', e.target.value)}
                       className="w-full form-understate p-4 text-charcoal-dark text-sm"
