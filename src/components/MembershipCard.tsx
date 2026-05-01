@@ -53,7 +53,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
 
       {/* Card Body */}
       <div className="flex-1 p-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4 relative overflow-hidden">
-        {/* Photo Frame with Gradient Border - Properly positioned to clear footer */}
+        {/* Photo Frame with Gradient Border - Center-aligned */}
         <div className="w-24 h-28 sm:w-34 sm:h-42 p-[1.5px] shrink-0 bg-gradient-to-b from-[#CE1126] via-[#DAA520] to-[#006B3F] shadow-lg relative z-10 rounded-[4px]">
           <div className="w-full h-full p-1 bg-slate-50 rounded-[3px]">
             <div 
@@ -76,69 +76,74 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
           </div>
         </div>
 
-        {/* Member Details - Refined for perfect alignment */}
-        <div className="flex-1 space-y-1 sm:space-y-2 min-w-0">
+        {/* Member Details - Center-aligned with photo */}
+        <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0">
           <div>
-            <h5 className="text-[#1a1a1a] font-bold text-[10px] sm:text-lg uppercase tracking-tight leading-tight truncate pr-16">{userName || 'Member Name'}</h5>
+            <h5 className="text-[#1a1a1a] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-tight truncate pr-16">{userName || 'Member Name'}</h5>
             <div className="h-0.5 w-6 sm:w-12 bg-brand-green mt-0.5"></div>
           </div>
 
           <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-charcoal-dark">
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[5px] sm:text-[7px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Reg. No.</span>
-              <span className="text-[6px] sm:text-[8px] font-black text-brand-green uppercase tracking-wider truncate">{userRegNo || 'DI-XXXXXX'}</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Reg. No.</span>
+              <span className="text-[7px] sm:text-[10px] font-black text-brand-green uppercase tracking-wider truncate">{userRegNo || 'DI-XXXXXX'}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[5px] sm:text-[7px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Gender</span>
-              <span className="text-[6px] sm:text-[8px] font-bold uppercase truncate">{gender || 'Not Specified'}</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Gender</span>
+              <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{gender || 'Not Specified'}</span>
             </div>
             
             {(!country || country === 'Ghana') ? (
               <>
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <span className="text-[5px] sm:text-[7px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Region</span>
-                  <span className="text-[6px] sm:text-[8px] font-bold uppercase truncate">{region || 'Not Specified'}</span>
+                  <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Region</span>
+                  <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{region || 'Not Specified'}</span>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <span className="text-[5px] sm:text-[7px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Const.</span>
-                  <span className="text-[6px] sm:text-[8px] font-bold uppercase truncate">{constituency || 'Not Specified'}</span>
+                  <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Const.</span>
+                  <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{constituency || 'Not Specified'}</span>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-2 sm:gap-4">
-                <span className="text-[5px] sm:text-[7px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Country</span>
-                <span className="text-[6px] sm:text-[8px] font-bold uppercase truncate">{country || 'Not Specified'}</span>
+                <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Country</span>
+                <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{country || 'Not Specified'}</span>
               </div>
             )}
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[5px] sm:text-[7px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Chapter</span>
-              <span className="text-[6px] sm:text-[8px] font-bold uppercase truncate">{chapter || 'Not Specified'}</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Chapter</span>
+              <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{chapter || 'Not Specified'}</span>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[5px] sm:text-[7px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Joined</span>
-              <span className="text-[6px] sm:text-[8px] font-bold uppercase truncate">{joinedDate || '30 Apr 2026'}</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Joined</span>
+              <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{joinedDate || '30 Apr 2026'}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[5px] sm:text-[7px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Status</span>
-              <span className="text-[6px] sm:text-[8px] font-black text-brand-green uppercase truncate">{status || 'Active'}</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Status</span>
+              <span className="text-[7px] sm:text-[9px] font-black text-brand-green uppercase truncate">{status || 'Active'}</span>
             </div>
           </div>
         </div>
 
-        {/* QR Code - Stable positioned */}
-        <div className="absolute top-[22%] right-2 sm:right-4 flex flex-col items-center scale-[0.6] sm:scale-[0.85] origin-top-right z-20">
+        {/* QR Code - Perfectly centered vertically */}
+        <div className="absolute top-1/2 -translate-y-1/2 right-2 sm:right-6 flex flex-col items-center scale-[0.65] sm:scale-[1.0] origin-right z-20">
           <div className="bg-white border border-slate-200 p-1 shadow-sm">
             <QRCodeSVG 
               value={`${typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/${userRegNo || 'DI-XXXXXX'}`}
-              size={64}
+              size={80}
               level="H"
               includeMargin={false}
-              className="w-10 h-10 sm:w-16 sm:h-16"
+              className="w-12 h-12 sm:w-20 sm:h-20"
             />
           </div>
-          <span className="text-[5px] sm:text-[6px] text-slate-400 uppercase mt-1 font-black tracking-widest">Verify ID</span>
+          <span className="text-[6px] sm:text-[8px] text-slate-400 uppercase mt-1 font-black tracking-widest">Verify ID</span>
+        </div>
+
+        {/* Subtle Watermark Logo */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none z-0">
+          <img src="/logo.png" alt="" className="w-40 sm:w-64 object-contain grayscale" />
         </div>
       </div>
 

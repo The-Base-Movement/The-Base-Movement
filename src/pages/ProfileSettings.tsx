@@ -190,10 +190,12 @@ export default function ProfileSettings() {
     if (!cardRef.current) return
     
     try {
+      // Capture at high scale for professional print quality
       const canvas = await html2canvas(cardRef.current, {
-        scale: 2,
+        scale: 4,
         useCORS: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        logging: false
       })
       
       const imgData = canvas.toDataURL('image/png')
@@ -202,10 +204,28 @@ export default function ProfileSettings() {
         printWindow.document.write(`
           <html>
             <head>
-              <title>Print Membership Card</title>
+              <title>THE BASE - Official Membership Card</title>
               <style>
-                body { margin: 0; display: flex; items-center; justify-center; height: 100vh; }
-                img { width: 85.6mm; height: 54mm; }
+                @page { 
+                  size: 85.6mm 53.98mm; 
+                  margin: 0; 
+                }
+                body { 
+                  margin: 0; 
+                  padding: 0;
+                  display: flex; 
+                  align-items: center; 
+                  justify-content: center; 
+                  height: 100vh; 
+                  background: #fff;
+                  -webkit-print-color-adjust: exact;
+                }
+                img { 
+                  width: 85.6mm; 
+                  height: 53.98mm; 
+                  display: block; 
+                  image-rendering: -webkit-optimize-contrast;
+                }
               </style>
             </head>
             <body>
