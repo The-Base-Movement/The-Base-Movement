@@ -178,25 +178,42 @@ export default function Register() {
     emergencyNumber: '',
   })
 
-  // Sync country code with platform
-  useEffect(() => {
-    if (platform === 'GHANA') {
-      setFormData(prev => ({ ...prev, selectedCountry: 'Ghana', countryCode: '+233' }))
-    } else {
-      setFormData(prev => ({ ...prev, selectedCountry: diasporaCountries[0], countryCode: countryCodes[diasporaCountries[0]] || '+1' }))
-    }
-  }, [platform])
+  const handlePlatformChange = (newPlatform: string) => {
+    setPlatform(newPlatform)
+    setFormData(prev => {
+      let newData = { ...prev }
+      if (newPlatform === 'GHANA') {
+        newData.selectedCountry = 'Ghana'
+        newData.countryCode = '+233'
+      } else {
+        newData.selectedCountry = diasporaCountries[0]
+        newData.countryCode = countryCodes[diasporaCountries[0]] || '+1'
+      }
+      return newData
+    })
+  }
 
-  // Sync country code with country selection
-  useEffect(() => {
-    if (formData.selectedCountry && countryCodes[formData.selectedCountry]) {
-      setFormData(prev => ({ ...prev, countryCode: countryCodes[formData.selectedCountry] }))
-    }
-  }, [formData.selectedCountry])
-
+  // Sync logic moved to handleChange for better performance
   const handleChange = (field: string, value: string) => {
     setFormData(prev => {
-      const newData = { ...prev, [field]: value }
+      let newData = { ...prev, [field]: value }
+      
+      // Auto-sync country and code when platform changes
+      if (field === 'platform') {
+        if (value === 'GHANA') {
+          newData.selectedCountry = 'Ghana'
+          newData.countryCode = '+233'
+        } else {
+          newData.selectedCountry = diasporaCountries[0]
+          newData.countryCode = countryCodes[diasporaCountries[0]] || '+1'
+        }
+      }
+      
+      // Auto-sync code when country changes
+      if (field === 'selectedCountry' && countryCodes[value]) {
+        newData.countryCode = countryCodes[value]
+      }
+
       if (field === 'region') {
         newData.constituency = ''
       }
@@ -363,31 +380,39 @@ export default function Register() {
 
           <div className="space-y-6">
             <button
-              onClick={() => { setStep('form'); setFormStep(1); }}
+              onClick={() => {
+                handlePlatformChange('GHANA')
+                setStep('form')
+                setFormStep(1)
+              }}
               className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-brand-green transition-colors text-left shadow-sm"
             >
               <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-brand-green/10 transition-colors">
                 <FileText className="w-8 h-8 text-brand-green" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg mb-1">Register Online</h3>
-                <p className="text-sm text-slate-500">Complete the secure digital form. Takes about 5 minutes.</p>
+                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg mb-1">Local Membership (Ghana)</h3>
+                <p className="text-sm text-slate-500">For residents living and voting within the 16 regions of Ghana.</p>
               </div>
               <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-brand-green transition-colors" />
             </button>
 
             <button
-              onClick={() => setStep('upload')}
-              className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-[#CE1126] transition-colors text-left shadow-sm"
+              onClick={() => {
+                handlePlatformChange('DIASPORA')
+                setStep('form')
+                setFormStep(1)
+              }}
+              className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-brand-gold transition-colors text-left shadow-sm"
             >
-              <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-[#CE1126]/10 transition-colors">
-                <Upload className="w-8 h-8 text-[#CE1126]" />
+              <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-brand-gold/10 transition-colors">
+                <User className="w-8 h-8 text-brand-gold" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg mb-1">Upload Paper Form</h3>
-                <p className="text-sm text-slate-500">Already completed a physical form? Scan and upload it here.</p>
+                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg mb-1">Diaspora Membership</h3>
+                <p className="text-sm text-slate-500">For Ghanaians living abroad who wish to support the movement.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-[#CE1126] transition-colors" />
+              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-brand-gold transition-colors" />
             </button>
           </div>
 
@@ -719,9 +744,10 @@ export default function Register() {
                     required
                     value={formData.profession}
                     onChange={(e) => handleChange('profession', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
                   />
                 </div>
+              </div>
+              </div>
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
@@ -875,7 +901,6 @@ export default function Register() {
               )}
             </button>
           </div>
-
           </form>
         </div>
       </div>
