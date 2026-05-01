@@ -131,6 +131,22 @@ export default function BlogPost() {
                     ))}
                   </div>
                 </div>
+
+                <div className="pt-8 border-t border-stone-100 space-y-6">
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Explore Categories</p>
+                  <div className="space-y-2">
+                    {['Movement', 'Youth', 'Diaspora', 'Integrity', 'Economy', 'Community'].map((cat) => (
+                      <Link 
+                        to={`/blog?category=${cat.toLowerCase()}`} 
+                        key={cat} 
+                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:text-brand-green transition-all"
+                      >
+                        {cat}
+                        <ChevronRight className="w-3 h-3 text-stone-300" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </div>
             </aside>
 
