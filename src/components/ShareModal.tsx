@@ -82,7 +82,7 @@ const shareOptions = [
       >
         {/* Header */}
         <div className="p-6 border-b border-stone-100 flex justify-between items-center bg-stone-50">
-          <h2 className="text-xl font-bold text-stone-900 font-meta tracking-tight">{title}</h2>
+          <h2 className="text-lg font-bold text-stone-900 font-meta tracking-tight pr-4">{title}</h2>
           <button 
             onClick={onClose}
             className="w-8 h-8 rounded-none bg-white border border-stone-200 flex items-center justify-center text-stone-400 hover:text-[var(--brand-green)] transition-colors"
