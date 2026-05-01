@@ -28,6 +28,10 @@ const diasporaCountries = [
   'United Kingdom', 'United States', 'Canada', 'Germany', 'France', 'Australia', 'South Africa', 'United Arab Emirates', 'Netherlands', 'Italy'
 ]
 
+const professions = [
+  'Healthcare', 'Education', 'Finance', 'Law', 'Technology', 'Agriculture', 'Creative Arts', 'Engineering', 'Trade', 'Research'
+]
+
 interface Member {
   id: number
   name: string
@@ -59,6 +63,7 @@ export default function Members() {
   const [selectedRegion, setSelectedRegion] = useState<string>('all')
   const [selectedConstituency, setSelectedConstituency] = useState<string>('all')
   const [selectedCountry, setSelectedCountry] = useState<string>('all')
+  const [selectedProfession, setSelectedProfession] = useState<string>('all')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
 
@@ -68,21 +73,22 @@ export default function Members() {
       .filter(member => {
         const matchesPlatform = member.platform === activePlatform
         const matchesSearch = member.name.toLowerCase().includes(search.toLowerCase())
+        const matchesProfession = selectedProfession === 'all' || member.profession === selectedProfession
         
         if (activePlatform === 'GHANA') {
           const matchesRegion = selectedRegion === 'all' || member.region === selectedRegion
           const matchesConstituency = selectedConstituency === 'all' || member.constituency === selectedConstituency
-          return matchesPlatform && matchesSearch && matchesRegion && matchesConstituency
+          return matchesPlatform && matchesSearch && matchesRegion && matchesConstituency && matchesProfession
         } else {
           const matchesCountry = selectedCountry === 'all' || member.country === selectedCountry
-          return matchesPlatform && matchesSearch && matchesCountry
+          return matchesPlatform && matchesSearch && matchesCountry && matchesProfession
         }
       })
       .sort((a, b) => {
         if (sortOrder === 'asc') return a.name.localeCompare(b.name)
         return b.name.localeCompare(a.name)
       })
-  }, [activePlatform, search, selectedRegion, selectedConstituency, selectedCountry, sortOrder])
+  }, [activePlatform, search, selectedRegion, selectedConstituency, selectedCountry, selectedProfession, sortOrder])
 
   const constituencies = useMemo(() => {
     if (selectedRegion === 'all') return []
@@ -198,13 +204,24 @@ export default function Members() {
                   </Select>
                 )}
 
-                {(search !== '' || selectedRegion !== 'all' || selectedConstituency !== 'all' || selectedCountry !== 'all') && (
+                <Select value={selectedProfession} onValueChange={setSelectedProfession}>
+                  <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-black uppercase tracking-widest rounded-lg h-10">
+                    <SelectValue placeholder="All Professions" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all" className="text-xs uppercase font-bold">All Professions</SelectItem>
+                    {professions.map(p => <SelectItem key={p} value={p} className="text-xs uppercase font-bold">{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+
+                {(search !== '' || selectedRegion !== 'all' || selectedConstituency !== 'all' || selectedCountry !== 'all' || selectedProfession !== 'all') && (
                   <button 
                     onClick={() => {
                       setSearch('');
                       setSelectedRegion('all');
                       setSelectedConstituency('all');
                       setSelectedCountry('all');
+                      setSelectedProfession('all');
                     }}
                     className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest text-red-500 hover:bg-red-50 rounded-none transition-all ml-auto"
                   >
@@ -276,6 +293,7 @@ export default function Members() {
                       setSelectedRegion('all');
                       setSelectedConstituency('all');
                       setSelectedCountry('all');
+                      setSelectedProfession('all');
                     }}
                     className="mt-8 text-brand-green font-black text-[10px] uppercase tracking-widest hover:underline"
                   >
