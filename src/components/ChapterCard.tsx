@@ -23,7 +23,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
       to={`/dashboard/chapters/${chapter.id}`}
       className="group bg-white border border-stone-200 rounded-none overflow-hidden hover:shadow-xl hover:border-brand-green transition-all duration-500 flex flex-col"
     >
-      <div className="h-1.5 w-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F] opacity-80 group-hover:opacity-100 transition-opacity"></div>
+      <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] opacity-80 group-hover:opacity-100 transition-opacity"></div>
       <div className="p-8 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-6">
           <div className="w-12 h-12 bg-stone-50 rounded-none flex items-center justify-center text-stone-400 group-hover:text-brand-green transition-colors">
