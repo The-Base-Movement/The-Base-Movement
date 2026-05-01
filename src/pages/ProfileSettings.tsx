@@ -373,6 +373,16 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
+                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Profession</label>
+                  <input
+                    value={form.profession}
+                    onChange={e => handleChange('profession', e.target.value)}
+                    placeholder="E.g. Teacher, Engineer, Student"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Assigned Chapter</label>
                   <input
                     value={form.chapter}

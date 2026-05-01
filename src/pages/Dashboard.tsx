@@ -20,6 +20,7 @@ interface MemberData {
   region: string
   constituency: string
   chapter: string
+  profession: string
 }
 
 export default function Dashboard() {
@@ -51,7 +52,8 @@ export default function Dashboard() {
         gender: 'Male',
         region: 'Greater Accra',
         constituency: 'Assin Central',
-        chapter: 'The Base - Central Chapter'
+        chapter: 'The Base - Central Chapter',
+        profession: 'Legislator'
       }
       setMember(mockMember)
       
@@ -167,6 +169,12 @@ export default function Dashboard() {
                   <div className="min-w-0">
                     <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Assigned Chapter</p>
                     <p className="text-base sm:text-lg font-bold text-on-surface truncate">{member.chapter}</p>
+                  </div>
+                )}
+                {member?.profession && (
+                  <div className="min-w-0">
+                    <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Profession</p>
+                    <p className="text-base sm:text-lg font-bold text-on-surface truncate">{member.profession}</p>
                   </div>
                 )}
               </div>

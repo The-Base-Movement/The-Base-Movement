@@ -112,6 +112,7 @@ export default function Register() {
     region: '',
     constituency: '',
     chapter: '',
+    profession: '',
     employment: '',
     educationLevel: '',
     emergencyContactName: '',
@@ -157,6 +158,7 @@ export default function Register() {
             region: formData.region,
             constituency: formData.constituency,
             chapter: formData.chapter,
+            profession: formData.profession,
             avatar_url: photoUrl
           })
         })
@@ -584,6 +586,18 @@ export default function Register() {
                       className="w-full form-understate p-4 text-charcoal-dark text-sm"
                     />
                   )}
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="profession" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Profession / Skill <span className="text-[#CE1126]">*</span></label>
+                  <input
+                    id="profession"
+                    placeholder="E.g. Teacher, Artisan"
+                    required
+                    value={formData.profession}
+                    onChange={(e) => handleChange('profession', e.target.value)}
+                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                  />
                 </div>
 
                 <div className="space-y-3">
