@@ -10,15 +10,15 @@ const blogPost = {
   content: `
     <p>The prosperity of any nation lies in its ability to transform raw materials into finished goods. For too long, Ghana has relied on the export of primary resources, leaving our youth vulnerable to global price fluctuations and limited employment opportunities. "The Base" movement believes that industrialization is not just an economic strategy; it is a moral imperative for national survival.</p>
     
-    <h3>1. The Foundation of Our Economic Agenda</h3>
+    <h2>1. The Foundation of Our Economic Agenda</h2>
     <p>Our agenda, "Ghana First," prioritizes the establishment of regional industrial hubs. These hubs are designed to leverage local resources—from the lithium deposits in Mfantseman to the vast agricultural potential of the Northern regions—to build a self-reliant economy.</p>
     
-    <h3>2. Modernizing Agriculture through Technology</h3>
+    <h2>2. Modernizing Agriculture through Technology</h2>
     <p>Agriculture remains the backbone of our society, but it requires a technological revolution. By integrating high-tech irrigation systems and establishing state-of-the-art processing plants, we can ensure food security and create an agricultural value chain that employs thousands of young professionals.</p>
     
     <blockquote>"We are not just building factories; we are building the character of a new Ghana—one that is disciplined, innovative, and unapologetically ambitious."</blockquote>
     
-    <h3>3. The Role of the Youth in National Transformation</h3>
+    <h2>3. The Role of the Youth in National Transformation</h2>
     <p>The youth are not the leaders of tomorrow; they are the catalysts of today. Our platform provides the training, resources, and institutional support necessary for young Ghanaians to take charge of the industrial landscape. Through "The Base," we are fostering a generation of creators, not just consumers.</p>
     
     <p>Join us as we embark on this historic journey. Together, we will build a Ghana that works for every citizen, where every young person has the opportunity to thrive and contribute to our collective greatness.</p>
@@ -124,11 +124,11 @@ export default function BlogPost() {
               </div>
             </div>
             
-            <h1 className="text-4xl md:text-6xl font-black text-stone-900 leading-[1.1] tracking-tighter font-meta">
+            <h1 className="text-stone-900 leading-[1.1] tracking-tighter mb-0">
               {post.title}
             </h1>
             
-            <p className="text-xl text-stone-500 leading-relaxed font-medium italic border-l-4 border-warm-gold pl-6 py-2">
+            <p className="text-stone-500 leading-relaxed font-medium italic border-l-4 border-warm-gold pl-6 py-2 mb-0">
               {post.excerpt}
             </p>
           </header>
@@ -149,7 +149,7 @@ export default function BlogPost() {
             <aside className="lg:col-span-1 space-y-8 order-2 lg:order-1">
               <div className="sticky top-32 space-y-8">
                 <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Authored By</p>
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">Authored By</p>
                   <div className="flex items-center gap-3">
                     <img 
                       src={post.authorProfile?.image || '/founder.jpg'} 
@@ -157,11 +157,11 @@ export default function BlogPost() {
                       className="w-12 h-12 bg-charcoal-dark rounded-none object-cover"
                     />
                     <div>
-                      <p className="text-sm font-bold text-stone-900 leading-none">{post.authorProfile?.name}</p>
-                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5">{post.authorProfile?.role}</p>
+                      <p className="text-sm font-bold text-stone-900 leading-none mb-0">{post.authorProfile?.name}</p>
+                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0">{post.authorProfile?.role}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-stone-500 leading-relaxed pt-2">
+                  <p className="text-xs text-stone-500 leading-relaxed pt-2 mb-0">
                     {post.authorProfile?.bio}
                   </p>
                 </div>
@@ -199,7 +199,7 @@ export default function BlogPost() {
                 </div>
 
                 <div className="pt-8 border-t border-stone-100 space-y-6">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Explore Categories</p>
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">Explore Categories</p>
                   <div className="space-y-2">
                     {['Movement', 'Youth', 'Diaspora', 'Integrity', 'Economy', 'Community'].map((cat) => (
                       <Link 
@@ -241,8 +241,8 @@ export default function BlogPost() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-brand-green/10 -mr-32 -mt-32 blur-3xl"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                   <div className="text-center md:text-left">
-                    <h3 className="text-2xl font-bold font-meta tracking-tight mb-2">Build the Future Together</h3>
-                    <p className="text-stone-400 text-sm">Join "The Base" movement and be a part of Ghana's industrial revolution.</p>
+                    <h2 className="text-white tracking-tight mb-2">Build the Future Together</h2>
+                    <p className="text-stone-400 mb-0">Join "The Base" movement and be a part of Ghana's industrial revolution.</p>
                   </div>
                   <Link to="/register">
                     <Button className="bg-brand-green hover:bg-brand-green/90 text-white font-bold tracking-widest text-xs h-14 px-10 rounded-none uppercase">
@@ -259,7 +259,7 @@ export default function BlogPost() {
 
               {/* Related Insights Section */}
               <div className="mt-24">
-                <p className="font-meta text-xs text-warm-gold uppercase tracking-widest mb-10">Related Insights</p>
+                <p className="text-[10px] font-bold text-warm-gold uppercase tracking-widest mb-10">Related Insights</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   {[
                     { id: '2', title: 'Jobs, Skills and the Next Generation', category: 'Youth', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80' },
@@ -272,10 +272,10 @@ export default function BlogPost() {
                           <img src={related.image} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                           <div className="absolute top-0 left-0 w-full h-1 bg-brand-green scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                         </div>
-                        <span className="text-[9px] font-bold text-brand-green uppercase tracking-widest">{related.category}</span>
-                        <h4 className="text-sm font-bold text-stone-900 mt-2 group-hover:text-brand-green transition-colors leading-tight">
+                        <span className="text-[9px] font-bold text-brand-green uppercase tracking-widest mb-0">{related.category}</span>
+                        <h5 className="text-stone-900 mt-2 group-hover:text-brand-green transition-colors leading-tight mb-0">
                           {related.title}
-                        </h4>
+                        </h5>
                       </article>
                     </Link>
                   ))}

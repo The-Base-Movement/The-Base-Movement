@@ -126,11 +126,11 @@ export default function Store() {
       <header className="mb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="font-h1 text-h2 text-stone-900 mb-2 flex items-center gap-3">
+            <h1 className="text-stone-900 mb-2 flex items-center gap-3">
               <ShoppingBag className="w-8 h-8 text-brand-green" />
               Official Store
             </h1>
-            <p className="text-muted-gray font-body-md max-w-xl">
+            <p className="text-muted-gray max-w-xl mb-0">
               Equip yourself with official movement gear. Every purchase directly funds our grassroots organizing and civic education programs.
             </p>
           </div>
@@ -232,7 +232,7 @@ export default function Store() {
         ) : (
           <div className="col-span-full py-24 text-center">
             <ShoppingBag className="w-16 h-16 text-stone-200 mx-auto mb-4" />
-            <p className="font-h3 text-stone-400">No products found in this category.</p>
+            <h3 className="text-stone-400">No products found in this category.</h3>
           </div>
         )}
       </div>
@@ -283,8 +283,8 @@ export default function Store() {
             <span className="material-symbols-outlined text-brand-green">local_shipping</span>
           </div>
           <div>
-            <h4 className="font-bold text-stone-900 text-sm uppercase tracking-tight">Nationwide Delivery</h4>
-            <p className="text-xs text-muted-gray">Prompt shipping to all 16 regions.</p>
+            <h4 className="text-stone-900 mb-1">Nationwide Delivery</h4>
+            <p className="text-xs text-muted-gray mb-0">Prompt shipping to all 16 regions.</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -292,8 +292,8 @@ export default function Store() {
             <span className="material-symbols-outlined text-brand-green">verified_user</span>
           </div>
           <div>
-            <h4 className="font-bold text-stone-900 text-sm uppercase tracking-tight">Secure Payment</h4>
-            <p className="text-xs text-muted-gray">MoMo and Card payments protected.</p>
+            <h4 className="text-stone-900 mb-1">Secure Payment</h4>
+            <p className="text-xs text-muted-gray mb-0">MoMo and Card payments protected.</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -301,8 +301,8 @@ export default function Store() {
             <span className="material-symbols-outlined text-brand-green">volunteer_activism</span>
           </div>
           <div>
-            <h4 className="font-bold text-stone-900 text-sm uppercase tracking-tight">Movement Impact</h4>
-            <p className="text-xs text-muted-gray">100% profit goes to the cause.</p>
+            <h4 className="text-stone-900 mb-1">Movement Impact</h4>
+            <p className="text-xs text-muted-gray mb-0">100% profit goes to the cause.</p>
           </div>
         </div>
       </section>

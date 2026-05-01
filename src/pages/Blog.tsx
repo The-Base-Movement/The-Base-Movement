@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const posts = [
@@ -42,7 +43,7 @@ const posts = [
     date: 'April 15, 2026',
     title: 'How Ghanaians Abroad Are Reshaping the Movement',
     excerpt:
-      'From London to Toronto, diaspora members are not just sending remittances — they are becoming the organisational backbone of a nationwide civic transformation.',
+      'From London to Toronto, diaspora members are not just sending remittances; they are becoming the organisational backbone of a nationwide civic transformation.',
     author: 'Ama Serwaa',
     authorProfile: {
       name: 'Ama Serwaa',
@@ -76,7 +77,7 @@ const posts = [
     date: 'March 30, 2026',
     title: "Ghana's Resource Wealth and Who It Should Serve",
     excerpt:
-      'Gold, bauxite, cocoa — Ghana is rich. Yet millions remain below the poverty line. The Base examines why resource revenue must be restructured for people-first outcomes.',
+      'Gold, bauxite, cocoa; Ghana is rich. Yet millions remain below the poverty line. The Base examines why resource revenue must be restructured for people-first outcomes.',
     author: 'Ekow Amissah',
     authorProfile: {
       name: 'Ekow Amissah',
@@ -133,7 +134,7 @@ export default function Blog() {
       {/* Hero */}
       <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-brand-green">
         <div className="max-w-[1280px] mx-auto">
-          <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">The Base — Insights</p>
+          <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">The Base Insights</p>
           <h1 className="font-meta font-black text-4xl md:text-5xl uppercase tracking-tight leading-tight mb-4 max-w-2xl">
             Ideas, Analysis &amp; Movement News
           </h1>
@@ -164,21 +165,21 @@ export default function Blog() {
                 <span className="text-xs text-slate-400 font-meta">{featured.date}</span>
               </div>
               <Link to={`${baseUrl}/${slugify(featured.title)}`}>
-                <h2 className="font-meta font-black text-2xl text-charcoal-dark uppercase tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
+                <h2 className="text-xl font-bold text-charcoal-dark uppercase tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
                   {featured.title}
                 </h2>
               </Link>
               <p className="text-slate-500 text-sm leading-relaxed mb-6">{featured.excerpt}</p>
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-meta text-slate-400 uppercase tracking-wider">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
                   {featured.authorProfile?.name || featured.author} · {featured.readTime}
                 </div>
                 <Link
                   to={`${baseUrl}/${slugify(featured.title)}`}
-                  className="flex items-center gap-1.5 text-xs font-meta font-bold text-brand-green uppercase tracking-wider hover:underline"
+                  className="flex items-center gap-1.5 text-[10px] font-bold text-brand-green uppercase tracking-widest hover:underline"
                 >
                   Read Article
-                  <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_forward</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
@@ -189,7 +190,7 @@ export default function Blog() {
         <section>
           <div className="flex flex-col lg:flex-row gap-12">
             <div className="lg:w-2/3">
-              <p className="font-meta text-xs text-warm-gold uppercase tracking-widest mb-6">Latest Articles</p>
+              <h2 className="text-stone-900 uppercase tracking-widest mb-6">Latest Articles</h2>
               <div className="grid sm:grid-cols-2 gap-8">
                 {rest.map((post) => (
                   <article
@@ -211,7 +212,7 @@ export default function Blog() {
                         <span className="text-[10px] text-slate-400 font-meta">{post.date}</span>
                       </div>
                       <Link to={`${baseUrl}/${slugify(post.title)}`}>
-                        <h3 className="font-meta font-black text-base text-charcoal-dark uppercase tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
+                        <h3 className="text-sm font-bold text-charcoal-dark uppercase tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
                           {post.title}
                         </h3>
                       </Link>
@@ -222,10 +223,10 @@ export default function Blog() {
                         </span>
                         <Link
                           to={`${baseUrl}/${slugify(post.title)}`}
-                          className="text-[10px] font-meta font-bold text-brand-green uppercase tracking-wider hover:underline flex items-center gap-1"
+                          className="text-[9px] font-bold text-brand-green uppercase tracking-widest hover:underline flex items-center gap-1"
                         >
                           Read
-                          <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_forward</span>
+                          <ArrowRight className="w-3 h-3" />
                         </Link>
                       </div>
                     </div>
@@ -237,7 +238,7 @@ export default function Blog() {
             {/* Sidebar */}
             <aside className="lg:w-1/3 space-y-12">
               <div>
-                <p className="font-meta text-xs text-warm-gold uppercase tracking-widest mb-6">Categories</p>
+                <h2 className="text-stone-900 uppercase tracking-widest mb-6">Categories</h2>
                 <div className="bg-white border border-slate-200 p-8 space-y-2">
                   {Object.keys(categoryColors).map((cat) => (
                     <button 

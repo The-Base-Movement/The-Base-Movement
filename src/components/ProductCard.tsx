@@ -84,16 +84,16 @@ export function ProductCard({ product, onShare }: ProductProps) {
 
       <CardContent className="p-6 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="font-h3 text-base text-stone-900 group-hover:text-brand-green transition-colors line-clamp-1 lowercase first-letter:uppercase">
+          <h5 className="text-stone-900 group-hover:text-brand-green transition-colors line-clamp-1 lowercase first-letter:uppercase mb-0">
             {product.name}
-          </h3>
+          </h5>
           <div className="flex items-center gap-1">
             <Star className="w-3 h-3 fill-warm-gold text-warm-gold" />
             <span className="text-[10px] font-bold text-stone-500">{product.rating || '4.8'}</span>
           </div>
         </div>
         
-        <p className="text-xs text-muted-gray mb-4 line-clamp-2 leading-relaxed">
+        <p className="text-muted-gray mb-4 line-clamp-2 leading-relaxed">
           {product.description}
         </p>
         

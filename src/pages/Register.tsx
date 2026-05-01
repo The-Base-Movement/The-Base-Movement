@@ -463,519 +463,497 @@ export default function Register() {
 
   // Form step (Multi-page)
   return (
-    <main className="bg-surface-warm font-body-md min-h-screen pb-24 pt-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-10">
-          <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-4" />
-          <h1 className="text-3xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
-          <div className="w-16 h-1 bg-[#CE1126] mx-auto mb-4"></div>
-          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest font-meta mb-6">Official Registration</h2>
+    <main className="bg-surface-warm font-body-md min-h-screen">
+      {/* Hero Section */}
+      <div className="bg-white border-b border-slate-200 pt-16 pb-12 px-4 text-center">
+        <div className="max-w-6xl mx-auto">
+          <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6" />
+          <h1 className="text-charcoal-dark mb-2">The Base</h1>
+          
+          {/* Ghana Flag Gradient Line */}
+          <div className="w-24 h-1.5 mx-auto mb-4 flex">
+            <div className="flex-1 bg-[#CE1126]"></div>
+            <div className="flex-1 bg-[#DAA520]"></div>
+            <div className="flex-1 bg-[#006B3F]"></div>
+          </div>
+          
+          <h2 className="text-slate-500 mb-8">Official Registration Form</h2>
           
           <button
             onClick={() => setStep('choice')}
-            className="text-xs font-bold text-brand-green uppercase tracking-wider hover:underline flex items-center justify-center gap-1 mx-auto font-meta mb-8"
+            className="inline-flex items-center gap-2 px-6 py-2 border border-slate-200 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all font-meta"
           >
-            <ArrowLeft className="w-4 h-4" /> Registration Options
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Registration Options
           </button>
+        </div>
+      </div>
 
-          {/* Progress Indicator */}
-          <div className="flex items-center justify-center max-w-lg mx-auto">
-            <div className="flex items-center w-full">
-              {/* Step 1 */}
-              <div className="relative flex flex-col items-center flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta z-10 ${formStep >= 1 ? 'bg-brand-green text-white' : 'bg-slate-200 text-slate-500'}`}>
-                  {formStep > 1 ? <CheckCircle2 className="w-5 h-5" /> : 1}
+      <div className="max-w-6xl mx-auto py-12 px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          
+          {/* Vertical Sidebar Navigation */}
+          <div className="lg:col-span-3 space-y-2 sticky top-8">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 pl-4">Registration Progress</p>
+            
+            <div className="space-y-1">
+              {[
+                { step: 1, label: 'Primary Details' },
+                { step: 2, label: 'Demographic info' },
+                { step: 3, label: 'Emergency contact' },
+                { step: 4, label: 'Final Verification' }
+              ].map((item) => (
+                <div 
+                  key={item.step}
+                  className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-brand-green shadow-sm' : 'border-transparent text-slate-400 opacity-60'}`}
+                >
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-brand-green text-white' : 'bg-slate-200 text-slate-500'}`}>
+                    {formStep > item.step ? <CheckCircle2 className="w-5 h-5" /> : item.step}
+                  </div>
+                  <span className={`text-xs font-bold tracking-tight font-meta ${formStep === item.step ? 'text-charcoal-dark' : ''}`}>
+                    {item.label}
+                  </span>
                 </div>
-                <div className="text-[10px] font-bold uppercase tracking-wider font-meta mt-2 text-slate-500 hidden sm:block absolute top-10 whitespace-nowrap">Primary</div>
-                <div className={`absolute top-4 left-1/2 w-full h-1 ${formStep >= 2 ? 'bg-brand-green' : 'bg-slate-200'}`}></div>
-              </div>
-              
-              {/* Step 2 */}
-              <div className="relative flex flex-col items-center flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta z-10 ${formStep >= 2 ? 'bg-brand-green text-white' : 'bg-slate-200 text-slate-500'}`}>
-                  {formStep > 2 ? <CheckCircle2 className="w-5 h-5" /> : 2}
-                </div>
-                <div className="text-[10px] font-bold uppercase tracking-wider font-meta mt-2 text-slate-500 hidden sm:block absolute top-10 whitespace-nowrap">Demographic</div>
-                <div className={`absolute top-4 left-1/2 w-full h-1 ${formStep >= 3 ? 'bg-brand-green' : 'bg-slate-200'}`}></div>
-              </div>
+              ))}
+            </div>
 
-               {/* Step 3 */}
-              <div className="relative flex flex-col items-center flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta z-10 ${formStep >= 3 ? 'bg-brand-green text-white' : 'bg-slate-200 text-slate-500'}`}>
-                  {formStep > 3 ? <CheckCircle2 className="w-5 h-5" /> : 3}
-                </div>
-                <div className="text-[10px] font-bold uppercase tracking-wider font-meta mt-2 text-slate-500 hidden sm:block absolute top-10 whitespace-nowrap">Emergency</div>
-                <div className={`absolute top-4 left-1/2 w-full h-1 ${formStep >= 4 ? 'bg-brand-green' : 'bg-slate-200'}`}></div>
-              </div>
-
-              {/* Step 4 */}
-              <div className="relative flex flex-col items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta z-10 ${formStep >= 4 ? 'bg-brand-green text-white' : 'bg-slate-200 text-slate-500'}`}>
-                  {formStep > 4 ? <CheckCircle2 className="w-5 h-5" /> : 4}
-                </div>
-                <div className="text-[10px] font-bold uppercase tracking-wider font-meta mt-2 text-slate-500 hidden sm:block absolute top-10 whitespace-nowrap">Verification</div>
-              </div>
+            <div className="mt-12 p-6 bg-charcoal-dark text-white rounded-none border-l-4 border-warm-gold">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-warm-gold mb-2">Important Notice</p>
+              <p className="text-xs leading-relaxed text-slate-300 font-medium">Please ensure all official details match your government-issued identity documents exactly to avoid verification delays.</p>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white border border-slate-200 p-8 md:p-12 shadow-sm">
-          <form onSubmit={handleSubmit}>
-          
-          {/* STEP 1: Primary Details */}
-          {formStep === 1 && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                <h3 className="font-meta font-bold uppercase tracking-tight text-xl text-charcoal-dark">Step 1: Primary Details</h3>
-                <p className="text-sm text-slate-500 font-body-md mt-1">Basic information required for your membership profile.</p>
-              </div>
-
-              <div className="space-y-3">
-                <label htmlFor="fullName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                  Full Name <span className="text-[#CE1126]">*</span>
-                </label>
-                <input
-                  id="fullName"
-                  placeholder="As it appears on official ID"
-                  required
-                  value={formData.fullName}
-                  onChange={(e) => handleChange('fullName', e.target.value)}
-                  className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                  Select Platform <span className="text-[#CE1126]">*</span>
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'GHANA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                    <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
-                    Base Ghana
-                  </label>
-                  <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'DIASPORA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                    <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
-                    Base Diaspora
-                  </label>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                {platform === 'DIASPORA' ? (
-                  <div className="space-y-3">
-                    <label htmlFor="selectedCountry" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Country of Residence <span className="text-[#CE1126]">*</span>
-                    </label>
-                    <select 
-                      id="selectedCountry"
-                      required
-                      value={formData.selectedCountry} 
-                      onChange={(e) => handleChange('selectedCountry', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                      style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                    >
-                      {diasporaCountries.map((country) => (
-                        <option key={country} value={country}>{country}</option>
-                      ))}
-                    </select>
-                  </div>
-                ) : null}
-
-                <div className="space-y-3">
-                  <label htmlFor="contactNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                    Contact Number <span className="text-[#CE1126]">*</span>
-                  </label>
-                  <div className="flex">
-                    <select
-                      value={formData.countryCode}
-                      onChange={(e) => handleChange('countryCode', e.target.value)}
-                      className="flex items-center px-2 bg-surface-warm border-y border-l border-slate-300 font-meta font-bold text-charcoal-dark text-xs appearance-none focus:outline-none"
-                    >
-                      {Object.entries(countryCodes).sort((a, b) => a[0].localeCompare(b[0])).map(([name, code]) => (
-                        <option key={name} value={code}>{code} ({name})</option>
-                      ))}
-                    </select>
-                    <input
-                      id="contactNumber"
-                      type="tel"
-                      placeholder="Phone number"
-                      required
-                      value={formData.contactNumber}
-                      onChange={(e) => handleChange('contactNumber', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm border-l-0"
-                    />
-                  </div>
-                </div>
-
-                {platform === 'GHANA' && (
-                  <div className="space-y-3">
-                    <label htmlFor="ageRange" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Age Bracket <span className="text-[#CE1126]">*</span>
-                    </label>
-                    <select 
-                      id="ageRange"
-                      required
-                      value={formData.ageRange} 
-                      onChange={(e) => handleChange('ageRange', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                      style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                    >
-                      <option value="">Select Age</option>
-                      {ageRanges.map((range) => (
-                        <option key={range} value={range}>{range}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                  Gender <span className="text-[#CE1126]">*</span>
-                </label>
-                <div className="grid grid-cols-3 gap-4">
-                  {['Male', 'Female', 'Other'].map((g) => (
-                    <label key={g} className={`cursor-pointer border py-3 text-center transition-colors font-meta font-bold text-sm ${formData.gender === g ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                      <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} className="hidden" />
-                      {g}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                  Account Password <span className="text-[#CE1126]">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Minimum 6 characters"
-                    required
-                    minLength={6}
-                    value={formData.password}
-                    onChange={(e) => handleChange('password', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-green"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: Demographic Data */}
-          {formStep === 2 && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                <h3 className="font-meta font-bold uppercase tracking-tight text-xl text-charcoal-dark">Step 2: Demographic Data (Optional)</h3>
-                <p className="text-sm text-slate-500 font-body-md mt-1">This information helps us understand the reach of the movement.</p>
-              </div>
+          {/* Form Content Area */}
+          <div className="lg:col-span-9">
+            <div className="bg-white border border-slate-200 p-8 md:p-12 shadow-sm">
+              <form onSubmit={handleSubmit}>
               
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label htmlFor="email" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Email Address <span className="text-[10px] lowercase normal-case opacity-70 tracking-normal">(Optional)</span></label>
-                  <input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={formData.email}
-                    onChange={(e) => handleChange('email', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                  />
-                </div>
+              {/* STEP 1: Primary Details */}
+              {formStep === 1 && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                    <h3 className="text-charcoal-dark">Step 1: Primary Details</h3>
+                    <p className="text-slate-500 mt-1 mb-0">Basic information required for your membership profile.</p>
+                  </div>
 
-                <div className="space-y-3">
-                  <label htmlFor="region" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Region {platform === 'GHANA' && <span className="text-[#CE1126]">*</span>}</label>
-                  <select 
-                    id="region"
-                    required={platform === 'GHANA'}
-                    value={formData.region} 
-                    onChange={(e) => handleChange('region', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                    style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                  >
-                    <option value="">Select Region</option>
-                    {ghanaRegions.map((region) => (
-                      <option key={region} value={region}>{region}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label htmlFor="constituency" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Voting Constituency in Ghana {platform === 'GHANA' && <span className="text-[#CE1126]">*</span>}</label>
-                  {formData.region && regionConstituencies[formData.region] ? (
-                    <select 
-                      id="constituency"
-                      required={platform === 'GHANA'}
-                      value={formData.constituency} 
-                      onChange={(e) => handleChange('constituency', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                      style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                    >
-                      <option value="">Select Constituency</option>
-                      {regionConstituencies[formData.region].map((constituency) => (
-                        <option key={constituency} value={constituency}>{constituency}</option>
-                      ))}
-                    </select>
-                  ) : (
+                  <div className="space-y-3">
+                    <label htmlFor="fullName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                      Full Name <span className="text-[#CE1126]">*</span>
+                    </label>
                     <input
-                      id="constituency"
-                      placeholder="E.g. Ayawaso West"
-                      required={platform === 'GHANA'}
-                      value={formData.constituency}
-                      onChange={(e) => handleChange('constituency', e.target.value)}
+                      id="fullName"
+                      placeholder="As it appears on official ID"
+                      required
+                      value={formData.fullName}
+                      onChange={(e) => handleChange('fullName', e.target.value)}
                       className="w-full form-understate p-4 text-charcoal-dark text-sm"
                     />
-                  )}
-                </div>
+                  </div>
 
-                <div className="space-y-3">
-                  <label htmlFor="residentialAddress" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Residential Address <span className="text-[10px] lowercase normal-case opacity-70 tracking-normal font-meta">(Optional)</span></label>
-                  <input
-                    id="residentialAddress"
-                    placeholder="House No, Street Name, City"
-                    value={formData.residentialAddress}
-                    onChange={(e) => handleChange('residentialAddress', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label htmlFor="profession" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Profession / Skill <span className="text-[#CE1126]">*</span></label>
-                  <input
-                    id="profession"
-                    list="professions-list"
-                    placeholder="E.g. Teacher, Artisan"
-                    required
-                    value={formData.profession}
-                    onChange={(e) => handleChange('profession', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                  />
-                  <datalist id="professions-list">
-                    <option value="Artisan" />
-                    <option value="Teacher / Educator" />
-                    <option value="Healthcare Professional" />
-                    <option value="Student" />
-                    <option value="Businessman / Entrepreneur" />
-                    <option value="Civil Servant" />
-                    <option value="Security / Military" />
-                    <option value="Art / Creative" />
-                    <option value="Unemployed" />
-                  </datalist>
-                </div>
-
-                <div className="space-y-3">
-                  <label htmlFor="education" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Education Level <span className="text-[#CE1126]">*</span></label>
-                  <select 
-                    id="education"
-                    required
-                    value={formData.educationLevel} 
-                    onChange={(e) => handleChange('educationLevel', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                    style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                  >
-                    <option value="">Select Level</option>
-                    {educationLevels.map((level) => (
-                      <option key={level} value={level}>{level}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label htmlFor="chapter" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Assigned Chapter <span className="text-[10px] lowercase normal-case opacity-70 tracking-normal font-meta">(Optional)</span></label>
-                  <input
-                    id="chapter"
-                    placeholder="E.g. Accra Chapter (Optional)"
-                    value={formData.chapter}
-                    onChange={(e) => handleChange('chapter', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block mb-3">Currently Employed?</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {['Yes', 'No'].map((emp) => (
-                      <label key={emp} className={`cursor-pointer border py-3 text-center transition-colors font-meta font-bold text-sm ${formData.employment === emp ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                        <input type="radio" name="employment" value={emp} checked={formData.employment === emp} onChange={() => handleChange('employment', emp)} className="hidden" />
-                        {emp}
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
+                      Select Platform <span className="text-[#CE1126]">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'GHANA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                        <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
+                        Base Ghana
                       </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: Emergency Contact (Optional) */}
-          {formStep === 3 && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                <h3 className="font-meta font-bold uppercase tracking-tight text-xl text-charcoal-dark">Step 3: Emergency Contact</h3>
-                <p className="text-sm text-slate-500 font-body-md mt-1">Information for administrative safety and emergency protocols.</p>
-              </div>
-
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <label htmlFor="emergencyContactName" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Emergency Contact Name</label>
-                  <input
-                    id="emergencyContactName"
-                    placeholder="Emergency contact name"
-                    value={formData.emergencyContactName}
-                    onChange={(e) => handleChange('emergencyContactName', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <label htmlFor="emergencyRelationship" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Relationship</label>
-                  <input
-                    id="emergencyRelationship"
-                    placeholder="e.g. Father, Mother, Sibling"
-                    value={formData.emergencyRelationship}
-                    onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <label htmlFor="emergencyNumber" className="text-xs font-bold text-slate-500 font-meta tracking-widest uppercase block">Contact Number</label>
-                  <input
-                    id="emergencyNumber"
-                    type="tel"
-                    placeholder="Phone number"
-                    value={formData.emergencyNumber}
-                    onChange={(e) => handleChange('emergencyNumber', e.target.value)}
-                    className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-4 text-center">
-                <p className="text-xs text-slate-400 font-meta tracking-wider uppercase">Providing this information is optional but highly recommended.</p>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: Verification Photo & Declaration */}
-          {formStep === 4 && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                <h3 className="font-meta font-bold uppercase tracking-tight text-xl text-charcoal-dark">Step 4: Verification & Oath</h3>
-                <p className="text-sm text-slate-500 font-body-md mt-1">Final steps to complete your registration to the movement.</p>
-              </div>
-
-              <div className="space-y-6">
-                <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-2">
-                  Verification Photo <span className="text-[#CE1126]">*</span>
-                </label>
-                
-                {!photoUrl ? (
-                  <div className="border-2 border-dashed border-slate-300 bg-slate-50 p-10 text-center hover:bg-slate-100 transition-colors cursor-pointer relative">
-                    <input type="file" accept="image/*" onChange={handlePhotoUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="photo-upload" required />
-                    <Upload className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                    <p className="text-base text-slate-700 font-bold mb-1 font-meta uppercase">Upload Passport-style Photo</p>
-                    <p className="text-xs text-slate-500 font-meta tracking-wider uppercase">Must clearly show your face</p>
-                  </div>
-                ) : (
-                  <div className="border border-slate-200 p-4 bg-slate-50">
-                    <div className="relative w-full h-80 bg-charcoal-dark mb-4">
-                      <Cropper
-                        image={photoUrl}
-                        crop={crop}
-                        zoom={zoom}
-                        aspect={3 / 4}
-                        onCropChange={setCrop}
-                        onCropComplete={onCropComplete}
-                        onZoomChange={setZoom}
-                      />
+                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'DIASPORA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                        <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
+                        Base Diaspora
+                      </label>
                     </div>
-                    <div className="flex items-center gap-4">
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {platform === 'DIASPORA' ? (
+                      <div className="space-y-3">
+                        <label htmlFor="selectedCountry" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                          Country of Residence <span className="text-[#CE1126]">*</span>
+                        </label>
+                        <select 
+                          id="selectedCountry"
+                          required
+                          value={formData.selectedCountry} 
+                          onChange={(e) => handleChange('selectedCountry', e.target.value)}
+                          className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
+                          style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                        >
+                          {diasporaCountries.map((country) => (
+                            <option key={country} value={country}>{country}</option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : null}
+
+                    <div className="space-y-3">
+                      <label htmlFor="contactNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                        Contact Number <span className="text-[#CE1126]">*</span>
+                      </label>
+                      <div className="flex">
+                        <select
+                          value={formData.countryCode}
+                          onChange={(e) => handleChange('countryCode', e.target.value)}
+                          className="flex items-center px-2 bg-surface-warm border-y border-l border-slate-300 font-meta font-bold text-charcoal-dark text-xs appearance-none focus:outline-none"
+                        >
+                          {Object.entries(countryCodes).sort((a, b) => a[0].localeCompare(b[0])).map(([name, code]) => (
+                            <option key={name} value={code}>{code} ({name})</option>
+                          ))}
+                        </select>
+                        <input
+                          id="contactNumber"
+                          type="tel"
+                          placeholder="Phone number"
+                          required
+                          value={formData.contactNumber}
+                          onChange={(e) => handleChange('contactNumber', e.target.value)}
+                          className="w-full form-understate p-4 text-charcoal-dark text-sm border-l-0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                      Account Password <span className="text-[#CE1126]">*</span>
+                    </label>
+                    <div className="relative">
                       <input
-                        type="range"
-                        value={zoom}
-                        min={1}
-                        max={3}
-                        step={0.1}
-                        aria-labelledby="Zoom"
-                        onChange={(e) => setZoom(Number(e.target.value))}
-                        className="w-full accent-brand-green"
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Minimum 6 characters"
+                        required
+                        minLength={6}
+                        value={formData.password}
+                        onChange={(e) => handleChange('password', e.target.value)}
+                        className="w-full form-understate p-4 text-charcoal-dark text-sm"
                       />
                       <button
                         type="button"
-                        onClick={() => setPhotoUrl(null)}
-                        className="shrink-0 p-2 bg-slate-200 text-charcoal-dark hover:bg-[#CE1126] hover:text-white transition-colors"
-                        title="Remove photo"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-green"
                       >
-                        <X className="w-5 h-5" />
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
-                    <p className="text-xs text-slate-500 font-meta tracking-wider uppercase mt-4 text-center">Position your face within the frame</p>
                   </div>
-                )}
-              </div>
-
-              {/* Oath */}
-              <div className="bg-charcoal-dark text-white p-8 mt-8">
-                <h3 className="font-meta font-bold uppercase tracking-widest text-warm-gold mb-3 text-sm">The Base Declaration</h3>
-                <p className="font-body-md text-sm leading-relaxed mb-6 text-slate-300">
-                  I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong>THE BASE</strong> — Patriotism, Honesty, and Discipline — and pledge to advance the cause of <strong>GHANA FIRST</strong> in all my actions.
-                </p>
-                
-                <div className="flex items-start gap-4">
-                  <input
-                    type="checkbox"
-                    id="privacy"
-                    checked={agreed}
-                    onChange={(e) => setAgreed(e.target.checked)}
-                    className="mt-1 w-5 h-5 shrink-0 text-brand-green bg-charcoal-dark border-slate-500 rounded-none focus:ring-brand-green"
-                  />
-                  <label htmlFor="privacy" className="text-sm text-slate-300 cursor-pointer leading-tight">
-                    I accept this declaration and agree to the <Link to="/privacy" className="text-warm-gold hover:underline">Privacy Policy</Link> <span className="text-[#CE1126]">*</span>
-                  </label>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Navigation Controls */}
-          <div className="pt-10 mt-8 border-t border-slate-200 flex justify-between gap-4">
-            {formStep > 1 && (
-              <button
-                type="button"
-                onClick={goBack}
-                className="w-1/3 bg-slate-100 hover:bg-slate-200 text-charcoal-dark font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-2 transition-all"
-              >
-                <ArrowLeft className="w-5 h-5" /> Back
-              </button>
-            )}
-            
-            <button
-              type="submit"
-              disabled={formStep === 4 && !agreed}
-              className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all ${formStep === 1 ? 'w-full' : 'flex-1'} ${formStep === 4 && !agreed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-brand-green text-white hover:opacity-90 active:scale-[0.99]'}`}
-            >
-              {formStep < 4 ? (
-                <>Next Step <ArrowRight className="w-5 h-5" /></>
-              ) : (
-                <>Submit Official Registration <ArrowRight className="w-5 h-5" /></>
               )}
-            </button>
+
+              {/* STEP 2: Demographic Details */}
+              {formStep === 2 && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                    <h3 className="text-charcoal-dark">Step 2: Demographic Details</h3>
+                    <p className="text-slate-500 mt-1 mb-0">Further details to finalize your membership chapter.</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
+                        Age Range <span className="text-[#CE1126]">*</span>
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {ageRanges.map(range => (
+                          <label key={range} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.ageRange === range ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                            <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} className="hidden" />
+                            {range}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
+                        Gender <span className="text-[#CE1126]">*</span>
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {['Male', 'Female'].map(g => (
+                          <label key={g} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.gender === g ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                            <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} className="hidden" />
+                            {g}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label htmlFor="residentialAddress" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                      Residential Address <span className="text-[#CE1126]">*</span>
+                    </label>
+                    <input
+                      id="residentialAddress"
+                      placeholder="Street, House Number, City"
+                      required
+                      value={formData.residentialAddress}
+                      onChange={(e) => handleChange('residentialAddress', e.target.value)}
+                      className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                    />
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {platform === 'GHANA' ? (
+                      <>
+                        <div className="space-y-3">
+                          <label htmlFor="region" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                            Region <span className="text-[#CE1126]">*</span>
+                          </label>
+                          <select 
+                            id="region"
+                            required
+                            value={formData.region} 
+                            onChange={(e) => handleChange('region', e.target.value)}
+                            className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
+                            style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                          >
+                            <option value="">Select Region</option>
+                            {ghanaRegions.map((region) => (
+                              <option key={region} value={region}>{region}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-3">
+                          <label htmlFor="constituency" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                            Constituency <span className="text-[#CE1126]">*</span>
+                          </label>
+                          <select 
+                            id="constituency"
+                            required
+                            disabled={!formData.region}
+                            value={formData.constituency} 
+                            onChange={(e) => handleChange('constituency', e.target.value)}
+                            className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta disabled:opacity-50"
+                            style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                          >
+                            <option value="">Select Constituency</option>
+                            {formData.region && regionConstituencies[formData.region]?.map((con) => (
+                              <option key={con} value={con}>{con}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="space-y-3">
+                        <label htmlFor="chapter" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                          Assigned Chapter <span className="text-[#CE1126]">*</span>
+                        </label>
+                        <input
+                          id="chapter"
+                          placeholder="E.g. UK Chapter - London"
+                          required
+                          value={formData.chapter}
+                          onChange={(e) => handleChange('chapter', e.target.value)}
+                          className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: Emergency Contact */}
+              {formStep === 3 && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                    <h3 className="text-charcoal-dark">Step 3: Emergency Details</h3>
+                    <p className="text-slate-500 mt-1 mb-0">Crucial for member safety and institutional records.</p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label htmlFor="emergencyContactName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                      Emergency Contact Name <span className="text-[#CE1126]">*</span>
+                    </label>
+                    <input
+                      id="emergencyContactName"
+                      placeholder="Full Name"
+                      required
+                      value={formData.emergencyContactName}
+                      onChange={(e) => handleChange('emergencyContactName', e.target.value)}
+                      className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                    />
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label htmlFor="emergencyRelationship" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                        Relationship <span className="text-[#CE1126]">*</span>
+                      </label>
+                      <input
+                        id="emergencyRelationship"
+                        placeholder="E.g. Spouse, Parent, Brother"
+                        required
+                        value={formData.emergencyRelationship}
+                        onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
+                        className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label htmlFor="emergencyNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                        Emergency Contact Number <span className="text-[#CE1126]">*</span>
+                      </label>
+                      <input
+                        id="emergencyNumber"
+                        type="tel"
+                        placeholder="Phone number"
+                        required
+                        value={formData.emergencyNumber}
+                        onChange={(e) => handleChange('emergencyNumber', e.target.value)}
+                        className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label htmlFor="profession" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                        Profession / Occupation <span className="text-[#CE1126]">*</span>
+                      </label>
+                      <input
+                        id="profession"
+                        placeholder="E.g. Teacher, Nurse, Student"
+                        required
+                        value={formData.profession}
+                        onChange={(e) => handleChange('profession', e.target.value)}
+                        className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label htmlFor="educationLevel" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                        Education Level <span className="text-[#CE1126]">*</span>
+                      </label>
+                      <select 
+                        id="educationLevel"
+                        required
+                        value={formData.educationLevel} 
+                        onChange={(e) => handleChange('educationLevel', e.target.value)}
+                        className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
+                        style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                      >
+                        <option value="">Select Level</option>
+                        {educationLevels.map(lvl => (
+                          <option key={lvl} value={lvl}>{lvl}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: Verification */}
+              {formStep === 4 && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                    <h3 className="text-charcoal-dark">Step 4: Final Verification</h3>
+                    <p className="text-slate-500 mt-1 mb-0">Identity confirmation and oath of commitment.</p>
+                  </div>
+
+                  <div className="space-y-6">
+                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                      Passport Photo <span className="text-[#CE1126]">*</span>
+                    </label>
+                    
+                    {!photoUrl ? (
+                      <div className="border-2 border-dashed border-slate-200 p-12 text-center bg-slate-50 relative group transition-colors hover:border-brand-green">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePhotoUpload}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <Upload className="w-12 h-12 text-slate-300 mx-auto mb-4 group-hover:text-brand-green transition-colors" />
+                        <p className="font-meta font-bold text-slate-500 uppercase tracking-widest text-[10px]">Click to upload passport photo</p>
+                      </div>
+                    ) : (
+                      <div className="relative bg-slate-100 p-4 border border-slate-200">
+                        <div className="relative h-[400px] w-full bg-charcoal-dark overflow-hidden">
+                          <Cropper
+                            image={photoUrl}
+                            crop={crop}
+                            zoom={zoom}
+                            aspect={3 / 4}
+                            onCropChange={setCrop}
+                            onCropComplete={onCropComplete}
+                            onZoomChange={setZoom}
+                          />
+                        </div>
+                        <div className="flex items-center gap-4 mt-6 px-4 pb-4">
+                          <input
+                            type="range"
+                            value={zoom}
+                            min={1}
+                            max={3}
+                            step={0.1}
+                            aria-labelledby="Zoom"
+                            onChange={(e) => setZoom(Number(e.target.value))}
+                            className="w-full accent-brand-green"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setPhotoUrl(null)}
+                            className="shrink-0 p-2 bg-slate-200 text-charcoal-dark hover:bg-[#CE1126] hover:text-white transition-colors"
+                            title="Remove photo"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-slate-500 font-meta tracking-widest uppercase mt-2 text-center font-bold">Position your face within the frame</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Oath */}
+                  <div className="bg-charcoal-dark text-white p-8 mt-8 border-l-4 border-brand-green">
+                    <h5 className="text-warm-gold mb-3">The Base Declaration</h5>
+                    <p className="text-slate-300 mb-6 leading-relaxed">
+                      I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong>THE BASE</strong>: Patriotism, Honesty, and Discipline and pledge to advance the cause of <strong>GHANA FIRST</strong> in all my actions.
+                    </p>
+                    
+                    <div className="flex items-start gap-4">
+                      <input
+                        type="checkbox"
+                        id="privacy"
+                        checked={agreed}
+                        onChange={(e) => setAgreed(e.target.checked)}
+                        className="mt-1 w-5 h-5 shrink-0 text-brand-green bg-charcoal-dark border-slate-500 rounded-none focus:ring-brand-green cursor-pointer"
+                      />
+                      <label htmlFor="privacy" className="text-sm text-slate-300 cursor-pointer leading-tight font-medium">
+                        I accept this declaration and agree to the <Link to="/privacy" className="text-warm-gold hover:underline font-bold">Privacy Policy</Link> <span className="text-[#CE1126]">*</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Controls */}
+              <div className="pt-10 mt-12 border-t border-slate-200 flex justify-between gap-4">
+                {formStep > 1 ? (
+                  <button
+                    type="button"
+                    onClick={goBack}
+                    className="w-1/3 bg-slate-100 hover:bg-slate-200 text-charcoal-dark font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-2 transition-all shadow-sm"
+                  >
+                    <ArrowLeft className="w-5 h-5" /> Back
+                  </button>
+                ) : (
+                  <div className="w-1/3"></div>
+                )}
+                
+                <button
+                  type="submit"
+                  disabled={formStep === 4 && !agreed}
+                  className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all flex-1 shadow-md ${formStep === 4 && !agreed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-brand-green text-white hover:opacity-90 active:scale-[0.99]'}`}
+                >
+                  {formStep < 4 ? (
+                    <>Next Step <ArrowRight className="w-5 h-5" /></>
+                  ) : (
+                    <>Submit Official Registration <ArrowRight className="w-5 h-5" /></>
+                  )}
+                </button>
+              </div>
+              </form>
+            </div>
           </div>
-          </form>
         </div>
       </div>
     </main>

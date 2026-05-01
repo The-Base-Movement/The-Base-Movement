@@ -84,8 +84,8 @@ export default function DashboardLayout() {
         <div className="px-6 py-8 flex items-center gap-3 bg-stone-100 dark:bg-zinc-950 z-10 shrink-0">
           <img src="/logo.png" alt="The Base Logo" className="h-10 w-10" />
           <div>
-            <h1 className="text-lg font-black text-emerald-900 dark:text-white font-meta leading-none">The Base</h1>
-            <p className="text-[9px] font-meta text-warm-gold font-semibold tracking-widest mt-1">Civic Movement</p>
+            <h1 className="text-lg text-emerald-900 dark:text-white leading-none mb-0">The Base</h1>
+            <p className="text-[9px] text-warm-gold font-bold tracking-widest mt-1 mb-0 uppercase">Civic Movement</p>
           </div>
         </div>
 
@@ -168,16 +168,16 @@ export default function DashboardLayout() {
           <div className="mx-4 my-8 overflow-hidden rounded-none relative group shrink-0 shadow-lg">
             <img
               src="/founder.jpg"
-              alt="Dr. George Oti Bonsu — The Base Movement Founder"
+              alt="Dr. George Oti Bonsu The Base Movement Founder"
               className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
             />
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-brand-green/90 via-brand-green/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-3">
-              <p className="font-meta font-black text-white text-[10px] tracking-widest leading-tight">
+              <p className="text-white text-[10px] font-bold tracking-widest leading-tight mb-0 uppercase">
                 Dr. George Oti Bonsu
               </p>
-              <p className="font-meta text-white/70 text-[9px] tracking-wider mt-0.5">
+              <p className="text-white/70 text-[9px] font-bold tracking-wider mt-0.5 mb-0 uppercase">
                 Movement Founder
               </p>
             </div>
@@ -232,7 +232,7 @@ export default function DashboardLayout() {
                   <img src="/logo.png" alt="The Base" className="h-6 w-6" />
                   <span className="text-brand-green font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
-                <div className="hidden sm:flex items-center gap-2 text-[10px] font-meta text-stone-400 tracking-widest uppercase font-bold">
+                <div className="hidden sm:flex items-center gap-2 text-[10px] text-stone-400 tracking-widest uppercase font-bold">
                   <span className="text-brand-green">The Base</span>
                   <span className="text-stone-300">/</span>
                   <span className="text-stone-900">{getPageTitle()}</span>
@@ -286,8 +286,8 @@ export default function DashboardLayout() {
                   )}
                 </div>
                 <div className="hidden lg:block text-left">
-                  <p className="text-sm font-semibold text-on-surface leading-none">{userName}</p>
-                  <p className="text-[10px] font-meta text-warm-gold tracking-widest mt-0.5">
+                  <p className="text-sm font-bold text-on-surface leading-none mb-1">{userName}</p>
+                  <p className="text-[10px] text-warm-gold font-bold tracking-widest uppercase mb-0">
                     {userPlatform} · Verified
                   </p>
                 </div>
@@ -307,7 +307,7 @@ export default function DashboardLayout() {
         {/* Dashboard Footer */}
         <footer className="mt-12 py-12 px-12 border-t border-stone-200 bg-stone-50">
           <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="font-meta text-xs text-stone-500">© 2024 The Base Movement. Ghana First.</p>
+            <p className="text-xs text-stone-500 mb-0 uppercase font-bold tracking-widest">© 2024 The Base Movement. Ghana First.</p>
             <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8">
               <Link className="font-meta text-xs text-stone-400 hover:underline hover:text-emerald-600 transition-colors" to="/dashboard/privacy">Privacy Policy</Link>
               <Link className="font-meta text-xs text-stone-400 hover:underline hover:text-emerald-600 transition-colors" to="/dashboard/terms">Terms of Service</Link>

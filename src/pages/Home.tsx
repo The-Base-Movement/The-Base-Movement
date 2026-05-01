@@ -143,7 +143,7 @@ export default function Home() {
               <span className="text-[#CE1126] font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Mission</span>
               <h3 className="text-2xl font-meta font-bold mb-4 uppercase tracking-tight text-white">Actionable Agenda</h3>
               <p className="text-slate-400 leading-relaxed font-body-md text-sm">
-                To deliver an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians — covering education, governance, industrialisation, infrastructure, institutional reform, and agriculture.
+                To deliver an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians, covering education, governance, industrialisation, infrastructure, institutional reform, and agriculture.
               </p>
             </div>
             <div className="border-l-2 border-warm-gold pl-6">

@@ -51,10 +51,10 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
             <div className="w-16 h-16 bg-brand-green/10 flex items-center justify-center mx-auto mb-6">
               <MapPin className="w-8 h-8 text-brand-green" />
             </div>
-            <h2 className="text-2xl font-black text-stone-900 font-meta tracking-tight mb-3">
+            <h2 className="text-stone-900 mb-3">
               Your Chapter Assignment
             </h2>
-            <p className="text-sm text-stone-500 leading-relaxed max-w-sm mx-auto">
+            <p className="text-stone-500 max-w-sm mx-auto mb-0">
               Welcome to the movement, <span className="font-bold text-stone-800">{userName}</span>. You've been automatically assigned to a chapter based on your registration details.
             </p>
           </div>
@@ -67,14 +67,14 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
-                  <h3 className="text-lg font-bold text-stone-900 tracking-tight leading-tight">
+                  <h5 className="text-stone-900 leading-tight mb-1">
                     {assignedChapter.name}
-                  </h3>
+                  </h5>
                   <span className="text-[10px] font-bold text-white bg-brand-green px-2 py-0.5 rounded-none uppercase tracking-widest">
                     Assigned
                   </span>
                 </div>
-                <p className="text-xs font-semibold text-brand-green uppercase tracking-wider">
+                <p className="text-xs font-bold text-brand-green uppercase tracking-wider mb-0">
                   {assignedChapter.region}
                 </p>
               </div>
@@ -104,7 +104,7 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
           <div className="mt-10 pt-8 border-t border-stone-100">
             <div className="flex items-center gap-3 text-stone-400">
               <Building2 className="w-4 h-4" />
-              <p className="text-[10px] font-semibold uppercase tracking-widest">
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-0">
                 Assigned based on your region: {assignedChapter.region}
               </p>
             </div>

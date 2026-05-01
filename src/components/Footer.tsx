@@ -8,7 +8,7 @@ export default function Footer() {
           <Link to="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
             <img alt="The Base Logo" className="h-12 w-12" src="/logo.png" />
             <div className="flex flex-col">
-              <span className="text-2xl font-black text-stone-900 tracking-tighter font-meta leading-none">The Base</span>
+              <h2 className="text-stone-900 leading-none mb-0">The Base</h2>
               <span className="text-[10px] font-bold text-brand-green uppercase tracking-[0.2em] mt-1">Ghana First, Jobs for the Youth!</span>
             </div>
           </Link>
@@ -50,7 +50,7 @@ export default function Footer() {
         </div>
         
         <div className="space-y-4">
-          <h4 className="font-meta font-bold uppercase tracking-widest text-sm text-brand-green">Movement</h4>
+          <h4 className="text-brand-green">Movement</h4>
           <div className="flex flex-col space-y-2 text-sm text-stone-600">
             <Link className="hover:text-brand-green transition-colors" to="/our-agenda">Aims & Objectives</Link>
             <Link className="hover:text-brand-green transition-colors" to="/impact">Our Impact</Link>
@@ -60,7 +60,7 @@ export default function Footer() {
         </div>
         
         <div className="space-y-4">
-          <h4 className="font-meta font-bold uppercase tracking-widest text-sm text-brand-green">Connect</h4>
+          <h4 className="text-brand-green">Connect</h4>
           <div className="flex flex-col space-y-2 text-sm text-stone-600">
             <Link className="hover:text-brand-green transition-colors" to="/contact">Contact Us</Link>
             <Link className="hover:text-brand-green transition-colors" to="#">Press</Link>
@@ -69,7 +69,7 @@ export default function Footer() {
         </div>
         
         <div className="space-y-4">
-          <h4 className="font-meta font-bold uppercase tracking-widest text-sm text-brand-green">Take Action</h4>
+          <h4 className="text-brand-green">Take Action</h4>
           <div className="flex flex-col space-y-2 text-sm text-stone-600">
             <Link className="hover:text-brand-green transition-colors" to="/register">Join the Base</Link>
             <Link className="hover:text-brand-green transition-colors" to="/donate">Donate</Link>
@@ -79,7 +79,7 @@ export default function Footer() {
       </div>
       
       <div className="max-w-[1280px] mx-auto px-8 mt-16 pt-8 border-t border-stone-200 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-stone-500">© 2026 The Base. All rights reserved.</p>
+        <p className="text-xs text-stone-500 mb-0 font-bold uppercase tracking-widest">© 2026 The Base. All rights reserved.</p>
         <div className="flex gap-1">
           <div className="w-8 h-2 bg-[#CE1126]"></div>
           <div className="w-8 h-2 bg-[#DAA520]"></div>

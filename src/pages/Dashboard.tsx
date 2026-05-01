@@ -94,34 +94,34 @@ export default function Dashboard() {
       />
       {/* Section 1: Growth Stats (Bento Grid Style) */}
       <section className="mb-12">
-        <h2 className="font-h2 text-xl sm:text-h3 text-on-surface mb-6 flex items-center">
+        <h2 className="text-on-surface mb-6 flex items-center">
           <span className="material-symbols-outlined mr-2 text-brand-green" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>trending_up</span>
           Movement Growth
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
             <span className="material-symbols-outlined text-brand-green mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>bolt</span>
-            <p className="font-meta text-warm-gold text-xs sm:text-base mb-1">Joined in last 1 hour</p>
-            <h3 className="font-h1 text-brand-green text-3xl sm:text-h2 leading-none">
+            <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 1 hour</p>
+            <h1 className="text-brand-green leading-none mb-0">
               {stats?.joined_last_hour?.toLocaleString() || '0'}
-            </h3>
-            <p className="text-muted-gray text-xs sm:text-sm mt-2">Active citizens joining the cause</p>
+            </h1>
+            <p className="text-muted-gray mt-2 mb-0">Active citizens joining the cause</p>
           </div>
           <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
             <span className="material-symbols-outlined text-brand-green mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>history</span>
-            <p className="font-meta text-warm-gold text-xs sm:text-base mb-1">Joined in last 24 hours</p>
-            <h3 className="font-h1 text-brand-green text-3xl sm:text-h2 leading-none">
+            <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 24 hours</p>
+            <h1 className="text-brand-green leading-none mb-0">
               {stats?.joined_last_24h?.toLocaleString() || '0'}
-            </h3>
-            <p className="text-muted-gray text-xs sm:text-sm mt-2">Spanning all 16 regions of Ghana</p>
+            </h1>
+            <p className="text-muted-gray mt-2 mb-0">Spanning all 16 regions of Ghana</p>
           </div>
           <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
             <span className="material-symbols-outlined text-brand-green mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>calendar_month</span>
-            <p className="font-meta text-warm-gold text-xs sm:text-base mb-1">Joined in last 7 days</p>
-            <h3 className="font-h1 text-brand-green text-3xl sm:text-h2 leading-none">
+            <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 7 days</p>
+            <h1 className="text-brand-green leading-none mb-0">
               {stats?.joined_last_7d?.toLocaleString() || '0'}
-            </h3>
-            <p className="text-muted-gray text-xs sm:text-sm mt-2">Growing collective impact nationwide</p>
+            </h1>
+            <p className="text-muted-gray mt-2 mb-0">Growing collective impact nationwide</p>
           </div>
         </div>
       </section>
@@ -131,15 +131,15 @@ export default function Dashboard() {
         <section className="lg:col-span-7">
           <div className="bg-surface-warm border-t-[3px] border-t-warm-gold overflow-hidden rounded-sm shadow-sm">
             <div className="p-6 sm:p-8">
-              <h3 className="font-h3 text-lg sm:text-primary mb-6 sm:mb-8 border-b border-divider-gold pb-4">Member Identity Details</h3>
+              <h3 className="mb-6 sm:mb-8 border-b border-divider-gold pb-4 text-on-surface">Member Identity Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 sm:gap-y-8 gap-x-12">
                 <div className="min-w-0">
-                  <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Full Name</p>
-                  <p className="text-base sm:text-lg font-bold text-on-surface truncate">{member?.full_name || 'Not Available'}</p>
+                  <p className="text-[10px] text-warm-gold uppercase tracking-widest mb-1 font-bold">Full Name</p>
+                  <p className="text-lg font-bold text-on-surface truncate mb-0">{member?.full_name || 'Not Available'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Registration Number</p>
-                  <p className="text-base sm:text-lg font-bold text-on-surface break-all sm:break-normal">{member?.registration_number || 'N/A'}</p>
+                  <p className="text-[10px] text-warm-gold uppercase tracking-widest mb-1 font-bold">Registration Number</p>
+                  <p className="text-lg font-bold text-on-surface break-all sm:break-normal mb-0">{member?.registration_number || 'N/A'}</p>
                 </div>
                 <div className="min-w-0">
                   <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Platform</p>
@@ -188,8 +188,8 @@ export default function Dashboard() {
             <div className="absolute inset-0 opacity-10 pointer-events-none">
               <div className="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
             </div>
-            <h3 className="font-h3 text-white mb-2 relative z-10">Invite Others to Join The Base</h3>
-            <p className="text-slate-300 text-sm sm:text-base mb-6 relative z-10">Our strength is in our numbers. Share your unique registration link with fellow Ghanaians and watch our collective voice grow.</p>
+            <h3 className="text-white mb-2 relative z-10">Invite Others to Join The Base</h3>
+            <p className="text-slate-300 mb-6 relative z-10">Our strength is in our numbers. Share your unique registration link with fellow Ghanaians and watch our collective voice grow.</p>
             <div className="relative mb-6">
               <input 
                 className="w-full bg-primary/20 border border-primary-fixed/30 text-white font-body-sm py-3 pl-4 pr-12 rounded-sm focus:ring-0 focus:outline-none truncate" 
@@ -220,7 +220,7 @@ export default function Dashboard() {
 
       {/* Section 4: Quick Actions (Functional Grid) */}
       <section className="mt-12">
-        <h3 className="font-h3 text-primary mb-6">Quick Actions</h3>
+        <h3 className="text-on-surface mb-6">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/settings">
             <span className="material-symbols-outlined text-brand-green mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>badge</span>
@@ -249,8 +249,8 @@ export default function Dashboard() {
       <section className="mt-16 overflow-hidden rounded-xl h-[300px] relative">
         <img alt="The Base Banner" className="w-full h-full object-cover" src="/the-base-banner-1.png" />
         <div className="absolute inset-0 bg-gradient-to-l from-primary/90 via-primary/40 to-transparent flex flex-col justify-end items-end p-12 text-right">
-          <p className="font-h2 text-white text-h3 mb-2">Together, we build the Ghana we deserve.</p>
-          <p className="text-primary-fixed max-w-2xl">Ghana First is more than a slogan—it's a commitment to our shared prosperity and civic responsibility.</p>
+          <h2 className="text-white mb-2">Together, we build the Ghana we deserve.</h2>
+          <p className="text-white max-w-2xl mb-0">Ghana First is more than a slogan—it's a commitment to our shared prosperity and civic responsibility.</p>
         </div>
       </section>
     </div>

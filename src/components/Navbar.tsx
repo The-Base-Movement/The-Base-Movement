@@ -59,12 +59,12 @@ export default function Navbar() {
       <nav className="flex justify-between items-center max-w-[1280px] mx-auto px-8 h-20">
         <div className="flex items-center gap-4">
           <img alt="The Base Logo" className="h-10 w-10" src="/logo.png" />
-          <Link to="/" className="text-2xl font-black text-emerald-900 dark:text-emerald-50 tracking-tighter uppercase font-meta hover:opacity-80 transition-opacity">
-            The Base
+          <Link to="/" className="text-emerald-900 dark:text-emerald-50 hover:opacity-80 transition-opacity mb-0">
+            <h1 className="text-xl mb-0">The Base</h1>
           </Link>
         </div>
         
-        <div className="hidden md:flex items-center space-x-8 font-meta text-sm font-medium tracking-tight">
+        <div className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-tight uppercase">
           <Link 
             to="/" 
             className={`transition-colors duration-200 ${isActive('/') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-700'}`}
@@ -124,8 +124,8 @@ export default function Navbar() {
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 shadow-xl py-2 z-50">
                   <div className="px-4 py-2 border-b border-slate-100 mb-1">
-                    <p className="text-sm font-bold text-charcoal-dark font-meta">Member Portal</p>
-                    <p className="text-xs text-slate-500 font-meta">Active</p>
+                    <p className="text-sm font-bold text-charcoal-dark mb-0">Member Portal</p>
+                    <p className="text-xs text-slate-500 mb-0 font-bold uppercase tracking-widest">Active</p>
                   </div>
                   <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal-dark hover:bg-slate-50 font-meta transition-colors">
                     <User className="w-4 h-4 text-brand-green" /> Dashboard
@@ -146,10 +146,10 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link to="/login" className="px-6 py-2 border border-brand-green text-brand-green font-meta text-sm hover:bg-surface-warm transition-all active:scale-95">
+              <Link to="/login" className="px-6 py-2 border border-brand-green text-brand-green text-sm font-bold uppercase tracking-widest hover:bg-surface-warm transition-all active:scale-95">
                 Login
               </Link>
-              <Link to="/register" className="px-6 py-2 bg-brand-green text-white font-meta text-sm hover:opacity-90 transition-all active:scale-95">
+              <Link to="/register" className="px-6 py-2 bg-brand-green text-white text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-all active:scale-95">
                 Register
               </Link>
             </>

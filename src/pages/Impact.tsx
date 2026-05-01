@@ -70,8 +70,8 @@ export default function Impact() {
           >
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <div>
-                <h2 className="text-xl font-bold text-charcoal-dark">Full Activity Log</h2>
-                <p className="text-xs font-medium text-slate-400 mt-1">Verified movement contributions</p>
+                <h2 className="text-charcoal-dark mb-0">Full Activity Log</h2>
+                <p className="text-xs font-bold text-slate-400 mt-1 mb-0 uppercase tracking-widest">Verified movement contributions</p>
               </div>
               <button 
                 onClick={() => setShowFullActivity(false)}
@@ -88,8 +88,8 @@ export default function Impact() {
                       {item.name[0]}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-charcoal-dark">{item.name}</p>
-                      <p className="text-[11px] font-medium text-slate-400">{item.location} • {item.time}</p>
+                      <p className="text-sm font-bold text-charcoal-dark mb-0">{item.name}</p>
+                      <p className="text-[11px] font-bold text-slate-400 mb-0 uppercase tracking-wider">{item.location} • {item.time}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -120,7 +120,7 @@ export default function Impact() {
             <span className="w-2 h-2 bg-brand-green rounded-full animate-pulse"></span>
             <span className="text-[10px] text-white/60 font-bold">Live Movement Metrics</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4">
+          <h1 className="text-white tracking-tight mb-4">
             Our Collective <span className="text-brand-green">Impact</span>
           </h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
@@ -128,7 +128,7 @@ export default function Impact() {
             <div className="flex-1 bg-[#DAA520]"></div>
             <div className="flex-1 bg-[#006B3F]"></div>
           </div>
-          <p className="text-white/60 max-w-2xl mx-auto text-sm md:text-base font-medium leading-relaxed">
+          <p className="text-white/60 max-w-2xl mx-auto mb-0 leading-relaxed font-medium">
             Real-time data reflecting the pulse of "The Base" movement. Every registration and contribution brings us closer to a unified, prosperous Ghana.
           </p>
         </div>
@@ -154,8 +154,8 @@ export default function Impact() {
                       {stat.trend} <ArrowUpRight className="w-3 h-3" />
                     </span>
                   </div>
-                  <h3 className="text-3xl font-bold text-charcoal-dark tracking-tight">{stat.value}</h3>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">{stat.label}</p>
+                  <h3 className="text-charcoal-dark leading-tight mb-0">{stat.value}</h3>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 mb-0">{stat.label}</p>
                 </CardContent>
               </Card>
             )
@@ -168,15 +168,15 @@ export default function Impact() {
             <section className="bg-white rounded-none border border-slate-100 p-8 shadow-xl shadow-slate-200/40">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                  <h2 className="text-xl font-bold text-charcoal-dark tracking-tight flex items-center gap-2">
+                  <h2 className="text-charcoal-dark flex items-center gap-2 mb-0">
                     <Activity className="w-5 h-5 text-brand-green" />
                     Campaign Progress
                   </h2>
-                  <p className="text-xs font-bold text-slate-400 mt-1">Movement Operations Fund</p>
+                  <p className="text-xs font-bold text-slate-400 mt-1 mb-0 uppercase tracking-widest">Movement Operations Fund</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-charcoal-dark tracking-tight">GHS 128,450 <span className="text-slate-300">/ 500,000</span></p>
-                  <p className="text-[10px] font-bold text-brand-green mt-1">26% Towards Goal</p>
+                  <p className="text-sm font-bold text-charcoal-dark mb-0">GHS 128,450 <span className="text-slate-300">/ 500,000</span></p>
+                  <p className="text-[10px] font-bold text-brand-green mt-1 mb-0 uppercase tracking-widest">26% Towards Goal</p>
                 </div>
               </div>
 
@@ -188,23 +188,23 @@ export default function Impact() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="p-4 bg-slate-50 rounded-none">
-                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Average Donation</p>
-                  <p className="text-lg font-bold text-charcoal-dark">GHS 361.20</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Average Donation</p>
+                  <p className="text-lg font-bold text-charcoal-dark mb-0">GHS 361.20</p>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-none">
-                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Total Contributors</p>
-                  <p className="text-lg font-bold text-charcoal-dark">1,244</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Contributors</p>
+                  <p className="text-lg font-bold text-charcoal-dark mb-0">1,244</p>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-none">
-                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Last Update</p>
-                  <p className="text-lg font-bold text-charcoal-dark">Just Now</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Last Update</p>
+                  <p className="text-lg font-bold text-charcoal-dark mb-0">Just Now</p>
                 </div>
               </div>
             </section>
 
             {/* Geographical Spread */}
             <section className="bg-white rounded-none border border-slate-100 p-8 shadow-xl shadow-slate-200/40">
-              <h2 className="text-xl font-bold text-charcoal-dark tracking-tight mb-6 flex items-center gap-2">
+              <h2 className="text-charcoal-dark mb-6 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-warm-gold" />
                 Regional Engagement
               </h2>
@@ -230,9 +230,9 @@ export default function Impact() {
           {/* Right Column: Live Feed */}
           <div className="space-y-8">
             <section className="bg-white rounded-none border border-slate-100 p-8 shadow-xl shadow-slate-200/40 h-full flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-charcoal-dark tracking-tight">Recent Activity</h2>
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+              <div className="flex items-center justify-between mb-4 gap-2">
+                <h5 className="text-charcoal-dark mb-0">Recent Activity</h5>
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-ping shrink-0"></span>
               </div>
 
               {/* Filter Tabs & Calendar */}
@@ -254,11 +254,10 @@ export default function Impact() {
                   </div>
                   <button 
                     onClick={() => setShowDatePicker(!showDatePicker)}
-                    className={`flex items-center justify-center gap-2 px-4 py-2.5 border rounded-none text-sm font-bold tracking-widest transition-all group whitespace-nowrap uppercase ${showDatePicker || activeFilter === 'custom' ? 'bg-brand-green border-brand-green text-white shadow-lg shadow-brand-green/20' : 'border-slate-100 text-slate-500 hover:bg-slate-50 hover:border-slate-200'}`}
+                    className={`flex items-center justify-center w-10 h-10 border rounded-none transition-all group shrink-0 ${showDatePicker || activeFilter === 'custom' ? 'bg-brand-green border-brand-green text-white shadow-lg shadow-brand-green/20' : 'border-slate-100 text-slate-500 hover:bg-slate-50 hover:border-slate-200'}`}
+                    title="Custom Range"
                   >
                     <Calendar className={`w-4 h-4 ${showDatePicker || activeFilter === 'custom' ? 'text-white' : 'text-slate-400 group-hover:text-brand-green'}`} />
-                    <span className="sm:hidden xl:inline">Custom Range</span>
-                    <span className="hidden sm:inline xl:hidden">Range</span>
                   </button>
                 </div>
 
@@ -300,11 +299,11 @@ export default function Impact() {
                 {activeFilter === 'custom' ? (
                   <div className="text-center py-12 px-6 bg-slate-50/50 rounded-none border border-dashed border-slate-200">
                     <Calendar className="w-8 h-8 text-slate-300 mx-auto mb-3" />
-                    <p className="text-xs font-bold text-slate-400 leading-loose">
+                    <p className="text-xs font-bold text-slate-400 leading-loose mb-0">
                       Showing results for:<br/>
                       <span className="text-brand-green font-bold">{dateRange.start || '...'}</span> to <span className="text-brand-green font-bold">{dateRange.end || '...'}</span>
                     </p>
-                    <p className="text-[10px] font-medium text-slate-400 mt-4">No records found for this specific range.</p>
+                    <p className="text-[10px] font-bold text-slate-400 mt-4 mb-0 uppercase tracking-widest">No records found for this specific range.</p>
                   </div>
                 ) : (
                   recentContributions[activeFilter].map(item => (
@@ -319,7 +318,7 @@ export default function Impact() {
                             {item.amount}
                           </span>
                         </div>
-                        <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                        <p className="text-[11px] font-bold text-slate-400 mt-0.5 mb-0 uppercase tracking-wider">
                           {item.location} • {item.time}
                         </p>
                       </div>

@@ -119,10 +119,10 @@ export default function Chapters() {
           <Breadcrumbs />
           <div className="mt-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-                <h1 className="text-4xl font-bold text-stone-900 tracking-tighter font-meta mb-2">
+                <h1 className="text-stone-900 mb-2">
                   Movement Chapters
                 </h1>
-              <p className="text-stone-500 max-w-xl text-sm leading-relaxed">
+              <p className="text-stone-500 max-w-xl">
                 Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {allChapters.length}+ regional hubs.
               </p>
             </div>
@@ -195,9 +195,9 @@ export default function Chapters() {
                   </span>
                 </div>
                 
-                <h3 className="text-xl font-bold text-stone-900 tracking-tighter font-meta mb-1 group-hover:text-brand-green transition-colors">
+                <h5 className="text-stone-900 mb-1 group-hover:text-brand-green transition-colors">
                   {chapter.name}
-                </h3>
+                </h5>
                 <p className="text-stone-400 text-[10px] font-semibold tracking-[0.2em] mb-6 uppercase">
                   {chapter.city_or_region}, {chapter.country}
                 </p>
@@ -238,12 +238,12 @@ export default function Chapters() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-green/10 rounded-none -mr-32 -mt-32 blur-3xl"></div>
           <div className="relative z-10 grid md:grid-cols-3 gap-12 text-center md:text-left">
             <div>
-              <p className="text-brand-green text-[10px] font-semibold tracking-[0.3em] mb-4 uppercase">Total Chapters</p>
-              <p className="text-5xl font-meta font-bold tracking-tighter">{allChapters.length}</p>
+              <p className="text-brand-green text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">Total Chapters</p>
+              <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{allChapters.length}</p>
             </div>
             <div>
-              <p className="text-warm-gold text-[10px] font-semibold tracking-[0.3em] mb-4 uppercase">Countries Represented</p>
-              <p className="text-5xl font-meta font-bold tracking-tighter">{new Set(allChapters.map(c => c.country)).size}</p>
+              <p className="text-warm-gold text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">Countries Represented</p>
+              <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{new Set(allChapters.map(c => c.country)).size}</p>
             </div>
             <div className="flex flex-col justify-center">
               <p className="text-slate-400 text-sm leading-relaxed mb-6 italic">
@@ -278,7 +278,7 @@ export default function Chapters() {
               <div className="w-16 h-16 bg-emerald-50 rounded-none flex items-center justify-center mb-2">
                 <Send className="w-8 h-8 text-brand-green" />
               </div>
-              <h3 className="text-lg font-bold text-stone-900 tracking-tight">Request Submitted Successfully</h3>
+              <h3 className="text-stone-900">Request Submitted Successfully</h3>
               <p className="text-xs text-stone-500 max-w-xs mx-auto">
                 Your proposal for the <span className="font-bold text-brand-green">{chapterLocation}</span> chapter has been logged. Our regional coordinators will contact you shortly.
               </p>

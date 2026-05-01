@@ -36,6 +36,84 @@
   }
   body {
     @apply bg-background text-on-surface antialiased;
+    font-size: 14px;
+  }
+  @screen sm {
+    body { font-size: 15px; }
+  }
+  @screen lg {
+    body { font-size: 16px; }
+  }
+
+  /* Unified Typography Scale */
+  h1, .h1 {
+    @apply font-meta font-black uppercase tracking-tighter leading-[1.1];
+    font-size: 1.5rem;
+  }
+  @screen sm {
+    h1, .h1 { font-size: 2rem; }
+  }
+  @screen lg {
+    h1, .h1 { font-size: 2.5rem; }
+  }
+
+  h2, .h2 {
+    @apply font-meta font-black uppercase tracking-tight leading-[1.2];
+    font-size: 1.25rem;
+  }
+  @screen sm {
+    h2, .h2 { font-size: 1.5rem; }
+  }
+  @screen lg {
+    h2, .h2 { font-size: 2rem; }
+  }
+
+  h3, .h3 {
+    @apply font-meta font-bold uppercase tracking-tight leading-[1.3];
+    font-size: 1.125rem;
+  }
+  @screen sm {
+    h3, .h3 { font-size: 1.25rem; }
+  }
+  @screen lg {
+    h3, .h3 { font-size: 1.5rem; }
+  }
+
+  h4, .h4 {
+    @apply font-meta font-bold uppercase tracking-tight leading-[1.4];
+    font-size: 1.125rem;
+  }
+  @screen sm {
+    h4, .h4 { font-size: 1.25rem; }
+  }
+  @screen lg {
+    h4, .h4 { font-size: 1.5rem; }
+  }
+
+  h5, .h5 {
+    @apply font-meta font-bold uppercase tracking-wide leading-[1.5];
+    font-size: 1rem;
+  }
+  @screen sm {
+    h5, .h5 { font-size: 1.125rem; }
+  }
+  @screen lg {
+    h5, .h5 { font-size: 1.25rem; }
+  }
+
+  h6, .h6 {
+    @apply font-meta font-bold uppercase tracking-widest leading-[1.6];
+    font-size: 0.75rem;
+  }
+  @screen sm {
+    h6, .h6 { font-size: 0.875rem; }
+  }
+  @screen lg {
+    h6, .h6 { font-size: 1rem; }
+  }
+
+  p {
+    @apply font-body-md leading-relaxed mb-4;
   }
 }
 

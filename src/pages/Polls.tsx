@@ -115,11 +115,11 @@ export default function Polls() {
         <div className="max-w-7xl mx-auto px-8 py-6">
           <Breadcrumbs />
           <div className="mt-4">
-            <h1 className="text-4xl font-bold text-stone-900 tracking-tighter font-meta flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-3 mb-0">
               <Vote className="w-8 h-8 text-brand-green" />
               Opinion Polls
             </h1>
-            <p className="text-stone-500 max-w-2xl text-sm leading-relaxed mt-2">
+            <p className="text-stone-500 max-w-2xl mt-2 mb-0">
               Your voice shapes the movement. Participate in our regular polls to help prioritize our agenda and regional interventions.
             </p>
           </div>
@@ -131,9 +131,9 @@ export default function Polls() {
           
           {/* Active Polls Section */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-6">
               <Clock className="w-4 h-4 text-brand-green" />
-              <h2 className="text-sm font-bold text-stone-900 uppercase tracking-widest">Active Polls</h2>
+              <h2 className="text-base font-bold text-stone-900 uppercase tracking-widest mb-0">Active Polls</h2>
             </div>
 
             {activePolls.map(poll => (
@@ -141,15 +141,15 @@ export default function Polls() {
                 <CardContent className="p-8">
                   <div className="flex flex-col gap-4 mb-6">
                     <div className="flex flex-wrap items-center justify-between gap-4">
-                      <span className="text-[10px] font-bold text-brand-green bg-brand-green/5 px-2 py-1 rounded-none uppercase tracking-widest shrink-0">
+                      <span className="text-[10px] font-bold text-brand-green bg-brand-green/5 px-2 py-1 rounded-none uppercase tracking-widest shrink-0 mb-0">
                         {poll.category}
                       </span>
                       <div className="flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5 text-stone-400" />
-                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">
                           {poll.status === 'Active' ? 'Ends In:' : 'Ended'}
                         </p>
-                        <p className="text-xs font-bold text-stone-700">
+                        <p className="text-xs font-bold text-stone-700 mb-0">
                           {poll.status === 'Active' ? (
                             (() => {
                               const days = Math.max(0, Math.ceil((new Date(poll.expired_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
@@ -159,7 +159,7 @@ export default function Polls() {
                         </p>
                       </div>
                     </div>
-                    <h3 className="text-xl font-bold text-stone-900 tracking-tight">
+                    <h3 className="text-base font-bold text-stone-900 mb-0">
                       {poll.question}
                     </h3>
                   </div>
@@ -188,9 +188,9 @@ export default function Polls() {
                                 <div className="flex justify-between items-center text-sm font-bold px-4 py-3 bg-stone-50 border border-stone-100 relative z-10 overflow-hidden">
                                   <div className="flex items-center gap-2">
                                     {isSelected && <CheckCircle2 className="w-4 h-4 text-brand-green" />}
-                                    <span className={isSelected ? 'text-brand-green' : 'text-stone-600'}>{option.label}</span>
+                                    <span className={`text-sm font-medium ${isSelected ? 'text-brand-green' : 'text-stone-600'}`}>{option.label}</span>
                                   </div>
-                                  <span className="text-stone-400 font-meta tracking-widest">{percentage}%</span>
+                                  <span className="text-stone-400 text-[10px] font-bold tracking-widest">{percentage}%</span>
                                   {/* Progress Bar Background */}
                                   <div 
                                     className="absolute inset-0 -z-10 transition-all duration-1000 ease-out"
@@ -205,9 +205,9 @@ export default function Polls() {
                               <button
                                 onClick={() => handleVote(poll.id, option.id)}
                                 disabled={voting === poll.id}
-                                className="w-full text-left px-5 py-4 border border-stone-200 hover:border-brand-green hover:bg-stone-50 transition-all text-sm font-bold text-stone-700 rounded-none flex justify-between items-center group/btn"
+                                className="w-full text-left px-5 py-4 border border-stone-200 hover:border-brand-green hover:bg-stone-50 transition-all rounded-none flex justify-between items-center group/btn"
                               >
-                                {option.label}
+                                <span className="text-sm font-medium text-stone-700">{option.label}</span>
                                 <ArrowRight className="w-4 h-4 opacity-0 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all text-brand-green" />
                               </button>
                             )}
@@ -218,7 +218,7 @@ export default function Polls() {
                   </div>
 
                   <div className="mt-8 pt-6 border-t border-stone-100 flex justify-between items-center">
-                    <div className="flex items-center gap-4 text-xs font-bold text-stone-400 uppercase tracking-widest">
+                    <div className="flex items-center gap-4 text-xs font-bold text-stone-400 uppercase tracking-widest mb-0">
                       <div className="flex items-center gap-1.5">
                         <Users className="w-4 h-4" />
                         {poll.totalVotes.toLocaleString()} Votes
@@ -232,7 +232,7 @@ export default function Polls() {
                       </button>
                     </div>
                     {poll.voted && (
-                      <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                      <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 uppercase tracking-widest mb-0">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         VOTE RECORDED
                       </span>
@@ -251,18 +251,18 @@ export default function Polls() {
                 <Vote className="w-24 h-24 text-brand-green" />
               </div>
               <div className="relative z-10">
-                <h3 className="text-warm-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Movement Voice</h3>
-                <p className="text-sm leading-relaxed text-stone-300 mb-6">
+                <p className="text-warm-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Movement Voice</p>
+                <p className="text-stone-300 mb-6 leading-relaxed">
                   Poll results are presented to the National Steering Committee every month to influence movement strategy.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 p-4 border border-white/10">
-                    <p className="text-[10px] text-white/40 uppercase mb-1">Total Votes</p>
-                    <p className="text-xl font-bold">12,450</p>
+                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Total Votes</p>
+                    <h3 className="text-white mb-0">12,450</h3>
                   </div>
                   <div className="bg-white/5 p-4 border border-white/10">
-                    <p className="text-[10px] text-white/40 uppercase mb-1">Active Polls</p>
-                    <p className="text-xl font-bold">2</p>
+                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Active Polls</p>
+                    <h3 className="text-white mb-0">2</h3>
                   </div>
                 </div>
               </div>
@@ -270,21 +270,21 @@ export default function Polls() {
 
             {/* Closed Polls */}
             <div className="bg-white border border-stone-200 p-8 rounded-none">
-              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <div className="flex items-center gap-2 mb-8">
                 <Lock className="w-4 h-4 text-stone-400" />
-                Closed Polls
-              </h3>
+                <h2 className="text-base font-bold text-stone-900 uppercase tracking-widest mb-0">Closed Polls</h2>
+              </div>
               <div className="space-y-6">
                 {closedPolls.map(poll => (
                   <div key={poll.id} className="group pb-6 border-b border-stone-50 last:border-0 last:pb-0">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-[10px] font-bold text-red-500 bg-red-500/5 px-2 py-1 rounded-none uppercase tracking-widest">
+                      <p className="text-[10px] font-bold text-red-500 bg-red-500/5 px-2 py-1 rounded-none uppercase tracking-widest mb-0">
                         {poll.category} • CLOSED
-                      </span>
+                      </p>
                     </div>
-                    <h4 className="text-sm font-bold text-stone-800 leading-snug group-hover:text-brand-green transition-colors">
+                    <h3 className="text-sm font-bold text-stone-800 leading-snug group-hover:text-brand-green transition-colors mb-0">
                       {poll.question}
-                    </h4>
+                    </h3>
                     
                     {showResults[poll.id] && (
                       <div className="mt-4 space-y-2 animate-in fade-in slide-in-from-top-1 duration-300">
@@ -302,9 +302,9 @@ export default function Polls() {
                             const percentage = Math.round((option.votes / poll.totalVotes) * 100);
                             return (
                               <div key={option.id} className="space-y-1">
-                                <div className="flex justify-between items-center text-sm font-bold px-3 py-2 bg-stone-50 border border-stone-100 relative z-10 overflow-hidden">
-                                  <span className="text-stone-600 truncate mr-2">{option.label}</span>
-                                  <span className="text-stone-400 shrink-0">{percentage}%</span>
+                                <div className="flex justify-between items-center px-3 py-2 bg-stone-50 border border-stone-100 relative z-10 overflow-hidden">
+                                  <span className="text-xs font-medium text-stone-600 truncate mr-2">{option.label}</span>
+                                  <span className="text-[9px] font-bold text-stone-400 shrink-0 uppercase tracking-widest">{percentage}%</span>
                                   <div 
                                     className="absolute inset-0 -z-10"
                                     style={{ 
@@ -321,10 +321,10 @@ export default function Polls() {
                     )}
 
                     <div className="flex items-center justify-between mt-4">
-                      <span className="text-sm font-semibold text-stone-400">{poll.totalVotes.toLocaleString()} responses</span>
+                      <p className="text-[11px] font-bold text-stone-400 mb-0 uppercase tracking-widest">{poll.totalVotes.toLocaleString()} responses</p>
                       <button 
                         onClick={() => toggleResults(poll.id)}
-                        className="text-sm font-bold text-brand-green flex items-center gap-1 group-hover:translate-x-1 transition-transform"
+                        className="text-xs font-bold text-brand-green flex items-center gap-1 group-hover:translate-x-1 transition-transform uppercase tracking-widest"
                       >
                         {showResults[poll.id] ? 'Hide Results' : 'Final Results'} <ArrowRight className="w-3 h-3" />
                       </button>
@@ -336,11 +336,11 @@ export default function Polls() {
 
             {/* Engagement Card */}
             <div className="bg-brand-green p-8 rounded-none text-white">
-              <h3 className="text-sm font-bold uppercase tracking-widest mb-4">Suggest a Poll</h3>
-              <p className="text-sm text-white/80 leading-relaxed mb-6 font-medium">
+              <h4 className="uppercase tracking-widest mb-4">Suggest a Poll</h4>
+              <p className="text-white/80 leading-relaxed mb-6 font-medium">
                 Have a question you think the movement needs to answer? Submit your proposal for a new opinion poll.
               </p>
-              <Button className="w-full bg-white text-brand-green hover:bg-stone-50 rounded-none font-bold text-xs uppercase tracking-widest">
+              <Button className="w-full bg-white text-brand-green hover:bg-stone-50 rounded-none uppercase tracking-widest">
                 Submit Proposal
               </Button>
             </div>

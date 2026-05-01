@@ -107,14 +107,14 @@ export default function Members() {
             <div className="w-10 h-10 bg-brand-green/20 rounded-none flex items-center justify-center">
               <Users className="w-6 h-6 text-brand-green" />
             </div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">Member <span className="text-brand-green">Directory</span></h1>
+            <h1 className="text-white">Member <span className="text-brand-green">Directory</span></h1>
           </div>
           <div className="flex h-1 w-24 mb-6">
             <div className="flex-1 bg-[#CE1126]"></div>
             <div className="flex-1 bg-[#DAA520]"></div>
             <div className="flex-1 bg-[#006B3F]"></div>
           </div>
-          <p className="text-white/60 max-w-xl text-sm md:text-base font-medium leading-relaxed">
+          <p className="text-white/60 max-w-xl mb-0">
             The Base movement is built by its people. Connect with brothers and sisters committed to Ghana's prosperity, both at home and in the diaspora.
           </p>
         </div>
@@ -252,8 +252,8 @@ export default function Members() {
                               <User className="w-7 h-7 text-brand-green group-hover:text-white transition-colors duration-500" />
                             </div>
                             <div className="min-w-0">
-                              <h3 className="text-sm font-bold text-charcoal-dark truncate tracking-tight">{member.name}</h3>
-                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{member.profession}</p>
+                              <h5 className="text-charcoal-dark truncate">{member.name}</h5>
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 mb-0">{member.profession}</p>
                             </div>
                           </div>
                           
@@ -285,8 +285,8 @@ export default function Members() {
                   <div className="w-20 h-20 bg-slate-50 rounded-none flex items-center justify-center mb-6">
                     <Users className="w-10 h-10 text-slate-200" />
                   </div>
-                  <h3 className="text-xl font-black text-charcoal-dark uppercase tracking-tight">No Members Found</h3>
-                  <p className="text-slate-400 max-w-sm mt-2 text-sm font-medium">We couldn't find any members matching your current filters. Try adjusting your search criteria.</p>
+                  <h3 className="text-charcoal-dark">No Members Found</h3>
+                  <p className="text-slate-400 max-w-sm mt-2">We couldn't find any members matching your current filters. Try adjusting your search criteria.</p>
                   <button 
                     onClick={() => {
                       setSearch('');
@@ -318,8 +318,8 @@ export default function Members() {
                 <div className="w-24 h-24 rounded-none bg-brand-green/10 border-4 border-brand-green/20 flex items-center justify-center mb-4 shadow-xl">
                   <User className="w-12 h-12 text-brand-green" />
                 </div>
-                <DialogTitle className="text-2xl font-bold text-white tracking-tight mb-1">{selectedMember?.name}</DialogTitle>
-                <span className="text-[10px] font-black text-brand-green uppercase tracking-[0.2em]">{selectedMember?.profession}</span>
+                <DialogTitle className="text-white mb-1">{selectedMember?.name}</DialogTitle>
+                <span className="text-[10px] font-bold text-brand-green uppercase tracking-[0.2em]">{selectedMember?.profession}</span>
               </div>
               <div className="absolute bottom-0 left-0 w-full h-1 bg-warm-gold"></div>
             </div>
@@ -332,14 +332,14 @@ export default function Members() {
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Platform</p>
                 <div className="flex items-center gap-2">
                   <Globe className="w-3 h-3 text-brand-green" />
-                  <p className="text-xs font-black text-charcoal-dark uppercase">{selectedMember?.platform}</p>
+                  <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">{selectedMember?.platform}</p>
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Joined Date</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0">Joined Date</p>
                 <div className="flex items-center gap-2">
                   <Users className="w-3 h-3 text-warm-gold" />
-                  <p className="text-xs font-black text-charcoal-dark uppercase">Oct 2024</p>
+                  <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">Oct 2024</p>
                 </div>
               </div>
             </div>
@@ -349,7 +349,7 @@ export default function Members() {
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Location</p>
                 <div className="flex items-center gap-2 bg-slate-50 p-3 rounded-none border border-slate-100">
                   <MapPin className="w-4 h-4 text-brand-green" />
-                  <p className="text-xs font-bold text-charcoal-dark uppercase">
+                  <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">
                     {selectedMember?.platform === 'GHANA' 
                       ? `${selectedMember?.constituency}, ${selectedMember?.region} Region` 
                       : `${selectedMember?.country}`}
