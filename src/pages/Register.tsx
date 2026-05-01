@@ -181,7 +181,7 @@ export default function Register() {
   const handlePlatformChange = (newPlatform: string) => {
     setPlatform(newPlatform)
     setFormData(prev => {
-      let newData = { ...prev }
+      const newData = { ...prev }
       if (newPlatform === 'GHANA') {
         newData.selectedCountry = 'Ghana'
         newData.countryCode = '+233'
@@ -196,7 +196,7 @@ export default function Register() {
   // Sync logic moved to handleChange for better performance
   const handleChange = (field: string, value: string) => {
     setFormData(prev => {
-      let newData = { ...prev, [field]: value }
+      const newData = { ...prev, [field]: value }
       
       // Auto-sync country and code when platform changes
       if (field === 'platform') {
