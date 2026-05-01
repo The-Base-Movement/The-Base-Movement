@@ -75,8 +75,10 @@ export default function ChapterDetails() {
           <div className="lg:col-span-2 space-y-12">
             
             {/* About Section */}
-            <section className="bg-white border border-stone-200 p-10 rounded-none">
-              <h2 className="text-xl font-bold text-stone-900 tracking-tight font-meta mb-6 flex items-center gap-3">
+            <section className="bg-white border border-stone-200 rounded-none overflow-hidden flex flex-col">
+              <div className="h-1.5 w-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F]"></div>
+              <div className="p-10">
+                <h2 className="text-xl font-bold text-stone-900 tracking-tight font-meta mb-6 flex items-center gap-3">
                 <Globe className="w-5 h-5 text-brand-green" />
                 About This Chapter
               </h2>
@@ -139,8 +141,10 @@ export default function ChapterDetails() {
           <div className="space-y-8">
             
             {/* Leadership Card */}
-            <div className="bg-white border border-stone-200 p-8 rounded-none">
-              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-6 border-b border-stone-100 pb-4">Chapter Leadership</h3>
+            <div className="bg-white border border-stone-200 rounded-none overflow-hidden flex flex-col">
+              <div className="h-1.5 w-full bg-gradient-to-r from-[#CE1126] via-[#DAA520] to-[#006B3F]"></div>
+              <div className="p-8">
+                <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-6 border-b border-stone-100 pb-4">Chapter Leadership</h3>
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-stone-100 rounded-none flex items-center justify-center text-stone-400">
