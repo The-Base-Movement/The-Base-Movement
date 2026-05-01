@@ -15,10 +15,10 @@ export default function AdminLogin() {
         <Card className="border border-gray-200">
           <CardContent className="p-8">
             <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-[#CE1126]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Shield className="w-6 h-6 text-[#CE1126]" />
+              <div className="w-12 h-12 bg-[var(--brand-red)]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Shield className="w-6 h-6 text-[var(--brand-red)]" />
               </div>
-              <h1 className="text-xl font-bold text-[#1a1a1a] mb-1">Admin Login</h1>
+              <h1 className="text-xl font-bold text-[var(--brand-black)] mb-1">Admin Login</h1>
               <p className="text-sm text-gray-500">Authorized personnel only</p>
             </div>
 
@@ -53,7 +53,7 @@ export default function AdminLogin() {
 
               <Button
                 type="submit"
-                className="w-full bg-[#1a1a1a] hover:bg-[#333] text-white font-semibold py-3"
+                className="w-full bg-[var(--brand-black)] hover:bg-[#333] text-white font-semibold py-3"
               >
                 <ArrowRight className="w-4 h-4 mr-2" /> Sign In
               </Button>

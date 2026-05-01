@@ -32,9 +32,9 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
       >
         {/* Brand Accent Bar */}
         <div className="flex h-1.5 w-full">
-          <div className="flex-1 bg-[#CE1126]"></div>
-          <div className="flex-1 bg-[#DAA520]"></div>
-          <div className="flex-1 bg-[#006B3F]"></div>
+          <div className="flex-1 bg-[var(--brand-red)]"></div>
+          <div className="flex-1 bg-[var(--brand-gold)]"></div>
+          <div className="flex-1 bg-[var(--brand-green)]"></div>
         </div>
 
         {/* Close Button */}

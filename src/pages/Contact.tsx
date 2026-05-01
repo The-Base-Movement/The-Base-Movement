@@ -17,9 +17,9 @@ export default function Contact() {
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <h1 className="text-4xl md:text-h1 font-black mb-4 uppercase tracking-tighter font-meta">Contact Us</h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
-            <div className="flex-1 bg-[#CE1126]"></div>
-            <div className="flex-1 bg-[#DAA520]"></div>
-            <div className="flex-1 bg-[#006B3F]"></div>
+            <div className="flex-1 bg-[var(--brand-red)]"></div>
+            <div className="flex-1 bg-[var(--brand-gold)]"></div>
+            <div className="flex-1 bg-[var(--brand-green)]"></div>
           </div>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto font-body-md">
             Have a question or want to get involved? Reach out to our team. We are a movement of ordinary citizens building an extraordinary nation.
@@ -106,7 +106,7 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
                     <label htmlFor="fullName" className="text-[10px] font-bold text-charcoal-dark font-meta uppercase tracking-widest">
-                      FULL NAME <span className="text-[#CE1126]">*</span>
+                      FULL NAME <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <input 
                       id="fullName" 
@@ -153,7 +153,7 @@ export default function Contact() {
 
                   <div className="space-y-2">
                     <label htmlFor="message" className="text-[10px] font-bold text-charcoal-dark font-meta uppercase tracking-widest">
-                      MESSAGE <span className="text-[#CE1126]">*</span>
+                      MESSAGE <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <textarea
                       id="message"

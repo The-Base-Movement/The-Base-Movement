@@ -75,9 +75,9 @@ export default function Donate() {
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center pb-0 mb-0">
           <h1 className="text-4xl md:text-h1 font-bold mb-4 tracking-tighter font-meta">Support the Movement</h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
-            <div className="flex-1 bg-[#CE1126]"></div>
-            <div className="flex-1 bg-[#DAA520]"></div>
-            <div className="flex-1 bg-[#006B3F]"></div>
+            <div className="flex-1 bg-[var(--brand-red)]"></div>
+            <div className="flex-1 bg-[var(--brand-gold)]"></div>
+            <div className="flex-1 bg-[var(--brand-green)]"></div>
           </div>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto font-body-md">
             Your contribution helps grow and sustain The Base movement across Ghana and the diaspora. Together, we are building a nation that works for everyone.
@@ -86,7 +86,7 @@ export default function Donate() {
       </div>
 
       {!submitted && (
-        <div className={`sticky top-[72px] z-50 bg-off-white/95 backdrop-blur-md border-t-4 transition-all duration-300 border-b border-stone-200 py-6 shadow-sm mt-0 ${hasScrolled ? 'border-t-[#006B3F]' : 'border-t-transparent'}`}>
+        <div className={`sticky top-[72px] z-50 bg-off-white/95 backdrop-blur-md border-t-4 transition-all duration-300 border-b border-stone-200 py-6 shadow-sm mt-0 ${hasScrolled ? 'border-t-[var(--brand-green)]' : 'border-t-transparent'}`}>
           <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
             <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
               <div className="hidden md:flex items-center gap-3 shrink-0 border-r border-stone-200 pr-6">
@@ -101,10 +101,10 @@ export default function Donate() {
                 <div className="absolute top-[16px] left-0 right-0 h-[1px] bg-stone-200 z-0"></div>
                 <div className="grid grid-cols-4 gap-4 relative z-10">
                     {[
-                      { step: 1, label: 'Details', id: 'payment-section', color: 'bg-[#CE1126]', text: 'text-white' },
-                      { step: 2, label: 'Donor', id: 'donor-section', color: 'bg-[#DAA520]', text: 'text-black' },
+                      { step: 1, label: 'Details', id: 'payment-section', color: 'bg-[var(--brand-red)]', text: 'text-white' },
+                      { step: 2, label: 'Donor', id: 'donor-section', color: 'bg-[var(--brand-gold)]', text: 'text-black' },
                       { step: 3, label: 'Link', id: 'link-section', color: 'bg-black', text: 'text-white' },
-                      { step: 4, label: 'Proof', id: 'receipt-section', color: 'bg-[#006B3F]', text: 'text-white' }
+                      { step: 4, label: 'Proof', id: 'receipt-section', color: 'bg-[var(--brand-green)]', text: 'text-white' }
                     ].map((s) => (
                       <div key={s.step} className="flex flex-col items-center">
                         <div 
@@ -149,7 +149,7 @@ export default function Donate() {
                 </div>
                 
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-8 h-8 bg-[#CE1126] text-white flex items-center justify-center font-meta font-bold text-xs rounded-none">01</span>
+                  <span className="w-8 h-8 bg-[var(--brand-red)] text-white flex items-center justify-center font-meta font-bold text-xs rounded-none">01</span>
                   <h3 className="font-bold text-white font-meta tracking-tighter text-xl">Payment Details</h3>
                 </div>
                 
@@ -187,14 +187,14 @@ export default function Donate() {
               {/* Column 2: Donation Form */}
               <div id="donor-section" className="bg-white border border-slate-200 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px]">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-8 h-8 bg-[#DAA520] text-black flex items-center justify-center font-meta font-bold text-xs rounded-none">02</span>
+                  <span className="w-8 h-8 bg-[var(--brand-gold)] text-black flex items-center justify-center font-meta font-bold text-xs rounded-none">02</span>
                   <h3 className="font-bold text-charcoal-dark font-meta tracking-tighter text-xl">Donor Information</h3>
                 </div>
 
                 <form onSubmit={handleSubmit} id="donationForm" className="space-y-6 flex-1">
                   <div className="space-y-2">
                     <label htmlFor="fullName" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                      Full name <span className="text-[#CE1126]">*</span>
+                      Full name <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <input 
                       id="fullName" 
@@ -209,7 +209,7 @@ export default function Donate() {
 
                   <div className="space-y-2">
                     <label htmlFor="phone" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                      Phone number <span className="text-[#CE1126]">*</span>
+                      Phone number <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <input 
                       id="phone" 
@@ -225,7 +225,7 @@ export default function Donate() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label htmlFor="amount" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                        Amount (GHS) <span className="text-[#CE1126]">*</span>
+                        Amount (GHS) <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <input 
                         id="amount" 
@@ -240,7 +240,7 @@ export default function Donate() {
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="country" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                        Country <span className="text-[#CE1126]">*</span>
+                        Country <span className="text-[var(--brand-red)]">*</span>
                       </label>
                       <select id="country" required onFocus={() => setActiveStep(2)} className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none bg-slate-50/50" style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7rem top 50%', backgroundSize: '.65rem auto' }}>
                         <option value="GH">Ghana</option>
@@ -314,7 +314,7 @@ export default function Donate() {
               {/* Column 4: Upload Receipt */}
               <div id="receipt-section" className="bg-white border border-slate-200 shadow-sm p-8 md:p-10 flex flex-col rounded-none scroll-mt-[180px]">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-8 h-8 bg-[#006B3F] text-white flex items-center justify-center font-meta font-bold text-xs rounded-none">04</span>
+                  <span className="w-8 h-8 bg-[var(--brand-green)] text-white flex items-center justify-center font-meta font-bold text-xs rounded-none">04</span>
                   <h3 className="font-bold text-charcoal-dark font-meta tracking-tighter text-xl">Proof of Payment</h3>
                 </div>
 

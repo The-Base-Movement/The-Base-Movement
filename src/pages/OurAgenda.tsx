@@ -8,7 +8,7 @@ const agendaPillars = [
     number: '01',
     title: 'Quality Education for Every Ghanaian',
     icon: GraduationCap,
-    color: '#006B3F',
+    color: 'var(--brand-green)',
     summary: 'Ensure universal access to quality formal and informal education that produces informed, capable, and civically responsible Ghanaian citizens at every level of society.',
     objectives: [
       {
@@ -40,7 +40,7 @@ const agendaPillars = [
     number: '02',
     title: 'Lean, Accountable Government',
     icon: Building2,
-    color: '#CE1126',
+    color: 'var(--brand-red)',
     summary: 'Build a right-sized, fiscally disciplined government where public office is a service to the nation, not a path to personal enrichment, and where every cedi of public money is accounted for.',
     objectives: [
       {
@@ -67,7 +67,7 @@ const agendaPillars = [
     number: '03',
     title: 'Industrialisation, Tourism & Agro-Processing',
     icon: Factory,
-    color: '#DAA520',
+    color: 'var(--brand-gold)',
     summary: 'Drive economic growth and mass employment through three powerful engines: building factories and industries across all 16 regions, developing Ghana into a world-class tourism destination, and transforming raw agricultural produce into high-value processed goods that keep wealth and jobs inside Ghana.',
     objectives: [
       {
@@ -103,7 +103,7 @@ const agendaPillars = [
     number: '04',
     title: 'Quality Infrastructure From Cities to Villages',
     icon: Construction,
-    color: '#006B3F',
+    color: 'var(--brand-green)',
     summary: 'Deliver world-class roads, energy, water, and digital infrastructure across Ghana, with deliberate priority given to rural and village communities that have been left behind.',
     objectives: [
       {
@@ -135,7 +135,7 @@ const agendaPillars = [
     number: '05',
     title: 'Comprehensive Institutional Reform',
     icon: Landmark,
-    color: '#CE1126',
+    color: 'var(--brand-red)',
     summary: 'Restructure, streamline, and strengthen all public institutions so that government serves the people efficiently, transparently, and without unnecessary duplication or waste.',
     objectives: [
       {
@@ -168,7 +168,7 @@ const agendaPillars = [
     number: '06',
     title: 'Expertise-Led Agriculture Sector',
     icon: Sprout,
-    color: '#DAA520',
+    color: 'var(--brand-gold)',
     summary: 'Place qualified agricultural experts, scientists, and practitioners in charge of Ghana\'s food and farming sector, driving evidence-based policy, agro-processing, and genuine food security.',
     objectives: [
       {
@@ -232,9 +232,9 @@ export default function OurAgenda() {
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <h1 className="uppercase tracking-tighter mb-4">Our Agenda</h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
-            <div className="flex-1 bg-[#CE1126]"></div>
-            <div className="flex-1 bg-[#DAA520]"></div>
-            <div className="flex-1 bg-[#006B3F]"></div>
+            <div className="flex-1 bg-[var(--brand-red)]"></div>
+            <div className="flex-1 bg-[var(--brand-gold)]"></div>
+            <div className="flex-1 bg-[var(--brand-green)]"></div>
           </div>
           <p className="text-slate-300 max-w-2xl mx-auto mb-0">
             The Six Aims of The Base. A detailed, actionable blueprint to build a stronger, more prosperous nation through patriotism, honesty, and discipline.
