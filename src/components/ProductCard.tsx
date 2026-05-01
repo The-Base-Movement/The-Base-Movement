@@ -103,8 +103,8 @@ export function ProductCard({ product, onShare }: ProductProps) {
           </span>
           
           <Button
-            asChild={!isComingSoon}
-            variant={isComingSoon ? 'outline' : 'default'}
+            asChild
+            variant={isComingSoon ? 'outline' : 'primary'}
             disabled={isComingSoon}
             className={`h-9 px-4 text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all ${
               isComingSoon 
