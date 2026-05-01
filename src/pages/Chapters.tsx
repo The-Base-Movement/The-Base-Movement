@@ -129,7 +129,7 @@ export default function Chapters() {
             <div className="flex gap-3">
               <Button 
                 onClick={() => setIsRequestModalOpen(true)}
-                className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold tracking-widest text-xs h-12 px-6 rounded-none"
+                className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-semibold tracking-widest text-xs h-12 px-6 rounded-none"
               >
                 <Plus className="w-4 h-4 mr-2" /> Request a Chapter
               </Button>
@@ -141,13 +141,13 @@ export default function Chapters() {
             <div className="flex bg-stone-100 p-1 rounded-none w-full sm:w-auto">
               <button 
                 onClick={() => setActiveTab('ghana')}
-                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-widest rounded-none transition-all ${activeTab === 'ghana' ? 'bg-white text-brand-green shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-widest rounded-none transition-all ${activeTab === 'ghana' ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
               >
                 Ghana Regional
               </button>
               <button 
                 onClick={() => setActiveTab('diaspora')}
-                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-widest rounded-none transition-all ${activeTab === 'diaspora' ? 'bg-white text-brand-green shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-widest rounded-none transition-all ${activeTab === 'diaspora' ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
               >
                 Global Diaspora
               </button>
@@ -185,10 +185,10 @@ export default function Chapters() {
 
         {/* Global Stats Footer */}
         <div className="mt-20 bg-charcoal-dark p-12 rounded-none text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-green/10 rounded-none -mr-32 -mt-32 blur-3xl"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--brand-green)]/10 rounded-none -mr-32 -mt-32 blur-3xl"></div>
           <div className="relative z-10 grid md:grid-cols-3 gap-12 text-center md:text-left">
             <div>
-              <p className="text-brand-green text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">Total Chapters</p>
+              <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">Total Chapters</p>
               <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{allChapters.length}</p>
             </div>
             <div>
@@ -213,7 +213,7 @@ export default function Chapters() {
           <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
             <div className="flex items-center gap-3 mb-2">
-              <Building2 className="w-5 h-5 text-brand-green" />
+              <Building2 className="w-5 h-5 text-[var(--brand-green)]" />
               <DialogTitle className="text-xl font-bold tracking-tight uppercase font-meta">Request a Chapter</DialogTitle>
             </div>
             <DialogDescription className="text-stone-400 text-xs">
@@ -224,11 +224,11 @@ export default function Chapters() {
           {submissionSuccess ? (
             <div className="p-12 text-center flex flex-col items-center justify-center space-y-4">
               <div className="w-16 h-16 bg-emerald-50 rounded-none flex items-center justify-center mb-2">
-                <Send className="w-8 h-8 text-brand-green" />
+                <Send className="w-8 h-8 text-[var(--brand-green)]" />
               </div>
               <h3 className="text-stone-900">Request Submitted Successfully</h3>
               <p className="text-xs text-stone-500 max-w-xs mx-auto">
-                Your proposal for the <span className="font-bold text-brand-green">{chapterLocation}</span> chapter has been logged. Our regional coordinators will contact you shortly.
+                Your proposal for the <span className="font-bold text-[var(--brand-green)]">{chapterLocation}</span> chapter has been logged. Our regional coordinators will contact you shortly.
               </p>
             </div>
           ) : (
@@ -270,7 +270,7 @@ export default function Chapters() {
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="h-12 bg-brand-green hover:bg-brand-green/90 text-white font-bold text-[10px] uppercase tracking-widest rounded-none min-w-[140px]"
+                  className="h-12 bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold text-[10px] uppercase tracking-widest rounded-none min-w-[140px]"
                 >
                   {isSubmitting ? 'Processing...' : 'Submit Request'}
                 </Button>

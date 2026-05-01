@@ -72,7 +72,7 @@ export default function Privacy() {
           </div>
 
           <p className="text-sm text-gray-500 text-center pt-4">
-            Last updated: April 2026. If you have questions about this privacy agreement, please <a href="/contact" className="text-brand-green hover:underline">contact us</a>.
+            Last updated: April 2026. If you have questions about this privacy agreement, please <a href="/contact" className="text-[var(--brand-green)] hover:underline">contact us</a>.
           </p>
         </div>
       </div>

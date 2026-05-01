@@ -106,30 +106,30 @@ export default function Dashboard() {
       {/* Section 1: Growth Stats (Bento Grid Style) */}
       <section className="mb-12">
         <h2 className="text-on-surface mb-6 flex items-center">
-          <span className="material-symbols-outlined mr-2 text-brand-green" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>trending_up</span>
+          <span className="material-symbols-outlined mr-2 text-[var(--brand-green)]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>trending_up</span>
           Movement Growth
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
-            <span className="material-symbols-outlined text-brand-green mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>bolt</span>
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>bolt</span>
             <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 1 hour</p>
-            <h1 className="text-brand-green leading-none mb-0">
+            <h1 className="text-[var(--brand-green)] leading-none mb-0">
               {stats?.joined_last_hour?.toLocaleString() || '0'}
             </h1>
             <p className="text-muted-gray mt-2 mb-0">Active citizens joining the cause</p>
           </div>
           <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
-            <span className="material-symbols-outlined text-brand-green mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>history</span>
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>history</span>
             <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 24 hours</p>
-            <h1 className="text-brand-green leading-none mb-0">
+            <h1 className="text-[var(--brand-green)] leading-none mb-0">
               {stats?.joined_last_24h?.toLocaleString() || '0'}
             </h1>
             <p className="text-muted-gray mt-2 mb-0">Spanning all 16 regions of Ghana</p>
           </div>
           <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
-            <span className="material-symbols-outlined text-brand-green mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>calendar_month</span>
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>calendar_month</span>
             <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 7 days</p>
-            <h1 className="text-brand-green leading-none mb-0">
+            <h1 className="text-[var(--brand-green)] leading-none mb-0">
               {stats?.joined_last_7d?.toLocaleString() || '0'}
             </h1>
             <p className="text-muted-gray mt-2 mb-0">Growing collective impact nationwide</p>
@@ -154,7 +154,7 @@ export default function Dashboard() {
                 </div>
                 <div className="min-w-0">
                   <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Platform</p>
-                  <span className="inline-block px-3 py-1 bg-brand-green text-white text-[10px] font-bold tracking-tighter rounded-full">
+                  <span className="inline-block px-3 py-1 bg-[var(--brand-green)] text-white text-[10px] font-bold tracking-tighter rounded-full">
                     {member?.platform || 'GHANA'}
                   </span>
                 </div>
@@ -243,23 +243,23 @@ export default function Dashboard() {
         <h3 className="text-on-surface mb-6">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/settings">
-            <span className="material-symbols-outlined text-brand-green mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>badge</span>
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>badge</span>
             <p className="font-meta text-[11px] text-on-surface">Membership Card</p>
           </Link>
           <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/dashboard/store">
-            <span className="material-symbols-outlined text-brand-green mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>storefront</span>
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>storefront</span>
             <p className="font-meta text-[11px] text-on-surface">Official Store</p>
           </Link>
           <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/dashboard/polls">
-            <span className="material-symbols-outlined text-brand-green mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>how_to_vote</span>
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>how_to_vote</span>
             <p className="font-meta text-[11px] text-on-surface">Opinion Polls</p>
           </Link>
           <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/dashboard/donate">
-            <span className="material-symbols-outlined text-brand-green mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>volunteer_activism</span>
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>volunteer_activism</span>
             <p className="font-meta text-[11px] text-on-surface">Donate / Support</p>
           </Link>
           <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/settings">
-            <span className="material-symbols-outlined text-brand-green mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>manage_accounts</span>
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>manage_accounts</span>
             <p className="font-meta text-[11px] text-on-surface">Edit Profile</p>
           </Link>
         </div>

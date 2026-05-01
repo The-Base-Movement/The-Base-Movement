@@ -109,7 +109,7 @@ const posts = [
 ]
 
 const categoryColors:Record<string, string> = {
-  Movement: 'bg-brand-green/10 text-brand-green',
+  Movement: 'bg-[var(--brand-green)]/10 text-[var(--brand-green)]',
   Youth: 'bg-blue-50 text-blue-700',
   Diaspora: 'bg-purple-50 text-purple-700',
   Integrity: 'bg-amber-50 text-amber-700',
@@ -133,7 +133,7 @@ export default function Blog() {
   return (
     <div className="bg-surface-warm font-body-md min-h-screen">
       {/* Hero */}
-      <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-brand-green">
+      <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-[var(--brand-green)]">
         <div className="max-w-[1280px] mx-auto">
           <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">The Base Insights</p>
           <h1 className="font-meta font-black text-4xl md:text-5xl uppercase tracking-tight leading-tight mb-4 max-w-2xl">
@@ -166,7 +166,7 @@ export default function Blog() {
                 <span className="text-xs text-slate-400 font-meta">{featured.date}</span>
               </div>
               <Link to={`${baseUrl}/${slugify(featured.title)}`}>
-                <h2 className="text-xl font-bold text-charcoal-dark uppercase tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
+                <h2 className="text-xl font-bold text-charcoal-dark uppercase tracking-tight leading-tight mb-4 hover:text-[var(--brand-green)] transition-colors">
                   {featured.title}
                 </h2>
               </Link>
@@ -177,7 +177,7 @@ export default function Blog() {
                 </div>
                 <Link
                   to={`${baseUrl}/${slugify(featured.title)}`}
-                  className="flex items-center gap-1.5 text-[10px] font-bold text-brand-green uppercase tracking-widest hover:underline"
+                  className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--brand-green)] uppercase tracking-widest hover:underline"
                 >
                   Read Article
                   <ArrowRight className="w-4 h-4" />
@@ -213,10 +213,10 @@ export default function Blog() {
                   {Object.keys(categoryColors).map((cat) => (
                     <button 
                       key={cat} 
-                      className="w-full flex items-center justify-between p-3 text-xs font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:text-brand-green transition-all group"
+                      className="w-full flex items-center justify-between p-3 text-xs font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:text-[var(--brand-green)] transition-all group"
                     >
                       {cat}
-                      <span className="text-[10px] text-slate-300 font-meta group-hover:text-brand-green transition-colors">12 Posts</span>
+                      <span className="text-[10px] text-slate-300 font-meta group-hover:text-[var(--brand-green)] transition-colors">12 Posts</span>
                     </button>
                   ))}
                 </div>
@@ -231,9 +231,9 @@ export default function Blog() {
                   <input 
                     type="email" 
                     placeholder="Email Address" 
-                    className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors"
+                    className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-[var(--brand-green)] transition-colors"
                   />
-                  <Button className="w-full bg-brand-green hover:bg-brand-green/90 text-white text-[10px] font-bold uppercase tracking-widest h-12">
+                  <Button className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white text-[10px] font-bold uppercase tracking-widest h-12">
                     Subscribe
                   </Button>
                 </div>
@@ -247,7 +247,7 @@ export default function Blog() {
           <button className="w-10 h-10 flex items-center justify-center border border-slate-200 text-slate-400 cursor-not-allowed hover:bg-slate-50 transition-colors">
             <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>chevron_left</span>
           </button>
-          <button className="w-10 h-10 flex items-center justify-center bg-brand-green text-white font-meta font-bold">1</button>
+          <button className="w-10 h-10 flex items-center justify-center bg-[var(--brand-green)] text-white font-meta font-bold">1</button>
           <button className="w-10 h-10 flex items-center justify-center border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors font-meta font-bold">2</button>
           <button className="w-10 h-10 flex items-center justify-center border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors font-meta font-bold">3</button>
           <span className="text-slate-400 px-2 font-meta">...</span>
@@ -258,7 +258,7 @@ export default function Blog() {
         </div>
 
         {/* CTA */}
-        <section className="mt-20 py-16 px-12 bg-charcoal-dark text-white text-center border-l-4 border-brand-green">
+        <section className="mt-20 py-16 px-12 bg-charcoal-dark text-white text-center border-l-4 border-[var(--brand-green)]">
           <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">Join the Conversation</p>
           <h2 className="font-meta font-black text-3xl uppercase tracking-tight mb-4">Become a Member. Shape the Narrative.</h2>
           <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">
@@ -266,7 +266,7 @@ export default function Blog() {
           </p>
           <Link
             to="/register"
-            className="inline-flex items-center gap-2 bg-brand-green text-white font-meta font-bold uppercase tracking-widest px-8 py-4 hover:opacity-90 transition-all active:scale-95"
+            className="inline-flex items-center gap-2 bg-[var(--brand-green)] text-white font-meta font-bold uppercase tracking-widest px-8 py-4 hover:opacity-90 transition-all active:scale-95"
           >
             Join The Base
             <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_forward</span>

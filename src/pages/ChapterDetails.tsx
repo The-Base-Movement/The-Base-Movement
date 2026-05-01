@@ -49,11 +49,11 @@ export default function ChapterDetails() {
               </h1>
               <div className="flex items-center gap-4 mt-2 text-stone-500 text-sm">
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-brand-green" />
+                  <MapPin className="w-4 h-4 text-[var(--brand-green)]" />
                   {chapter.city_or_region}, {chapter.country}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-brand-green" />
+                  <Users className="w-4 h-4 text-[var(--brand-green)]" />
                   {chapter.membersCount} Active Members
                 </div>
               </div>
@@ -67,7 +67,7 @@ export default function ChapterDetails() {
               >
                 <Share2 className="w-4 h-4 mr-2" /> Share
               </Button>
-              <Button className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold tracking-widest text-xs h-12 px-8 rounded-none">
+              <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-semibold tracking-widest text-xs h-12 px-8 rounded-none">
                 Join This Chapter
               </Button>
             </div>
@@ -86,7 +86,7 @@ export default function ChapterDetails() {
               <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
               <div className="p-10">
                 <h2 className="text-xl font-bold text-stone-900 tracking-tight font-meta mb-6 flex items-center gap-3">
-                <Globe className="w-5 h-5 text-brand-green" />
+                <Globe className="w-5 h-5 text-[var(--brand-green)]" />
                 About This Chapter
               </h2>
               <div className="prose prose-stone max-w-none">
@@ -115,10 +115,10 @@ export default function ChapterDetails() {
             <section>
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-bold text-stone-900 tracking-tight font-meta flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-brand-green" />
+                  <Calendar className="w-5 h-5 text-[var(--brand-green)]" />
                   Recent Activities
                 </h2>
-                <button className="text-[10px] font-semibold text-brand-green uppercase tracking-widest hover:underline">View All</button>
+                <button className="text-[10px] font-semibold text-[var(--brand-green)] uppercase tracking-widest hover:underline">View All</button>
               </div>
               
               <div className="space-y-4">
@@ -127,18 +127,18 @@ export default function ChapterDetails() {
                   { title: "Community Outreach Program", date: "Oct 12, 2024", type: "Action" },
                   { title: "New Member Orientation", date: "Sep 28, 2024", type: "Onboarding" }
                 ].map((activity, i) => (
-                  <div key={i} className="bg-white border border-stone-200 p-6 rounded-none flex items-center justify-between group hover:border-brand-green transition-colors">
+                  <div key={i} className="bg-white border border-stone-200 p-6 rounded-none flex items-center justify-between group hover:border-[var(--brand-green)] transition-colors">
                     <div className="flex items-center gap-6">
                       <div className="w-12 h-12 bg-stone-50 flex flex-col items-center justify-center text-stone-400 font-meta">
                         <span className="text-[10px] font-bold uppercase">{activity.date.split(' ')[0]}</span>
                         <span className="text-lg font-black leading-none">{activity.date.split(' ')[1].replace(',', '')}</span>
                       </div>
                       <div>
-                        <h4 className="font-bold text-stone-900 group-hover:text-brand-green transition-colors">{activity.title}</h4>
+                        <h4 className="font-bold text-stone-900 group-hover:text-[var(--brand-green)] transition-colors">{activity.title}</h4>
                         <p className="text-xs text-stone-400 uppercase tracking-widest mt-1">{activity.type}</p>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-brand-green transition-all" />
+                    <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-[var(--brand-green)] transition-all" />
                   </div>
                 ))}
               </div>
@@ -176,11 +176,11 @@ export default function ChapterDetails() {
               
               <div className="mt-8 pt-8 border-t border-stone-100 space-y-4">
                 <div className="flex items-center gap-3 text-stone-500 text-sm">
-                  <Mail className="w-4 h-4 text-brand-green" />
+                  <Mail className="w-4 h-4 text-[var(--brand-green)]" />
                   <span>{chapter.city_or_region.toLowerCase()}@thebasemovement.com</span>
                 </div>
                 <div className="flex items-center gap-3 text-stone-500 text-sm">
-                  <Phone className="w-4 h-4 text-brand-green" />
+                  <Phone className="w-4 h-4 text-[var(--brand-green)]" />
                   <span>+233 (0) 50 123 4567</span>
                 </div>
               </div>
@@ -190,7 +190,7 @@ export default function ChapterDetails() {
           {/* Verification Card */}
           <div className="bg-charcoal-dark p-8 rounded-none text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-10">
-              <ShieldCheck className="w-24 h-24 text-brand-green" />
+              <ShieldCheck className="w-24 h-24 text-[var(--brand-green)]" />
             </div>
             <div className="relative z-10">
               <h3 className="text-warm-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Official Verification</h3>
@@ -211,7 +211,7 @@ export default function ChapterDetails() {
               Your donations to this specific chapter help fund local townhalls and community outreach programs in {chapter.city_or_region}.
             </p>
             <Link to="/dashboard/donate">
-              <Button className="w-full bg-brand-green hover:bg-brand-green/90 text-white rounded-none">
+              <Button className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white rounded-none">
                 Donate to Chapter
               </Button>
             </Link>

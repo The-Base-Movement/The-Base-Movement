@@ -42,7 +42,7 @@ export default function Contact() {
             <div className="space-y-4 md:space-y-6">
               <div className="bg-white p-5 md:p-6 border border-slate-200 rounded-none civic-card-shadow flex items-start gap-4 transition-transform hover:-translate-y-1">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-surface-warm flex items-center justify-center shrink-0">
-                  <Mail className="w-5 h-5 md:w-6 md:h-6 text-brand-green" />
+                  <Mail className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 font-meta">Email</p>
@@ -52,7 +52,7 @@ export default function Contact() {
 
               <div className="bg-white p-5 md:p-6 border border-slate-200 rounded-none civic-card-shadow flex items-start gap-4 transition-transform hover:-translate-y-1">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-surface-warm flex items-center justify-center shrink-0">
-                  <Phone className="w-5 h-5 md:w-6 md:h-6 text-brand-green" />
+                  <Phone className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 font-meta">Phone</p>
@@ -62,7 +62,7 @@ export default function Contact() {
 
               <div className="bg-white p-5 md:p-6 border border-slate-200 rounded-none civic-card-shadow flex items-start gap-4 transition-transform hover:-translate-y-1">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-surface-warm flex items-center justify-center shrink-0">
-                  <MapPin className="w-5 h-5 md:w-6 md:h-6 text-brand-green" />
+                  <MapPin className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 font-meta">Location</p>
@@ -80,7 +80,7 @@ export default function Contact() {
                   />
                 </div>
                 <div className="p-5 border-t border-slate-100">
-                  <p className="text-[10px] font-meta font-bold text-brand-green uppercase tracking-widest">Official Headquarters</p>
+                  <p className="text-[10px] font-meta font-bold text-[var(--brand-green)] uppercase tracking-widest">Official Headquarters</p>
                   <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
                     Our central hub in Accra, serving as the heart of movement operations and community engagement.
                   </p>
@@ -97,7 +97,7 @@ export default function Contact() {
               {submitted ? (
                 <div className="text-center py-12 md:py-20">
                   <div className="w-20 h-20 bg-surface-warm flex items-center justify-center mx-auto mb-6">
-                    <Send className="w-10 h-10 text-brand-green" />
+                    <Send className="w-10 h-10 text-[var(--brand-green)]" />
                   </div>
                   <h3 className="text-xl font-bold text-charcoal-dark mb-3 font-meta uppercase tracking-tight">Message Sent</h3>
                   <p className="text-slate-600 text-sm md:text-base max-w-xs mx-auto">Thank you for reaching out. Our team will get back to you shortly.</p>
@@ -166,7 +166,7 @@ export default function Contact() {
 
                   <button
                     type="submit"
-                    className="w-full bg-brand-green hover:opacity-90 text-white font-meta font-black uppercase tracking-[0.2em] py-5 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-brand-green/10"
+                    className="w-full bg-[var(--brand-green)] hover:opacity-90 text-white font-meta font-black uppercase tracking-[0.2em] py-5 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-brand-green/10"
                   >
                     <Send className="w-5 h-5" /> Send Message
                   </button>

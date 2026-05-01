@@ -55,9 +55,9 @@ export function ProductCard({ product, onShare }: ProductProps) {
                 addToWishlist(product)
               }
             }}
-            className={`w-10 h-10 bg-white shadow-md flex items-center justify-center transition-all duration-300 group/heart scale-90 hover:scale-100 ${isWishlisted ? 'text-brand-red' : 'text-stone-400 hover:text-brand-red'}`}
+            className={`w-10 h-10 bg-white shadow-md flex items-center justify-center transition-all duration-300 group/heart scale-90 hover:scale-100 ${isWishlisted ? 'text-[var(--brand-red)]' : 'text-stone-400 hover:text-[var(--brand-red)]'}`}
           >
-            <Heart className={`w-5 h-5 transition-all ${isWishlisted ? 'fill-brand-red text-brand-red' : 'group-hover/heart:fill-brand-red group-hover/heart:text-brand-red'}`} />
+            <Heart className={`w-5 h-5 transition-all ${isWishlisted ? 'fill-brand-red text-[var(--brand-red)]' : 'group-hover/heart:fill-brand-red group-hover/heart:text-[var(--brand-red)]'}`} />
           </button>
           <button 
             onClick={(e) => {
@@ -65,7 +65,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
               e.stopPropagation();
               onShare?.(product);
             }}
-            className="w-10 h-10 bg-white shadow-md flex items-center justify-center text-stone-400 hover:text-brand-green transition-all duration-300 scale-90 hover:scale-100"
+            className="w-10 h-10 bg-white shadow-md flex items-center justify-center text-stone-400 hover:text-[var(--brand-green)] transition-all duration-300 scale-90 hover:scale-100"
           >
             <Share2 className="w-5 h-5" />
           </button>
@@ -75,7 +75,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center translate-y-4 group-hover:translate-y-0 transition-transform">
           <Link 
             to={`product/${product.slug}`}
-            className="bg-white text-stone-900 px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-brand-green hover:text-white transition-colors"
+            className="bg-white text-stone-900 px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[var(--brand-green)] hover:text-white transition-colors"
           >
             Quick View
           </Link>
@@ -84,7 +84,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
 
       <CardContent className="p-6 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-2">
-          <h5 className="text-stone-900 group-hover:text-brand-green transition-colors line-clamp-1 lowercase first-letter:uppercase mb-0">
+          <h5 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors line-clamp-1 lowercase first-letter:uppercase mb-0">
             {product.name}
           </h5>
           <div className="flex items-center gap-1">
@@ -98,7 +98,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
         </p>
         
         <div className="mt-auto pt-4 border-t border-stone-100 flex items-center justify-between">
-          <span className="text-lg font-bold text-brand-green">
+          <span className="text-lg font-bold text-[var(--brand-green)]">
             {product.price}
           </span>
           
@@ -109,7 +109,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
             className={`h-9 px-4 text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all ${
               isComingSoon 
                 ? 'border-stone-200 text-stone-400' 
-                : 'bg-brand-green hover:bg-emerald-700 text-white shadow-md shadow-brand-green/20'
+                : 'bg-[var(--brand-green)] hover:opacity-90 text-white shadow-md shadow-brand-green/20'
             }`}
           >
             {isComingSoon ? (

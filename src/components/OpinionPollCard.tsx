@@ -42,11 +42,11 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
   const days = Math.max(0, Math.ceil((new Date(poll.expired_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
 
   return (
-    <Card className="border border-stone-200 rounded-none shadow-sm overflow-hidden hover:border-brand-green/30 transition-all">
+    <Card className="border border-stone-200 rounded-none shadow-sm overflow-hidden hover:border-[var(--brand-green)]/30 transition-all">
       <CardContent className="p-8">
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <span className="text-[10px] font-bold text-brand-green bg-brand-green/5 px-2 py-1 rounded-none uppercase tracking-widest shrink-0 mb-0">
+            <span className="text-[10px] font-bold text-[var(--brand-green)] bg-[var(--brand-green)]/5 px-2 py-1 rounded-none uppercase tracking-widest shrink-0 mb-0">
               {poll.category}
             </span>
             <div className="flex items-center gap-2">
@@ -76,8 +76,8 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-sm font-bold px-4 py-3 bg-stone-50 border border-stone-100 relative z-10 overflow-hidden">
                       <div className="flex items-center gap-2">
-                        {isSelected && <CheckCircle2 className="w-4 h-4 text-brand-green" />}
-                        <span className={`text-sm font-medium ${isSelected ? 'text-brand-green' : 'text-stone-600'}`}>{option.label}</span>
+                        {isSelected && <CheckCircle2 className="w-4 h-4 text-[var(--brand-green)]" />}
+                        <span className={`text-sm font-medium ${isSelected ? 'text-[var(--brand-green)]' : 'text-stone-600'}`}>{option.label}</span>
                       </div>
                       <span className="text-stone-400 text-[10px] font-bold tracking-widest">{percentage}%</span>
                       {/* Progress Bar Background */}
@@ -94,10 +94,10 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
                   <button
                     onClick={() => handleVote(poll.id, option.id)}
                     disabled={voting === poll.id}
-                    className="w-full text-left px-5 py-4 border border-stone-200 hover:border-brand-green hover:bg-stone-50 transition-all rounded-none flex justify-between items-center group/btn"
+                    className="w-full text-left px-5 py-4 border border-stone-200 hover:border-[var(--brand-green)] hover:bg-stone-50 transition-all rounded-none flex justify-between items-center group/btn"
                   >
                     <span className="text-sm font-bold text-stone-700">{option.label}</span>
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all text-brand-green" />
+                    <ArrowRight className="w-4 h-4 opacity-0 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all text-[var(--brand-green)]" />
                   </button>
                 )}
               </div>
@@ -113,7 +113,7 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
             </div>
             <button 
               onClick={() => toggleResults(poll.id)}
-              className={`flex items-center gap-1.5 transition-colors ${showResults ? 'text-brand-green' : 'hover:text-brand-green'}`}
+              className={`flex items-center gap-1.5 transition-colors ${showResults ? 'text-[var(--brand-green)]' : 'hover:text-[var(--brand-green)]'}`}
             >
               <BarChart3 className="w-4 h-4" />
               {showResults ? 'Hide Results' : 'Live Results'}

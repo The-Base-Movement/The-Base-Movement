@@ -102,14 +102,14 @@ export default function Home() {
       <section className="py-24 bg-white">
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="grid md:grid-cols-2 gap-12 md:gap-24">
-            <div className="border-t-[4px] border-brand-green pt-8 group">
+            <div className="border-t-[4px] border-[var(--brand-green)] pt-8 group">
               <h3 className="text-h3 font-meta font-black text-charcoal-dark mb-4 flex items-center gap-3 uppercase tracking-tight">
-                <MapPin className="text-brand-green w-8 h-8" /> Base Ghana
+                <MapPin className="text-[var(--brand-green)] w-8 h-8" /> Base Ghana
               </h3>
               <p className="text-lg text-slate-600 mb-8 leading-relaxed font-body-md">
                 For Ghanaians living in Ghana. Join our grassroots movement and make your voice heard in the development of our great nation.
               </p>
-              <Link to="/register?platform=GHANA" className="inline-flex items-center gap-2 text-brand-green font-meta font-bold uppercase tracking-widest text-sm hover:opacity-80 transition-opacity">
+              <Link to="/register?platform=GHANA" className="inline-flex items-center gap-2 text-[var(--brand-green)] font-meta font-bold uppercase tracking-widest text-sm hover:opacity-80 transition-opacity">
                 Register for Base Ghana <ArrowRight className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -153,8 +153,8 @@ export default function Home() {
                 We are guided by love of country, transparency in leadership, and the moral courage to do what is right for Ghana.
               </p>
             </div>
-            <div className="border-l-2 border-brand-green pl-6">
-              <span className="text-brand-green font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Vision</span>
+            <div className="border-l-2 border-[var(--brand-green)] pl-6">
+              <span className="text-[var(--brand-green)] font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Vision</span>
               <h3 className="text-2xl font-meta font-bold mb-4 uppercase tracking-tight text-white">A Transformed Nation</h3>
               <p className="text-slate-400 leading-relaxed font-body-md text-sm">
                 A Ghana with quality education, lean accountable government, industrialisation, tourism, and agro-processing, quality infrastructure, comprehensive institutional reform, and expertise-led agriculture.
@@ -187,10 +187,10 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <span className="text-brand-green font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Movement Updates</span>
+              <span className="text-[var(--brand-green)] font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Movement Updates</span>
               <h2 className="text-3xl md:text-h2 font-meta font-black text-charcoal-dark uppercase tracking-tight">Latest Insights</h2>
             </div>
-            <Link to="/blog" className="hidden md:flex items-center gap-2 text-brand-green font-meta font-bold uppercase tracking-widest text-xs hover:underline">
+            <Link to="/blog" className="hidden md:flex items-center gap-2 text-[var(--brand-green)] font-meta font-bold uppercase tracking-widest text-xs hover:underline">
               View All News <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -225,24 +225,24 @@ export default function Home() {
                   />
                 </div>
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[10px] font-meta font-bold text-brand-green uppercase tracking-widest">{news.category}</span>
+                  <span className="text-[10px] font-meta font-bold text-[var(--brand-green)] uppercase tracking-widest">{news.category}</span>
                   <span className="text-[10px] text-slate-400 font-meta">{news.date}</span>
                 </div>
-                <h3 className="text-lg font-meta font-bold text-charcoal-dark uppercase tracking-tight leading-tight group-hover:text-brand-green transition-colors">
+                <h3 className="text-lg font-meta font-bold text-charcoal-dark uppercase tracking-tight leading-tight group-hover:text-[var(--brand-green)] transition-colors">
                   {news.title}
                 </h3>
               </Link>
             ))}
           </div>
 
-          <Link to="/blog" className="md:hidden flex items-center justify-center gap-2 mt-10 text-brand-green font-meta font-bold uppercase tracking-widest text-xs border border-brand-green py-4">
+          <Link to="/blog" className="md:hidden flex items-center justify-center gap-2 mt-10 text-[var(--brand-green)] font-meta font-bold uppercase tracking-widest text-xs border border-[var(--brand-green)] py-4">
             View All News <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
 
       {/* Decisive CTA Band */}
-      <section className="bg-brand-green text-white py-24 md:py-32">
+      <section className="bg-[var(--brand-green)] text-white py-24 md:py-32">
         <div className="max-w-[1280px] mx-auto px-8 text-center">
           <h2 className="text-4xl md:text-[4rem] font-meta font-black mb-6 tracking-tighter uppercase leading-none">
             Ready to Make a Difference?

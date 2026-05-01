@@ -85,7 +85,7 @@ const shareOptions = [
           <h2 className="text-xl font-bold text-stone-900 font-meta tracking-tight">{title}</h2>
           <button 
             onClick={onClose}
-            className="w-8 h-8 rounded-none bg-white border border-stone-200 flex items-center justify-center text-stone-400 hover:text-brand-green transition-colors"
+            className="w-8 h-8 rounded-none bg-white border border-stone-200 flex items-center justify-center text-stone-400 hover:text-[var(--brand-green)] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -101,7 +101,7 @@ const shareOptions = [
               </div>
               <Button 
                 onClick={handleCopy}
-                className={`w-full h-12 rounded-none font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${copied ? 'bg-emerald-600 text-white' : 'bg-white border border-stone-200 text-stone-600 hover:bg-brand-green hover:text-white hover:border-brand-green'}`}
+                className={`w-full h-12 rounded-none font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${copied ? 'bg-emerald-600 text-white' : 'bg-white border border-stone-200 text-stone-600 hover:bg-[var(--brand-green)] hover:text-white hover:border-[var(--brand-green)]'}`}
               >
                 {copied ? (
                   <>

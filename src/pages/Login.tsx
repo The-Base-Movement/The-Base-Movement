@@ -48,7 +48,7 @@ export default function Login() {
                 <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase">
                   Password
                 </label>
-                <Link to="#" className="text-xs text-brand-green hover:underline font-meta">
+                <Link to="#" className="text-xs text-[var(--brand-green)] hover:underline font-meta">
                   Forgot?
                 </Link>
               </div>
@@ -62,7 +62,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-green"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[var(--brand-green)]"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -71,7 +71,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-brand-green hover:opacity-90 text-white font-meta font-bold uppercase tracking-wider py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
+              className="w-full bg-[var(--brand-green)] hover:opacity-90 text-white font-meta font-bold uppercase tracking-wider py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
             >
               Sign In <ArrowRight className="w-4 h-4" />
             </button>
@@ -80,7 +80,7 @@ export default function Login() {
           <div className="mt-8 pt-6 border-t border-slate-100 text-center">
             <p className="text-sm text-slate-500 font-body-md">
               Not a member yet?{' '}
-              <Link to="/register" className="text-brand-green font-bold hover:underline">
+              <Link to="/register" className="text-[var(--brand-green)] font-bold hover:underline">
                 Join the Movement
               </Link>
             </p>

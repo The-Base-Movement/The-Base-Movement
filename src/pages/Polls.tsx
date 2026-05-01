@@ -116,7 +116,7 @@ export default function Polls() {
           <Breadcrumbs />
           <div className="mt-4">
             <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-3 mb-0">
-              <Vote className="w-8 h-8 text-brand-green" />
+              <Vote className="w-8 h-8 text-[var(--brand-green)]" />
               Opinion Polls
             </h1>
             <p className="text-stone-500 max-w-2xl mt-2 mb-0">
@@ -132,7 +132,7 @@ export default function Polls() {
           {/* Active Polls Section */}
           <div className="lg:col-span-2 space-y-8">
             <div className="flex items-center gap-2 mb-6">
-              <Clock className="w-4 h-4 text-brand-green" />
+              <Clock className="w-4 h-4 text-[var(--brand-green)]" />
               <h2 className="text-base font-bold text-stone-900 uppercase tracking-widest mb-0">Active Polls</h2>
             </div>
 
@@ -153,7 +153,7 @@ export default function Polls() {
             {/* Stats Overview */}
             <div className="bg-charcoal-dark p-8 rounded-none text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Vote className="w-24 h-24 text-brand-green" />
+                <Vote className="w-24 h-24 text-[var(--brand-green)]" />
               </div>
               <div className="relative z-10">
                 <p className="text-warm-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Movement Voice</p>
@@ -187,7 +187,7 @@ export default function Polls() {
                         {poll.category} • CLOSED
                       </p>
                     </div>
-                    <h3 className="text-sm font-bold text-stone-800 leading-snug group-hover:text-brand-green transition-colors mb-0">
+                    <h3 className="text-sm font-bold text-stone-800 leading-snug group-hover:text-[var(--brand-green)] transition-colors mb-0">
                       {poll.question}
                     </h3>
                     
@@ -229,7 +229,7 @@ export default function Polls() {
                       <p className="text-[11px] font-bold text-stone-400 mb-0 uppercase tracking-widest">{poll.totalVotes.toLocaleString()} responses</p>
                       <button 
                         onClick={() => toggleResults(poll.id)}
-                        className="text-xs font-bold text-brand-green flex items-center gap-1 group-hover:translate-x-1 transition-transform uppercase tracking-widest"
+                        className="text-xs font-bold text-[var(--brand-green)] flex items-center gap-1 group-hover:translate-x-1 transition-transform uppercase tracking-widest"
                       >
                         {showResults[poll.id] ? 'Hide Results' : 'Final Results'} <ArrowRight className="w-3 h-3" />
                       </button>
@@ -240,12 +240,12 @@ export default function Polls() {
             </div>
 
             {/* Engagement Card */}
-            <div className="bg-brand-green p-8 rounded-none text-white">
+            <div className="bg-[var(--brand-green)] p-8 rounded-none text-white">
               <h4 className="uppercase tracking-widest mb-4">Suggest a Poll</h4>
               <p className="text-white/80 leading-relaxed mb-6 font-medium">
                 Have a question you think the movement needs to answer? Submit your proposal for a new opinion poll.
               </p>
-              <Button className="w-full bg-white text-brand-green hover:bg-stone-50 rounded-none uppercase tracking-widest">
+              <Button className="w-full bg-white text-[var(--brand-green)] hover:bg-stone-50 rounded-none uppercase tracking-widest">
                 Submit Proposal
               </Button>
             </div>

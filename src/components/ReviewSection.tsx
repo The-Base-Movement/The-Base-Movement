@@ -104,7 +104,7 @@ export function ReviewSection() {
               <Button 
                 type="submit"
                 disabled={!newReview.trim()}
-                className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold tracking-widest text-[10px] h-12 rounded-none uppercase"
+                className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-widest text-[10px] h-12 rounded-none uppercase"
               >
                 Submit Review
               </Button>
@@ -141,7 +141,7 @@ export function ReviewSection() {
                 {review.content}
               </p>
 
-              <button className="flex items-center gap-2 text-[10px] font-black text-stone-400 uppercase tracking-widest hover:text-brand-green transition-colors">
+              <button className="flex items-center gap-2 text-[10px] font-black text-stone-400 uppercase tracking-widest hover:text-[var(--brand-green)] transition-colors">
                 <ThumbsUp className="w-3.5 h-3.5" /> Helpful
               </button>
             </div>

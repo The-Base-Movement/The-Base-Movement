@@ -94,7 +94,7 @@ export default function BlogPost() {
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <Link 
             to={baseUrl} 
-            className="flex items-center gap-2 text-stone-400 hover:text-brand-green transition-colors text-[10px] font-bold uppercase tracking-widest"
+            className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-green)] transition-colors text-[10px] font-bold uppercase tracking-widest"
           >
             <ChevronLeft className="w-4 h-4" /> Back to Insights
           </Link>
@@ -116,7 +116,7 @@ export default function BlogPost() {
           {/* Header */}
           <header className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-              <span className="px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-bold uppercase tracking-widest">
+              <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-[10px] font-bold uppercase tracking-widest">
                 {post.category}
               </span>
               <div className="flex items-center gap-4 text-stone-400 text-[10px] font-bold uppercase tracking-widest">
@@ -206,7 +206,7 @@ export default function BlogPost() {
                       <Link 
                         to={`/blog?category=${cat.toLowerCase()}`} 
                         key={cat} 
-                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:text-brand-green transition-all"
+                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:text-[var(--brand-green)] transition-all"
                       >
                         {cat}
                         <ChevronRight className="w-3 h-3 text-stone-300" />
@@ -231,7 +231,7 @@ export default function BlogPost() {
               {/* Tags & Footer */}
               <div className="mt-16 pt-8 border-t border-stone-100 flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1.5 bg-stone-100 text-stone-500 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-green/10 hover:text-brand-green cursor-pointer transition-colors">
+                  <span key={tag} className="px-3 py-1.5 bg-stone-100 text-stone-500 text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors">
                     #{tag}
                   </span>
                 ))}
@@ -241,14 +241,14 @@ export default function BlogPost() {
 
               {/* Engagement Call to Action */}
               <div className="mt-24 p-10 bg-charcoal-dark text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-green/10 -mr-32 -mt-32 blur-3xl"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--brand-green)]/10 -mr-32 -mt-32 blur-3xl"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                   <div className="text-center md:text-left">
                     <h2 className="text-white tracking-tight mb-2">Build the Future Together</h2>
                     <p className="text-stone-400 mb-0">Join "The Base" movement and be a part of Ghana's industrial revolution.</p>
                   </div>
                   <Link to="/register">
-                    <Button className="bg-brand-green hover:bg-brand-green/90 text-white font-bold tracking-widest text-xs h-14 px-10 rounded-none uppercase">
+                    <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-widest text-xs h-14 px-10 rounded-none uppercase">
                       Register as a Member
                     </Button>
                   </Link>
@@ -273,10 +273,10 @@ export default function BlogPost() {
                       <article className="group cursor-pointer">
                         <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
                           <img src={related.image} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                          <div className="absolute top-0 left-0 w-full h-1 bg-brand-green scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                          <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                         </div>
-                        <span className="text-[9px] font-bold text-brand-green uppercase tracking-widest mb-0">{related.category}</span>
-                        <h5 className="text-stone-900 mt-2 group-hover:text-brand-green transition-colors leading-tight mb-0">
+                        <span className="text-[9px] font-bold text-[var(--brand-green)] uppercase tracking-widest mb-0">{related.category}</span>
+                        <h5 className="text-stone-900 mt-2 group-hover:text-[var(--brand-green)] transition-colors leading-tight mb-0">
                           {related.title}
                         </h5>
                       </article>

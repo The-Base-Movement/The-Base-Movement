@@ -254,7 +254,7 @@ export default function OurAgenda() {
                   <a 
                     key={pillar.id}
                     href={`#${pillar.id}`}
-                    className={`block py-2 text-sm transition-all ${activeSection === pillar.id ? 'sticky-nav-active' : 'text-slate-600 hover:text-brand-green border-l-3 border-transparent pl-4'}`}
+                    className={`block py-2 text-sm transition-all ${activeSection === pillar.id ? 'sticky-nav-active' : 'text-slate-600 hover:text-[var(--brand-green)] border-l-3 border-transparent pl-4'}`}
                   >
                     {pillar.number}. {pillar.title}
                   </a>
@@ -287,13 +287,13 @@ export default function OurAgenda() {
             {/* Intro Cards */}
             <div className="grid md:grid-cols-2 gap-8 mb-16">
               <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
-                <h3 className="text-brand-green uppercase tracking-tight mb-4">What is an Aim?</h3>
+                <h3 className="text-[var(--brand-green)] uppercase tracking-tight mb-4">What is an Aim?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm mb-0">
                   An Aim is a broad, long-term statement of intent. It describes the desired end state or the overall direction a movement or organisation wishes to pursue. Aims are visionary in nature. They answer the question: "What kind of Ghana are we trying to build?" They are not time-bound or immediately measurable, but they provide the moral compass and purpose that guides all action.
                 </p>
               </div>
               <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
-                <h3 className="text-brand-green uppercase tracking-tight mb-4">What is an Objective?</h3>
+                <h3 className="text-[var(--brand-green)] uppercase tracking-tight mb-4">What is an Objective?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm mb-0">
                   An Objective is a specific, actionable, and measurable step taken in pursuit of an Aim. Objectives answer the question: "Exactly what will we do and how?" They are concrete, time-oriented, and directly deliverable. Where an Aim sets the destination, an Objective maps the route. Every objective in this document is derived from one of THE BASE's six core Aims.
                 </p>
@@ -338,7 +338,7 @@ export default function OurAgenda() {
 
             {/* Covenant CTA */}
             <div className="bg-charcoal-dark text-white p-6 md:p-12 text-center mt-24">
-              <div className="w-16 h-16 bg-brand-green mx-auto mb-6 flex items-center justify-center">
+              <div className="w-16 h-16 bg-[var(--brand-green)] mx-auto mb-6 flex items-center justify-center">
                 <Landmark className="w-8 h-8 text-white" />
               </div>
               <h2 className="mb-6">Our Covenant with Ghana</h2>
@@ -348,11 +348,11 @@ export default function OurAgenda() {
                 <p className="text-warm-gold font-bold uppercase tracking-widest mt-4 mb-0">Ghana First. Always.</p>
               </div>
               {isLoggedIn ? (
-                <Link to="/dashboard/members" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-brand-green text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
+                <Link to="/dashboard/members" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-[var(--brand-green)] text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
                   View Members <ArrowRight className="w-5 h-5" />
                 </Link>
               ) : (
-                <Link to="/register" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-brand-green text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
+                <Link to="/register" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-[var(--brand-green)] text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
                   Join The Movement <ArrowRight className="w-5 h-5" />
                 </Link>
               )}

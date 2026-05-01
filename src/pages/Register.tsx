@@ -288,7 +288,7 @@ export default function Register() {
       <main className="bg-surface-warm font-body-md min-h-screen py-12 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-green/10 text-brand-green mb-6 animate-bounce">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--brand-green)]/10 text-[var(--brand-green)] mb-6 animate-bounce">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <h1 className="text-3xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">Registration Complete</h1>
@@ -322,7 +322,7 @@ export default function Register() {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                   <div>
                     <h4 className="font-meta font-bold text-xs text-charcoal-dark uppercase tracking-wider mb-1">Registration Number</h4>
-                    <p className="font-meta font-black text-xl text-brand-green tracking-tight">{regNumber}</p>
+                    <p className="font-meta font-black text-xl text-[var(--brand-green)] tracking-tight">{regNumber}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <button 
@@ -347,7 +347,7 @@ export default function Register() {
               <div className="bg-white border border-slate-200 p-8 shadow-sm">
                 <h4 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-widest mb-4">Membership Verification</h4>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-brand-green animate-pulse"></div>
+                  <div className="w-2 h-2 rounded-full bg-[var(--brand-green)] animate-pulse"></div>
                   <p className="text-xs font-bold text-charcoal-dark font-meta uppercase tracking-tight">Status: Active & Verified</p>
                 </div>
                 <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
@@ -355,7 +355,7 @@ export default function Register() {
                 </p>
               </div>
 
-              <div className="bg-brand-green text-white p-8 flex flex-col justify-between">
+              <div className="bg-[var(--brand-green)] text-white p-8 flex flex-col justify-between">
                 <div>
                   <h4 className="font-meta font-bold text-[10px] text-white/60 uppercase tracking-widest mb-4">Next Step</h4>
                   <p className="text-sm font-bold font-meta uppercase leading-tight mb-4">Access your leadership dashboard to join a chapter.</p>
@@ -389,16 +389,16 @@ export default function Register() {
                 setStep('form')
                 setFormStep(1)
               }}
-              className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-brand-green transition-colors text-left shadow-sm"
+              className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-[var(--brand-green)] transition-colors text-left shadow-sm"
             >
-              <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-brand-green/10 transition-colors">
-                <FileText className="w-8 h-8 text-brand-green" />
+              <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-[var(--brand-green)]/10 transition-colors">
+                <FileText className="w-8 h-8 text-[var(--brand-green)]" />
               </div>
               <div className="flex-1">
                 <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg mb-1">Local Membership (Ghana)</h3>
                 <p className="text-sm text-slate-500">For residents living and voting within the 16 regions of Ghana.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-brand-green transition-colors" />
+              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-[var(--brand-green)] transition-colors" />
             </button>
 
             <button
@@ -407,22 +407,22 @@ export default function Register() {
                 setStep('form')
                 setFormStep(1)
               }}
-              className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-brand-gold transition-colors text-left shadow-sm"
+              className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-[var(--brand-gold)] transition-colors text-left shadow-sm"
             >
-              <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-brand-gold/10 transition-colors">
-                <User className="w-8 h-8 text-brand-gold" />
+              <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-[var(--brand-gold)]/10 transition-colors">
+                <User className="w-8 h-8 text-[var(--brand-gold)]" />
               </div>
               <div className="flex-1">
                 <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg mb-1">Diaspora Membership</h3>
                 <p className="text-sm text-slate-500">For Ghanaians living abroad who wish to support the movement.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-brand-gold transition-colors" />
+              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-[var(--brand-gold)] transition-colors" />
             </button>
           </div>
 
           <div className="text-center mt-12 pt-8 border-t border-slate-200">
             <p className="text-sm text-slate-500 font-body-md">
-              Already a member? <Link to="/login" className="text-brand-green font-bold hover:underline">Sign in securely</Link>
+              Already a member? <Link to="/login" className="text-[var(--brand-green)] font-bold hover:underline">Sign in securely</Link>
             </p>
           </div>
         </div>
@@ -442,7 +442,7 @@ export default function Register() {
             
             <button
               onClick={() => setStep('choice')}
-              className="text-xs font-bold text-brand-green uppercase tracking-wider hover:underline flex items-center justify-center gap-1 mx-auto font-meta"
+              className="text-xs font-bold text-[var(--brand-green)] uppercase tracking-wider hover:underline flex items-center justify-center gap-1 mx-auto font-meta"
             >
               <ArrowLeft className="w-4 h-4" /> Registration Options
             </button>
@@ -451,7 +451,7 @@ export default function Register() {
           <div className="bg-white border border-slate-200 p-10 shadow-sm">
             <div className="border-2 border-dashed border-slate-300 bg-slate-50 p-12 text-center hover:bg-slate-100 transition-colors group cursor-pointer relative">
               <input type="file" accept=".jpg,.jpeg,.png,.pdf" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="form-upload" />
-              <ArrowDownToLine className="w-12 h-12 text-slate-400 mx-auto mb-4 group-hover:text-brand-green transition-colors" />
+              <ArrowDownToLine className="w-12 h-12 text-slate-400 mx-auto mb-4 group-hover:text-[var(--brand-green)] transition-colors" />
               <p className="text-base text-slate-700 font-bold mb-2 font-meta uppercase">Select File to Upload</p>
               <p className="text-sm text-slate-500 font-meta uppercase tracking-wider">JPG, PNG, or PDF (max 5MB)</p>
             </div>
@@ -504,9 +504,9 @@ export default function Register() {
               ].map((item) => (
                 <div 
                   key={item.step}
-                  className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-brand-green shadow-sm' : 'border-transparent text-slate-400 opacity-60'}`}
+                  className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-[var(--brand-green)] shadow-sm' : 'border-transparent text-slate-400 opacity-60'}`}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-brand-green text-white' : 'bg-slate-200 text-slate-500'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-[var(--brand-green)] text-white' : 'bg-slate-200 text-slate-500'}`}>
                     {formStep > item.step ? <CheckCircle2 className="w-5 h-5" /> : item.step}
                   </div>
                   <span className={`text-xs font-bold tracking-tight font-meta ${formStep === item.step ? 'text-charcoal-dark' : ''}`}>
@@ -554,11 +554,11 @@ export default function Register() {
                       Select Platform <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
-                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'GHANA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'GHANA' ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                         <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
                         Base Ghana
                       </label>
-                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'DIASPORA' ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'DIASPORA' ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                         <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
                         Base Diaspora
                       </label>
@@ -631,7 +631,7 @@ export default function Register() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-green"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[var(--brand-green)]"
                       >
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
@@ -655,7 +655,7 @@ export default function Register() {
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {ageRanges.map(range => (
-                          <label key={range} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.ageRange === range ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                          <label key={range} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.ageRange === range ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                             <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} className="hidden" />
                             {range}
                           </label>
@@ -669,7 +669,7 @@ export default function Register() {
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {['Male', 'Female'].map(g => (
-                          <label key={g} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.gender === g ? 'border-brand-green bg-brand-green/5 text-brand-green' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                          <label key={g} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.gender === g ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                             <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} className="hidden" />
                             {g}
                           </label>
@@ -854,14 +854,14 @@ export default function Register() {
                     </label>
                     
                     {!photoUrl ? (
-                      <div className="border-2 border-dashed border-slate-200 p-12 text-center bg-slate-50 relative group transition-colors hover:border-brand-green">
+                      <div className="border-2 border-dashed border-slate-200 p-12 text-center bg-slate-50 relative group transition-colors hover:border-[var(--brand-green)]">
                         <input
                           type="file"
                           accept="image/*"
                           onChange={handlePhotoUpload}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                         />
-                        <Upload className="w-12 h-12 text-slate-300 mx-auto mb-4 group-hover:text-brand-green transition-colors" />
+                        <Upload className="w-12 h-12 text-slate-300 mx-auto mb-4 group-hover:text-[var(--brand-green)] transition-colors" />
                         <p className="font-meta font-bold text-slate-500 uppercase tracking-widest text-[10px]">Click to upload passport photo</p>
                       </div>
                     ) : (
@@ -903,7 +903,7 @@ export default function Register() {
                   </div>
 
                   {/* Oath */}
-                  <div className="bg-charcoal-dark text-white p-8 mt-8 border-l-4 border-brand-green">
+                  <div className="bg-charcoal-dark text-white p-8 mt-8 border-l-4 border-[var(--brand-green)]">
                     <h5 className="text-warm-gold mb-3">The Base Declaration</h5>
                     <p className="text-slate-300 mb-6 leading-relaxed">
                       I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong>THE BASE</strong>: Patriotism, Honesty, and Discipline and pledge to advance the cause of <strong>GHANA FIRST</strong> in all my actions.
@@ -915,7 +915,7 @@ export default function Register() {
                         id="privacy"
                         checked={agreed}
                         onChange={(e) => setAgreed(e.target.checked)}
-                        className="mt-1 w-5 h-5 shrink-0 text-brand-green bg-charcoal-dark border-slate-500 rounded-none focus:ring-brand-green cursor-pointer"
+                        className="mt-1 w-5 h-5 shrink-0 text-[var(--brand-green)] bg-charcoal-dark border-slate-500 rounded-none focus:ring-brand-green cursor-pointer"
                       />
                       <label htmlFor="privacy" className="text-sm text-slate-300 cursor-pointer leading-tight font-medium">
                         I accept this declaration and agree to the <Link to="/privacy" className="text-warm-gold hover:underline font-bold">Privacy Policy</Link> <span className="text-[var(--brand-red)]">*</span>
@@ -942,7 +942,7 @@ export default function Register() {
                 <button
                   type="submit"
                   disabled={formStep === 4 && !agreed}
-                  className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all flex-1 shadow-md ${formStep === 4 && !agreed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-brand-green text-white hover:opacity-90 active:scale-[0.99]'}`}
+                  className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all flex-1 shadow-md ${formStep === 4 && !agreed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-[var(--brand-green)] text-white hover:opacity-90 active:scale-[0.99]'}`}
                 >
                   {formStep < 4 ? (
                     <>Next Step <ArrowRight className="w-5 h-5" /></>

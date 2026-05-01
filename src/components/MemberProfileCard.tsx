@@ -29,8 +29,8 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
       <Card className="relative border-none shadow-none bg-white rounded-none overflow-hidden h-full">
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-none bg-brand-green/5 border border-brand-green/10 flex items-center justify-center shrink-0 group-hover:bg-brand-green transition-colors duration-500">
-              <User className="w-7 h-7 text-brand-green group-hover:text-white transition-colors duration-500" />
+            <div className="w-14 h-14 rounded-none bg-[var(--brand-green)]/5 border border-[var(--brand-green)]/10 flex items-center justify-center shrink-0 group-hover:bg-[var(--brand-green)] transition-colors duration-500">
+              <User className="w-7 h-7 text-[var(--brand-green)] group-hover:text-white transition-colors duration-500" />
             </div>
             <div className="min-w-0">
               <h3 className="text-charcoal-dark truncate text-base font-bold uppercase tracking-tight">
@@ -42,7 +42,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
           
           <div className="mt-6 pt-6 border-t border-slate-50 space-y-3">
             <div className="flex items-center gap-2 text-slate-500">
-              <MapPin className="w-3 h-3 text-brand-green" />
+              <MapPin className="w-3 h-3 text-[var(--brand-green)]" />
               <span className="text-[10px] font-bold uppercase tracking-tight truncate">
                 {member.platform === 'GHANA' ? `${member.constituency}, ${member.region}` : member.country}
               </span>
@@ -54,7 +54,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
           </div>
 
           <div className="mt-6">
-            <button className="w-full py-2.5 bg-slate-50 group-hover:bg-brand-green group-hover:text-white text-[9px] font-bold tracking-[0.2em] rounded-none transition-all uppercase">
+            <button className="w-full py-2.5 bg-slate-50 group-hover:bg-[var(--brand-green)] group-hover:text-white text-[9px] font-bold tracking-[0.2em] rounded-none transition-all uppercase">
               View Profile
             </button>
           </div>

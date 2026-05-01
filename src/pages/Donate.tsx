@@ -93,7 +93,7 @@ export default function Donate() {
                 <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain" />
                 <div className="text-left text-stone-900">
                   <p className="font-meta font-bold text-sm uppercase tracking-tighter leading-none">Support the</p>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-green">Movement</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--brand-green)]">Movement</p>
                 </div>
               </div>
 
@@ -113,7 +113,7 @@ export default function Donate() {
                         >
                           {s.step}
                         </div>
-                        <span className={`text-[10px] font-meta font-semibold uppercase tracking-widest mt-2 text-center transition-colors ${activeStep === s.step ? 'text-brand-green font-bold' : 'text-stone-400'}`}>
+                        <span className={`text-[10px] font-meta font-semibold uppercase tracking-widest mt-2 text-center transition-colors ${activeStep === s.step ? 'text-[var(--brand-green)] font-bold' : 'text-stone-400'}`}>
                           {s.label}
                         </span>
                       </div>
@@ -129,13 +129,13 @@ export default function Donate() {
         {submitted ? (
           <div className="max-w-2xl mx-auto bg-white border border-slate-200 rounded-none shadow-sm p-12 text-center mt-12">
             <div className="w-20 h-20 bg-surface-warm flex items-center justify-center mx-auto mb-6 rounded-none">
-              <Check className="w-10 h-10 text-brand-green" />
+              <Check className="w-10 h-10 text-[var(--brand-green)]" />
             </div>
             <h2 className="text-2xl font-bold text-charcoal-dark mb-3 font-meta tracking-tight">Thank You!</h2>
             <p className="text-slate-600 mb-8 font-body-md leading-relaxed">
               Your donation has been recorded and will be verified shortly. Your support is what makes this movement possible.
             </p>
-            <Link to="/" className="inline-flex items-center justify-center px-8 py-4 bg-brand-green hover:opacity-90 transition-opacity text-white font-meta font-semibold tracking-wider rounded-none">
+            <Link to="/" className="inline-flex items-center justify-center px-8 py-4 bg-[var(--brand-green)] hover:opacity-90 transition-opacity text-white font-meta font-semibold tracking-wider rounded-none">
               Back to Home
             </Link>
           </div>
@@ -145,7 +145,7 @@ export default function Donate() {
               
               <div id="payment-section" className="bg-charcoal-dark text-white p-8 md:p-10 shadow-xl relative overflow-hidden flex flex-col scroll-mt-[180px]">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transform translate-x-4 -translate-y-4">
-                  <Phone className="w-32 h-32 text-brand-green" />
+                  <Phone className="w-32 h-32 text-[var(--brand-green)]" />
                 </div>
                 
                 <div className="flex items-center gap-4 mb-10">
@@ -156,7 +156,7 @@ export default function Donate() {
                 <div className="space-y-8 flex-1">
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Account Holder</p>
-                    <p className="font-bold text-brand-green text-2xl tracking-tight leading-none">Paul Kofi Agyekum</p>
+                    <p className="font-bold text-[var(--brand-green)] text-2xl tracking-tight leading-none">Paul Kofi Agyekum</p>
                   </div>
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">MoMo Number</p>
@@ -175,7 +175,7 @@ export default function Donate() {
                 </div>
 
                 <div className="mt-12 p-6 bg-white/5 border border-white/10 flex items-start gap-4 rounded-none">
-                  <div className="text-brand-green mt-0.5">
+                  <div className="text-[var(--brand-green)] mt-0.5">
                     <span className="material-symbols-outlined text-[20px]">info</span>
                   </div>
                   <p className="text-[11px] text-slate-400 leading-relaxed font-medium tracking-wider">
@@ -253,7 +253,7 @@ export default function Donate() {
 
                   <div className="bg-slate-50 border border-slate-200 p-6 rounded-none space-y-4">
                     <p className="text-[10px] font-bold font-meta uppercase tracking-widest text-slate-500">Member Tracking</p>
-                    <input id="membership" placeholder="ID Number (Optional)" className="w-full bg-white border border-slate-200 p-4 text-sm font-meta placeholder-slate-300 focus:outline-none focus:border-brand-green transition-all" />
+                    <input id="membership" placeholder="ID Number (Optional)" className="w-full bg-white border border-slate-200 p-4 text-sm font-meta placeholder-slate-300 focus:outline-none focus:border-[var(--brand-green)] transition-all" />
                   </div>
                 </form>
               </div>
@@ -270,7 +270,7 @@ export default function Donate() {
                 <div className="space-y-8 flex-1 flex flex-col">
                     <div className="bg-slate-50 border border-slate-100 p-6 rounded-none space-y-4">
                       <div className="flex items-center gap-3">
-                        <Activity className="w-5 h-5 text-brand-green" />
+                        <Activity className="w-5 h-5 text-[var(--brand-green)]" />
                         <h4 className="font-bold text-charcoal-dark font-meta tracking-tight text-sm">
                           {isLoggedIn ? 'Automatic Integration' : 'Member Integration'} <span className="text-stone-400 font-normal">(optional)</span>
                         </h4>
@@ -291,7 +291,7 @@ export default function Donate() {
                           value={formData.membershipNumber}
                           onChange={(e) => setFormData({ ...formData, membershipNumber: e.target.value })}
                           onFocus={() => setActiveStep(3)}
-                          className="w-full bg-white p-4 text-charcoal-dark text-sm border border-slate-200 focus:border-brand-green outline-none transition-all" 
+                          className="w-full bg-white p-4 text-charcoal-dark text-sm border border-slate-200 focus:border-[var(--brand-green)] outline-none transition-all" 
                         />
                       </div>
                       <label className="flex items-center gap-3 cursor-pointer group">
@@ -305,7 +305,7 @@ export default function Donate() {
                           />
                           <Check className="absolute h-3.5 w-3.5 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" />
                         </div>
-                        <span className="text-xs text-slate-600 font-meta font-semibold group-hover:text-brand-green transition-colors">Show my donation on my dashboard once verified</span>
+                        <span className="text-xs text-slate-600 font-meta font-semibold group-hover:text-[var(--brand-green)] transition-colors">Show my donation on my dashboard once verified</span>
                       </label>
                     </div>
                 </div>
@@ -319,7 +319,7 @@ export default function Donate() {
                 </div>
 
                 <div className="space-y-8 flex-1 flex flex-col">
-                    <div className="border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-none p-12 text-center hover:bg-slate-100 hover:border-brand-green transition-all group cursor-pointer relative flex-1 flex flex-col justify-center">
+                    <div className="border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-none p-12 text-center hover:bg-slate-100 hover:border-[var(--brand-green)] transition-all group cursor-pointer relative flex-1 flex flex-col justify-center">
                       <input 
                         type="file" 
                         form="donationForm" 
@@ -330,7 +330,7 @@ export default function Donate() {
                         required 
                       />
                       <div className="w-16 h-16 bg-white shadow-sm border border-slate-100 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 rounded-none">
-                        <ArrowDownToLine className="w-8 h-8 text-slate-400 group-hover:text-brand-green transition-colors" />
+                        <ArrowDownToLine className="w-8 h-8 text-slate-400 group-hover:text-[var(--brand-green)] transition-colors" />
                       </div>
                       <p className="text-sm text-slate-700 font-semibold mb-1 tracking-tight font-meta">Click or drag receipt</p>
                       <p className="text-[10px] text-slate-400 font-meta uppercase tracking-widest">JPG, PNG, or PDF</p>
@@ -338,18 +338,18 @@ export default function Donate() {
 
                     <div className="bg-surface-warm p-6 border border-slate-100 rounded-none">
                       <div className="flex items-center gap-3 mb-3">
-                        <Globe className="w-5 h-5 text-brand-green" />
+                        <Globe className="w-5 h-5 text-[var(--brand-green)]" />
                         <h4 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-xs">International option</h4>
                       </div>
                       <p className="text-sm text-slate-600 leading-relaxed font-body-md">
-                        Use code <span className="text-brand-green font-bold">THEBASEM</span> on TapTap Send for a bonus.
+                        Use code <span className="text-[var(--brand-green)] font-bold">THEBASEM</span> on TapTap Send for a bonus.
                       </p>
                     </div>
 
                     <button
                       type="submit"
                       form="donationForm"
-                      className="w-full bg-brand-green hover:opacity-95 text-white font-meta font-semibold tracking-widest py-6 transition-all active:scale-[0.98] flex items-center justify-center gap-4 shadow-xl shadow-brand-green/10 rounded-none"
+                      className="w-full bg-[var(--brand-green)] hover:opacity-95 text-white font-meta font-semibold tracking-widest py-6 transition-all active:scale-[0.98] flex items-center justify-center gap-4 shadow-xl shadow-brand-green/10 rounded-none"
                     >
                       <Heart className="w-6 h-6" /> Confirm Donation
                     </button>
@@ -363,7 +363,7 @@ export default function Donate() {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h2 className="text-2xl font-bold text-charcoal-dark tracking-tight font-meta flex items-center gap-3">
-                    <Activity className="w-6 h-6 text-brand-green" />
+                    <Activity className="w-6 h-6 text-[var(--brand-green)]" />
                     Contribution History
                   </h2>
                   <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-1">Track your personal impact on the movement</p>
@@ -373,9 +373,9 @@ export default function Donate() {
                     <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Total donated</p>
                     <p className="text-sm font-bold text-charcoal-dark uppercase tracking-tight">GHS 1,250</p>
                   </div>
-                  <div className="px-4 py-2 bg-brand-green/5 border border-brand-green/20 text-center rounded-none">
-                    <p className="text-[9px] font-semibold text-brand-green uppercase tracking-widest">Points earned</p>
-                    <p className="text-sm font-bold text-brand-green uppercase tracking-tight">125 XP</p>
+                  <div className="px-4 py-2 bg-[var(--brand-green)]/5 border border-[var(--brand-green)]/20 text-center rounded-none">
+                    <p className="text-[9px] font-semibold text-[var(--brand-green)] uppercase tracking-widest">Points earned</p>
+                    <p className="text-sm font-bold text-[var(--brand-green)] uppercase tracking-tight">125 XP</p>
                   </div>
                 </div>
               </div>
@@ -414,13 +414,13 @@ export default function Donate() {
                             </div>
                           </td>
                           <td className="p-5">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-brand-green/10 text-brand-green text-xs font-semibold uppercase tracking-widest rounded-none">
-                              <div className="w-1 h-1 bg-brand-green rounded-none"></div>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-xs font-semibold uppercase tracking-widest rounded-none">
+                              <div className="w-1 h-1 bg-[var(--brand-green)] rounded-none"></div>
                               {item.status}
                             </span>
                           </td>
                           <td className="p-5 text-right">
-                            <button className="p-2 text-slate-400 hover:text-brand-green hover:bg-white border border-transparent hover:border-slate-200 rounded-none transition-all">
+                            <button className="p-2 text-slate-400 hover:text-[var(--brand-green)] hover:bg-white border border-transparent hover:border-slate-200 rounded-none transition-all">
                               <ArrowDownToLine className="w-4 h-4" />
                             </button>
                           </td>
@@ -443,7 +443,7 @@ export default function Donate() {
                           <p className="text-sm font-bold text-charcoal-dark">{item.date}</p>
                           <p className="text-xs text-slate-400 font-meta uppercase tracking-widest">{item.id}</p>
                         </div>
-                        <span className="px-2.5 py-1 bg-brand-green/10 text-brand-green text-xs font-semibold uppercase tracking-widest">
+                        <span className="px-2.5 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-xs font-semibold uppercase tracking-widest">
                           {item.status}
                         </span>
                       </div>
@@ -468,7 +468,7 @@ export default function Donate() {
                     <p className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Recent Contributions</p>
                     <button 
                        onClick={() => setIsHistoryModalOpen(true)}
-                       className="text-sm font-bold text-brand-green uppercase tracking-widest hover:underline transition-all"
+                       className="text-sm font-bold text-[var(--brand-green)] uppercase tracking-widest hover:underline transition-all"
                      >
                        Full History
                      </button>
@@ -483,12 +483,12 @@ export default function Donate() {
                  <div className="relative w-full max-w-4xl bg-white border border-slate-200 shadow-2xl overflow-hidden rounded-none flex flex-col max-h-[85vh]">
                    <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
                      <div className="flex items-center gap-3">
-                       <Activity className="w-5 h-5 text-brand-green" />
+                       <Activity className="w-5 h-5 text-[var(--brand-green)]" />
                        <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg">Full Contribution History</h3>
                      </div>
                      <button 
                        onClick={() => setIsHistoryModalOpen(false)}
-                       className="p-2 text-slate-400 hover:text-brand-green hover:bg-slate-50 transition-all rounded-none"
+                       className="p-2 text-slate-400 hover:text-[var(--brand-green)] hover:bg-slate-50 transition-all rounded-none"
                      >
                        <X className="w-6 h-6" />
                      </button>
@@ -519,7 +519,7 @@ export default function Donate() {
                                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.method}</p>
                                </td>
                                <td className="p-5">
-                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-brand-green/10 text-brand-green text-[10px] font-bold uppercase tracking-[0.2em] rounded-none">
+                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-[10px] font-bold uppercase tracking-[0.2em] rounded-none">
                                    {item.status}
                                  </span>
                                </td>
@@ -556,7 +556,7 @@ export default function Donate() {
                            setIsHistoryModalOpen(false)
                            document.getElementById('payment-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                          }}
-                         className="px-8 py-3 bg-brand-green text-white font-meta font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all rounded-none flex items-center gap-2 shadow-lg shadow-brand-green/20"
+                         className="px-8 py-3 bg-[var(--brand-green)] text-white font-meta font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all rounded-none flex items-center gap-2 shadow-lg shadow-brand-green/20"
                        >
                          <Heart className="w-4 h-4" /> Contribute Now
                        </button>

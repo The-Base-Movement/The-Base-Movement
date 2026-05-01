@@ -186,7 +186,7 @@ export default function DashboardLayout() {
           <div className="px-6 pt-2">
             <button 
               onClick={() => setIsShareModalOpen(true)}
-              className="w-full py-3 bg-brand-green text-white font-meta text-xs font-bold tracking-widest rounded-none hover:brightness-110 active:scale-95 transition-all shadow-md shadow-brand-green/20"
+              className="w-full py-3 bg-[var(--brand-green)] text-white font-meta text-xs font-bold tracking-widest rounded-none hover:brightness-110 active:scale-95 transition-all shadow-md shadow-brand-green/20"
             >
               Invite & Share
             </button>
@@ -203,9 +203,9 @@ export default function DashboardLayout() {
             {/* Back to Landing Page */}
             <Link
               to="/"
-              className="mt-6 flex items-center gap-2 w-full py-2.5 px-3 rounded-none border border-stone-200 text-stone-500 hover:border-brand-green hover:text-brand-green transition-all text-xs font-meta font-bold tracking-widest group bg-white/50"
+              className="mt-6 flex items-center gap-2 w-full py-2.5 px-3 rounded-none border border-stone-200 text-stone-500 hover:border-[var(--brand-green)] hover:text-[var(--brand-green)] transition-all text-xs font-meta font-bold tracking-widest group bg-white/50"
             >
-              <span className="material-symbols-outlined text-[16px] group-hover:text-brand-green transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
+              <span className="material-symbols-outlined text-[16px] group-hover:text-[var(--brand-green)] transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
               Back to Site
             </Link>
           </div>
@@ -223,17 +223,17 @@ export default function DashboardLayout() {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden p-2 -ml-2 rounded-lg hover:bg-stone-100 text-stone-600"
+                className="md:hidden p-2 -ml-2 rounded-lg hover:bg-[var(--brand-light-gray)] text-stone-600"
               >
                 <span className="material-symbols-outlined text-[24px]">menu</span>
               </button>
               <div className="flex items-center gap-2">
                 <Link to="/dashboard" className="flex items-center gap-2">
                   <img src="/logo.png" alt="The Base" className="h-6 w-6" />
-                  <span className="text-brand-green font-black text-xs tracking-tighter sm:hidden">The Base</span>
+                  <span className="text-[var(--brand-green)] font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
                 <div className="hidden sm:flex items-center gap-2 text-[10px] text-stone-400 tracking-widest uppercase font-bold">
-                  <span className="text-brand-green">The Base</span>
+                  <span className="text-[var(--brand-green)]">The Base</span>
                   <span className="text-stone-300">/</span>
                   <span className="text-stone-900">{getPageTitle()}</span>
                 </div>
@@ -252,14 +252,14 @@ export default function DashboardLayout() {
                 <input
                   type="text"
                   placeholder="Search…"
-                  className="pl-9 pr-4 py-1.5 text-sm bg-stone-100 border border-stone-200 rounded-none text-stone-600 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-brand-green/50 transition-all w-48 focus:w-64"
+                  className="pl-9 pr-4 py-1.5 text-sm bg-stone-100 border border-stone-200 rounded-none text-stone-600 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-[var(--brand-green)]/50 transition-all w-48 focus:w-64"
                 />
               </div>
 
               {/* Notification Bell */}
-              <button className="relative p-2 rounded-full hover:bg-stone-100 transition-colors group">
+              <button className="relative p-2 rounded-full hover:bg-[var(--brand-light-gray)] transition-colors group">
                 <span
-                  className="material-symbols-outlined text-stone-500 group-hover:text-brand-green transition-colors text-[22px]"
+                  className="material-symbols-outlined text-stone-500 group-hover:text-[var(--brand-green)] transition-colors text-[22px]"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
                 >notifications</span>
                 {/* Unread badge */}
@@ -280,7 +280,7 @@ export default function DashboardLayout() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-brand-green flex items-center justify-center text-white text-xs font-bold font-meta tracking-wider">
+                    <div className="w-full h-full bg-[var(--brand-green)] flex items-center justify-center text-white text-xs font-bold font-meta tracking-wider">
                       {initials || 'M'}
                     </div>
                   )}
@@ -292,7 +292,7 @@ export default function DashboardLayout() {
                   </p>
                 </div>
                 <span
-                  className="material-symbols-outlined text-stone-400 text-[18px] group-hover:text-brand-green transition-colors"
+                  className="material-symbols-outlined text-stone-400 text-[18px] group-hover:text-[var(--brand-green)] transition-colors"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}
                 >expand_more</span>
               </button>

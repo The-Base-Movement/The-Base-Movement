@@ -104,7 +104,7 @@ export default function Navbar() {
           {isLoggedIn && (
             <Link 
               to="/dashboard" 
-              className={`transition-colors duration-200 font-bold ${isActive('/dashboard') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-brand-green hover:text-emerald-700'}`}
+              className={`transition-colors duration-200 font-bold ${isActive('/dashboard') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-[var(--brand-green)] hover:text-emerald-700'}`}
             >
               Dashboard
             </Link>
@@ -118,7 +118,7 @@ export default function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-2 focus:outline-none hover:opacity-80 transition-opacity"
               >
-                <img src={userAvatar} alt="Profile" className="w-10 h-10 rounded-full border-2 border-brand-green object-cover" />
+                <img src={userAvatar} alt="Profile" className="w-10 h-10 rounded-full border-2 border-[var(--brand-green)] object-cover" />
               </button>
 
               {isDropdownOpen && (
@@ -128,7 +128,7 @@ export default function Navbar() {
                     <p className="text-xs text-slate-500 mb-0 font-bold uppercase tracking-widest">Active</p>
                   </div>
                   <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal-dark hover:bg-slate-50 font-meta transition-colors">
-                    <User className="w-4 h-4 text-brand-green" /> Dashboard
+                    <User className="w-4 h-4 text-[var(--brand-green)]" /> Dashboard
                   </Link>
                   <Link to="/settings" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal-dark hover:bg-slate-50 font-meta transition-colors">
                     <Settings className="w-4 h-4 text-slate-400" /> Profile Settings
@@ -146,10 +146,10 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link to="/login" className="px-6 py-2 border border-brand-green text-brand-green text-sm font-bold uppercase tracking-widest hover:bg-surface-warm transition-all active:scale-95">
+              <Link to="/login" className="px-6 py-2 border border-[var(--brand-green)] text-[var(--brand-green)] text-sm font-bold uppercase tracking-widest hover:bg-surface-warm transition-all active:scale-95">
                 Login
               </Link>
-              <Link to="/register" className="px-6 py-2 bg-brand-green text-white text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-all active:scale-95">
+              <Link to="/register" className="px-6 py-2 bg-[var(--brand-green)] text-white text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-all active:scale-95">
                 Register
               </Link>
             </>
@@ -182,8 +182,8 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-center px-6 py-3 border border-brand-green text-brand-green font-meta transition-all active:scale-95">Login</Link>
-                <Link to="/register" className="text-center px-6 py-3 bg-brand-green text-white font-meta transition-all active:scale-95">Register</Link>
+                <Link to="/login" className="text-center px-6 py-3 border border-[var(--brand-green)] text-[var(--brand-green)] font-meta transition-all active:scale-95">Login</Link>
+                <Link to="/register" className="text-center px-6 py-3 bg-[var(--brand-green)] text-white font-meta transition-all active:scale-95">Register</Link>
               </>
             )}
           </div>

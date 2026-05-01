@@ -105,10 +105,10 @@ export default function Members() {
         </div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-brand-green/20 rounded-none flex items-center justify-center">
-              <Users className="w-6 h-6 text-brand-green" />
+            <div className="w-10 h-10 bg-[var(--brand-green)]/20 rounded-none flex items-center justify-center">
+              <Users className="w-6 h-6 text-[var(--brand-green)]" />
             </div>
-            <h1 className="text-white">Member <span className="text-brand-green">Directory</span></h1>
+            <h1 className="text-white">Member <span className="text-[var(--brand-green)]">Directory</span></h1>
           </div>
           <div className="flex h-1 w-24 mb-6">
             <div className="flex-1 bg-[var(--brand-red)]"></div>
@@ -138,8 +138,8 @@ export default function Members() {
                   className="w-full lg:w-auto"
                 >
                   <TabsList className="bg-slate-50 p-1 h-12 w-full lg:w-auto">
-                    <TabsTrigger value="GHANA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-widest data-[state=active]:bg-white data-[state=active]:text-brand-green data-[state=active]:shadow-sm rounded-none">Ghana</TabsTrigger>
-                    <TabsTrigger value="DIASPORA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-widest data-[state=active]:bg-white data-[state=active]:text-brand-green data-[state=active]:shadow-sm rounded-none">Diaspora</TabsTrigger>
+                    <TabsTrigger value="GHANA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-widest data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Ghana</TabsTrigger>
+                    <TabsTrigger value="DIASPORA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-widest data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Diaspora</TabsTrigger>
                   </TabsList>
                 </Tabs>
 
@@ -156,7 +156,7 @@ export default function Members() {
                 <div className="flex items-center gap-2 w-full lg:w-auto bg-slate-50 p-1 rounded-none">
                   <button 
                     onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                    className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest text-slate-500 hover:text-brand-green transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest text-slate-500 hover:text-[var(--brand-green)] transition-colors"
                   >
                     <ArrowUpDown className="w-3 h-3" />
                     Sort {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
@@ -260,7 +260,7 @@ export default function Members() {
                       setSelectedCountry('all');
                       setSelectedProfession('all');
                     }}
-                    className="mt-8 text-brand-green font-black text-[10px] uppercase tracking-widest hover:underline"
+                    className="mt-8 text-[var(--brand-green)] font-black text-[10px] uppercase tracking-widest hover:underline"
                   >
                     Reset All Filters
                   </button>
@@ -280,11 +280,11 @@ export default function Members() {
                 <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
               </div>
               <div className="relative z-10 flex flex-col items-center">
-                <div className="w-24 h-24 rounded-none bg-brand-green/10 border-4 border-brand-green/20 flex items-center justify-center mb-4 shadow-xl">
-                  <User className="w-12 h-12 text-brand-green" />
+                <div className="w-24 h-24 rounded-none bg-[var(--brand-green)]/10 border-4 border-[var(--brand-green)]/20 flex items-center justify-center mb-4 shadow-xl">
+                  <User className="w-12 h-12 text-[var(--brand-green)]" />
                 </div>
                 <DialogTitle className="text-white mb-1">{selectedMember?.name}</DialogTitle>
-                <span className="text-[10px] font-bold text-brand-green uppercase tracking-[0.2em]">{selectedMember?.profession}</span>
+                <span className="text-[10px] font-bold text-[var(--brand-green)] uppercase tracking-[0.2em]">{selectedMember?.profession}</span>
               </div>
               <div className="absolute bottom-0 left-0 w-full h-1 bg-warm-gold"></div>
             </div>
@@ -296,7 +296,7 @@ export default function Members() {
               <div className="space-y-1">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Platform</p>
                 <div className="flex items-center gap-2">
-                  <Globe className="w-3 h-3 text-brand-green" />
+                  <Globe className="w-3 h-3 text-[var(--brand-green)]" />
                   <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">{selectedMember?.platform}</p>
                 </div>
               </div>
@@ -313,7 +313,7 @@ export default function Members() {
               <div className="space-y-1">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Location</p>
                 <div className="flex items-center gap-2 bg-slate-50 p-3 rounded-none border border-slate-100">
-                  <MapPin className="w-4 h-4 text-brand-green" />
+                  <MapPin className="w-4 h-4 text-[var(--brand-green)]" />
                   <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">
                     {selectedMember?.platform === 'GHANA' 
                       ? `${selectedMember?.constituency}, ${selectedMember?.region} Region` 
@@ -331,7 +331,7 @@ export default function Members() {
             </div>
 
             <div className="pt-6 border-t border-slate-100 flex gap-4">
-              <button className="flex-1 py-4 bg-brand-green text-white text-[10px] font-bold tracking-widest rounded-none shadow-lg shadow-brand-green/20 hover:opacity-90 transition-all">
+              <button className="flex-1 py-4 bg-[var(--brand-green)] text-white text-[10px] font-bold tracking-widest rounded-none shadow-lg shadow-brand-green/20 hover:opacity-90 transition-all">
                 Send Message
               </button>
               <button 

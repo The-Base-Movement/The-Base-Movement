@@ -46,7 +46,7 @@ export function CommentSection() {
   return (
     <div className="mt-24 pt-12 border-t border-stone-100">
       <div className="flex items-center gap-3 mb-10">
-        <MessageSquare className="w-6 h-6 text-brand-green" />
+        <MessageSquare className="w-6 h-6 text-[var(--brand-green)]" />
         <h2 className="text-xl font-bold text-stone-900 tracking-tight mb-0">Community Discussion</h2>
         <span className="bg-stone-100 text-stone-500 text-[10px] font-bold px-2 py-0.5 uppercase tracking-widest">
           {comments.length} Comments
@@ -73,7 +73,7 @@ export function CommentSection() {
             <Button 
               type="submit"
               disabled={!newComment.trim()}
-              className="bg-brand-green hover:bg-brand-green/90 text-white font-bold tracking-widest text-[10px] h-10 px-8 rounded-none uppercase"
+              className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-widest text-[10px] h-10 px-8 rounded-none uppercase"
             >
               Post Comment <Send className="w-3 h-3 ml-2" />
             </Button>
@@ -85,8 +85,8 @@ export function CommentSection() {
       <div className="space-y-8">
         {comments.map((comment) => (
           <div key={comment.id} className="flex gap-4 group">
-            <div className="w-12 h-12 bg-brand-green/5 border border-brand-green/10 flex items-center justify-center shrink-0">
-              <User className="w-6 h-6 text-brand-green" />
+            <div className="w-12 h-12 bg-[var(--brand-green)]/5 border border-[var(--brand-green)]/10 flex items-center justify-center shrink-0">
+              <User className="w-6 h-6 text-[var(--brand-green)]" />
             </div>
             <div className="flex-1 space-y-2">
               <div className="flex items-center justify-between">
@@ -97,8 +97,8 @@ export function CommentSection() {
                 {comment.content}
               </p>
               <div className="flex gap-4 pt-2">
-                <button className="text-[9px] font-black text-stone-400 uppercase tracking-widest hover:text-brand-green transition-colors">Reply</button>
-                <button className="text-[9px] font-black text-stone-400 uppercase tracking-widest hover:text-brand-red transition-colors">Flag</button>
+                <button className="text-[9px] font-black text-stone-400 uppercase tracking-widest hover:text-[var(--brand-green)] transition-colors">Reply</button>
+                <button className="text-[9px] font-black text-stone-400 uppercase tracking-widest hover:text-[var(--brand-red)] transition-colors">Flag</button>
               </div>
             </div>
           </div>

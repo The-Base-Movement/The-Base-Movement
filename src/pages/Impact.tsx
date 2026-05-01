@@ -75,7 +75,7 @@ export default function Impact() {
               </div>
               <button 
                 onClick={() => setShowFullActivity(false)}
-                className="w-8 h-8 rounded-none bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-brand-green transition-colors"
+                className="w-8 h-8 rounded-none bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[var(--brand-green)] transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -84,7 +84,7 @@ export default function Impact() {
               {[...recentContributions.day, ...recentContributions.week, ...recentContributions.month].map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between p-4 border border-slate-50 rounded-none hover:bg-slate-50 transition-colors">
                   <div className="flex gap-4 items-center">
-                    <div className="w-10 h-10 rounded-none bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-xs">
+                    <div className="w-10 h-10 rounded-none bg-[var(--brand-green)]/10 flex items-center justify-center text-[var(--brand-green)] font-bold text-xs">
                       {item.name[0]}
                     </div>
                     <div>
@@ -93,7 +93,7 @@ export default function Impact() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-brand-green">{item.amount}</p>
+                    <p className="text-sm font-bold text-[var(--brand-green)]">{item.amount}</p>
                     <p className="text-[10px] font-semibold text-slate-300">Verified</p>
                   </div>
                 </div>
@@ -112,16 +112,16 @@ export default function Impact() {
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         </div>
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-green/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-[var(--brand-green)]/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-warm-gold/10 rounded-full blur-3xl"></div>
         
         <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-none mb-6">
-            <span className="w-2 h-2 bg-brand-green rounded-full animate-pulse"></span>
+            <span className="w-2 h-2 bg-[var(--brand-green)] rounded-full animate-pulse"></span>
             <span className="text-[10px] text-white/60 font-bold">Live Movement Metrics</span>
           </div>
           <h1 className="text-white tracking-tight mb-4">
-            Our Collective <span className="text-brand-green">Impact</span>
+            Our Collective <span className="text-[var(--brand-green)]">Impact</span>
           </h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
             <div className="flex-1 bg-[var(--brand-red)]"></div>
@@ -150,7 +150,7 @@ export default function Impact() {
                     >
                       <Icon className="w-6 h-6" style={{ color: stat.color }} />
                     </div>
-                    <span className="text-[10px] font-semibold text-brand-green bg-brand-green/10 px-2 py-1 rounded-none flex items-center gap-1">
+                    <span className="text-[10px] font-semibold text-[var(--brand-green)] bg-[var(--brand-green)]/10 px-2 py-1 rounded-none flex items-center gap-1">
                       {stat.trend} <ArrowUpRight className="w-3 h-3" />
                     </span>
                   </div>
@@ -169,19 +169,19 @@ export default function Impact() {
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                   <h2 className="text-charcoal-dark flex items-center gap-2 mb-0">
-                    <Activity className="w-5 h-5 text-brand-green" />
+                    <Activity className="w-5 h-5 text-[var(--brand-green)]" />
                     Campaign Progress
                   </h2>
                   <p className="text-xs font-bold text-slate-400 mt-1 mb-0 uppercase tracking-widest">Movement Operations Fund</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-charcoal-dark mb-0">GHS 128,450 <span className="text-slate-300">/ 500,000</span></p>
-                  <p className="text-[10px] font-bold text-brand-green mt-1 mb-0 uppercase tracking-widest">26% Towards Goal</p>
+                  <p className="text-[10px] font-bold text-[var(--brand-green)] mt-1 mb-0 uppercase tracking-widest">26% Towards Goal</p>
                 </div>
               </div>
 
               <div className="relative h-4 bg-slate-100 rounded-none overflow-hidden mb-12">
-                <div className="absolute top-0 left-0 h-full bg-brand-green w-[26%] shadow-[0_0_15px_rgba(0,107,60,0.4)] relative">
+                <div className="absolute top-0 left-0 h-full bg-[var(--brand-green)] w-[26%] shadow-[0_0_15px_rgba(0,107,60,0.4)] relative">
                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
                 </div>
               </div>
@@ -210,16 +210,16 @@ export default function Impact() {
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {regions.map(region => (
-                  <div key={region.name} className="p-4 border border-slate-100 rounded-none hover:border-brand-green/30 transition-all cursor-default">
+                  <div key={region.name} className="p-4 border border-slate-100 rounded-none hover:border-[var(--brand-green)]/30 transition-all cursor-default">
                     <p className="text-sm font-bold text-charcoal-dark uppercase">{region.name}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="flex-1 h-1 bg-slate-100 rounded-none overflow-hidden">
                         <div 
-                          className="h-full bg-brand-green transition-all duration-1000" 
+                          className="h-full bg-[var(--brand-green)] transition-all duration-1000" 
                           style={{ width: `${region.engagement}%` }}
                         ></div>
                       </div>
-                      <span className="text-sm font-bold text-brand-green uppercase">{region.engagement}%</span>
+                      <span className="text-sm font-bold text-[var(--brand-green)] uppercase">{region.engagement}%</span>
                     </div>
                   </div>
                 ))}
@@ -246,7 +246,7 @@ export default function Impact() {
                         setActiveFilter(t);
                         setShowDatePicker(false);
                       }}
-                      className={`flex-1 py-2 text-sm font-bold tracking-widest rounded-none transition-all uppercase ${activeFilter === t ? 'bg-white text-brand-green shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`flex-1 py-2 text-sm font-bold tracking-widest rounded-none transition-all uppercase ${activeFilter === t ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       {t}
                     </button>
@@ -254,10 +254,10 @@ export default function Impact() {
                   </div>
                   <button 
                     onClick={() => setShowDatePicker(!showDatePicker)}
-                    className={`flex items-center justify-center w-10 h-10 border rounded-none transition-all group shrink-0 ${showDatePicker || activeFilter === 'custom' ? 'bg-brand-green border-brand-green text-white shadow-lg shadow-brand-green/20' : 'border-slate-100 text-slate-500 hover:bg-slate-50 hover:border-slate-200'}`}
+                    className={`flex items-center justify-center w-10 h-10 border rounded-none transition-all group shrink-0 ${showDatePicker || activeFilter === 'custom' ? 'bg-[var(--brand-green)] border-[var(--brand-green)] text-white shadow-lg shadow-brand-green/20' : 'border-slate-100 text-slate-500 hover:bg-slate-50 hover:border-slate-200'}`}
                     title="Custom Range"
                   >
-                    <Calendar className={`w-4 h-4 ${showDatePicker || activeFilter === 'custom' ? 'text-white' : 'text-slate-400 group-hover:text-brand-green'}`} />
+                    <Calendar className={`w-4 h-4 ${showDatePicker || activeFilter === 'custom' ? 'text-white' : 'text-slate-400 group-hover:text-[var(--brand-green)]'}`} />
                   </button>
                 </div>
 
@@ -287,7 +287,7 @@ export default function Impact() {
                         setActiveFilter('custom');
                         setShowDatePicker(false);
                       }}
-                      className="w-full mt-4 py-2 bg-brand-green text-white text-[9px] font-semibold tracking-widest rounded-none hover:brightness-110 transition-all"
+                      className="w-full mt-4 py-2 bg-[var(--brand-green)] text-white text-[9px] font-semibold tracking-widest rounded-none hover:brightness-110 transition-all"
                     >
                       Apply Filter
                     </button>
@@ -301,20 +301,20 @@ export default function Impact() {
                     <Calendar className="w-8 h-8 text-slate-300 mx-auto mb-3" />
                     <p className="text-xs font-bold text-slate-400 leading-loose mb-0">
                       Showing results for:<br/>
-                      <span className="text-brand-green font-bold">{dateRange.start || '...'}</span> to <span className="text-brand-green font-bold">{dateRange.end || '...'}</span>
+                      <span className="text-[var(--brand-green)] font-bold">{dateRange.start || '...'}</span> to <span className="text-[var(--brand-green)] font-bold">{dateRange.end || '...'}</span>
                     </p>
                     <p className="text-[10px] font-bold text-slate-400 mt-4 mb-0 uppercase tracking-widest">No records found for this specific range.</p>
                   </div>
                 ) : (
                   recentContributions[activeFilter].map(item => (
                     <div key={item.id} className="flex gap-4 group">
-                      <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center text-brand-green font-semibold text-xs shrink-0 group-hover:bg-brand-green group-hover:text-white transition-colors">
+                      <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center text-[var(--brand-green)] font-semibold text-xs shrink-0 group-hover:bg-[var(--brand-green)] group-hover:text-white transition-colors">
                         {item.name[0]}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start">
                           <p className="text-sm font-bold text-charcoal-dark truncate">{item.name}</p>
-                          <span className="text-[11px] font-bold text-brand-green bg-brand-green/5 px-2 py-0.5 rounded-none">
+                          <span className="text-[11px] font-bold text-[var(--brand-green)] bg-[var(--brand-green)]/5 px-2 py-0.5 rounded-none">
                             {item.amount}
                           </span>
                         </div>
@@ -330,7 +330,7 @@ export default function Impact() {
                 onClick={() => setShowFullActivity(true)}
                 className="mt-auto pt-10 w-full group"
               >
-                <div className="py-4 bg-slate-50 text-slate-500 font-meta font-bold text-xs tracking-wide rounded-none border border-transparent group-hover:border-brand-green/20 group-hover:bg-brand-green/5 group-hover:text-brand-green transition-all flex items-center justify-center gap-2">
+                <div className="py-4 bg-slate-50 text-slate-500 font-meta font-bold text-xs tracking-wide rounded-none border border-transparent group-hover:border-[var(--brand-green)]/20 group-hover:bg-[var(--brand-green)]/5 group-hover:text-[var(--brand-green)] transition-all flex items-center justify-center gap-2">
                   View Full Activity Log
                   <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </div>

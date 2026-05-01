@@ -48,7 +48,7 @@ export default function Cart() {
       <div className="max-w-6xl mx-auto">
         <header className="mb-12">
           <h1 className="font-h1 text-2xl sm:text-h2 text-stone-900 mb-2 flex items-center gap-3">
-            <ShoppingBag className="w-8 h-8 text-brand-green shrink-0" />
+            <ShoppingBag className="w-8 h-8 text-[var(--brand-green)] shrink-0" />
             <span>Your Shopping Bag</span>
           </h1>
           <p className="text-muted-gray font-body-md">
@@ -70,11 +70,11 @@ export default function Cart() {
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-4">
                       <Link 
                         to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${item.id}` : `/store/product/${item.id}`}
-                        className="font-bold text-stone-900 text-sm sm:text-base leading-tight hover:text-brand-green transition-colors"
+                        className="font-bold text-stone-900 text-sm sm:text-base leading-tight hover:text-[var(--brand-green)] transition-colors"
                       >
                         {item.name}
                       </Link>
-                      <p className="font-bold text-brand-green text-sm sm:text-base whitespace-nowrap shrink-0">GHS {item.price.toFixed(2)}</p>
+                      <p className="font-bold text-[var(--brand-green)] text-sm sm:text-base whitespace-nowrap shrink-0">GHS {item.price.toFixed(2)}</p>
                     </div>
                     
                     <div className="flex flex-wrap gap-4 text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-4">
@@ -113,7 +113,7 @@ export default function Cart() {
 
               <Link 
                 to="/store"
-                className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors mt-4 group"
+                className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mt-4 group"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                 <span className="font-meta text-[10px] font-bold uppercase tracking-widest">Continue Shopping</span>
@@ -140,11 +140,11 @@ export default function Cart() {
                   </div>
                   <div className="pt-4 border-t border-stone-200 flex justify-between items-center">
                     <span className="font-h3 text-lg text-stone-900">Total</span>
-                    <span className="font-h3 text-xl text-brand-green">GHS {total.toFixed(2)}</span>
+                    <span className="font-h3 text-xl text-[var(--brand-green)]">GHS {total.toFixed(2)}</span>
                   </div>
                 </div>
 
-                <Button asChild className="w-full h-14 bg-brand-green hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20">
+                <Button asChild className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20">
                   <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/checkout' : '/store/checkout'}>
                     Proceed to Checkout
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -171,7 +171,7 @@ export default function Cart() {
             </div>
             <h2 className="font-h3 text-2xl text-stone-900 mb-2">Your bag is empty</h2>
             <p className="text-muted-gray font-body-md mb-8">Looks like you haven't added anything to your bag yet.</p>
-            <Button asChild className="bg-brand-green hover:bg-emerald-700 text-white px-8 h-12 text-xs font-bold uppercase tracking-widest rounded-sm">
+            <Button asChild className="bg-[var(--brand-green)] hover:opacity-90 text-white px-8 h-12 text-xs font-bold uppercase tracking-widest rounded-sm">
               <Link to="/store">Explore the Store</Link>
             </Button>
           </div>

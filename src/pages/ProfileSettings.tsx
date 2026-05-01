@@ -355,7 +355,7 @@ export default function ProfileSettings() {
                       <select
                         value={form.countryCode}
                         onChange={e => handleChange('countryCode', e.target.value)}
-                        className="w-24 border-b-2 border-slate-100 bg-transparent py-3 pr-8 text-xs text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all appearance-none cursor-pointer"
+                        className="w-24 border-b-2 border-slate-100 bg-transparent py-3 pr-8 text-xs text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                       >
                         {countryCodes.map(c => (
                           <option key={c.value} value={c.value}>{c.label}</option>
@@ -368,7 +368,7 @@ export default function ProfileSettings() {
                       value={form.phone}
                       onChange={e => handleChange('phone', e.target.value)}
                       placeholder="e.g. 24 123 4567"
-                      className="flex-1 border-b-2 border-slate-100 bg-transparent py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                      className="flex-1 border-b-2 border-slate-100 bg-transparent py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                     />
                   </div>
                 </div>
@@ -379,7 +379,7 @@ export default function ProfileSettings() {
                     <select
                       value={form.gender}
                       onChange={e => handleChange('gender', e.target.value)}
-                      className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all appearance-none cursor-pointer"
+                      className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                     >
                       <option value="Male / 18 - 25">Male / 18 - 25</option>
                       <option value="Male / 26 - 40">Male / 26 - 40</option>
@@ -423,7 +423,7 @@ export default function ProfileSettings() {
                             const newRegion = e.target.value
                             setForm(prev => ({ ...prev, region: newRegion, constituency: '' }))
                           }}
-                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all appearance-none cursor-pointer"
+                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                         >
                           <option value="">Select Region</option>
                           {ghanaRegions.map(reg => (
@@ -441,7 +441,7 @@ export default function ProfileSettings() {
                           value={form.constituency}
                           disabled={!form.region}
                           onChange={e => handleChange('constituency', e.target.value)}
-                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all appearance-none cursor-pointer disabled:opacity-50"
+                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer disabled:opacity-50"
                         >
                           <option value="">Select Constituency</option>
                           {form.region && regionConstituencies[form.region]?.map(con => (
@@ -467,7 +467,7 @@ export default function ProfileSettings() {
                             countryCode: countryData?.dial || prev.countryCode
                           }))
                         }}
-                        className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-brand-green transition-all appearance-none cursor-pointer"
+                        className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                       >
                         <option value="">Select Country</option>
                         {countries.map(c => (
@@ -486,7 +486,7 @@ export default function ProfileSettings() {
                     value={form.bio}
                     onChange={e => handleChange('bio', e.target.value)}
                     placeholder="A brief statement about your commitment to the Ghana First movement..."
-                    className="w-full border-2 border-slate-50 bg-slate-50/50 p-6 text-sm text-charcoal-dark font-medium focus:outline-none focus:border-brand-green transition-all resize-none leading-relaxed placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                    className="w-full border-2 border-slate-50 bg-slate-50/50 p-6 text-sm text-charcoal-dark font-medium focus:outline-none focus:border-[var(--brand-green)] transition-all resize-none leading-relaxed placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
               </div>
