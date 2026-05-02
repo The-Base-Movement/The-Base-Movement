@@ -85,6 +85,79 @@ export default function ChaptersManagement() {
         ))}
       </div>
 
+      {/* Regional Impact Intelligence Map */}
+      <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
+        <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
+              <Globe className="w-5 h-5 text-[var(--brand-red)]" />
+              Regional Movement Density
+            </CardTitle>
+            <CardDescription className="text-xs mt-1">Geospatial distribution of chapters and mobilization strength.</CardDescription>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-[var(--brand-green)]" />
+              <span className="text-[9px] font-black uppercase tracking-widest text-stone-500">High Strength</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-[var(--brand-gold)]" />
+              <span className="text-[9px] font-black uppercase tracking-widest text-stone-500">Moderate</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-[var(--brand-red)]" />
+              <span className="text-[9px] font-black uppercase tracking-widest text-stone-500">Emerging</span>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-10 flex flex-col md:flex-row gap-10 items-center justify-center bg-stone-50/30">
+          <div className="relative w-full max-w-[500px] aspect-[4/5] bg-stone-100/50 flex items-center justify-center border border-stone-200/50 group overflow-hidden">
+             {/* Abstract SVG Map of Ghana Regions */}
+             <svg viewBox="0 0 400 500" className="w-full h-full p-8 opacity-80 group-hover:opacity-100 transition-opacity duration-700">
+                {/* Northern Regions */}
+                <path d="M50,50 L350,50 L350,200 L50,200 Z" fill="var(--brand-red)" fillOpacity="0.15" stroke="var(--brand-red)" strokeWidth="2" className="hover:fill-opacity-40 transition-all cursor-pointer" />
+                {/* Middle Regions */}
+                <path d="M50,205 L350,205 L350,350 L50,350 Z" fill="var(--brand-gold)" fillOpacity="0.2" stroke="var(--brand-gold)" strokeWidth="2" className="hover:fill-opacity-50 transition-all cursor-pointer" />
+                {/* Southern / Coastal Regions */}
+                <path d="M50,355 L200,355 L200,480 L50,480 Z" fill="var(--brand-green)" fillOpacity="0.25" stroke="var(--brand-green)" strokeWidth="2" className="hover:fill-opacity-60 transition-all cursor-pointer" />
+                <path d="M205,355 L350,355 L350,480 L205,480 Z" fill="var(--brand-green)" fillOpacity="0.25" stroke="var(--brand-green)" strokeWidth="2" className="hover:fill-opacity-60 transition-all cursor-pointer" />
+                
+                {/* Markers */}
+                <circle cx="275" cy="420" r="8" fill="var(--brand-black)" className="animate-pulse" />
+                <circle cx="125" cy="420" r="8" fill="var(--brand-black)" />
+                <circle cx="200" cy="275" r="8" fill="var(--brand-black)" />
+                <circle cx="100" cy="125" r="8" fill="var(--brand-black)" />
+             </svg>
+             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-300 transform -rotate-45">National Geospatial Grid</span>
+             </div>
+          </div>
+          
+          <div className="flex-1 space-y-6 w-full">
+            <h4 className="text-xs font-black uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-2">Regional Performance Tier</h4>
+            <div className="space-y-4">
+              {regionalStats.map((stat) => (
+                <div key={stat.region} className="group cursor-pointer">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-[10px] font-black uppercase tracking-tight text-stone-600 group-hover:text-[var(--brand-black)] transition-colors">{stat.region}</span>
+                    <span className="text-[10px] font-bold text-stone-400 uppercase">{stat.performance} Impact</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-stone-100 overflow-hidden rounded-none">
+                    <div 
+                      className="h-full transition-all duration-1000" 
+                      style={{ 
+                        width: `${(stat.memberCount / 20000) * 100}%`,
+                        backgroundColor: stat.color 
+                      }} 
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Search and Filters */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">

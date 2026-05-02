@@ -60,6 +60,16 @@ export interface GrowthTrend {
   count: number
 }
 
+export interface ActivityLog {
+  id: number
+  type: 'registration' | 'chapter' | 'poll' | 'store' | 'security'
+  user: string
+  time: string
+  details: string
+  icon: string
+  color: string
+}
+
 export type AdminRole = 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER'
 
 export interface AdminPermission {
@@ -164,7 +174,7 @@ class AdminService {
   }
 
   // --- Activity Logs ---
-  async getActivityLogs(): Promise<any[]> {
+  async getActivityLogs(): Promise<ActivityLog[]> {
     return []
   }
 }
