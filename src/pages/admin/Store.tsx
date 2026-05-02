@@ -23,11 +23,11 @@ import { cn } from '@/lib/utils'
 
 // Mock Data for Products
 const productsData = [
-  { id: 'PROD-001', name: 'Movement Official Tee', category: 'Apparel', price: 'GHS 120', stock: 450, status: 'In Stock', image: '👕' },
-  { id: 'PROD-002', name: 'Premium Base Cap', category: 'Accessories', price: 'GHS 85', stock: 12, status: 'Low Stock', image: '🧢' },
-  { id: 'PROD-003', name: 'Agenda Manifest Booklet', category: 'Education', price: 'GHS 25', stock: 1200, status: 'In Stock', image: '📖' },
-  { id: 'PROD-004', name: 'Base Movement Wristband', category: 'Accessories', price: 'GHS 15', stock: 0, status: 'Out of Stock', image: '⌚' },
-  { id: 'PROD-005', name: 'Legacy Founder Hoodie', category: 'Apparel', price: 'GHS 250', stock: 85, status: 'In Stock', image: '🧥' },
+  { id: 'PROD-001', name: 'Movement Official Tee', category: 'Apparel', price: 'GHS 120', stock: 450, status: 'Stable', image: '👕', color: 'var(--brand-green)' },
+  { id: 'PROD-002', name: 'Premium Base Cap', category: 'Accessories', price: 'GHS 85', stock: 12, status: 'Low Stock', image: '🧢', color: 'var(--brand-gold)' },
+  { id: 'PROD-003', name: 'Agenda Manifest Booklet', category: 'Education', price: 'GHS 25', stock: 1200, status: 'Processing', image: '📖', color: 'var(--brand-black)' },
+  { id: 'PROD-004', name: 'Base Movement Wristband', category: 'Accessories', price: 'GHS 15', stock: 0, status: 'Critical', image: '⌚', color: 'var(--brand-red)' },
+  { id: 'PROD-005', name: 'Legacy Founder Hoodie', category: 'Apparel', price: 'GHS 250', stock: 85, status: 'Stable', image: '🧥', color: 'var(--brand-green)' },
 ]
 
 export default function AdminStore() {
@@ -74,11 +74,11 @@ export default function AdminStore() {
             <span className="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-tight">Across 24 Products</span>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm bg-red-50/30 border-red-100">
+        <Card className="rounded-none border-stone-200 shadow-sm bg-red-50/10 border-red-100">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Stock Alerts</p>
-            <h3 className="text-2xl font-black font-meta text-red-600">3</h3>
-            <span className="text-[9px] font-bold text-red-500 flex items-center gap-1 mt-1 uppercase tracking-tight">
+            <p className="text-[9px] font-black text-[var(--brand-red)] uppercase tracking-[0.2em]">Stock Alerts</p>
+            <h3 className="text-2xl font-black font-meta text-[var(--brand-red)]">3</h3>
+            <span className="text-[9px] font-black text-[var(--brand-red)]/60 flex items-center gap-1 mt-1 uppercase tracking-tight">
               <AlertTriangle className="w-3 h-3" /> Requires Attention
             </span>
           </CardContent>
@@ -135,23 +135,28 @@ export default function AdminStore() {
                     </td>
                     <td className="px-6 py-5 text-center">
                       <span className={cn(
-                        "text-xs font-bold",
-                        product.stock === 0 ? "text-red-500" : product.stock < 50 ? "text-amber-500" : "text-stone-600"
+                        "text-xs font-black",
+                        product.stock === 0 ? "text-[var(--brand-red)]" : product.stock < 50 ? "text-[var(--brand-gold)]" : "text-stone-900"
                       )}>
-                        {product.stock}
+                        {product.stock.toLocaleString()}
                       </span>
                     </td>
                     <td className="px-6 py-5">
-                      <span className={cn(
-                        "px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border",
-                        product.status === 'In Stock' 
-                          ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                          : product.status === 'Low Stock'
-                          ? "bg-amber-50 text-amber-600 border-amber-100"
-                          : "bg-red-50 text-red-600 border-red-100"
-                      )}>
-                        {product.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: product.color }} />
+                        <span className={cn(
+                          "px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border",
+                          product.status === 'Critical' 
+                            ? "bg-red-50 text-[var(--brand-red)] border-red-100" 
+                            : product.status === 'Low Stock'
+                            ? "bg-amber-50 text-[var(--brand-gold)] border-amber-100"
+                            : product.status === 'Processing'
+                            ? "bg-stone-50 text-[var(--brand-black)] border-stone-200"
+                            : "bg-emerald-50 text-[var(--brand-green)] border-emerald-100"
+                        )}>
+                          {product.status}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -183,7 +188,7 @@ export default function AdminStore() {
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                 <span className="text-stone-400">Shipped Orders</span>
                 <span className="text-[var(--brand-green)]">82%</span>
               </div>
@@ -192,21 +197,21 @@ export default function AdminStore() {
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                 <span className="text-stone-400">Processing</span>
-                <span className="text-amber-500">12%</span>
+                <span className="text-[var(--brand-gold)]">12%</span>
               </div>
               <div className="w-full h-1.5 bg-stone-100 overflow-hidden">
-                <div className="h-full bg-amber-500 w-[12%]" />
+                <div className="h-full bg-[var(--brand-gold)] w-[12%]" />
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                 <span className="text-stone-400">Returns / Issues</span>
-                <span className="text-red-500">6%</span>
+                <span className="text-[var(--brand-red)]">6%</span>
               </div>
               <div className="w-full h-1.5 bg-stone-100 overflow-hidden">
-                <div className="h-full bg-red-500 w-[6%]" />
+                <div className="h-full bg-[var(--brand-red)] w-[6%]" />
               </div>
             </div>
           </div>
