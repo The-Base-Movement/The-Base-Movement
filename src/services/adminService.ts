@@ -179,7 +179,7 @@ export interface AdminUser {
 
 // ── Data API Configuration ─────────────────────────────────────────────────
 const DATA_API_URL = 'https://ep-ancient-tooth-amjyc3yp.apirest.c-5.us-east-1.aws.neon.tech/neondb/rest/v1'
-const DATA_API_TOKEN = import.meta.env.VITE_NEON_DATA_API_TOKEN || 'napi_kt52rspew0ksatq0oyc05r0aipww7thnqi50aw46c7od92l15jcs7wz6u8haluit'
+const DATA_API_TOKEN = import.meta.env.VITE_NEON_DATA_API_TOKEN
 
 // ── State Store ─────────────────────────────────────────────────────────────
 const sessionAuditLogs: AuditLogEntry[] = []
