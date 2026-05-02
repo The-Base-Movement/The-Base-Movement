@@ -54,10 +54,11 @@ export default function ChaptersManagement() {
     if (editingChapterId) {
       updateChapter(editingChapterId, formData)
     } else {
+      const slug = formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')
       addChapter({
         ...formData,
         members: 0,
-        details_url: `https://thebasemovement.com/chapters/${Math.random().toString(36).substr(2, 9)}`
+        details_url: `https://thebasemovement.com/chapters/${slug}`
       })
     }
     closeModal()
