@@ -9,9 +9,9 @@ import {
   TrendingUp,
   Clock,
   ShieldCheck,
-  CheckCircle2,
-  LucideIcon
+  CheckCircle2
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { 
   Card, 
   CardContent, 
