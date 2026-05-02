@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { 
   LayoutDashboard, 
   Users, 
@@ -17,33 +17,12 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
-interface SidebarItemProps {
-  to: string
-  icon: React.ElementType
-  label: string
-  active?: boolean
-}
-
-const SidebarItem = ({ to, icon: Icon, label, active }: SidebarItemProps) => (
-  <Link
-    to={to}
-    className={cn(
-      "flex items-center gap-3 px-4 py-3 rounded-none transition-all font-meta font-bold uppercase tracking-widest text-[11px]",
-      active 
-        ? "bg-[var(--brand-black)] text-white" 
-        : "text-stone-500 hover:bg-stone-100 hover:text-[var(--brand-black)]"
-    )}
-  >
-    <Icon className="w-4 h-4" />
-    {label}
-  </Link>
-)
-
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+export default function AdminLayout({ children }: { children?: React.ReactNode }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const location = useLocation()
+  const navigate = useNavigate()
 
-  const navigation = [
+  const navItems = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
     { to: '/admin/members', icon: Users, label: 'Members' },
     { to: '/admin/chapters', icon: MapPin, label: 'Chapters' },
@@ -52,106 +31,117 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { to: '/admin/settings', icon: Settings, label: 'Settings' },
   ]
 
+  const handleLogout = () => {
+    // Basic logout logic
+    navigate('/admin-login')
+  }
+
   return (
-    <div className="min-h-screen bg-stone-50 flex font-inter">
-      {/* Sidebar Overlay for Mobile */}
-      {isSidebarOpen && (
+    <div className="min-h-screen bg-stone-50 font-inter text-stone-900 flex overflow-hidden">
+      {/* Mobile Sidebar Overlay */}
+      {!isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
-          onClick={() => setIsSidebarOpen(false)}
+          onClick={() => setIsSidebarOpen(true)}
         />
       )}
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-stone-200 transform transition-transform duration-300 lg:relative lg:translate-x-0",
-        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        "fixed inset-y-0 left-0 z-50 w-72 bg-[var(--brand-black)] border-r border-white/5 transition-transform duration-300 transform lg:relative lg:translate-x-0",
+        !isSidebarOpen && "-translate-x-full"
       )}>
         <div className="h-full flex flex-col">
           {/* Logo Section */}
-          <div className="p-6 border-b border-stone-100 bg-stone-50">
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 bg-[var(--brand-red)] flex items-center justify-center rounded-none shadow-lg shadow-brand-red/20">
-                <Shield className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-black font-meta tracking-tighter text-[var(--brand-black)] leading-none uppercase">THE BASE</span>
-                <span className="text-[9px] font-bold text-[var(--brand-red)] uppercase tracking-widest">Admin Office</span>
-              </div>
-            </Link>
+          <div className="p-8 border-b border-white/5 flex items-center gap-3">
+            <div className="w-10 h-10 bg-white flex items-center justify-center shadow-lg">
+              <img src="/logo.png" alt="The Base Logo" className="w-8 h-8 object-contain" />
+            </div>
+            <div>
+              <p className="text-white font-black font-meta text-lg leading-none tracking-tighter uppercase">The Base</p>
+              <p className="text-[var(--brand-red)] text-[8px] font-black uppercase tracking-[0.2em] mt-1 leading-none">Admin Office</p>
+            </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1">
-            {navigation.map((item) => (
-              <SidebarItem
-                key={item.to}
-                to={item.to}
-                icon={item.icon}
-                label={item.label}
-                active={location.pathname === item.to}
-              />
-            ))}
+          <nav className="flex-1 p-6 space-y-2 overflow-y-auto">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.to
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={cn(
+                    "flex items-center gap-4 px-4 py-4 text-[10px] font-black uppercase tracking-widest transition-all",
+                    isActive 
+                      ? "bg-[var(--brand-red)] text-white shadow-lg shadow-brand-red/20" 
+                      : "text-stone-400 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  <item.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-stone-500")} />
+                  {item.label}
+                </Link>
+              )
+            })}
           </nav>
 
-          {/* Footer Navigation */}
-          <div className="p-4 border-t border-stone-100">
-            <SidebarItem
-              to="/admin/login"
-              icon={LogOut}
-              label="Sign Out"
-            />
+          {/* Sidebar Footer */}
+          <div className="p-6 border-t border-white/5">
+            <button 
+              onClick={handleLogout}
+              className="w-full flex items-center gap-4 px-4 py-4 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-red)] transition-colors group"
+            >
+              <LogOut className="w-4 h-4 text-stone-500 group-hover:text-[var(--brand-red)]" />
+              Sign Out
+            </button>
           </div>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-stone-200 flex items-center justify-between px-4 lg:px-8 shrink-0">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-              onClick={() => setIsSidebarOpen(true)}
+        <header className="h-20 bg-white border-b border-stone-100 flex items-center justify-between px-8 shrink-0">
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="lg:hidden p-2 text-stone-400 hover:text-[var(--brand-black)]"
             >
-              <Menu className="w-5 h-5" />
-            </Button>
-            
-            <div className="hidden md:flex items-center gap-2 bg-stone-100 px-3 py-1.5 rounded-none border border-stone-200 w-64">
-              <Search className="w-4 h-4 text-stone-400" />
+              <Menu className="w-6 h-6" />
+            </button>
+            <div className="relative hidden md:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
               <input 
                 type="text" 
-                placeholder="Search anything..." 
-                className="bg-transparent border-none text-xs focus:ring-0 w-full placeholder:text-stone-400 font-medium"
+                placeholder="Quick search (⌘+K)" 
+                className="pl-10 pr-4 py-2 bg-stone-50 border border-stone-100 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--brand-red)] w-64 rounded-none"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="relative text-stone-500">
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-stone-400 hover:text-[var(--brand-black)] relative">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-[var(--brand-red)] rounded-full border-2 border-white" />
-            </Button>
-            <div className="h-8 w-[1px] bg-stone-200 mx-2 hidden sm:block" />
-            <div className="flex items-center gap-3 pl-2">
-              <div className="hidden sm:flex flex-col items-end">
-                <span className="text-xs font-bold text-[var(--brand-black)] leading-none">Super Admin</span>
-                <span className="text-[10px] text-stone-400 font-medium mt-1">Headquarters</span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-[var(--brand-red)] rounded-full border-2 border-white"></span>
+            </button>
+            <div className="h-8 w-px bg-stone-100 mx-2"></div>
+            <div className="flex items-center gap-3">
+              <div className="text-right hidden sm:block">
+                <p className="text-[10px] font-black uppercase tracking-tight leading-none">Super Admin</p>
+                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">HQ Tier 1</p>
               </div>
-              <div className="w-8 h-8 bg-stone-200 rounded-none border border-stone-300 flex items-center justify-center font-bold text-stone-500 text-xs">
+              <div className="w-10 h-10 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-xs shadow-md">
                 SA
               </div>
             </div>
           </div>
         </header>
 
-        {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+        {/* Content Area Scrollable */}
+        <div className="flex-1 overflow-y-auto p-8 lg:p-12">
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }
