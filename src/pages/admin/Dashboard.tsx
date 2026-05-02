@@ -20,7 +20,8 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
-import { adminService, GrowthTrend } from '@/services/adminService'
+import { adminService } from '@/services/adminService'
+import type { GrowthTrend } from '@/services/adminService'
 import { useState, useEffect } from 'react'
 import { 
   AreaChart, 

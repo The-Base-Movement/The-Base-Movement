@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
+import type { RegionalStat } from '@/services/adminService'
 import { useState, useEffect } from 'react'
 
 // Mock Data for Chapters with performance hierarchy
@@ -20,7 +21,7 @@ const chaptersData = [
   { id: 'CH-NOR-01', name: 'Tamale North', region: 'Northern', lead: 'Alhaji Ibrahim', members: 5400, impact: 'Low', status: 'Pending', color: 'var(--brand-red)' },
 ]
 export default function ChaptersManagement() {
-  const [regionalStats, setRegionalStats] = useState<any[]>([])
+  const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
 
   useEffect(() => {
     const fetchStats = async () => {
