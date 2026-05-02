@@ -20,8 +20,18 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
+interface PendingMember {
+  id: string
+  name: string
+  region: string
+  constituency: string
+  type: string
+  submitted: string
+  status: string
+}
+
 // Mock Data for Pending Verifications
-const pendingMembers = [
+const pendingMembers: PendingMember[] = [
   { id: 'REG-882', name: 'Emmanuel Tetteh', region: 'Greater Accra', constituency: 'Tema West', type: 'Premium', submitted: '2 hours ago', status: 'Pending' },
   { id: 'REG-881', name: 'Yaa Konadu', region: 'Ashanti', constituency: 'Oforikrom', type: 'Standard', submitted: '5 hours ago', status: 'In Review' },
   { id: 'REG-880', name: 'Ishmael Mensah', region: 'Western', constituency: 'Effia', type: 'Standard', submitted: '1 day ago', status: 'Pending' },
@@ -29,7 +39,7 @@ const pendingMembers = [
 ]
 
 export default function MemberVerification() {
-  const [selectedMember, setSelectedMember] = useState<any>(null)
+  const [selectedMember, setSelectedMember] = useState<PendingMember | null>(null)
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
