@@ -19,9 +19,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
   Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+  CardContent
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
