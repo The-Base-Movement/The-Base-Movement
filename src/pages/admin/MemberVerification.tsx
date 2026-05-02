@@ -126,16 +126,9 @@ export default function MemberVerification() {
   const [statusFilter, setStatusFilter] = useState<PendingMember['status'] | 'All'>('All')
   const [showPhotoFull, setShowPhotoFull] = useState(false)
 
-  const STATUS_CYCLE: (PendingMember['status'] | 'All')[] = [
+  const STATUS_OPTIONS: (PendingMember['status'] | 'All')[] = [
     'All', 'In Review', 'Processing', 'Flagged', 'Approved', 'Rejected'
   ]
-
-  const cycleFilter = () => {
-    setStatusFilter(prev => {
-      const idx = STATUS_CYCLE.indexOf(prev)
-      return STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length]
-    })
-  }
 
   const pendingCount = members.filter(m => m.status === 'In Review' || m.status === 'Processing').length
 
@@ -234,24 +227,18 @@ export default function MemberVerification() {
                   className="pl-9 h-9 text-xs rounded-none border-stone-200"
                 />
               </div>
-              <Button
-                variant="outline"
-                onClick={cycleFilter}
-                className={`h-9 px-4 text-[9px] font-black uppercase tracking-widest rounded-none transition-colors ${
-                  statusFilter === 'All'
-                    ? 'border-stone-200 text-stone-500'
-                    : statusFilter === 'Approved'
-                    ? 'border-emerald-400 text-emerald-600 bg-emerald-50'
-                    : statusFilter === 'Rejected'
-                    ? 'border-red-400 text-red-600 bg-red-50'
-                    : statusFilter === 'Flagged'
-                    ? 'border-red-300 text-red-500 bg-red-50'
-                    : 'border-amber-400 text-amber-600 bg-amber-50'
-                }`}
-              >
-                <Filter className="w-3.5 h-3.5 mr-2" />
-                {statusFilter === 'All' ? 'All Statuses' : statusFilter}
-              </Button>
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
+                <select
+                  value={statusFilter}
+                  onChange={e => setStatusFilter(e.target.value as PendingMember['status'] | 'All')}
+                  className="h-9 pl-9 pr-8 text-[9px] font-black uppercase tracking-widest rounded-none border border-stone-200 bg-white text-stone-700 focus:outline-none focus:border-[var(--brand-black)] appearance-none cursor-pointer transition-colors"
+                >
+                  {STATUS_OPTIONS.map(s => (
+                    <option key={s} value={s}>{s === 'All' ? 'All Statuses' : s}</option>
+                  ))}
+                </select>
+              </div>
             </CardHeader>
             <CardContent className="p-0">
               {filtered.length === 0 ? (
