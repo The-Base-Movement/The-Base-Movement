@@ -12,6 +12,8 @@ import {
   UserCheck,
   UserPlus,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -124,7 +126,10 @@ export default function MemberVerification() {
   const [showRegForm, setShowRegForm] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<PendingMember['status'] | 'All'>('All')
+  const [currentPage, setCurrentPage] = useState(1)
   const [showPhotoFull, setShowPhotoFull] = useState(false)
+
+  const PAGE_SIZE = 10
 
   const STATUS_OPTIONS: (PendingMember['status'] | 'All')[] = [
     'All', 'In Review', 'Processing', 'Flagged', 'Approved', 'Rejected'
@@ -179,6 +184,14 @@ export default function MemberVerification() {
       )
     )
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const safePage   = Math.min(currentPage, totalPages)
+  const paginated  = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+
+  // Reset to page 1 whenever the filter or search changes
+  const handleSearch = (val: string) => { setSearch(val); setCurrentPage(1) }
+  const handleFilter = (val: PendingMember['status'] | 'All') => { setStatusFilter(val); setCurrentPage(1) }
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
@@ -222,7 +235,7 @@ export default function MemberVerification() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
                 <Input
                   value={search}
-                  onChange={e => setSearch(e.target.value)}
+                  onChange={e => handleSearch(e.target.value)}
                   placeholder="Search by name, ID, region..."
                   className="pl-9 h-9 text-xs rounded-none border-stone-200"
                 />
@@ -231,7 +244,7 @@ export default function MemberVerification() {
                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
                 <select
                   value={statusFilter}
-                  onChange={e => setStatusFilter(e.target.value as PendingMember['status'] | 'All')}
+                  onChange={e => handleFilter(e.target.value as PendingMember['status'] | 'All')}
                   className="h-9 pl-9 pr-8 text-[9px] font-black uppercase tracking-widest rounded-none border border-stone-200 bg-white text-stone-700 focus:outline-none focus:border-[var(--brand-black)] appearance-none cursor-pointer transition-colors"
                 >
                   {STATUS_OPTIONS.map(s => (
@@ -247,7 +260,7 @@ export default function MemberVerification() {
                 </div>
               ) : (
                 <div className="divide-y divide-stone-50">
-                  {filtered.map((member) => (
+                  {paginated.map((member) => (
                     <div
                       key={member.id}
                       className={cn(
@@ -310,6 +323,46 @@ export default function MemberVerification() {
                 </div>
               )}
             </CardContent>
+
+            {/* Pagination bar */}
+            {totalPages > 1 && (
+              <div className="px-6 py-4 border-t border-stone-100 bg-stone-50/30 flex items-center justify-between">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-stone-400">
+                  Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
+                </p>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={safePage === 1}
+                    className="w-8 h-8 flex items-center justify-center border border-stone-200 text-stone-500 hover:bg-[var(--brand-black)] hover:text-white hover:border-[var(--brand-black)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-8 h-8 flex items-center justify-center border text-[9px] font-black transition-all ${
+                        page === safePage
+                          ? 'bg-[var(--brand-black)] text-white border-[var(--brand-black)]'
+                          : 'border-stone-200 text-stone-500 hover:bg-stone-100'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={safePage === totalPages}
+                    className="w-8 h-8 flex items-center justify-center border border-stone-200 text-stone-500 hover:bg-[var(--brand-black)] hover:text-white hover:border-[var(--brand-black)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
 
