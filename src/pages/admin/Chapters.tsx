@@ -1,13 +1,4 @@
-import { useState } from 'react'
-import { 
-  MapPin, 
-  Users, 
-  Plus, 
-  Search, 
-  ChevronRight, 
-  Shield,
-  Target
-} from 'lucide-react'
+import { MapPin, Users, Plus, Search, ChevronRight, Shield, Target } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
