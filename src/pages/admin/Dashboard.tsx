@@ -24,7 +24,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import type { GrowthTrend, SentimentStat } from '@/services/adminService'
+import type { GrowthTrend, SentimentStat, AuditLogEntry } from '@/services/adminService'
 import { useState, useEffect } from 'react'
 import { 
   AreaChart, 
@@ -73,15 +73,18 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
 export default function AdminDashboard() {
   const [growthData, setGrowthData] = useState<GrowthTrend[]>([])
   const [sentimentStats, setSentimentStats] = useState<SentimentStat[]>([])
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
-      const [growth, sentiment] = await Promise.all([
+      const [growth, sentiment, audit] = await Promise.all([
         adminService.getGrowthTrends(),
-        adminService.getSentimentAnalysis()
+        adminService.getSentimentAnalysis(),
+        adminService.getSystemAuditLogs()
       ])
       setGrowthData(growth)
       setSentimentStats(sentiment)
+      setAuditLogs(audit)
     }
     fetchData()
   }, [])
@@ -184,48 +187,70 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          {/* Live Operations Feed */}
+          {/* System Audit Intelligence Hub */}
           <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-[var(--brand-red)]" />
-                  Live Operations Feed
+                  <ShieldCheck className="w-5 h-5 text-[var(--brand-red)]" />
+                  System Audit Intelligence
                 </CardTitle>
-                <CardDescription className="text-xs mt-1">Real-time administrative and movement activity.</CardDescription>
+                <CardDescription className="text-xs mt-1">High-fidelity tracking of all administrative operations.</CardDescription>
               </div>
-              <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-stone-400">
-                Refresh Feed
-              </Button>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">Live Audit Feed</span>
+              </div>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="divide-y divide-stone-50">
-                {activityLogs.map((log) => (
-                  <div key={log.id} className="p-6 flex items-start gap-5 hover:bg-stone-50/50 transition-colors group">
-                    <div className={cn("w-10 h-10 shrink-0 flex items-center justify-center bg-stone-50", log.color.replace('text-', 'bg-').replace('500', '100'))}>
-                      <log.icon className={cn("w-5 h-5", log.color)} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-4">
-                        <p className="text-sm font-black text-[var(--brand-black)] uppercase tracking-tight truncate">{log.details}</p>
-                        <span className="text-[10px] font-bold text-stone-400 whitespace-nowrap flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {log.time}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Source:</span>
-                        <span className="text-[10px] font-black text-stone-600 uppercase tracking-tight">{log.user}</span>
-                      </div>
-                    </div>
-                    <Button variant="ghost" size="icon" className="text-stone-300 opacity-0 group-hover:opacity-100 transition-all">
-                      <ArrowUpRight className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-stone-50/50 border-b border-stone-100">
+                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Timestamp</th>
+                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Administrator</th>
+                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Action</th>
+                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Resource</th>
+                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-50">
+                    {auditLogs.map((log) => (
+                      <tr key={log.id} className="hover:bg-stone-50/50 transition-colors group">
+                        <td className="p-4">
+                          <p className="text-[10px] font-bold text-stone-400 whitespace-nowrap">
+                            {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                          </p>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-none bg-stone-100 flex items-center justify-center text-[8px] font-black">HQ</div>
+                            <span className="text-[10px] font-black text-stone-900 uppercase tracking-tight">{log.adminName}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-[10px] font-bold text-[var(--brand-black)] uppercase tracking-tight">{log.action}</span>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest">{log.resource}</span>
+                        </td>
+                        <td className="p-4">
+                          <span className={cn("px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border", 
+                            log.status === 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                            log.status === 'Warning' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
+                            'bg-rose-50 text-rose-600 border-rose-100'
+                          )}>
+                            {log.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
               <div className="p-6 border-t border-stone-50 bg-stone-50/20">
                 <Button variant="outline" className="w-full h-12 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-black)] hover:text-white transition-all">
-                  View Full System Audit Trail
+                  Access Full Movement Audit Vault
                 </Button>
               </div>
             </CardContent>
