@@ -1,4 +1,4 @@
-import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, UserPlus, Globe } from 'lucide-react'
+import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
@@ -11,18 +11,34 @@ import {
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import type { RegionalStat } from '@/services/adminService'
-import { useState, useEffect } from 'react'
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
+import { useState, useEffect, useMemo } from 'react'
+import { useChapters } from '@/context/ChaptersContext'
 
-// Mock Data for Chapters with performance hierarchy
-const chaptersData = [
-  { id: 'CH-ACC-01', name: 'Greater Accra Central', region: 'Greater Accra', lead: 'Dr. Samuel Kweku', members: 4500, impact: 'High', status: 'Active', color: 'var(--brand-green)' },
-  { id: 'CH-ASH-01', name: 'Kumasi Metropolitan', region: 'Ashanti', lead: 'Nana Ama Serwaa', members: 8200, impact: 'Very High', status: 'Active', color: 'var(--brand-green)' },
-  { id: 'CH-WES-01', name: 'Sekondi-Takoradi', region: 'Western', lead: 'Ekow Essien', members: 3100, impact: 'Medium', status: 'Active', color: 'var(--brand-gold)' },
-  { id: 'CH-CEN-01', name: 'Cape Coast South', region: 'Central', lead: 'Prof. John Mensah', members: 2800, impact: 'Medium', status: 'Active', color: 'var(--brand-gold)' },
-  { id: 'CH-NOR-01', name: 'Tamale North', region: 'Northern', lead: 'Alhaji Ibrahim', members: 5400, impact: 'Low', status: 'Pending', color: 'var(--brand-red)' },
-]
+// Removing local mock data as we are now using ChaptersContext
 export default function ChaptersManagement() {
+  const { chapters, addChapter, deleteChapter } = useChapters()
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending'>('All')
+  
+  // New Chapter Form State
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [newChapter, setNewChapter] = useState({
+    name: '',
+    city_or_region: '',
+    country: 'Ghana',
+    description: '',
+    status: 'Pending'
+  })
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -31,6 +47,41 @@ export default function ChaptersManagement() {
     }
     fetchStats()
   }, [])
+
+  const handleAddChapter = (e: React.FormEvent) => {
+    e.preventDefault()
+    addChapter({
+      ...newChapter,
+      members: 0,
+      details_url: `https://thebasemovement.com/chapters/${Math.random().toString(36).substr(2, 9)}`
+    })
+    setIsAddModalOpen(false)
+    setNewChapter({
+      name: '',
+      city_or_region: '',
+      country: 'Ghana',
+      description: '',
+      status: 'Pending'
+    })
+  }
+
+  const filteredChapters = useMemo(() => {
+    return chapters.filter(c => {
+      const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) || 
+                           c.city_or_region.toLowerCase().includes(search.toLowerCase()) ||
+                           c.country.toLowerCase().includes(search.toLowerCase())
+      
+      const normalizedStatus = c.status === 'Active' || c.status === 'Member' ? 'Active' : 'Pending'
+      const matchesStatus = statusFilter === 'All' || normalizedStatus === statusFilter
+      
+      return matchesSearch && matchesStatus
+    })
+  }, [chapters, search, statusFilter])
+
+  const totalMembers = useMemo(() => 
+    chapters.reduce((sum, c) => sum + (c.membersCount || 0), 0), 
+    [chapters]
+  )
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -41,7 +92,11 @@ export default function ChaptersManagement() {
           <p className="text-stone-500 text-sm mt-1">Coordinate regional cells and constituency headquarters.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="primary" className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
+          <Button 
+            variant="primary" 
+            onClick={() => setIsAddModalOpen(true)}
+            className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]"
+          >
             <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
           </Button>
         </div>
@@ -56,7 +111,18 @@ export default function ChaptersManagement() {
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Total Chapters</p>
-              <h3 className="text-2xl font-black font-meta">124</h3>
+              <h3 className="text-2xl font-black font-meta">{chapters.length}</h3>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-none border-stone-200 shadow-sm bg-white">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="w-12 h-12 bg-stone-100 flex items-center justify-center">
+              <Users className="w-6 h-6 text-[var(--brand-black)]" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Movement Size</p>
+              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{totalMembers.toLocaleString()}</h3>
             </div>
           </CardContent>
         </Card>
@@ -159,35 +225,42 @@ export default function ChaptersManagement() {
         </CardContent>
       </Card>
 
-      {/* Search and Filters */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
           <Input 
-            placeholder="Search chapters by region or lead..." 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search chapters by name, region or country..." 
             className="pl-10 h-11 rounded-none border-stone-200"
           />
         </div>
-        <Button variant="outline" className="h-11 rounded-none border-stone-200 px-8 text-[10px] font-bold uppercase tracking-widest">
-          Filter By Status
-        </Button>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
+          className="h-11 px-4 text-[10px] font-bold uppercase tracking-widest rounded-none border border-stone-200 bg-white focus:outline-none focus:border-[var(--brand-black)]"
+        >
+          <option value="All">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Pending">Pending</option>
+        </select>
       </div>
 
       {/* Chapters Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {chaptersData.map((chapter) => (
+        {filteredChapters.map((chapter) => (
           <Card key={chapter.id} className="rounded-none border-stone-200 shadow-sm hover:shadow-md transition-all group overflow-hidden">
             <CardHeader className="p-6 border-b border-stone-50 bg-stone-50/50">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <span className="text-[9px] font-black text-[var(--brand-red)] uppercase tracking-wider">{chapter.id}</span>
+                  <span className="text-[9px] font-black text-[var(--brand-red)] uppercase tracking-wider">{chapter.id.slice(0, 8).toUpperCase()}</span>
                   <CardTitle className="text-sm font-black text-[var(--brand-black)] uppercase tracking-tight leading-tight">
                     {chapter.name}
                   </CardTitle>
                 </div>
                 <div className={cn(
                   "px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border",
-                  chapter.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100"
+                  (chapter.status === 'Active' || chapter.status === 'Member') ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100"
                 )}>
                   {chapter.status}
                 </div>
@@ -197,15 +270,15 @@ export default function ChaptersManagement() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1 group/lead">
                   <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest flex items-center gap-1">
-                    <Crown className="w-2.5 h-2.5 text-[var(--brand-gold)]" /> Chapter Lead
+                    <Crown className="w-2.5 h-2.5 text-[var(--brand-gold)]" /> Regional Hub
                   </p>
-                  <p className="text-xs font-black text-stone-900 uppercase tracking-tight truncate">{chapter.lead}</p>
+                  <p className="text-xs font-black text-stone-900 uppercase tracking-tight truncate">{chapter.city_or_region}</p>
                 </div>
                 <div className="space-y-1 text-right">
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Growth</p>
+                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Strength</p>
                   <p className="text-xs font-black text-stone-900 flex items-center justify-end gap-1">
                     <Users className="w-3 h-3 text-[var(--brand-green)]" />
-                    {chapter.members.toLocaleString()}
+                    {(chapter.membersCount || 0).toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -214,20 +287,23 @@ export default function ChaptersManagement() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5 text-stone-400" />
-                    <span className="text-[10px] font-bold text-stone-500 uppercase tracking-tight">{chapter.region}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-gold)]" />
-                    <span className="text-[8px] font-black uppercase tracking-widest text-[var(--brand-gold)]">{chapter.impact} Impact</span>
+                    <span className="text-[10px] font-bold text-stone-500 uppercase tracking-tight">{chapter.country}</span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-2 mt-4">
-                  <Button variant="outline" className="h-9 px-0 text-[8px] font-black uppercase tracking-widest border-stone-100 hover:bg-stone-900 hover:text-white transition-all">
-                    <UserPlus className="w-3 h-3 mr-1.5" /> Manage Lead
+                  <Button 
+                    variant="outline" 
+                    className="h-9 px-0 text-[8px] font-black uppercase tracking-widest border-stone-100 hover:bg-stone-900 hover:text-white transition-all"
+                  >
+                    Manage Hub
                   </Button>
-                  <Button variant="ghost" className="h-9 px-0 text-[8px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-black)]">
-                    Audit Logs <ChevronRight className="w-3 h-3 ml-1" />
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => deleteChapter(chapter.id)}
+                    className="h-9 px-0 text-[8px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-red)] transition-colors"
+                  >
+                    Delete Chapter <ChevronRight className="w-3 h-3 ml-1" />
                   </Button>
                 </div>
               </div>
@@ -236,13 +312,106 @@ export default function ChaptersManagement() {
         ))}
 
         {/* Create New Chapter Placeholder */}
-        <button className="border-2 border-dashed border-stone-200 rounded-none p-8 flex flex-col items-center justify-center gap-4 text-stone-400 hover:border-[var(--brand-red)] hover:text-[var(--brand-red)] transition-all group">
+        <button 
+          onClick={() => setIsAddModalOpen(true)}
+          className="border-2 border-dashed border-stone-200 rounded-none p-8 flex flex-col items-center justify-center gap-4 text-stone-400 hover:border-[var(--brand-red)] hover:text-[var(--brand-red)] transition-all group"
+        >
           <div className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-[var(--brand-red)] group-hover:text-white transition-all">
             <Plus className="w-6 h-6" />
           </div>
           <span className="text-[10px] font-black uppercase tracking-widest">Establish New Chapter</span>
         </button>
       </div>
+
+      {/* Add Chapter Modal */}
+      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+        <DialogContent className="sm:max-w-[500px] border-none rounded-none p-0 overflow-hidden bg-white">
+          <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
+            <DialogTitle className="text-xl font-bold tracking-tight uppercase font-meta">Establish New Chapter</DialogTitle>
+            <DialogDescription className="text-stone-400 text-xs mt-2">
+              Register a new mobilization hub. This chapter will immediately be visible on the public platform once established.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleAddChapter} className="p-8 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Chapter Name</label>
+                <Input 
+                  required
+                  placeholder="e.g. Adabraka Hub"
+                  value={newChapter.name}
+                  onChange={(e) => setNewChapter({...newChapter, name: e.target.value})}
+                  className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">City / Region</label>
+                <Input 
+                  required
+                  placeholder="e.g. Accra"
+                  value={newChapter.city_or_region}
+                  onChange={(e) => setNewChapter({...newChapter, city_or_region: e.target.value})}
+                  className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Country</label>
+                <Input 
+                  required
+                  placeholder="e.g. Ghana"
+                  value={newChapter.country}
+                  onChange={(e) => setNewChapter({...newChapter, country: e.target.value})}
+                  className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Initial Status</label>
+                <select
+                  value={newChapter.status}
+                  onChange={(e) => setNewChapter({...newChapter, status: e.target.value})}
+                  className="w-full h-12 bg-stone-50 border border-stone-200 rounded-none focus:ring-brand-green px-4 text-sm font-medium"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Active">Active</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Mission Description</label>
+              <Textarea 
+                required
+                placeholder="Describe the chapter's focus area..."
+                value={newChapter.description}
+                onChange={(e) => setNewChapter({...newChapter, description: e.target.value})}
+                className="min-h-[100px] bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm p-4"
+              />
+            </div>
+
+            <DialogFooter className="pt-4">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setIsAddModalOpen(false)}
+                className="text-[10px] font-bold uppercase tracking-widest rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                className="bg-[var(--brand-black)] text-white hover:bg-stone-800 font-bold text-[10px] uppercase tracking-widest rounded-none px-8"
+              >
+                Create Chapter
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

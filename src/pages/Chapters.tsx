@@ -3,7 +3,7 @@ import { MapPin, Search, Plus, Filter, Building2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ChapterCard } from '@/components/ChapterCard'
-import { allChapters } from '@/data/chaptersData'
+import { useChapters } from '@/context/ChaptersContext'
 import {
   Dialog,
   DialogContent,
@@ -68,13 +68,14 @@ const countryFlags: Record<string, string> = {
   'United Arab Emirates': '🇦🇪'
 }
 
-const ghanaChapters = allChapters.filter(c => c.country === 'Ghana');
-const diasporaChapters = allChapters.filter(c => c.country !== 'Ghana');
-
 export default function Chapters() {
+  const { chapters } = useChapters()
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<'ghana' | 'diaspora'>('ghana')
   const [requestSent, setRequestSent] = useState<Record<string, boolean>>({})
+
+  const ghanaChapters = chapters.filter(c => c.country === 'Ghana')
+  const diasporaChapters = chapters.filter(c => c.country !== 'Ghana')
   
   // Request Modal State
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
@@ -123,7 +124,7 @@ export default function Chapters() {
                   Movement Chapters
                 </h1>
               <p className="text-stone-500 max-w-xl">
-                Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {allChapters.length}+ regional hubs.
+                Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {chapters.length}+ regional hubs.
               </p>
             </div>
             <div className="flex gap-3">
@@ -189,11 +190,11 @@ export default function Chapters() {
           <div className="relative z-10 grid md:grid-cols-3 gap-12 text-center md:text-left">
             <div>
               <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">Total Chapters</p>
-              <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{allChapters.length}</p>
+              <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{chapters.length}</p>
             </div>
             <div>
               <p className="text-warm-gold text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">Countries Represented</p>
-              <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{new Set(allChapters.map(c => c.country)).size}</p>
+              <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{new Set(chapters.map(c => c.country)).size}</p>
             </div>
             <div className="flex flex-col justify-center">
               <p className="text-slate-400 text-sm leading-relaxed mb-6 italic">
