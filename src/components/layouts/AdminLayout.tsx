@@ -47,6 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { to: '/admin/members', icon: Users, label: 'Members' },
     { to: '/admin/chapters', icon: MapPin, label: 'Chapters' },
     { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys' },
+    { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise' },
     { to: '/admin/settings', icon: Settings, label: 'Settings' },
   ]
 
