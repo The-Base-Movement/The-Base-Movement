@@ -149,6 +149,35 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* Advanced Filtering & Intelligence Hub */}
+      <div className="bg-white border border-stone-200 p-4 flex flex-wrap items-center gap-4">
+        <div className="flex-1 min-w-[240px] relative">
+          <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+          <input 
+            type="text" 
+            placeholder="Search regional telemetry..." 
+            className="w-full h-10 pl-10 pr-4 bg-stone-50 border-none text-[10px] font-bold uppercase tracking-tight placeholder:text-stone-400 focus:ring-1 focus:ring-[var(--brand-gold)] transition-all"
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <select className="h-10 px-4 bg-stone-50 border-none text-[10px] font-black uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-[var(--brand-gold)] cursor-pointer">
+            <option>All Regions</option>
+            <option>Greater Accra</option>
+            <option>Ashanti</option>
+            <option>Western</option>
+            <option>Central</option>
+          </select>
+          <select className="h-10 px-4 bg-stone-50 border-none text-[10px] font-black uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-[var(--brand-gold)] cursor-pointer">
+            <option>Last 7 Days</option>
+            <option>Last 30 Days</option>
+            <option>This Quarter</option>
+          </select>
+          <Button variant="ghost" className="h-10 px-4 text-[10px] font-black uppercase tracking-widest text-[var(--brand-red)] hover:bg-rose-50">
+            Reset Filters
+          </Button>
+        </div>
+      </div>
+
       {/* Primary Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <StatCard title="Total Membership" value="452,890" change="+12.4%" icon={Users} color="bg-[var(--brand-green)]" />
