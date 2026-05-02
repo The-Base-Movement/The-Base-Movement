@@ -30,8 +30,10 @@ export interface Chapter {
   country: string
   leader_name: string
   member_count: number
-  status: 'Active' | 'Pending' | 'Closed' | 'Member' | 'Join Chapter'
+  status: 'Active' | 'Pending' | 'Closed' | 'Member' | 'Join Chapter' | string
   image_url?: string
+  description?: string
+  details_url?: string
 }
 
 export interface Poll {
@@ -128,6 +130,8 @@ interface DBChapter {
   leader_name: string | null;
   member_count: number;
   status: Chapter['status'];
+  description: string | null;
+  details_url: string | null;
 }
 
 interface DBPoll {
@@ -392,7 +396,9 @@ class AdminService {
       country: c.country,
       leader_name: 'Unassigned',
       member_count: c.membersCount,
-      status: c.status as Chapter['status']
+      status: c.status as Chapter['status'],
+      description: c.description,
+      details_url: c.details_url
     }))
   }
 
@@ -426,7 +432,9 @@ class AdminService {
         country: c.country || 'Ghana',
         leader_name: c.leader_name || 'Unassigned',
         member_count: c.member_count || 0,
-        status: c.status
+        status: c.status,
+        description: c.description || undefined,
+        details_url: c.details_url || undefined
       }))
     } catch (error) {
       console.warn('[SYSTEM] Failed to fetch chapters from API, using fallback:', error)
@@ -448,7 +456,9 @@ class AdminService {
           country: chapter.country,
           leader_name: chapter.leader_name,
           member_count: chapter.member_count,
-          status: chapter.status
+          status: chapter.status,
+          description: chapter.description,
+          details_url: chapter.details_url
         })
       })
       await this.logAction('CHAPTER_CREATE', `CHAPTERS/${chapter.name}`, 'Success')
@@ -468,6 +478,8 @@ class AdminService {
       if (chapter.leader_name) updateData.leader_name = chapter.leader_name
       if (chapter.status) updateData.status = chapter.status
       if (chapter.member_count !== undefined) updateData.member_count = chapter.member_count
+      if (chapter.description) updateData.description = chapter.description
+      if (chapter.details_url) updateData.details_url = chapter.details_url
 
       await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
         method: 'PATCH',

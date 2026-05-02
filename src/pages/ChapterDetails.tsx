@@ -2,14 +2,18 @@ import { useParams, Link } from 'react-router-dom'
 import { MapPin, Users, Globe, ShieldCheck, Calendar, Share2, Mail, Phone, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { allChapters } from '@/data/chaptersData'
 import { useState } from 'react'
 import { ShareModal } from '@/components/ShareModal'
+import { useChapters } from '@/context/ChaptersContext'
+import { LoadingScreen } from '@/components/LoadingScreen'
 
 export default function ChapterDetails() {
   const { id } = useParams<{ id: string }>()
-  const chapter = allChapters.find(c => c.id === id)
+  const { chapters, isLoading } = useChapters()
+  const chapter = chapters.find(c => c.id === id)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+
+  if (isLoading) return <LoadingScreen />
 
   if (!chapter) {
     return (
@@ -54,7 +58,7 @@ export default function ChapterDetails() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-[var(--brand-green)]" />
-                  {chapter.membersCount} Active Members
+                  {chapter.member_count} Active Members
                 </div>
               </div>
             </div>
