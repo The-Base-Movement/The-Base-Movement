@@ -1,189 +1,184 @@
+import { useState } from 'react'
 import { 
   Users, 
   MapPin, 
-  Vote, 
-  TrendingUp, 
-  ArrowUpRight, 
+  BarChart3, 
+  ShoppingBag, 
+  AlertCircle,
+  Activity,
+  ArrowUpRight,
+  TrendingUp,
   Clock,
-  CheckCircle2,
-  AlertCircle
+  ChevronRight,
+  ShieldCheck,
+  CheckCircle2
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle,
+  CardDescription 
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
-
-const StatCard = ({ title, value, change, icon: Icon, color }: any) => (
-  <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden group">
-    <CardContent className="p-6">
-      <div className="flex justify-between items-start">
-        <div className="space-y-2">
-          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{title}</p>
-          <h3 className="text-3xl font-black font-meta text-[var(--brand-black)]">{value}</h3>
-          <div className="flex items-center gap-1 text-[10px] font-bold">
-            <span className="text-emerald-600 flex items-center">
-              <ArrowUpRight className="w-3 h-3 mr-0.5" />
-              {change}
-            </span>
-            <span className="text-stone-400 uppercase tracking-tight ml-1">vs last month</span>
-          </div>
-        </div>
-        <div className={cn(
-          "w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-110",
-          color
-        )}>
-          <Icon className="w-6 h-6" />
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-)
-
 import { cn } from '@/lib/utils'
 
+// High-Fidelity Stat Card Component
+function StatCard({ title, value, change, icon: Icon, color }: any) {
+  return (
+    <Card className="rounded-none border-stone-200 shadow-sm group hover:shadow-md transition-all overflow-hidden relative">
+      <div className={cn("absolute top-0 left-0 w-1 h-full", color)} />
+      <CardContent className="p-6">
+        <div className="flex justify-between items-start">
+          <div className="space-y-2">
+            <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">{title}</p>
+            <h3 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">{value}</h3>
+            <div className="flex items-center gap-1.5">
+              <span className="flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5">
+                <TrendingUp className="w-3 h-3" /> {change}
+              </span>
+              <span className="text-[9px] font-bold text-stone-400 uppercase tracking-tight">vs last week</span>
+            </div>
+          </div>
+          <div className={cn("w-12 h-12 flex items-center justify-center bg-stone-50 text-stone-400 group-hover:scale-110 transition-transform", color.replace('bg-', 'text-').replace('-600', '-500'))}>
+            <Icon className="w-6 h-6" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function AdminDashboard() {
-  const recentActivities = [
-    { id: 1, type: 'registration', member: 'Kwame Mensah', region: 'Greater Accra', time: '2 mins ago', status: 'Approved' },
-    { id: 2, type: 'chapter', title: 'New Chapter: Kumasi Central', region: 'Ashanti', time: '45 mins ago', status: 'Pending' },
-    { id: 3, type: 'poll', title: 'Economic Policy Feedback', count: '1,240 votes', time: '2 hours ago', status: 'Active' },
-    { id: 4, type: 'donation', amount: 'GHS 5,000', member: 'Abena Osei', time: '5 hours ago', status: 'Completed' },
+  const activityLogs = [
+    { id: 1, type: 'registration', user: 'Kwesi Appiah', time: '12 mins ago', details: 'New member verified in Western Region', icon: ShieldCheck, color: 'text-emerald-500' },
+    { id: 2, type: 'chapter', user: 'Ashanti HQ', time: '45 mins ago', details: 'Established new constituency cell in Bantama', icon: MapPin, color: 'text-[var(--brand-red)]' },
+    { id: 3, type: 'poll', user: 'National HQ', time: '1 hour ago', details: 'Poll "Economic Policy Feedback" reached 10k votes', icon: BarChart3, color: 'text-[var(--brand-gold)]' },
+    { id: 4, type: 'store', user: 'Logistics', time: '3 hours ago', details: 'Stock alert: Official Tee (Low Inventory)', icon: ShoppingBag, color: 'text-amber-500' },
+    { id: 5, type: 'security', user: 'System', time: '5 hours ago', details: 'Successful backup of member encrypted database', icon: CheckCircle2, color: 'text-blue-500' },
   ]
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Top Banner / Welcome */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">System Overview</h1>
-          <p className="text-stone-500 text-sm mt-1">Monitor the pulse of the movement in real-time.</p>
+          <h1 className="text-4xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter leading-none">Command Center</h1>
+          <p className="text-stone-500 text-sm mt-2 flex items-center gap-2">
+            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            Live movement operations monitoring active.
+          </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-10 text-[10px] uppercase font-bold tracking-widest">
-            Export Report
+          <Button variant="outline" className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest border-stone-200">
+            Export Intelligence
           </Button>
-          <Button variant="primary" className="h-10 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
-            Manual Registration
+          <Button variant="primary" className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
+            Platform Logs
           </Button>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          title="Total Members" 
-          value="45,280" 
-          change="+12.5%" 
-          icon={Users} 
-          color="bg-emerald-50 text-emerald-600"
-        />
-        <StatCard 
-          title="Active Chapters" 
-          value="124" 
-          change="+3.2%" 
-          icon={MapPin} 
-          color="bg-blue-50 text-blue-600"
-        />
-        <StatCard 
-          title="Poll Engagement" 
-          value="89.4%" 
-          change="+5.1%" 
-          icon={Vote} 
-          color="bg-amber-50 text-amber-600"
-        />
-        <StatCard 
-          title="Avg Impact" 
-          value="7.8/10" 
-          change="+0.4%" 
-          icon={TrendingUp} 
-          color="bg-purple-50 text-purple-600"
-        />
+      {/* Primary Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <StatCard title="Total Membership" value="452,890" change="+12.4%" icon={Users} color="bg-[var(--brand-green)]" />
+        <StatCard title="Regional Chapters" value="124" change="+4.2%" icon={MapPin} color="bg-[var(--brand-red)]" />
+        <StatCard title="Member Engagement" value="88.4%" change="+2.1%" icon={Activity} color="bg-[var(--brand-gold)]" />
+        <StatCard title="Merch Orders" value="1,245" change="+15.8%" icon={ShoppingBag} color="bg-stone-800" />
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Activity Table */}
-        <Card className="lg:col-span-2 rounded-none border-stone-200 shadow-sm">
-          <CardHeader className="border-b border-stone-100 bg-stone-50/50 p-6">
-            <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[var(--brand-red)]" />
-              Live Feed Activity
-            </CardTitle>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        {/* Live Activity Feed */}
+        <Card className="xl:col-span-2 rounded-none border-stone-200 shadow-sm overflow-hidden">
+          <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
+                <Activity className="w-5 h-5 text-[var(--brand-red)]" />
+                Live Operations Feed
+              </CardTitle>
+              <CardDescription className="text-xs mt-1">Real-time administrative and movement activity.</CardDescription>
+            </div>
+            <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-stone-400">
+              Refresh Feed
+            </Button>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-stone-100 bg-stone-50/30">
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Activity</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Details</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Time</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-100">
-                  {recentActivities.map((activity) => (
-                    <tr key={activity.id} className="hover:bg-stone-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className={cn(
-                            "w-2 h-2 rounded-full",
-                            activity.status === 'Approved' || activity.status === 'Completed' ? "bg-emerald-500" : "bg-amber-500"
-                          )} />
-                          <span className="text-xs font-bold text-stone-900">{activity.type === 'registration' ? 'Member Join' : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs text-stone-600 font-medium">{activity.member || activity.title}</span>
-                        <p className="text-[10px] text-stone-400 mt-0.5">{activity.region || activity.count}</p>
-                      </td>
-                      <td className="px-6 py-4 text-xs text-stone-500 font-medium">
-                        {activity.time}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <span className={cn(
-                          "px-2 py-1 text-[9px] font-black uppercase tracking-wider rounded-none border",
-                          activity.status === 'Approved' || activity.status === 'Completed' 
-                            ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                            : "bg-amber-50 text-amber-600 border-amber-100"
-                        )}>
-                          {activity.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="divide-y divide-stone-50">
+              {activityLogs.map((log) => (
+                <div key={log.id} className="p-6 flex items-start gap-5 hover:bg-stone-50/50 transition-colors group">
+                  <div className={cn("w-10 h-10 shrink-0 flex items-center justify-center bg-stone-50", log.color.replace('text-', 'bg-').replace('500', '100'))}>
+                    <log.icon className={cn("w-5 h-5", log.color)} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="text-sm font-black text-[var(--brand-black)] uppercase tracking-tight truncate">{log.details}</p>
+                      <span className="text-[10px] font-bold text-stone-400 whitespace-nowrap flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {log.time}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Source:</span>
+                      <span className="text-[10px] font-black text-stone-600 uppercase tracking-tight">{log.user}</span>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" className="text-stone-300 opacity-0 group-hover:opacity-100 transition-all">
+                    <ArrowUpRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <div className="p-6 border-t border-stone-50 bg-stone-50/20">
+              <Button variant="outline" className="w-full h-12 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-black)] hover:text-white transition-all">
+                View Full System Audit Trail
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* System Health / Quick Stats */}
-        <div className="space-y-6">
+        {/* Status / Quick Insights */}
+        <div className="space-y-8">
           <Card className="rounded-none border-stone-200 shadow-sm">
-            <CardHeader className="p-6">
-              <CardTitle className="text-xs font-black font-meta uppercase tracking-widest">Platform Integrity</CardTitle>
+            <CardHeader className="p-6 border-b border-stone-100">
+              <CardTitle className="text-xs font-black font-meta uppercase tracking-widest text-stone-400">System Status</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 pt-0 space-y-4">
-              <div className="flex items-center justify-between p-3 bg-stone-50 border border-stone-100">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span className="text-[11px] font-bold text-stone-700 uppercase tracking-tight">Database Sync</span>
-                </div>
-                <span className="text-[10px] font-bold text-emerald-600">Stable</span>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-600">Database Engine</span>
+                <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">Operational</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-stone-50 border border-stone-100">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="w-4 h-4 text-amber-500" />
-                  <span className="text-[11px] font-bold text-stone-700 uppercase tracking-tight">Pending Verifications</span>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-600">Member API</span>
+                <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">99.9% Uptime</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-600">Merch Storefront</span>
+                <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">Active</span>
+              </div>
+              <div className="pt-4 border-t border-stone-50">
+                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-2">Regional Traffic Heat</p>
+                <div className="h-2 w-full bg-stone-100 rounded-none overflow-hidden">
+                  <div className="h-full bg-[var(--brand-red)] w-3/4" />
                 </div>
-                <span className="text-[10px] font-bold text-amber-600">14 Active</span>
+                <div className="flex justify-between mt-1.5">
+                  <span className="text-[9px] font-bold text-stone-400 uppercase">G. Accra</span>
+                  <span className="text-[9px] font-bold text-[var(--brand-red)] uppercase">Peak</span>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Button 
-            className="w-full h-14 bg-[var(--brand-red)] hover:bg-[var(--brand-red)] hover:opacity-90 text-white font-black font-meta uppercase tracking-widest rounded-none shadow-xl shadow-brand-red/20"
-          >
-            Generate Regional Audit
-          </Button>
+          <Card className="rounded-none border-stone-900 bg-[var(--brand-black)] text-white p-8 relative overflow-hidden group">
+            <ShieldCheck className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5 group-hover:rotate-12 transition-transform duration-500" />
+            <div className="relative z-10 space-y-4">
+              <h4 className="text-lg font-black font-meta uppercase tracking-tighter">Security Protocol</h4>
+              <p className="text-xs text-stone-400 leading-relaxed">
+                Platform encryption is active. All administrative actions are recorded for the National HQ audit trail.
+              </p>
+              <Button variant="outline" className="h-10 text-[10px] uppercase font-bold tracking-widest border-white/20 text-white hover:bg-white/10">
+                Review Permissions
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     </div>
