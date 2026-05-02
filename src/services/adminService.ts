@@ -35,9 +35,54 @@ export interface Poll {
   endDate: string
 }
 
+export type AdminRole = 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER'
+
+export interface AdminPermission {
+  action: 'VERIFY_MEMBER' | 'MANAGE_CHAPTER' | 'MANAGE_POLLS' | 'MANAGE_INVENTORY' | 'VIEW_AUDIT_LOGS' | 'APPOINT_LEAD'
+  resource: 'MEMBERS' | 'CHAPTERS' | 'POLLS' | 'STORE' | 'SYSTEM'
+}
+
+export interface AdminUser {
+  id: string
+  name: string
+  role: AdminRole
+  region?: string
+  permissions: AdminPermission[]
+}
+
 class AdminService {
   private static instance: AdminService
-  private constructor() {}
+  private currentUser: AdminUser | null = null
+
+  private constructor() {
+    // Initial high-fidelity mock session for Phase 2
+    this.currentUser = {
+      id: 'USR-001',
+      name: 'National Admin HQ',
+      role: 'SUPER_ADMIN',
+      permissions: [
+        { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
+        { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
+        { action: 'MANAGE_POLLS', resource: 'POLLS' },
+        { action: 'MANAGE_INVENTORY', resource: 'STORE' },
+        { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+        { action: 'APPOINT_LEAD', resource: 'CHAPTERS' }
+      ]
+    }
+  }
+
+  public can(action: AdminPermission['action'], resource: AdminPermission['resource']): boolean {
+    if (!this.currentUser) return false
+    if (this.currentUser.role === 'SUPER_ADMIN') return true
+    
+    return this.currentUser.permissions.some(
+      p => p.action === action && p.resource === resource
+    )
+  }
+
+  public getCurrentUser(): AdminUser | null {
+    return this.currentUser
+  }
 
   public static getInstance(): AdminService {
     if (!AdminService.instance) {
