@@ -1,60 +1,44 @@
-# Admin Back Office Implementation Plan - "The Base" Movement
+# Admin Back-Office Implementation Roadmap
 
-This document outlines the architectural plan for scaffolding the Admin Back Office (Admin Dashboard) for the platform. The goal is to provide a robust, high-fidelity administrative interface to manage the platform's core entities.
+This document outlines the architectural plan and implementation status for "The Base" movement's administrative infrastructure.
 
-## 1. Core Objectives
-- **Centralized Management**: Unified interface for managing users, chapters, events, and content.
-- **Data Integrity**: Enforce strict CRUD operations with validation and audit logging.
-- **High-Fidelity UI**: Extend the established brand design system to the administrative experience.
-- **Role-Based Access Control (RBAC)**: Secure access for Super Admins, Regional Admins, and Chapter Leads.
+## Phase 1: Foundation & Scaffolding [COMPLETED]
+- [x] **Secure Administrative Layout**: Implementation of `AdminLayout` with responsive sidebar and high-fidelity branding.
+- [x] **Universal Branding Sync**: Integration of official `/logo.png` for 100% theme parity with the frontend.
+- [x] **Directory Reorganization**: Centralized all admin pages in `src/pages/admin/` for clean architecture.
+- [x] **Module Scaffolding**: 
+    - [x] `Dashboard`: Real-time impact and activity overview.
+    - [x] `Members`: High-fidelity directory with status tracking.
+    - [x] `Chapters`: Regional network and hierarchy management.
+    - [x] `Polls`: Engagement hub and campaign dashboard.
+    - [x] `Store`: Inventory tracking and fulfillment analytics.
+    - [x] `Settings`: RBAC (Role-Based Access Control) and system preferences.
 
-## 2. Information Architecture
-The admin office will be structured around several key modules:
+## Phase 2: Functional Depth & Integration [IN PROGRESS]
+- [ ] **RBAC Enforcement**: Finalize backend middleware for role verification and route protection.
+- [ ] **Live CRUD Operations**: Transition from mock data to real-time API persistence for all modules.
+- [ ] **Advanced Member Management**:
+    - [ ] Automated verification workflow for new registrations.
+    - [ ] Direct communication tools (Email/SMS integration).
+    - [ ] Member activity history and audit logs.
+- [ ] **Dynamic Chapter Control**:
+    - [ ] Chapter lead appointment and promotion system.
+    - [ ] Regional target setting and performance tracking.
+- [ ] **Merch & Inventory Logistics**:
+    - [ ] Automated stock alerts and reorder processing.
+    - [ ] Integrated shipment tracking and order status automation.
 
-### 2.1 Dashboard Overview
-- **Visual Analytics**: Real-time stats on membership growth, regional distribution, and recent activity.
-- **Quick Actions**: Shortcuts to common tasks like approving new members or creating a new chapter.
+## Phase 3: Analytics & Intelligence [PLANNED]
+- [ ] **Real-time Impact Monitoring**: Integration of Recharts for dynamic growth visualization.
+- [ ] **Sentiment Analysis**: Qualitative feedback processing from movement polls.
+- [ ] **Geospatial Visualization**: Interactive map showing movement density and chapter growth.
+- [ ] **System Health & Audit**: Advanced logging for all administrative actions.
 
-### 2.2 Member Management (CRUD)
-- **Member Directory**: Searchable, filterable list of all registered members.
-- **Profile Management**: Ability to view, edit, and manage member statuses (active, pending, suspended).
-- **ID Card Management**: Tools to manually regenerate or revoke membership cards.
-
-### 2.3 Chapter & Constituency Management
-- **Chapter Directory**: Overview of all active chapters with membership counts.
-- **Regional Hierarchy**: Management of regions, constituencies, and their assigned leadership.
-- **Impact Tracking**: Module to update regional impact stats and milestones.
-
-### 2.4 Content & Engagement Management
-- **Polls & Surveys**: Create, edit, and publish opinion polls; visualize real-time results.
-- **News & Blog**: CMS for the "Our Agenda" and blog sections.
-- **Merchandise Store**: Basic inventory and order management for the store.
-
-## 3. Technical Requirements
-- **Protected Routes**: Middleware to ensure only authenticated admins can access the `/admin/*` paths.
-- **API Integration**: RESTful endpoints for all CRUD operations, synchronized with the Postgres database.
-- **State Management**: Robust local and global state handling for complex forms and data tables.
-- **Design System Tokens**: Full utilization of `var(--brand-*)` variables for theme consistency.
-
-## 4. Implementation Roadmap
-
-### Phase 1: Authentication & Layout
-- [ ] Implement secure `/admin/login`.
-- [ ] Create `AdminLayout` with a responsive sidebar and unified header.
-- [ ] Set up private route guards.
-
-### Phase 2: Data Management (CRUD)
-- [ ] **Users**: Table view with search, filter, and edit modal.
-- [ ] **Chapters**: Regional management interface.
-- [ ] **Polls**: Form builder for creating new engagement campaigns.
-
-### Phase 3: Analytics & Reporting
-- [ ] Integrate charting library (e.g., Recharts) for membership growth visualization.
-- [ ] Exportable reports (CSV/PDF) for regional performance.
-
-### Phase 4: Security & Audit
-- [ ] Implement audit logs for sensitive admin actions.
-- [ ] Finalize RBAC permissions for different admin tiers.
+## Technical Requirements
+- **Design System**: 100% adherence to centralized brand tokens (CSS variables).
+- **Security**: JWT-based authentication with Tiered RBAC.
+- **Responsiveness**: Mobile-first administrative tools for field operations.
+- **Performance**: Optimistic UI updates for high-speed management workflows.
 
 ---
-*Created: May 1, 2026 | "The Base" Movement Platform*
+*Last Updated: 2024-05-02*
