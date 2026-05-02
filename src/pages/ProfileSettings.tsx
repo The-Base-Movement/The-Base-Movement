@@ -95,9 +95,7 @@ export default function ProfileSettings() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     () => localStorage.getItem('userAvatar')
   )
-  const [userName, setUserName] = useState(
-    () => localStorage.getItem('userName') || ''
-  )
+
   const [userPlatform] = useState(
     () => localStorage.getItem('userPlatform') || ''
   )
@@ -127,12 +125,14 @@ export default function ProfileSettings() {
     }
   })
 
-  const initials = userName
+  const initials = form.fullName
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
     .map(n => n[0].toUpperCase())
     .join('')
+
+  const previewRegNo = userRegNo || `TBM-${(!form.country || form.country === 'Ghana') ? 'GH' : 'DI'}-${new Date().getFullYear().toString().slice(-2)}XXXX`
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -155,7 +155,6 @@ export default function ProfileSettings() {
     e.preventDefault()
     if (form.fullName) {
       localStorage.setItem('userName', form.fullName)
-      setUserName(form.fullName)
       window.dispatchEvent(new Event('storage'))
     }
     setSaved(true)
@@ -180,7 +179,7 @@ export default function ProfileSettings() {
       })
       
       pdf.addImage(imgData, 'PNG', 0, 0, 85.6, 54)
-      pdf.save(`THE-BASE-CARD-${userRegNo || 'MEMBER'}.pdf`)
+      pdf.save(`THE-BASE-CARD-${previewRegNo || 'MEMBER'}.pdf`)
     } catch (error) {
       console.error('Error generating PDF:', error)
     }
@@ -282,7 +281,7 @@ export default function ProfileSettings() {
               <MembershipCard 
                 userName={form.fullName}
                 avatarUrl={avatarUrl}
-                userRegNo={userRegNo}
+                userRegNo={previewRegNo}
                 initials={initials}
                 gender={form.gender}
                 joinedDate={form.joinedDate}
