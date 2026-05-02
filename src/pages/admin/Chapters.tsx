@@ -1,11 +1,12 @@
-import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, UserPlus } from 'lucide-react'
+import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, UserPlus, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
   Card, 
   CardContent, 
   CardHeader, 
-  CardTitle 
+  CardTitle,
+  CardDescription
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
