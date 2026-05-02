@@ -123,7 +123,19 @@ export default function MemberVerification() {
   const [selectedMember, setSelectedMember] = useState<PendingMember | null>(null)
   const [showRegForm, setShowRegForm] = useState(false)
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<PendingMember['status'] | 'All'>('All')
   const [showPhotoFull, setShowPhotoFull] = useState(false)
+
+  const STATUS_CYCLE: (PendingMember['status'] | 'All')[] = [
+    'All', 'In Review', 'Processing', 'Flagged', 'Approved', 'Rejected'
+  ]
+
+  const cycleFilter = () => {
+    setStatusFilter(prev => {
+      const idx = STATUS_CYCLE.indexOf(prev)
+      return STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length]
+    })
+  }
 
   const pendingCount = members.filter(m => m.status === 'In Review' || m.status === 'Processing').length
 
@@ -164,11 +176,15 @@ export default function MemberVerification() {
     adminService.verifyMember(selectedMember.id, approve)
   }
 
-  const filtered = members.filter(m =>
-    m.name.toLowerCase().includes(search.toLowerCase()) ||
-    m.id.toLowerCase().includes(search.toLowerCase()) ||
-    m.region.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = members
+    .filter(m =>
+      (statusFilter === 'All' || m.status === statusFilter) &&
+      (
+        m.name.toLowerCase().includes(search.toLowerCase()) ||
+        m.id.toLowerCase().includes(search.toLowerCase()) ||
+        m.region.toLowerCase().includes(search.toLowerCase())
+      )
+    )
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -218,8 +234,23 @@ export default function MemberVerification() {
                   className="pl-9 h-9 text-xs rounded-none border-stone-200"
                 />
               </div>
-              <Button variant="outline" className="h-9 px-4 text-[9px] font-black uppercase tracking-widest rounded-none border-stone-200">
-                <Filter className="w-3.5 h-3.5 mr-2" /> Recent First
+              <Button
+                variant="outline"
+                onClick={cycleFilter}
+                className={`h-9 px-4 text-[9px] font-black uppercase tracking-widest rounded-none transition-colors ${
+                  statusFilter === 'All'
+                    ? 'border-stone-200 text-stone-500'
+                    : statusFilter === 'Approved'
+                    ? 'border-emerald-400 text-emerald-600 bg-emerald-50'
+                    : statusFilter === 'Rejected'
+                    ? 'border-red-400 text-red-600 bg-red-50'
+                    : statusFilter === 'Flagged'
+                    ? 'border-red-300 text-red-500 bg-red-50'
+                    : 'border-amber-400 text-amber-600 bg-amber-50'
+                }`}
+              >
+                <Filter className="w-3.5 h-3.5 mr-2" />
+                {statusFilter === 'All' ? 'All Statuses' : statusFilter}
               </Button>
             </CardHeader>
             <CardContent className="p-0">
