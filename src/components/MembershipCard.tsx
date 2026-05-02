@@ -77,52 +77,52 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         </div>
 
         {/* Member Details - Center-aligned with photo */}
-        <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0">
+        <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0 pr-8">
           <div>
-            <h5 className="text-[var(--brand-black)] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-tight truncate pr-16">{userName || 'Member Name'}</h5>
+            <h5 className="text-[var(--brand-black)] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-normal whitespace-nowrap overflow-visible pb-[2px]">{userName || 'Member Name'}</h5>
             <div className="h-0.5 w-6 sm:w-12 bg-brand-green mt-0.5"></div>
           </div>
 
           <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-charcoal-dark">
             <div className="flex items-center gap-2 sm:gap-4">
               <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Reg. No.</span>
-              <span className="text-[7px] sm:text-[10px] font-black text-brand-green uppercase tracking-wider truncate">{userRegNo || 'DI-XXXXXX'}</span>
+              <span className="text-[7px] sm:text-[10px] font-black text-brand-green uppercase tracking-wider whitespace-nowrap overflow-visible pb-[1px]">{userRegNo || 'DI-XXXXXX'}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Gender</span>
-              <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{gender || 'Not Specified'}</span>
+              <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{gender || 'Not Specified'}</span>
             </div>
             
             {(!country || country === 'Ghana') ? (
               <>
                 <div className="flex items-center gap-2 sm:gap-4">
                   <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Region</span>
-                  <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{region || 'Not Specified'}</span>
+                  <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{region || 'Not Specified'}</span>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
                   <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Const.</span>
-                  <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{constituency || 'Not Specified'}</span>
+                  <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{constituency || 'Not Specified'}</span>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-2 sm:gap-4">
                 <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Country</span>
-                <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{country || 'Not Specified'}</span>
+                <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{country || 'Not Specified'}</span>
               </div>
             )}
 
             <div className="flex items-center gap-2 sm:gap-4">
               <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Chapter</span>
-              <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{chapter || 'Not Specified'}</span>
+              <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{chapter || 'Not Specified'}</span>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
               <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Joined</span>
-              <span className="text-[7px] sm:text-[9px] font-bold uppercase truncate">{joinedDate || '30 Apr 2026'}</span>
+              <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{joinedDate || '30 Apr 2026'}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Status</span>
-              <span className="text-[7px] sm:text-[9px] font-black text-brand-green uppercase truncate">{status || 'Active'}</span>
+              <span className="text-[7px] sm:text-[9px] font-black text-brand-green uppercase whitespace-nowrap overflow-visible pb-[1px]">{status || 'Active'}</span>
             </div>
           </div>
         </div>
