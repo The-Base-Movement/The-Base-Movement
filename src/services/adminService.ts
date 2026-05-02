@@ -70,6 +70,17 @@ export interface ActivityLog {
   color: string
 }
 
+export interface AuditLogEntry {
+  id: string
+  timestamp: string
+  adminId: string
+  adminName: string
+  action: string
+  resource: string
+  status: 'Success' | 'Failure' | 'Warning'
+  ipAddress: string
+}
+
 export type AdminRole = 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER'
 
 export interface AdminPermission {
@@ -188,6 +199,15 @@ class AdminService {
       { topic: 'Economic Policy', score: 65, trend: 'Stable', sentiment: 'Neutral', color: 'var(--brand-gold)' },
       { topic: 'Youth Mobilization', score: 92, trend: 'Up', sentiment: 'Positive', color: 'var(--brand-green)' },
       { topic: 'Infrastructure Focus', score: 45, trend: 'Down', sentiment: 'Negative', color: 'var(--brand-red)' },
+    ]
+  }
+
+  // --- System Audit ---
+  async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
+    return [
+      { id: 'AUD-001', timestamp: '2026-05-02T08:30:00Z', adminId: 'USR-001', adminName: 'National Admin HQ', action: 'APPOINT_LEAD', resource: 'CHAPTERS/ASH-01', status: 'Success', ipAddress: '192.168.1.105' },
+      { id: 'AUD-002', timestamp: '2026-05-02T09:15:00Z', adminId: 'USR-002', adminName: 'Regional Lead Accra', action: 'VERIFY_MEMBER', resource: 'MEMBERS/ACC-450', status: 'Success', ipAddress: '192.168.1.110' },
+      { id: 'AUD-003', timestamp: '2026-05-02T10:45:00Z', adminId: 'USR-001', adminName: 'National Admin HQ', action: 'SECURITY_KEY_ROTATION', resource: 'SYSTEM/AUTH', status: 'Warning', ipAddress: '192.168.1.105' },
     ]
   }
 
