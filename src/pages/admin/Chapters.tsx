@@ -5,7 +5,6 @@ import {
   Plus, 
   Search, 
   ChevronRight, 
-  ExternalLink,
   Shield,
   Target
 } from 'lucide-react'
