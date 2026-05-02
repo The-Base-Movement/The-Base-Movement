@@ -4,12 +4,10 @@ import {
   MapPin, 
   BarChart3, 
   ShoppingBag, 
-  AlertCircle,
   Activity,
   ArrowUpRight,
   TrendingUp,
   Clock,
-  ChevronRight,
   ShieldCheck,
   CheckCircle2
 } from 'lucide-react'
