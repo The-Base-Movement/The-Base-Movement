@@ -1,4 +1,4 @@
-import { MapPin, Users, Plus, Search, ChevronRight, Shield, Target } from 'lucide-react'
+import { MapPin, Users, Plus, Search, ChevronRight, Shield, Target, Crown, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
@@ -105,28 +105,43 @@ export default function ChaptersManagement() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-6 space-y-5">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Chapter Lead</p>
-                  <p className="text-xs font-bold text-stone-900">{chapter.lead}</p>
+                <div className="space-y-1 group/lead">
+                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest flex items-center gap-1">
+                    <Crown className="w-2.5 h-2.5 text-[var(--brand-gold)]" /> Chapter Lead
+                  </p>
+                  <p className="text-xs font-black text-stone-900 uppercase tracking-tight truncate">{chapter.lead}</p>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Members</p>
-                  <p className="text-xs font-bold text-stone-900 flex items-center gap-1">
+                <div className="space-y-1 text-right">
+                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Growth</p>
+                  <p className="text-xs font-black text-stone-900 flex items-center justify-end gap-1">
                     <Users className="w-3 h-3 text-[var(--brand-green)]" />
                     {chapter.members.toLocaleString()}
                   </p>
                 </div>
               </div>
-              <div className="pt-4 border-t border-stone-50 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-stone-400" />
-                  <span className="text-[10px] font-bold text-stone-500 uppercase tracking-tight">{chapter.region}</span>
+
+              <div className="space-y-3 pt-2 border-t border-stone-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-3.5 h-3.5 text-stone-400" />
+                    <span className="text-[10px] font-bold text-stone-500 uppercase tracking-tight">{chapter.region}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-gold)]" />
+                    <span className="text-[8px] font-black uppercase tracking-widest text-[var(--brand-gold)]">{chapter.impact} Impact</span>
+                  </div>
                 </div>
-                <Button variant="ghost" className="h-8 px-2 text-[9px] font-black uppercase tracking-widest text-stone-400 group-hover:text-[var(--brand-black)]">
-                  Details <ChevronRight className="w-3 h-3 ml-1" />
-                </Button>
+                
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  <Button variant="outline" className="h-9 px-0 text-[8px] font-black uppercase tracking-widest border-stone-100 hover:bg-stone-900 hover:text-white transition-all">
+                    <UserPlus className="w-3 h-3 mr-1.5" /> Manage Lead
+                  </Button>
+                  <Button variant="ghost" className="h-9 px-0 text-[8px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-black)]">
+                    Audit Logs <ChevronRight className="w-3 h-3 ml-1" />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
