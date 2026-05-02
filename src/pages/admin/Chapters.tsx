@@ -21,18 +21,19 @@ import {
 } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { useState, useEffect, useMemo } from 'react'
-import { useChapters } from '@/context/ChaptersContext'
+import { useChapters, type Chapter } from '@/context/ChaptersContext'
 
 // Removing local mock data as we are now using ChaptersContext
 export default function ChaptersManagement() {
-  const { chapters, addChapter, deleteChapter } = useChapters()
+  const { chapters, addChapter, updateChapter, deleteChapter } = useChapters()
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending'>('All')
   
-  // New Chapter Form State
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [newChapter, setNewChapter] = useState({
+  // Chapter Form State
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingChapterId, setEditingChapterId] = useState<string | null>(null)
+  const [formData, setFormData] = useState({
     name: '',
     city_or_region: '',
     country: 'Ghana',
@@ -48,21 +49,47 @@ export default function ChaptersManagement() {
     fetchStats()
   }, [])
 
-  const handleAddChapter = (e: React.FormEvent) => {
+  const handleSaveChapter = (e: React.FormEvent) => {
     e.preventDefault()
-    addChapter({
-      ...newChapter,
-      members: 0,
-      details_url: `https://thebasemovement.com/chapters/${Math.random().toString(36).substr(2, 9)}`
-    })
-    setIsAddModalOpen(false)
-    setNewChapter({
+    if (editingChapterId) {
+      updateChapter(editingChapterId, formData)
+    } else {
+      addChapter({
+        ...formData,
+        members: 0,
+        details_url: `https://thebasemovement.com/chapters/${Math.random().toString(36).substr(2, 9)}`
+      })
+    }
+    closeModal()
+  }
+
+  const openAddModal = () => {
+    setEditingChapterId(null)
+    setFormData({
       name: '',
       city_or_region: '',
       country: 'Ghana',
       description: '',
       status: 'Pending'
     })
+    setIsModalOpen(true)
+  }
+
+  const openEditModal = (chapter: Chapter) => {
+    setEditingChapterId(chapter.id)
+    setFormData({
+      name: chapter.name,
+      city_or_region: chapter.city_or_region,
+      country: chapter.country,
+      description: chapter.description,
+      status: chapter.status === 'Member' ? 'Active' : chapter.status
+    })
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setEditingChapterId(null)
   }
 
   const filteredChapters = useMemo(() => {
@@ -94,7 +121,7 @@ export default function ChaptersManagement() {
         <div className="flex items-center gap-3">
           <Button 
             variant="primary" 
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={openAddModal}
             className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]"
           >
             <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
@@ -237,7 +264,7 @@ export default function ChaptersManagement() {
         </div>
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
+          onChange={(e) => setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending')}
           className="h-11 px-4 text-[10px] font-bold uppercase tracking-widest rounded-none border border-stone-200 bg-white focus:outline-none focus:border-[var(--brand-black)]"
         >
           <option value="All">All Statuses</option>
@@ -294,6 +321,7 @@ export default function ChaptersManagement() {
                 <div className="grid grid-cols-2 gap-2 mt-4">
                   <Button 
                     variant="outline" 
+                    onClick={() => openEditModal(chapter)}
                     className="h-9 px-0 text-[8px] font-black uppercase tracking-widest border-stone-100 hover:bg-stone-900 hover:text-white transition-all"
                   >
                     Manage Hub
@@ -313,7 +341,7 @@ export default function ChaptersManagement() {
 
         {/* Create New Chapter Placeholder */}
         <button 
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={openAddModal}
           className="border-2 border-dashed border-stone-200 rounded-none p-8 flex flex-col items-center justify-center gap-4 text-stone-400 hover:border-[var(--brand-red)] hover:text-[var(--brand-red)] transition-all group"
         >
           <div className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-[var(--brand-red)] group-hover:text-white transition-all">
@@ -323,26 +351,30 @@ export default function ChaptersManagement() {
         </button>
       </div>
 
-      {/* Add Chapter Modal */}
-      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+      {/* Chapter Editor Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[500px] border-none rounded-none p-0 overflow-hidden bg-white">
           <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
-            <DialogTitle className="text-xl font-bold tracking-tight uppercase font-meta">Establish New Chapter</DialogTitle>
+            <DialogTitle className="text-xl font-bold tracking-tight uppercase font-meta">
+              {editingChapterId ? 'Configure Regional Hub' : 'Establish New Chapter'}
+            </DialogTitle>
             <DialogDescription className="text-stone-400 text-xs mt-2">
-              Register a new mobilization hub. This chapter will immediately be visible on the public platform once established.
+              {editingChapterId 
+                ? 'Update infrastructure settings and mobilization status for this regional cell.' 
+                : 'Register a new mobilization hub. This chapter will immediately be visible on the public platform once established.'}
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleAddChapter} className="p-8 space-y-6">
+          <form onSubmit={handleSaveChapter} className="p-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Chapter Name</label>
                 <Input 
                   required
                   placeholder="e.g. Adabraka Hub"
-                  value={newChapter.name}
-                  onChange={(e) => setNewChapter({...newChapter, name: e.target.value})}
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
                   className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
                 />
               </div>
@@ -351,8 +383,8 @@ export default function ChaptersManagement() {
                 <Input 
                   required
                   placeholder="e.g. Accra"
-                  value={newChapter.city_or_region}
-                  onChange={(e) => setNewChapter({...newChapter, city_or_region: e.target.value})}
+                  value={formData.city_or_region}
+                  onChange={(e) => setFormData({...formData, city_or_region: e.target.value})}
                   className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
                 />
               </div>
@@ -364,16 +396,16 @@ export default function ChaptersManagement() {
                 <Input 
                   required
                   placeholder="e.g. Ghana"
-                  value={newChapter.country}
-                  onChange={(e) => setNewChapter({...newChapter, country: e.target.value})}
+                  value={formData.country}
+                  onChange={(e) => setFormData({...formData, country: e.target.value})}
                   className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Initial Status</label>
+                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Hub Status</label>
                 <select
-                  value={newChapter.status}
-                  onChange={(e) => setNewChapter({...newChapter, status: e.target.value})}
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value})}
                   className="w-full h-12 bg-stone-50 border border-stone-200 rounded-none focus:ring-brand-green px-4 text-sm font-medium"
                 >
                   <option value="Pending">Pending</option>
@@ -387,8 +419,8 @@ export default function ChaptersManagement() {
               <Textarea 
                 required
                 placeholder="Describe the chapter's focus area..."
-                value={newChapter.description}
-                onChange={(e) => setNewChapter({...newChapter, description: e.target.value})}
+                value={formData.description}
+                onChange={(e) => setFormData({...formData, description: e.target.value})}
                 className="min-h-[100px] bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm p-4"
               />
             </div>
@@ -397,7 +429,7 @@ export default function ChaptersManagement() {
               <Button 
                 type="button" 
                 variant="outline" 
-                onClick={() => setIsAddModalOpen(false)}
+                onClick={closeModal}
                 className="text-[10px] font-bold uppercase tracking-widest rounded-none"
               >
                 Cancel
@@ -406,7 +438,7 @@ export default function ChaptersManagement() {
                 type="submit" 
                 className="bg-[var(--brand-black)] text-white hover:bg-stone-800 font-bold text-[10px] uppercase tracking-widest rounded-none px-8"
               >
-                Create Chapter
+                {editingChapterId ? 'Update Hub' : 'Create Chapter'}
               </Button>
             </DialogFooter>
           </form>
