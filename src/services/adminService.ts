@@ -117,9 +117,25 @@ class AdminService {
     return []
   }
 
-  // --- Activity Logs ---
-  async getActivityLogs(): Promise<any[]> {
-    return []
+  // --- Analytics & Geospatial Intelligence ---
+  async getRegionalStats(): Promise<{ region: string, memberCount: number, chapters: number, activePolls: number }[]> {
+    return [
+      { region: 'Greater Accra', memberCount: 12500, chapters: 45, activePolls: 3 },
+      { region: 'Ashanti', memberCount: 18200, chapters: 62, activePolls: 5 },
+      { region: 'Western', memberCount: 8400, chapters: 28, activePolls: 2 },
+      { region: 'Central', memberCount: 6100, chapters: 22, activePolls: 1 },
+      { region: 'Northern', memberCount: 4200, chapters: 15, activePolls: 2 },
+    ]
+  }
+
+  async getGrowthTrends(): Promise<{ date: string, count: number }[]> {
+    return [
+      { date: '2024-01', count: 1200 },
+      { date: '2024-02', count: 2100 },
+      { date: '2024-03', count: 3800 },
+      { date: '2024-04', count: 5600 },
+      { date: '2024-05', count: 8200 },
+    ]
   }
 }
 
