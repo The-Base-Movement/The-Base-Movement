@@ -43,6 +43,20 @@ interface StatCardProps {
   color: string
 }
 
+// High-Fidelity Skeleton Loading Component
+function SkeletonCard() {
+  return (
+    <Card className="rounded-none border-stone-100 shadow-none overflow-hidden relative">
+      <div className="absolute top-0 left-0 w-1 h-full bg-stone-100" />
+      <CardContent className="p-6 space-y-4">
+        <div className="w-1/3 h-2 bg-stone-100 animate-pulse" />
+        <div className="w-2/3 h-8 bg-stone-100 animate-pulse" />
+        <div className="w-1/2 h-3 bg-stone-100 animate-pulse" />
+      </CardContent>
+    </Card>
+  )
+}
+
 // High-Fidelity Stat Card Component
 function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
   return (
@@ -74,9 +88,11 @@ export default function AdminDashboard() {
   const [sentimentStats, setSentimentStats] = useState<SentimentStat[]>([])
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true)
       const [growth, sentiment, audit, regions] = await Promise.all([
         adminService.getGrowthTrends(),
         adminService.getSentimentAnalysis(),
@@ -87,6 +103,7 @@ export default function AdminDashboard() {
       setSentimentStats(sentiment)
       setAuditLogs(audit)
       setRegionalStats(regions)
+      setIsLoading(false)
     }
     fetchData()
   }, [])
@@ -180,10 +197,21 @@ export default function AdminDashboard() {
 
       {/* Primary Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <StatCard title="Total Membership" value="452,890" change="+12.4%" icon={Users} color="bg-[var(--brand-green)]" />
-        <StatCard title="Regional Chapters" value="124" change="+4.2%" icon={MapPin} color="bg-[var(--brand-red)]" />
-        <StatCard title="Member Engagement" value="88.4%" change="+2.1%" icon={Activity} color="bg-[var(--brand-gold)]" />
-        <StatCard title="Merch Orders" value="1,245" change="+15.8%" icon={ShoppingBag} color="bg-stone-800" />
+        {isLoading ? (
+          <>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </>
+        ) : (
+          <>
+            <StatCard title="Total Membership" value="452,890" change="+12.4%" icon={Users} color="bg-[var(--brand-green)]" />
+            <StatCard title="Regional Chapters" value="124" change="+4.2%" icon={MapPin} color="bg-[var(--brand-red)]" />
+            <StatCard title="Member Engagement" value="88.4%" change="+2.1%" icon={Activity} color="bg-[var(--brand-gold)]" />
+            <StatCard title="Merch Orders" value="1,245" change="+15.8%" icon={ShoppingBag} color="bg-stone-800" />
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
