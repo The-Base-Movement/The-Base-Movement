@@ -228,7 +228,9 @@ export default function Register() {
       setFormStep(prev => prev + 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
-      const regNo = (platform === 'GHANA' ? 'GH-' : 'DI-') + new Date().getFullYear() + '-' + Math.floor(100000 + Math.random() * 900000)
+      const yearStr = new Date().getFullYear().toString().slice(-2)
+      const randomNum = String(Math.floor(1000 + Math.random() * 9000))
+      const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
       setRegNumber(regNo)
       
       // Live Data Sync: Insert into Neon Database

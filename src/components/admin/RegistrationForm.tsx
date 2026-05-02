@@ -121,7 +121,9 @@ export default function RegistrationForm({ onClose, onSuccess }: RegistrationFor
       if (modalElement) modalElement.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       setIsSubmitting(true)
-      const regNo = (platform === 'GHANA' ? 'GH-' : 'DI-') + new Date().getFullYear() + '-' + Math.floor(100000 + Math.random() * 900000)
+      const yearStr = new Date().getFullYear().toString().slice(-2)
+      const randomNum = String(Math.floor(1000 + Math.random() * 9000))
+      const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
       
       try {
         await fetch('https://ep-red-math-alposcfu.apirest.c-3.eu-central-1.aws.neon.tech/neondb/rest/v1/members', {
