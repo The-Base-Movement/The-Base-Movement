@@ -152,3 +152,45 @@ Stores authoritative contact information and brand identity details for the move
 | `brand_yellow` | VARCHAR(7) | Brand yellow/gold hex code |
 | `brand_black` | VARCHAR(7) | Brand black hex code |
 | `updated_at` | TIMESTAMP | Last configuration update |
+
+## 10. Audit Logs Table (Accountability)
+Stores high-fidelity tracking of all administrative and system-level actions.
+
+| Field Name | Type | Description |
+| :--- | :--- | :--- |
+| `id` | UUID | Primary Key |
+| `timestamp` | TIMESTAMP | Time of the action |
+| `admin_id` | UUID | Reference to the administrator (from Users) |
+| `action` | VARCHAR(100) | Type of action (e.g., APPOINT_LEAD, VERIFY_MEMBER) |
+| `resource` | VARCHAR(255) | Targeted resource identifier |
+| `status` | ENUM('Success', 'Failure', 'Warning') | Outcome of the action |
+| `ip_address` | VARCHAR(45) | IP address of the originator |
+| `metadata` | JSONB | Additional technical details |
+
+## 11. Sentiment Analysis Table (Intelligence)
+Stores the movement's psychological engagement telemetry.
+
+| Field Name | Type | Description |
+| :--- | :--- | :--- |
+| `id` | UUID | Primary Key |
+| `topic` | VARCHAR(255) | Strategic topic (e.g., Leadership Trust) |
+| `score` | INTEGER | Sentiment score (0-100) |
+| `sentiment` | ENUM('Positive', 'Neutral', 'Negative') | Qualitative classification |
+| `trend` | ENUM('Up', 'Down', 'Stable') | Movement direction |
+| `color_hex` | VARCHAR(7) | Brand-mapped visualization color |
+| `sample_size` | INTEGER | Number of data points analyzed |
+| `analyzed_at` | TIMESTAMP | Date of intelligence processing |
+
+## 12. Regional Performance Table (Mobilization)
+Stores mobilization metrics and status for regional chapters.
+
+| Field Name | Type | Description |
+| :--- | :--- | :--- |
+| `id` | UUID | Primary Key |
+| `region_name` | VARCHAR(100) | Unique name of the region |
+| `member_count` | INTEGER | Current active membership |
+| `chapters_count` | INTEGER | Number of established constituency chapters |
+| `performance` | ENUM('High', 'Medium', 'Emerging') | Status (Maps to Red-Gold-Green) |
+| `target_count` | INTEGER | Mobilization goal for the period |
+| `growth_rate` | DECIMAL(5,2) | Month-over-month growth percentage |
+| `updated_at` | TIMESTAMP | Last metrics update |
