@@ -471,29 +471,75 @@ export default function ProfileSettings() {
                     </div>
                   </>
                 ) : (
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Country of Residence</label>
-                    <div className="relative">
-                      <select
-                        value={form.country}
-                        onChange={e => {
-                          const countryName = e.target.value
-                          const countryData = countries.find(c => c.name === countryName)
-                          setForm(prev => ({ 
-                            ...prev, 
-                            country: countryName,
-                            countryCode: countryData?.dial || prev.countryCode
-                          }))
-                        }}
-                        className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
-                      >
-                        <option value="">Select Country</option>
-                        {countries.map(c => (
-                          <option key={c.code} value={c.name}>{c.name}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <div className="space-y-4 md:col-span-2 md:grid md:grid-cols-2 md:gap-8 md:space-y-0">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Country of Residence</label>
+                      <div className="relative">
+                        <select
+                          value={form.country}
+                          onChange={e => {
+                            const countryName = e.target.value
+                            const countryData = countries.find(c => c.name === countryName)
+                            setForm(prev => ({ 
+                              ...prev, 
+                              country: countryName,
+                              countryCode: countryData?.dial || prev.countryCode,
+                              region: countryName !== 'Ghana' ? '' : prev.region,
+                              constituency: countryName !== 'Ghana' ? '' : prev.constituency
+                            }))
+                          }}
+                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                        >
+                          <option value="">Select Country</option>
+                          {countries.map(c => (
+                            <option key={c.code} value={c.name}>{c.name}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                      </div>
                     </div>
+                    
+                    {form.country === 'Ghana' && (
+                      <>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Region</label>
+                          <div className="relative">
+                            <select
+                              value={form.region}
+                              onChange={e => {
+                                const newRegion = e.target.value
+                                setForm(prev => ({ ...prev, region: newRegion, constituency: '' }))
+                              }}
+                              className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                            >
+                              <option value="">Select Region</option>
+                              {ghanaRegions.map(reg => (
+                                <option key={reg} value={reg}>{reg}</option>
+                              ))}
+                            </select>
+                            <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Constituency</label>
+                          <div className="relative">
+                            <select
+                              value={form.constituency}
+                              disabled={!form.region}
+                              onChange={e => handleChange('constituency', e.target.value)}
+                              className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer disabled:opacity-50"
+                            >
+                              <option value="">Select Constituency</option>
+                              {form.region && regionConstituencies[form.region]?.map(con => (
+                                <option key={con} value={con}>{con}</option>
+                              ))}
+                            </select>
+                            <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
 
