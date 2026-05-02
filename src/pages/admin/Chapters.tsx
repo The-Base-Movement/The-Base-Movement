@@ -1,4 +1,4 @@
-import { MapPin, Users, Plus, Search, ChevronRight, Shield, Target, Crown, UserPlus } from 'lucide-react'
+import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
