@@ -77,6 +77,14 @@ export interface AdminPermission {
   resource: 'MEMBERS' | 'CHAPTERS' | 'POLLS' | 'STORE' | 'SYSTEM'
 }
 
+export interface SentimentStat {
+  topic: string
+  score: number // 0-100
+  trend: 'Up' | 'Down' | 'Stable'
+  sentiment: 'Positive' | 'Neutral' | 'Negative'
+  color: string
+}
+
 export interface AdminUser {
   id: string
   name: string
@@ -170,6 +178,16 @@ class AdminService {
       { date: '2024-03', count: 3800 },
       { date: '2024-04', count: 5600 },
       { date: '2024-05', count: 8200 },
+    ]
+  }
+
+  // --- Sentiment Analysis ---
+  async getSentimentAnalysis(): Promise<SentimentStat[]> {
+    return [
+      { topic: 'Leadership Trust', score: 88, trend: 'Up', sentiment: 'Positive', color: 'var(--brand-green)' },
+      { topic: 'Economic Policy', score: 65, trend: 'Stable', sentiment: 'Neutral', color: 'var(--brand-gold)' },
+      { topic: 'Youth Mobilization', score: 92, trend: 'Up', sentiment: 'Positive', color: 'var(--brand-green)' },
+      { topic: 'Infrastructure Focus', score: 45, trend: 'Down', sentiment: 'Negative', color: 'var(--brand-red)' },
     ]
   }
 
