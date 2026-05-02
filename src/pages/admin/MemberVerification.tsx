@@ -413,9 +413,9 @@ export default function MemberVerification() {
                   {(selectedMember.status === 'In Review' || selectedMember.status === 'Processing' || selectedMember.status === 'Flagged') && (
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <Button
-                        variant="outline"
+                        variant="primary"
                         onClick={() => handleVerdict(false)}
-                        className="h-11 border-white/10 text-white hover:bg-red-500/10 hover:text-red-400 hover:border-red-500 transition-all text-[9px] font-black uppercase tracking-widest"
+                        className="h-11 bg-[var(--brand-red)] text-white hover:bg-red-700 transition-all text-[9px] font-black uppercase tracking-widest border-0"
                       >
                         <XCircle className="w-3.5 h-3.5 mr-1.5" /> Reject
                       </Button>
