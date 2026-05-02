@@ -36,6 +36,9 @@ import Polls from './pages/Polls'
 import AdminLayout from './components/layouts/AdminLayout'
 import AdminDashboard from './pages/admin/Dashboard'
 import AdminLogin from './pages/admin/Login'
+import AdminMembers from './pages/admin/Members'
+import AdminChapters from './pages/admin/Chapters'
+import AdminPolls from './pages/admin/Polls'
 
 export default function App() {
   return (
@@ -100,9 +103,9 @@ export default function App() {
         {/* ── Admin routes (Admin Sidebar + Topbar) ── */}
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/members" element={<Members />} />
-          <Route path="/admin/chapters" element={<Chapters />} />
-          <Route path="/admin/polls" element={<Polls />} />
+          <Route path="/admin/members" element={<AdminMembers />} />
+          <Route path="/admin/chapters" element={<AdminChapters />} />
+          <Route path="/admin/polls" element={<AdminPolls />} />
           <Route path="/admin/settings" element={<ProfileSettings />} />
         </Route>
       </Routes>
