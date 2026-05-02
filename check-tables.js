@@ -11,7 +11,7 @@ if (!token) {
 
 const url = 'https://ep-ancient-tooth-amjyc3yp.apirest.c-5.us-east-1.aws.neon.tech/neondb/rest/v1/';
 
-fetch(url)
+fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
   .then(res => res.json())
   .then(data => {
     if (data.paths) {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { 
   LayoutDashboard, 
@@ -26,6 +26,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const location = useLocation()
   const navigate = useNavigate()
   const user = adminService.getCurrentUser()
+
+  useEffect(() => {
+    if (!adminService.getCurrentUser()) {
+      navigate('/admin-login')
+    }
+  }, [navigate])
 
   const navItems: ( { to: string, icon: any, label: string, permission?: { action: AdminPermission['action'], resource: AdminPermission['resource'] } } )[] = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
@@ -72,7 +78,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           )}>
             <Link to="/admin/dashboard" className="flex items-center gap-4 shrink-0">
               <div className="w-10 h-10 bg-white flex items-center justify-center shadow-2xl p-1.5 shrink-0">
-                <img src="/logo.png" alt="The Base Logo" className="w-full h-full object-contain" />
+                <img src="/The-Base/logo.png" alt="The Base Logo" className="w-full h-full object-contain" />
               </div>
               <div className={cn(
                 "transition-all duration-300 origin-left",

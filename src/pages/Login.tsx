@@ -20,7 +20,7 @@ export default function Login() {
         
         <div className="text-center mb-8">
           <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
-            <img src="/logo.png" alt="The Base" className="h-16 w-auto mx-auto mb-4" />
+            <img src="/The-Base/logo.png" alt="The Base" className="h-16 w-auto mx-auto mb-4" />
           </Link>
           <h1 className="text-2xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
           <p className="text-sm text-slate-500 font-meta tracking-widest uppercase">Member Sign In</p>

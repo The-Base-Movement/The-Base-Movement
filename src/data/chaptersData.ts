@@ -686,17 +686,19 @@ export const chaptersData = [
 ];
 
 
-interface Chapter {
+export interface StaticChapter {
+  id: string;
   name: string;
   city_or_region: string;
   country: string;
   members: number | null;
+  membersCount: number;
   status: string;
   details_url: string;
-  description?: string;
+  description: string;
 }
 
-export const allChapters = (chaptersData as Chapter[]).map(c => {
+export const allChapters: StaticChapter[] = (chaptersData as any[]).map(c => {
   const slug = c.name
     .toLowerCase()
     .replace(/ - /g, '-')

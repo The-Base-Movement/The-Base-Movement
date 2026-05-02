@@ -1,4 +1,5 @@
 import { authService } from './authService'
+import { allChapters } from '../data/chaptersData'
 
 export interface Member {
   id: string
@@ -194,7 +195,10 @@ class AdminService {
 
   private getAuthHeader(): Record<string, string> {
     const token = authService.getToken()
-    if (!token) return {}
+    if (!token) {
+      console.warn('[SYSTEM] No session token found. API requests will likely fail with 400 (Bad Request).')
+      return {}
+    }
     return { 'Authorization': `Bearer ${token}` }
   }
 
@@ -222,12 +226,16 @@ class AdminService {
   }
 
   public can(action: AdminPermission['action'], resource: AdminPermission['resource']): boolean {
+    // If not authenticated via authService, deny permission
+    if (!authService.isAuthenticated()) return false
+    
     if (!this.currentUser) return false
     if (this.currentUser.role === 'SUPER_ADMIN') return true
     return this.currentUser.permissions.some(p => p.action === action && p.resource === resource)
   }
 
   public getCurrentUser(): AdminUser | null {
+    if (!authService.isAuthenticated()) return null
     return this.currentUser
   }
 
@@ -340,15 +348,39 @@ class AdminService {
 
   // --- Chapter Operations ---
 
+  private getFallbackChapters(): Chapter[] {
+    return allChapters.map(c => ({
+      id: c.id,
+      name: c.name,
+      city_or_region: c.city_or_region,
+      country: c.country,
+      leader_name: 'Unassigned',
+      member_count: c.membersCount,
+      status: c.status as Chapter['status']
+    }))
+  }
+
   async getChapters(): Promise<Chapter[]> {
+    const token = authService.getToken()
+    if (!token) {
+      console.info('[SYSTEM] No session token, returning fallback chapters.')
+      return this.getFallbackChapters()
+    }
+
     try {
       const response = await fetch(`${DATA_API_URL}/chapters?select=*&order=name.asc`, {
         headers: this.getAuthHeader()
       })
       if (!response.ok) {
-        const err = await response.json()
-        console.error('[SYSTEM] Chapters API Error:', response.status, err)
-        throw new Error(`API Error: ${response.status}`)
+        let errBody
+        try {
+          errBody = await response.json()
+        } catch {
+          errBody = await response.text()
+        }
+        console.error('[SYSTEM] Chapters API Error:', response.status, errBody)
+        // Fallback on error to ensure UI doesn't break
+        return this.getFallbackChapters()
       }
       const data = (await response.json()) as DBChapter[]
       return data.map((c) => ({
@@ -361,8 +393,8 @@ class AdminService {
         status: c.status
       }))
     } catch (error) {
-      console.warn('[SYSTEM] Failed to fetch chapters from API:', error)
-      return []
+      console.warn('[SYSTEM] Failed to fetch chapters from API, using fallback:', error)
+      return this.getFallbackChapters()
     }
   }
 

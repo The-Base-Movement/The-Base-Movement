@@ -90,7 +90,7 @@ export default function Donate() {
           <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
             <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
               <div className="hidden md:flex items-center gap-3 shrink-0 border-r border-stone-200 pr-6">
-                <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain" />
+                <img src="/The-Base/logo.png" alt="The Base" className="w-10 h-10 object-contain" />
                 <div className="text-left text-stone-900">
                   <p className="font-meta font-bold text-sm uppercase tracking-tighter leading-none">Support the</p>
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--brand-green)]">Movement</p>

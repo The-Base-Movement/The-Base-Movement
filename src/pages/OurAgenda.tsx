@@ -264,7 +264,7 @@ export default function OurAgenda() {
               {/* Leader Portrait */}
               <div className="mt-8 overflow-hidden rounded-sm relative group">
                 <img
-                  src="/founder.jpg"
+                  src="/The-Base/founder.jpg"
                   alt="Dr. George Oti Bonsu The Base Movement Founder"
                   className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
                 />

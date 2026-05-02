@@ -16,7 +16,7 @@ const posts = [
       name: 'Dr. George Oti Bonsu',
       role: 'Founder, The Base',
       bio: 'Visionary leader and advocate for the industrial transformation of Ghana. Dedicated to empowering the youth through disciplined civic engagement.',
-      image: '/founder.jpg'
+      image: '/The-Base/founder.jpg'
     },
     readTime: '5 min read',
     image: 'https://images.unsplash.com/photo-1589519160732-576f165b9aad?w=800&q=80',
@@ -67,7 +67,7 @@ const posts = [
       name: 'Dr. George Oti Bonsu',
       role: 'Founder, The Base',
       bio: 'Visionary leader and advocate for the industrial transformation of Ghana. Dedicated to empowering the youth through disciplined civic engagement.',
-      image: '/founder.jpg'
+      image: '/The-Base/founder.jpg'
     },
     readTime: '4 min read',
     image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',

@@ -29,13 +29,13 @@ const blogPost = {
     name: "Dr. George Oti Bonsu",
     role: "Founder, The Base",
     bio: "Visionary leader and advocate for the industrial transformation of Ghana. Dedicated to empowering the youth through disciplined civic engagement.",
-    image: "/founder.jpg"
+    image: "/The-Base/founder.jpg"
   },
   authorRole: "Founder, The Base",
   date: "October 28, 2024",
   readTime: "8 min read",
   category: "Policy & Agenda",
-  image: "/hero-bg.png",
+  image: "/The-Base/hero-bg.png",
   tags: ["Industrialization", "Youth Employment", "Ghana First", "Economic Reform"]
 }
 
@@ -153,7 +153,7 @@ export default function BlogPost() {
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">Authored By</p>
                   <div className="flex items-center gap-3">
                     <img 
-                      src={post.authorProfile?.image || '/founder.jpg'} 
+                      src={post.authorProfile?.image || '/The-Base/founder.jpg'} 
                       alt={post.authorProfile?.name} 
                       className="w-12 h-12 bg-charcoal-dark rounded-none object-cover"
                     />

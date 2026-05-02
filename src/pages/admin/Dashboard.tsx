@@ -93,20 +93,27 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log('[SYSTEM] Dashboard: Starting data fetch...')
       setIsLoading(true)
-      const [growth, sentiment, audit, regions, stats] = await Promise.all([
-        adminService.getGrowthTrends(),
-        adminService.getSentimentAnalysis(),
-        adminService.getSystemAuditLogs(),
-        adminService.getRegionalStats(),
-        adminService.getGlobalStats()
-      ])
-      setGrowthData(growth)
-      setSentimentStats(sentiment)
-      setAuditLogs(audit)
-      setRegionalStats(regions)
-      setGlobalStats(stats)
-      setIsLoading(false)
+      try {
+        const [growth, sentiment, audit, regions, stats] = await Promise.all([
+          adminService.getGrowthTrends(),
+          adminService.getSentimentAnalysis(),
+          adminService.getSystemAuditLogs(),
+          adminService.getRegionalStats(),
+          adminService.getGlobalStats()
+        ])
+        setGrowthData(growth)
+        setSentimentStats(sentiment)
+        setAuditLogs(audit)
+        setRegionalStats(regions)
+        setGlobalStats(stats)
+        console.log('[SYSTEM] Dashboard: Data fetch complete.')
+      } catch (error) {
+        console.error('[SYSTEM] Dashboard: Data fetch failed:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
     fetchData()
   }, [])

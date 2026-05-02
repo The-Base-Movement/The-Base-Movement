@@ -93,7 +93,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex-1 flex justify-center md:justify-end opacity-90 relative">
-            <img src="/logo.png" alt="The Base" className="w-64 md:w-96 drop-shadow-2xl transition-all duration-700" />
+            <img src="/The-Base/logo.png" alt="The Base" className="w-64 md:w-96 drop-shadow-2xl transition-all duration-700" />
           </div>
         </div>
       </section>

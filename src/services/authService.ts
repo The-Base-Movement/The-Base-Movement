@@ -74,9 +74,9 @@ class AuthService {
   }
 
   getToken(): string | null {
-    // Better Auth returns sessionToken in the session object usually
-    // Neon Data API expects this token as the Bearer token
-    return this.session?.session.id || null;
+    // Better Auth returns sessionToken in the session object.
+    // The Neon Data API requires this JWT as the Bearer token.
+    return this.session?.session.token || null;
   }
 
   isAuthenticated(): boolean {
