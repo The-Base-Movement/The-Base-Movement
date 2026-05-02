@@ -40,6 +40,7 @@ import AdminMembers from './pages/admin/Members'
 import AdminChapters from './pages/admin/Chapters'
 import AdminPolls from './pages/admin/Polls'
 import AdminStore from './pages/admin/Store'
+import AdminSettings from './pages/admin/Settings'
 
 export default function App() {
   return (
@@ -108,7 +109,7 @@ export default function App() {
           <Route path="/admin/chapters" element={<AdminChapters />} />
           <Route path="/admin/polls" element={<AdminPolls />} />
           <Route path="/admin/store" element={<AdminStore />} />
-          <Route path="/admin/settings" element={<ProfileSettings />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
         </Route>
       </Routes>
     </StoreProvider>
