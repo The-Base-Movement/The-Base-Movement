@@ -194,3 +194,67 @@ Stores mobilization metrics and status for regional chapters.
 | `target_count` | INTEGER | Mobilization goal for the period |
 | `growth_rate` | DECIMAL(5,2) | Month-over-month growth percentage |
 | `updated_at` | TIMESTAMP | Last metrics update |
+
+## 13. Countries Reference Table
+Stores the authoritative list of supported countries for member registration along with their dialing codes.
+
+| Field Name | Type | Description |
+| :--- | :--- | :--- |
+| `id` | UUID | Primary Key |
+| `name` | VARCHAR(255) | Official country name |
+| `dialing_code` | VARCHAR(10) | International phone prefix |
+| `is_diaspora` | BOOLEAN | Identifies if country is part of diaspora |
+
+### Reference Data (Seed)
+
+| Country Name | Dialing Code | Is Diaspora |
+| :--- | :--- | :--- |
+| Ghana | +233 | false |
+| Australia | +61 | true |
+| Austria | +43 | true |
+| Belgium | +32 | true |
+| Brazil | +55 | true |
+| Burkina Faso | +226 | true |
+| Cameroon | +237 | true |
+| Canada | +1 | true |
+| China | +86 | true |
+| Czech Republic | +420 | true |
+| Denmark | +45 | true |
+| Egypt | +20 | true |
+| Finland | +358 | true |
+| France | +33 | true |
+| Germany | +49 | true |
+| India | +91 | true |
+| Ireland | +353 | true |
+| Israel | +972 | true |
+| Italy | +39 | true |
+| Japan | +81 | true |
+| Kenya | +254 | true |
+| Kuwait | +965 | true |
+| Luxembourg | +352 | true |
+| Malaysia | +60 | true |
+| Mexico | +52 | true |
+| Morocco | +212 | true |
+| Netherlands | +31 | true |
+| New Zealand | +64 | true |
+| Nigeria | +234 | true |
+| Norway | +47 | true |
+| Poland | +48 | true |
+| Portugal | +351 | true |
+| Qatar | +974 | true |
+| Russia | +7 | true |
+| Saudi Arabia | +966 | true |
+| Senegal | +221 | true |
+| Singapore | +65 | true |
+| South Africa | +27 | true |
+| South Korea | +82 | true |
+| Spain | +34 | true |
+| Sweden | +46 | true |
+| Switzerland | +41 | true |
+| Tanzania | +255 | true |
+| Thailand | +66 | true |
+| Togo | +228 | true |
+| Turkey | +90 | true |
+| United Arab Emirates | +971 | true |
+| United Kingdom | +44 | true |
+| United States | +1 | true |

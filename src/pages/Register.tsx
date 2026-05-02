@@ -596,8 +596,8 @@ export default function Register() {
                           onChange={(e) => handleChange('countryCode', e.target.value)}
                           className="flex items-center px-2 bg-surface-warm border-y border-l border-slate-300 font-meta font-bold text-charcoal-dark text-xs appearance-none focus:outline-none"
                         >
-                          {Object.entries(countryCodes).sort((a, b) => a[0].localeCompare(b[0])).map(([name, code]) => (
-                            <option key={name} value={code}>{code} ({name})</option>
+                          {Array.from(new Set(Object.values(countryCodes))).sort().map((code) => (
+                            <option key={code} value={code}>{code}</option>
                           ))}
                         </select>
                         <input

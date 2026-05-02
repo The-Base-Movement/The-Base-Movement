@@ -148,8 +148,8 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
       </div>
 
       {/* Card Footer */}
-      <div className="h-4 sm:h-6 bg-slate-50 border-t border-slate-100 px-3 sm:px-6 flex items-center justify-center">
-        <p className="text-[5px] sm:text-[7px] text-slate-400 font-bold uppercase tracking-widest truncate">
+      <div className="bg-slate-50 border-t border-slate-100 px-3 sm:px-6 py-1 sm:py-1.5 flex items-center justify-center">
+        <p className="text-[5px] sm:text-[7px] text-slate-400 font-bold uppercase tracking-widest truncate leading-none m-0">
           {typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/{userRegNo || 'DI-XXXXXX'}
         </p>
       </div>

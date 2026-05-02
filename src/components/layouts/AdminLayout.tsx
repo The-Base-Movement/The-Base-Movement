@@ -22,7 +22,7 @@ import { adminService } from '@/services/adminService'
 import type { AdminPermission } from '@/services/adminService'
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024)
   const location = useLocation()
   const navigate = useNavigate()
   const user = adminService.getCurrentUser()

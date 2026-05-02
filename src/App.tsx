@@ -43,11 +43,14 @@ import AdminStore from './pages/admin/Store'
 import AdminSettings from './pages/admin/Settings'
 import AdminMemberVerification from './pages/admin/MemberVerification'
 
+import { Toaster } from './components/ui/toaster'
+
 export default function App() {
   return (
     <StoreProvider>
       <ScrollToTop />
       <ReadingProgressBar />
+      <Toaster />
       <Routes>
         {/* Redirects */}
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
