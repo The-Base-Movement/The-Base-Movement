@@ -116,7 +116,7 @@ interface DBUser {
   status: Member['status'];
   joined_at: string;
   platform: string;
-  passport_photo_url: string | null;
+  avatar_url: string | null;
   gender: string | null;
   chapter: string | null;
   country: string | null;
@@ -233,12 +233,15 @@ class AdminService {
   private currentUser: AdminUser | null = null
 
   private getAuthHeader(): Record<string, string> {
-    const token = authService.getToken()
-    if (!token) {
-      console.warn('[SYSTEM] No session token found. API requests will likely fail with 400 (Bad Request).')
-      return {}
+    const sessionToken = authService.getToken()
+    
+    if (sessionToken) {
+      console.log('[SYSTEM] Sending session token (JWT Mode)')
+      return { 'Authorization': `Bearer ${sessionToken}` }
     }
-    return { 'Authorization': `Bearer ${token}` }
+
+    console.log('[SYSTEM] Sending no token (Anonymous Mode)')
+    return {}
   }
 
   private constructor() {
@@ -322,12 +325,26 @@ class AdminService {
 
   // --- Member Operations ---
   async getMembers(): Promise<Member[]> {
+    const token = authService.getToken()
+    if (!token) {
+      console.warn('[SYSTEM] No session token found for getMembers. Returning empty results.')
+      return []
+    }
+
     try {
       const response = await fetch(`${DATA_API_URL}/users?select=*&order=joined_at.desc`, {
         headers: this.getAuthHeader()
       })
-      const data = (await response.json()) as DBUser[]
-      if (!Array.isArray(data)) throw new Error('Invalid data format')
+      
+      const responseBody = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        console.error(`[SYSTEM] getMembers failed with status ${response.status}:`, responseBody)
+        throw new Error(`getMembers failed: ${response.status}`)
+      }
+
+      const data = responseBody as DBUser[]
+      if (!Array.isArray(data)) throw new Error('Invalid data format from API')
 
       return data.map((u) => ({
         id: u.registration_number,
@@ -337,9 +354,9 @@ class AdminService {
         region: u.region || 'Unknown',
         constituency: u.constituency || 'Unknown',
         status: u.status,
-        joined: new Date(u.joined_at).toLocaleDateString(),
+        joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
         type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
-        avatarUrl: u.passport_photo_url || undefined,
+        avatarUrl: u.avatar_url || undefined,
         gender: u.gender || 'Unknown',
         chapter: u.chapter || 'Central',
         country: u.country || 'Ghana'
@@ -655,13 +672,31 @@ class AdminService {
 
 
   async getRegions(): Promise<Region[]> {
+    const token = authService.getToken()
+    if (!token) {
+      console.warn('[SYSTEM] No session token found for getRegions. Returning empty results.')
+      return []
+    }
+
     try {
+      // Use explicit relationship name if standard embedding fails
       const response = await fetch(`${DATA_API_URL}/ghana_regions?select=id,name,ghana_constituencies(name)`, {
         headers: this.getAuthHeader()
       })
-      console.log('[SYSTEM] Fetch Regions Status:', response.status)
-      const data = (await response.json()) as DBRegion[]
-      console.log('[SYSTEM] Fetch Regions Data:', data)
+      
+      const responseBody = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        console.error(`[SYSTEM] getRegions failed with status ${response.status}:`, responseBody)
+        // If the join fails, try a fallback without constituencies to at least get the regions
+        if (response.status === 400) {
+          console.warn('[SYSTEM] Resource embedding failed, attempting fallback fetch...')
+          return this.getRegionsFallback()
+        }
+        throw new Error(`getRegions failed: ${response.status}`)
+      }
+
+      const data = responseBody as DBRegion[]
       if (!Array.isArray(data)) throw new Error('Invalid data format')
       return data.map((r) => ({
         id: r.id,
@@ -672,6 +707,19 @@ class AdminService {
       }))
     } catch (error) {
       console.error('[SYSTEM] Failed to fetch geographical data:', error)
+      return []
+    }
+  }
+
+  private async getRegionsFallback(): Promise<Region[]> {
+    try {
+      const response = await fetch(`${DATA_API_URL}/ghana_regions?select=id,name`, {
+        headers: this.getAuthHeader()
+      })
+      const data = (await response.json()) as { id: number, name: string }[]
+      return data.map(r => ({ id: r.id, name: r.name, constituencies: [] }))
+    } catch (e) {
+      console.error('[SYSTEM] Fallback regions fetch failed:', e)
       return []
     }
   }

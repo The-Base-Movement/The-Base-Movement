@@ -1,9 +1,14 @@
 import { useState, useCallback } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, ArrowDownToLine, CheckCircle2, X } from 'lucide-react'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, ArrowDownToLine, CheckCircle2, X, Loader2 } from 'lucide-react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import MembershipCard from '../components/MembershipCard'
+import { authService } from '@/services/authService'
+import { toast } from 'sonner'
+
+// Configuration for Data API (syncing with adminService)
+const DATA_API_URL = 'https://ep-ancient-tooth-amjyc3yp.apirest.c-5.us-east-1.aws.neon.tech/neondb/rest/v1';
 
 const ageRanges = ['16-25', '26-40', '41-60', '60+']
 const educationLevels = [
@@ -140,6 +145,8 @@ export default function Register() {
   const [agreed, setAgreed] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [regNumber, setRegNumber] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -232,17 +239,29 @@ export default function Register() {
       const randomNum = String(Math.floor(1000 + Math.random() * 9000))
       const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
       setRegNumber(regNo)
-      
-      // Live Data Sync: Insert into Neon Database
+
+      // --- SYNC WITH NEON AUTH & DATA API ---
+      setIsLoading(true)
       try {
-        await fetch('https://ep-red-math-alposcfu.apirest.c-3.eu-central-1.aws.neon.tech/neondb/rest/v1/members', {
+        // 1. Create Auth Account
+        const authName = formData.fullName
+        const authEmail = formData.email || `${regNo.toLowerCase()}@thebase.org`
+        const authPassword = formData.password
+
+        await authService.signUp(authEmail, authPassword, authName, photoUrl || undefined)
+
+        // 2. Insert Profile Data into public.users
+        const token = authService.getToken()
+        await fetch(`${DATA_API_URL}/users`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
             'Prefer': 'return=minimal'
           },
           body: JSON.stringify({
             full_name: formData.fullName,
+            email: authEmail,
             registration_number: regNo,
             platform: platform,
             country: formData.selectedCountry,
@@ -250,7 +269,6 @@ export default function Register() {
             phone_number: formData.countryCode + formData.contactNumber,
             age_range: formData.ageRange,
             gender: formData.gender,
-            email: formData.email,
             residential_address: formData.residentialAddress,
             region: formData.region,
             constituency: formData.constituency,
@@ -263,8 +281,13 @@ export default function Register() {
             avatar_url: photoUrl
           })
         })
+
+        toast.success('Official records synchronized.')
       } catch (error) {
         console.error('Failed to sync with live database:', error)
+        toast.error('Account created locally, but cloud sync failed. Our admins will verify your record manually.')
+      } finally {
+        setIsLoading(false)
       }
 
       // Persist user data so the dashboard can read it
@@ -362,9 +385,12 @@ export default function Register() {
                   <h4 className="font-meta font-bold text-[10px] text-white/60 uppercase tracking-widest mb-4">Next Step</h4>
                   <p className="text-sm font-bold font-meta uppercase leading-tight mb-4">Access your leadership dashboard to join a chapter.</p>
                 </div>
-                <Link to="/login" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-white/10 hover:bg-white/20 p-3 text-center justify-center transition-colors">
+                <button 
+                  onClick={() => navigate('/dashboard')}
+                  className="w-full inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-white/10 hover:bg-white/20 p-3 text-center justify-center transition-colors cursor-pointer"
+                >
                   Enter Dashboard <ArrowRight className="w-4 h-4" />
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -943,10 +969,14 @@ export default function Register() {
                 
                 <button
                   type="submit"
-                  disabled={formStep === 4 && !agreed}
-                  className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all flex-1 shadow-md ${formStep === 4 && !agreed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-[var(--brand-green)] text-white hover:opacity-90 active:scale-[0.99]'}`}
+                  disabled={(formStep === 4 && !agreed) || isLoading}
+                  className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all flex-1 shadow-md ${(formStep === 4 && !agreed) || isLoading ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-[var(--brand-green)] text-white hover:opacity-90 active:scale-[0.99]'}`}
                 >
-                  {formStep < 4 ? (
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" /> Synchronizing Official Record...
+                    </>
+                  ) : formStep < 4 ? (
                     <>Next Step <ArrowRight className="w-5 h-5" /></>
                   ) : (
                     <>Submit Official Registration <ArrowRight className="w-5 h-5" /></>

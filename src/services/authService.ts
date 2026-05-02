@@ -66,6 +66,26 @@ class AuthService {
     return data;
   }
 
+  async signUp(email: string, password: string, name: string, image?: string): Promise<AuthSession> {
+    const response = await fetch(`${AUTH_URL}/sign-up/email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password, name, image }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Registration failed');
+    }
+
+    const data = await response.json();
+    this.session = data;
+    localStorage.setItem('neon_auth_session', JSON.stringify(data));
+    return data;
+  }
+
   logout() {
     this.session = null;
     localStorage.removeItem('neon_auth_session');

@@ -1,17 +1,41 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react'
+import { authService } from '@/services/authService'
+import { toast } from 'sonner'
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    localStorage.setItem('isLoggedIn', 'true')
-    localStorage.setItem('userAvatar', 'https://i.pravatar.cc/150?u=a042581f4e29026704d')
-    window.dispatchEvent(new Event('storage'))
-    navigate('/dashboard')
+    setIsLoading(true)
+
+    try {
+      await authService.login(email, password)
+      
+      // Update legacy local storage items for compatibility with dashboard UI
+      const user = authService.getUser()
+      if (user) {
+        localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('userName', user.name)
+        if (user.image) localStorage.setItem('userAvatar', user.image)
+      }
+      
+      localStorage.setItem('isLoggedIn', 'true')
+      window.dispatchEvent(new Event('storage'))
+      toast.success('Welcome back, patriot!')
+      navigate('/dashboard')
+    } catch (error) {
+      console.error('Login error:', error)
+      toast.error(error instanceof Error ? error.message : 'Invalid credentials. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -35,11 +59,14 @@ export default function Login() {
               <input
                 id="phone"
                 type="text"
-                placeholder="e.g. 201234567 or you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="e.g. you@example.com"
                 className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                required
               />
               <p className="text-[10px] text-slate-500 font-meta tracking-wide mt-1">
-                Enter your phone number (with or without country code) or your email address
+                Enter your email address associated with your membership
               </p>
             </div>
 
@@ -56,8 +83,11 @@ export default function Login() {
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Your password"
                   className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                  required
                 />
                 <button
                   type="button"
@@ -71,9 +101,18 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-[var(--brand-green)] hover:opacity-90 text-white font-meta font-bold uppercase tracking-wider py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
+              disabled={isLoading}
+              className="w-full bg-[var(--brand-green)] hover:opacity-90 text-white font-meta font-bold uppercase tracking-wider py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
             >
-              Sign In <ArrowRight className="w-4 h-4" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" /> Authenticating...
+                </>
+              ) : (
+                <>
+                  Sign In <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 

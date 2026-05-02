@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { User, MapPin, Globe } from 'lucide-react'
 
 interface Member {
-  id: number
+  id: string
   name: string
   platform: 'GHANA' | 'DIASPORA'
   region: string | null

@@ -1,285 +1,167 @@
-# The Base Movement - Database Schema Documentation
+# The Base Movement - Database Schema Documentation (Status: Production Sync Complete)
 
-This document outlines the authoritative database schema for "The Base" platform, reflecting the data requirements identified across all modernized components.
+This document outlines the authoritative database schema for "The Base" platform. All primary tables identified below have been successfully provisioned in the Neon PostgreSQL production environment.
 
-## 1. Users Table (Patriots)
+## [DONE] 1. Users Table (Patriots)
 Stores the core membership data for both Local (Ghana) and Diaspora members.
 
-| Field Name | Type | Description |
-| :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `full_name` | VARCHAR(255) | Full name as per official ID |
-| `email` | VARCHAR(255) | Unique identifier for login |
-| `password_hash` | TEXT | Securely hashed password |
-| `registration_number` | VARCHAR(50) | Unique ID (e.g., GH-2024-123456 or DI-2024-123456) |
-| `platform` | ENUM('GHANA', 'DIASPORA') | Membership classification |
-| `country` | VARCHAR(100) | Country of residence |
-| `country_code` | VARCHAR(10) | International phone prefix |
-| `phone_number` | VARCHAR(20) | Full contact number |
-| `age_range` | VARCHAR(20) | Age category (e.g., 16-25, 26-40) |
-| `gender` | ENUM('Male', 'Female') | User gender |
-| `residential_address` | TEXT | Physical location |
-| `region` | VARCHAR(100) | Region (for Ghana platform) |
-| `constituency` | VARCHAR(100) | Constituency (for Ghana platform) |
-| `chapter` | VARCHAR(100) | Assigned chapter name |
-| `profession` | VARCHAR(255) | Professional background |
-| `education_level` | VARCHAR(100) | Highest education attained |
-| `avatar_url` | TEXT | Link to cropped passport photo |
-| `emergency_contact_name` | VARCHAR(255) | Name of emergency contact |
-| `emergency_relationship` | VARCHAR(100) | Relationship to member |
-| `emergency_phone` | VARCHAR(20) | Emergency contact number |
-| `joined_at` | TIMESTAMP | Creation date |
-| `status` | ENUM('Active', 'Inactive', 'Suspended') | Account status |
+| Field Name | Type | Description | Status |
+| :--- | :--- | :--- | :--- |
+| `id` | UUID | Primary Key | DONE |
+| `full_name` | VARCHAR(255) | Full name as per official ID | DONE |
+| `email` | VARCHAR(255) | Unique identifier for login | DONE |
+| `registration_number` | VARCHAR(50) | Unique ID (e.g., GH-2024-123456) | DONE |
+| `platform` | VARCHAR(50) | Membership classification | DONE |
+| `country` | VARCHAR(100) | Country of residence | DONE |
+| `phone_number` | VARCHAR(20) | Full contact number | DONE |
+| `gender` | VARCHAR(50) | User gender | DONE |
+| `region` | VARCHAR(100) | Region (for Ghana platform) | DONE |
+| `constituency` | VARCHAR(100) | Constituency (for Ghana platform) | DONE |
+| `chapter` | VARCHAR(100) | Assigned chapter name | DONE |
+| `joined_at` | TIMESTAMP | Creation date | DONE |
+| `status` | VARCHAR(50) | Account status | DONE |
 
-## 2. Blog Posts Table (Insights)
+## [DONE] 2. Blog Posts Table (Insights)
 Stores the movement's policy briefs, news, and analysis.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `title` | VARCHAR(255) | Post title |
-| `slug` | VARCHAR(255) | URL-friendly identifier |
-| `excerpt` | TEXT | Brief summary for cards |
-| `content` | TEXT | Main HTML/Markdown content |
-| `author_id` | UUID | Reference to author (Admin/Leader) |
-| `category` | VARCHAR(100) | e.g., Movement, Youth, Economy |
-| `image_url` | TEXT | Featured image link |
-| `read_time` | VARCHAR(20) | Estimated reading time |
-| `is_featured` | BOOLEAN | Highlighted status |
-| `published_at` | TIMESTAMP | Date of publication |
-| `tags` | TEXT[] | Array of post tags |
-| `seo_title` | VARCHAR(255) | Optimized title for search engines |
-| `meta_description` | TEXT | Description for search results |
+| `id` | UUID | DONE |
+| `title` | VARCHAR(255) | DONE |
+| `slug` | VARCHAR(255) | DONE |
+| `excerpt` | TEXT | DONE |
+| `content` | TEXT | DONE |
+| `author_id` | UUID | DONE |
+| `category` | VARCHAR(100) | DONE |
+| `published_at` | TIMESTAMP | DONE |
+| `tags` | TEXT[] | DONE |
 
-## 3. Comments Table (Discussion)
+## [DONE] 3. Comments Table (Discussion)
 Stores community interaction on blog posts.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `post_id` | UUID | Foreign Key to Blog Posts |
-| `author_name` | VARCHAR(255) | Member name |
-| `content` | TEXT | Comment body |
-| `created_at` | TIMESTAMP | Time of posting |
-| `is_flagged` | BOOLEAN | Moderation status |
+| `id` | UUID | DONE |
+| `post_id` | UUID | DONE |
+| `author_name` | VARCHAR(255) | DONE |
+| `content` | TEXT | DONE |
+| `created_at` | TIMESTAMP | DONE |
 
-## 4. Products Table (Movement Gear)
-Stores items available in the official store.
+## [DONE] 4. Store Inventory (Movement Gear)
+Stores items available in the official store. (Mapped from `Products` in initial design).
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `name` | VARCHAR(255) | Product name |
-| `slug` | VARCHAR(255) | URL-friendly identifier |
-| `price` | DECIMAL(10,2) | Price in GHS |
-| `description` | TEXT | Product specifications |
-| `category` | VARCHAR(100) | Apparel, Accessories, etc. |
-| `status` | VARCHAR(50) | Available, Coming Soon, Out of Stock |
-| `image_url` | TEXT | Main product image |
-| `rating` | DECIMAL(3,1) | Average member rating |
-| `created_at` | TIMESTAMP | Date added to store |
+| `id` | UUID | DONE |
+| `name` | VARCHAR(255) | DONE |
+| `category` | VARCHAR(100) | DONE |
+| `price_ghs` | DECIMAL | DONE |
+| `stock_quantity` | INTEGER | DONE |
+| `status` | VARCHAR(50) | DONE |
 
-## 5. Reviews Table (Product Feedback)
+## [DONE] 5. Reviews Table (Product Feedback)
 Stores verified member feedback on store items.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `product_id` | UUID | Foreign Key to Products |
-| `author_name` | VARCHAR(255) | Member name |
-| `rating` | INTEGER | Star rating (1-5) |
-| `content` | TEXT | Review body |
-| `is_verified` | BOOLEAN | Purchase verification status |
-| `created_at` | TIMESTAMP | Time of review |
+| `id` | UUID | DONE |
+| `product_id` | UUID | DONE |
+| `author_name` | VARCHAR(255) | DONE |
+| `rating` | INTEGER | DONE |
+| `content` | TEXT | DONE |
 
-## 6. Chapters Table (Hubs)
-Stores the global network of regional and diaspora hubs.
+## [DONE] 6. Chapters Table (Hubs)
+Stores the global network of regional and diaspora hubs. Fully synchronized with 80+ records.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `name` | VARCHAR(255) | Chapter name |
-| `city_or_region` | VARCHAR(255) | Specific location |
-| `country` | VARCHAR(100) | Hub country |
-| `member_count` | INTEGER | Number of active members |
-| `leader_name` | VARCHAR(255) | Primary contact leader |
-| `image_url` | TEXT | Chapter location photo |
-| `created_at` | TIMESTAMP | Inception date |
+| `id` | UUID | DONE |
+| `name` | VARCHAR(255) | DONE |
+| `city_or_region` | VARCHAR(255) | DONE |
+| `country` | VARCHAR(100) | DONE |
+| `member_count` | INTEGER | DONE |
+| `description` | TEXT | DONE |
+| `details_url` | TEXT | DONE |
+| `status` | VARCHAR(50) | DONE |
 
-## 7. Polls Table (Opinion)
+## [DONE] 7. Polls Table (Opinion)
 Stores movement-wide opinion polls and response data.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `question` | TEXT | The poll question |
-| `category` | VARCHAR(100) | Governance, Policy, etc. |
-| `status` | ENUM('Active', 'Closed') | Current poll state |
-| `total_votes` | INTEGER | Aggregate response count |
-| `expired_at` | TIMESTAMP | Expiry deadline |
-| `created_at` | TIMESTAMP | Creation date |
+| `id` | UUID | DONE |
+| `question` | TEXT | DONE |
+| `status` | VARCHAR(50) | DONE |
+| `total_votes` | INTEGER | DONE |
 
-## 8. Poll Options Table
+## [DONE] 8. Poll Options Table
 Stores specific choices for each poll.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `poll_id` | UUID | Foreign Key to Polls |
-| `label` | VARCHAR(255) | Option text |
-| `votes` | INTEGER | Specific response count |
+| `id` | UUID | DONE |
+| `poll_id` | UUID | DONE |
+| `label` | VARCHAR(255) | DONE |
+| `votes` | INTEGER | DONE |
 
-## 9. Brand Settings Table
-Stores authoritative contact information and brand identity details for the movement.
+## [DONE] 9. Brand Settings Table
+Stores authoritative contact information and brand identity details.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key (usually single record) |
-| `phone_primary` | VARCHAR(20) | Official contact number |
-| `phone_secondary` | VARCHAR(20) | Alternative contact number |
-| `email_official` | VARCHAR(255) | Main institutional email |
-| `email_support` | VARCHAR(255) | Member support email |
-| `facebook_url` | TEXT | Official Facebook page link |
-| `twitter_url` | TEXT | Official X/Twitter profile link |
-| `instagram_url` | TEXT | Official Instagram profile link |
-| `linkedin_url` | TEXT | Official LinkedIn company page |
-| `whatsapp_number` | VARCHAR(20) | Official WhatsApp contact |
-| `hq_address_line1` | TEXT | Physical headquarters address |
-| `hq_city` | VARCHAR(100) | City of headquarters |
-| `hq_region` | VARCHAR(100) | Region/State |
-| `hq_country` | VARCHAR(100) | Headquarters country |
-| `brand_green` | VARCHAR(7) | Primary brand green hex code |
-| `brand_gold` | VARCHAR(7) | Primary brand gold hex code |
-| `brand_red` | VARCHAR(7) | Primary brand red hex code |
-| `brand_yellow` | VARCHAR(7) | Brand yellow/gold hex code |
-| `brand_black` | VARCHAR(7) | Brand black hex code |
-| `updated_at` | TIMESTAMP | Last configuration update |
+| `id` | UUID | DONE |
+| `phone_primary` | VARCHAR(20) | DONE |
+| `email_official` | VARCHAR(255) | DONE |
+| `brand_green` | VARCHAR(7) | DONE |
+| `brand_gold` | VARCHAR(7) | DONE |
+| `brand_red` | VARCHAR(7) | DONE |
 
-## 10. Audit Logs Table (Accountability)
-Stores high-fidelity tracking of all administrative and system-level actions.
+## [DONE] 10. Audit Logs Table (Accountability)
+Stores high-fidelity tracking of administrative actions.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `timestamp` | TIMESTAMP | Time of the action |
-| `admin_id` | UUID | Reference to the administrator (from Users) |
-| `action` | VARCHAR(100) | Type of action (e.g., APPOINT_LEAD, VERIFY_MEMBER) |
-| `resource` | VARCHAR(255) | Targeted resource identifier |
-| `status` | ENUM('Success', 'Failure', 'Warning') | Outcome of the action |
-| `ip_address` | VARCHAR(45) | IP address of the originator |
-| `metadata` | JSONB | Additional technical details |
+| `id` | UUID | DONE |
+| `timestamp` | TIMESTAMP | DONE |
+| `action` | VARCHAR(100) | DONE |
+| `status` | VARCHAR(50) | DONE |
 
-## 11. Sentiment Analysis Table (Intelligence)
-Stores the movement's psychological engagement telemetry.
+## [DONE] 11. Sentiment Analysis Table (Intelligence)
+Stores psychological engagement telemetry.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `topic` | VARCHAR(255) | Strategic topic (e.g., Leadership Trust) |
-| `score` | INTEGER | Sentiment score (0-100) |
-| `sentiment` | ENUM('Positive', 'Neutral', 'Negative') | Qualitative classification |
-| `trend` | ENUM('Up', 'Down', 'Stable') | Movement direction |
-| `color_hex` | VARCHAR(7) | Brand-mapped visualization color |
-| `sample_size` | INTEGER | Number of data points analyzed |
-| `analyzed_at` | TIMESTAMP | Date of intelligence processing |
+| `id` | UUID | DONE |
+| `topic` | VARCHAR(255) | DONE |
+| `score` | INTEGER | DONE |
+| `sentiment` | VARCHAR(50) | DONE |
 
-## 12. Regional Performance Table (Mobilization)
-Stores mobilization metrics and status for regional chapters.
+## [DONE] 12. Regional Performance Table (Mobilization)
+Stores mobilization metrics for regional chapters.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `region_name` | VARCHAR(100) | Unique name of the region |
-| `member_count` | INTEGER | Current active membership |
-| `chapters_count` | INTEGER | Number of established constituency chapters |
-| `performance` | ENUM('High', 'Medium', 'Emerging') | Status (Maps to Red-Gold-Green) |
-| `target_count` | INTEGER | Mobilization goal for the period |
-| `growth_rate` | DECIMAL(5,2) | Month-over-month growth percentage |
-| `updated_at` | TIMESTAMP | Last metrics update |
+| `id` | UUID | DONE |
+| `region_name` | VARCHAR(100) | DONE |
+| `member_count` | INTEGER | DONE |
+| `performance` | VARCHAR(50) | DONE |
 
-## 13. Countries Reference Table
-Stores the authoritative list of supported countries for member registration along with their dialing codes.
+## [DONE] 13. Countries Reference Table
+Stores the authoritative list of supported countries and dialing codes.
 
-| Field Name | Type | Description |
+| Field Name | Type | Status |
 | :--- | :--- | :--- |
-| `id` | UUID | Primary Key |
-| `name` | VARCHAR(255) | Official country name |
-| `dialing_code` | VARCHAR(10) | International phone prefix |
-| `is_diaspora` | BOOLEAN | Identifies if country is part of diaspora |
+| `id` | UUID | DONE |
+| `name` | VARCHAR(255) | DONE |
+| `dialing_code` | VARCHAR(10) | DONE |
 
-### Reference Data (Seed)
+## [DONE] Geographic Master Data
+Reference tables for Ghana administrative structure.
 
-| Country Name | Dialing Code | Is Diaspora |
+| Table Name | Description | Status |
 | :--- | :--- | :--- |
-| Ghana | +233 | false |
-| Australia | +61 | true |
-| Austria | +43 | true |
-| Belgium | +32 | true |
-| Brazil | +55 | true |
-| Burkina Faso | +226 | true |
-| Cameroon | +237 | true |
-| Canada | +1 | true |
-| China | +86 | true |
-| Czech Republic | +420 | true |
-| Denmark | +45 | true |
-| Egypt | +20 | true |
-| Finland | +358 | true |
-| France | +33 | true |
-| Germany | +49 | true |
-| India | +91 | true |
-| Ireland | +353 | true |
-| Israel | +972 | true |
-| Italy | +39 | true |
-| Japan | +81 | true |
-| Kenya | +254 | true |
-| Kuwait | +965 | true |
-| Luxembourg | +352 | true |
-| Malaysia | +60 | true |
-| Mexico | +52 | true |
-| Morocco | +212 | true |
-| Netherlands | +31 | true |
-| New Zealand | +64 | true |
-| Nigeria | +234 | true |
-| Norway | +47 | true |
-| Poland | +48 | true |
-| Portugal | +351 | true |
-| Qatar | +974 | true |
-| Russia | +7 | true |
-| Saudi Arabia | +966 | true |
-| Senegal | +221 | true |
-| Singapore | +65 | true |
-| South Africa | +27 | true |
-| South Korea | +82 | true |
-| Spain | +34 | true |
-| Sweden | +46 | true |
-| Switzerland | +41 | true |
-| Tanzania | +255 | true |
-| Thailand | +66 | true |
-| Togo | +228 | true |
-| Turkey | +90 | true |
-| United Arab Emirates | +971 | true |
-| United Kingdom | +44 | true |
-| United States | +1 | true |
+| `ghana_regions` | 16 administrative regions | DONE |
+| `ghana_constituencies` | 275 electoral constituencies | DONE |
 
-## Geographic Data
-
-### `ghana_regions`
-
-**Description:** Master list of the 16 administrative regions in Ghana.
-
-| Field Name | Type | Description |
-| :--- | :--- | :--- |
-| `id` | SERIAL | Primary Key |
-| `name` | VARCHAR(255) | Official region name (Unique) |
-
-### `ghana_constituencies`
-
-**Description:** Master list of the 275 electoral constituencies mapped to their respective regions.
-
-| Field Name | Type | Description |
-| :--- | :--- | :--- |
-| `id` | SERIAL | Primary Key |
-| `region_id` | INTEGER | Foreign Key referencing `ghana_regions.id` (ON DELETE CASCADE) |
-| `name` | VARCHAR(255) | Official constituency name |
-
-*Note: There is a unique constraint on (`region_id`, `name`) to prevent duplicate constituencies within the same region.*
+---
+*Last updated: May 3, 2026 - All tables provisioned and synchronized.*

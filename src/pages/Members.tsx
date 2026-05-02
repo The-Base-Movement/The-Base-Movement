@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Globe, Search, MapPin, Users, User, ArrowUpDown, Filter, X } from 'lucide-react'
@@ -11,18 +11,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { adminService } from '@/services/adminService'
+import { LoadingScreen } from '@/components/LoadingScreen'
 
-const ghanaRegions = [
-  'Ahafo', 'Ashanti', 'Bono', 'Bono East', 'Central', 'Eastern', 'Greater Accra',
-  'North East', 'Northern', 'Oti', 'Savannah', 'Upper East', 'Upper West', 'Volta', 'Western', 'Western North'
-]
-
-const regionConstituencies: Record<string, string[]> = {
-  'Ahafo': ['Asunafo North', 'Asunafo South', 'Asutifi North', 'Asutifi South', 'Tano North', 'Tano South'],
-  'Ashanti': ['Adansi-Asokwa', 'Fomena', 'New Edubease', 'Afigya Kwabre North', 'Afigya Kwabre South', 'Asawase', 'Asokwa', 'Bantama', 'Suame', 'Mampong'],
-  'Greater Accra': ['Ablekuma Central', 'Ablekuma North', 'Ablekuma West', 'Adenta', 'Ashaiman', 'Ayawaso Central', 'Ayawaso West', 'Dome-Kwabenya', 'Madina', 'Tema Central'],
-  'Northern': ['Gushegu', 'Karaga', 'Kpandai', 'Kumbungu', 'Tamale Central', 'Sagnarigu', 'Savelugu'],
-  // ... adding a few more for demo
+interface Member {
+  id: string
+  name: string
+  platform: 'GHANA' | 'DIASPORA'
+  region: string | null
+  constituency: string | null
+  country: string
+  profession: string
+  avatar: string | null
 }
 
 const diasporaCountries = [
@@ -33,32 +33,12 @@ const professions = [
   'Healthcare', 'Education', 'Finance', 'Law', 'Technology', 'Agriculture', 'Creative Arts', 'Engineering', 'Trade', 'Research'
 ]
 
-interface Member {
-  id: number
-  name: string
-  platform: 'GHANA' | 'DIASPORA'
-  region: string | null
-  constituency: string | null
-  country: string
-  profession: string
-  avatar: string | null
-}
-
-// Mock data for members
-const mockMembers: Member[] = [
-  { id: 1, name: 'Abena Mensah', platform: 'GHANA', region: 'Greater Accra', constituency: 'Madina', country: 'Ghana', profession: 'Healthcare', avatar: null },
-  { id: 2, name: 'Kwesi Osei', platform: 'GHANA', region: 'Ashanti', constituency: 'Bantama', country: 'Ghana', profession: 'Education', avatar: null },
-  { id: 3, name: 'John Smith', platform: 'DIASPORA', region: null, constituency: null, country: 'United Kingdom', profession: 'Finance', avatar: null },
-  { id: 4, name: 'Ama Adow', platform: 'GHANA', region: 'Greater Accra', constituency: 'Adenta', country: 'Ghana', profession: 'Law', avatar: null },
-  { id: 5, name: 'Sarah Wilson', platform: 'DIASPORA', region: null, constituency: null, country: 'United States', profession: 'Technology', avatar: null },
-  { id: 6, name: 'Kojo Antwi', platform: 'GHANA', region: 'Northern', constituency: 'Tamale Central', country: 'Ghana', profession: 'Agriculture', avatar: null },
-  { id: 7, name: 'Ekow Eshun', platform: 'DIASPORA', region: null, constituency: null, country: 'Canada', profession: 'Creative Arts', avatar: null },
-  { id: 8, name: 'Baaba Yankah', platform: 'GHANA', region: 'Central', constituency: 'Cape Coast South', country: 'Ghana', profession: 'Engineering', avatar: null },
-  { id: 9, name: 'Michael Boateng', platform: 'GHANA', region: 'Ashanti', constituency: 'Suame', country: 'Ghana', profession: 'Trade', avatar: null },
-  { id: 10, name: 'Grace Ofori', platform: 'DIASPORA', region: null, constituency: null, country: 'Germany', profession: 'Research', avatar: null },
-]
-
 export default function Members() {
+  const [members, setMembers] = useState<Member[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [ghanaRegions, setGhanaRegions] = useState<string[]>([])
+  const [regionConstituencies, setRegionConstituencies] = useState<Record<string, string[]>>({})
+
   const [search, setSearch] = useState('')
   const [activePlatform, setActivePlatform] = useState<'GHANA' | 'DIASPORA'>('GHANA')
   const [selectedRegion, setSelectedRegion] = useState<string>('all')
@@ -68,12 +48,74 @@ export default function Members() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      try {
+        console.log('[MEMBERS] Initiating data fetch...')
+        const [fetchedMembers, fetchedRegions] = await Promise.all([
+          adminService.getMembers(),
+          adminService.getRegions()
+        ])
+
+        console.log('[MEMBERS] Raw data received:', { 
+          membersCount: fetchedMembers.length, 
+          regionsCount: fetchedRegions.length 
+        })
+
+        // Map members to UI format
+        const mappedMembers: Member[] = fetchedMembers.map(m => {
+          if (!m.id || !m.name) {
+            console.warn('[MEMBERS] Found potentially invalid member record:', m)
+          }
+          return {
+            id: m.id || Math.random().toString(),
+            name: m.name || 'Unnamed Patriot',
+            platform: m.type === 'Standard' ? 'GHANA' : 'DIASPORA',
+            region: m.region,
+            constituency: m.constituency,
+            country: m.country || 'Ghana',
+            profession: 'Patriot', // Placeholder as requested
+            avatar: m.avatarUrl || null
+          }
+        })
+
+        // Map regions and constituencies
+        const regionsArr: string[] = []
+        const constMap: Record<string, string[]> = {}
+        
+        fetchedRegions.forEach(r => {
+          if (r.name) {
+            regionsArr.push(r.name)
+            constMap[r.name] = r.constituencies || []
+          }
+        })
+
+        console.log('[MEMBERS] Mapping complete. Updating state.')
+        setMembers(mappedMembers)
+        setGhanaRegions(regionsArr)
+        setRegionConstituencies(constMap)
+      } catch (error) {
+        console.error('[MEMBERS] Data sync failed:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   // Filtered and Sorted Members
   const filteredMembers = useMemo(() => {
-    return mockMembers
+    const sourceData = members.length > 0 ? members : [] 
+    return sourceData
       .filter(member => {
         const matchesPlatform = member.platform === activePlatform
-        const matchesSearch = member.name.toLowerCase().includes(search.toLowerCase())
+        
+        // Defensive checks for search
+        const memberName = member.name || ''
+        const matchesSearch = memberName.toLowerCase().includes(search.toLowerCase())
+        
         const matchesProfession = selectedProfession === 'all' || member.profession === selectedProfession
         
         if (activePlatform === 'GHANA') {
@@ -86,15 +128,19 @@ export default function Members() {
         }
       })
       .sort((a, b) => {
-        if (sortOrder === 'asc') return a.name.localeCompare(b.name)
-        return b.name.localeCompare(a.name)
+        const nameA = a.name || ''
+        const nameB = b.name || ''
+        if (sortOrder === 'asc') return nameA.localeCompare(nameB)
+        return nameB.localeCompare(nameA)
       })
-  }, [activePlatform, search, selectedRegion, selectedConstituency, selectedCountry, selectedProfession, sortOrder])
+  }, [members, activePlatform, search, selectedRegion, selectedConstituency, selectedCountry, selectedProfession, sortOrder])
 
   const constituencies = useMemo(() => {
     if (selectedRegion === 'all') return []
     return regionConstituencies[selectedRegion] || []
-  }, [selectedRegion])
+  }, [selectedRegion, regionConstituencies])
+
+  if (isLoading) return <LoadingScreen />
 
   return (
     <div className="bg-stone-50/50 min-h-screen font-meta pb-20">
