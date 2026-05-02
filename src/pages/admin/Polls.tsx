@@ -5,7 +5,8 @@ import {
   Clock, 
   MoreVertical,
   MessageSquare,
-  TrendingUp
+  TrendingUp,
+  ChevronRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
