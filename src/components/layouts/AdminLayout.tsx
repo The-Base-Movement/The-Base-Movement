@@ -11,7 +11,8 @@ import {
   X, 
   Shield,
   Bell,
-  Search
+  Search,
+  ShoppingBag
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
