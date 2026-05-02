@@ -199,42 +199,61 @@ export default function ProfileSettings() {
       })
       
       const imgData = canvas.toDataURL('image/png')
-      const printWindow = window.open('', '_blank')
-      if (printWindow) {
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>THE BASE - Official Membership Card</title>
-              <style>
-                @page { 
-                  size: 85.6mm 53.98mm; 
-                  margin: 0; 
-                }
-                body { 
-                  margin: 0; 
-                  padding: 0;
-                  display: flex; 
-                  align-items: center; 
-                  justify-content: center; 
-                  height: 100vh; 
-                  background: #fff;
-                  -webkit-print-color-adjust: exact;
-                }
-                img { 
-                  width: 85.6mm; 
-                  height: 53.98mm; 
-                  display: block; 
-                  image-rendering: -webkit-optimize-contrast;
-                }
-              </style>
-            </head>
-            <body>
-              <img src="${imgData}" onload="window.print();window.close()" />
-            </body>
-          </html>
-        `)
-        printWindow.document.close()
-      }
+      
+      // Use iframe to bypass popup blockers
+      const iframe = document.createElement('iframe')
+      iframe.style.position = 'fixed'
+      iframe.style.right = '0'
+      iframe.style.bottom = '0'
+      iframe.style.width = '0'
+      iframe.style.height = '0'
+      iframe.style.border = 'none'
+      document.body.appendChild(iframe)
+
+      const iframeDoc = iframe.contentWindow?.document
+      if (!iframeDoc) return
+
+      iframeDoc.write(`
+        <html>
+          <head>
+            <title>THE BASE - Official Membership Card</title>
+            <style>
+              @page { 
+                size: 85.6mm 53.98mm; 
+                margin: 0; 
+              }
+              body { 
+                margin: 0; 
+                padding: 0;
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                height: 100vh; 
+                background: #fff;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+              }
+              img { 
+                width: 85.6mm; 
+                height: 53.98mm; 
+                display: block; 
+                image-rendering: -webkit-optimize-contrast;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="${imgData}" onload="setTimeout(() => { window.print(); }, 200);" />
+          </body>
+        </html>
+      `)
+      iframeDoc.close()
+      
+      // Clean up iframe after a delay to ensure print dialog opened
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe)
+        }
+      }, 60000)
     } catch (error) {
       console.error('Error printing card:', error)
     }
