@@ -78,7 +78,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           )}>
             <Link to="/admin/dashboard" className="flex items-center gap-4 shrink-0">
               <div className="w-10 h-10 bg-white flex items-center justify-center shadow-2xl p-1.5 shrink-0">
-                <img src="/The-Base/logo.png" alt="The Base Logo" className="w-full h-full object-contain" />
+                <img src="/logo.png" alt="The Base Logo" className="w-full h-full object-contain" />
               </div>
               <div className={cn(
                 "transition-all duration-300 origin-left",

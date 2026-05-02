@@ -14,7 +14,7 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     const readProfile = () => {
-      setAvatarUrl(localStorage.getItem('userAvatar') || '/The-Base/founder.jpg')
+      setAvatarUrl(localStorage.getItem('userAvatar') || '/founder.jpg')
       setUserName(localStorage.getItem('userName') || 'Dr. George Oti Bonsu')
       setUserPlatform(localStorage.getItem('userPlatform') || 'Founder')
     }
@@ -82,7 +82,7 @@ export default function DashboardLayout() {
       <nav className={`fixed left-0 top-0 h-full flex flex-col bg-stone-100 dark:bg-zinc-950 text-emerald-700 dark:text-emerald-400 w-64 border-r border-stone-200 dark:border-zinc-800 z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         {/* Fixed Header */}
         <div className="px-6 py-8 flex items-center gap-3 bg-stone-100 dark:bg-zinc-950 z-10 shrink-0">
-          <img src="/The-Base/logo.png" alt="The Base Logo" className="h-10 w-10" />
+          <img src="/logo.png" alt="The Base Logo" className="h-10 w-10" />
           <div>
             <h1 className="text-lg text-emerald-900 dark:text-white leading-none mb-0">The Base</h1>
             <p className="text-[9px] text-warm-gold font-bold tracking-widest mt-1 mb-0 uppercase">Civic Movement</p>
@@ -167,7 +167,7 @@ export default function DashboardLayout() {
           {/* Leader Portrait */}
           <div className="mx-4 my-8 overflow-hidden rounded-none relative group shrink-0 shadow-lg">
             <img
-              src="/The-Base/founder.jpg"
+              src="/founder.jpg"
               alt="Dr. George Oti Bonsu The Base Movement Founder"
               className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
             />
@@ -229,7 +229,7 @@ export default function DashboardLayout() {
               </button>
               <div className="flex items-center gap-2">
                 <Link to="/dashboard" className="flex items-center gap-2">
-                  <img src="/The-Base/logo.png" alt="The Base" className="h-6 w-6" />
+                  <img src="/logo.png" alt="The Base" className="h-6 w-6" />
                   <span className="text-[var(--brand-green)] font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
                 <div className="hidden sm:flex items-center gap-2 text-[10px] text-stone-400 tracking-widest uppercase font-bold">
