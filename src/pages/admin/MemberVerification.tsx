@@ -19,6 +19,7 @@ import {
   CardTitle 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { adminService } from '@/services/adminService'
 
 interface PendingMember {
   id: string
@@ -183,10 +184,18 @@ export default function MemberVerification() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 pt-4">
-                    <Button variant="outline" className="h-12 border-white/10 text-white hover:bg-red-500/10 hover:text-red-500 hover:border-red-500 transition-all text-[10px] font-black uppercase tracking-widest">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => adminService.verifyMember(selectedMember.id, false)}
+                      className="h-12 border-white/10 text-white hover:bg-red-500/10 hover:text-red-500 hover:border-red-500 transition-all text-[10px] font-black uppercase tracking-widest"
+                    >
                       <XCircle className="w-4 h-4 mr-2" /> Reject
                     </Button>
-                    <Button variant="primary" className="h-12 bg-[var(--brand-green)] text-white hover:bg-emerald-600 transition-all text-[10px] font-black uppercase tracking-widest">
+                    <Button 
+                      variant="primary" 
+                      onClick={() => adminService.verifyMember(selectedMember.id, true)}
+                      className="h-12 bg-[var(--brand-green)] text-white hover:bg-emerald-600 transition-all text-[10px] font-black uppercase tracking-widest"
+                    >
                       <UserCheck className="w-4 h-4 mr-2" /> Approve
                     </Button>
                   </div>
