@@ -22,6 +22,7 @@ import {
   CardTitle 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { useToast } from '@/hooks/use-toast'
 
 // Mock Data for Members
 const membersData = [
@@ -34,6 +35,33 @@ const membersData = [
 
 export default function MembersList() {
   const [searchTerm, setSearchTerm] = useState('')
+  const { toast } = useToast()
+  const [isExporting, setIsExporting] = useState(false)
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    toast({
+      title: "PREPARING MEMBER EXPORT",
+      description: "Generating high-fidelity regional membership directory...",
+    })
+    
+    setTimeout(() => {
+      setIsExporting(false)
+      toast({
+        title: "EXPORT COMPLETE",
+        description: "Membership directory successfully secured and ready for download.",
+        variant: "default",
+      })
+    }, 2000)
+  }
+
+  const handleAddMember = () => {
+    toast({
+      title: "IDENTITY HUB ACCESS",
+      description: "Opening secure member registration workflow...",
+      variant: "default",
+    })
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -44,11 +72,21 @@ export default function MembersList() {
           <p className="text-stone-500 text-sm mt-1">Manage and coordinate the movement's registered members.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-11 text-[10px] uppercase font-bold tracking-widest border-stone-200">
-            <Download className="w-4 h-4 mr-2" /> Export List
+          <Button 
+            variant="outline" 
+            className="rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-stone-50"
+            onClick={handleExport}
+            disabled={isExporting}
+          >
+            <Download className="w-3.5 h-3.5 mr-2" />
+            {isExporting ? 'GENERATING...' : 'Export List'}
           </Button>
-          <Button variant="primary" className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
-            <UserPlus className="w-4 h-4 mr-2" /> Add New Member
+          <Button 
+            className="rounded-none bg-[var(--brand-black)] text-white text-[10px] font-black uppercase tracking-widest hover:bg-stone-800"
+            onClick={handleAddMember}
+          >
+            <UserPlus className="w-3.5 h-3.5 mr-2" />
+            Add New Member
           </Button>
         </div>
       </div>
