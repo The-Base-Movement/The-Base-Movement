@@ -35,6 +35,31 @@ export interface Poll {
   endDate: string
 }
 
+export interface InventoryItem {
+  id: string
+  name: string
+  category: string
+  price: string
+  stock: number
+  status: 'Stable' | 'Low Stock' | 'Critical' | 'Processing'
+  image: string
+  color: string
+}
+
+export interface RegionalStat {
+  region: string
+  memberCount: number
+  chapters: number
+  activePolls: number
+  performance: 'High' | 'Medium' | 'Low'
+  color: string
+}
+
+export interface GrowthTrend {
+  date: string
+  count: number
+}
+
 export type AdminRole = 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER'
 
 export interface AdminPermission {
@@ -113,12 +138,12 @@ class AdminService {
   }
 
   // --- Store Operations ---
-  async getInventory(): Promise<any[]> {
+  async getInventory(): Promise<InventoryItem[]> {
     return []
   }
 
   // --- Analytics & Geospatial Intelligence ---
-  async getRegionalStats(): Promise<{ region: string, memberCount: number, chapters: number, activePolls: number, performance: 'High' | 'Medium' | 'Low', color: string }[]> {
+  async getRegionalStats(): Promise<RegionalStat[]> {
     return [
       { region: 'Greater Accra', memberCount: 12500, chapters: 45, activePolls: 3, performance: 'High', color: 'var(--brand-green)' },
       { region: 'Ashanti', memberCount: 18200, chapters: 62, activePolls: 5, performance: 'High', color: 'var(--brand-green)' },
@@ -128,7 +153,7 @@ class AdminService {
     ]
   }
 
-  async getGrowthTrends(): Promise<{ date: string, count: number }[]> {
+  async getGrowthTrends(): Promise<GrowthTrend[]> {
     return [
       { date: '2024-01', count: 1200 },
       { date: '2024-02', count: 2100 },
@@ -136,6 +161,11 @@ class AdminService {
       { date: '2024-04', count: 5600 },
       { date: '2024-05', count: 8200 },
     ]
+  }
+
+  // --- Activity Logs ---
+  async getActivityLogs(): Promise<any[]> {
+    return []
   }
 }
 

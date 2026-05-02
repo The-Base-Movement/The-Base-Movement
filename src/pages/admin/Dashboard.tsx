@@ -22,6 +22,17 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
+import { adminService, GrowthTrend } from '@/services/adminService'
+import { useState, useEffect } from 'react'
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts'
 
 interface StatCardProps {
   title: string
@@ -96,50 +107,61 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        {/* Live Activity Feed */}
+        {/* Growth Intelligence Visualization */}
         <Card className="xl:col-span-2 rounded-none border-stone-200 shadow-sm overflow-hidden">
           <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
-                <Activity className="w-5 h-5 text-[var(--brand-red)]" />
-                Live Operations Feed
+                <TrendingUp className="w-5 h-5 text-[var(--brand-gold)]" />
+                Growth Intelligence
               </CardTitle>
-              <CardDescription className="text-xs mt-1">Real-time administrative and movement activity.</CardDescription>
+              <CardDescription className="text-xs mt-1">Real-time member expansion telemetry across all regions.</CardDescription>
             </div>
-            <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-stone-400">
-              Refresh Feed
-            </Button>
           </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-stone-50">
-              {activityLogs.map((log) => (
-                <div key={log.id} className="p-6 flex items-start gap-5 hover:bg-stone-50/50 transition-colors group">
-                  <div className={cn("w-10 h-10 shrink-0 flex items-center justify-center bg-stone-50", log.color.replace('text-', 'bg-').replace('500', '100'))}>
-                    <log.icon className={cn("w-5 h-5", log.color)} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-4">
-                      <p className="text-sm font-black text-[var(--brand-black)] uppercase tracking-tight truncate">{log.details}</p>
-                      <span className="text-[10px] font-bold text-stone-400 whitespace-nowrap flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {log.time}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Source:</span>
-                      <span className="text-[10px] font-black text-stone-600 uppercase tracking-tight">{log.user}</span>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="icon" className="text-stone-300 opacity-0 group-hover:opacity-100 transition-all">
-                    <ArrowUpRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <div className="p-6 border-t border-stone-50 bg-stone-50/20">
-              <Button variant="outline" className="w-full h-12 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-black)] hover:text-white transition-all">
-                View Full System Audit Trail
-              </Button>
-            </div>
+          <CardContent className="p-8 h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={growthData}>
+                <defs>
+                  <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--brand-gold)" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="var(--brand-gold)" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <XAxis 
+                  dataKey="date" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 10, fontWeight: 700, fill: '#a8a29e' }}
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 10, fontWeight: 700, fill: '#a8a29e' }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'var(--brand-black)', 
+                    border: 'none', 
+                    borderRadius: '0', 
+                    color: 'white',
+                    fontSize: '10px',
+                    fontWeight: '900',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em'
+                  }} 
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="count" 
+                  stroke="var(--brand-red)" 
+                  strokeWidth={3}
+                  fillOpacity={1} 
+                  fill="url(#colorGrowth)" 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
