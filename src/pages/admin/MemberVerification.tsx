@@ -29,6 +29,7 @@ interface PendingMember {
   type: string
   submitted: string
   status: string
+  color: string
 }
 
 // Mock Data for Pending Verifications
