@@ -18,20 +18,28 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
+import { adminService, AdminPermission } from '@/services/adminService'
+
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const location = useLocation()
   const navigate = useNavigate()
+  const user = adminService.getCurrentUser()
 
-  const navItems = [
+  const navItems: ( { to: string, icon: any, label: string, permission?: { action: AdminPermission['action'], resource: AdminPermission['resource'] } } )[] = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
-    { to: '/admin/members', icon: Users, label: 'Members' },
-    { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications' },
-    { to: '/admin/chapters', icon: MapPin, label: 'Chapters' },
-    { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys' },
-    { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise' },
-    { to: '/admin/settings', icon: Settings, label: 'Settings' },
+    { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+    { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+    { to: '/admin/chapters', icon: MapPin, label: 'Chapters', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+    { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
+    { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
+    { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
   ]
+
+  const filteredNavItems = navItems.filter(item => {
+    if (!item.permission) return true
+    return adminService.can(item.permission.action, item.permission.resource)
+  })
 
   const handleLogout = () => {
     // Basic logout logic
@@ -76,7 +84,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
           {/* Navigation */}
           <nav className="flex-1 py-8 px-4 space-y-1 overflow-y-auto">
-            {navItems.map((item) => {
+            {filteredNavItems.map((item) => {
               const isActive = location.pathname === item.to
               return (
                 <Link
@@ -182,15 +190,19 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             
             <div className="flex items-center gap-5 pl-2 group cursor-pointer">
               <div className="text-right hidden md:block">
-                <p className="text-[11px] font-black text-[var(--brand-black)] uppercase tracking-tight leading-none group-hover:text-[var(--brand-red)] transition-colors">Commander-In-Chief</p>
+                <p className="text-[11px] font-black text-[var(--brand-black)] uppercase tracking-tight leading-none group-hover:text-[var(--brand-red)] transition-colors">
+                  {user?.name || 'Administrative Officer'}
+                </p>
                 <div className="flex items-center justify-end gap-1.5 mt-1.5">
                   <span className="w-1 h-1 bg-emerald-500 rounded-full" />
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest leading-none">Tier 1 HQ Access</p>
+                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest leading-none">
+                    {user?.role.replace('_', ' ') || 'HQ Access'}
+                  </p>
                 </div>
               </div>
               <div className="relative shrink-0">
-                <div className="w-12 h-12 bg-[var(--brand-black)] text-white flex items-center justify-center font-black text-xs shadow-2xl relative z-10 group-hover:-translate-y-1 group-hover:-translate-x-1 transition-transform duration-300">
-                  HQ
+                <div className="w-12 h-12 bg-[var(--brand-black)] text-white flex items-center justify-center font-black text-xs shadow-2xl relative z-10 group-hover:-translate-y-1 group-hover:-translate-x-1 transition-transform duration-300 uppercase">
+                  {user?.name.split(' ').map(n => n[0]).join('') || 'HQ'}
                 </div>
                 <div className="absolute inset-0 bg-[var(--brand-red)] translate-y-0.5 translate-x-0.5 z-0" />
               </div>
