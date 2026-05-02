@@ -8,17 +8,28 @@ import {
   CardTitle 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { adminService } from '@/services/adminService'
+import { useState, useEffect } from 'react'
 
-// Mock Data for Chapters
+// Mock Data for Chapters with performance hierarchy
 const chaptersData = [
-  { id: 'CH-ACC-01', name: 'Greater Accra Central', region: 'Greater Accra', lead: 'Dr. Samuel Kweku', members: 4500, impact: 'High', status: 'Active' },
-  { id: 'CH-ASH-01', name: 'Kumasi Metropolitan', region: 'Ashanti', lead: 'Nana Ama Serwaa', members: 8200, impact: 'Very High', status: 'Active' },
-  { id: 'CH-WES-01', name: 'Sekondi-Takoradi', region: 'Western', lead: 'Ekow Essien', members: 3100, impact: 'Medium', status: 'Active' },
-  { id: 'CH-CEN-01', name: 'Cape Coast South', region: 'Central', lead: 'Prof. John Mensah', members: 2800, impact: 'High', status: 'Active' },
-  { id: 'CH-NOR-01', name: 'Tamale North', region: 'Northern', lead: 'Alhaji Ibrahim', members: 5400, impact: 'High', status: 'Pending' },
+  { id: 'CH-ACC-01', name: 'Greater Accra Central', region: 'Greater Accra', lead: 'Dr. Samuel Kweku', members: 4500, impact: 'High', status: 'Active', color: 'var(--brand-green)' },
+  { id: 'CH-ASH-01', name: 'Kumasi Metropolitan', region: 'Ashanti', lead: 'Nana Ama Serwaa', members: 8200, impact: 'Very High', status: 'Active', color: 'var(--brand-green)' },
+  { id: 'CH-WES-01', name: 'Sekondi-Takoradi', region: 'Western', lead: 'Ekow Essien', members: 3100, impact: 'Medium', status: 'Active', color: 'var(--brand-gold)' },
+  { id: 'CH-CEN-01', name: 'Cape Coast South', region: 'Central', lead: 'Prof. John Mensah', members: 2800, impact: 'Medium', status: 'Active', color: 'var(--brand-gold)' },
+  { id: 'CH-NOR-01', name: 'Tamale North', region: 'Northern', lead: 'Alhaji Ibrahim', members: 5400, impact: 'Low', status: 'Pending', color: 'var(--brand-red)' },
 ]
-
 export default function ChaptersManagement() {
+  const [regionalStats, setRegionalStats] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const stats = await adminService.getRegionalStats()
+      setRegionalStats(stats)
+    }
+    fetchStats()
+  }, [])
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
@@ -35,8 +46,8 @@ export default function ChaptersManagement() {
       </div>
 
       {/* Chapters Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="rounded-none border-stone-200 shadow-sm bg-[var(--brand-green)] text-white">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="rounded-none border-stone-200 shadow-sm bg-[var(--brand-black)] text-white">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-white/10 flex items-center justify-center">
               <Shield className="w-6 h-6 text-white" />
@@ -47,28 +58,30 @@ export default function ChaptersManagement() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm bg-[var(--brand-red)] text-white">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/10 flex items-center justify-center">
-              <MapPin className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Active Regions</p>
-              <h3 className="text-2xl font-black font-meta">16 / 16</h3>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm bg-[var(--brand-gold)] text-[var(--brand-black)]">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-black/10 flex items-center justify-center">
-              <Target className="w-6 h-6 text-[var(--brand-black)]" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Target Milestone</p>
-              <h3 className="text-2xl font-black font-meta">82%</h3>
-            </div>
-          </CardContent>
-        </Card>
+        {regionalStats.slice(0, 3).map((stat) => (
+          <Card key={stat.region} className="rounded-none border-stone-200 shadow-sm overflow-hidden relative group cursor-pointer">
+            <CardContent className="p-6 flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 bg-stone-100 flex items-center justify-center transition-colors group-hover:bg-[var(--brand-black)] group-hover:text-white">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 group-hover:text-[var(--brand-black)] transition-colors">{stat.region}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <h3 className="text-xl font-black font-meta text-[var(--brand-black)]">{stat.memberCount.toLocaleString()}</h3>
+                  <div className={cn(
+                    "px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest border",
+                    stat.performance === 'High' && "bg-emerald-50 text-[var(--brand-green)] border-[var(--brand-green)]/20",
+                    stat.performance === 'Medium' && "bg-amber-50 text-[var(--brand-gold)] border-[var(--brand-gold)]/20",
+                    stat.performance === 'Low' && "bg-red-50 text-[var(--brand-red)] border-[var(--brand-red)]/20",
+                  )}>
+                    {stat.performance}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <div className="absolute bottom-0 left-0 h-1 bg-[var(--brand-red)] transition-all duration-300 w-0 group-hover:w-full" style={{ backgroundColor: stat.color }} />
+          </Card>
+        ))}
       </div>
 
       {/* Search and Filters */}

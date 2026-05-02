@@ -118,13 +118,13 @@ class AdminService {
   }
 
   // --- Analytics & Geospatial Intelligence ---
-  async getRegionalStats(): Promise<{ region: string, memberCount: number, chapters: number, activePolls: number }[]> {
+  async getRegionalStats(): Promise<{ region: string, memberCount: number, chapters: number, activePolls: number, performance: 'High' | 'Medium' | 'Low', color: string }[]> {
     return [
-      { region: 'Greater Accra', memberCount: 12500, chapters: 45, activePolls: 3 },
-      { region: 'Ashanti', memberCount: 18200, chapters: 62, activePolls: 5 },
-      { region: 'Western', memberCount: 8400, chapters: 28, activePolls: 2 },
-      { region: 'Central', memberCount: 6100, chapters: 22, activePolls: 1 },
-      { region: 'Northern', memberCount: 4200, chapters: 15, activePolls: 2 },
+      { region: 'Greater Accra', memberCount: 12500, chapters: 45, activePolls: 3, performance: 'High', color: 'var(--brand-green)' },
+      { region: 'Ashanti', memberCount: 18200, chapters: 62, activePolls: 5, performance: 'High', color: 'var(--brand-green)' },
+      { region: 'Western', memberCount: 8400, chapters: 28, activePolls: 2, performance: 'Medium', color: 'var(--brand-gold)' },
+      { region: 'Central', memberCount: 6100, chapters: 22, activePolls: 1, performance: 'Medium', color: 'var(--brand-gold)' },
+      { region: 'Northern', memberCount: 4200, chapters: 15, activePolls: 2, performance: 'Low', color: 'var(--brand-red)' },
     ]
   }
 
