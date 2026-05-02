@@ -18,23 +18,28 @@ import {
   CardTitle 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { adminService, type Poll } from '@/services/adminService'
+import { adminService, type Poll, type PollStats } from '@/services/adminService'
 import { toast } from 'sonner'
 
 // Mock Data for Polls
 export default function PollsManagement() {
   const [polls, setPolls] = useState<Poll[]>([])
+  const [stats, setStats] = useState<PollStats | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchPolls = async () => {
+    const fetchData = async () => {
       setIsLoading(true)
-      const data = await adminService.getPolls()
-      setPolls(data)
+      const [pollData, statData] = await Promise.all([
+        adminService.getPolls(),
+        adminService.getPollStats()
+      ])
+      setPolls(pollData)
+      setStats(statData)
       setIsLoading(false)
     }
-    fetchPolls()
+    fetchData()
   }, [])
 
   const handlePollAction = (action: string, pollTitle: string) => {
@@ -65,9 +70,9 @@ export default function PollsManagement() {
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
               <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Total Engagements</p>
-              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">24.5k</h3>
+              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{stats?.totalEngagements || "..."}</h3>
               <div className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 mt-1">
-                <TrendingUp className="w-3 h-3" /> +15% this week
+                <TrendingUp className="w-3 h-3" /> +15.2%
               </div>
             </div>
           </CardContent>
@@ -76,7 +81,7 @@ export default function PollsManagement() {
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
               <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Active Polls</p>
-              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">12</h3>
+              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{stats?.activePolls ?? "..."}</h3>
               <p className="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-tight">Across all regions</p>
             </div>
           </CardContent>
@@ -85,7 +90,7 @@ export default function PollsManagement() {
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
               <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Avg Response Time</p>
-              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">4.2m</h3>
+              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{stats?.avgResponseTime || "..."}</h3>
               <p className="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-tight">Per survey session</p>
             </div>
           </CardContent>
@@ -94,7 +99,7 @@ export default function PollsManagement() {
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
               <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Feedback Rate</p>
-              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">68%</h3>
+              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{stats?.feedbackRate || "..."}</h3>
               <p className="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-tight">From active members</p>
             </div>
           </CardContent>

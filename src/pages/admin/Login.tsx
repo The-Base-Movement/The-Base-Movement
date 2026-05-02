@@ -6,8 +6,31 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Eye, EyeOff, Shield, ArrowRight } from 'lucide-react'
 
+import { authService } from '@/services/authService'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    try {
+      await authService.login(email, password)
+      toast.success('Access Granted. Welcome to the Command Center.')
+      navigate('/admin')
+    } catch (error: any) {
+      toast.error(error.message || 'Authentication failed. Please check your credentials.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
@@ -22,14 +45,17 @@ export default function AdminLogin() {
               <p className="text-sm text-gray-500">Authorized personnel only</p>
             </div>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleLogin}>
               <div>
                 <Label htmlFor="admin-email" className="text-sm font-medium">Email</Label>
                 <Input
                   id="admin-email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@thebase.org"
                   className="mt-1"
+                  required
                 />
               </div>
 
@@ -39,7 +65,10 @@ export default function AdminLogin() {
                   <Input
                     id="admin-password"
                     type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Your password"
+                    required
                   />
                   <button
                     type="button"
@@ -53,9 +82,14 @@ export default function AdminLogin() {
 
               <Button
                 type="submit"
+                disabled={isLoading}
                 className="w-full bg-[var(--brand-black)] hover:bg-[#333] text-white font-semibold py-3"
               >
-                <ArrowRight className="w-4 h-4 mr-2" /> Sign In
+                {isLoading ? "Authenticating..." : (
+                  <>
+                    <ArrowRight className="w-4 h-4 mr-2" /> Sign In
+                  </>
+                )}
               </Button>
             </form>
 

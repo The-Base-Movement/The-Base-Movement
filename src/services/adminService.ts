@@ -1,8 +1,4 @@
-/**
- * Admin Service
- * Core architectural service for handling Back-Office CRUD operations.
- * Transitioning from mock data to real-time persistence patterns.
- */
+import { authService } from './authService'
 
 export interface Member {
   id: string
@@ -55,6 +51,13 @@ export interface InventoryItem {
   status: 'Stable' | 'Low Stock' | 'Critical' | 'Processing'
   image: string
   color: string
+}
+
+export interface PollStats {
+  totalEngagements: string
+  activePolls: number
+  avgResponseTime: string
+  feedbackRate: string
 }
 
 export interface RegionalStat {
@@ -181,7 +184,7 @@ export interface AdminUser {
 
 // ── Data API Configuration ─────────────────────────────────────────────────
 const DATA_API_URL = 'https://ep-ancient-tooth-amjyc3yp.apirest.c-5.us-east-1.aws.neon.tech/neondb/rest/v1'
-const DATA_API_TOKEN = import.meta.env.VITE_NEON_DATA_API_TOKEN
+const DATA_API_MANAGEMENT_TOKEN = import.meta.env.VITE_NEON_DATA_API_TOKEN
 
 // ── State Store ─────────────────────────────────────────────────────────────
 const sessionAuditLogs: AuditLogEntry[] = []
@@ -189,6 +192,13 @@ const sessionAuditLogs: AuditLogEntry[] = []
 class AdminService {
   private static instance: AdminService
   private currentUser: AdminUser | null = null
+
+  private getAuthHeader(): Record<string, string> {
+    const token = authService.getToken()
+    const activeToken = token || DATA_API_MANAGEMENT_TOKEN
+    if (!activeToken) return {}
+    return { 'Authorization': `Bearer ${activeToken}` }
+  }
 
   private constructor() {
     this.currentUser = {
@@ -244,7 +254,7 @@ class AdminService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DATA_API_TOKEN}`
+          ...this.getAuthHeader()
         },
         body: JSON.stringify(logEntry)
       })
@@ -268,7 +278,7 @@ class AdminService {
   async getMembers(): Promise<Member[]> {
     try {
       const response = await fetch(`${DATA_API_URL}/users?select=*&order=joined_at.desc`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       const data = (await response.json()) as DBUser[]
       if (!Array.isArray(data)) throw new Error('Invalid data format')
@@ -303,7 +313,7 @@ class AdminService {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DATA_API_TOKEN}`
+          ...this.getAuthHeader()
         },
         body: JSON.stringify({ 
           verification_status: status,
@@ -335,8 +345,13 @@ class AdminService {
   async getChapters(): Promise<Chapter[]> {
     try {
       const response = await fetch(`${DATA_API_URL}/chapters?select=*&order=name.asc`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
+      if (!response.ok) {
+        const err = await response.json()
+        console.error('[SYSTEM] Chapters API Error:', response.status, err)
+        throw new Error(`API Error: ${response.status}`)
+      }
       const data = (await response.json()) as DBChapter[]
       return data.map((c) => ({
         id: c.id,
@@ -359,7 +374,7 @@ class AdminService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DATA_API_TOKEN}`
+          ...this.getAuthHeader()
         },
         body: JSON.stringify({
           name: chapter.name,
@@ -392,7 +407,7 @@ class AdminService {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DATA_API_TOKEN}`
+          ...this.getAuthHeader()
         },
         body: JSON.stringify(updateData)
       })
@@ -408,7 +423,7 @@ class AdminService {
     try {
       await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       await this.logAction('CHAPTER_DELETE', `CHAPTERS/${name}`, 'Warning')
       return true
@@ -421,7 +436,7 @@ class AdminService {
   async incrementChapterMemberCount(chapterName: string): Promise<void> {
     try {
       const getResponse = await fetch(`${DATA_API_URL}/chapters?name=eq.${chapterName}&select=id,member_count`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       const chapters = await getResponse.json()
       if (chapters.length > 0) {
@@ -430,7 +445,7 @@ class AdminService {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${DATA_API_TOKEN}`
+            ...this.getAuthHeader()
           },
           body: JSON.stringify({ member_count: (member_count || 0) + 1 })
         })
@@ -445,20 +460,56 @@ class AdminService {
   async getPolls(): Promise<Poll[]> {
     try {
       const response = await fetch(`${DATA_API_URL}/polls?select=*&order=created_at.desc`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       const data = (await response.json()) as DBPoll[]
       return data.map((p) => ({
         id: p.id,
         title: p.title,
         status: p.status,
-        votes: p.votes,
-        region: p.region,
-        endDate: p.end_date
+        votes: p.votes || 0,
+        region: p.region || 'National',
+        endDate: p.end_date ? new Date(p.end_date).toLocaleDateString() : 'N/A'
       }))
     } catch (error) {
       console.warn('[SYSTEM] Failed to fetch polls from API:', error)
       return []
+    }
+  }
+
+  async getPollStats(): Promise<PollStats> {
+    try {
+      const [pollsRes, usersRes] = await Promise.all([
+        fetch(`${DATA_API_URL}/polls?select=votes,status`, {
+          headers: this.getAuthHeader()
+        }),
+        fetch(`${DATA_API_URL}/users?select=id`, {
+          method: 'HEAD',
+          headers: this.getAuthHeader()
+        })
+      ])
+
+      const pollsData = (await pollsRes.json()) as { votes: number, status: string }[]
+      const totalUsers = parseInt(usersRes.headers.get('content-range')?.split('/')?.[1] || '1')
+      
+      const totalVotes = pollsData.reduce((sum, p) => sum + (p.votes || 0), 0)
+      const activeCount = pollsData.filter(p => p.status === 'Active').length
+      const feedbackRate = Math.round((totalVotes / (totalUsers || 1)) * 10) / 10
+
+      return {
+        totalEngagements: totalVotes > 1000 ? `${(totalVotes / 1000).toFixed(1)}k` : totalVotes.toString(),
+        activePolls: activeCount,
+        avgResponseTime: '4.2m', // Placeholder until we have session data
+        feedbackRate: `${Math.min(feedbackRate * 10, 100)}%`
+      }
+    } catch (error) {
+      console.error('[SYSTEM] Failed to fetch poll stats:', error)
+      return {
+        totalEngagements: '0',
+        activePolls: 0,
+        avgResponseTime: '0m',
+        feedbackRate: '0%'
+      }
     }
   }
 
@@ -467,7 +518,7 @@ class AdminService {
   async getInventory(): Promise<InventoryItem[]> {
     try {
       const response = await fetch(`${DATA_API_URL}/store_inventory?select=*&order=name.asc`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       const data = (await response.json()) as DBInventory[]
       return data.map((i) => ({
@@ -490,8 +541,14 @@ class AdminService {
   async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
     try {
       const [usersRes, chaptersRes] = await Promise.all([
-        fetch(`${DATA_API_URL}/users?select=id&limit=1`, { headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}`, 'Prefer': 'count=exact' }, method: 'HEAD' }),
-        fetch(`${DATA_API_URL}/chapters?select=id&limit=1`, { headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}`, 'Prefer': 'count=exact' }, method: 'HEAD' })
+        fetch(`${DATA_API_URL}/users?select=id&limit=1`, { 
+          headers: { ...this.getAuthHeader(), 'Prefer': 'count=exact' }, 
+          method: 'HEAD' 
+        }),
+        fetch(`${DATA_API_URL}/chapters?select=id&limit=1`, { 
+          headers: { ...this.getAuthHeader(), 'Prefer': 'count=exact' }, 
+          method: 'HEAD' 
+        })
       ])
       
       const parseCount = (res: Response) => {
@@ -522,7 +579,7 @@ class AdminService {
   async getRegions(): Promise<Region[]> {
     try {
       const response = await fetch(`${DATA_API_URL}/ghana_regions?select=id,name,ghana_constituencies(name)`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       console.log('[SYSTEM] Fetch Regions Status:', response.status)
       const data = (await response.json()) as DBRegion[]
@@ -547,7 +604,7 @@ class AdminService {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DATA_API_TOKEN}`
+          ...this.getAuthHeader()
         },
         body: JSON.stringify({ name })
       })
@@ -563,7 +620,7 @@ class AdminService {
     try {
       await fetch(`${DATA_API_URL}/ghana_constituencies?id=eq.${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       await this.logAction('CONSTITUENCY_DELETE', `REGIONS/${regionName}/CONSTITUENCIES/${conName}`, 'Warning')
       return true
@@ -602,7 +659,7 @@ class AdminService {
   async getGrowthTrends(): Promise<GrowthTrend[]> {
     try {
       const response = await fetch(`${DATA_API_URL}/membership_growth_view?select=*&limit=12`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       const data = await response.json()
       if (!Array.isArray(data)) throw new Error('Invalid data')
@@ -632,7 +689,7 @@ class AdminService {
   async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
     try {
       const response = await fetch(`${DATA_API_URL}/audit_logs?limit=50&order=timestamp.desc`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       const data = await response.json()
       if (!Array.isArray(data)) return sessionAuditLogs
@@ -654,7 +711,7 @@ class AdminService {
   async getAuditLogsForResource(resourceId: string): Promise<AuditLogEntry[]> {
     try {
       const response = await fetch(`${DATA_API_URL}/audit_logs?resource=eq.${resourceId}&order=timestamp.desc`, {
-        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+        headers: this.getAuthHeader()
       })
       const data = await response.json()
       return (data as DBLog[]).map((log) => ({
