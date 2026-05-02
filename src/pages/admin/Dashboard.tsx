@@ -205,10 +205,10 @@ export default function AdminDashboard() {
           </>
         ) : (
           <>
-            <StatCard title={globalStats[0]?.label || "Loading..."} value={globalStats[0]?.value || "..."} change={globalStats[0]?.change || "..."} icon={Users} color="bg-[var(--brand-green)]" />
-            <StatCard title={globalStats[1]?.label || "Loading..."} value={globalStats[1]?.value || "..."} change={globalStats[1]?.change || "..."} icon={MapPin} color="bg-[var(--brand-red)]" />
-            <StatCard title={globalStats[2]?.label || "Loading..."} value={globalStats[2]?.value || "..."} change={globalStats[2]?.change || "..."} icon={Activity} color="bg-[var(--brand-gold)]" />
-            <StatCard title={globalStats[3]?.label || "Loading..."} value={globalStats[3]?.value || "..."} change={globalStats[3]?.change || "..."} icon={ShoppingBag} color="bg-stone-800" />
+            <StatCard title={globalStats[0]?.label || "Loading..."} value={globalStats[0]?.value || "..."} change={globalStats[0]?.change || "..."} icon={Users} color="bg-[var(--brand-red)]" />
+            <StatCard title={globalStats[1]?.label || "Loading..."} value={globalStats[1]?.value || "..."} change={globalStats[1]?.change || "..."} icon={MapPin} color="bg-[var(--brand-gold)]" />
+            <StatCard title={globalStats[2]?.label || "Loading..."} value={globalStats[2]?.value || "..."} change={globalStats[2]?.change || "..."} icon={Activity} color="bg-[var(--brand-black)]" />
+            <StatCard title={globalStats[3]?.label || "Loading..."} value={globalStats[3]?.value || "..."} change={globalStats[3]?.change || "..."} icon={ShoppingBag} color="bg-[var(--brand-green)]" />
           </>
         )}
       </div>

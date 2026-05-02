@@ -487,15 +487,25 @@ class AdminService {
   async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
     try {
       const [usersRes, chaptersRes] = await Promise.all([
-        fetch(`${DATA_API_URL}/users?select=id`, { headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}`, 'Prefer': 'count=exact' } }),
-        fetch(`${DATA_API_URL}/chapters?select=id`, { headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}`, 'Prefer': 'count=exact' } })
+        fetch(`${DATA_API_URL}/users?select=id&limit=1`, { headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}`, 'Prefer': 'count=exact' }, method: 'HEAD' }),
+        fetch(`${DATA_API_URL}/chapters?select=id&limit=1`, { headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}`, 'Prefer': 'count=exact' }, method: 'HEAD' })
       ])
-      const users = await usersRes.json()
-      const chapters = await chaptersRes.json()
+      
+      const parseCount = (res: Response) => {
+        const range = res.headers.get('Content-Range')
+        if (range) {
+          const match = range.match(/\/(\d+)$/)
+          if (match) return parseInt(match[1], 10)
+        }
+        return 0
+      }
+
+      const usersCount = parseCount(usersRes)
+      const chaptersCount = parseCount(chaptersRes)
 
       return [
-        { label: 'Total Membership', value: (Array.isArray(users) ? users.length : 1420500).toLocaleString(), change: '+12.4%' },
-        { label: 'Regional Chapters', value: (Array.isArray(chapters) ? chapters.length : 285).toString(), change: '+4.2%' },
+        { label: 'Total Membership', value: usersCount.toLocaleString(), change: '+12.4%' },
+        { label: 'Regional Chapters', value: chaptersCount.toString(), change: '+4.2%' },
         { label: 'Member Engagement', value: '88.4%', change: '+2.1%' },
         { label: 'Merch Orders', value: '1,245', change: '+15.8%' }
       ]
