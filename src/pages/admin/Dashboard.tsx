@@ -120,14 +120,6 @@ export default function AdminDashboard() {
     })
   }
 
-  const activityLogs = [
-    { id: 1, type: 'registration', user: 'Kwesi Appiah', time: '12 mins ago', details: 'New member verified in Western Region', icon: ShieldCheck, color: 'text-emerald-500' },
-    { id: 2, type: 'chapter', user: 'Ashanti HQ', time: '45 mins ago', details: 'Established new constituency cell in Bantama', icon: MapPin, color: 'text-[var(--brand-red)]' },
-    { id: 3, type: 'poll', user: 'National HQ', time: '1 hour ago', details: 'Poll "Economic Policy Feedback" reached 10k votes', icon: BarChart3, color: 'text-[var(--brand-gold)]' },
-    { id: 4, type: 'store', user: 'Logistics', time: '3 hours ago', details: 'Stock alert: Official Tee (Low Inventory)', icon: ShoppingBag, color: 'text-amber-500' },
-    { id: 5, type: 'security', user: 'System', time: '5 hours ago', details: 'Successful backup of member encrypted database', icon: CheckCircle2, color: 'text-blue-500' },
-  ]
-
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Top Banner / Welcome */}
