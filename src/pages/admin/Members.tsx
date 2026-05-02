@@ -11,7 +11,8 @@ import {
   UserPlus,
   ArrowUpDown,
   MessageSquare,
-  History
+  History,
+  X
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -23,6 +24,7 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
+import RegistrationForm from '@/components/admin/RegistrationForm'
 
 // Mock Data for Members
 const membersData = [
@@ -37,6 +39,7 @@ export default function MembersList() {
   const [searchTerm, setSearchTerm] = useState('')
   const { toast } = useToast()
   const [isExporting, setIsExporting] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
 
   const handleExport = async () => {
     setIsExporting(true)
@@ -56,9 +59,14 @@ export default function MembersList() {
   }
 
   const handleAddMember = () => {
+    setIsAdding(true)
+  }
+
+  const handleAddSuccess = () => {
+    setIsAdding(false)
     toast({
-      title: "IDENTITY HUB ACCESS",
-      description: "Opening secure member registration workflow...",
+      title: "PATRIOT REGISTERED",
+      description: "Identity successfully established in the National Database.",
       variant: "default",
     })
   }
@@ -228,6 +236,16 @@ export default function MembersList() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Identity Hub Registration Overlay */}
+      {isAdding && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <RegistrationForm 
+            onClose={() => setIsAdding(false)} 
+            onSuccess={handleAddSuccess} 
+          />
+        </div>
+      )}
     </div>
   )
 }
