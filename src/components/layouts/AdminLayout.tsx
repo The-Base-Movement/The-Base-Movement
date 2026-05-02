@@ -133,43 +133,66 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        {/* Top Header */}
-        <header className="h-24 bg-white border-b border-stone-100 flex items-center justify-between px-6 md:px-10 sticky top-0 z-30 shrink-0">
-          <div className="flex items-center gap-6">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="hover:bg-stone-50"
-            >
-              {isSidebarOpen ? <X className="w-5 h-5 text-stone-600" /> : <Menu className="w-5 h-5 text-stone-600" />}
-            </Button>
+        {/* Top Header - Redesigned */}
+        <header className="h-24 bg-white/80 backdrop-blur-md border-b border-stone-200/60 flex items-center justify-between px-6 md:px-10 sticky top-0 z-30 shrink-0">
+          <div className="flex items-center gap-8">
+            {/* Sidebar Toggle with Premium Hover */}
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="hover:bg-[var(--brand-black)] hover:text-white transition-all duration-300 rounded-none w-12 h-12 border border-transparent hover:border-white/20"
+              >
+                {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
+              <div className="h-8 w-px bg-stone-200 hidden lg:block" />
+            </div>
             
-            <div className="hidden md:flex relative items-center group">
-              <Search className="absolute left-3 w-4 h-4 text-stone-300 group-focus-within:text-[var(--brand-red)] transition-colors" />
+            {/* Command Search - Refined */}
+            <div className="hidden lg:flex relative items-center group">
+              <div className="absolute left-4 p-1 bg-stone-100 rounded-sm group-focus-within:bg-[var(--brand-red)] transition-colors duration-300">
+                <Search className="w-3.5 h-3.5 text-stone-400 group-focus-within:text-white transition-colors" />
+              </div>
               <input 
                 type="text" 
-                placeholder="Search resources..."
-                className="pl-10 h-11 w-72 bg-stone-50 border-transparent focus:bg-white focus:border-stone-200 transition-all text-[10px] outline-none uppercase font-black tracking-widest"
+                placeholder="Search command center..."
+                className="pl-14 h-12 w-[400px] bg-stone-50 border border-stone-100 focus:bg-white focus:border-[var(--brand-black)] focus:ring-0 transition-all text-[11px] outline-none uppercase font-black tracking-widest placeholder:text-stone-300 shadow-sm focus:shadow-md"
               />
+              <div className="absolute right-4 flex items-center gap-1 opacity-40 group-focus-within:opacity-0 transition-opacity">
+                <span className="px-1.5 py-0.5 border border-stone-300 text-[8px] font-bold">⌘</span>
+                <span className="px-1.5 py-0.5 border border-stone-300 text-[8px] font-bold">K</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 md:gap-8">
-            <div className="flex items-center gap-4">
-              <button className="p-2 text-stone-400 hover:text-[var(--brand-black)] relative group">
-                <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[var(--brand-red)] rounded-full border-2 border-white"></span>
-              </button>
+          {/* Topbar Actions - Polished */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="relative group w-12 h-12 rounded-none hover:bg-stone-50">
+                <Bell className="w-5 h-5 text-stone-500 group-hover:rotate-12 group-hover:text-[var(--brand-red)] transition-all" />
+                <span className="absolute top-3.5 right-3.5 w-2 h-2 bg-[var(--brand-red)] rounded-full border-2 border-white animate-pulse" />
+              </Button>
+              <Button variant="ghost" size="icon" className="w-12 h-12 rounded-none hover:bg-stone-50 text-stone-500 hidden sm:flex">
+                <Shield className="w-5 h-5" />
+              </Button>
             </div>
             
-            <div className="flex items-center gap-4 border-l border-stone-100 pl-4 md:pl-8">
-              <div className="text-right hidden sm:block">
-                <p className="text-[10px] font-black text-[var(--brand-black)] uppercase tracking-tight leading-none">Super Admin</p>
-                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1.5 leading-none">HQ Tier 1</p>
+            <div className="h-10 w-px bg-stone-200" />
+            
+            <div className="flex items-center gap-5 pl-2 group cursor-pointer">
+              <div className="text-right hidden md:block">
+                <p className="text-[11px] font-black text-[var(--brand-black)] uppercase tracking-tight leading-none group-hover:text-[var(--brand-red)] transition-colors">Commander-In-Chief</p>
+                <div className="flex items-center justify-end gap-1.5 mt-1.5">
+                  <span className="w-1 h-1 bg-emerald-500 rounded-full" />
+                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest leading-none">Tier 1 HQ Access</p>
+                </div>
               </div>
-              <div className="w-11 h-11 bg-[var(--brand-black)] text-white flex items-center justify-center font-black text-xs shadow-xl ring-2 ring-stone-50">
-                SA
+              <div className="relative shrink-0">
+                <div className="w-12 h-12 bg-[var(--brand-black)] text-white flex items-center justify-center font-black text-xs shadow-2xl relative z-10 group-hover:-translate-y-1 group-hover:-translate-x-1 transition-transform duration-300">
+                  HQ
+                </div>
+                <div className="absolute inset-0 bg-[var(--brand-red)] translate-y-0.5 translate-x-0.5 z-0" />
               </div>
             </div>
           </div>
