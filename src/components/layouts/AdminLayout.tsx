@@ -25,6 +25,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const navItems = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
     { to: '/admin/members', icon: Users, label: 'Members' },
+    { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications' },
     { to: '/admin/chapters', icon: MapPin, label: 'Chapters' },
     { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys' },
     { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise' },
