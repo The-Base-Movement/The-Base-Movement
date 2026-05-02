@@ -35,6 +35,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts'
+import { useToast } from '@/hooks/use-toast'
 
 interface StatCardProps {
   title: string
@@ -89,6 +90,35 @@ export default function AdminDashboard() {
     fetchData()
   }, [])
 
+  const { toast } = useToast()
+  const [isExporting, setIsExporting] = useState(false)
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    toast({
+      title: "PREPARING INTELLIGENCE EXPORT",
+      description: "Generating high-fidelity movement telemetry report...",
+    })
+    
+    // Simulate high-speed processing
+    setTimeout(() => {
+      setIsExporting(false)
+      toast({
+        title: "EXPORT COMPLETE",
+        description: "Intelligence vault updated. File ready for regional HQ.",
+        variant: "default",
+      })
+    }, 2000)
+  }
+
+  const handlePlatformLogs = () => {
+    toast({
+      title: "ACCESSING AUDIT VAULT",
+      description: "Decrypting high-security system activity logs...",
+      variant: "destructive",
+    })
+  }
+
   const activityLogs = [
     { id: 1, type: 'registration', user: 'Kwesi Appiah', time: '12 mins ago', details: 'New member verified in Western Region', icon: ShieldCheck, color: 'text-emerald-500' },
     { id: 2, type: 'chapter', user: 'Ashanti HQ', time: '45 mins ago', details: 'Established new constituency cell in Bantama', icon: MapPin, color: 'text-[var(--brand-red)]' },
@@ -109,10 +139,18 @@ export default function AdminDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest border-stone-200">
-            Export Intelligence
+          <Button 
+            variant="outline" 
+            className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest border-stone-200"
+            onClick={handleExport}
+            disabled={isExporting}
+          >
+            {isExporting ? 'GENERATING...' : 'Export Intelligence'}
           </Button>
-          <Button variant="primary" className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
+          <Button 
+            className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800"
+            onClick={handlePlatformLogs}
+          >
             Platform Logs
           </Button>
         </div>
