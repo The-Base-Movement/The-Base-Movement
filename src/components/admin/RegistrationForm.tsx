@@ -34,12 +34,35 @@ const regionConstituencies: Record<string, string[]> = {
   'Northern': ['Gushegu', 'Karaga', 'Kpandai', 'Kumbungu', 'Mion', 'Nanton', 'Bimbilla', 'Wulensi', 'Saboba', 'Sagnarigu', 'Savelugu', 'Tamale Central']
 }
 
+export interface RegistrationSubmission {
+  fullName: string
+  registrationNumber: string
+  platform: string
+  selectedCountry: string
+  countryCode: string
+  contactNumber: string
+  ageRange: string
+  gender: string
+  email: string
+  residentialAddress: string
+  region: string
+  constituency: string
+  chapter: string
+  profession: string
+  educationLevel: string
+  emergencyContactName: string
+  emergencyRelationship: string
+  emergencyNumber: string
+  photoUrl: string | null
+}
+
 interface RegistrationFormProps {
   onClose: () => void
   onSuccess: () => void
+  onSubmitData?: (data: RegistrationSubmission) => void
 }
 
-export default function RegistrationForm({ onClose, onSuccess }: RegistrationFormProps) {
+export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: RegistrationFormProps) {
   const [formStep, setFormStep] = useState<number>(1)
   const [platform, setPlatform] = useState('GHANA')
   const [showPassword, setShowPassword] = useState(false)
@@ -124,39 +147,17 @@ export default function RegistrationForm({ onClose, onSuccess }: RegistrationFor
       const yearStr = new Date().getFullYear().toString().slice(-2)
       const randomNum = String(Math.floor(1000 + Math.random() * 9000))
       const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
-      
-      try {
-        await fetch('https://ep-red-math-alposcfu.apirest.c-3.eu-central-1.aws.neon.tech/neondb/rest/v1/members', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify({
-            full_name: formData.fullName,
-            registration_number: regNo,
-            platform: platform,
-            country: formData.selectedCountry,
-            country_code: formData.countryCode,
-            phone_number: formData.countryCode + formData.contactNumber,
-            age_range: formData.ageRange,
-            gender: formData.gender,
-            email: formData.email,
-            residential_address: formData.residentialAddress,
-            region: formData.region,
-            constituency: formData.constituency,
-            chapter: formData.chapter,
-            profession: formData.profession,
-            education_level: formData.educationLevel,
-            emergency_contact_name: formData.emergencyContactName,
-            emergency_relationship: formData.emergencyRelationship,
-            emergency_phone: formData.emergencyNumber,
-            avatar_url: photoUrl
-          })
+
+      // Pass the complete submission back to the parent before closing
+      if (onSubmitData) {
+        onSubmitData({
+          ...formData,
+          registrationNumber: regNo,
+          platform,
+          photoUrl,
         })
-      } catch (error) {
-        console.error('Failed to sync with live database:', error)
       }
+
       setIsSubmitting(false)
       onSuccess()
     }
