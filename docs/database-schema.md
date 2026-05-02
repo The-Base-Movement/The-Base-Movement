@@ -258,3 +258,26 @@ Stores the authoritative list of supported countries for member registration alo
 | United Arab Emirates | +971 | true |
 | United Kingdom | +44 | true |
 | United States | +1 | true |
+
+## Geographic Data
+
+### `ghana_regions`
+
+**Description:** Master list of the 16 administrative regions in Ghana.
+
+| Field Name | Type | Description |
+| :--- | :--- | :--- |
+| `id` | SERIAL | Primary Key |
+| `name` | VARCHAR(255) | Official region name (Unique) |
+
+### `ghana_constituencies`
+
+**Description:** Master list of the 275 electoral constituencies mapped to their respective regions.
+
+| Field Name | Type | Description |
+| :--- | :--- | :--- |
+| `id` | SERIAL | Primary Key |
+| `region_id` | INTEGER | Foreign Key referencing `ghana_regions.id` (ON DELETE CASCADE) |
+| `name` | VARCHAR(255) | Official constituency name |
+
+*Note: There is a unique constraint on (`region_id`, `name`) to prevent duplicate constituencies within the same region.*
