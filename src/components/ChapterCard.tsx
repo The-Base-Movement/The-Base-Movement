@@ -1,14 +1,7 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Users, ArrowRight } from 'lucide-react'
 
-interface Chapter {
-  id: string
-  name: string
-  city_or_region: string
-  country: string
-  membersCount: number
-  status: string
-}
+import { type Chapter } from '@/services/adminService'
 
 interface ChapterCardProps {
   chapter: Chapter
@@ -32,7 +25,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
           <span className={`px-3 py-1 rounded-none text-[10px] font-semibold tracking-widest ${
             requestSent[chapter.id] 
               ? 'bg-amber-50 text-amber-600'
-              : chapter.status === 'Active' || chapter.status === 'Member' 
+              : (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member' 
                 ? 'bg-emerald-50 text-emerald-600' 
                 : 'bg-stone-50 text-stone-600'
           }`}>
@@ -52,12 +45,12 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Strength</span>
             <div className="flex items-center gap-2">
               <Users className="w-3 h-3 text-[var(--brand-green)]" />
-              <span className="text-sm font-bold text-stone-700">{chapter.membersCount}</span>
+              <span className="text-sm font-bold text-stone-700">{chapter.member_count}</span>
             </div>
           </div>
         </div>
         
-        {chapter.status === 'Join Chapter' && !requestSent[chapter.id] ? (
+        {(chapter.status as string) === 'Join Chapter' && !requestSent[chapter.id] ? (
           <button 
             onClick={(e) => handleJoinRequest(e, chapter.id)}
             className="w-full mt-8 h-12 border border-[var(--brand-green)] bg-[var(--brand-green)] text-white rounded-none text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-[var(--brand-green)] transition-all flex items-center justify-center gap-2"

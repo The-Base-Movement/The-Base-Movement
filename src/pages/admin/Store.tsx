@@ -28,14 +28,11 @@ export default function AdminStore() {
   const [products, setProducts] = useState<InventoryItem[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('All')
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchInventory = async () => {
-      setIsLoading(true)
       const data = await adminService.getInventory()
       setProducts(data)
-      setIsLoading(false)
     }
     fetchInventory()
   }, [])

@@ -56,10 +56,11 @@ export default function ChaptersManagement() {
     // Adapted mapping for service compatibility
     const chapterData = {
       name: formData.name,
-      region: formData.city_or_region,
-      lead: 'Unassigned', // Default for now
-      members: 0,
-      status: formData.status as 'Active' | 'Pending' | 'Closed'
+      city_or_region: formData.city_or_region,
+      country: formData.country,
+      leader_name: 'Unassigned',
+      member_count: 0,
+      status: formData.status as Chapter['status']
     }
 
     if (editingChapterId) {
@@ -88,9 +89,9 @@ export default function ChaptersManagement() {
     setEditingChapterId(chapter.id)
     setFormData({
       name: chapter.name,
-      city_or_region: chapter.region,
-      country: 'Ghana', // Chapter type doesn't have country, defaulting
-      description: '', // Chapter type doesn't have description, defaulting
+      city_or_region: chapter.city_or_region,
+      country: chapter.country || 'Ghana',
+      description: '', 
       status: chapter.status
     })
     setIsModalOpen(true)
@@ -111,7 +112,7 @@ export default function ChaptersManagement() {
   const filteredChapters = useMemo(() => {
     return chapters.filter(c => {
       const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) || 
-                           c.region.toLowerCase().includes(search.toLowerCase())
+                           c.city_or_region.toLowerCase().includes(search.toLowerCase())
       
       const normalizedStatus = c.status === 'Active' ? 'Active' : 'Pending'
       const matchesStatus = statusFilter === 'All' || normalizedStatus === statusFilter
@@ -121,7 +122,7 @@ export default function ChaptersManagement() {
   }, [chapters, search, statusFilter])
 
   const totalMembers = useMemo(() => 
-    chapters.reduce((sum, c) => sum + (c.members || 0), 0), 
+    chapters.reduce((sum, c) => sum + (c.member_count || 0), 0), 
     [chapters]
   )
 
@@ -323,13 +324,13 @@ export default function ChaptersManagement() {
                   <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest flex items-center gap-1">
                     <Crown className="w-2.5 h-2.5 text-[var(--brand-gold)]" /> Regional Hub
                   </p>
-                  <p className="text-xs font-black text-stone-900 uppercase tracking-tight truncate">{chapter.region}</p>
+                  <p className="text-xs font-black text-stone-900 uppercase tracking-tight truncate">{chapter.city_or_region}</p>
                 </div>
                 <div className="space-y-1 text-right">
                   <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Strength</p>
                   <p className="text-xs font-black text-stone-900 flex items-center justify-end gap-1">
                     <Users className="w-3 h-3 text-[var(--brand-green)]" />
-                    {(chapter.members || 0).toLocaleString()}
+                    {(chapter.member_count || 0).toLocaleString()}
                   </p>
                 </div>
               </div>

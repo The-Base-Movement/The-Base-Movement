@@ -8,8 +8,7 @@ import {
   Users,
   Key,
   ShieldCheck,
-  Search,
-  FileText
+  Search
 } from 'lucide-react'
 import { adminService, type AuditLogEntry } from '@/services/adminService'
 import { Button } from '@/components/ui/Button'

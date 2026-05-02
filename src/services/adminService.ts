@@ -29,11 +29,12 @@ export interface Region {
 export interface Chapter {
   id: string
   name: string
-  region: string
-  lead: string
-  members: number
-  impact?: 'Low' | 'Medium' | 'High' | 'Very High'
-  status: 'Active' | 'Pending' | 'Closed'
+  city_or_region: string
+  country: string
+  leader_name: string
+  member_count: number
+  status: 'Active' | 'Pending' | 'Closed' | 'Member' | 'Join Chapter'
+  image_url?: string
 }
 
 export interface Poll {
@@ -101,6 +102,7 @@ interface DBChapter {
   id: string;
   name: string;
   city_or_region: string;
+  country: string;
   leader_name: string | null;
   member_count: number;
   status: Chapter['status'];
@@ -339,10 +341,10 @@ class AdminService {
       return data.map((c) => ({
         id: c.id,
         name: c.name,
-        region: c.city_or_region,
-        lead: c.leader_name || 'Unassigned',
-        members: c.member_count || 0,
-        impact: c.member_count > 500 ? 'Very High' : c.member_count > 200 ? 'High' : c.member_count > 50 ? 'Medium' : 'Low',
+        city_or_region: c.city_or_region,
+        country: c.country || 'Ghana',
+        leader_name: c.leader_name || 'Unassigned',
+        member_count: c.member_count || 0,
         status: c.status
       }))
     } catch (error) {
@@ -361,10 +363,10 @@ class AdminService {
         },
         body: JSON.stringify({
           name: chapter.name,
-          city_or_region: chapter.region,
-          country: 'Ghana',
-          leader_name: chapter.lead,
-          member_count: chapter.members,
+          city_or_region: chapter.city_or_region,
+          country: chapter.country,
+          leader_name: chapter.leader_name,
+          member_count: chapter.member_count,
           status: chapter.status
         })
       })
@@ -380,10 +382,11 @@ class AdminService {
     try {
       const updateData: Record<string, unknown> = {}
       if (chapter.name) updateData.name = chapter.name
-      if (chapter.region) updateData.city_or_region = chapter.region
-      if (chapter.lead) updateData.leader_name = chapter.lead
+      if (chapter.city_or_region) updateData.city_or_region = chapter.city_or_region
+      if (chapter.country) updateData.country = chapter.country
+      if (chapter.leader_name) updateData.leader_name = chapter.leader_name
       if (chapter.status) updateData.status = chapter.status
-      if (chapter.members !== undefined) updateData.member_count = chapter.members
+      if (chapter.member_count !== undefined) updateData.member_count = chapter.member_count
 
       await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
         method: 'PATCH',
@@ -578,8 +581,8 @@ class AdminService {
       ])
 
       return regions.map(r => {
-        const regionalChapters = chapters.filter(c => c.region === r.name)
-        const totalMembers = regionalChapters.reduce((sum, c) => sum + c.members, 0)
+        const regionalChapters = chapters.filter(c => c.city_or_region === r.name)
+        const totalMembers = regionalChapters.reduce((sum, c) => sum + c.member_count, 0)
         
         return {
           region: r.name,
@@ -615,10 +618,10 @@ class AdminService {
       const chapters = await this.getChapters()
       return chapters.slice(0, 4).map(c => ({
         topic: `${c.name} Mobilization`,
-        score: Math.min(Math.round((c.members / 500) * 100), 100),
-        trend: c.members > 100 ? 'Up' : 'Stable',
-        sentiment: c.members > 200 ? 'Positive' : 'Neutral',
-        color: c.members > 200 ? 'var(--brand-green)' : 'var(--brand-gold)'
+        score: Math.min(Math.round((c.member_count / 500) * 100), 100),
+        trend: c.member_count > 100 ? 'Up' : 'Stable',
+        sentiment: c.member_count > 200 ? 'Positive' : 'Neutral',
+        color: c.member_count > 200 ? 'var(--brand-green)' : 'var(--brand-gold)'
       }))
     } catch {
       return []

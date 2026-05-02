@@ -73,7 +73,7 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
               <span className="text-[9px] font-bold text-stone-400 uppercase tracking-tight">vs last week</span>
             </div>
           </div>
-          <div className={cn("w-12 h-12 flex items-center justify-center bg-stone-50 text-stone-400 group-hover:scale-110 transition-transform", color.replace('bg-', 'text-').replace('-600', '-500'))}>
+          <div className={cn("w-12 h-12 flex items-center justify-center bg-stone-50 group-hover:scale-110 transition-transform", color.replace('bg-', 'text-'))}>
             <Icon className="w-6 h-6" />
           </div>
         </div>
