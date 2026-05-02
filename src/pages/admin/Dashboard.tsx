@@ -9,7 +9,8 @@ import {
   TrendingUp,
   Clock,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  LucideIcon
 } from 'lucide-react'
 import { 
   Card, 
@@ -21,8 +22,16 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
+interface StatCardProps {
+  title: string
+  value: string
+  change: string
+  icon: LucideIcon
+  color: string
+}
+
 // High-Fidelity Stat Card Component
-function StatCard({ title, value, change, icon: Icon, color }: any) {
+function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
   return (
     <Card className="rounded-none border-stone-200 shadow-sm group hover:shadow-md transition-all overflow-hidden relative">
       <div className={cn("absolute top-0 left-0 w-1 h-full", color)} />
