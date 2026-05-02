@@ -9,7 +9,9 @@ import {
   MapPin, 
   ShieldCheck,
   UserPlus,
-  ArrowUpDown
+  ArrowUpDown,
+  MessageSquare,
+  History
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -143,10 +145,34 @@ export default function MembersList() {
                         {member.status}
                       </span>
                     </td>
-                    <td className="px-6 py-5 text-right">
-                      <Button variant="ghost" size="icon" className="text-stone-400 hover:text-[var(--brand-black)]">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)] hover:bg-stone-100"
+                          title="Direct Message"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)] hover:bg-stone-100"
+                          title="Audit History"
+                        >
+                          <History className="w-3.5 h-3.5" />
+                        </Button>
+                        <div className="w-px h-4 bg-stone-200 mx-1" />
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="w-8 h-8 text-stone-400 hover:text-[var(--brand-red)] hover:bg-red-50"
+                          title="Manage Status"
+                        >
+                          <MoreHorizontal className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
