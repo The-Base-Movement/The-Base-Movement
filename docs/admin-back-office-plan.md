@@ -20,14 +20,14 @@ This document outlines the architectural plan and implementation status for "The
 - [x] **Mobile-Responsive Infrastructure**: High-fidelity slide-over sidebar and drawer logic for all devices.
 - [x] **Premium UI Overhaul**: Redesigned glassmorphism topbar and refined dashboard aesthetics.
 - [x] **Regional Hierarchy Control**: Chapter lead appointment system and member growth visualization.
+- [x] **RBAC Enforcement**: Tiered permission system and route protection logic integrated into AdminLayout.
 - [x] **Engagement Hub Overhaul**: High-fidelity Polls management with strict brand color hierarchy (Red > Gold > Black > Green).
 - [x] **Regional Inventory Hub**: Brand-synchronized merch management with automated stock alerts (Priority: Red > Gold).
 - [x] **Advanced Member Management**:
     - [x] Direct communication tools (MessageSquare integration).
     - [x] Member activity history and high-fidelity audit access.
-    - [ ] Automated verification workflow for new registrations.
+    - [x] Automated verification workflow for new registrations.
 - [x] **Data Persistence Layer**: Established `adminService` for centralized Live CRUD operations.
-- [ ] **RBAC Enforcement**: Finalize backend middleware for role verification and route protection.
 - [ ] **Live API Integration**: Transition from mock data to real-time persistence for all modules.
 
 ## Phase 3: Analytics & Intelligence [PLANNED]

@@ -33,10 +33,10 @@ interface PendingMember {
 
 // Mock Data for Pending Verifications
 const pendingMembers: PendingMember[] = [
-  { id: 'REG-882', name: 'Emmanuel Tetteh', region: 'Greater Accra', constituency: 'Tema West', type: 'Premium', submitted: '2 hours ago', status: 'Pending' },
-  { id: 'REG-881', name: 'Yaa Konadu', region: 'Ashanti', constituency: 'Oforikrom', type: 'Standard', submitted: '5 hours ago', status: 'In Review' },
-  { id: 'REG-880', name: 'Ishmael Mensah', region: 'Western', constituency: 'Effia', type: 'Standard', submitted: '1 day ago', status: 'Pending' },
-  { id: 'REG-879', name: 'Sarah Owusu', region: 'Central', constituency: 'KEEA', type: 'Premium', submitted: '1 day ago', status: 'Pending' },
+  { id: 'REG-882', name: 'Emmanuel Tetteh', region: 'Greater Accra', constituency: 'Tema West', type: 'Premium', submitted: '2 hours ago', status: 'In Review', color: 'var(--brand-gold)' },
+  { id: 'REG-881', name: 'Yaa Konadu', region: 'Ashanti', constituency: 'Oforikrom', type: 'Standard', submitted: '5 hours ago', status: 'Processing', color: 'var(--brand-black)' },
+  { id: 'REG-880', name: 'Ishmael Mensah', region: 'Western', constituency: 'Effia', type: 'Standard', submitted: '1 day ago', status: 'Flagged', color: 'var(--brand-red)' },
+  { id: 'REG-879', name: 'Sarah Owusu', region: 'Central', constituency: 'KEEA', type: 'Premium', submitted: '1 day ago', status: 'Approved', color: 'var(--brand-green)' },
 ]
 
 export default function MemberVerification() {
@@ -110,9 +110,10 @@ export default function MemberVerification() {
                       </div>
                       <div className={cn(
                         "px-3 py-1 text-[9px] font-black uppercase tracking-widest border",
-                        member.status === 'In Review' 
-                          ? "bg-amber-500/10 text-amber-500 border-amber-500/20" 
-                          : "bg-stone-500/10 text-stone-500 border-stone-500/20"
+                        member.status === 'In Review' && "bg-amber-500/10 text-[var(--brand-gold)] border-[var(--brand-gold)]/20",
+                        member.status === 'Processing' && "bg-stone-500/10 text-[var(--brand-black)] border-[var(--brand-black)]/20",
+                        member.status === 'Flagged' && "bg-red-500/10 text-[var(--brand-red)] border-[var(--brand-red)]/20",
+                        member.status === 'Approved' && "bg-emerald-500/10 text-[var(--brand-green)] border-[var(--brand-green)]/20"
                       )}>
                         {member.status}
                       </div>
