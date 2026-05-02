@@ -4,9 +4,7 @@ import {
   BarChart3, 
   ShoppingBag, 
   Activity,
-  ArrowUpRight,
   TrendingUp,
-  Clock,
   ShieldCheck,
   CheckCircle2,
   Zap,
@@ -69,6 +67,16 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
 }
 
 export default function AdminDashboard() {
+  const [growthData, setGrowthData] = useState<GrowthTrend[]>([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await adminService.getGrowthTrends()
+      setGrowthData(data)
+    }
+    fetchData()
+  }, [])
+
   const activityLogs = [
     { id: 1, type: 'registration', user: 'Kwesi Appiah', time: '12 mins ago', details: 'New member verified in Western Region', icon: ShieldCheck, color: 'text-emerald-500' },
     { id: 2, type: 'chapter', user: 'Ashanti HQ', time: '45 mins ago', details: 'Established new constituency cell in Bantama', icon: MapPin, color: 'text-[var(--brand-red)]' },
