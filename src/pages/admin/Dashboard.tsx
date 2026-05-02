@@ -24,7 +24,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import type { GrowthTrend, SentimentStat, AuditLogEntry } from '@/services/adminService'
+import type { GrowthTrend, SentimentStat, AuditLogEntry, RegionalStat } from '@/services/adminService'
 import { useState, useEffect } from 'react'
 import { 
   AreaChart, 
@@ -75,17 +75,20 @@ export default function AdminDashboard() {
   const [growthData, setGrowthData] = useState<GrowthTrend[]>([])
   const [sentimentStats, setSentimentStats] = useState<SentimentStat[]>([])
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
+  const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
-      const [growth, sentiment, audit] = await Promise.all([
+      const [growth, sentiment, audit, regions] = await Promise.all([
         adminService.getGrowthTrends(),
         adminService.getSentimentAnalysis(),
-        adminService.getSystemAuditLogs()
+        adminService.getSystemAuditLogs(),
+        adminService.getRegionalStats()
       ])
       setGrowthData(growth)
       setSentimentStats(sentiment)
       setAuditLogs(audit)
+      setRegionalStats(regions)
     }
     fetchData()
   }, [])
@@ -222,8 +225,49 @@ export default function AdminDashboard() {
                   />
                 </AreaChart>
               </ResponsiveContainer>
-            </CardContent>
+              </CardContent>
           </Card>
+
+          {/* Regional Impact Intelligence Hub */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {regionalStats.slice(0, 4).map((region) => (
+              <Card key={region.region} className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white group hover:border-[var(--brand-gold)] transition-all">
+                <CardHeader className="p-6 pb-4 flex flex-row items-center justify-between space-y-0">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-stone-400 group-hover:text-[var(--brand-gold)] transition-colors" />
+                    <CardTitle className="text-[10px] font-black uppercase tracking-widest text-stone-900">{region.region}</CardTitle>
+                  </div>
+                  <span className={cn("text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border", 
+                    region.performance === 'High' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                    region.performance === 'Medium' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-rose-50 text-rose-600 border-rose-100'
+                  )}>
+                    {region.performance} IMPACT
+                  </span>
+                </CardHeader>
+                <CardContent className="p-6 pt-0 space-y-4">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-2xl font-black font-meta text-stone-900 leading-none">{region.memberCount.toLocaleString()}</p>
+                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Total Members</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-black text-stone-600">{region.chapters}</p>
+                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Chapters</p>
+                    </div>
+                  </div>
+                  <div className="h-1 w-full bg-stone-50 overflow-hidden">
+                    <div 
+                      className="h-full transition-all duration-1000" 
+                      style={{ 
+                        width: `${(region.memberCount / 200000) * 100}%`,
+                        backgroundColor: region.color 
+                      }} 
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
           {/* System Audit Intelligence Hub */}
           <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
