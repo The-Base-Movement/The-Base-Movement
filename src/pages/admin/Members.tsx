@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { 
   Search, 
   Filter, 
@@ -26,6 +26,8 @@ import { useToast } from '@/hooks/use-toast'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import MembershipCard from '@/components/MembershipCard'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 
 // Mock Data for Members
 const membersData = [
@@ -51,6 +53,57 @@ export default function MembersList() {
   const [selectedMember, setSelectedMember] = useState<typeof membersData[0] | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  const handlePrint = async () => {
+    if (!cardRef.current) return
+    try {
+      const canvas = await html2canvas(cardRef.current, { scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false })
+      const imgData = canvas.toDataURL('image/png')
+      const iframe = document.createElement('iframe')
+      iframe.style.position = 'fixed'
+      iframe.style.right = '0'
+      iframe.style.bottom = '0'
+      iframe.style.width = '0'
+      iframe.style.height = '0'
+      iframe.style.border = 'none'
+      document.body.appendChild(iframe)
+      const iframeDoc = iframe.contentWindow?.document
+      if (!iframeDoc) return
+      iframeDoc.write(`
+        <html>
+          <head>
+            <title>THE BASE - Official Membership Card</title>
+            <style>
+              @page { size: 85.6mm 53.98mm; margin: 0; }
+              body { margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background: #fff; -webkit-print-color-adjust: exact; color-adjust: exact; }
+              img { width: 85.6mm; height: 53.98mm; display: block; image-rendering: -webkit-optimize-contrast; }
+            </style>
+          </head>
+          <body>
+            <img src="${imgData}" onload="setTimeout(() => { window.print(); }, 200);" />
+          </body>
+        </html>
+      `)
+      iframeDoc.close()
+      setTimeout(() => { if (document.body.contains(iframe)) document.body.removeChild(iframe) }, 60000)
+    } catch (error) {
+      console.error('Error printing card:', error)
+    }
+  }
+
+  const handleDownload = async () => {
+    if (!cardRef.current || !selectedMember) return
+    try {
+      const canvas = await html2canvas(cardRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [85.6, 54] })
+      pdf.addImage(imgData, 'PNG', 0, 0, 85.6, 54)
+      pdf.save(`THE-BASE-CARD-${selectedMember.id}.pdf`)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+    }
+  }
 
   const handleExport = async () => {
     setIsExporting(true)
@@ -346,7 +399,8 @@ export default function MembersList() {
       <Dialog open={!!selectedMember} onOpenChange={(open) => !open && setSelectedMember(null)}>
         <DialogContent className="max-w-[95vw] sm:max-w-[500px] md:max-w-[600px] p-0 border-none bg-transparent shadow-none [&>button]:hidden">
           {selectedMember && (
-            <div className="relative">
+            <div className="flex flex-col gap-4">
+              <div ref={cardRef}>
               <MembershipCard 
                 userName={selectedMember.name}
                 userRegNo={selectedMember.id}
@@ -368,6 +422,23 @@ export default function MembersList() {
               >
                 <X className="w-4 h-4" />
               </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Button 
+                  onClick={handlePrint}
+                  className="h-12 bg-white hover:bg-stone-50 border border-stone-200 text-stone-900 font-meta font-black uppercase tracking-widest text-[10px] shadow-lg rounded-none"
+                >
+                  <span className="material-symbols-outlined text-[18px] mr-2">print</span>
+                  Print Card
+                </Button>
+                <Button 
+                  onClick={handleDownload}
+                  className="h-12 bg-[var(--brand-black)] hover:bg-stone-800 text-white font-meta font-black uppercase tracking-widest text-[10px] shadow-lg rounded-none"
+                >
+                  <span className="material-symbols-outlined text-[18px] mr-2">download</span>
+                  Download PDF
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
