@@ -10,7 +10,8 @@ import {
   ShieldCheck,
   CheckCircle2,
   Zap,
-  Globe
+  Globe,
+  ChevronRight
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { 
@@ -23,7 +24,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import type { GrowthTrend } from '@/services/adminService'
+import type { GrowthTrend, SentimentStat } from '@/services/adminService'
 import { useState, useEffect } from 'react'
 import { 
   AreaChart, 
@@ -71,11 +72,16 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
 
 export default function AdminDashboard() {
   const [growthData, setGrowthData] = useState<GrowthTrend[]>([])
+  const [sentimentStats, setSentimentStats] = useState<SentimentStat[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await adminService.getGrowthTrends()
-      setGrowthData(data)
+      const [growth, sentiment] = await Promise.all([
+        adminService.getGrowthTrends(),
+        adminService.getSentimentAnalysis()
+      ])
+      setGrowthData(growth)
+      setSentimentStats(sentiment)
     }
     fetchData()
   }, [])
@@ -254,6 +260,50 @@ export default function AdminDashboard() {
                   <span className="text-[9px] font-bold text-stone-400 uppercase">G. Accra</span>
                   <span className="text-[9px] font-bold text-[var(--brand-red)] uppercase">Peak</span>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-none border-stone-200 shadow-sm bg-white overflow-hidden">
+            <CardHeader className="p-6 border-b border-stone-100">
+              <CardTitle className="text-xs font-black font-meta uppercase tracking-widest text-stone-400">Engagement Pulse</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              {sentimentStats.map((stat) => (
+                <div key={stat.topic} className="space-y-2">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-[10px] font-black text-stone-900 uppercase tracking-tight">{stat.topic}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className={cn("text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5", 
+                          stat.sentiment === 'Positive' ? 'bg-emerald-50 text-emerald-600' : 
+                          stat.sentiment === 'Neutral' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
+                        )}>
+                          {stat.sentiment}
+                        </span>
+                        <span className="text-[8px] font-bold text-stone-400 uppercase flex items-center gap-0.5">
+                          {stat.trend === 'Up' ? <TrendingUp className="w-2.5 h-2.5 text-emerald-500" /> : <Activity className="w-2.5 h-2.5 text-rose-500 rotate-180" />}
+                          {stat.trend}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-sm font-black font-meta text-stone-900">{stat.score}%</span>
+                  </div>
+                  <div className="h-1 w-full bg-stone-50 overflow-hidden">
+                    <div 
+                      className="h-full transition-all duration-1000" 
+                      style={{ 
+                        width: `${stat.score}%`,
+                        backgroundColor: stat.color 
+                      }} 
+                    />
+                  </div>
+                </div>
+              ))}
+              <div className="pt-2">
+                <Button variant="ghost" className="w-full text-[9px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-black)] transition-colors">
+                  Detailed Sentiment Audit <ChevronRight className="w-3 h-3 ml-1" />
+                </Button>
               </div>
             </CardContent>
           </Card>
