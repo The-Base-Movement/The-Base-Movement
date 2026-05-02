@@ -33,6 +33,10 @@ import Dashboard from './pages/Dashboard'
 import ProfileSettings from './pages/ProfileSettings'
 import Polls from './pages/Polls'
 
+// Admin pages
+import AdminLayout from './components/layouts/AdminLayout'
+import AdminDashboard from './pages/AdminDashboard'
+
 export default function App() {
   return (
     <StoreProvider>
@@ -40,6 +44,7 @@ export default function App() {
       <ReadingProgressBar />
       <Routes>
         {/* Redirects */}
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="/checkout" element={<Navigate to="/store/checkout" replace />} />
         <Route path="/dashboard/checkout" element={<Navigate to="/dashboard/store/checkout" replace />} />
         <Route path="/members" element={<Navigate to="/dashboard/members" replace />} />
@@ -90,6 +95,15 @@ export default function App() {
           <Route path="/dashboard/privacy" element={<Privacy />} />
           <Route path="/dashboard/terms" element={<Terms />} />
           <Route path="/settings" element={<ProfileSettings />} />
+        </Route>
+
+        {/* ── Admin routes (Admin Sidebar + Topbar) ── */}
+        <Route element={<AdminLayout />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/members" element={<Members />} />
+          <Route path="/admin/chapters" element={<Chapters />} />
+          <Route path="/admin/polls" element={<Polls />} />
+          <Route path="/admin/settings" element={<ProfileSettings />} />
         </Route>
       </Routes>
     </StoreProvider>
