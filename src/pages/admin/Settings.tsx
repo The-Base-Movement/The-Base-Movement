@@ -2,11 +2,9 @@ import { useState } from 'react'
 import { 
   User, 
   Shield, 
-  Bell, 
   Globe, 
   Lock, 
   Save,
-  CheckCircle2,
   Users,
   Key
 } from 'lucide-react'

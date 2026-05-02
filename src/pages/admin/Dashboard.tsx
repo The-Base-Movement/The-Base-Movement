@@ -1,12 +1,10 @@
 import { 
   Users, 
   MapPin, 
-  BarChart3, 
   ShoppingBag, 
   Activity,
   TrendingUp,
   ShieldCheck,
-  CheckCircle2,
   Zap,
   Globe,
   ChevronRight
