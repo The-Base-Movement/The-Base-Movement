@@ -409,7 +409,7 @@ export default function MembersList() {
                 region={selectedMember.region}
                 constituency={selectedMember.constituency}
                 chapter={selectedMember.chapter}
-                status={selectedMember.status}
+                status={selectedMember.status === 'Active' ? 'Active Member' : selectedMember.status}
                 joinedDate={selectedMember.joined}
                 initials={selectedMember.name.split(' ').map(n => n[0]).join('')}
                 avatarUrl={selectedMember.avatarUrl}
