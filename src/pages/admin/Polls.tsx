@@ -22,10 +22,10 @@ import { cn } from '@/lib/utils'
 
 // Mock Data for Polls
 const pollsData = [
-  { id: 'POLL-001', title: 'Economic Policy Feedback 2024', status: 'Active', votes: 12450, region: 'National', endDate: '2024-05-15' },
-  { id: 'POLL-002', title: 'Regional Impact Assessment', status: 'Draft', votes: 0, region: 'Ashanti', endDate: '2024-06-01' },
-  { id: 'POLL-003', title: 'Membership Benefits Survey', status: 'Closed', votes: 8900, region: 'National', endDate: '2024-04-10' },
-  { id: 'POLL-004', title: 'Community Policing Initiatives', status: 'Active', votes: 3120, region: 'Greater Accra', endDate: '2024-05-20' },
+  { id: 'POLL-001', title: 'Economic Policy Feedback 2024', status: 'High Priority', votes: 12450, region: 'National', endDate: '2024-05-15', color: 'var(--brand-red)' },
+  { id: 'POLL-002', title: 'Regional Impact Assessment', status: 'In Progress', votes: 4200, region: 'Ashanti', endDate: '2024-06-01', color: 'var(--brand-gold)' },
+  { id: 'POLL-003', title: 'System-Wide Logistics Survey', status: 'Active', votes: 8900, region: 'National', endDate: '2024-04-10', color: 'var(--brand-black)' },
+  { id: 'POLL-004', title: 'Community Policing Complete', status: 'Finalized', votes: 3120, region: 'Greater Accra', endDate: '2024-03-20', color: 'var(--brand-green)' },
 ]
 
 export default function PollsManagement() {
@@ -125,29 +125,34 @@ export default function PollsManagement() {
                     </td>
                     <td className="px-6 py-5 text-center">
                       <div className="flex flex-col items-center">
-                        <span className="text-xs font-bold text-stone-900">{poll.votes.toLocaleString()}</span>
-                        <div className="w-16 h-1 bg-stone-100 mt-1 overflow-hidden">
+                        <span className="text-xs font-black text-stone-900">{poll.votes.toLocaleString()}</span>
+                        <div className="w-20 h-1 bg-stone-100 mt-2 overflow-hidden">
                           <div 
-                            className="h-full bg-[var(--brand-green)]" 
-                            style={{ width: poll.status === 'Closed' ? '100%' : '65%' }} 
+                            className="h-full transition-all duration-1000" 
+                            style={{ width: '75%', backgroundColor: poll.color }} 
                           />
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <span className="text-xs font-bold text-stone-600">{poll.region}</span>
+                      <span className="text-xs font-black text-stone-600 uppercase tracking-tight">{poll.region}</span>
                     </td>
                     <td className="px-6 py-5">
-                      <span className={cn(
-                        "px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border",
-                        poll.status === 'Active' 
-                          ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                          : poll.status === 'Draft'
-                          ? "bg-stone-50 text-stone-500 border-stone-200"
-                          : "bg-stone-100 text-stone-400 border-stone-200"
-                      )}>
-                        {poll.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: poll.color }} />
+                        <span className={cn(
+                          "px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border",
+                          poll.status === 'High Priority' 
+                            ? "bg-red-50 text-[var(--brand-red)] border-red-100" 
+                            : poll.status === 'In Progress'
+                            ? "bg-amber-50 text-[var(--brand-gold)] border-amber-100"
+                            : poll.status === 'Active'
+                            ? "bg-stone-50 text-[var(--brand-black)] border-stone-200"
+                            : "bg-emerald-50 text-[var(--brand-green)] border-emerald-100"
+                        )}>
+                          {poll.status}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-2 text-[10px] font-bold text-stone-500">
