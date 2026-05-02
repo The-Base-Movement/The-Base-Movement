@@ -184,7 +184,6 @@ export interface AdminUser {
 
 // ── Data API Configuration ─────────────────────────────────────────────────
 const DATA_API_URL = 'https://ep-ancient-tooth-amjyc3yp.apirest.c-5.us-east-1.aws.neon.tech/neondb/rest/v1'
-const DATA_API_MANAGEMENT_TOKEN = import.meta.env.VITE_NEON_DATA_API_TOKEN
 
 // ── State Store ─────────────────────────────────────────────────────────────
 const sessionAuditLogs: AuditLogEntry[] = []
@@ -195,9 +194,8 @@ class AdminService {
 
   private getAuthHeader(): Record<string, string> {
     const token = authService.getToken()
-    const activeToken = token || DATA_API_MANAGEMENT_TOKEN
-    if (!activeToken) return {}
-    return { 'Authorization': `Bearer ${activeToken}` }
+    if (!token) return {}
+    return { 'Authorization': `Bearer ${token}` }
   }
 
   private constructor() {

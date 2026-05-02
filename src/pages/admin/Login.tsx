@@ -25,8 +25,9 @@ export default function AdminLogin() {
       await authService.login(email, password)
       toast.success('Access Granted. Welcome to the Command Center.')
       navigate('/admin')
-    } catch (error: any) {
-      toast.error(error.message || 'Authentication failed. Please check your credentials.')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Authentication failed. Please check your credentials.'
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
