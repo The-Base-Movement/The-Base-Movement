@@ -48,6 +48,8 @@ Stores the movement's policy briefs, news, and analysis.
 | `is_featured` | BOOLEAN | Highlighted status |
 | `published_at` | TIMESTAMP | Date of publication |
 | `tags` | TEXT[] | Array of post tags |
+| `seo_title` | VARCHAR(255) | Optimized title for search engines |
+| `meta_description` | TEXT | Description for search results |
 
 ## 3. Comments Table (Discussion)
 Stores community interaction on blog posts.

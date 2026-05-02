@@ -43,6 +43,7 @@ import AdminStore from './pages/admin/Store'
 import AdminSettings from './pages/admin/Settings'
 import AdminMemberVerification from './pages/admin/MemberVerification'
 import AdminRegions from './pages/admin/Regions'
+import AdminBlogs from './pages/admin/Blogs'
 
 import { Toaster } from './components/ui/toaster'
 
@@ -117,6 +118,7 @@ export default function App() {
           <Route path="/admin/store" element={<AdminStore />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin/regions" element={<AdminRegions />} />
+          <Route path="/admin/blogs" element={<AdminBlogs />} />
         </Route>
       </Routes>
     </StoreProvider>

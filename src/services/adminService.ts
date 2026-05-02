@@ -85,6 +85,24 @@ export interface ActivityLog {
   color: string
 }
 
+export interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  authorId: string
+  authorName?: string
+  category: string
+  imageUrl?: string
+  readTime: string
+  isFeatured: boolean
+  publishedAt: string
+  tags: string[]
+  seoTitle?: string
+  metaDescription?: string
+}
+
 // ── Database Schema Interfaces ──────────────────────────────────────────────
 interface DBUser {
   registration_number: string;
@@ -148,6 +166,23 @@ interface DBLog {
   metadata: Record<string, unknown>;
 }
 
+interface DBBlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  author_id: string;
+  category: string;
+  image_url: string | null;
+  read_time: string;
+  is_featured: boolean;
+  published_at: string;
+  tags: string[];
+  seo_title: string | null;
+  meta_description: string | null;
+}
+
 export interface AuditLogEntry {
   id: string
   timestamp: string
@@ -163,8 +198,8 @@ export interface AuditLogEntry {
 export type AdminRole = 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER'
 
 export interface AdminPermission {
-  action: 'VERIFY_MEMBER' | 'MANAGE_CHAPTER' | 'MANAGE_POLLS' | 'MANAGE_INVENTORY' | 'VIEW_AUDIT_LOGS' | 'APPOINT_LEAD'
-  resource: 'MEMBERS' | 'CHAPTERS' | 'POLLS' | 'STORE' | 'SYSTEM'
+  action: 'VERIFY_MEMBER' | 'MANAGE_CHAPTER' | 'MANAGE_POLLS' | 'MANAGE_INVENTORY' | 'VIEW_AUDIT_LOGS' | 'APPOINT_LEAD' | 'MANAGE_BLOGS'
+  resource: 'MEMBERS' | 'CHAPTERS' | 'POLLS' | 'STORE' | 'SYSTEM' | 'BLOGS'
 }
 
 export interface SentimentStat {
@@ -213,7 +248,8 @@ class AdminService {
         { action: 'MANAGE_POLLS', resource: 'POLLS' },
         { action: 'MANAGE_INVENTORY', resource: 'STORE' },
         { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
-        { action: 'APPOINT_LEAD', resource: 'CHAPTERS' }
+        { action: 'APPOINT_LEAD', resource: 'CHAPTERS' },
+        { action: 'MANAGE_BLOGS', resource: 'BLOGS' }
       ]
     }
   }
@@ -773,6 +809,115 @@ class AdminService {
       }))
     } catch {
       return []
+    }
+  }
+
+  // --- Blog Operations ---
+
+  async getBlogPosts(): Promise<BlogPost[]> {
+    try {
+      const response = await fetch(`${DATA_API_URL}/blogs?select=*&order=published_at.desc`, {
+        headers: this.getAuthHeader()
+      })
+      const data = (await response.json()) as DBBlogPost[]
+      return data.map((p) => ({
+        id: p.id,
+        title: p.title,
+        slug: p.slug,
+        excerpt: p.excerpt,
+        content: p.content,
+        authorId: p.author_id,
+        authorName: 'Admin', // Placeholder until we join with users table
+        category: p.category,
+        imageUrl: p.image_url || undefined,
+        readTime: p.read_time,
+        isFeatured: p.is_featured,
+        publishedAt: p.published_at,
+        tags: p.tags || [],
+        seoTitle: p.seo_title || undefined,
+        metaDescription: p.meta_description || undefined
+      }))
+    } catch (error) {
+      console.warn('[SYSTEM] Failed to fetch blog posts from API:', error)
+      return []
+    }
+  }
+
+  async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<boolean> {
+    try {
+      await fetch(`${DATA_API_URL}/blogs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeader()
+        },
+        body: JSON.stringify({
+          title: post.title,
+          slug: post.slug,
+          excerpt: post.excerpt,
+          content: post.content,
+          author_id: post.authorId,
+          category: post.category,
+          image_url: post.imageUrl || null,
+          read_time: post.readTime,
+          is_featured: post.isFeatured,
+          published_at: post.publishedAt,
+          tags: post.tags,
+          seo_title: post.seoTitle || null,
+          meta_description: post.metaDescription || null
+        })
+      })
+      await this.logAction('BLOG_CREATE', `BLOGS/${post.slug}`, 'Success')
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Blog post creation failed:', error)
+      return false
+    }
+  }
+
+  async updateBlogPost(id: string, post: Partial<BlogPost>): Promise<boolean> {
+    try {
+      const updateData: Record<string, unknown> = {}
+      if (post.title) updateData.title = post.title
+      if (post.slug) updateData.slug = post.slug
+      if (post.excerpt) updateData.excerpt = post.excerpt
+      if (post.content) updateData.content = post.content
+      if (post.category) updateData.category = post.category
+      if (post.imageUrl !== undefined) updateData.image_url = post.imageUrl
+      if (post.readTime) updateData.read_time = post.readTime
+      if (post.isFeatured !== undefined) updateData.is_featured = post.isFeatured
+      if (post.publishedAt) updateData.published_at = post.publishedAt
+      if (post.tags) updateData.tags = post.tags
+      if (post.seoTitle !== undefined) updateData.seo_title = post.seoTitle
+      if (post.metaDescription !== undefined) updateData.meta_description = post.metaDescription
+
+      await fetch(`${DATA_API_URL}/blogs?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeader()
+        },
+        body: JSON.stringify(updateData)
+      })
+      await this.logAction('BLOG_UPDATE', `BLOGS/${id}`, 'Success', post)
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Blog post update failed:', error)
+      return false
+    }
+  }
+
+  async deleteBlogPost(id: string, slug: string): Promise<boolean> {
+    try {
+      await fetch(`${DATA_API_URL}/blogs?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeader()
+      })
+      await this.logAction('BLOG_DELETE', `BLOGS/${slug}`, 'Warning')
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Blog post deletion failed:', error)
+      return false
     }
   }
 }
