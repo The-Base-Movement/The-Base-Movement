@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useState } from 'react'
 import { ShareModal } from '@/components/ShareModal'
 import { useChapters } from '@/context/ChaptersContext'
-import { LoadingScreen } from '@/components/LoadingScreen'
+import { LoadingScreen } from '../components/LoadingScreen'
 
 export default function ChapterDetails() {
   const { id } = useParams<{ id: string }>()
