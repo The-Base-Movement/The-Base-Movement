@@ -3,9 +3,7 @@ import {
   Plus, 
   Search, 
   Clock, 
-  CheckCircle2, 
   MoreVertical,
-  Users,
   MessageSquare,
   TrendingUp
 } from 'lucide-react'
