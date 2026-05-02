@@ -8,7 +8,9 @@ import {
   TrendingUp,
   Clock,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  Zap,
+  Globe
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { 
@@ -173,17 +175,33 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-none border-stone-900 bg-[var(--brand-black)] text-white p-8 relative overflow-hidden group">
-            <ShieldCheck className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5 group-hover:rotate-12 transition-transform duration-500" />
-            <div className="relative z-10 space-y-4">
-              <h4 className="text-lg font-black font-meta uppercase tracking-tighter">Security Protocol</h4>
-              <p className="text-xs text-stone-400 leading-relaxed">
-                Platform encryption is active. All administrative actions are recorded for the National HQ audit trail.
-              </p>
-              <Button variant="outline" className="h-10 text-[10px] uppercase font-bold tracking-widest border-white/20 text-white hover:bg-white/10">
-                Review Permissions
-              </Button>
-            </div>
+          <Card className="rounded-none border-stone-200 shadow-sm bg-[var(--brand-black)] text-white overflow-hidden relative group">
+            <Globe className="absolute -bottom-8 -right-8 w-40 h-40 text-white/5 group-hover:scale-110 transition-transform duration-1000" />
+            <CardHeader className="p-8 pb-4 relative z-10">
+              <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-500 flex items-center gap-2">
+                <Zap className="w-3.5 h-3.5 text-[var(--brand-red)]" /> System Pulse
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 pt-0 space-y-6 relative z-10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-3xl font-black font-meta tracking-tighter">99.8%</p>
+                  <p className="text-[9px] font-black uppercase tracking-widest text-[var(--brand-red)] mt-1">Operational Capacity</p>
+                </div>
+                <div className="w-12 h-12 flex items-center justify-center border border-white/10 relative">
+                  <div className="absolute inset-0 border border-[var(--brand-red)] animate-ping opacity-20" />
+                  <Activity className="w-5 h-5 text-white/40" />
+                </div>
+              </div>
+              <div className="pt-4 border-t border-white/5">
+                <p className="text-[9px] font-bold text-stone-500 uppercase tracking-widest">Active Data Streams</p>
+                <div className="mt-4 flex gap-1 h-8 items-end">
+                  {[40, 70, 45, 90, 65, 80, 50, 85, 30, 60].map((h, i) => (
+                    <div key={i} className="flex-1 bg-[var(--brand-red)] opacity-50 hover:opacity-100 transition-all duration-500" style={{ height: `${h}%` }} />
+                  ))}
+                </div>
+              </div>
+            </CardContent>
           </Card>
         </div>
       </div>
