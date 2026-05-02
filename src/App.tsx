@@ -25,7 +25,6 @@ import ChapterDetails from './pages/ChapterDetails'
 import BlogPost from './pages/BlogPost'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
-import AdminLogin from './pages/AdminLogin'
 import Wishlist from './pages/Wishlist'
 
 // Dashboard pages
@@ -35,7 +34,8 @@ import Polls from './pages/Polls'
 
 // Admin pages
 import AdminLayout from './components/layouts/AdminLayout'
-import AdminDashboard from './pages/AdminDashboard'
+import AdminDashboard from './pages/admin/Dashboard'
+import AdminLogin from './pages/admin/Login'
 
 export default function App() {
   return (
