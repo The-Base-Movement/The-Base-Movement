@@ -32,6 +32,7 @@ import {
   ResponsiveContainer 
 } from 'recharts'
 import { useToast } from '@/hooks/use-toast'
+import { useNavigate } from 'react-router-dom'
 
 interface StatCardProps {
   title: string
@@ -86,21 +87,25 @@ export default function AdminDashboard() {
   const [sentimentStats, setSentimentStats] = useState<SentimentStat[]>([])
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
+  const [globalStats, setGlobalStats] = useState<{ label: string, value: string, change: string }[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
-      const [growth, sentiment, audit, regions] = await Promise.all([
+      const [growth, sentiment, audit, regions, stats] = await Promise.all([
         adminService.getGrowthTrends(),
         adminService.getSentimentAnalysis(),
         adminService.getSystemAuditLogs(),
-        adminService.getRegionalStats()
+        adminService.getRegionalStats(),
+        adminService.getGlobalStats()
       ])
       setGrowthData(growth)
       setSentimentStats(sentiment)
       setAuditLogs(audit)
       setRegionalStats(regions)
+      setGlobalStats(stats)
       setIsLoading(false)
     }
     fetchData()
@@ -128,11 +133,7 @@ export default function AdminDashboard() {
   }
 
   const handlePlatformLogs = () => {
-    toast({
-      title: "ACCESSING AUDIT VAULT",
-      description: "Decrypting high-security system activity logs...",
-      variant: "destructive",
-    })
+    navigate('/admin/settings?tab=audit')
   }
 
   return (
@@ -204,10 +205,10 @@ export default function AdminDashboard() {
           </>
         ) : (
           <>
-            <StatCard title="Total Membership" value="452,890" change="+12.4%" icon={Users} color="bg-[var(--brand-green)]" />
-            <StatCard title="Regional Chapters" value="124" change="+4.2%" icon={MapPin} color="bg-[var(--brand-red)]" />
-            <StatCard title="Member Engagement" value="88.4%" change="+2.1%" icon={Activity} color="bg-[var(--brand-gold)]" />
-            <StatCard title="Merch Orders" value="1,245" change="+15.8%" icon={ShoppingBag} color="bg-stone-800" />
+            <StatCard title={globalStats[0]?.label || "Loading..."} value={globalStats[0]?.value || "..."} change={globalStats[0]?.change || "..."} icon={Users} color="bg-[var(--brand-green)]" />
+            <StatCard title={globalStats[1]?.label || "Loading..."} value={globalStats[1]?.value || "..."} change={globalStats[1]?.change || "..."} icon={MapPin} color="bg-[var(--brand-red)]" />
+            <StatCard title={globalStats[2]?.label || "Loading..."} value={globalStats[2]?.value || "..."} change={globalStats[2]?.change || "..."} icon={Activity} color="bg-[var(--brand-gold)]" />
+            <StatCard title={globalStats[3]?.label || "Loading..."} value={globalStats[3]?.value || "..."} change={globalStats[3]?.change || "..."} icon={ShoppingBag} color="bg-stone-800" />
           </>
         )}
       </div>
@@ -376,7 +377,11 @@ export default function AdminDashboard() {
                 </table>
               </div>
               <div className="p-6 border-t border-stone-50 bg-stone-50/20">
-                <Button variant="outline" className="w-full h-12 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-black)] hover:text-white transition-all">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/admin/settings?tab=audit')}
+                  className="w-full h-12 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-black)] hover:text-white transition-all"
+                >
                   Access Full Movement Audit Vault
                 </Button>
               </div>

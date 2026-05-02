@@ -1,4 +1,4 @@
-import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, Globe } from 'lucide-react'
+import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, Globe, History } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import type { RegionalStat } from '@/services/adminService'
+import type { RegionalStat, Chapter } from '@/services/adminService'
 import { 
   Dialog, 
   DialogContent, 
@@ -21,7 +21,8 @@ import {
 } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { useState, useEffect, useMemo } from 'react'
-import { useChapters, type Chapter } from '@/context/ChaptersContext'
+import { useChapters } from '@/context/ChaptersContext'
+import { toast } from 'sonner'
 
 // Removing local mock data as we are now using ChaptersContext
 export default function ChaptersManagement() {
@@ -49,17 +50,24 @@ export default function ChaptersManagement() {
     fetchStats()
   }, [])
 
-  const handleSaveChapter = (e: React.FormEvent) => {
+  const handleSaveChapter = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Adapted mapping for service compatibility
+    const chapterData = {
+      name: formData.name,
+      region: formData.city_or_region,
+      lead: 'Unassigned', // Default for now
+      members: 0,
+      status: formData.status as 'Active' | 'Pending' | 'Closed'
+    }
+
     if (editingChapterId) {
-      updateChapter(editingChapterId, formData)
+      const success = await updateChapter(editingChapterId, chapterData)
+      if (success) toast.success(`Chapter "${formData.name}" updated successfully.`)
     } else {
-      const slug = formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')
-      addChapter({
-        ...formData,
-        members: 0,
-        details_url: `https://thebasemovement.com/chapters/${slug}`
-      })
+      const success = await addChapter(chapterData)
+      if (success) toast.success(`Chapter "${formData.name}" established successfully.`)
     }
     closeModal()
   }
@@ -80,10 +88,10 @@ export default function ChaptersManagement() {
     setEditingChapterId(chapter.id)
     setFormData({
       name: chapter.name,
-      city_or_region: chapter.city_or_region,
-      country: chapter.country,
-      description: chapter.description,
-      status: chapter.status === 'Member' ? 'Active' : chapter.status
+      city_or_region: chapter.region,
+      country: 'Ghana', // Chapter type doesn't have country, defaulting
+      description: '', // Chapter type doesn't have description, defaulting
+      status: chapter.status
     })
     setIsModalOpen(true)
   }
@@ -93,13 +101,19 @@ export default function ChaptersManagement() {
     setEditingChapterId(null)
   }
 
+  const handleDeleteChapter = async (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to decommission the "${name}" chapter?`)) {
+      const success = await deleteChapter(id, name)
+      if (success) toast.error(`Chapter "${name}" has been decommissioned.`)
+    }
+  }
+
   const filteredChapters = useMemo(() => {
     return chapters.filter(c => {
       const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) || 
-                           c.city_or_region.toLowerCase().includes(search.toLowerCase()) ||
-                           c.country.toLowerCase().includes(search.toLowerCase())
+                           c.region.toLowerCase().includes(search.toLowerCase())
       
-      const normalizedStatus = c.status === 'Active' || c.status === 'Member' ? 'Active' : 'Pending'
+      const normalizedStatus = c.status === 'Active' ? 'Active' : 'Pending'
       const matchesStatus = statusFilter === 'All' || normalizedStatus === statusFilter
       
       return matchesSearch && matchesStatus
@@ -107,7 +121,7 @@ export default function ChaptersManagement() {
   }, [chapters, search, statusFilter])
 
   const totalMembers = useMemo(() => 
-    chapters.reduce((sum, c) => sum + (c.membersCount || 0), 0), 
+    chapters.reduce((sum, c) => sum + (c.members || 0), 0), 
     [chapters]
   )
 
@@ -121,12 +135,21 @@ export default function ChaptersManagement() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="primary" 
-            onClick={openAddModal}
-            className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]"
+            variant="outline" 
+            onClick={() => toast.info("Accessing Audit Vault...")}
+            className="h-11 text-[10px] uppercase font-bold tracking-widest border-stone-200"
           >
-            <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
+            <History className="w-4 h-4 mr-2" /> View Audit Trail
           </Button>
+          {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
+            <Button 
+              variant="primary" 
+              onClick={openAddModal}
+              className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
+            </Button>
+          )}
         </div>
       </div>
 
@@ -288,7 +311,7 @@ export default function ChaptersManagement() {
                 </div>
                 <div className={cn(
                   "px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border",
-                  (chapter.status === 'Active' || chapter.status === 'Member') ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100"
+                  (chapter.status === 'Active') ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100"
                 )}>
                   {chapter.status}
                 </div>
@@ -300,13 +323,13 @@ export default function ChaptersManagement() {
                   <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest flex items-center gap-1">
                     <Crown className="w-2.5 h-2.5 text-[var(--brand-gold)]" /> Regional Hub
                   </p>
-                  <p className="text-xs font-black text-stone-900 uppercase tracking-tight truncate">{chapter.city_or_region}</p>
+                  <p className="text-xs font-black text-stone-900 uppercase tracking-tight truncate">{chapter.region}</p>
                 </div>
                 <div className="space-y-1 text-right">
                   <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Strength</p>
                   <p className="text-xs font-black text-stone-900 flex items-center justify-end gap-1">
                     <Users className="w-3 h-3 text-[var(--brand-green)]" />
-                    {(chapter.membersCount || 0).toLocaleString()}
+                    {(chapter.members || 0).toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -315,25 +338,29 @@ export default function ChaptersManagement() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5 text-stone-400" />
-                    <span className="text-[10px] font-bold text-stone-500 uppercase tracking-tight">{chapter.country}</span>
+                    <span className="text-[10px] font-bold text-stone-500 uppercase tracking-tight">Ghana</span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-2 mt-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => openEditModal(chapter)}
-                    className="h-9 px-0 text-[8px] font-black uppercase tracking-widest border-stone-100 hover:bg-stone-900 hover:text-white transition-all"
-                  >
-                    Manage Hub
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => deleteChapter(chapter.id)}
-                    className="h-9 px-0 text-[8px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-red)] transition-colors"
-                  >
-                    Delete Chapter <ChevronRight className="w-3 h-3 ml-1" />
-                  </Button>
+                  {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => openEditModal(chapter)}
+                      className="h-9 px-0 text-[8px] font-black uppercase tracking-widest border-stone-100 hover:bg-stone-900 hover:text-white transition-all"
+                    >
+                      Manage Hub
+                    </Button>
+                  )}
+                  {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
+                      className="h-9 px-0 text-[8px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-red)] transition-colors"
+                    >
+                      Delete Chapter <ChevronRight className="w-3 h-3 ml-1" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -341,15 +368,17 @@ export default function ChaptersManagement() {
         ))}
 
         {/* Create New Chapter Placeholder */}
-        <button 
-          onClick={openAddModal}
-          className="border-2 border-dashed border-stone-200 rounded-none p-8 flex flex-col items-center justify-center gap-4 text-stone-400 hover:border-[var(--brand-red)] hover:text-[var(--brand-red)] transition-all group"
-        >
-          <div className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-[var(--brand-red)] group-hover:text-white transition-all">
-            <Plus className="w-6 h-6" />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest">Establish New Chapter</span>
-        </button>
+        {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
+          <button 
+            onClick={openAddModal}
+            className="border-2 border-dashed border-stone-200 rounded-none p-8 flex flex-col items-center justify-center gap-4 text-stone-400 hover:border-[var(--brand-red)] hover:text-[var(--brand-red)] transition-all group"
+          >
+            <div className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-[var(--brand-red)] group-hover:text-white transition-all">
+              <Plus className="w-6 h-6" />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest">Establish New Chapter</span>
+          </button>
+        )}
       </div>
 
       {/* Chapter Editor Modal */}

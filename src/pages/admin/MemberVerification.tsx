@@ -14,6 +14,10 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Database,
+  History,
+  Lock,
+  FileText,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -25,6 +29,7 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
+import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
 
@@ -47,6 +52,7 @@ interface PendingMember {
   submitted: string
   status: 'In Review' | 'Processing' | 'Flagged' | 'Approved' | 'Rejected'
   photoUrl: string | null
+  chapter?: string
 }
 
 // ── Seed mock data ─────────────────────────────────────────────────────────────
@@ -128,6 +134,7 @@ export default function MemberVerification() {
   const [statusFilter, setStatusFilter] = useState<PendingMember['status'] | 'All'>('All')
   const [currentPage, setCurrentPage] = useState(1)
   const [showPhotoFull, setShowPhotoFull] = useState(false)
+  const [viewingVaultRecord, setViewingVaultRecord] = useState<PendingMember | null>(null)
 
   const PAGE_SIZE = 10
 
@@ -164,14 +171,23 @@ export default function MemberVerification() {
   }
 
   // ── Approve / Reject ──────────────────────────────────────────────────────
-  const handleVerdict = (approve: boolean) => {
+  const handleVerdict = async (approve: boolean) => {
     if (!selectedMember) return
     const newStatus: PendingMember['status'] = approve ? 'Approved' : 'Rejected'
+    
+    // Optimistic UI
     setMembers(prev =>
       prev.map(m => m.id === selectedMember.id ? { ...m, status: newStatus } : m)
     )
     setSelectedMember(prev => prev ? { ...prev, status: newStatus } : null)
-    adminService.verifyMember(selectedMember.id, approve)
+    
+    try {
+      await adminService.verifyMember(selectedMember.id, approve, undefined, selectedMember.chapter)
+      toast.success(`Member "${selectedMember.name}" has been ${newStatus.toLowerCase()}.`)
+    } catch (error) {
+      console.error('[VERIFICATION] Action failed:', error)
+      toast.error("Failed to update verification status.")
+    }
   }
 
   const filtered = members
@@ -517,7 +533,7 @@ export default function MemberVerification() {
               {/* View photo button (if available) */}
               {selectedMember.photoUrl && (
                 <Card className="rounded-none border-stone-200 shadow-sm">
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 space-y-2">
                     <Button
                       variant="ghost"
                       className="w-full h-10 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-black)]"
@@ -525,6 +541,15 @@ export default function MemberVerification() {
                     >
                       <Eye className="w-4 h-4 mr-2" /> View Full Passport Photo
                     </Button>
+                    {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
+                      <Button
+                        variant="ghost"
+                        className="w-full h-10 text-[10px] font-black uppercase tracking-widest text-[var(--brand-gold)] hover:bg-stone-50"
+                        onClick={() => setViewingVaultRecord(selectedMember)}
+                      >
+                        <Database className="w-4 h-4 mr-2" /> View Full Audit Record
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               )}
@@ -577,6 +602,136 @@ export default function MemberVerification() {
               <EyeOff className="w-5 h-5" />
             </button>
           </div>
+        </div>
+      )}
+
+      {/* ── Audit Vault Modal ────────────────────────────────────────────────── */}
+      {viewingVaultRecord && (
+        <div className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <Card className="max-w-4xl w-full rounded-none border-0 shadow-2xl overflow-hidden bg-stone-50">
+            <CardHeader className="bg-[var(--brand-black)] text-white p-8 border-b border-white/10 relative">
+              <div className="absolute top-0 right-0 p-6 opacity-10">
+                <Lock className="w-24 h-24 rotate-12" />
+              </div>
+              <div className="flex justify-between items-start relative z-10">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black text-[var(--brand-gold)] uppercase tracking-[0.3em]">
+                      Secure Vault Record
+                    </span>
+                    <div className={cn(
+                      "px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border border-white/20",
+                      viewingVaultRecord.status === 'Approved' ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+                    )}>
+                      {viewingVaultRecord.status}
+                    </div>
+                  </div>
+                  <h2 className="text-3xl font-black font-meta uppercase tracking-tighter leading-none pt-2">
+                    {viewingVaultRecord.name}
+                  </h2>
+                  <p className="text-stone-400 text-xs font-bold uppercase tracking-widest">
+                    Permanent Record ID: {viewingVaultRecord.id}
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setViewingVaultRecord(null)}
+                  className="p-2 hover:bg-white/10 text-white/60 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="space-y-8">
+                  <section>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-stone-400 border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
+                      <FileText className="w-3.5 h-3.5" /> Identity Metadata
+                    </h3>
+                    <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+                      {[
+                        { label: 'Full Name', value: viewingVaultRecord.name },
+                        { label: 'Platform', value: viewingVaultRecord.platform },
+                        { label: 'Country', value: viewingVaultRecord.country },
+                        { label: 'Region', value: viewingVaultRecord.region },
+                        { label: 'Constituency', value: viewingVaultRecord.constituency },
+                        { label: 'Profession', value: viewingVaultRecord.profession },
+                        { label: 'Education', value: viewingVaultRecord.educationLevel },
+                        { label: 'Gender', value: viewingVaultRecord.gender },
+                        { label: 'Age Range', value: viewingVaultRecord.ageRange },
+                      ].map(f => (
+                        <div key={f.label}>
+                          <p className="text-[8px] font-bold text-stone-400 uppercase tracking-widest">{f.label}</p>
+                          <p className="text-[11px] font-black uppercase tracking-tight text-stone-900">{f.value || '—'}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-stone-400 border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
+                      <History className="w-3.5 h-3.5" /> Audit History
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="p-4 bg-white border-l-2 border-[var(--brand-green)] shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <p className="text-[10px] font-black uppercase tracking-tight text-stone-900">Registration Submitted</p>
+                          <span className="text-[8px] font-bold text-stone-400 uppercase">{viewingVaultRecord.submitted}</span>
+                        </div>
+                        <p className="text-[9px] text-stone-500 mt-1 uppercase tracking-tight">System generated entry upon form completion.</p>
+                      </div>
+                      {viewingVaultRecord.status === 'Approved' && (
+                        <div className="p-4 bg-white border-l-2 border-emerald-500 shadow-sm">
+                          <div className="flex justify-between items-start">
+                            <p className="text-[10px] font-black uppercase tracking-tight text-emerald-600">Verification Approved</p>
+                            <span className="text-[8px] font-bold text-stone-400 uppercase">Just now</span>
+                          </div>
+                          <p className="text-[9px] text-stone-500 mt-1 uppercase tracking-tight">Administrator: National Admin HQ</p>
+                        </div>
+                      )}
+                      {viewingVaultRecord.status === 'Rejected' && (
+                        <div className="p-4 bg-white border-l-2 border-red-500 shadow-sm">
+                          <div className="flex justify-between items-start">
+                            <p className="text-[10px] font-black uppercase tracking-tight text-red-600">Verification Rejected</p>
+                            <span className="text-[8px] font-bold text-stone-400 uppercase">Just now</span>
+                          </div>
+                          <p className="text-[9px] text-stone-500 mt-1 uppercase tracking-tight">Administrator: National Admin HQ</p>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                </div>
+
+                <div className="space-y-8">
+                  <section>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-stone-400 border-b border-stone-200 pb-2 mb-4">
+                      Captured Credentials
+                    </h3>
+                    <div className="aspect-[3/4] bg-stone-200 overflow-hidden shadow-inner border border-stone-300 relative group">
+                      {viewingVaultRecord.photoUrl ? (
+                        <img src={viewingVaultRecord.photoUrl} alt="Vault Record" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 gap-2">
+                          <EyeOff className="w-8 h-8 opacity-20" />
+                          <p className="text-[9px] font-black uppercase">No biometric data</p>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                        <Database className="text-white w-12 h-12 opacity-50" />
+                      </div>
+                    </div>
+                  </section>
+                  
+                  <div className="p-6 bg-[var(--brand-gold)]/10 border border-[var(--brand-gold)]/20">
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--brand-gold)] mb-2 italic">Legal Disclaimer</p>
+                    <p className="text-[10px] text-stone-600 leading-relaxed font-medium italic">
+                      This record is persistently stored in the Movement's Secure Audit Vault. Metadata cannot be altered after verification completion.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>

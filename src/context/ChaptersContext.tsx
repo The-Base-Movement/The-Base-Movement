@@ -1,54 +1,53 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
-import { allChapters } from '@/data/chaptersData'
-
-// ── Types ──────────────────────────────────────────────────────────────────────
-export interface Chapter {
-  id: string
-  name: string
-  city_or_region: string
-  country: string
-  members: number | null
-  membersCount: number
-  status: string
-  details_url: string
-  description: string
-}
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { adminService, type Chapter } from '@/services/adminService'
 
 interface ChaptersContextValue {
   chapters: Chapter[]
-  addChapter: (chapter: Omit<Chapter, 'id' | 'membersCount'>) => void
-  updateChapter: (id: string, patch: Partial<Chapter>) => void
-  deleteChapter: (id: string) => void
+  isLoading: boolean
+  refreshChapters: () => Promise<void>
+  addChapter: (chapter: Omit<Chapter, 'id'>) => Promise<boolean>
+  updateChapter: (id: string, patch: Partial<Chapter>) => Promise<boolean>
+  deleteChapter: (id: string, name: string) => Promise<boolean>
 }
 
 // ── Context ────────────────────────────────────────────────────────────────────
 const ChaptersContext = createContext<ChaptersContextValue | null>(null)
 
 export function ChaptersProvider({ children }: { children: ReactNode }) {
-  const [chapters, setChapters] = useState<Chapter[]>(allChapters as Chapter[])
+  const [chapters, setChapters] = useState<Chapter[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const addChapter = (chapter: Omit<Chapter, 'id' | 'membersCount'>) => {
-    const id = chapter.name
-      .toLowerCase()
-      .replace(/ - /g, '-')
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]+/g, '')
-    setChapters(prev => [
-      { ...chapter, id, membersCount: chapter.members ?? 0 },
-      ...prev,
-    ])
+  const refreshChapters = async () => {
+    setIsLoading(true)
+    const data = await adminService.getChapters()
+    setChapters(data)
+    setIsLoading(false)
   }
 
-  const updateChapter = (id: string, patch: Partial<Chapter>) => {
-    setChapters(prev => prev.map(c => c.id === id ? { ...c, ...patch } : c))
+  useEffect(() => {
+    refreshChapters()
+  }, [])
+
+  const addChapter = async (chapter: Omit<Chapter, 'id'>) => {
+    const success = await adminService.createChapter(chapter)
+    if (success) await refreshChapters()
+    return success
   }
 
-  const deleteChapter = (id: string) => {
-    setChapters(prev => prev.filter(c => c.id !== id))
+  const updateChapter = async (id: string, patch: Partial<Chapter>) => {
+    const success = await adminService.updateChapter(id, patch)
+    if (success) await refreshChapters()
+    return success
+  }
+
+  const deleteChapter = async (id: string, name: string) => {
+    const success = await adminService.deleteChapter(id, name)
+    if (success) await refreshChapters()
+    return success
   }
 
   return (
-    <ChaptersContext.Provider value={{ chapters, addChapter, updateChapter, deleteChapter }}>
+    <ChaptersContext.Provider value={{ chapters, isLoading, refreshChapters, addChapter, updateChapter, deleteChapter }}>
       {children}
     </ChaptersContext.Provider>
   )

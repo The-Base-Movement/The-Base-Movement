@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { 
   BarChart3, 
   Plus, 
@@ -17,16 +18,32 @@ import {
   CardTitle 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { adminService, type Poll } from '@/services/adminService'
+import { toast } from 'sonner'
 
 // Mock Data for Polls
-const pollsData = [
-  { id: 'POLL-001', title: 'Economic Policy Feedback 2024', status: 'High Priority', votes: 12450, region: 'National', endDate: '2024-05-15', color: 'var(--brand-red)' },
-  { id: 'POLL-002', title: 'Regional Impact Assessment', status: 'In Progress', votes: 4200, region: 'Ashanti', endDate: '2024-06-01', color: 'var(--brand-gold)' },
-  { id: 'POLL-003', title: 'System-Wide Logistics Survey', status: 'Active', votes: 8900, region: 'National', endDate: '2024-04-10', color: 'var(--brand-black)' },
-  { id: 'POLL-004', title: 'Community Policing Complete', status: 'Finalized', votes: 3120, region: 'Greater Accra', endDate: '2024-03-20', color: 'var(--brand-green)' },
-]
-
 export default function PollsManagement() {
+  const [polls, setPolls] = useState<Poll[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchPolls = async () => {
+      setIsLoading(true)
+      const data = await adminService.getPolls()
+      setPolls(data)
+      setIsLoading(false)
+    }
+    fetchPolls()
+  }, [])
+
+  const handlePollAction = (action: string, pollTitle: string) => {
+    adminService.logAction(action, `POLLS/${pollTitle}`, 'Success')
+    toast.success(`${action.replace('_', ' ')}: ${pollTitle} updated in Audit Vault`)
+  }
+
+  const filteredPolls = polls.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()))
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
@@ -95,6 +112,8 @@ export default function PollsManagement() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
             <Input 
               placeholder="Search polls..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 h-9 text-xs rounded-none border-stone-200"
             />
           </div>
@@ -113,7 +132,30 @@ export default function PollsManagement() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-50">
-                {pollsData.map((poll) => (
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td className="px-6 py-5">
+                        <div className="space-y-2">
+                          <div className="h-4 bg-stone-100 w-3/4" />
+                          <div className="h-2 bg-stone-50 w-1/2" />
+                        </div>
+                      </td>
+                      <td className="px-6 py-5"><div className="h-4 bg-stone-50 w-full" /></td>
+                      <td className="px-6 py-5"><div className="h-4 bg-stone-50 w-full" /></td>
+                      <td className="px-6 py-5"><div className="h-6 bg-stone-50 w-16" /></td>
+                      <td className="px-6 py-5"><div className="h-4 bg-stone-50 w-full" /></td>
+                      <td className="px-6 py-5 text-right"><div className="h-8 w-8 bg-stone-50 ml-auto" /></td>
+                    </tr>
+                  ))
+                ) : filteredPolls.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
+                      No matching polls found in the campaign hub.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredPolls.map((poll) => (
                   <tr key={poll.id} className="hover:bg-stone-50/50 transition-colors">
                     <td className="px-6 py-5">
                       <div className="flex flex-col">
@@ -127,7 +169,10 @@ export default function PollsManagement() {
                         <div className="w-20 h-1 bg-stone-100 mt-2 overflow-hidden">
                           <div 
                             className="h-full transition-all duration-1000" 
-                            style={{ width: '75%', backgroundColor: poll.color }} 
+                            style={{ 
+                              width: poll.votes > 10000 ? '90%' : poll.votes > 5000 ? '60%' : '30%', 
+                              backgroundColor: poll.status === 'Active' ? 'var(--brand-green)' : 'var(--brand-gold)' 
+                            }} 
                           />
                         </div>
                       </div>
@@ -137,16 +182,14 @@ export default function PollsManagement() {
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: poll.color }} />
+                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: poll.status === 'Active' ? 'var(--brand-green)' : 'var(--brand-gold)' }} />
                         <span className={cn(
                           "px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border",
-                          poll.status === 'High Priority' 
-                            ? "bg-red-50 text-[var(--brand-red)] border-red-100" 
-                            : poll.status === 'In Progress'
+                          poll.status === 'Active' 
+                            ? "bg-emerald-50 text-[var(--brand-green)] border-emerald-100" 
+                            : poll.status === 'Draft'
                             ? "bg-amber-50 text-[var(--brand-gold)] border-amber-100"
-                            : poll.status === 'Active'
-                            ? "bg-stone-50 text-[var(--brand-black)] border-stone-200"
-                            : "bg-emerald-50 text-[var(--brand-green)] border-emerald-100"
+                            : "bg-stone-50 text-[var(--brand-black)] border-stone-200"
                         )}>
                           {poll.status}
                         </span>
@@ -159,12 +202,18 @@ export default function PollsManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-5 text-right">
-                      <Button variant="ghost" size="icon" className="text-stone-400">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-stone-400"
+                        onClick={() => handlePollAction('POLL_MANAGE', poll.title)}
+                      >
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </td>
                   </tr>
-                ))}
+                  ))
+                )}
               </tbody>
             </table>
           </div>

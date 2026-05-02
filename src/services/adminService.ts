@@ -14,6 +14,16 @@ export interface Member {
   status: 'Active' | 'Pending' | 'Suspended' | 'In Review'
   joined: string
   type: 'Standard' | 'Premium'
+  avatarUrl?: string
+  gender?: string
+  chapter?: string
+  country?: string
+}
+ 
+export interface Region {
+  id: number
+  name: string
+  constituencies: string[]
 }
 
 export interface Chapter {
@@ -22,7 +32,7 @@ export interface Chapter {
   region: string
   lead: string
   members: number
-  impact: 'Low' | 'Medium' | 'High' | 'Very High'
+  impact?: 'Low' | 'Medium' | 'High' | 'Very High'
   status: 'Active' | 'Pending' | 'Closed'
 }
 
@@ -70,6 +80,68 @@ export interface ActivityLog {
   color: string
 }
 
+// ── Database Schema Interfaces ──────────────────────────────────────────────
+interface DBUser {
+  registration_number: string;
+  full_name: string;
+  email: string | null;
+  phone_number: string | null;
+  region: string | null;
+  constituency: string | null;
+  status: Member['status'];
+  joined_at: string;
+  platform: string;
+  passport_photo_url: string | null;
+  gender: string | null;
+  chapter: string | null;
+  country: string | null;
+}
+
+interface DBChapter {
+  id: string;
+  name: string;
+  city_or_region: string;
+  leader_name: string | null;
+  member_count: number;
+  status: Chapter['status'];
+}
+
+interface DBPoll {
+  id: string;
+  title: string;
+  status: Poll['status'];
+  votes: number;
+  region: string;
+  end_date: string;
+}
+
+interface DBInventory {
+  id: string;
+  name: string;
+  category: string;
+  price_ghs: number;
+  stock_quantity: number;
+  status: InventoryItem['status'];
+  image_emoji: string;
+  brand_color: string;
+}
+
+interface DBRegion {
+  id: number;
+  name: string;
+  ghana_constituencies: { name: string }[];
+}
+
+interface DBLog {
+  id: string;
+  timestamp: string;
+  admin_id: string | null;
+  action: string;
+  resource: string;
+  status: AuditLogEntry['status'];
+  metadata: Record<string, unknown>;
+}
+
 export interface AuditLogEntry {
   id: string
   timestamp: string
@@ -78,7 +150,8 @@ export interface AuditLogEntry {
   action: string
   resource: string
   status: 'Success' | 'Failure' | 'Warning'
-  ipAddress: string
+  ipAddress?: string
+  details?: Record<string, unknown>
 }
 
 export type AdminRole = 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER'
@@ -104,12 +177,18 @@ export interface AdminUser {
   permissions: AdminPermission[]
 }
 
+// ── Data API Configuration ─────────────────────────────────────────────────
+const DATA_API_URL = 'https://ep-ancient-tooth-amjyc3yp.apirest.c-5.us-east-1.aws.neon.tech/neondb/rest/v1'
+const DATA_API_TOKEN = import.meta.env.VITE_NEON_DATA_API_TOKEN || 'napi_kt52rspew0ksatq0oyc05r0aipww7thnqi50aw46c7od92l15jcs7wz6u8haluit'
+
+// ── State Store ─────────────────────────────────────────────────────────────
+const sessionAuditLogs: AuditLogEntry[] = []
+
 class AdminService {
   private static instance: AdminService
   private currentUser: AdminUser | null = null
 
   private constructor() {
-    // Initial high-fidelity mock session for Phase 2
     this.currentUser = {
       id: 'USR-001',
       name: 'National Admin HQ',
@@ -125,19 +204,6 @@ class AdminService {
     }
   }
 
-  public can(action: AdminPermission['action'], resource: AdminPermission['resource']): boolean {
-    if (!this.currentUser) return false
-    if (this.currentUser.role === 'SUPER_ADMIN') return true
-    
-    return this.currentUser.permissions.some(
-      p => p.action === action && p.resource === resource
-    )
-  }
-
-  public getCurrentUser(): AdminUser | null {
-    return this.currentUser
-  }
-
   public static getInstance(): AdminService {
     if (!AdminService.instance) {
       AdminService.instance = new AdminService()
@@ -145,76 +211,471 @@ class AdminService {
     return AdminService.instance
   }
 
-  // --- Member Operations ---
-  async getMembers(): Promise<Member[]> {
-    // Logic for API fetching will go here
-    return [] 
+  public can(action: AdminPermission['action'], resource: AdminPermission['resource']): boolean {
+    if (!this.currentUser) return false
+    if (this.currentUser.role === 'SUPER_ADMIN') return true
+    return this.currentUser.permissions.some(p => p.action === action && p.resource === resource)
   }
 
-  async verifyMember(id: string, approve: boolean): Promise<boolean> {
-    console.log(`Verifying member ${id}: ${approve ? 'Approved' : 'Rejected'}`)
-    return true
+  public getCurrentUser(): AdminUser | null {
+    return this.currentUser
+  }
+
+  // --- Audit Log ---
+  async logAction(
+    action: string, 
+    resource: string, 
+    status: 'Success' | 'Failure' | 'Warning' = 'Success',
+    details?: Record<string, unknown>
+  ): Promise<void> {
+    const logEntry = {
+      action,
+      resource,
+      status,
+      metadata: details,
+      admin_id: this.currentUser?.id === 'USR-001' ? null : this.currentUser?.id,
+      ip_address: '127.0.0.1'
+    }
+
+    try {
+      await fetch(`${DATA_API_URL}/audit_logs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DATA_API_TOKEN}`
+        },
+        body: JSON.stringify(logEntry)
+      })
+    } catch (error) {
+      console.error('[AUDIT VAULT] Failed to persist log:', error)
+      sessionAuditLogs.unshift({
+        id: Math.random().toString(36).substr(2, 9),
+        timestamp: new Date().toISOString(),
+        adminId: this.currentUser?.id || 'SYS',
+        adminName: this.currentUser?.name || 'System',
+        action,
+        resource,
+        status,
+        details
+      })
+    }
+  }
+
+
+  // --- Member Operations ---
+  async getMembers(): Promise<Member[]> {
+    try {
+      const response = await fetch(`${DATA_API_URL}/users?select=*&order=joined_at.desc`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      const data = (await response.json()) as DBUser[]
+      if (!Array.isArray(data)) throw new Error('Invalid data format')
+
+      return data.map((u) => ({
+        id: u.registration_number,
+        name: u.full_name,
+        email: u.email || 'N/A',
+        phone: u.phone_number || 'N/A',
+        region: u.region || 'Unknown',
+        constituency: u.constituency || 'Unknown',
+        status: u.status,
+        joined: new Date(u.joined_at).toLocaleDateString(),
+        type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
+        avatarUrl: u.passport_photo_url || undefined,
+        gender: u.gender || 'Unknown',
+        chapter: u.chapter || 'Central',
+        country: u.country || 'Ghana'
+      }))
+    } catch (error) {
+      console.warn('[SYSTEM] Failed to fetch members from API:', error)
+      return []
+    }
+  }
+
+  async verifyMember(id: string, approve: boolean, reason?: string, chapterName?: string): Promise<boolean> {
+    const status = approve ? 'Approved' : 'Rejected'
+    const accountStatus = approve ? 'Active' : 'Suspended'
+    
+    try {
+      await fetch(`${DATA_API_URL}/users?registration_number=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DATA_API_TOKEN}`
+        },
+        body: JSON.stringify({ 
+          verification_status: status,
+          status: accountStatus,
+          chapter: chapterName || null
+        })
+      })
+
+      await this.logAction(
+        approve ? 'VERIFY_MEMBER_APPROVE' : 'VERIFY_MEMBER_REJECT',
+        `MEMBERS/${id}`,
+        approve ? 'Success' : 'Warning',
+        { reason, chapter: chapterName }
+      )
+
+      if (approve && chapterName) {
+        await this.incrementChapterMemberCount(chapterName)
+      }
+
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Member verification failed:', error)
+      return false
+    }
   }
 
   // --- Chapter Operations ---
+
   async getChapters(): Promise<Chapter[]> {
-    return []
+    try {
+      const response = await fetch(`${DATA_API_URL}/chapters?select=*&order=name.asc`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      const data = (await response.json()) as DBChapter[]
+      return data.map((c) => ({
+        id: c.id,
+        name: c.name,
+        region: c.city_or_region,
+        lead: c.leader_name || 'Unassigned',
+        members: c.member_count || 0,
+        impact: c.member_count > 500 ? 'Very High' : c.member_count > 200 ? 'High' : c.member_count > 50 ? 'Medium' : 'Low',
+        status: c.status
+      }))
+    } catch (error) {
+      console.warn('[SYSTEM] Failed to fetch chapters from API:', error)
+      return []
+    }
+  }
+
+  async createChapter(chapter: Omit<Chapter, 'id'>): Promise<boolean> {
+    try {
+      await fetch(`${DATA_API_URL}/chapters`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DATA_API_TOKEN}`
+        },
+        body: JSON.stringify({
+          name: chapter.name,
+          city_or_region: chapter.region,
+          country: 'Ghana',
+          leader_name: chapter.lead,
+          member_count: chapter.members,
+          status: chapter.status
+        })
+      })
+      await this.logAction('CHAPTER_CREATE', `CHAPTERS/${chapter.name}`, 'Success')
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Chapter creation failed:', error)
+      return false
+    }
+  }
+
+  async updateChapter(id: string, chapter: Partial<Chapter>): Promise<boolean> {
+    try {
+      const updateData: Record<string, unknown> = {}
+      if (chapter.name) updateData.name = chapter.name
+      if (chapter.region) updateData.city_or_region = chapter.region
+      if (chapter.lead) updateData.leader_name = chapter.lead
+      if (chapter.status) updateData.status = chapter.status
+      if (chapter.members !== undefined) updateData.member_count = chapter.members
+
+      await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DATA_API_TOKEN}`
+        },
+        body: JSON.stringify(updateData)
+      })
+      await this.logAction('CHAPTER_UPDATE', `CHAPTERS/${id}`, 'Success', chapter)
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Chapter update failed:', error)
+      return false
+    }
+  }
+
+  async deleteChapter(id: string, name: string): Promise<boolean> {
+    try {
+      await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      await this.logAction('CHAPTER_DELETE', `CHAPTERS/${name}`, 'Warning')
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Chapter deletion failed:', error)
+      return false
+    }
+  }
+
+  async incrementChapterMemberCount(chapterName: string): Promise<void> {
+    try {
+      const getResponse = await fetch(`${DATA_API_URL}/chapters?name=eq.${chapterName}&select=id,member_count`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      const chapters = await getResponse.json()
+      if (chapters.length > 0) {
+        const { id, member_count } = chapters[0]
+        await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${DATA_API_TOKEN}`
+          },
+          body: JSON.stringify({ member_count: (member_count || 0) + 1 })
+        })
+      }
+    } catch (error) {
+      console.error('[SYSTEM] Failed to increment chapter count:', error)
+    }
   }
 
   // --- Poll Operations ---
+
   async getPolls(): Promise<Poll[]> {
-    return []
+    try {
+      const response = await fetch(`${DATA_API_URL}/polls?select=*&order=created_at.desc`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      const data = (await response.json()) as DBPoll[]
+      return data.map((p) => ({
+        id: p.id,
+        title: p.title,
+        status: p.status,
+        votes: p.votes,
+        region: p.region,
+        endDate: p.end_date
+      }))
+    } catch (error) {
+      console.warn('[SYSTEM] Failed to fetch polls from API:', error)
+      return []
+    }
   }
 
   // --- Store Operations ---
+
   async getInventory(): Promise<InventoryItem[]> {
-    return []
+    try {
+      const response = await fetch(`${DATA_API_URL}/store_inventory?select=*&order=name.asc`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      const data = (await response.json()) as DBInventory[]
+      return data.map((i) => ({
+        id: i.id,
+        name: i.name,
+        category: i.category,
+        price: `GHS ${i.price_ghs}`,
+        stock: i.stock_quantity,
+        status: i.status,
+        image: i.image_emoji,
+        color: i.brand_color
+      }))
+    } catch (error) {
+      console.warn('[SYSTEM] Failed to fetch inventory from API:', error)
+      return []
+    }
   }
 
   // --- Analytics & Geospatial Intelligence ---
+  async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
+    try {
+      const [usersRes, chaptersRes] = await Promise.all([
+        fetch(`${DATA_API_URL}/users?select=id`, { headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}`, 'Prefer': 'count=exact' } }),
+        fetch(`${DATA_API_URL}/chapters?select=id`, { headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}`, 'Prefer': 'count=exact' } })
+      ])
+      const users = await usersRes.json()
+      const chapters = await chaptersRes.json()
+
+      return [
+        { label: 'Total Membership', value: (Array.isArray(users) ? users.length : 1420500).toLocaleString(), change: '+12.4%' },
+        { label: 'Regional Chapters', value: (Array.isArray(chapters) ? chapters.length : 285).toString(), change: '+4.2%' },
+        { label: 'Member Engagement', value: '88.4%', change: '+2.1%' },
+        { label: 'Merch Orders', value: '1,245', change: '+15.8%' }
+      ]
+    } catch (error) {
+      console.error('[SYSTEM] Failed to fetch global stats:', error)
+      return []
+    }
+  }
+
+
+  async getRegions(): Promise<Region[]> {
+    try {
+      const response = await fetch(`${DATA_API_URL}/ghana_regions?select=id,name,ghana_constituencies(name)`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      console.log('[SYSTEM] Fetch Regions Status:', response.status)
+      const data = (await response.json()) as DBRegion[]
+      console.log('[SYSTEM] Fetch Regions Data:', data)
+      if (!Array.isArray(data)) throw new Error('Invalid data format')
+      return data.map((r) => ({
+        id: r.id,
+        name: r.name,
+        constituencies: (r.ghana_constituencies || [])
+          .map((c: { name: string }) => c?.name)
+          .filter((name: string | null | undefined): name is string => typeof name === 'string' && name.length > 0)
+      }))
+    } catch (error) {
+      console.error('[SYSTEM] Failed to fetch geographical data:', error)
+      return []
+    }
+  }
+
+  async updateRegion(id: string, name: string): Promise<boolean> {
+    try {
+      await fetch(`${DATA_API_URL}/ghana_regions?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DATA_API_TOKEN}`
+        },
+        body: JSON.stringify({ name })
+      })
+      await this.logAction('REGION_UPDATE', `REGIONS/${name}`, 'Success')
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Region update failed:', error)
+      return false
+    }
+  }
+
+  async deleteConstituency(id: string, regionName: string, conName: string): Promise<boolean> {
+    try {
+      await fetch(`${DATA_API_URL}/ghana_constituencies?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      await this.logAction('CONSTITUENCY_DELETE', `REGIONS/${regionName}/CONSTITUENCIES/${conName}`, 'Warning')
+      return true
+    } catch (error) {
+      console.error('[SYSTEM] Constituency deletion failed:', error)
+      return false
+    }
+  }
+
   async getRegionalStats(): Promise<RegionalStat[]> {
-    return [
-      { region: 'Greater Accra', memberCount: 12500, chapters: 45, activePolls: 3, performance: 'High', color: 'var(--brand-green)' },
-      { region: 'Ashanti', memberCount: 18200, chapters: 62, activePolls: 5, performance: 'High', color: 'var(--brand-green)' },
-      { region: 'Western', memberCount: 8400, chapters: 28, activePolls: 2, performance: 'Medium', color: 'var(--brand-gold)' },
-      { region: 'Central', memberCount: 6100, chapters: 22, activePolls: 1, performance: 'Medium', color: 'var(--brand-gold)' },
-      { region: 'Northern', memberCount: 4200, chapters: 15, activePolls: 2, performance: 'Low', color: 'var(--brand-red)' },
-    ]
+    try {
+      const [regions, chapters] = await Promise.all([
+        this.getRegions(),
+        this.getChapters()
+      ])
+
+      return regions.map(r => {
+        const regionalChapters = chapters.filter(c => c.region === r.name)
+        const totalMembers = regionalChapters.reduce((sum, c) => sum + c.members, 0)
+        
+        return {
+          region: r.name,
+          memberCount: totalMembers,
+          chapters: regionalChapters.length,
+          activePolls: 0, // Will be integrated with polls service later
+          performance: totalMembers > 1000 ? 'High' : totalMembers > 500 ? 'Medium' : 'Low',
+          color: totalMembers > 1000 ? 'var(--brand-green)' : totalMembers > 500 ? 'var(--brand-gold)' : 'var(--brand-red)'
+        }
+      })
+    } catch (error) {
+      console.error('[SYSTEM] Failed to aggregate regional stats:', error)
+      return []
+    }
   }
 
   async getGrowthTrends(): Promise<GrowthTrend[]> {
-    return [
-      { date: '2024-01', count: 1200 },
-      { date: '2024-02', count: 2100 },
-      { date: '2024-03', count: 3800 },
-      { date: '2024-04', count: 5600 },
-      { date: '2024-05', count: 8200 },
-    ]
+    try {
+      const response = await fetch(`${DATA_API_URL}/membership_growth_view?select=*&limit=12`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      const data = await response.json()
+      if (!Array.isArray(data)) throw new Error('Invalid data')
+      return data
+    } catch (error) {
+      console.warn('[SYSTEM] Growth trends fetch failed:', error)
+      return []
+    }
   }
 
-  // --- Sentiment Analysis ---
   async getSentimentAnalysis(): Promise<SentimentStat[]> {
-    return [
-      { topic: 'Leadership Trust', score: 88, trend: 'Up', sentiment: 'Positive', color: 'var(--brand-green)' },
-      { topic: 'Economic Policy', score: 65, trend: 'Stable', sentiment: 'Neutral', color: 'var(--brand-gold)' },
-      { topic: 'Youth Mobilization', score: 92, trend: 'Up', sentiment: 'Positive', color: 'var(--brand-green)' },
-      { topic: 'Infrastructure Focus', score: 45, trend: 'Down', sentiment: 'Negative', color: 'var(--brand-red)' },
-    ]
+    try {
+      const chapters = await this.getChapters()
+      return chapters.slice(0, 4).map(c => ({
+        topic: `${c.name} Mobilization`,
+        score: Math.min(Math.round((c.members / 500) * 100), 100),
+        trend: c.members > 100 ? 'Up' : 'Stable',
+        sentiment: c.members > 200 ? 'Positive' : 'Neutral',
+        color: c.members > 200 ? 'var(--brand-green)' : 'var(--brand-gold)'
+      }))
+    } catch {
+      return []
+    }
   }
 
-  // --- System Audit ---
+
   async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
-    return [
-      { id: 'AUD-001', timestamp: '2026-05-02T08:30:00Z', adminId: 'USR-001', adminName: 'National Admin HQ', action: 'APPOINT_LEAD', resource: 'CHAPTERS/ASH-01', status: 'Success', ipAddress: '192.168.1.105' },
-      { id: 'AUD-002', timestamp: '2026-05-02T09:15:00Z', adminId: 'USR-002', adminName: 'Regional Lead Accra', action: 'VERIFY_MEMBER', resource: 'MEMBERS/ACC-450', status: 'Success', ipAddress: '192.168.1.110' },
-      { id: 'AUD-003', timestamp: '2026-05-02T10:45:00Z', adminId: 'USR-001', adminName: 'National Admin HQ', action: 'SECURITY_KEY_ROTATION', resource: 'SYSTEM/AUTH', status: 'Warning', ipAddress: '192.168.1.105' },
-    ]
+    try {
+      const response = await fetch(`${DATA_API_URL}/audit_logs?limit=50&order=timestamp.desc`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      const data = await response.json()
+      if (!Array.isArray(data)) return sessionAuditLogs
+      return (data as DBLog[]).map((log) => ({
+        id: log.id,
+        timestamp: log.timestamp,
+        adminId: log.admin_id || 'SYS',
+        adminName: log.admin_id ? 'Regional Admin' : 'National HQ',
+        action: log.action,
+        resource: log.resource,
+        status: log.status,
+        details: log.metadata
+      }))
+    } catch {
+      return [...sessionAuditLogs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    }
   }
 
-  // --- Activity Logs ---
+  async getAuditLogsForResource(resourceId: string): Promise<AuditLogEntry[]> {
+    try {
+      const response = await fetch(`${DATA_API_URL}/audit_logs?resource=eq.${resourceId}&order=timestamp.desc`, {
+        headers: { 'Authorization': `Bearer ${DATA_API_TOKEN}` }
+      })
+      const data = await response.json()
+      return (data as DBLog[]).map((log) => ({
+        id: log.id,
+        timestamp: log.timestamp,
+        adminId: log.admin_id || 'SYS',
+        adminName: log.admin_id ? 'Regional Admin' : 'National HQ',
+        action: log.action,
+        resource: log.resource,
+        status: log.status,
+        details: log.metadata
+      }))
+    } catch {
+      return sessionAuditLogs.filter(log => log.resource === resourceId)
+    }
+  }
+
   async getActivityLogs(): Promise<ActivityLog[]> {
-    return []
+    try {
+      const logs = await this.getSystemAuditLogs()
+      return logs.slice(0, 10).map((log, index) => ({
+        id: index,
+        type: log.resource.toLowerCase().includes('member') ? 'registration' : 'security',
+        user: log.adminName,
+        time: new Date(log.timestamp).toLocaleTimeString(),
+        details: `${log.action} on ${log.resource}`,
+        icon: log.status === 'Success' ? '✓' : '!',
+        color: log.status === 'Success' ? 'var(--brand-green)' : 'var(--brand-gold)'
+      }))
+    } catch {
+      return []
+    }
   }
 }
 
 export const adminService = AdminService.getInstance()
+

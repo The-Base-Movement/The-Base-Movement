@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { 
   ShoppingBag, 
   Plus, 
@@ -19,34 +20,72 @@ import {
   CardTitle 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { adminService, type InventoryItem } from '@/services/adminService'
+import { toast } from 'sonner'
 
 // Mock Data for Products
-const productsData = [
-  { id: 'PROD-001', name: 'Movement Official Tee', category: 'Apparel', price: 'GHS 120', stock: 450, status: 'Stable', image: '👕', color: 'var(--brand-green)' },
-  { id: 'PROD-002', name: 'Premium Base Cap', category: 'Accessories', price: 'GHS 85', stock: 12, status: 'Low Stock', image: '🧢', color: 'var(--brand-gold)' },
-  { id: 'PROD-003', name: 'Agenda Manifest Booklet', category: 'Education', price: 'GHS 25', stock: 1200, status: 'Processing', image: '📖', color: 'var(--brand-black)' },
-  { id: 'PROD-004', name: 'Base Movement Wristband', category: 'Accessories', price: 'GHS 15', stock: 0, status: 'Critical', image: '⌚', color: 'var(--brand-red)' },
-  { id: 'PROD-005', name: 'Legacy Founder Hoodie', category: 'Apparel', price: 'GHS 250', stock: 85, status: 'Stable', image: '🧥', color: 'var(--brand-green)' },
-]
-
 export default function AdminStore() {
+  const [products, setProducts] = useState<InventoryItem[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeCategory, setActiveCategory] = useState('All')
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      setIsLoading(true)
+      const data = await adminService.getInventory()
+      setProducts(data)
+      setIsLoading(false)
+    }
+    fetchInventory()
+  }, [])
+
+  const lowStockItems = products.filter(p => p.stock < 50 && p.stock > 0)
+  const categories = ['All', ...new Set(products.map(p => p.category))]
+
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = activeCategory === 'All' || p.category === activeCategory
+    return matchesSearch && matchesCategory
+  })
+
+  const handleStoreAction = (action: string, productName: string) => {
+    adminService.logAction(action, `STORE/${productName}`, 'Success')
+    toast.success(`${action.replace('_', ' ')}: ${productName} recorded in Audit Vault`)
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">Inventory & Merch</h1>
-          <p className="text-stone-500 text-sm mt-1">Manage movement merchandise, stock levels, and store performance.</p>
+          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">Logistics & Supply</h1>
+          <p className="text-stone-500 text-sm mt-1">Movement inventory, merchandising, and regional distribution.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-11 text-[10px] uppercase font-bold tracking-widest border-stone-200">
-            Order History
-          </Button>
           <Button variant="primary" className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
-            <Plus className="w-4 h-4 mr-2" /> Add New Product
+            <Plus className="w-4 h-4 mr-2" /> Add Inventory Item
           </Button>
         </div>
       </div>
+
+      {/* Critical Alerts Banner */}
+      {lowStockItems.length > 0 && (
+        <div className="bg-amber-50 border-l-4 border-amber-500 p-4 flex items-center justify-between animate-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-amber-900">Inventory Alert</p>
+              <p className="text-xs text-amber-700">{lowStockItems.length} items require immediate replenishment to maintain movement visibility.</p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" className="h-8 text-[9px] font-black uppercase border-amber-200 text-amber-700 hover:bg-amber-100">
+            View Alerts
+          </Button>
+        </div>
+      )}
 
       {/* Store Performance Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -86,17 +125,38 @@ export default function AdminStore() {
 
       {/* Inventory Management Table */}
       <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
-        <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
-            <Package className="w-4 h-4 text-[var(--brand-red)]" />
-            Product Catalog
-          </CardTitle>
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
-            <Input 
-              placeholder="Search products..." 
-              className="pl-9 h-9 text-xs rounded-none border-stone-200"
-            />
+        <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
+              <Package className="w-4 h-4 text-[var(--brand-red)]" />
+              Product Catalog
+            </CardTitle>
+            
+            {/* Category Filter Tabs */}
+            <div className="flex items-center bg-stone-100 p-1 rounded-none overflow-x-auto no-scrollbar">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={cn(
+                    "px-4 py-1.5 text-[9px] font-black uppercase tracking-tight transition-all",
+                    activeCategory === cat ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
+              <Input 
+                placeholder="Search products..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-9 text-xs rounded-none border-stone-200"
+              />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -113,7 +173,7 @@ export default function AdminStore() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-50">
-                {productsData.map((product) => (
+                {filteredProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-stone-50/50 transition-colors group">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
@@ -159,10 +219,20 @@ export default function AdminStore() {
                     </td>
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)]">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)]"
+                          onClick={() => handleStoreAction('PRODUCT_EDIT', product.name)}
+                        >
                           <Edit3 className="w-3.5 h-3.5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="w-8 h-8 text-stone-400 hover:text-[var(--brand-red)]">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="w-8 h-8 text-stone-400 hover:text-[var(--brand-red)]"
+                          onClick={() => handleStoreAction('PRODUCT_DELETE', product.name)}
+                        >
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
                         <Button variant="ghost" size="icon" className="w-8 h-8 text-stone-400">

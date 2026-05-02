@@ -6,8 +6,12 @@ import {
   Lock, 
   Save,
   Users,
-  Key
+  Key,
+  ShieldCheck,
+  Search,
+  FileText
 } from 'lucide-react'
+import { adminService, type AuditLogEntry } from '@/services/adminService'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,16 +23,34 @@ import {
   CardDescription 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { useSearchParams } from 'react-router-dom'
 
 export default function AdminSettings() {
-  const [activeTab, setActiveTab] = useState('profile')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = searchParams.get('tab') || 'profile'
+
+  const setActiveTab = (tab: string) => {
+    setSearchParams({ tab })
+  }
 
   const tabs = [
     { id: 'profile', label: 'My Profile', icon: User },
     { id: 'roles', label: 'Admin Roles', icon: Shield },
     { id: 'system', label: 'System Preferences', icon: Globe },
     { id: 'security', label: 'Security', icon: Lock },
+    { id: 'audit', label: 'Audit Vault', icon: ShieldCheck },
   ]
+
+  const [auditSearch, setAuditSearch] = useState('')
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
+
+  useState(() => {
+    const fetchLogs = async () => {
+      const logs = await adminService.getSystemAuditLogs()
+      setAuditLogs(logs)
+    }
+    fetchLogs()
+  })
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -171,6 +193,77 @@ export default function AdminSettings() {
                       </div>
                     ))}
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          {activeTab === 'audit' && (
+            <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+              <CardHeader className="p-8 border-b border-stone-100 bg-charcoal-dark text-white relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
+                <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Movement Audit Vault</CardTitle>
+                <CardDescription className="text-stone-400 text-xs mt-1">High-fidelity traceability of every administrative decision and system modification.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="p-6 border-b border-stone-100 bg-stone-50/50 flex flex-col md:flex-row gap-4 items-center">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
+                    <Input 
+                      placeholder="Search vault by administrator, action, or resource..." 
+                      value={auditSearch}
+                      onChange={(e) => setAuditSearch(e.target.value)}
+                      className="pl-10 h-11 rounded-none border-stone-200 text-xs"
+                    />
+                  </div>
+                  <Button variant="outline" className="h-11 px-6 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest">
+                    Export Vault
+                  </Button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-stone-50 border-b border-stone-100">
+                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Timestamp</th>
+                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Admin</th>
+                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Action</th>
+                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Resource</th>
+                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-50">
+                      {auditLogs.filter(log => 
+                        log.adminName.toLowerCase().includes(auditSearch.toLowerCase()) ||
+                        log.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
+                        log.resource.toLowerCase().includes(auditSearch.toLowerCase())
+                      ).map((log) => (
+                        <tr key={log.id} className="hover:bg-stone-50/50 transition-colors">
+                          <td className="p-4">
+                            <p className="text-[10px] font-bold text-stone-500 whitespace-nowrap">
+                              {new Date(log.timestamp).toLocaleString()}
+                            </p>
+                          </td>
+                          <td className="p-4">
+                            <span className="text-[10px] font-black text-stone-900 uppercase tracking-tight">{log.adminName}</span>
+                          </td>
+                          <td className="p-4">
+                            <span className="text-[10px] font-bold text-[var(--brand-black)] uppercase tracking-tight">{log.action}</span>
+                          </td>
+                          <td className="p-4">
+                            <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest">{log.resource}</span>
+                          </td>
+                          <td className="p-4">
+                            <span className={cn("px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border", 
+                              log.status === 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                              log.status === 'Warning' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
+                              'bg-rose-50 text-rose-600 border-rose-100'
+                            )}>
+                              {log.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>

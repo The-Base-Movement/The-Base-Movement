@@ -1,115 +1,30 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MapPin, ChevronRight, ChevronDown, Plus, Search, Edit2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-
-// ── Mock Data ──────────────────────────────────────────────────────────────────
-const regionsData = [
-  {
-    id: 1, name: 'Ahafo',
-    constituencies: ['Asunafo North', 'Asunafo South', 'Asutifi North', 'Asutifi South', 'Tano North', 'Tano South'],
-  },
-  {
-    id: 2, name: 'Ashanti',
-    constituencies: [
-      'Adansi-Asokwa', 'Fomena', 'New Edubease', 'Afigya Kwabre North', 'Afigya Kwabre South',
-      'Ahafo Ano North', 'Ahafo Ano South East', 'Ahafo Ano South West', 'Akrofuom', 'Odotobri',
-      'Manso Nkwanta', 'Manso Edubia', 'Asante Akim Central', 'Asante Akim North', 'Asante Akim South',
-      'Asawase', 'Asokwa', 'Atwima-Kwanwoma', 'Atwima Mponua', 'Atwima-Nwabiagya South',
-      'Atwima-Nwabiagya North', 'Bekwai', 'Bosome-Freho', 'Bosomtwe', 'Ejisu',
-      'Ejura-Sekyedumase', 'Juaben', 'Bantama', 'Manhyia North', 'Manhyia South',
-      'Nhyiaeso', 'Subin', 'Kwabre East', 'Kwadaso', 'Mampong',
-      'Obuasi East', 'Obuasi West', 'Offinso South', 'Offinso North', 'Oforikrom',
-      'Old Tafo', 'Sekyere Afram Plains', 'Nsuta-Kwamang-Beposo', 'Afigya Sekyere East', 'Kumawu',
-      'Effiduase-Asokore', 'Suame',
-    ],
-  },
-  {
-    id: 3, name: 'Bono',
-    constituencies: ['Banda Ahenkro', 'Berekum East', 'Berekum West', 'Dormaa Central', 'Dormaa East', 'Dormaa West', 'Jaman North', 'Jaman South', 'Sunyani East', 'Sunyani West', 'Tain', 'Wenchi'],
-  },
-  {
-    id: 4, name: 'Bono East',
-    constituencies: ['Atebubu-Amantin', 'Kintampo North', 'Kintampo South', 'Nkoranza North', 'Nkoranza South', 'Pru East', 'Pru West', 'Sene East', 'Sene West', 'Techiman South', 'Techiman North'],
-  },
-  {
-    id: 5, name: 'Central',
-    constituencies: [
-      'Abura-Asebu-Kwamankese', 'Agona East', 'Agona West', 'Ajumako-Enyan-Essiam', 'Asikuma-Odoben-Brakwa',
-      'Assin Central', 'Assin North', 'Assin South', 'Awutu-Senya East', 'Awutu-Senya West',
-      'Cape Coast North', 'Cape Coast South', 'Effutu', 'Ekumfi', 'Gomoa East',
-      'Gomoa Central', 'Gomoa West', 'Komenda-Edina-Eguafo-Abirem', 'Mfantseman', 'Twifo-Atii Morkwaa',
-      'Hemang Lower Denkyira', 'Upper Denkyira East', 'Upper Denkyira West',
-    ],
-  },
-  {
-    id: 6, name: 'Eastern',
-    constituencies: [
-      'Abuakwa North', 'Abuakwa South', 'Achiase', 'Akropong', 'Akwapim South', 'Ofoase-Ayirebi',
-      'Asene Akroso Manso', 'Asuogyaman', 'Atiwa East', 'Atiwa West', 'Ayensuano',
-      'Akim Oda', 'Abirem', 'Akim Swedru', 'Akwatia', 'Fanteakwa North', 'Fanteakwa South',
-      'Kade', 'Afram Plains North', 'Afram Plains South', 'Abetifi', 'Mpraeso', 'Nkawkaw',
-      'Lower Manya', 'New Juaben North', 'New Juaben South', 'Nsawam Adoagyiri',
-      'Okere', 'Suhum', 'Upper Manya', 'Upper West Akim', 'Lower West Akim', 'Yilo Krobo',
-    ],
-  },
-  {
-    id: 7, name: 'Greater Accra',
-    constituencies: [
-      'Ablekuma Central', 'Ablekuma North', 'Ablekuma West', 'Ablekuma South', 'Odododiodio', 'Okaikwei Central',
-      'Okaikwei South', 'Ada', 'Sege', 'Adenta', 'Ashaiman', 'Ayawaso Central', 'Ayawaso East',
-      'Ayawaso North', 'Ayawaso West', 'Anyaa-Sowutuom', 'Dome-Kwabenya', 'Trobu',
-      'Bortianor-Ngleshie-Amanfrom', 'Domeabra-Obom', 'Amasaman', 'Korle Klottey',
-      'Kpone-Katamanso', 'Krowor', 'Dade Kotopon', 'Abokobi-Madina', 'Ledzokuku',
-      'Ningo-Prampram', 'Okaikwei North', 'Shai-Osudoku', 'Tema Central', 'Tema East', 'Tema West', 'Weija',
-    ],
-  },
-  {
-    id: 8, name: 'North East',
-    constituencies: ['Bunkpurugu', 'Chereponi', 'Nalerigu', 'Yagaba-Kubori', 'Walewale', 'Yunyoo'],
-  },
-  {
-    id: 9, name: 'Northern',
-    constituencies: ['Gushegu', 'Karaga', 'Kpandai', 'Kumbungu', 'Mion', 'Nanton', 'Bimbilla', 'Wulensi', 'Saboba', 'Sagnarigu', 'Savelugu', 'Tamale Central', 'Tamale North', 'Tamale South', 'Yendi'],
-  },
-  {
-    id: 10, name: 'Oti',
-    constituencies: ['Krachi East', 'Krachi West', 'Krachi Nchumuru', 'Nkwanta North', 'Nkwanta South', 'Biakoye', 'Jasikan', 'Kadjebi', 'Guan'],
-  },
-  {
-    id: 11, name: 'Savannah',
-    constituencies: ['Bole', 'Sawla-Tuna-Kalba', 'Damongo', 'Daboya-Mankarigu', 'Salaga North', 'Salaga South', 'Yapei-Kusawgu'],
-  },
-  {
-    id: 12, name: 'Upper East',
-    constituencies: ['Bolgatanga Central', 'Bolgatanga East', 'Chiana-Paga', 'Navrongo Central', 'Builsa North', 'Builsa South', 'Bawku Central', 'Binduri', 'Pusiga', 'Zebilla', 'Garu', 'Tempane', 'Talensi', 'Nabdam', 'Bongo'],
-  },
-  {
-    id: 13, name: 'Upper West',
-    constituencies: ['Wa Central', 'Wa West', 'Wa East', 'Nadowli-Kaleo', 'Jirapa', 'Lambussie', 'Lawra', 'Nandom', 'Daffiama-Bussie-Issa', 'Sissala West', 'Sissala East'],
-  },
-  {
-    id: 14, name: 'Volta',
-    constituencies: ['Ho Central', 'Ho West', 'Hohoe', 'Kpando', 'North Dayi', 'South Dayi', 'Afadzato South', 'Agotime-Ziope', 'Adaklu', 'North Tongu', 'South Tongu', 'Central Tongu', 'Akatsi South', 'Akatsi North', 'Ketu South', 'Ketu North', 'Keta', 'Anlo'],
-  },
-  {
-    id: 15, name: 'Western',
-    constituencies: ['Takoradi', 'Sekondi', 'Essikado-Ketan', 'Kwesimintsim', 'Effia', 'Ahanta West', 'Mpohor', 'Shama', 'Wassa East', 'Tarkwa-Nsuaem', 'Prestea Huni-Valley', 'Evalue-Ajomoro-Gwira', 'Ellembelle', 'Jomoro'],
-  },
-  {
-    id: 16, name: 'Western North',
-    constituencies: ['Sefwi-Wiawso', 'Sefwi Akontombra', 'Bodi', 'Juaboso', 'Bia West', 'Bia East', 'Bibiani-Anhwiaso-Bekwai', 'Aowin', 'Suaman'],
-  },
-]
-
-const totalConstituencies = regionsData.reduce((acc, r) => acc + r.constituencies.length, 0)
+import { adminService, type Region } from '@/services/adminService'
+import { toast } from 'sonner'
 
 export default function AdminRegions() {
+  const [regions, setRegions] = useState<Region[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedRegions, setExpandedRegions] = useState<number[]>([])
   const [constituencySearch, setConstituencySearch] = useState<Record<number, string>>({})
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const data = await adminService.getRegions()
+      setRegions(data)
+      setIsLoading(false)
+    }
+    fetchData()
+  }, [])
+
+  const totalConstituencies = regions.reduce((acc, r) => acc + (r.constituencies?.length || 0), 0)
 
   const toggleRegion = (id: number) => {
     setExpandedRegions(prev =>
@@ -117,10 +32,18 @@ export default function AdminRegions() {
     )
   }
 
-  const filteredRegions = regionsData.filter(r =>
-    r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.constituencies.some(c => c.toLowerCase().includes(searchQuery.toLowerCase()))
-  )
+  const filteredRegions = regions.filter(region => {
+    const rName = region.name || ''
+    const rConstituencies = region.constituencies || []
+    return rName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      rConstituencies.some(c => c?.toLowerCase().includes(searchQuery.toLowerCase()))
+  })
+
+  const handleAction = (action: string, region: string, constituency?: string) => {
+    const resource = constituency ? `REGIONS/${region}/CONSTITUENCIES/${constituency}` : `REGIONS/${region}`
+    adminService.logAction(action, resource, 'Success')
+    toast.success(`${action.replace('_', ' ')} recorded in Audit Vault for ${constituency || region}`)
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -197,16 +120,31 @@ export default function AdminRegions() {
 
       {/* Regions List */}
       <div className="space-y-3">
-        {filteredRegions.length === 0 ? (
-          <div className="py-20 text-center text-stone-400 text-sm font-bold uppercase tracking-widest">
-            No results found.
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="rounded-none border-stone-100 shadow-none animate-pulse">
+              <div className="px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 bg-stone-100" />
+                  <div className="space-y-2">
+                    <div className="h-4 bg-stone-100 w-24" />
+                    <div className="h-2 bg-stone-50 w-16" />
+                  </div>
+                </div>
+                <div className="h-6 w-6 bg-stone-50" />
+              </div>
+            </Card>
+          ))
+        ) : filteredRegions.length === 0 ? (
+          <div className="py-20 text-center text-stone-400 text-sm font-bold uppercase tracking-widest border border-dashed border-stone-200">
+            No matching geographical data found.
           </div>
         ) : (
           filteredRegions.map((region) => {
             const isExpanded = expandedRegions.includes(region.id)
             const cSearch = constituencySearch[region.id] || ''
-            const visibleConstituencies = region.constituencies.filter(c =>
-              c.toLowerCase().includes(cSearch.toLowerCase())
+            const visibleConstituencies = (region.constituencies || []).filter(c =>
+              c?.toLowerCase().includes(cSearch.toLowerCase())
             )
 
             return (
@@ -236,13 +174,13 @@ export default function AdminRegions() {
                     {/* Action buttons — stop propagation so they don't toggle expand */}
                     <button
                       className="p-1.5 rounded text-stone-300 hover:text-[var(--brand-black)] hover:bg-stone-100 transition-colors"
-                      onClick={e => { e.stopPropagation(); alert(`Edit ${region.name}`) }}
+                      onClick={e => { e.stopPropagation(); handleAction('REGION_EDIT', region.name) }}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       className="p-1.5 rounded text-stone-300 hover:text-[var(--brand-red)] hover:bg-red-50 transition-colors"
-                      onClick={e => { e.stopPropagation(); alert(`Delete ${region.name}`) }}
+                      onClick={e => { e.stopPropagation(); handleAction('REGION_DELETE', region.name) }}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -287,7 +225,7 @@ export default function AdminRegions() {
                           </span>
                           <button
                             className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-                            onClick={() => alert(`Edit constituency: ${con}`)}
+                            onClick={() => handleAction('CONSTITUENCY_EDIT', region.name, con)}
                           >
                             <Edit2 className="w-2.5 h-2.5 text-stone-400 hover:text-[var(--brand-black)]" />
                           </button>

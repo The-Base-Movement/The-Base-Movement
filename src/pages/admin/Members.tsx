@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { 
   Search, 
   Filter, 
@@ -13,8 +13,11 @@ import {
   MessageSquare,
   History,
   RotateCcw,
-  X
+  X,
+  Lock,
+  FileText
 } from 'lucide-react'
+import { adminService, type AuditLogEntry, type Member } from '@/services/adminService'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
@@ -29,31 +32,57 @@ import MembershipCard from '@/components/MembershipCard'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 
-// Mock Data for Members
-const membersData = [
-  { id: 'TBM-GH-24001', name: 'Kwame Mensah', email: 'kwame.m@example.com', phone: '+233 24 123 4567', region: 'Greater Accra', constituency: 'Ayawaso West', status: 'Active', joined: '2024-01-15', gender: 'Male / 26 - 40', country: 'Ghana', chapter: 'The Base - Accra Chapter', profession: 'Engineer', avatarUrl: 'https://i.pravatar.cc/150?u=kwame' },
-  { id: 'TBM-GH-24002', name: 'Abena Osei', email: 'abena.o@example.com', phone: '+233 20 987 6543', region: 'Ashanti', constituency: 'Bantama', status: 'Active', joined: '2024-02-10', gender: 'Female / 26 - 40', country: 'Ghana', chapter: 'The Base - Ashanti Chapter', profession: 'Teacher', avatarUrl: 'https://i.pravatar.cc/150?u=abena' },
-  { id: 'TBM-GH-24003', name: 'Kofi Amoah', email: 'kofi.a@example.com', phone: '+233 55 555 5555', region: 'Western', constituency: 'Sekondi', status: 'Pending', joined: '2024-03-01', gender: 'Male / 18 - 25', country: 'Ghana', chapter: 'The Base - Western Chapter', profession: 'Student', avatarUrl: null },
-  { id: 'TBM-GH-24004', name: 'Efua Forson', email: 'efua.f@example.com', phone: '+233 24 444 4444', region: 'Central', constituency: 'Cape Coast South', status: 'Active', joined: '2024-03-12', gender: 'Female / 18 - 25', country: 'Ghana', chapter: 'The Base - Central Chapter', profession: 'Nurse', avatarUrl: 'https://i.pravatar.cc/150?u=efua' },
-  { id: 'TBM-GH-24005', name: 'Yaw Boateng', email: 'yaw.b@example.com', phone: '+233 27 777 7777', region: 'Eastern', constituency: 'New Juaben South', status: 'Suspended', joined: '2024-03-20', gender: 'Male / 41+', country: 'Ghana', chapter: 'The Base - Eastern Chapter', profession: 'Entrepreneur', avatarUrl: 'https://i.pravatar.cc/150?u=yaw' },
-  { id: 'TBM-GH-24006', name: 'Akua Addo', email: 'akua.a@example.com', phone: '+233 24 111 2222', region: 'Greater Accra', constituency: 'Korle Klottey', status: 'Active', joined: '2024-03-25', gender: 'Female / 26 - 40', country: 'Ghana', chapter: 'The Base - Accra Chapter', profession: 'Trader', avatarUrl: null },
-  { id: 'TBM-GH-24007', name: 'Osei Tutu', email: 'osei.t@example.com', phone: '+233 50 333 4444', region: 'Ashanti', constituency: 'Manhyia', status: 'Active', joined: '2024-04-02', gender: 'Male / 41+', country: 'Ghana', chapter: 'The Base - Ashanti Chapter', profession: 'Lawyer', avatarUrl: 'https://i.pravatar.cc/150?u=osei' },
-  { id: 'TBM-GH-24008', name: 'Ama Serwaa', email: 'ama.s@example.com', phone: '+233 20 555 6666', region: 'Bono', constituency: 'Sunyani East', status: 'Pending', joined: '2024-04-05', gender: 'Female / 26 - 40', country: 'Ghana', chapter: 'The Base - Bono Chapter', profession: 'Accountant', avatarUrl: 'https://i.pravatar.cc/150?u=ama' },
-  { id: 'TBM-GH-24009', name: 'Esi Owusu', email: 'esi.o@example.com', phone: '+233 27 888 9999', region: 'Central', constituency: 'Effutu', status: 'Active', joined: '2024-04-10', gender: 'Female / 18 - 25', country: 'Ghana', chapter: 'The Base - Central Chapter', profession: 'Student', avatarUrl: null },
-  { id: 'TBM-GH-24010', name: 'Kwabena Yeboah', email: 'kwabena.y@example.com', phone: '+233 24 000 1111', region: 'Western', constituency: 'Tarkwa', status: 'Active', joined: '2024-04-15', gender: 'Male / 26 - 40', country: 'Ghana', chapter: 'The Base - Western Chapter', profession: 'IT Consultant', avatarUrl: 'https://i.pravatar.cc/150?u=kwabena' },
-  { id: 'TBM-GH-24011', name: 'Adwoa Mansa', email: 'adwoa.m@example.com', phone: '+233 55 222 3333', region: 'Eastern', constituency: 'Aburi', status: 'Suspended', joined: '2024-04-18', gender: 'Female / 41+', country: 'Ghana', chapter: 'The Base - Eastern Chapter', profession: 'Teacher', avatarUrl: 'https://i.pravatar.cc/150?u=adwoa' },
-  { id: 'TBM-GH-24012', name: 'Kweku Baah', email: 'kweku.b@example.com', phone: '+233 20 777 8888', region: 'Volta', constituency: 'Ho Central', status: 'Active', joined: '2024-04-20', gender: 'Male / 26 - 40', country: 'Ghana', chapter: 'The Base - Volta Chapter', profession: 'Doctor', avatarUrl: null },
-]
 
 export default function MembersList() {
+  const [members, setMembers] = useState<Member[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const { toast } = useToast()
   const [isExporting, setIsExporting] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
-  const [selectedMember, setSelectedMember] = useState<typeof membersData[0] | null>(null)
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
   const cardRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      setIsLoading(true)
+      const data = await adminService.getMembers()
+      setMembers(data)
+      setIsLoading(false)
+    }
+    fetchMembers()
+  }, [])
+
+  // Audit Vault State
+  const [viewingAuditLogs, setViewingAuditLogs] = useState<AuditLogEntry[] | null>(null)
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false)
+  const [auditTargetMember, setAuditTargetMember] = useState<string | null>(null)
+
+  const handleViewAudit = async (member: Member) => {
+    setAuditTargetMember(member.name)
+    const logs = await adminService.getAuditLogsForResource(`MEMBERS/${member.id}`)
+    setViewingAuditLogs(logs)
+    setIsAuditModalOpen(true)
+  }
+
+  const handleVerify = async (id: string, name: string) => {
+    if (!adminService.can('VERIFY_MEMBER', 'MEMBERS')) {
+      toast({ title: "PERMISSION DENIED", description: "You do not have authorization to verify patriots.", variant: "destructive" })
+      return
+    }
+
+    if (window.confirm(`Are you sure you want to verify and admit ${name} into the movement?`)) {
+      const success = await adminService.verifyMember(id, true, 'Administrative Approval')
+      if (success) {
+        toast({ title: "PATRIOT VERIFIED", description: `${name} has been successfully admitted.` })
+        // Refresh members
+        const data = await adminService.getMembers()
+        setMembers(data)
+      }
+    }
+  }
 
   const handlePrint = async () => {
     if (!cardRef.current) return
@@ -135,17 +164,15 @@ export default function MembersList() {
     })
   }
 
-  const filteredMembers = membersData.filter(m => {
+  const filteredMembers = members.filter(m => {
     const term = searchTerm.toLowerCase()
     return (
-      m.name.toLowerCase().includes(term) || 
-      m.id.toLowerCase().includes(term) ||
-      m.email.toLowerCase().includes(term) ||
-      m.phone.toLowerCase().includes(term) ||
-      m.region.toLowerCase().includes(term) ||
-      m.constituency.toLowerCase().includes(term) ||
-      m.profession.toLowerCase().includes(term) ||
-      m.country.toLowerCase().includes(term)
+      m.name?.toLowerCase().includes(term) || 
+      m.id?.toLowerCase().includes(term) ||
+      m.email?.toLowerCase().includes(term) ||
+      m.phone?.toLowerCase().includes(term) ||
+      m.region?.toLowerCase().includes(term) ||
+      m.constituency?.toLowerCase().includes(term)
     )
   })
 
@@ -251,7 +278,32 @@ export default function MembersList() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100">
-                {paginatedMembers.map((member) => (
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-stone-100 shrink-0" />
+                          <div className="space-y-2 flex-1">
+                            <div className="h-4 bg-stone-100 w-3/4" />
+                            <div className="h-3 bg-stone-100 w-1/2" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5"><div className="h-4 bg-stone-50 w-full" /></td>
+                      <td className="px-6 py-5"><div className="h-4 bg-stone-50 w-full" /></td>
+                      <td className="px-6 py-5"><div className="h-6 bg-stone-50 w-16" /></td>
+                      <td className="px-6 py-5 text-right"><div className="h-8 w-8 bg-stone-50 ml-auto" /></td>
+                    </tr>
+                  ))
+                ) : paginatedMembers.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-stone-500 font-bold uppercase tracking-widest text-xs">
+                      No members found matching your search.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedMembers.map((member) => (
                   <tr key={member.id} className="hover:bg-stone-50/50 transition-colors group">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
@@ -320,10 +372,21 @@ export default function MembersList() {
                           size="icon" 
                           className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)] hover:bg-stone-100"
                           title="Audit History"
-                          onClick={() => toast({ title: "AUDIT LOG", description: `Retrieving activity history for ${member.id}...` })}
+                          onClick={() => handleViewAudit(member)}
                         >
                           <History className="w-3.5 h-3.5" />
                         </Button>
+                        {member.status === 'Pending' && adminService.can('VERIFY_MEMBER', 'MEMBERS') && (
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="w-8 h-8 text-amber-500 hover:text-emerald-600 hover:bg-emerald-50"
+                            title="Verify Patriot"
+                            onClick={() => handleVerify(member.id, member.name)}
+                          >
+                            <ShieldCheck className="w-3.5 h-3.5" />
+                          </Button>
+                        )}
                         <div className="w-px h-4 bg-stone-200 mx-1" />
                         <Button 
                           variant="ghost" 
@@ -346,13 +409,7 @@ export default function MembersList() {
                       </div>
                     </td>
                   </tr>
-                ))}
-                {paginatedMembers.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-stone-500 font-bold uppercase tracking-widest text-xs">
-                      No members found matching your search.
-                    </td>
-                  </tr>
+                  ))
                 )}
               </tbody>
             </table>
@@ -441,6 +498,75 @@ export default function MembersList() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Audit Vault History Modal */}
+      <Dialog open={isAuditModalOpen} onOpenChange={setIsAuditModalOpen}>
+        <DialogContent className="max-w-2xl border-none rounded-none p-0 overflow-hidden bg-white">
+          <div className="p-8 bg-charcoal-dark text-white relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/10 flex items-center justify-center">
+                <Lock className="w-5 h-5 text-[var(--brand-gold)]" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black uppercase tracking-tight font-meta">Audit Vault History</h2>
+                <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">
+                  Full chain of custody for: {auditTargetMember}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-6 max-h-[60vh] overflow-y-auto">
+            {!viewingAuditLogs || viewingAuditLogs.length === 0 ? (
+              <div className="py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
+                No audit records found for this resource.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {viewingAuditLogs.map((log) => (
+                  <div key={log.id} className="border border-stone-100 p-5 group hover:border-[var(--brand-gold)] transition-all">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-4">
+                        <div className="w-8 h-8 bg-stone-50 flex items-center justify-center shrink-0">
+                          <FileText className="w-4 h-4 text-stone-400" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">
+                            {new Date(log.timestamp).toLocaleString()}
+                          </p>
+                          <h4 className="text-sm font-black text-stone-900 mt-1 uppercase tracking-tight">{log.action}</h4>
+                          <p className="text-xs text-stone-500 font-medium mt-1">Processed by: {log.adminName}</p>
+                          {log.details && (
+                            <div className="mt-3 p-3 bg-stone-50 text-[10px] font-mono text-stone-600 break-all border-l-2 border-stone-200">
+                              {JSON.stringify(log.details, null, 2)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <span className={cn(
+                        "px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border",
+                        log.status === 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                      )}>
+                        {log.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="p-6 border-t border-stone-100 bg-stone-50/50 flex justify-end">
+            <Button 
+              onClick={() => setIsAuditModalOpen(false)}
+              className="bg-[var(--brand-black)] text-white text-[10px] font-black uppercase tracking-widest rounded-none h-11 px-8"
+            >
+              Close Vault
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
