@@ -38,8 +38,17 @@ export default function LeadershipHub() {
   }, [])
 
   useEffect(() => {
-    fetchApplications(true) // Silent fetch on mount because isLoading is true by default
-  }, [fetchApplications])
+    let isMounted = true
+    const init = async () => {
+      const data = await adminService.getChapterApplications()
+      if (isMounted) {
+        setApplications(data)
+        setIsLoading(false)
+      }
+    }
+    init()
+    return () => { isMounted = false }
+  }, [])
 
   const handleApprove = async (appId: string, name: string) => {
     const success = await adminService.approveChapterApplication(appId, 'Approved by SuperAdmin via Command Center')
@@ -132,7 +141,7 @@ export default function LeadershipHub() {
               <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Active Applications</CardTitle>
               <CardDescription className="text-xs">Review and approve new Chapter Leaders.</CardDescription>
             </div>
-            <Button variant="ghost" onClick={fetchApplications} className="h-8 w-8 p-0 rounded-none hover:bg-stone-100">
+            <Button variant="ghost" onClick={() => fetchApplications()} className="h-8 w-8 p-0 rounded-none hover:bg-stone-100">
               <Clock className="w-4 h-4 text-stone-400" />
             </Button>
           </div>

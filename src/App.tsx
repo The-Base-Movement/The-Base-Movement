@@ -44,8 +44,8 @@ import AdminSettings from './pages/admin/Settings'
 import AdminMemberVerification from './pages/admin/MemberVerification'
 import AdminRegions from './pages/admin/Regions'
 import AdminBlogs from './pages/admin/Blogs'
-import AdminLeadershipHub from './pages/admin/LeadershipHub'
-import AdminDonations from './pages/admin/DonationVerification'
+import AdminLeadershipHub from './pages/admin/LeadershipHub.tsx'
+import AdminDonations from './pages/admin/DonationVerification.tsx'
 
 import { Toaster } from './components/ui/toaster'
 

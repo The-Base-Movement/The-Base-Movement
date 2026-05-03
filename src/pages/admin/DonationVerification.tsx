@@ -37,8 +37,17 @@ export default function DonationVerification() {
   }, [])
 
   useEffect(() => {
-    fetchDonations(true) // Silent fetch on mount because isLoading is true by default
-  }, [fetchDonations])
+    let isMounted = true
+    const init = async () => {
+      const data = await adminService.getPendingDonations()
+      if (isMounted) {
+        setDonations(data)
+        setIsLoading(false)
+      }
+    }
+    init()
+    return () => { isMounted = false }
+  }, [])
 
   const handleVerify = async (donationId: string, name: string, status: 'Verified' | 'Rejected') => {
     setIsVerifying(donationId)
@@ -95,7 +104,7 @@ export default function DonationVerification() {
           <Button variant="outline" className="h-10 px-4 text-[10px] font-black uppercase tracking-widest border-stone-200">
             <Filter className="w-3.5 h-3.5 mr-2" /> All Campaigns
           </Button>
-          <Button variant="ghost" onClick={fetchDonations} className="h-10 w-10 p-0 hover:bg-stone-50 border border-stone-100">
+          <Button variant="ghost" onClick={() => fetchDonations()} className="h-10 w-10 p-0 hover:bg-stone-50 border border-stone-100">
             <Loader2 className={cn("w-4 h-4 text-stone-400", isLoading && "animate-spin")} />
           </Button>
         </div>
