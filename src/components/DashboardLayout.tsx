@@ -18,8 +18,8 @@ export default function DashboardLayout() {
     const readProfile = () => {
       const user = authService.getUser()
       if (user) {
-        setUserName(user.name || 'Member')
-        setAvatarUrl(user.image || null)
+        setUserName(user.user_metadata?.full_name || 'Member')
+        setAvatarUrl(user.user_metadata?.avatar_url || null)
       } else {
         // Fallback to local storage for persistence across reloads if service not ready
         setAvatarUrl(localStorage.getItem('userAvatar'))

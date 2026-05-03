@@ -46,7 +46,6 @@ export default function AdminSettings() {
 
   const [auditSearch, setAuditSearch] = useState('')
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
-  const [adminUser, setAdminUser] = useState<any>(null)
   const [adminData, setAdminData] = useState<any>(null)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -65,11 +64,10 @@ export default function AdminSettings() {
     confirmPassword: ''
   })
 
-  useState(() => {
+  useEffect(() => {
     const fetchData = async () => {
       const user = authService.getUser()
       if (user) {
-        setAdminUser(user)
         setProfileForm({
           fullName: user.user_metadata?.full_name || '',
           email: user.email || '',
@@ -85,7 +83,7 @@ export default function AdminSettings() {
       setAuditLogs(logs)
     }
     fetchData()
-  })
+  }, [])
 
   const handleSaveProfile = async () => {
     setIsSaving(true)

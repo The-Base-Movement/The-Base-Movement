@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ShoppingBag, Heart, ArrowLeft, Trash2, ShoppingCart } from 'lucide-react'
+import { Heart, ArrowLeft, Trash2, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 

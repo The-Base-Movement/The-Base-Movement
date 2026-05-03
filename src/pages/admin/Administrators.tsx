@@ -4,14 +4,12 @@ import {
   Search, 
   UserPlus, 
   MoreHorizontal, 
-  Mail, 
   ShieldCheck,
   ShieldAlert,
   Zap
 } from 'lucide-react'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/input'
 import { 
   Card, 
   CardContent
@@ -117,7 +115,7 @@ export default function Administrators() {
                         <div className="flex items-center gap-4">
                           <div className={cn(
                             "w-10 h-10 flex items-center justify-center font-bold text-xs shadow-md",
-                            admin.role === 'SuperAdmin' ? "bg-[var(--brand-red)] text-white" : "bg-[var(--brand-black)] text-white"
+                            admin.role === 'SUPER_ADMIN' ? "bg-[var(--brand-red)] text-white" : "bg-[var(--brand-black)] text-white"
                           )}>
                             {admin.name.split(' ').map(n => n[0]).join('')}
                           </div>
@@ -129,14 +127,14 @@ export default function Administrators() {
                       </td>
                       <td className="px-6 py-6">
                         <div className="flex items-center gap-2">
-                          {admin.role === 'SuperAdmin' ? (
+                          {admin.role === 'SUPER_ADMIN' ? (
                             <ShieldAlert className="w-4 h-4 text-[var(--brand-red)]" />
                           ) : (
                             <ShieldCheck className="w-4 h-4 text-emerald-500" />
                           )}
                           <span className={cn(
                             "text-[10px] font-black uppercase tracking-widest",
-                            admin.role === 'SuperAdmin' ? "text-[var(--brand-red)]" : "text-emerald-600"
+                            admin.role === 'SUPER_ADMIN' ? "text-[var(--brand-red)]" : "text-emerald-600"
                           )}>
                             {admin.role}
                           </span>
