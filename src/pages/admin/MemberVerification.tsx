@@ -149,10 +149,10 @@ export default function MemberVerification() {
     const newMember: PendingMember = {
       id: data.registrationNumber,
       name: data.fullName,
-      region: data.region || data.selectedCountry,
+      region: data.region || data.country,
       constituency: data.constituency || data.chapter || '—',
       platform: data.platform,
-      country: data.selectedCountry,
+      country: data.country,
       phone: `${data.countryCode} ${data.contactNumber}`,
       gender: data.gender,
       ageRange: data.ageRange,

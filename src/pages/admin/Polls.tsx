@@ -47,7 +47,7 @@ export default function PollsManagement() {
     toast.success(`${action.replace('_', ' ')}: ${pollTitle} updated in Audit Vault`)
   }
 
-  const filteredPolls = polls.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredPolls = polls.filter(p => p.question.toLowerCase().includes(searchQuery.toLowerCase()))
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -164,18 +164,18 @@ export default function PollsManagement() {
                   <tr key={poll.id} className="hover:bg-stone-50/50 transition-colors">
                     <td className="px-6 py-5">
                       <div className="flex flex-col">
-                        <span className="text-xs font-black text-[var(--brand-black)] uppercase tracking-tight">{poll.title}</span>
+                        <span className="text-xs font-black text-[var(--brand-black)] uppercase tracking-tight">{poll.question}</span>
                         <span className="text-[9px] font-bold text-stone-400 mt-0.5">{poll.id}</span>
                       </div>
                     </td>
                     <td className="px-6 py-5 text-center">
                       <div className="flex flex-col items-center">
-                        <span className="text-xs font-black text-stone-900">{poll.votes.toLocaleString()}</span>
+                        <span className="text-xs font-black text-stone-900">{poll.totalVotes.toLocaleString()}</span>
                         <div className="w-20 h-1 bg-stone-100 mt-2 overflow-hidden">
                           <div 
                             className="h-full transition-all duration-1000" 
                             style={{ 
-                              width: poll.votes > 10000 ? '90%' : poll.votes > 5000 ? '60%' : '30%', 
+                              width: poll.totalVotes > 10000 ? '90%' : poll.totalVotes > 5000 ? '60%' : '30%', 
                               backgroundColor: poll.status === 'Active' ? 'var(--brand-green)' : 'var(--brand-gold)' 
                             }} 
                           />
@@ -211,7 +211,7 @@ export default function PollsManagement() {
                         variant="ghost" 
                         size="icon" 
                         className="text-stone-400"
-                        onClick={() => handlePollAction('POLL_MANAGE', poll.title)}
+                        onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                       >
                         <MoreVertical className="w-4 h-4" />
                       </Button>

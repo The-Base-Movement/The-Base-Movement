@@ -1,24 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Clock, CheckCircle2, ArrowRight, Users, BarChart3 } from 'lucide-react'
 
-interface PollOption {
-  id: string;
-  label: string;
-  votes: number;
-}
-
-interface Poll {
-  id: string;
-  question: string;
-  options: PollOption[];
-  totalVotes: number;
-  status: 'Active' | 'Closed';
-  endDate: string;
-  expired_at: string;
-  category: string;
-  voted?: boolean;
-  userSelection?: string;
-}
+import type { Poll } from '@/services/adminService'
 
 interface OpinionPollCardProps {
   poll: Poll
@@ -39,7 +22,7 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
     return 'rgba(206, 17, 38, 0.05)'; // 4th+: Light Red
   };
 
-  const days = Math.max(0, Math.ceil((new Date(poll.expired_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+  const days = Math.max(0, Math.ceil((new Date(poll.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
 
   return (
     <Card className="border border-stone-200 rounded-none shadow-sm overflow-hidden hover:border-[var(--brand-green)]/30 transition-all">

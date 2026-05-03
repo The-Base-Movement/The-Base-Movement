@@ -2,21 +2,32 @@ import { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
+import { authService } from '@/services/authService'
 
 export default function DashboardLayout() {
   const location = useLocation()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [userName, setUserName] = useState('Member')
-  const [userPlatform, setUserPlatform] = useState('')
+  const [userPlatform, setUserPlatform] = useState('Member')
+  const [userRegNo, setUserRegNo] = useState('')
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
 
   useEffect(() => {
     const readProfile = () => {
-      setAvatarUrl(localStorage.getItem('userAvatar') || '/founder.jpg')
-      setUserName(localStorage.getItem('userName') || 'Dr. George Oti Bonsu')
-      setUserPlatform(localStorage.getItem('userPlatform') || 'Founder')
+      const user = authService.getUser()
+      if (user) {
+        setUserName(user.name || 'Member')
+        setAvatarUrl(user.image || null)
+      } else {
+        // Fallback to local storage for persistence across reloads if service not ready
+        setAvatarUrl(localStorage.getItem('userAvatar'))
+        setUserName(localStorage.getItem('userName') || 'Member')
+      }
+      
+      setUserPlatform(localStorage.getItem('userPlatform') || 'General')
+      setUserRegNo(localStorage.getItem('userRegNo') || '')
     }
     readProfile()
     window.addEventListener('storage', readProfile)
@@ -30,11 +41,11 @@ export default function DashboardLayout() {
   }, [location.pathname])
 
   // Derive initials from the stored name
-  const initials = userName
+  const initials = (userName || 'Member')
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
-    .map(n => n[0].toUpperCase())
+    .map(n => n[0]?.toUpperCase() || '')
     .join('')
 
   const isActive = (path: string) => location.pathname === path
@@ -287,8 +298,8 @@ export default function DashboardLayout() {
                 </div>
                 <div className="hidden lg:block text-left">
                   <p className="text-sm font-bold text-on-surface leading-none mb-1">{userName}</p>
-                  <p className="text-[10px] text-warm-gold font-bold tracking-widest uppercase mb-0">
-                    {userPlatform} · Verified
+                   <p className="text-[10px] text-warm-gold font-bold tracking-widest uppercase mb-0">
+                    {userPlatform} {userRegNo && `· ${userRegNo}`} · Verified
                   </p>
                 </div>
                 <span

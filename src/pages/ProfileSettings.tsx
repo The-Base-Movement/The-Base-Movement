@@ -1,95 +1,13 @@
-import { useState, useRef } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { ChevronDown, Loader2 } from 'lucide-react'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import MembershipCard from '../components/MembershipCard'
+import { adminService } from '@/services/adminService'
+import { toast } from 'sonner'
 
-const ghanaRegions = [
-  'Ahafo', 'Ashanti', 'Bono', 'Bono East', 'Central', 'Eastern', 'Greater Accra',
-  'North East', 'Northern', 'Oti', 'Savannah', 'Upper East', 'Upper West', 'Volta', 'Western', 'Western North'
-]
+// Master data now fetched dynamically from Supabase
 
-const regionConstituencies: Record<string, string[]> = {
-  'Ahafo': ['Asunafo North', 'Asunafo South', 'Asutifi North', 'Asutifi South', 'Tano North', 'Tano South'],
-  'Ashanti': [
-    'Adansi-Asokwa', 'Fomena', 'New Edubease', 'Afigya Kwabre North', 'Afigya Kwabre South',
-    'Ahafo Ano North', 'Ahafo Ano South East', 'Ahafo Ano South West', 'Akrofuom', 'Odotobri',
-    'Manso Nkwanta', 'Manso Edubia', 'Asante Akim Central', 'Asante Akim North', 'Asante Akim South',
-    'Asawase', 'Asokwa', 'Atwima-Kwanwoma', 'Atwima Mponua', 'Atwima-Nwabiagya South', 'Atwima-Nwabiagya North',
-    'Bekwai', 'Bosome-Freho', 'Bosomtwe', 'Ejisu', 'Ejura-Sekyedumase', 'Juaben', 'Bantama',
-    'Manhyia North', 'Manhyia South', 'Nhyiaeso', 'Subin', 'Kwabre East', 'Kwadaso', 'Mampong',
-    'Obuasi East', 'Obuasi West', 'Offinso South', 'Offinso North', 'Oforikrom', 'Old Tafo',
-    'Sekyere Afram Plains', 'Nsuta-Kwamang-Beposo', 'Afigya Sekyere East', 'Kumawu', 'Effiduase-Asokore', 'Suame'
-  ],
-  'Bono': ['Banda Ahenkro', 'Berekum East', 'Berekum West', 'Dormaa Central', 'Dormaa East', 'Dormaa West', 'Jaman North', 'Jaman South', 'Sunyani East', 'Sunyani West', 'Tain', 'Wenchi'],
-  'Bono East': ['Atebubu-Amantin', 'Kintampo North', 'Kintampo South', 'Nkoranza North', 'Nkoranza South', 'Pru East', 'Pru West', 'Sene East', 'Sene West', 'Techiman South', 'Techiman North'],
-  'Central': [
-    'Abura-Asebu-Kwamankese', 'Agona East', 'Agona West', 'Ajumako-Enyan-Essiam', 'Asikuma-Odoben-Brakwa',
-    'Assin Central', 'Assin North', 'Assin South', 'Awutu-Senya East', 'Awutu-Senya West', 'Cape Coast North',
-    'Cape Coast South', 'Effutu', 'Ekumfi', 'Gomoa East', 'Gomoa Central', 'Gomoa West', 'Komenda-Edina-Eguafo-Abirem',
-    'Mfantseman', 'Twifo-Atii Morkwaa', 'Hemang Lower Denkyira', 'Upper Denkyira East', 'Upper Denkyira West'
-  ],
-  'Eastern': [
-    'Abuakwa North', 'Abuakwa South', 'Achiase', 'Akropong', 'Akwapim South', 'Ofoase-Ayirebi', 'Asene Akroso Manso',
-    'Asuogyaman', 'Atiwa East', 'Atiwa West', 'Ayensuano', 'Akim Oda', 'Abirem', 'Akim Swedru', 'Akwatia',
-    'Fanteakwa North', 'Fanteakwa South', 'Kade', 'Afram Plains North', 'Afram Plains South', 'Abetifi',
-    'Mpraeso', 'Nkawkaw', 'Lower Manya', 'New Juaben North', 'New Juaben South', 'Nsawam Adoagyiri',
-    'Okere', 'Suhum', 'Upper Manya', 'Upper West Akim', 'Lower West Akim', 'Yilo Krobo'
-  ],
-  'Greater Accra': [
-    'Ablekuma Central', 'Ablekuma North', 'Ablekuma West', 'Ablekuma South', 'Odododiodio', 'Okaikwei Central',
-    'Okaikwei South', 'Ada', 'Sege', 'Adenta', 'Ashaiman', 'Ayawaso Central', 'Ayawaso East', 'Ayawaso North',
-    'Ayawaso West', 'Anyaa-Sowutuom', 'Dome-Kwabenya', 'Trobu', 'Bortianor-Ngleshie-Amanfrom', 'Domeabra-Obom',
-    'Amasaman', 'Korle Klottey', 'Kpone-Katamanso', 'Krowor', 'Dade Kotopon', 'Abokobi-Madina', 'Ledzokuku',
-    'Ningo-Prampram', 'Okaikwei North', 'Shai-Osudoku', 'Tema Central', 'Tema East', 'Tema West', 'Weija'
-  ],
-  'North East': ['Bunkpurugu', 'Chereponi', 'Nalerigu', 'Yagaba-Kubori', 'Walewale', 'Yunyoo'],
-  'Northern': ['Gushegu', 'Karaga', 'Kpandai', 'Kumbungu', 'Mion', 'Nanton', 'Bimbilla', 'Wulensi', 'Saboba', 'Sagnarigu', 'Savelugu', 'Tamale Central', 'Tamale North', 'Tamale South', 'Yendi'],
-  'Oti': ['Krachi East', 'Krachi West', 'Krachi Nchumuru', 'Nkwanta North', 'Nkwanta South', 'Biakoye', 'Jasikan', 'Kadjebi', 'Guan'],
-  'Savannah': ['Bole', 'Sawla-Tuna-Kalba', 'Damongo', 'Daboya-Mankarigu', 'Salaga North', 'Salaga South', 'Yapei-Kusawgu'],
-  'Upper East': ['Bolgatanga Central', 'Bolgatanga East', 'Chiana-Paga', 'Navrongo Central', 'Builsa North', 'Builsa South', 'Bawku Central', 'Binduri', 'Pusiga', 'Zebilla', 'Garu', 'Tempane', 'Talensi', 'Nabdam', 'Bongo'],
-  'Upper West': ['Wa Central', 'Wa West', 'Wa East', 'Nadowli-Kaleo', 'Jirapa', 'Lambussie', 'Lawra', 'Nandom', 'Daffiama-Bussie-Issa', 'Sissala West', 'Sissala East'],
-  'Volta': ['Ho Central', 'Ho West', 'Hohoe', 'Kpando', 'North Dayi', 'South Dayi', 'Afadzato South', 'Agotime-Ziope', 'Adaklu', 'North Tongu', 'South Tongu', 'Central Tongu', 'Akatsi South', 'Akatsi North', 'Ketu South', 'Ketu North', 'Keta', 'Anlo'],
-  'Western': ['Takoradi', 'Sekondi', 'Essikado-Ketan', 'Kwesimintsim', 'Effia', 'Ahanta West', 'Mpohor', 'Shama', 'Wassa East', 'Tarkwa-Nsuaem', 'Prestea Huni-Valley', 'Evalue-Ajomoro-Gwira', 'Ellembelle', 'Jomoro'],
-  'Western North': ['Sefwi-Wiawso', 'Sefwi Akontombra', 'Bodi', 'Juaboso', 'Bia West', 'Bia East', 'Bibiani-Anhwiaso-Bekwai', 'Aowin', 'Suaman']
-}
-
-const countries = [
-  { name: 'Ghana', code: 'GH', dial: '+233' },
-  { name: 'United Kingdom', code: 'UK', dial: '+44' },
-  { name: 'United States', code: 'US', dial: '+1' },
-  { name: 'Nigeria', code: 'NG', dial: '+234' },
-  { name: 'Germany', code: 'DE', dial: '+49' },
-  { name: 'Canada', code: 'CA', dial: '+1' },
-  { name: 'France', code: 'FR', dial: '+33' },
-  { name: 'Italy', code: 'IT', dial: '+39' },
-  { name: 'Spain', code: 'ES', dial: '+34' },
-  { name: 'Netherlands', code: 'NL', dial: '+31' },
-  { name: 'South Africa', code: 'ZA', dial: '+27' },
-  { name: 'Australia', code: 'AU', dial: '+61' },
-  { name: 'United Arab Emirates', code: 'AE', dial: '+971' },
-  { name: 'Belgium', code: 'BE', dial: '+32' },
-  { name: 'China', code: 'CN', dial: '+86' },
-  { name: 'Japan', code: 'JP', dial: '+81' },
-  { name: 'Togo', code: 'TG', dial: '+228' },
-  { name: 'Ivory Coast', code: 'CI', dial: '+225' },
-  { name: 'Other', code: 'OTHER', dial: '' }
-]
-
-const countryCodes = [
-  { label: '+233 (GH)', value: '+233' },
-  { label: '+44 (UK)', value: '+44' },
-  { label: '+1 (US/CA)', value: '+1' },
-  { label: '+234 (NG)', value: '+234' },
-  { label: '+49 (DE)', value: '+49' },
-  { label: '+33 (FR)', value: '+33' },
-  { label: '+31 (NL)', value: '+31' },
-  { label: '+27 (ZA)', value: '+27' },
-  { label: '+32 (BE)', value: '+32' },
-  { label: '+971 (UAE)', value: '+971' },
-  { label: '+228 (TG)', value: '+228' },
-  { label: '+225 (CI)', value: '+225' }
-]
 
 export default function ProfileSettings() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
@@ -106,24 +24,79 @@ export default function ProfileSettings() {
   const fileRef = useRef<HTMLInputElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  const [form, setForm] = useState(() => {
-    const name = localStorage.getItem('userName') || ''
-    return {
-      fullName: name,
-      email: '',
-      phone: '',
-      countryCode: '+233',
-      region: '',
-      constituency: '',
-      profession: '',
-      bio: '',
-      gender: 'Male / 26 - 40',
-      joinedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-      status: 'Active Member',
-      chapter: 'The Base - Ghana Chapter',
-      country: userPlatform === 'GHANA' ? 'Ghana' : ''
-    }
+  const [form, setForm] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    countryCode: '+233',
+    region: '',
+    constituency: '',
+    profession: '',
+    bio: '',
+    gender: 'Male / 26 - 40',
+    joinedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+    status: 'Active Member',
+    chapter: 'The Base - Ghana Chapter',
+    country: userPlatform === 'GHANA' ? 'Ghana' : ''
   })
+
+  const [loading, setLoading] = useState(true)
+  const [availableChapters, setAvailableChapters] = useState<string[]>([])
+  const [dbCountries, setDbCountries] = useState<{ name: string; dialing_code: string; is_diaspora: boolean }[]>([])
+  const [dbRegions, setDbRegions] = useState<{ id: number, name: string }[]>([])
+  const [dbConstituencies, setDbConstituencies] = useState<{ region_id: number, name: string }[]>([])
+
+  useEffect(() => {
+    async function loadProfile() {
+      // Fetch dynamic data
+      const [chapters, countries, regions] = await Promise.all([
+        adminService.getChapters(),
+        adminService.getCountries(),
+        adminService.getRegions()
+      ])
+      
+      setAvailableChapters(chapters.map(c => c.name))
+      
+      // Deduplicate countries by name just in case
+      const uniqueCountries = Array.from(new Map(countries.map(c => [c.name, c])).values())
+      setDbCountries(uniqueCountries)
+      setDbRegions(regions)
+
+      // Fetch all constituencies and deduplicate by region_id + name
+      const { data: conData } = await adminService.getConstituencies()
+      const uniqueConstituencies = Array.from(
+        new Map((conData || []).map(c => [`${c.region_id}-${c.name}`, c])).values()
+      )
+      setDbConstituencies(uniqueConstituencies)
+
+      const regNo = localStorage.getItem('userRegNo')
+      if (!regNo) {
+        setLoading(false)
+        return
+      }
+
+      const profile = await adminService.getMemberProfile(regNo)
+      if (profile) {
+        setForm({
+          fullName: profile.name,
+          email: profile.email || '',
+          phone: profile.phone || '',
+          countryCode: '+233', // Default, should ideally be derived from phone
+          region: profile.region || '',
+          constituency: profile.constituency || '',
+          profession: 'Member',
+          bio: '',
+          gender: profile.gender || 'Male / 26 - 40',
+          joinedDate: profile.joined,
+          status: profile.status === 'Active' ? 'Active Member' : profile.status,
+          chapter: profile.chapter || 'The Base - Ghana Chapter',
+          country: profile.country || (userPlatform === 'GHANA' ? 'Ghana' : '')
+        })
+      }
+      setLoading(false)
+    }
+    loadProfile()
+  }, [userPlatform])
 
   const initials = form.fullName
     .split(' ')
@@ -151,14 +124,62 @@ export default function ProfileSettings() {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (form.fullName) {
-      localStorage.setItem('userName', form.fullName)
-      window.dispatchEvent(new Event('storage'))
+    const regNo = localStorage.getItem('userRegNo')
+    if (!regNo) return
+
+    const dataURLtoBlob = (dataurl: string) => {
+      const arr = dataurl.split(',')
+      const mime = arr[0].match(/:(.*?);/)![1]
+      const bstr = atob(arr[1])
+      let n = bstr.length
+      const u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new Blob([u8arr], { type: mime })
     }
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+
+    setLoading(true)
+    let finalAvatarUrl = avatarUrl
+    
+    // Upload new avatar if it's a data URL
+    if (avatarUrl && avatarUrl.startsWith('data:')) {
+      try {
+        const blob = dataURLtoBlob(avatarUrl)
+        const fileName = `${regNo}.jpg`
+        const { error: uploadError } = await adminService.uploadAvatar(fileName, blob)
+        if (uploadError) throw uploadError
+
+        finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
+      } catch (uploadErr) {
+        console.error('[STORAGE] Avatar upload failed:', uploadErr)
+        toast.error('Failed to upload profile photo')
+      }
+    }
+
+    const success = await adminService.updateMemberProfile(regNo, {
+      name: form.fullName,
+      email: form.email,
+      phone: form.phone,
+      region: form.region,
+      constituency: form.constituency,
+      gender: form.gender,
+      chapter: form.chapter,
+      avatarUrl: finalAvatarUrl || undefined,
+      profession: form.profession
+    })
+
+    setLoading(false)
+
+    if (success) {
+      toast.success('Official Profile Synchronized')
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } else {
+      toast.error('Failed to sync profile. Check your connection.')
+    }
   }
 
   const handleDownload = async () => {
@@ -256,6 +277,17 @@ export default function ProfileSettings() {
     } catch (error) {
       console.error('Error printing card:', error)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-off-white">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-[var(--brand-green)] animate-spin" />
+          <p className="font-meta text-stone-500 uppercase tracking-widest text-xs animate-pulse">Syncing Profile with HQ...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -375,8 +407,9 @@ export default function ProfileSettings() {
                         onChange={e => handleChange('countryCode', e.target.value)}
                         className="w-24 border-b-2 border-slate-100 bg-transparent py-3 pr-8 text-xs text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                       >
-                        {countryCodes.map(c => (
-                          <option key={c.value} value={c.value}>{c.label}</option>
+                        <option value="+233">+233 (GH)</option>
+                        {dbCountries.map(c => (
+                          <option key={c.name} value={c.dialing_code}>{c.dialing_code} ({c.name.slice(0, 2).toUpperCase()})</option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400 pointer-events-none" />
@@ -422,12 +455,19 @@ export default function ProfileSettings() {
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Assigned Chapter</label>
-                  <input
-                    value={form.chapter}
-                    onChange={e => handleChange('chapter', e.target.value)}
-                    placeholder="E.g. The Base - Accra Chapter"
-                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
-                  />
+                  <div className="relative">
+                    <select
+                      value={form.chapter}
+                      onChange={e => handleChange('chapter', e.target.value)}
+                      className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="">Select Chapter</option>
+                      {availableChapters.map(name => (
+                        <option key={name} value={name}>{name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  </div>
                 </div>
 
                 {userPlatform === 'GHANA' ? (
@@ -444,8 +484,8 @@ export default function ProfileSettings() {
                           className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                         >
                           <option value="">Select Region</option>
-                          {ghanaRegions.map(reg => (
-                            <option key={reg} value={reg}>{reg}</option>
+                          {dbRegions.map(reg => (
+                            <option key={reg.id} value={reg.name}>{reg.name}</option>
                           ))}
                         </select>
                         <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -462,9 +502,11 @@ export default function ProfileSettings() {
                           className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer disabled:opacity-50"
                         >
                           <option value="">Select Constituency</option>
-                          {form.region && regionConstituencies[form.region]?.map(con => (
-                            <option key={con} value={con}>{con}</option>
-                          ))}
+                          {form.region && dbConstituencies
+                            .filter(c => c.region_id === dbRegions.find(r => r.name === form.region)?.id)
+                            .map(con => (
+                              <option key={con.name} value={con.name}>{con.name}</option>
+                            ))}
                         </select>
                         <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                       </div>
@@ -479,11 +521,11 @@ export default function ProfileSettings() {
                           value={form.country}
                           onChange={e => {
                             const countryName = e.target.value
-                            const countryData = countries.find(c => c.name === countryName)
+                            const countryData = dbCountries.find(c => c.name === countryName)
                             setForm(prev => ({ 
                               ...prev, 
                               country: countryName,
-                              countryCode: countryData?.dial || prev.countryCode,
+                              countryCode: countryData?.dialing_code || prev.countryCode,
                               region: countryName !== 'Ghana' ? '' : prev.region,
                               constituency: countryName !== 'Ghana' ? '' : prev.constituency
                             }))
@@ -491,8 +533,8 @@ export default function ProfileSettings() {
                           className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                         >
                           <option value="">Select Country</option>
-                          {countries.map(c => (
-                            <option key={c.code} value={c.name}>{c.name}</option>
+                          {dbCountries.map(c => (
+                            <option key={c.name} value={c.name}>{c.name}</option>
                           ))}
                         </select>
                         <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -513,8 +555,8 @@ export default function ProfileSettings() {
                               className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                             >
                               <option value="">Select Region</option>
-                              {ghanaRegions.map(reg => (
-                                <option key={reg} value={reg}>{reg}</option>
+                              {dbRegions.map(reg => (
+                                <option key={reg.id} value={reg.name}>{reg.name}</option>
                               ))}
                             </select>
                             <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -531,9 +573,14 @@ export default function ProfileSettings() {
                               className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer disabled:opacity-50"
                             >
                               <option value="">Select Constituency</option>
-                              {form.region && regionConstituencies[form.region]?.map(con => (
-                                <option key={con} value={con}>{con}</option>
-                              ))}
+                              {dbConstituencies
+                                .filter(c => {
+                                  const regionId = dbRegions.find(r => r.name === form.region)?.id
+                                  return c.region_id === regionId
+                                })
+                                .map(con => (
+                                  <option key={con.name} value={con.name}>{con.name}</option>
+                                ))}
                             </select>
                             <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                           </div>

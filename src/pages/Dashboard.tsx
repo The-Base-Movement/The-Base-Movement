@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { WelcomeModal } from '@/components/WelcomeModal'
 import { ShareModal } from '@/components/ShareModal'
+import { adminService } from '@/services/adminService'
 
 
 
@@ -46,27 +47,29 @@ export default function Dashboard() {
       // Simulate network delay for "Synchronizing Live Data" feel
       await new Promise(resolve => setTimeout(resolve, 800))
       
-      // Mock Growth Stats
-      setStats({
-        joined_last_hour: 42,
-        joined_last_24h: 856,
-        joined_last_7d: 5420
-      })
+      // 1. Fetch Live Growth Stats
+      const liveStats = await adminService.getGrowthStats()
+      setStats(liveStats)
 
-      // Mock Member Data
-      const mockMember = {
-        full_name: 'Kennedy Ohene Agyapong',
-        registration_number: 'GH-BASE-2024-9982',
-        platform: 'GHANA',
-        phone_number: '+233 24 123 4567',
-        age_range: '60+',
-        gender: 'Male',
-        region: 'Greater Accra',
-        constituency: 'Assin Central',
-        chapter: 'The Base - Central Chapter',
-        profession: 'Legislator'
+      // 2. Fetch Active Member Profile
+      const regNo = localStorage.getItem('userRegNo')
+      if (regNo) {
+        const liveMember = await adminService.getMemberProfile(regNo)
+        if (liveMember) {
+          setMember({
+            full_name: liveMember.name,
+            registration_number: liveMember.id,
+            platform: liveMember.type === 'Premium' ? 'DIASPORA' : 'GHANA',
+            phone_number: liveMember.phone,
+            age_range: 'Not Specified', // Default as it's not in the base Member interface
+            gender: liveMember.gender || 'Not Set',
+            region: liveMember.region,
+            constituency: liveMember.constituency,
+            chapter: liveMember.chapter || 'Central Chapter',
+            profession: 'Member'
+          })
+        }
       }
-      setMember(mockMember)
       
       // Check if first time
       const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')

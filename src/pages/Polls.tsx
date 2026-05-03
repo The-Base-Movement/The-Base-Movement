@@ -1,85 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Vote, ArrowRight, Clock, Lock } from 'lucide-react'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
+import { adminService, type Poll } from '@/services/adminService'
 
-interface PollOption {
-  id: string;
-  label: string;
-  votes: number;
-}
-
-interface Poll {
-  id: string;
-  question: string;
-  options: PollOption[];
-  totalVotes: number;
-  status: 'Active' | 'Closed';
-  endDate: string;
-  expired_at: string; // Dynamic expiry timestamp
-  category: string;
-  voted?: boolean;
-  userSelection?: string;
-}
-
-const initialPolls: Poll[] = [
-  {
-    id: '1',
-    question: "What should be the top priority for youth employment in Ghana?",
-    status: 'Active',
-    endDate: '2026-05-30',
-    expired_at: '2026-05-30T23:59:59Z',
-    category: 'Policy',
-    totalVotes: 554,
-    voted: false,
-    options: [
-      { id: 'a', label: 'Industrial factories', votes: 180 },
-      { id: 'b', label: 'Agriculture & agribusiness', votes: 154 },
-      { id: 'c', label: 'Technology & digital jobs', votes: 120 },
-      { id: 'd', label: 'Vocational training', votes: 60 },
-      { id: 'e', label: 'Small business support', votes: 40 }
-    ]
-  },
-  {
-    id: '2',
-    question: "Which region requires the most urgent industrial intervention?",
-    status: 'Active',
-    endDate: '2026-06-15',
-    expired_at: '2026-06-15T23:59:59Z',
-    category: 'Regional Development',
-    totalVotes: 342,
-    voted: false,
-    options: [
-      { id: 'a', label: 'Northern Region', votes: 110 },
-      { id: 'b', label: 'Ashanti Region', votes: 85 },
-      { id: 'c', label: 'Greater Accra', votes: 55 },
-      { id: 'd', label: 'Western Region', votes: 92 }
-    ]
-  },
-  {
-    id: '3',
-    question: "Standardizing National Identification for all digital services?",
-    status: 'Closed',
-    endDate: '2026-04-10',
-    expired_at: '2026-04-10T23:59:59Z',
-    category: 'Governance',
-    totalVotes: 1240,
-    voted: true,
-    userSelection: 'a',
-    options: [
-      { id: 'a', label: 'Strongly Agree', votes: 850 },
-      { id: 'b', label: 'Agree', votes: 240 },
-      { id: 'c', label: 'Neutral', votes: 80 },
-      { id: 'd', label: 'Disagree', votes: 70 }
-    ]
-  }
-]
+// Interfaces are now imported from adminService
 
 export default function Polls() {
-  const [polls, setPolls] = useState<Poll[]>(initialPolls)
+  const [polls, setPolls] = useState<Poll[]>([])
+  const [loading, setLoading] = useState(true)
   const [voting, setVoting] = useState<string | null>(null)
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    async function loadPolls() {
+      try {
+        const data = await adminService.getPolls()
+        setPolls(data)
+      } catch (err) {
+        console.error('Failed to load polls:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadPolls()
+  }, [])
 
   const toggleResults = (pollId: string) => {
     setShowResults(prev => ({ ...prev, [pollId]: !prev[pollId] }))
@@ -136,16 +82,28 @@ export default function Polls() {
               <h2 className="text-base font-bold text-stone-900 uppercase tracking-widest mb-0">Active Polls</h2>
             </div>
 
-            {activePolls.map(poll => (
-              <OpinionPollCard 
-                key={poll.id} 
-                poll={poll} 
-                voting={voting} 
-                showResults={!!showResults[poll.id]} 
-                handleVote={handleVote} 
-                toggleResults={toggleResults} 
-              />
-            ))}
+            {loading ? (
+              <div className="space-y-6">
+                {[1, 2].map(i => (
+                  <div key={i} className="h-64 bg-white border border-stone-200 animate-pulse rounded-none" />
+                ))}
+              </div>
+            ) : activePolls.length === 0 ? (
+              <div className="bg-white border border-stone-200 p-12 text-center">
+                <p className="text-stone-400 font-bold uppercase tracking-widest mb-0">No active polls at this time.</p>
+              </div>
+            ) : (
+              activePolls.map(poll => (
+                <OpinionPollCard 
+                  key={poll.id} 
+                  poll={poll} 
+                  voting={voting} 
+                  showResults={!!showResults[poll.id]} 
+                  handleVote={handleVote} 
+                  toggleResults={toggleResults} 
+                />
+              ))
+            )}
           </div>
 
           {/* Sidebar */}

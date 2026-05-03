@@ -52,33 +52,22 @@ export default function Members() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        console.log('[MEMBERS] Initiating data fetch...')
         const [fetchedMembers, fetchedRegions] = await Promise.all([
           adminService.getMembers(),
           adminService.getRegions()
         ])
 
-        console.log('[MEMBERS] Raw data received:', { 
-          membersCount: fetchedMembers.length, 
-          regionsCount: fetchedRegions.length 
-        })
-
         // Map members to UI format
-        const mappedMembers: Member[] = fetchedMembers.map(m => {
-          if (!m.id || !m.name) {
-            console.warn('[MEMBERS] Found potentially invalid member record:', m)
-          }
-          return {
-            id: m.id || Math.random().toString(),
-            name: m.name || 'Unnamed Patriot',
-            platform: m.type === 'Standard' ? 'GHANA' : 'DIASPORA',
-            region: m.region,
-            constituency: m.constituency,
-            country: m.country || 'Ghana',
-            profession: 'Patriot', // Placeholder as requested
-            avatar: m.avatarUrl || null
-          }
-        })
+        const mappedMembers: Member[] = fetchedMembers.map(m => ({
+          id: m.id || Math.random().toString(),
+          name: m.name || 'Unnamed Patriot',
+          platform: m.type === 'Standard' ? 'GHANA' : 'DIASPORA',
+          region: m.region,
+          constituency: m.constituency,
+          country: m.country || 'Ghana',
+          profession: m.profession || 'Patriot',
+          avatar: m.avatarUrl || null
+        }))
 
         // Map regions and constituencies
         const regionsArr: string[] = []
@@ -91,7 +80,6 @@ export default function Members() {
           }
         })
 
-        console.log('[MEMBERS] Mapping complete. Updating state.')
         setMembers(mappedMembers)
         setGhanaRegions(regionsArr)
         setRegionConstituencies(constMap)

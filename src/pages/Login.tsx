@@ -22,8 +22,8 @@ export default function Login() {
       const user = authService.getUser()
       if (user) {
         localStorage.setItem('isLoggedIn', 'true')
-        localStorage.setItem('userName', user.name)
-        if (user.image) localStorage.setItem('userAvatar', user.image)
+        localStorage.setItem('userName', user.user_metadata?.full_name || 'Patriot')
+        if (user.user_metadata?.avatar_url) localStorage.setItem('userAvatar', user.user_metadata.avatar_url)
       }
       
       localStorage.setItem('isLoggedIn', 'true')

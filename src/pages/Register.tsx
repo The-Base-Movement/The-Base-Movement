@@ -1,139 +1,14 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
-import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, ArrowDownToLine, CheckCircle2, X, Loader2 } from 'lucide-react'
+import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, CheckCircle2, Loader2 } from 'lucide-react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import MembershipCard from '../components/MembershipCard'
-import { authService } from '@/services/authService'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 
-// Configuration for Data API (syncing with adminService)
-const DATA_API_URL = 'https://ep-ancient-tooth-amjyc3yp.apirest.c-5.us-east-1.aws.neon.tech/neondb/rest/v1';
-
 const ageRanges = ['16-25', '26-40', '41-60', '60+']
-const educationLevels = [
-  'None',
-  'Primary',
-  'JHS / Middle School',
-  'SHS / Secondary',
-  'Vocational / Technical',
-  'Diploma / HND',
-  "Bachelor's Degree",
-  "Master's Degree",
-  'PhD / Doctorate',
-  'Professional Certification'
-]
-const ghanaRegions = [
-  'Ahafo', 'Ashanti', 'Bono', 'Bono East', 'Central', 'Eastern', 'Greater Accra',
-  'North East', 'Northern', 'Oti', 'Savannah', 'Upper East', 'Upper West', 'Volta', 'Western', 'Western North'
-]
-
-const diasporaCountries = [
-  'United Kingdom', 'United States', 'Canada', 'Germany', 'France', 'Australia', 'South Africa', 'United Arab Emirates', 'Netherlands', 'Italy', 'Austria', 'Belgium', 'Brazil', 'Burkina Faso', 'Cameroon', 'China', 'Czech Republic', 'Denmark', 'Egypt', 'Finland', 'India', 'Ireland', 'Israel', 'Japan', 'Kenya', 'Kuwait', 'Luxembourg', 'Malaysia', 'Mexico', 'Morocco', 'New Zealand', 'Nigeria', 'Norway', 'Poland', 'Portugal', 'Qatar', 'Russia', 'Saudi Arabia', 'Senegal', 'Singapore', 'South Korea', 'Spain', 'Sweden', 'Switzerland', 'Tanzania', 'Thailand', 'Togo', 'Turkey'
-]
-
-const countryCodes: Record<string, string> = {
-  'Ghana': '+233',
-  'United Kingdom': '+44',
-  'United States': '+1',
-  'Canada': '+1',
-  'Germany': '+49',
-  'France': '+33',
-  'Australia': '+61',
-  'South Africa': '+27',
-  'United Arab Emirates': '+971',
-  'Netherlands': '+31',
-  'Italy': '+39',
-  'Austria': '+43',
-  'Belgium': '+32',
-  'Brazil': '+55',
-  'Burkina Faso': '+226',
-  'Cameroon': '+237',
-  'China': '+86',
-  'Czech Republic': '+420',
-  'Denmark': '+45',
-  'Egypt': '+20',
-  'Finland': '+358',
-  'India': '+91',
-  'Ireland': '+353',
-  'Israel': '+972',
-  'Japan': '+81',
-  'Kenya': '+254',
-  'Kuwait': '+965',
-  'Luxembourg': '+352',
-  'Malaysia': '+60',
-  'Mexico': '+52',
-  'Morocco': '+212',
-  'New Zealand': '+64',
-  'Nigeria': '+234',
-  'Norway': '+47',
-  'Poland': '+48',
-  'Portugal': '+351',
-  'Qatar': '+974',
-  'Russia': '+7',
-  'Saudi Arabia': '+966',
-  'Senegal': '+221',
-  'Singapore': '+65',
-  'South Korea': '+82',
-  'Spain': '+34',
-  'Sweden': '+46',
-  'Switzerland': '+41',
-  'Tanzania': '+255',
-  'Thailand': '+66',
-  'Togo': '+228',
-  'Turkey': '+90'
-}
-
-const regionConstituencies: Record<string, string[]> = {
-  'Ahafo': [
-    'Asunafo North', 'Asunafo South', 'Asutifi North', 'Asutifi South', 'Tano North', 'Tano South'
-  ],
-  'Ashanti': [
-    'Adansi-Asokwa', 'Fomena', 'New Edubease', 'Afigya Kwabre North', 'Afigya Kwabre South',
-    'Ahafo Ano North', 'Ahafo Ano South East', 'Ahafo Ano South West', 'Akrofuom', 'Odotobri',
-    'Manso Nkwanta', 'Manso Edubia', 'Asante Akim Central', 'Asante Akim North', 'Asante Akim South',
-    'Asawase', 'Asokwa', 'Atwima-Kwanwoma', 'Atwima Mponua', 'Atwima-Nwabiagya South', 'Atwima-Nwabiagya North',
-    'Bekwai', 'Bosome-Freho', 'Bosomtwe', 'Ejisu', 'Ejura-Sekyedumase', 'Juaben', 'Bantama',
-    'Manhyia North', 'Manhyia South', 'Nhyiaeso', 'Subin', 'Kwabre East', 'Kwadaso', 'Mampong',
-    'Obuasi East', 'Obuasi West', 'Offinso South', 'Offinso North', 'Oforikrom', 'Old Tafo',
-    'Sekyere Afram Plains', 'Nsuta-Kwamang-Beposo', 'Afigya Sekyere East', 'Kumawu', 'Effiduase-Asokore', 'Suame'
-  ],
-  'Bono': [
-    'Banda Ahenkro', 'Berekum East', 'Berekum West', 'Dormaa Central', 'Dormaa East', 'Dormaa West',
-    'Jaman North', 'Jaman South', 'Sunyani East', 'Sunyani West', 'Tain', 'Wenchi'
-  ],
-  'Bono East': [
-    'Atebubu-Amantin', 'Kintampo North', 'Kintampo South', 'Nkoranza North', 'Nkoranza South',
-    'Pru East', 'Pru West', 'Sene East', 'Sene West', 'Techiman South', 'Techiman North'
-  ],
-  'Central': [
-    'Abura-Asebu-Kwamankese', 'Agona East', 'Agona West', 'Ajumako-Enyan-Essiam', 'Asikuma-Odoben-Brakwa',
-    'Assin Central', 'Assin North', 'Assin South', 'Awutu-Senya East', 'Awutu-Senya West', 'Cape Coast North',
-    'Cape Coast South', 'Effutu', 'Ekumfi', 'Gomoa East', 'Gomoa Central', 'Gomoa West', 'Komenda-Edina-Eguafo-Abirem',
-    'Mfantseman', 'Twifo-Atii Morkwaa', 'Hemang Lower Denkyira', 'Upper Denkyira East', 'Upper Denkyira West'
-  ],
-  'Eastern': [
-    'Abuakwa North', 'Abuakwa South', 'Achiase', 'Akropong', 'Akwapim South', 'Ofoase-Ayirebi', 'Asene Akroso Manso',
-    'Asuogyaman', 'Atiwa East', 'Atiwa West', 'Ayensuano', 'Akim Oda', 'Abirem', 'Akim Swedru', 'Akwatia',
-    'Fanteakwa North', 'Fanteakwa South', 'Kade', 'Afram Plains North', 'Afram Plains South', 'Abetifi',
-    'Mpraeso', 'Nkawkaw', 'Lower Manya', 'New Juaben North', 'New Juaben South', 'Nsawam Adoagyiri',
-    'Okere', 'Suhum', 'Upper Manya', 'Upper West Akim', 'Lower West Akim', 'Yilo Krobo'
-  ],
-  'Greater Accra': [
-    'Ablekuma Central', 'Ablekuma North', 'Ablekuma West', 'Ablekuma South', 'Odododiodio', 'Okaikwei Central',
-    'Okaikwei South', 'Ada', 'Sege', 'Adenta', 'Ashaiman', 'Ayawaso Central', 'Ayawaso East', 'Ayawaso North',
-    'Ayawaso West', 'Anyaa-Sowutuom', 'Dome-Kwabenya', 'Trobu', 'Bortianor-Ngleshie-Amanfrom', 'Domeabra-Obom',
-    'Amasaman', 'Korle Klottey', 'Kpone-Katamanso', 'Krowor', 'Dade Kotopon', 'Abokobi-Madina', 'Ledzokuku',
-    'Ningo-Prampram', 'Okaikwei North', 'Shai-Osudoku', 'Tema Central', 'Tema East', 'Tema West', 'Weija'
-  ],
-  'North East': [
-    'Bunkpurugu', 'Chereponi', 'Nalerigu', 'Yagaba-Kubori', 'Walewale', 'Yunyoo'
-  ],
-  'Northern': [
-    'Gushegu', 'Karaga', 'Kpandai', "Kumbungu", "Mion", "Nanton", "Bimbilla", "Wulensi", "Saboba", "Sagnarigu",
-    "Savelugu", "Tamale Central"
-  ]
-}
+// Hardcoded fallbacks removed - now fetching from Supabase
 
 export default function Register() {
   const [searchParams] = useSearchParams()
@@ -146,8 +21,64 @@ export default function Register() {
   const [submitted, setSubmitted] = useState(false)
   const [regNumber, setRegNumber] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  const [dbCountries, setDbCountries] = useState<string[]>([])
+  const [dbCountryCodes, setDbCountryCodes] = useState<Record<string, string>>({ 'Ghana': '+233' })
+  const [dbRegions, setDbRegions] = useState<{ id: number, name: string }[]>([])
+  const [dbConstituencies, setDbConstituencies] = useState<{ region_id: number, name: string }[]>([])
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // 1. Fetch Countries
+        const { data: countriesData, error: countriesError } = await supabase
+          .from('countries')
+          .select('*')
+          .order('name', { ascending: true })
+
+        if (countriesError) throw countriesError
+
+        if (Array.isArray(countriesData)) {
+          const names = countriesData.map(c => c.name);
+          const codes: Record<string, string> = {};
+          countriesData.forEach(c => {
+            codes[c.name] = c.dialing_code;
+          });
+          // Deduplicate and filter Ghana
+          const uniqueNames = Array.from(new Set(names.filter(n => n !== 'Ghana')));
+          setDbCountries(uniqueNames);
+          setDbCountryCodes(codes);
+        }
+
+        // 2. Fetch Regions
+        const { data: regionsData, error: regionsError } = await supabase
+          .from('ghana_regions')
+          .select('*')
+          .order('name', { ascending: true })
+
+        if (regionsError) throw regionsError
+        const uniqueRegions = Array.from(new Map((regionsData || []).map(r => [r.name, r])).values())
+        setDbRegions(uniqueRegions)
+
+        // 3. Fetch Constituencies
+        const { data: conData, error: conError } = await supabase
+          .from('ghana_constituencies')
+          .select('*')
+          .order('name', { ascending: true })
+
+        if (conError) throw conError
+        const uniqueConstituencies = Array.from(
+          new Map((conData || []).map(c => [`${c.region_id}-${c.name}`, c])).values()
+        )
+        setDbConstituencies(uniqueConstituencies)
+
+      } catch (error) {
+        console.error('[DATABASE] Failed to fetch master data for registration:', error);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const navigate = useNavigate()
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
@@ -168,7 +99,7 @@ export default function Register() {
   const [formData, setFormData] = useState({
     fullName: '',
     countryCode: '+233',
-    selectedCountry: 'Ghana',
+    country: 'Ghana',
     contactNumber: '',
     ageRange: '',
     gender: 'Male',
@@ -179,54 +110,21 @@ export default function Register() {
     constituency: '',
     chapter: '',
     profession: '',
-    employment: '',
     educationLevel: '',
     emergencyContactName: '',
     emergencyRelationship: '',
     emergencyNumber: '',
   })
 
-  const handlePlatformChange = (newPlatform: string) => {
-    setPlatform(newPlatform)
-    setFormData(prev => {
-      const newData = { ...prev }
-      if (newPlatform === 'GHANA') {
-        newData.selectedCountry = 'Ghana'
-        newData.countryCode = '+233'
-      } else {
-        newData.selectedCountry = diasporaCountries[0]
-        newData.countryCode = countryCodes[diasporaCountries[0]] || '+1'
-      }
-      return newData
-    })
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  // Sync logic moved to handleChange for better performance
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => {
-      const newData = { ...prev, [field]: value }
-      
-      // Auto-sync country and code when platform changes
-      if (field === 'platform') {
-        if (value === 'GHANA') {
-          newData.selectedCountry = 'Ghana'
-          newData.countryCode = '+233'
-        } else {
-          newData.selectedCountry = diasporaCountries[0]
-          newData.countryCode = countryCodes[diasporaCountries[0]] || '+1'
-        }
-      }
-      
-      // Auto-sync code when country changes
-      if (field === 'selectedCountry' && countryCodes[value]) {
-        newData.countryCode = countryCodes[value]
-      }
-
-      if (field === 'region') {
-        newData.constituency = ''
-      }
-      return newData
-    })
+  const handlePlatformChange = (newPlatform: string) => {
+    setPlatform(newPlatform)
+    if (newPlatform === 'GHANA') {
+      setFormData(prev => ({ ...prev, country: 'Ghana', countryCode: '+233' }))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -240,66 +138,89 @@ export default function Register() {
       const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
       setRegNumber(regNo)
 
-      // --- SYNC WITH NEON AUTH & DATA API ---
+      const dataURLtoBlob = (dataurl: string) => {
+        const arr = dataurl.split(',')
+        const mime = arr[0].match(/:(.*?);/)![1]
+        const bstr = atob(arr[1])
+        let n = bstr.length
+        const u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        return new Blob([u8arr], { type: mime })
+      }
+
       setIsLoading(true)
       try {
-        // 1. Create Auth Account
-        const authName = formData.fullName
         const authEmail = formData.email || `${regNo.toLowerCase()}@thebase.org`
-        const authPassword = formData.password
+        
+        // 1. Upload Avatar to Supabase Storage
+        let finalAvatarUrl = photoUrl
+        if (photoUrl && photoUrl.startsWith('data:')) {
+          try {
+            const blob = dataURLtoBlob(photoUrl)
+            const fileName = `${regNo}.jpg`
+            const { error: uploadError } = await supabase.storage
+              .from('avatars')
+              .upload(fileName, blob, { upsert: true })
 
-        await authService.signUp(authEmail, authPassword, authName, photoUrl || undefined)
+            if (uploadError) throw uploadError
 
-        // 2. Insert Profile Data into public.users
-        const token = authService.getToken()
-        await fetch(`${DATA_API_URL}/users`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify({
+            const { data: urlData } = supabase.storage
+              .from('avatars')
+              .getPublicUrl(fileName)
+            
+            finalAvatarUrl = urlData.publicUrl
+          } catch (uploadErr) {
+            console.error('[STORAGE] Avatar upload failed, falling back to local URL:', uploadErr)
+          }
+        }
+
+        // 2. Supabase Auth Sign Up
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: authEmail,
+          password: formData.password,
+          options: {
+            data: {
+              full_name: formData.fullName,
+              avatar_url: finalAvatarUrl
+            }
+          }
+        })
+
+        if (authError) throw authError
+
+        // 3. Insert Profile Data into users table
+        const { error: dbError } = await supabase
+          .from('users')
+          .insert({
+            id: authData.user?.id,
             full_name: formData.fullName,
             email: authEmail,
             registration_number: regNo,
             platform: platform,
-            country: formData.selectedCountry,
-            country_code: formData.countryCode,
+            country: formData.country,
             phone_number: formData.countryCode + formData.contactNumber,
-            age_range: formData.ageRange,
             gender: formData.gender,
-            residential_address: formData.residentialAddress,
             region: formData.region,
             constituency: formData.constituency,
             chapter: formData.chapter,
             profession: formData.profession,
-            education_level: formData.educationLevel,
-            emergency_contact_name: formData.emergencyContactName,
-            emergency_relationship: formData.emergencyRelationship,
-            emergency_phone: formData.emergencyNumber,
-            avatar_url: photoUrl
+            status: 'Active',
+            avatar_url: finalAvatarUrl
           })
-        })
+
+        if (dbError) throw dbError
 
         toast.success('Official records synchronized.')
-      } catch (error) {
-        console.error('Failed to sync with live database:', error)
-        toast.error('Account created locally, but cloud sync failed. Our admins will verify your record manually.')
+        setSubmitted(true)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } catch (error: unknown) {
+        console.error('[DATABASE] Registration failed:', error)
+        toast.error(error instanceof Error ? error.message : 'Registration failed. Please try again.')
       } finally {
         setIsLoading(false)
       }
-
-      // Persist user data so the dashboard can read it
-      localStorage.setItem('isLoggedIn', 'true')
-      localStorage.setItem('userName', formData.fullName)
-      localStorage.setItem('userPlatform', platform)
-      localStorage.setItem('userRegNo', regNo)
-      if (photoUrl) {
-        localStorage.setItem('userAvatar', photoUrl)
-      }
-      setSubmitted(true)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -321,7 +242,6 @@ export default function Register() {
           </div>
 
           <div className="space-y-8">
-            {/* Membership Card Preview */}
             <div className="bg-white border border-slate-200 p-2 shadow-2xl relative">
               <div className="border-b border-slate-100 pb-3 mb-4 px-4 pt-2">
                 <h3 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-[0.2em]">Official Membership Card</h3>
@@ -338,7 +258,7 @@ export default function Register() {
                   status="Active & Verified"
                   region={formData.region}
                   constituency={formData.constituency}
-                  country={formData.selectedCountry}
+                  country={formData.country}
                   chapter={formData.chapter}
                 />
               </div>
@@ -458,55 +378,18 @@ export default function Register() {
     )
   }
 
-  if (step === 'upload') {
-    return (
-      <main className="bg-surface-warm font-body-md min-h-screen flex flex-col justify-center py-12 px-4">
-        <div className="max-w-xl w-full mx-auto">
-          <div className="text-center mb-8">
-            <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-4" />
-            <h1 className="text-2xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
-            <div className="w-16 h-1 bg-[var(--brand-red)] mx-auto mb-4"></div>
-            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest font-meta mb-4">Upload Paper Form</h2>
-            
-            <button
-              onClick={() => setStep('choice')}
-              className="text-xs font-bold text-[var(--brand-green)] uppercase tracking-wider hover:underline flex items-center justify-center gap-1 mx-auto font-meta"
-            >
-              <ArrowLeft className="w-4 h-4" /> Registration Options
-            </button>
-          </div>
-
-          <div className="bg-white border border-slate-200 p-10 shadow-sm">
-            <div className="border-2 border-dashed border-slate-300 bg-slate-50 p-12 text-center hover:bg-slate-100 transition-colors group cursor-pointer relative">
-              <input type="file" accept=".jpg,.jpeg,.png,.pdf" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="form-upload" />
-              <ArrowDownToLine className="w-12 h-12 text-slate-400 mx-auto mb-4 group-hover:text-[var(--brand-green)] transition-colors" />
-              <p className="text-base text-slate-700 font-bold mb-2 font-meta uppercase">Select File to Upload</p>
-              <p className="text-sm text-slate-500 font-meta uppercase tracking-wider">JPG, PNG, or PDF (max 5MB)</p>
-            </div>
-          </div>
-        </div>
-      </main>
-    )
-  }
-
-  // Form step (Multi-page)
   return (
     <main className="bg-surface-warm font-body-md min-h-screen">
-      {/* Hero Section */}
       <div className="bg-white border-b border-slate-200 pt-16 pb-12 px-4 text-center">
         <div className="max-w-6xl mx-auto">
           <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6" />
           <h1 className="text-charcoal-dark mb-2">The Base</h1>
-          
-          {/* Ghana Flag Gradient Line */}
           <div className="w-24 h-1.5 mx-auto mb-4 flex">
             <div className="flex-1 bg-[var(--brand-red)]"></div>
             <div className="flex-1 bg-[var(--brand-gold)]"></div>
             <div className="flex-1 bg-[var(--brand-green)]"></div>
           </div>
-          
           <h2 className="text-slate-500 mb-8">Official Registration Form</h2>
-          
           <button
             onClick={() => setStep('choice')}
             className="inline-flex items-center gap-2 px-6 py-2 border border-slate-200 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all font-meta"
@@ -518,11 +401,8 @@ export default function Register() {
 
       <div className="max-w-6xl mx-auto py-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Vertical Sidebar Navigation */}
           <div className="lg:col-span-3 space-y-2 sticky top-8">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 pl-4">Registration Progress</p>
-            
             <div className="space-y-1">
               {[
                 { step: 1, label: 'Primary Details' },
@@ -530,10 +410,7 @@ export default function Register() {
                 { step: 3, label: 'Emergency contact' },
                 { step: 4, label: 'Final Verification' }
               ].map((item) => (
-                <div 
-                  key={item.step}
-                  className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-[var(--brand-green)] shadow-sm' : 'border-transparent text-slate-400 opacity-60'}`}
-                >
+                <div key={item.step} className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-[var(--brand-green)] shadow-sm' : 'border-transparent text-slate-400 opacity-60'}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-[var(--brand-green)] text-white' : 'bg-slate-200 text-slate-500'}`}>
                     {formStep > item.step ? <CheckCircle2 className="w-5 h-5" /> : item.step}
                   </div>
@@ -543,118 +420,50 @@ export default function Register() {
                 </div>
               ))}
             </div>
-
-            <div className="mt-12 p-6 bg-charcoal-dark text-white rounded-none border-l-4 border-warm-gold">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-warm-gold mb-2">Important Notice</p>
-              <p className="text-xs leading-relaxed text-slate-300 font-medium">Please ensure all official details match your government-issued identity documents exactly to avoid verification delays.</p>
-            </div>
           </div>
 
-          {/* Form Content Area */}
           <div className="lg:col-span-9">
             <div className="bg-white border border-slate-200 p-8 md:p-12 shadow-sm">
               <form onSubmit={handleSubmit}>
-              
-              {/* STEP 1: Primary Details */}
               {formStep === 1 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
                     <h3 className="text-charcoal-dark">Step 1: Primary Details</h3>
-                    <p className="text-slate-500 mt-1 mb-0">Basic information required for your membership profile.</p>
                   </div>
-
                   <div className="space-y-3">
-                    <label htmlFor="fullName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Full Name <span className="text-[var(--brand-red)]">*</span>
-                    </label>
-                    <input
-                      id="fullName"
-                      placeholder="As it appears on official ID"
-                      required
-                      value={formData.fullName}
-                      onChange={(e) => handleChange('fullName', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                    />
+                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Full Name</label>
+                    <input required value={formData.fullName} onChange={(e) => handleChange('fullName', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
                   </div>
-
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                      Select Platform <span className="text-[var(--brand-red)]">*</span>
-                    </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'GHANA' ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                        <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
-                        Base Ghana
-                      </label>
-                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'DIASPORA' ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                        <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
-                        Base Diaspora
-                      </label>
-                    </div>
-                  </div>
-
                   <div className="grid md:grid-cols-2 gap-8">
-                    {platform === 'DIASPORA' ? (
+                    {platform === 'DIASPORA' && (
                       <div className="space-y-3">
-                        <label htmlFor="selectedCountry" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                          Country of Residence <span className="text-[var(--brand-red)]">*</span>
-                        </label>
-                        <select 
-                          id="selectedCountry"
-                          required
-                          value={formData.selectedCountry} 
-                          onChange={(e) => handleChange('selectedCountry', e.target.value)}
-                          className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                          style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                        >
-                          {diasporaCountries.map((country) => (
-                            <option key={country} value={country}>{country}</option>
-                          ))}
+                        <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Country</label>
+                        <select required value={formData.country} onChange={(e) => handleChange('country', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                          <option value="">Select Country</option>
+                          {dbCountries.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                       </div>
-                    ) : null}
-
+                    )}
                     <div className="space-y-3">
-                      <label htmlFor="contactNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Contact Number <span className="text-[var(--brand-red)]">*</span>
-                      </label>
+                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Phone</label>
                       <div className="flex">
-                        <select
-                          value={formData.countryCode}
-                          onChange={(e) => handleChange('countryCode', e.target.value)}
-                          className="flex items-center px-2 bg-surface-warm border-y border-l border-slate-300 font-meta font-bold text-charcoal-dark text-xs appearance-none focus:outline-none"
-                        >
-                          {Array.from(new Set(Object.values(countryCodes))).sort().map((code) => (
-                            <option key={code} value={code}>{code}</option>
-                          ))}
+                        <select value={formData.countryCode} onChange={(e) => handleChange('countryCode', e.target.value)} className="px-2 bg-surface-warm border border-slate-300 text-xs">
+                          {Array.from(new Set(Object.values(dbCountryCodes))).map(code => <option key={code} value={code}>{code}</option>)}
                         </select>
-                        <input
-                          id="contactNumber"
-                          type="tel"
-                          placeholder="Phone number"
-                          required
-                          value={formData.contactNumber}
-                          onChange={(e) => handleChange('contactNumber', e.target.value)}
-                          className="w-full form-understate p-4 text-charcoal-dark text-sm border-l-0"
-                        />
+                        <input required value={formData.contactNumber} onChange={(e) => handleChange('contactNumber', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
                       </div>
                     </div>
                   </div>
-
                   <div className="space-y-3">
-                    <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Account Password <span className="text-[var(--brand-red)]">*</span>
-                    </label>
+                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Password</label>
                     <div className="relative">
-                      <input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Minimum 6 characters"
-                        required
-                        minLength={6}
-                        value={formData.password}
-                        onChange={(e) => handleChange('password', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                      <input 
+                        type={showPassword ? 'text' : 'password'} 
+                        required 
+                        minLength={6} 
+                        value={formData.password} 
+                        onChange={(e) => handleChange('password', e.target.value)} 
+                        className="w-full form-understate p-4 pr-12 text-charcoal-dark text-sm" 
                       />
                       <button
                         type="button"
@@ -668,318 +477,110 @@ export default function Register() {
                 </div>
               )}
 
-              {/* STEP 2: Demographic Details */}
               {formStep === 2 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
                     <h3 className="text-charcoal-dark">Step 2: Demographic Details</h3>
-                    <p className="text-slate-500 mt-1 mb-0">Further details to finalize your membership chapter.</p>
                   </div>
-
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                        Age Range <span className="text-[var(--brand-red)]">*</span>
-                      </label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {ageRanges.map(range => (
-                          <label key={range} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.ageRange === range ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                            <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} className="hidden" />
-                            {range}
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                        Gender <span className="text-[var(--brand-red)]">*</span>
-                      </label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {['Male', 'Female'].map(g => (
-                          <label key={g} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.gender === g ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                            <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} className="hidden" />
-                            {g}
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label htmlFor="residentialAddress" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Residential Address <span className="text-[var(--brand-red)]">*</span>
-                    </label>
-                    <input
-                      id="residentialAddress"
-                      placeholder="Street, House Number, City"
-                      required
-                      value={formData.residentialAddress}
-                      onChange={(e) => handleChange('residentialAddress', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                    />
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-8">
-                    {platform === 'GHANA' ? (
-                      <>
-                        <div className="space-y-3">
-                          <label htmlFor="region" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                            Region <span className="text-[var(--brand-red)]">*</span>
-                          </label>
-                          <select 
-                            id="region"
-                            required
-                            value={formData.region} 
-                            onChange={(e) => handleChange('region', e.target.value)}
-                            className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                            style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                          >
-                            <option value="">Select Region</option>
-                            {ghanaRegions.map((region) => (
-                              <option key={region} value={region}>{region}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="space-y-3">
-                          <label htmlFor="constituency" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                            Constituency <span className="text-[var(--brand-red)]">*</span>
-                          </label>
-                          <select 
-                            id="constituency"
-                            required
-                            disabled={!formData.region}
-                            value={formData.constituency} 
-                            onChange={(e) => handleChange('constituency', e.target.value)}
-                            className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta disabled:opacity-50"
-                            style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                          >
-                            <option value="">Select Constituency</option>
-                            {formData.region && regionConstituencies[formData.region]?.map((con) => (
-                              <option key={con} value={con}>{con}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="space-y-3">
-                        <label htmlFor="chapter" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                          Assigned Chapter <span className="text-[var(--brand-red)]">*</span>
-                        </label>
-                        <input
-                          id="chapter"
-                          placeholder="E.g. UK Chapter - London"
-                          required
-                          value={formData.chapter}
-                          onChange={(e) => handleChange('chapter', e.target.value)}
-                          className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 3: Emergency Contact */}
-              {formStep === 3 && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark">Step 3: Emergency Details</h3>
-                    <p className="text-slate-500 mt-1 mb-0">Crucial for member safety and institutional records.</p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label htmlFor="emergencyContactName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Emergency Contact Name <span className="text-[var(--brand-red)]">*</span>
-                    </label>
-                    <input
-                      id="emergencyContactName"
-                      placeholder="Full Name"
-                      required
-                      value={formData.emergencyContactName}
-                      onChange={(e) => handleChange('emergencyContactName', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                    />
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label htmlFor="emergencyRelationship" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Relationship <span className="text-[var(--brand-red)]">*</span>
-                      </label>
-                      <input
-                        id="emergencyRelationship"
-                        placeholder="E.g. Spouse, Parent, Brother"
-                        required
-                        value={formData.emergencyRelationship}
-                        onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                      />
+                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Age Range</label>
+                      <select required value={formData.ageRange} onChange={(e) => handleChange('ageRange', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                        <option value="">Select Range</option>
+                        {ageRanges.map(r => <option key={r} value={r}>{r}</option>)}
+                      </select>
                     </div>
                     <div className="space-y-3">
-                      <label htmlFor="emergencyNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Emergency Contact Number <span className="text-[var(--brand-red)]">*</span>
-                      </label>
-                      <input
-                        id="emergencyNumber"
-                        type="tel"
-                        placeholder="Phone number"
-                        required
-                        value={formData.emergencyNumber}
-                        onChange={(e) => handleChange('emergencyNumber', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label htmlFor="profession" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Profession / Occupation <span className="text-[var(--brand-red)]">*</span>
-                      </label>
-                      <input
-                        id="profession"
-                        placeholder="E.g. Teacher, Nurse, Student"
-                        required
-                        value={formData.profession}
-                        onChange={(e) => handleChange('profession', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label htmlFor="educationLevel" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Education Level <span className="text-[var(--brand-red)]">*</span>
-                      </label>
-                      <select 
-                        id="educationLevel"
-                        required
-                        value={formData.educationLevel} 
-                        onChange={(e) => handleChange('educationLevel', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta"
-                        style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
-                      >
-                        <option value="">Select Level</option>
-                        {educationLevels.map(lvl => (
-                          <option key={lvl} value={lvl}>{lvl}</option>
-                        ))}
+                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Gender</label>
+                      <select required value={formData.gender} onChange={(e) => handleChange('gender', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
                       </select>
                     </div>
                   </div>
+                  {platform === 'GHANA' && (
+                    <div className="grid md:grid-cols-2 gap-8">
+                      <div className="space-y-3">
+                        <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Region</label>
+                        <select required value={formData.region} onChange={(e) => handleChange('region', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                          <option value="">Select Region</option>
+                          {dbRegions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Constituency</label>
+                        <select required value={formData.constituency} onChange={(e) => handleChange('constituency', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                          <option value="">Select Constituency</option>
+                          {formData.region && dbConstituencies
+                            .filter(c => c.region_id === dbRegions.find(r => r.name === formData.region)?.id)
+                            .map(c => <option key={c.name} value={c.name}>{c.name}</option>)
+                          }
+                        </select>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* STEP 4: Verification */}
+              {formStep === 3 && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                    <h3 className="text-charcoal-dark">Step 3: Emergency & Profile</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Profession</label>
+                    <input required value={formData.profession} onChange={(e) => handleChange('profession', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Emergency Name</label>
+                      <input required value={formData.emergencyContactName} onChange={(e) => handleChange('emergencyContactName', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Emergency Phone</label>
+                      <input required value={formData.emergencyNumber} onChange={(e) => handleChange('emergencyNumber', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {formStep === 4 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
                     <h3 className="text-charcoal-dark">Step 4: Final Verification</h3>
-                    <p className="text-slate-500 mt-1 mb-0">Identity confirmation and oath of commitment.</p>
                   </div>
-
                   <div className="space-y-6">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Passport Photo <span className="text-[var(--brand-red)]">*</span>
-                    </label>
-                    
+                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Photo</label>
                     {!photoUrl ? (
-                      <div className="border-2 border-dashed border-slate-200 p-12 text-center bg-slate-50 relative group transition-colors hover:border-[var(--brand-green)]">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePhotoUpload}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        />
-                        <Upload className="w-12 h-12 text-slate-300 mx-auto mb-4 group-hover:text-[var(--brand-green)] transition-colors" />
-                        <p className="font-meta font-bold text-slate-500 uppercase tracking-widest text-[10px]">Click to upload passport photo</p>
+                      <div className="border-2 border-dashed p-12 text-center bg-slate-50 relative">
+                        <input type="file" accept="image/*" onChange={handlePhotoUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                        <Upload className="mx-auto mb-4 text-slate-300" />
+                        <p className="text-[10px] font-bold uppercase text-slate-500">Upload Photo</p>
                       </div>
                     ) : (
-                      <div className="relative bg-slate-100 p-4 border border-slate-200">
-                        <div className="relative h-[400px] w-full bg-charcoal-dark overflow-hidden">
-                          <Cropper
-                            image={photoUrl}
-                            crop={crop}
-                            zoom={zoom}
-                            aspect={3 / 4}
-                            onCropChange={setCrop}
-                            onCropComplete={onCropComplete}
-                            onZoomChange={setZoom}
-                          />
-                        </div>
-                        <div className="flex items-center gap-4 mt-6 px-4 pb-4">
-                          <input
-                            type="range"
-                            value={zoom}
-                            min={1}
-                            max={3}
-                            step={0.1}
-                            aria-labelledby="Zoom"
-                            onChange={(e) => setZoom(Number(e.target.value))}
-                            className="w-full accent-brand-green"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setPhotoUrl(null)}
-                            className="shrink-0 p-2 bg-slate-200 text-charcoal-dark hover:bg-[var(--brand-red)] hover:text-white transition-colors"
-                            title="Remove photo"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </div>
-                        <p className="text-[10px] text-slate-500 font-meta tracking-widest uppercase mt-2 text-center font-bold">Position your face within the frame</p>
+                      <div className="relative h-[400px] bg-charcoal-dark">
+                        <Cropper image={photoUrl} crop={crop} zoom={zoom} aspect={3/4} onCropChange={setCrop} onCropComplete={onCropComplete} onZoomChange={setZoom} />
                       </div>
                     )}
                   </div>
-
-                  {/* Oath */}
-                  <div className="bg-charcoal-dark text-white p-8 mt-8 border-l-4 border-[var(--brand-green)]">
-                    <h5 className="text-warm-gold mb-3">The Base Declaration</h5>
-                    <p className="text-slate-300 mb-6 leading-relaxed">
-                      I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong>THE BASE</strong>: Patriotism, Honesty, and Discipline and pledge to advance the cause of <strong>GHANA FIRST</strong> in all my actions.
-                    </p>
-                    
-                    <div className="flex items-start gap-4">
-                      <input
-                        type="checkbox"
-                        id="privacy"
-                        checked={agreed}
-                        onChange={(e) => setAgreed(e.target.checked)}
-                        className="mt-1 w-5 h-5 shrink-0 text-[var(--brand-green)] bg-charcoal-dark border-slate-500 rounded-none focus:ring-brand-green cursor-pointer"
-                      />
-                      <label htmlFor="privacy" className="text-sm text-slate-300 cursor-pointer leading-tight font-medium">
-                        I accept this declaration and agree to the <Link to="/privacy" className="text-warm-gold hover:underline font-bold">Privacy Policy</Link> <span className="text-[var(--brand-red)]">*</span>
-                      </label>
-                    </div>
+                  <div className="flex items-start gap-4 p-6 bg-charcoal-dark text-white border-l-4 border-[var(--brand-green)]">
+                    <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-1" />
+                    <label className="text-sm">I accept the declaration and agree to the Privacy Policy.</label>
                   </div>
                 </div>
               )}
 
-              {/* Navigation Controls */}
               <div className="pt-10 mt-12 border-t border-slate-200 flex justify-between gap-4">
-                {formStep > 1 ? (
-                  <button
-                    type="button"
-                    onClick={goBack}
-                    className="w-1/3 bg-slate-100 hover:bg-slate-200 text-charcoal-dark font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-2 transition-all shadow-sm"
-                  >
-                    <ArrowLeft className="w-5 h-5" /> Back
-                  </button>
-                ) : (
-                  <div className="w-1/3"></div>
+                {formStep > 1 && (
+                  <button type="button" onClick={goBack} className="w-1/3 bg-slate-100 py-4 font-meta font-bold uppercase tracking-widest text-[10px]">Back</button>
                 )}
-                
-                <button
-                  type="submit"
-                  disabled={(formStep === 4 && !agreed) || isLoading}
-                  className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all flex-1 shadow-md ${(formStep === 4 && !agreed) || isLoading ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-[var(--brand-green)] text-white hover:opacity-90 active:scale-[0.99]'}`}
-                >
+                <button type="submit" disabled={(formStep === 4 && !agreed) || isLoading} className="flex-1 bg-[var(--brand-green)] text-white py-4 font-meta font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
                   {isLoading ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" /> Synchronizing Official Record...
+                      <Loader2 className="w-4 h-4 animate-spin" /> Processing...
                     </>
-                  ) : formStep < 4 ? (
-                    <>Next Step <ArrowRight className="w-5 h-5" /></>
                   ) : (
-                    <>Submit Official Registration <ArrowRight className="w-5 h-5" /></>
+                    formStep < 4 ? 'Next Step' : 'Submit Registration'
                   )}
                 </button>
               </div>
