@@ -182,6 +182,13 @@ export interface SentimentStat {
   color: string
 }
 
+export interface PollStats {
+  totalEngagements: string
+  activePolls: number
+  avgResponseTime: string
+  feedbackRate: string
+}
+
 export interface AdminUser {
   id: string
   name: string
@@ -1145,12 +1152,12 @@ class AdminService {
     }));
   }
 
-  async approveChapterApplication(appId: string, notes: string = ''): Promise<boolean> {
-    const user = await authService.getCurrentUser();
+  async approveChapterApplication(applicationId: string, notes: string = ''): Promise<boolean> {
+    const user = await authService.getUser();
     if (!user) return false;
 
     const { error } = await supabase.rpc('approve_chapter_application', {
-      app_id: appId,
+      app_id: applicationId,
       admin_uid: user.id,
       notes: notes
     });
@@ -1208,7 +1215,7 @@ class AdminService {
   }
 
   async verifyDonation(donationId: string, status: 'Verified' | 'Rejected', notes: string = ''): Promise<boolean> {
-    const user = await authService.getCurrentUser();
+    const user = await authService.getUser();
     if (!user) return false;
 
     const { error } = await supabase.rpc('verify_donation_record', {

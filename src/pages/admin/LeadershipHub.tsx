@@ -30,15 +30,15 @@ export default function LeadershipHub() {
   const [searchQuery, setSearchQuery] = useState('')
   const { toast } = useToast()
 
-  const fetchApplications = useCallback(async () => {
-    setIsLoading(true)
+  const fetchApplications = useCallback(async (silent = false) => {
+    if (!silent) setIsLoading(true)
     const data = await adminService.getChapterApplications()
     setApplications(data)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    fetchApplications()
+    fetchApplications(true) // Silent fetch on mount because isLoading is true by default
   }, [fetchApplications])
 
   const handleApprove = async (appId: string, name: string) => {

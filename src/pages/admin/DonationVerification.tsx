@@ -3,23 +3,17 @@ import {
   DollarSign, 
   Search, 
   Filter, 
-  CheckCircle2, 
   XCircle, 
   Eye,
   Calendar,
   CreditCard,
-  User,
   ShieldCheck,
-  ChevronRight,
   Loader2,
   Image as ImageIcon
 } from 'lucide-react'
 import { 
   Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription 
+  CardContent 
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { adminService } from '@/services/adminService'
@@ -35,15 +29,15 @@ export default function DonationVerification() {
   const [isVerifying, setIsVerifying] = useState<string | null>(null)
   const { toast } = useToast()
 
-  const fetchDonations = useCallback(async () => {
-    setIsLoading(true)
+  const fetchDonations = useCallback(async (silent = false) => {
+    if (!silent) setIsLoading(true)
     const data = await adminService.getPendingDonations()
     setDonations(data)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    fetchDonations()
+    fetchDonations(true) // Silent fetch on mount because isLoading is true by default
   }, [fetchDonations])
 
   const handleVerify = async (donationId: string, name: string, status: 'Verified' | 'Rejected') => {
