@@ -271,10 +271,23 @@ class AdminService {
   }
 
   async getMembers(): Promise<Member[]> {
-    const { data, error } = await supabase
+    // Get IDs of all administrators to exclude them
+    const { data: adminIds } = await supabase
+      .from('admins')
+      .select('id')
+
+    const adminIdList = adminIds?.map(a => a.id) || []
+
+    const query = supabase
       .from('users')
       .select('*')
       .order('joined_at', { ascending: false })
+
+    if (adminIdList.length > 0) {
+      query.not('id', 'in', adminIdList)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       console.warn('[DATABASE] Falling back to mock members:', error)
@@ -286,16 +299,55 @@ class AdminService {
       name: u.full_name,
       email: u.email,
       phone: u.phone_number || 'N/A',
-      region: u.region || 'Unknown',
-      constituency: u.constituency || 'Unknown',
+      region: u.region || 'Region pending',
+      constituency: u.constituency || 'Constituency pending',
       status: u.status,
       joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
       type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
       avatarUrl: u.avatar_url || undefined,
-      gender: u.gender || 'Unknown',
+      gender: u.gender || 'Not specified',
       chapter: u.chapter || 'Central',
       country: u.country || 'Ghana',
       profession: u.profession || 'Patriot'
+    }))
+  }
+
+  async getAdministrators(): Promise<AdminUser[]> {
+    interface AdminDbResponse {
+      id: string;
+      role: string;
+      permissions: AdminPermission[];
+      users: {
+        full_name: string;
+        region: string | null;
+      } | null;
+    }
+
+    const { data, error } = await supabase
+      .from('admins')
+      .select(`
+        id,
+        role,
+        permissions,
+        users!admins_id_fkey (
+          full_name,
+          region
+        )
+      `)
+
+    if (error || !data) {
+      console.error('[DATABASE] Failed to fetch administrators:', error)
+      return []
+    }
+
+    const typedData = data as unknown as AdminDbResponse[]
+
+    return typedData.map((a) => ({
+      id: a.id,
+      name: a.users?.full_name || 'Authorized Officer',
+      role: a.role as AdminRole,
+      region: a.users?.region || 'National HQ',
+      permissions: a.permissions as AdminPermission[]
     }))
   }
 
@@ -803,11 +855,19 @@ class AdminService {
       .from('store_inventory')
       .select('*')
       .eq('slug', slug)
-      .single()
+      .maybeSingle()
 
-    if (error || !data) {
-      console.warn('[DATABASE] Product not found by slug:', slug)
+    if (error) {
+      console.error('[DATABASE] Error fetching product by slug:', error)
       return null
+    }
+
+    if (!data) {
+      // Fallback: Fetch all and match by generated slug if direct match failed
+      // This helps with data inconsistencies where the slug column might be null or different
+      console.warn('[DATABASE] Direct slug match failed, trying fallback for:', slug)
+      const all = await this.getStoreProducts()
+      return all.find(p => p.slug === slug) || null
     }
 
     return {
@@ -1315,6 +1375,111 @@ class AdminService {
       return false;
     }
 
+    return true;
+  }
+
+  async getAdminData(userId: string) {
+    const { data, error } = await supabase
+      .from('admins')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('[DATABASE] Error fetching admin data:', error);
+      return null;
+    }
+    return data;
+  }
+
+  async updateAdminData(userId: string, updates: { 
+    role?: AdminRole; 
+    permissions?: AdminPermission[]; 
+    assigned_region?: string | null;
+  }) {
+    const { error } = await supabase
+      .from('admins')
+      .update(updates)
+      .eq('id', userId);
+
+    if (error) {
+      throw new Error(error.message || 'Failed to update admin data');
+    }
+  }
+
+  async getWishlist(userId: string): Promise<Product[]> {
+    interface StoreInventoryDbRow {
+      id: string;
+      name: string;
+      slug: string | null;
+      category: string;
+      price_ghs: number;
+      stock_quantity: number;
+      image_url: string | null;
+      description: string | null;
+      rating: number | null;
+      reviews: number | null;
+      sizes: string[] | null;
+      colors: string[] | null;
+    }
+
+    const { data, error } = await supabase
+      .from('wishlist')
+      .select(`
+        id,
+        product_id,
+        store_inventory (*)
+      `)
+      .eq('user_id', userId);
+
+    if (error || !data) {
+      console.error('[DATABASE] Error fetching wishlist:', error);
+      return [];
+    }
+
+    return data.map(item => {
+      const i = item.store_inventory as unknown as StoreInventoryDbRow;
+      return {
+        id: i.id,
+        name: i.name,
+        slug: i.slug || i.name.toLowerCase().replace(/\s+/g, '-'),
+        category: i.category,
+        price: `GH₵ ${Number(i.price_ghs).toLocaleString()}`,
+        stock: i.stock_quantity,
+        status: i.stock_quantity > 10 ? 'Stable' : i.stock_quantity > 0 ? 'Low Stock' : 'Critical',
+        image: i.image_url || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop',
+        description: i.description || '',
+        rating: i.rating || 4.8,
+        reviews: i.reviews || 0,
+        sizes: i.sizes || ['S', 'M', 'L', 'XL'],
+        colors: i.colors || ['Standard']
+      };
+    });
+  }
+
+  async addToWishlist(userId: string, productId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('wishlist')
+      .insert({ user_id: userId, product_id: productId });
+
+    if (error && error.code !== '23505') { // Ignore unique constraint violation
+      console.error('[DATABASE] Error adding to wishlist:', error);
+      return false;
+    }
+    return true;
+  }
+
+  async removeFromWishlist(userId: string, productId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('wishlist')
+      .delete()
+      .eq('user_id', userId)
+      .eq('product_id', productId);
+
+    if (error) {
+      console.error('[DATABASE] Error removing from wishlist:', error);
+      return false;
+    }
     return true;
   }
 }

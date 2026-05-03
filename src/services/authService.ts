@@ -89,6 +89,26 @@ class AuthService {
   getUser() {
     return this.currentSession?.user || null;
   }
+
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      throw new Error(error.message || 'Failed to update password');
+    }
+  }
+
+  async updateProfile(updates: { full_name?: string; avatar_url?: string }): Promise<void> {
+    const { error } = await supabase.auth.updateUser({
+      data: updates
+    });
+
+    if (error) {
+      throw new Error(error.message || 'Failed to update profile');
+    }
+  }
 }
 
 export const authService = AuthService.getInstance();

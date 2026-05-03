@@ -18,7 +18,9 @@ export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState('')
   const [showSizeGuide, setShowSizeGuide] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
-  const { isInWishlist, addToWishlist, removeFromWishlist, addToCart } = useStore()
+  const { isInWishlist, addToWishlist, removeFromWishlist, addToCart, wishlist, cart } = useStore()
+  const wishlistCount = wishlist.length
+  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0)
 
   useEffect(() => {
     let isMounted = true
@@ -99,13 +101,42 @@ export default function ProductDetails() {
     <div className="bg-off-white min-h-screen">
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
       <Breadcrumbs />
-      <Link 
-        to={window.location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'}
-        className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors mb-12 group"
-      >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span className="font-meta text-xs font-bold uppercase tracking-widest">Back to Store</span>
-      </Link>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <Link 
+          to={window.location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'}
+          className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          <span className="font-meta text-[10px] font-bold uppercase tracking-widest">Back to Store</span>
+        </Link>
+
+        <div className="flex items-center gap-3">
+          <Link 
+            to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/wishlist' : '/store/wishlist'}
+            className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
+          >
+            <Heart className="w-4 h-4 text-stone-500 group-hover:text-brand-red transition-all" />
+            <span className="font-meta text-[10px] font-bold uppercase tracking-widest text-stone-600 group-hover:text-brand-red">Wishlist</span>
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-brand-red text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
+          <Link 
+            to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}
+            className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
+          >
+            <ShoppingBag className="w-4 h-4 text-stone-500 group-hover:text-brand-green transition-all" />
+            <span className="font-meta text-[10px] font-bold uppercase tracking-widest text-stone-600 group-hover:text-brand-green">Bag</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-brand-green text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+        </div>
+      </div>
 
       <div className="grid lg:grid-cols-2 gap-16">
         {/* Image Gallery */}
@@ -357,12 +388,14 @@ export default function ProductDetails() {
       )}
 
       {/* Share Modal */}
-      <ShareModal 
-        isOpen={isShareModalOpen} 
-        onClose={() => setIsShareModalOpen(false)} 
-        title={`Check out the ${product.name} at The Base Movement Store!`}
-        url={window.location.href}
-      />
+      {product && (
+        <ShareModal 
+          isOpen={isShareModalOpen} 
+          onClose={() => setIsShareModalOpen(false)} 
+          title={`Check out the ${product.name} at The Base Movement Store!`}
+          url={window.location.href}
+        />
+      )}
       </div>
     </div>
   )

@@ -8,9 +8,13 @@ import {
   Users,
   Key,
   ShieldCheck,
-  Search
+  Search,
+  Camera,
+  Loader2
 } from 'lucide-react'
 import { adminService, type AuditLogEntry } from '@/services/adminService'
+import { authService } from '@/services/authService'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -42,14 +46,79 @@ export default function AdminSettings() {
 
   const [auditSearch, setAuditSearch] = useState('')
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
+  const [adminUser, setAdminUser] = useState<any>(null)
+  const [adminData, setAdminData] = useState<any>(null)
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Profile Form State
+  const [profileForm, setProfileForm] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    avatarUrl: ''
+  })
+
+  // Password Form State
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
 
   useState(() => {
-    const fetchLogs = async () => {
+    const fetchData = async () => {
+      const user = authService.getUser()
+      if (user) {
+        setAdminUser(user)
+        setProfileForm({
+          fullName: user.user_metadata?.full_name || '',
+          email: user.email || '',
+          phone: user.user_metadata?.phone || '',
+          avatarUrl: user.user_metadata?.avatar_url || ''
+        })
+
+        const data = await adminService.getAdminData(user.id)
+        setAdminData(data)
+      }
+
       const logs = await adminService.getSystemAuditLogs()
       setAuditLogs(logs)
     }
-    fetchLogs()
+    fetchData()
   })
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true)
+    try {
+      await authService.updateProfile({
+        full_name: profileForm.fullName,
+        avatar_url: profileForm.avatarUrl
+      })
+      toast.success('Profile updated successfully')
+    } catch (error: any) {
+      toast.error(error.message)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleUpdatePassword = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error('Passwords do not match')
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      await authService.updatePassword(passwordForm.newPassword)
+      toast.success('Password updated successfully')
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+    } catch (error: any) {
+      toast.error(error.message)
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -89,35 +158,60 @@ export default function AdminSettings() {
           {activeTab === 'profile' && (
             <Card className="rounded-none border-stone-200 shadow-sm">
               <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/30">
-                <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Administrative Profile</CardTitle>
-                <CardDescription className="text-xs">Manage your personal admin account details.</CardDescription>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Administrative Profile</CardTitle>
+                    <CardDescription className="text-xs">Manage your personal admin account details.</CardDescription>
+                  </div>
+                  <Button 
+                    onClick={handleSaveProfile}
+                    disabled={isSaving}
+                    className="bg-[var(--brand-black)] text-white text-[10px] uppercase font-bold tracking-widest px-6"
+                  >
+                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                    Save Profile
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="p-8 space-y-6">
                 <div className="flex flex-col md:flex-row gap-8 items-start">
                   <div className="relative group">
                     <div className="w-24 h-24 bg-stone-100 flex items-center justify-center border-2 border-dashed border-stone-200 text-stone-400 font-bold text-xl overflow-hidden">
-                      SA
+                      {profileForm.avatarUrl ? (
+                        <img src={profileForm.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        profileForm.fullName.split(' ').map(n => n[0]).join('').toUpperCase() || 'AD'
+                      )}
                     </div>
-                    <button className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[8px] font-black uppercase tracking-widest">
-                      Change
+                    <button className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col gap-1">
+                      <Camera className="w-4 h-4" />
+                      <span className="text-[8px] font-black uppercase tracking-widest">Update</span>
                     </button>
                   </div>
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Full Name</Label>
-                      <Input defaultValue="Super Admin" className="h-11 rounded-none border-stone-200" />
+                      <Input 
+                        value={profileForm.fullName} 
+                        onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
+                        className="h-11 rounded-none border-stone-200" 
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Email Address</Label>
-                      <Input defaultValue="admin@thebase.org" className="h-11 rounded-none border-stone-200" />
+                      <Input value={profileForm.email} disabled className="h-11 rounded-none border-stone-100 bg-stone-50 text-stone-400 italic" />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Administrative Tier</Label>
-                      <Input value="Headquarters (Tier 1)" disabled className="h-11 rounded-none border-stone-100 bg-stone-50 text-stone-400 italic" />
+                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Administrative Role</Label>
+                      <Input value={adminData?.role || 'Loading...'} disabled className="h-11 rounded-none border-stone-100 bg-stone-50 text-stone-400 italic" />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Phone Number</Label>
-                      <Input defaultValue="+233 20 000 0000" className="h-11 rounded-none border-stone-200" />
+                      <Input 
+                        value={profileForm.phone} 
+                        onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                        className="h-11 rounded-none border-stone-200" 
+                      />
                     </div>
                   </div>
                 </div>
@@ -196,6 +290,70 @@ export default function AdminSettings() {
               </CardContent>
             </Card>
           )}
+          {activeTab === 'security' && (
+            <Card className="rounded-none border-stone-200 shadow-sm">
+              <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/30">
+                <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Security & Credentials</CardTitle>
+                <CardDescription className="text-xs">Update your password and manage account security.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-8 space-y-8">
+                <div className="max-w-md space-y-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">New Password</Label>
+                      <Input 
+                        type="password" 
+                        value={passwordForm.newPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                        className="h-11 rounded-none border-stone-200" 
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Confirm New Password</Label>
+                      <Input 
+                        type="password" 
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                        className="h-11 rounded-none border-stone-200" 
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Button 
+                      onClick={handleUpdatePassword}
+                      disabled={isSaving || !passwordForm.newPassword}
+                      className="w-full h-12 bg-[var(--brand-red)] hover:bg-rose-700 text-white text-[10px] uppercase font-bold tracking-widest rounded-none shadow-lg shadow-rose-200"
+                    >
+                      {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Lock className="w-4 h-4 mr-2" />}
+                      Update Security Credentials
+                    </Button>
+                    <p className="mt-4 text-[10px] text-stone-400 leading-relaxed text-center italic">
+                      Passwords must be at least 8 characters long and include a mix of letters, numbers, and symbols for maximum security.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-8 border-t border-stone-100">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-stone-900 mb-4 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" /> Two-Factor Authentication
+                  </h4>
+                  <div className="p-6 bg-stone-50 border border-stone-100 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-stone-700">Multi-Factor Authentication (MFA)</p>
+                      <p className="text-[10px] text-stone-400 mt-1">Add an extra layer of security to your admin account.</p>
+                    </div>
+                    <Button variant="outline" className="h-10 text-[9px] font-black uppercase tracking-widest border-stone-200">
+                      Configure MFA
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {activeTab === 'audit' && (
             <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
               <CardHeader className="p-8 border-b border-stone-100 bg-charcoal-dark text-white relative">

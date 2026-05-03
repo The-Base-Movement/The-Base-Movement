@@ -46,7 +46,9 @@ import AdminRegions from './pages/admin/Regions'
 import AdminBlogs from './pages/admin/Blogs'
 import AdminLeadershipHub from './pages/admin/LeadershipHub.tsx'
 import AdminDonations from './pages/admin/DonationVerification.tsx'
+import AdminAdministrators from './pages/admin/Administrators'
 
+import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
 
 export default function App() {
@@ -55,6 +57,7 @@ export default function App() {
       <ScrollToTop />
       <ReadingProgressBar />
       <Toaster />
+      <SonnerToaster position="top-right" richColors />
       <Routes>
         {/* Redirects */}
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
@@ -123,6 +126,7 @@ export default function App() {
           <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin/regions" element={<AdminRegions />} />
           <Route path="/admin/blogs" element={<AdminBlogs />} />
+          <Route path="/admin/administrators" element={<AdminAdministrators />} />
         </Route>
       </Routes>
     </StoreProvider>
