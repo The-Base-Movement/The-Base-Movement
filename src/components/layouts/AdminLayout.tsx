@@ -15,8 +15,10 @@ import {
   ShieldCheck,
   FileText,
   Zap,
-  DollarSign
+  DollarSign,
+  ShoppingBag
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
@@ -35,7 +37,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
   }, [navigate])
 
-  const navItems: ( { to: string, icon: any, label: string, permission?: { action: AdminPermission['action'], resource: AdminPermission['resource'] } } )[] = [
+  const navItems: ( { to: string, icon: LucideIcon, label: string, permission?: { action: AdminPermission['action'], resource: AdminPermission['resource'] } } )[] = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
     { to: '/admin/leadership', icon: Zap, label: 'Leadership Hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
     { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
