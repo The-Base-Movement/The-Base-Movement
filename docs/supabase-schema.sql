@@ -170,6 +170,7 @@ ALTER TABLE countries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ghana_regions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ghana_constituencies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE polls ENABLE ROW LEVEL SECURITY;
+ALTER TABLE poll_options ENABLE ROW LEVEL SECURITY;
 ALTER TABLE store_inventory ENABLE ROW LEVEL SECURITY;
 
 -- Allow Public READ access to directories
@@ -180,6 +181,7 @@ CREATE POLICY "Allow public read access to countries" ON countries FOR SELECT US
 CREATE POLICY "Allow public read access to ghana_regions" ON ghana_regions FOR SELECT USING (true);
 CREATE POLICY "Allow public read access to ghana_constituencies" ON ghana_constituencies FOR SELECT USING (true);
 CREATE POLICY "Allow public read access to polls" ON polls FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to poll_options" ON poll_options FOR SELECT USING (true);
 CREATE POLICY "Allow public read access to store_inventory" ON store_inventory FOR SELECT USING (true);
 
 -- Restrict WRITE access to authenticated users only (simplified for now)

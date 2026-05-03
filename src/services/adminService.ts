@@ -514,20 +514,71 @@ class AdminService {
       return []
     }
 
-    return data.map((p) => ({
-      id: p.id,
-      question: p.question,
-      status: p.status,
-      totalVotes: p.total_votes || 0,
-      region: p.region || 'National',
-      category: p.category || 'General',
-      endDate: p.end_date || 'N/A',
-      options: (p.poll_options || []).map((o: { id: string, label: string, votes: number }) => ({
-        id: o.id,
-        label: o.label,
-        votes: o.votes || 0
-      }))
-    }))
+    return (data || []).map((p: { 
+      id: string; 
+      question: string; 
+      status: 'Active' | 'Closed'; 
+      total_votes: number | null; 
+      region: string | null; 
+      category: string | null; 
+      end_date: string | null; 
+      poll_options: { id: string; label: string; votes: number }[] | null;
+    }) => {
+      // Ensure we have an array for options
+      const rawOptions = p.poll_options || [];
+      
+      return {
+        id: p.id,
+        question: p.question,
+        status: p.status,
+        totalVotes: p.total_votes || 0,
+        region: p.region || 'National',
+        category: p.category || 'General',
+        endDate: p.end_date || 'N/A',
+        options: rawOptions.map((o: { id: string, label: string, votes: number }) => ({
+          id: o.id,
+          label: o.label,
+          votes: o.votes || 0
+        }))
+      };
+    })
+  }
+
+  async voteInPoll(pollId: string, optionId: string): Promise<boolean> {
+    try {
+      // 1. Get current counts
+      const { data: optionData } = await supabase
+        .from('poll_options')
+        .select('votes')
+        .eq('id', optionId)
+        .single();
+      
+      const { data: pollData } = await supabase
+        .from('polls')
+        .select('total_votes')
+        .eq('id', pollId)
+        .single();
+
+      // 2. Perform updates
+      const { error: optError } = await supabase
+        .from('poll_options')
+        .update({ votes: (optionData?.votes || 0) + 1 })
+        .eq('id', optionId);
+
+      if (optError) throw optError;
+
+      const { error: pollError } = await supabase
+        .from('polls')
+        .update({ total_votes: (pollData?.total_votes || 0) + 1 })
+        .eq('id', pollId);
+
+      if (pollError) throw pollError;
+
+      return true;
+    } catch (err) {
+      console.error('[DATABASE] Vote submission failed:', err);
+      return false;
+    }
   }
 
   async getPollStats(): Promise<PollStats> {

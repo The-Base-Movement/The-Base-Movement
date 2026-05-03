@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Vote, ArrowRight, Clock, Lock } from 'lucide-react'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
 import { adminService, type Poll } from '@/services/adminService'
+import { toast } from 'sonner'
 
 // Interfaces are now imported from adminService
 
@@ -31,10 +32,12 @@ export default function Polls() {
     setShowResults(prev => ({ ...prev, [pollId]: !prev[pollId] }))
   }
 
-  const handleVote = (pollId: string, optionId: string) => {
+  const handleVote = async (pollId: string, optionId: string) => {
     setVoting(pollId)
-    // Simulate API call
-    setTimeout(() => {
+    
+    const success = await adminService.voteInPoll(pollId, optionId)
+    
+    if (success) {
       setPolls(prev => prev.map(p => {
         if (p.id === pollId) {
           return {
@@ -47,8 +50,12 @@ export default function Polls() {
         }
         return p
       }))
-      setVoting(null)
-    }, 1000)
+      toast.success('Your vote has been officially recorded. Thank you for your engagement!')
+    } else {
+      toast.error('Failed to submit vote. Please try again.')
+    }
+    
+    setVoting(null)
   }
 
   const activePolls = polls.filter(p => p.status === 'Active')
