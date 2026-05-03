@@ -1,3 +1,4 @@
+import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
 import { allChapters } from '../data/chaptersData'
 
@@ -15,8 +16,9 @@ export interface Member {
   gender?: string
   chapter?: string
   country?: string
+  profession?: string
 }
- 
+
 export interface Region {
   id: number
   name: string
@@ -36,13 +38,23 @@ export interface Chapter {
   details_url?: string
 }
 
+export interface PollOption {
+  id: string
+  label: string
+  votes: number
+}
+
 export interface Poll {
   id: string
-  title: string
+  question: string
   status: 'Active' | 'Draft' | 'Closed'
-  votes: number
+  totalVotes: number
   region: string
   endDate: string
+  category: string
+  options: PollOption[]
+  voted?: boolean
+  userSelection?: string
 }
 
 export interface InventoryItem {
@@ -105,88 +117,6 @@ export interface BlogPost {
   metaDescription?: string
 }
 
-// ── Database Schema Interfaces ──────────────────────────────────────────────
-interface DBUser {
-  registration_number: string;
-  full_name: string;
-  email: string | null;
-  phone_number: string | null;
-  region: string | null;
-  constituency: string | null;
-  status: Member['status'];
-  joined_at: string;
-  platform: string;
-  avatar_url: string | null;
-  gender: string | null;
-  chapter: string | null;
-  country: string | null;
-}
-
-interface DBChapter {
-  id: string;
-  name: string;
-  city_or_region: string;
-  country: string;
-  leader_name: string | null;
-  member_count: number;
-  status: Chapter['status'];
-  description: string | null;
-  details_url: string | null;
-}
-
-interface DBPoll {
-  id: string;
-  title: string;
-  status: Poll['status'];
-  votes: number;
-  region: string;
-  end_date: string;
-}
-
-interface DBInventory {
-  id: string;
-  name: string;
-  category: string;
-  price_ghs: number;
-  stock_quantity: number;
-  status: InventoryItem['status'];
-  image_emoji: string;
-  brand_color: string;
-}
-
-interface DBRegion {
-  id: number;
-  name: string;
-  ghana_constituencies: { name: string }[];
-}
-
-interface DBLog {
-  id: string;
-  timestamp: string;
-  admin_id: string | null;
-  action: string;
-  resource: string;
-  status: AuditLogEntry['status'];
-  metadata: Record<string, unknown>;
-}
-
-interface DBBlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  author_id: string;
-  category: string;
-  image_url: string | null;
-  read_time: string;
-  is_featured: boolean;
-  published_at: string;
-  tags: string[];
-  seo_title: string | null;
-  meta_description: string | null;
-}
-
 export interface AuditLogEntry {
   id: string
   timestamp: string
@@ -222,27 +152,9 @@ export interface AdminUser {
   permissions: AdminPermission[]
 }
 
-// ── Data API Configuration ─────────────────────────────────────────────────
-const DATA_API_URL = 'https://ep-ancient-tooth-amjyc3yp.apirest.c-5.us-east-1.aws.neon.tech/neondb/rest/v1'
-
-// ── State Store ─────────────────────────────────────────────────────────────
-const sessionAuditLogs: AuditLogEntry[] = []
-
 class AdminService {
   private static instance: AdminService
   private currentUser: AdminUser | null = null
-
-  private getAuthHeader(): Record<string, string> {
-    const sessionToken = authService.getToken()
-    
-    if (sessionToken) {
-      console.log('[SYSTEM] Sending session token (JWT Mode)')
-      return { 'Authorization': `Bearer ${sessionToken}` }
-    }
-
-    console.log('[SYSTEM] Sending no token (Anonymous Mode)')
-    return {}
-  }
 
   private constructor() {
     this.currentUser = {
@@ -269,9 +181,7 @@ class AdminService {
   }
 
   public can(action: AdminPermission['action'], resource: AdminPermission['resource']): boolean {
-    // If not authenticated via authService, deny permission
     if (!authService.isAuthenticated()) return false
-    
     if (!this.currentUser) return false
     if (this.currentUser.role === 'SUPER_ADMIN') return true
     return this.currentUser.permissions.some(p => p.action === action && p.resource === resource)
@@ -289,118 +199,184 @@ class AdminService {
     status: 'Success' | 'Failure' | 'Warning' = 'Success',
     details?: Record<string, unknown>
   ): Promise<void> {
-    const logEntry = {
-      action,
-      resource,
-      status,
-      metadata: details,
-      admin_id: this.currentUser?.id === 'USR-001' ? null : this.currentUser?.id,
-      ip_address: '127.0.0.1'
-    }
-
+    const user = authService.getUser()
     try {
-      await fetch(`${DATA_API_URL}/audit_logs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...this.getAuthHeader()
-        },
-        body: JSON.stringify(logEntry)
-      })
-    } catch (error) {
-      console.error('[AUDIT VAULT] Failed to persist log:', error)
-      sessionAuditLogs.unshift({
-        id: Math.random().toString(36).substr(2, 9),
-        timestamp: new Date().toISOString(),
-        adminId: this.currentUser?.id || 'SYS',
-        adminName: this.currentUser?.name || 'System',
+      await supabase.from('audit_logs').insert({
         action,
         resource,
         status,
-        details
+        metadata: details,
+        admin_id: user?.id,
       })
+    } catch (error) {
+      console.error('[DATABASE] Failed to persist log:', error)
     }
   }
 
-
   // --- Member Operations ---
+  
+  private getFallbackMembers(): Member[] {
+    return [
+      { id: 'TBM-GH-24001', name: 'Abena Mensah', email: 'a.mensah@example.com', phone: '+233 24 123 4567', region: 'Greater Accra', constituency: 'Madina', status: 'Active', joined: '01/10/2024', type: 'Standard', profession: 'Healthcare', country: 'Ghana' },
+      { id: 'TBM-GH-24002', name: 'Kwesi Osei', email: 'k.osei@example.com', phone: '+233 20 987 6543', region: 'Ashanti', constituency: 'Bantama', status: 'Active', joined: '15/10/2024', type: 'Standard', profession: 'Education', country: 'Ghana' },
+      { id: 'TBM-DI-24003', name: 'John Smith', email: 'jsmith@example.uk', phone: '+44 7700 900123', region: 'Unknown', constituency: 'Unknown', status: 'Active', joined: '20/10/2024', type: 'Premium', profession: 'Finance', country: 'United Kingdom' },
+      { id: 'TBM-GH-24004', name: 'Ama Adow', email: 'ama.adow@example.com', phone: '+233 55 555 5555', region: 'Greater Accra', constituency: 'Adenta', status: 'Active', joined: '05/11/2024', type: 'Standard', profession: 'Law', country: 'Ghana' },
+      { id: 'TBM-DI-24005', name: 'Sarah Wilson', email: 'swilson@example.com', phone: '+1 202 555 0123', region: 'Unknown', constituency: 'Unknown', status: 'Active', joined: '12/11/2024', type: 'Premium', profession: 'Technology', country: 'United States' }
+    ]
+  }
+
   async getMembers(): Promise<Member[]> {
-    const token = authService.getToken()
-    if (!token) {
-      console.warn('[SYSTEM] No session token found for getMembers. Returning empty results.')
-      return []
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .order('joined_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Falling back to mock members:', error)
+      return this.getFallbackMembers()
     }
+
+    return data.map((u) => ({
+      id: u.registration_number,
+      name: u.full_name,
+      email: u.email,
+      phone: u.phone_number || 'N/A',
+      region: u.region || 'Unknown',
+      constituency: u.constituency || 'Unknown',
+      status: u.status,
+      joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
+      type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
+      avatarUrl: u.avatar_url || undefined,
+      gender: u.gender || 'Unknown',
+      chapter: u.chapter || 'Central',
+      country: u.country || 'Ghana',
+      profession: u.profession || 'Patriot'
+    }))
+  }
+
+  async getMemberProfile(regNo: string): Promise<Member | null> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('registration_number', regNo)
+      .single()
+
+    if (error || !data) {
+      console.error('[DATABASE] Failed to fetch member profile:', error)
+      return null
+    }
+
+    return {
+      id: data.registration_number,
+      name: data.full_name,
+      email: data.email,
+      phone: data.phone_number || 'N/A',
+      region: data.region || 'Unknown',
+      constituency: data.constituency || 'Unknown',
+      status: data.status,
+      joined: data.joined_at ? new Date(data.joined_at).toLocaleDateString() : 'N/A',
+      type: data.platform === 'GHANA' ? 'Standard' : 'Premium',
+      avatarUrl: data.avatar_url || undefined,
+      gender: data.gender || 'Unknown',
+      chapter: data.chapter || 'Central',
+      country: data.country || 'Ghana',
+      profession: data.profession || 'Patriot'
+    }
+  }
+
+  async getGrowthStats(): Promise<{ joined_last_hour: number; joined_last_24h: number; joined_last_7d: number }> {
+    const now = new Date()
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString()
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
     try {
-      const response = await fetch(`${DATA_API_URL}/users?select=*&order=joined_at.desc`, {
-        headers: this.getAuthHeader()
-      })
-      
-      const responseBody = await response.json().catch(() => null)
+      const [hourRes, dayRes, weekRes] = await Promise.all([
+        supabase.from('users').select('*', { count: 'exact', head: true }).gte('joined_at', oneHourAgo),
+        supabase.from('users').select('*', { count: 'exact', head: true }).gte('joined_at', oneDayAgo),
+        supabase.from('users').select('*', { count: 'exact', head: true }).gte('joined_at', sevenDaysAgo)
+      ])
 
-      if (!response.ok) {
-        console.error(`[SYSTEM] getMembers failed with status ${response.status}:`, responseBody)
-        throw new Error(`getMembers failed: ${response.status}`)
+      return {
+        joined_last_hour: hourRes.count || 0,
+        joined_last_24h: dayRes.count || 0,
+        joined_last_7d: weekRes.count || 0
       }
-
-      const data = responseBody as DBUser[]
-      if (!Array.isArray(data)) throw new Error('Invalid data format from API')
-
-      return data.map((u) => ({
-        id: u.registration_number,
-        name: u.full_name,
-        email: u.email || 'N/A',
-        phone: u.phone_number || 'N/A',
-        region: u.region || 'Unknown',
-        constituency: u.constituency || 'Unknown',
-        status: u.status,
-        joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
-        type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
-        avatarUrl: u.avatar_url || undefined,
-        gender: u.gender || 'Unknown',
-        chapter: u.chapter || 'Central',
-        country: u.country || 'Ghana'
-      }))
     } catch (error) {
-      console.warn('[SYSTEM] Failed to fetch members from API:', error)
-      return []
+      console.warn('[DATABASE] Failed to fetch growth stats:', error)
+      return { joined_last_hour: 0, joined_last_24h: 0, joined_last_7d: 0 }
     }
+  }
+
+  async updateMemberProfile(regNo: string, profile: Partial<Member>): Promise<boolean> {
+    const updateData: Record<string, string | null | undefined> = {}
+    if (profile.name) updateData.full_name = profile.name
+    if (profile.email) updateData.email = profile.email
+    if (profile.phone) updateData.phone_number = profile.phone
+    if (profile.region) updateData.region = profile.region
+    if (profile.constituency) updateData.constituency = profile.constituency
+    if (profile.avatarUrl !== undefined) updateData.avatar_url = profile.avatarUrl
+    if (profile.gender) updateData.gender = profile.gender
+    if (profile.chapter) updateData.chapter = profile.chapter
+    if (profile.profession) updateData.profession = profile.profession
+
+    const { error } = await supabase
+      .from('users')
+      .update(updateData)
+      .eq('registration_number', regNo)
+
+    if (error) {
+      console.error('[DATABASE] Failed to update member profile:', error)
+      return false
+    }
+
+    if (profile.name) localStorage.setItem('userName', profile.name)
+    if (profile.avatarUrl) localStorage.setItem('userAvatar', profile.avatarUrl)
+    window.dispatchEvent(new Event('storage'))
+
+    return true
   }
 
   async verifyMember(id: string, approve: boolean, reason?: string, chapterName?: string): Promise<boolean> {
     const status = approve ? 'Approved' : 'Rejected'
     const accountStatus = approve ? 'Active' : 'Suspended'
     
-    try {
-      await fetch(`${DATA_API_URL}/users?registration_number=eq.${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...this.getAuthHeader()
-        },
-        body: JSON.stringify({ 
-          verification_status: status,
-          status: accountStatus,
-          chapter: chapterName || null
-        })
+    const { error } = await supabase
+      .from('users')
+      .update({ 
+        verification_status: status,
+        status: accountStatus,
+        chapter: chapterName || null
       })
+      .eq('registration_number', id)
 
-      await this.logAction(
-        approve ? 'VERIFY_MEMBER_APPROVE' : 'VERIFY_MEMBER_REJECT',
-        `MEMBERS/${id}`,
-        approve ? 'Success' : 'Warning',
-        { reason, chapter: chapterName }
-      )
-
-      if (approve && chapterName) {
-        await this.incrementChapterMemberCount(chapterName)
-      }
-
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Member verification failed:', error)
+    if (error) {
+      console.error('[DATABASE] Member verification failed:', error)
       return false
     }
+
+    await this.logAction(
+      approve ? 'VERIFY_MEMBER_APPROVE' : 'VERIFY_MEMBER_REJECT',
+      `MEMBERS/${id}`,
+      approve ? 'Success' : 'Warning',
+      { reason, chapter: chapterName }
+    )
+
+    if (approve && chapterName) {
+      await this.incrementChapterMemberCount(chapterName)
+    }
+
+    return true
+  }
+
+  async getCountries(): Promise<{ name: string; dialing_code: string; is_diaspora: boolean }[]> {
+    const { data, error } = await supabase
+      .from('countries')
+      .select('*')
+      .order('name', { ascending: true })
+
+    if (error || !Array.isArray(data)) return []
+    return data
   }
 
   // --- Chapter Operations ---
@@ -420,567 +396,496 @@ class AdminService {
   }
 
   async getChapters(): Promise<Chapter[]> {
-    const token = authService.getToken()
-    if (!token) {
-      console.info('[SYSTEM] No session token, returning fallback chapters.')
+    const { data, error } = await supabase
+      .from('chapters')
+      .select('*')
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('[DATABASE] Chapters Fetch Error:', error)
       return this.getFallbackChapters()
     }
 
-    try {
-      const response = await fetch(`${DATA_API_URL}/chapters?select=*&order=name.asc`, {
-        headers: this.getAuthHeader()
-      })
-      if (!response.ok) {
-        let errBody
-        try {
-          errBody = await response.json()
-        } catch {
-          errBody = await response.text()
-        }
-        console.error('[SYSTEM] Chapters API Error:', response.status, errBody)
-        // Fallback on error to ensure UI doesn't break
-        return this.getFallbackChapters()
-      }
-      const data = (await response.json()) as DBChapter[]
-      return data.map((c) => ({
-        id: c.id,
-        name: c.name,
-        city_or_region: c.city_or_region,
-        country: c.country || 'Ghana',
-        leader_name: c.leader_name || 'Unassigned',
-        member_count: c.member_count || 0,
-        status: c.status,
-        description: c.description || undefined,
-        details_url: c.details_url || undefined
-      }))
-    } catch (error) {
-      console.warn('[SYSTEM] Failed to fetch chapters from API, using fallback:', error)
-      return this.getFallbackChapters()
-    }
+    return data.map((c) => ({
+      id: c.id,
+      name: c.name,
+      city_or_region: c.city_or_region,
+      country: c.country || 'Ghana',
+      leader_name: c.leader_name || 'Unassigned',
+      member_count: c.member_count || 0,
+      status: c.status,
+      description: c.description || undefined,
+      details_url: c.details_url || undefined
+    }))
   }
 
   async createChapter(chapter: Omit<Chapter, 'id'>): Promise<boolean> {
-    try {
-      await fetch(`${DATA_API_URL}/chapters`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...this.getAuthHeader()
-        },
-        body: JSON.stringify({
-          name: chapter.name,
-          city_or_region: chapter.city_or_region,
-          country: chapter.country,
-          leader_name: chapter.leader_name,
-          member_count: chapter.member_count,
-          status: chapter.status,
-          description: chapter.description,
-          details_url: chapter.details_url
-        })
+    const { error } = await supabase
+      .from('chapters')
+      .insert({
+        name: chapter.name,
+        city_or_region: chapter.city_or_region,
+        country: chapter.country,
+        leader_name: chapter.leader_name,
+        member_count: chapter.member_count,
+        status: chapter.status,
+        description: chapter.description,
+        details_url: chapter.details_url
       })
-      await this.logAction('CHAPTER_CREATE', `CHAPTERS/${chapter.name}`, 'Success')
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Chapter creation failed:', error)
+
+    if (error) {
+      console.error('[DATABASE] Chapter creation failed:', error)
       return false
     }
+
+    await this.logAction('CHAPTER_CREATE', `CHAPTERS/${chapter.name}`, 'Success')
+    return true
   }
 
-  async updateChapter(id: string, chapter: Partial<Chapter>): Promise<boolean> {
-    try {
-      const updateData: Record<string, unknown> = {}
-      if (chapter.name) updateData.name = chapter.name
-      if (chapter.city_or_region) updateData.city_or_region = chapter.city_or_region
-      if (chapter.country) updateData.country = chapter.country
-      if (chapter.leader_name) updateData.leader_name = chapter.leader_name
-      if (chapter.status) updateData.status = chapter.status
-      if (chapter.member_count !== undefined) updateData.member_count = chapter.member_count
-      if (chapter.description) updateData.description = chapter.description
-      if (chapter.details_url) updateData.details_url = chapter.details_url
 
-      await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...this.getAuthHeader()
-        },
-        body: JSON.stringify(updateData)
-      })
-      await this.logAction('CHAPTER_UPDATE', `CHAPTERS/${id}`, 'Success', chapter)
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Chapter update failed:', error)
+  async updateChapter(id: string, chapter: Partial<Chapter>): Promise<boolean> {
+    const updateData: Record<string, string | number | null | undefined> = {}
+    if (chapter.name) updateData.name = chapter.name
+    if (chapter.city_or_region) updateData.city_or_region = chapter.city_or_region
+    if (chapter.country) updateData.country = chapter.country
+    if (chapter.leader_name) updateData.leader_name = chapter.leader_name
+    if (chapter.status) updateData.status = chapter.status
+    if (chapter.member_count !== undefined) updateData.member_count = chapter.member_count
+    if (chapter.description) updateData.description = chapter.description
+    if (chapter.details_url) updateData.details_url = chapter.details_url
+
+    const { error } = await supabase
+      .from('chapters')
+      .update(updateData)
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Chapter update failed:', error)
       return false
     }
+
+    await this.logAction('CHAPTER_UPDATE', `CHAPTERS/${id}`, 'Success', chapter)
+    return true
   }
 
   async deleteChapter(id: string, name: string): Promise<boolean> {
-    try {
-      await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
-        method: 'DELETE',
-        headers: this.getAuthHeader()
-      })
-      await this.logAction('CHAPTER_DELETE', `CHAPTERS/${name}`, 'Warning')
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Chapter deletion failed:', error)
+    const { error } = await supabase
+      .from('chapters')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Chapter deletion failed:', error)
       return false
     }
+
+    await this.logAction('CHAPTER_DELETE', `CHAPTERS/${name}`, 'Warning')
+    return true
   }
 
   async incrementChapterMemberCount(chapterName: string): Promise<void> {
-    try {
-      const getResponse = await fetch(`${DATA_API_URL}/chapters?name=eq.${chapterName}&select=id,member_count`, {
-        headers: this.getAuthHeader()
-      })
-      const chapters = await getResponse.json()
-      if (chapters.length > 0) {
-        const { id, member_count } = chapters[0]
-        await fetch(`${DATA_API_URL}/chapters?id=eq.${id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            ...this.getAuthHeader()
-          },
-          body: JSON.stringify({ member_count: (member_count || 0) + 1 })
-        })
-      }
-    } catch (error) {
-      console.error('[SYSTEM] Failed to increment chapter count:', error)
+    const { data, error } = await supabase
+      .from('chapters')
+      .select('id, member_count')
+      .eq('name', chapterName)
+      .single()
+
+    if (data && !error) {
+      await supabase
+        .from('chapters')
+        .update({ member_count: (data.member_count || 0) + 1 })
+        .eq('id', data.id)
     }
   }
 
   // --- Poll Operations ---
 
   async getPolls(): Promise<Poll[]> {
-    try {
-      const response = await fetch(`${DATA_API_URL}/polls?select=*&order=created_at.desc`, {
-        headers: this.getAuthHeader()
-      })
-      const data = (await response.json()) as DBPoll[]
-      return data.map((p) => ({
-        id: p.id,
-        title: p.title,
-        status: p.status,
-        votes: p.votes || 0,
-        region: p.region || 'National',
-        endDate: p.end_date ? new Date(p.end_date).toLocaleDateString() : 'N/A'
-      }))
-    } catch (error) {
-      console.warn('[SYSTEM] Failed to fetch polls from API:', error)
+    const { data, error } = await supabase
+      .from('polls')
+      .select(`
+        *,
+        poll_options (*)
+      `)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch polls:', error)
       return []
     }
+
+    return data.map((p) => ({
+      id: p.id,
+      question: p.question,
+      status: p.status,
+      totalVotes: p.total_votes || 0,
+      region: p.region || 'National',
+      category: p.category || 'General',
+      endDate: p.end_date || 'N/A',
+      options: (p.poll_options || []).map((o: { id: string, label: string, votes: number }) => ({
+        id: o.id,
+        label: o.label,
+        votes: o.votes || 0
+      }))
+    }))
   }
 
   async getPollStats(): Promise<PollStats> {
-    try {
-      const [pollsRes, usersRes] = await Promise.all([
-        fetch(`${DATA_API_URL}/polls?select=votes,status`, {
-          headers: this.getAuthHeader()
-        }),
-        fetch(`${DATA_API_URL}/users?select=id`, {
-          method: 'HEAD',
-          headers: this.getAuthHeader()
-        })
-      ])
+    const [pollsRes, usersRes] = await Promise.all([
+      supabase.from('polls').select('total_votes, status'),
+      supabase.from('users').select('id', { count: 'exact', head: true })
+    ])
 
-      const pollsData = (await pollsRes.json()) as { votes: number, status: string }[]
-      const totalUsers = parseInt(usersRes.headers.get('content-range')?.split('/')?.[1] || '1')
-      
-      const totalVotes = pollsData.reduce((sum, p) => sum + (p.votes || 0), 0)
-      const activeCount = pollsData.filter(p => p.status === 'Active').length
-      const feedbackRate = Math.round((totalVotes / (totalUsers || 1)) * 10) / 10
+    const pollsData = pollsRes.data || []
+    const totalUsers = usersRes.count || 1
+    
+    const totalVotes = pollsData.reduce((sum, p) => sum + (p.total_votes || 0), 0)
+    const activeCount = pollsData.filter(p => p.status === 'Active').length
+    const feedbackRate = Math.round((totalVotes / (totalUsers || 1)) * 10) / 10
 
-      return {
-        totalEngagements: totalVotes > 1000 ? `${(totalVotes / 1000).toFixed(1)}k` : totalVotes.toString(),
-        activePolls: activeCount,
-        avgResponseTime: '4.2m', // Placeholder until we have session data
-        feedbackRate: `${Math.min(feedbackRate * 10, 100)}%`
-      }
-    } catch (error) {
-      console.error('[SYSTEM] Failed to fetch poll stats:', error)
-      return {
-        totalEngagements: '0',
-        activePolls: 0,
-        avgResponseTime: '0m',
-        feedbackRate: '0%'
-      }
+    return {
+      totalEngagements: totalVotes > 1000 ? `${(totalVotes / 1000).toFixed(1)}k` : totalVotes.toString(),
+      activePolls: activeCount,
+      avgResponseTime: '4.2m',
+      feedbackRate: `${Math.min(feedbackRate * 10, 100)}%`
     }
   }
 
   // --- Store Operations ---
 
   async getInventory(): Promise<InventoryItem[]> {
-    try {
-      const response = await fetch(`${DATA_API_URL}/store_inventory?select=*&order=name.asc`, {
-        headers: this.getAuthHeader()
-      })
-      const data = (await response.json()) as DBInventory[]
-      return data.map((i) => ({
-        id: i.id,
-        name: i.name,
-        category: i.category,
-        price: `GHS ${i.price_ghs}`,
-        stock: i.stock_quantity,
-        status: i.status,
-        image: i.image_emoji,
-        color: i.brand_color
-      }))
-    } catch (error) {
-      console.warn('[SYSTEM] Failed to fetch inventory from API:', error)
+    const { data, error } = await supabase
+      .from('store_inventory')
+      .select('*')
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch inventory:', error)
       return []
     }
+
+    return data.map((i) => ({
+      id: i.id,
+      name: i.name,
+      category: i.category,
+      price: `GHS ${i.price_ghs}`,
+      stock: i.stock_quantity,
+      status: i.status,
+      image: i.image_emoji,
+      color: i.brand_color
+    }))
   }
 
-  // --- Analytics & Geospatial Intelligence ---
+  // --- Analytics ---
   async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
-    try {
-      const [usersRes, chaptersRes] = await Promise.all([
-        fetch(`${DATA_API_URL}/users?select=id&limit=1`, { 
-          headers: { ...this.getAuthHeader(), 'Prefer': 'count=exact' }, 
-          method: 'HEAD' 
-        }),
-        fetch(`${DATA_API_URL}/chapters?select=id&limit=1`, { 
-          headers: { ...this.getAuthHeader(), 'Prefer': 'count=exact' }, 
-          method: 'HEAD' 
-        })
-      ])
-      
-      const parseCount = (res: Response) => {
-        const range = res.headers.get('Content-Range')
-        if (range) {
-          const match = range.match(/\/(\d+)$/)
-          if (match) return parseInt(match[1], 10)
-        }
-        return 0
-      }
+    const [usersRes, chaptersRes] = await Promise.all([
+      supabase.from('users').select('*', { count: 'exact', head: true }),
+      supabase.from('chapters').select('*', { count: 'exact', head: true })
+    ])
+    
+    const usersCount = usersRes.count || 0
+    const chaptersCount = chaptersRes.count || 0
 
-      const usersCount = parseCount(usersRes)
-      const chaptersCount = parseCount(chaptersRes)
-
-      return [
-        { label: 'Total Membership', value: usersCount.toLocaleString(), change: '+12.4%' },
-        { label: 'Regional Chapters', value: chaptersCount.toString(), change: '+4.2%' },
-        { label: 'Member Engagement', value: '88.4%', change: '+2.1%' },
-        { label: 'Merch Orders', value: '1,245', change: '+15.8%' }
-      ]
-    } catch (error) {
-      console.error('[SYSTEM] Failed to fetch global stats:', error)
-      return []
-    }
+    return [
+      { label: 'Total Membership', value: usersCount.toLocaleString(), change: '+12.4%' },
+      { label: 'Regional Chapters', value: chaptersCount.toString(), change: '+4.2%' },
+      { label: 'Member Engagement', value: '88.4%', change: '+2.1%' },
+      { label: 'Merch Orders', value: '1,245', change: '+15.8%' }
+    ]
   }
 
 
   async getRegions(): Promise<Region[]> {
-    const token = authService.getToken()
-    if (!token) {
-      console.warn('[SYSTEM] No session token found for getRegions. Returning empty results.')
-      return []
+    const { data, error } = await supabase
+      .from('ghana_regions')
+      .select(`
+        id,
+        name,
+        ghana_constituencies (
+          name
+        )
+      `)
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('[DATABASE] Regional data fetch failed:', error)
+      return this.getRegionsFallback()
     }
 
-    try {
-      // Use explicit relationship name if standard embedding fails
-      const response = await fetch(`${DATA_API_URL}/ghana_regions?select=id,name,ghana_constituencies(name)`, {
-        headers: this.getAuthHeader()
-      })
-      
-      const responseBody = await response.json().catch(() => null)
+    return data.map((r) => ({
+      id: r.id,
+      name: r.name,
+      constituencies: (r.ghana_constituencies || []).map((c: { name: string }) => c.name)
+    }))
+  }
 
-      if (!response.ok) {
-        console.error(`[SYSTEM] getRegions failed with status ${response.status}:`, responseBody)
-        // If the join fails, try a fallback without constituencies to at least get the regions
-        if (response.status === 400) {
-          console.warn('[SYSTEM] Resource embedding failed, attempting fallback fetch...')
-          return this.getRegionsFallback()
-        }
-        throw new Error(`getRegions failed: ${response.status}`)
-      }
+  async getConstituencies(): Promise<{ data: { name: string, region_id: number }[] }> {
+    const { data, error } = await supabase
+      .from('ghana_constituencies')
+      .select('name, region_id')
+      .order('name', { ascending: true })
 
-      const data = responseBody as DBRegion[]
-      if (!Array.isArray(data)) throw new Error('Invalid data format')
-      return data.map((r) => ({
-        id: r.id,
-        name: r.name,
-        constituencies: (r.ghana_constituencies || [])
-          .map((c: { name: string }) => c?.name)
-          .filter((name: string | null | undefined): name is string => typeof name === 'string' && name.length > 0)
-      }))
-    } catch (error) {
-      console.error('[SYSTEM] Failed to fetch geographical data:', error)
-      return []
+    if (error) {
+      console.error('[DATABASE] Constituencies fetch failed:', error)
+      return { data: [] }
     }
+    return { data: data || [] }
   }
 
   private async getRegionsFallback(): Promise<Region[]> {
-    try {
-      const response = await fetch(`${DATA_API_URL}/ghana_regions?select=id,name`, {
-        headers: this.getAuthHeader()
-      })
-      const data = (await response.json()) as { id: number, name: string }[]
-      return data.map(r => ({ id: r.id, name: r.name, constituencies: [] }))
-    } catch (e) {
-      console.error('[SYSTEM] Fallback regions fetch failed:', e)
-      return []
-    }
+    const ghanaRegions = [
+      'Ahafo', 'Ashanti', 'Bono', 'Bono East', 'Central', 'Eastern', 'Greater Accra',
+      'North East', 'Northern', 'Oti', 'Savannah', 'Upper East', 'Upper West', 'Volta', 'Western', 'Western North'
+    ]
+    return ghanaRegions.map((name, index) => ({
+      id: index + 1,
+      name,
+      constituencies: []
+    }))
   }
 
   async updateRegion(id: string, name: string): Promise<boolean> {
-    try {
-      await fetch(`${DATA_API_URL}/ghana_regions?id=eq.${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...this.getAuthHeader()
-        },
-        body: JSON.stringify({ name })
-      })
-      await this.logAction('REGION_UPDATE', `REGIONS/${name}`, 'Success')
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Region update failed:', error)
+    const { error } = await supabase
+      .from('ghana_regions')
+      .update({ name })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Region update failed:', error)
       return false
     }
+    await this.logAction('REGION_UPDATE', `REGIONS/${name}`, 'Success')
+    return true
+  }
+
+  // --- Storage Operations ---
+  async uploadAvatar(fileName: string, blob: Blob): Promise<{ data: { path: string } | null, error: Error | null }> {
+    return supabase.storage
+      .from('avatars')
+      .upload(fileName, blob, { upsert: true })
+  }
+
+  getAvatarPublicUrl(fileName: string): string {
+    const { data } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(fileName)
+    return data.publicUrl
   }
 
   async deleteConstituency(id: string, regionName: string, conName: string): Promise<boolean> {
-    try {
-      await fetch(`${DATA_API_URL}/ghana_constituencies?id=eq.${id}`, {
-        method: 'DELETE',
-        headers: this.getAuthHeader()
-      })
-      await this.logAction('CONSTITUENCY_DELETE', `REGIONS/${regionName}/CONSTITUENCIES/${conName}`, 'Warning')
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Constituency deletion failed:', error)
+    const { error } = await supabase
+      .from('ghana_constituencies')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Constituency deletion failed:', error)
       return false
     }
+    await this.logAction('CONSTITUENCY_DELETE', `REGIONS/${regionName}/CONSTITUENCIES/${conName}`, 'Warning')
+    return true
   }
 
   async getRegionalStats(): Promise<RegionalStat[]> {
-    try {
-      const [regions, chapters] = await Promise.all([
-        this.getRegions(),
-        this.getChapters()
-      ])
+    const [regions, chapters] = await Promise.all([
+      this.getRegions(),
+      this.getChapters()
+    ])
 
-      return regions.map(r => {
-        const regionalChapters = chapters.filter(c => c.city_or_region === r.name)
-        const totalMembers = regionalChapters.reduce((sum, c) => sum + c.member_count, 0)
-        
-        return {
-          region: r.name,
-          memberCount: totalMembers,
-          chapters: regionalChapters.length,
-          activePolls: 0, // Will be integrated with polls service later
-          performance: totalMembers > 1000 ? 'High' : totalMembers > 500 ? 'Medium' : 'Low',
-          color: totalMembers > 1000 ? 'var(--brand-green)' : totalMembers > 500 ? 'var(--brand-gold)' : 'var(--brand-red)'
-        }
-      })
-    } catch (error) {
-      console.error('[SYSTEM] Failed to aggregate regional stats:', error)
-      return []
-    }
+    return regions.map(r => {
+      const regionalChapters = chapters.filter(c => c.city_or_region === r.name)
+      const totalMembers = regionalChapters.reduce((sum, c) => sum + c.member_count, 0)
+      
+      return {
+        region: r.name,
+        memberCount: totalMembers,
+        chapters: regionalChapters.length,
+        activePolls: 0,
+        performance: totalMembers > 1000 ? 'High' : totalMembers > 500 ? 'Medium' : 'Low',
+        color: totalMembers > 1000 ? 'var(--brand-green)' : totalMembers > 500 ? 'var(--brand-gold)' : 'var(--brand-red)'
+      }
+    })
   }
 
   async getGrowthTrends(): Promise<GrowthTrend[]> {
-    try {
-      const response = await fetch(`${DATA_API_URL}/membership_growth_view?select=*&limit=12`, {
-        headers: this.getAuthHeader()
-      })
-      const data = await response.json()
-      if (!Array.isArray(data)) throw new Error('Invalid data')
-      return data
-    } catch (error) {
-      console.warn('[SYSTEM] Growth trends fetch failed:', error)
+    // Note:membership_growth_view needs to be created in Supabase or handled as a table
+    const { data, error } = await supabase
+      .from('membership_growth_view')
+      .select('*')
+      .limit(12)
+
+    if (error) {
+      console.warn('[DATABASE] Growth trends fetch failed:', error)
       return []
     }
+    return data
   }
 
   async getSentimentAnalysis(): Promise<SentimentStat[]> {
-    try {
-      const chapters = await this.getChapters()
-      return chapters.slice(0, 4).map(c => ({
-        topic: `${c.name} Mobilization`,
-        score: Math.min(Math.round((c.member_count / 500) * 100), 100),
-        trend: c.member_count > 100 ? 'Up' : 'Stable',
-        sentiment: c.member_count > 200 ? 'Positive' : 'Neutral',
-        color: c.member_count > 200 ? 'var(--brand-green)' : 'var(--brand-gold)'
-      }))
-    } catch {
-      return []
-    }
+    const chapters = await this.getChapters()
+    return chapters.slice(0, 4).map(c => ({
+      topic: `${c.name} Mobilization`,
+      score: Math.min(Math.round((c.member_count / 500) * 100), 100),
+      trend: c.member_count > 100 ? 'Up' : 'Stable',
+      sentiment: c.member_count > 200 ? 'Positive' : 'Neutral',
+      color: c.member_count > 200 ? 'var(--brand-green)' : 'var(--brand-gold)'
+    }))
   }
 
 
   async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
-    try {
-      const response = await fetch(`${DATA_API_URL}/audit_logs?limit=50&order=timestamp.desc`, {
-        headers: this.getAuthHeader()
-      })
-      const data = await response.json()
-      if (!Array.isArray(data)) return sessionAuditLogs
-      return (data as DBLog[]).map((log) => ({
-        id: log.id,
-        timestamp: log.timestamp,
-        adminId: log.admin_id || 'SYS',
-        adminName: log.admin_id ? 'Regional Admin' : 'National HQ',
-        action: log.action,
-        resource: log.resource,
-        status: log.status,
-        details: log.metadata
-      }))
-    } catch {
-      return [...sessionAuditLogs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-    }
+    const { data, error } = await supabase
+      .from('audit_logs')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(50)
+
+    if (error || !Array.isArray(data)) return []
+    return data.map((log) => ({
+      id: log.id,
+      timestamp: log.timestamp,
+      adminId: log.admin_id || 'SYS',
+      adminName: log.admin_id ? 'Regional Admin' : 'National HQ',
+      action: log.action,
+      resource: log.resource,
+      status: log.status,
+      details: log.metadata
+    }))
   }
 
   async getAuditLogsForResource(resourceId: string): Promise<AuditLogEntry[]> {
-    try {
-      const response = await fetch(`${DATA_API_URL}/audit_logs?resource=eq.${resourceId}&order=timestamp.desc`, {
-        headers: this.getAuthHeader()
-      })
-      const data = await response.json()
-      return (data as DBLog[]).map((log) => ({
-        id: log.id,
-        timestamp: log.timestamp,
-        adminId: log.admin_id || 'SYS',
-        adminName: log.admin_id ? 'Regional Admin' : 'National HQ',
-        action: log.action,
-        resource: log.resource,
-        status: log.status,
-        details: log.metadata
-      }))
-    } catch {
-      return sessionAuditLogs.filter(log => log.resource === resourceId)
-    }
+    const { data, error } = await supabase
+      .from('audit_logs')
+      .select('*')
+      .eq('resource', resourceId)
+      .order('timestamp', { ascending: false })
+
+    if (error || !Array.isArray(data)) return []
+    return data.map((log) => ({
+      id: log.id,
+      timestamp: log.timestamp,
+      adminId: log.admin_id || 'SYS',
+      adminName: log.admin_id ? 'Regional Admin' : 'National HQ',
+      action: log.action,
+      resource: log.resource,
+      status: log.status,
+      details: log.metadata
+    }))
   }
 
   async getActivityLogs(): Promise<ActivityLog[]> {
-    try {
-      const logs = await this.getSystemAuditLogs()
-      return logs.slice(0, 10).map((log, index) => ({
-        id: index,
-        type: log.resource.toLowerCase().includes('member') ? 'registration' : 'security',
-        user: log.adminName,
-        time: new Date(log.timestamp).toLocaleTimeString(),
-        details: `${log.action} on ${log.resource}`,
-        icon: log.status === 'Success' ? '✓' : '!',
-        color: log.status === 'Success' ? 'var(--brand-green)' : 'var(--brand-gold)'
-      }))
-    } catch {
-      return []
-    }
+    const logs = await this.getSystemAuditLogs()
+    return logs.slice(0, 10).map((log, index) => ({
+      id: index,
+      type: log.resource.toLowerCase().includes('member') ? 'registration' : 'security',
+      user: log.adminName,
+      time: new Date(log.timestamp).toLocaleTimeString(),
+      details: `${log.action} on ${log.resource}`,
+      icon: log.status === 'Success' ? '✓' : '!',
+      color: log.status === 'Success' ? 'var(--brand-green)' : 'var(--brand-gold)'
+    }))
   }
 
   // --- Blog Operations ---
 
   async getBlogPosts(): Promise<BlogPost[]> {
-    try {
-      const response = await fetch(`${DATA_API_URL}/blogs?select=*&order=published_at.desc`, {
-        headers: this.getAuthHeader()
-      })
-      const data = (await response.json()) as DBBlogPost[]
-      return data.map((p) => ({
-        id: p.id,
-        title: p.title,
-        slug: p.slug,
-        excerpt: p.excerpt,
-        content: p.content,
-        authorId: p.author_id,
-        authorName: 'Admin', // Placeholder until we join with users table
-        category: p.category,
-        imageUrl: p.image_url || undefined,
-        readTime: p.read_time,
-        isFeatured: p.is_featured,
-        publishedAt: p.published_at,
-        tags: p.tags || [],
-        seoTitle: p.seo_title || undefined,
-        metaDescription: p.meta_description || undefined
-      }))
-    } catch (error) {
-      console.warn('[SYSTEM] Failed to fetch blog posts from API:', error)
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .order('published_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch blog posts:', error)
       return []
     }
+
+    return data.map((p) => ({
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      excerpt: p.excerpt,
+      content: p.content,
+      authorId: p.author_id,
+      authorName: 'Admin',
+      category: p.category,
+      imageUrl: p.avatar_url || undefined,
+      readTime: p.read_time,
+      isFeatured: p.is_featured,
+      publishedAt: p.published_at,
+      tags: p.tags || [],
+      seoTitle: p.seo_title || undefined,
+      metaDescription: p.meta_description || undefined
+    }))
   }
 
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<boolean> {
-    try {
-      await fetch(`${DATA_API_URL}/blogs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...this.getAuthHeader()
-        },
-        body: JSON.stringify({
-          title: post.title,
-          slug: post.slug,
-          excerpt: post.excerpt,
-          content: post.content,
-          author_id: post.authorId,
-          category: post.category,
-          image_url: post.imageUrl || null,
-          read_time: post.readTime,
-          is_featured: post.isFeatured,
-          published_at: post.publishedAt,
-          tags: post.tags,
-          seo_title: post.seoTitle || null,
-          meta_description: post.metaDescription || null
-        })
+    const { error } = await supabase
+      .from('blog_posts')
+      .insert({
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        content: post.content,
+        author_id: post.authorId,
+        category: post.category,
+        avatar_url: post.imageUrl || null,
+        read_time: post.readTime,
+        is_featured: post.isFeatured,
+        published_at: post.publishedAt,
+        tags: post.tags,
+        seo_title: post.seoTitle || null,
+        meta_description: post.metaDescription || null
       })
-      await this.logAction('BLOG_CREATE', `BLOGS/${post.slug}`, 'Success')
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Blog post creation failed:', error)
+
+    if (error) {
+      console.error('[DATABASE] Blog post creation failed:', error)
       return false
     }
+    await this.logAction('BLOG_CREATE', `BLOGS/${post.slug}`, 'Success')
+    return true
   }
 
   async updateBlogPost(id: string, post: Partial<BlogPost>): Promise<boolean> {
-    try {
-      const updateData: Record<string, unknown> = {}
-      if (post.title) updateData.title = post.title
-      if (post.slug) updateData.slug = post.slug
-      if (post.excerpt) updateData.excerpt = post.excerpt
-      if (post.content) updateData.content = post.content
-      if (post.category) updateData.category = post.category
-      if (post.imageUrl !== undefined) updateData.image_url = post.imageUrl
-      if (post.readTime) updateData.read_time = post.readTime
-      if (post.isFeatured !== undefined) updateData.is_featured = post.isFeatured
-      if (post.publishedAt) updateData.published_at = post.publishedAt
-      if (post.tags) updateData.tags = post.tags
-      if (post.seoTitle !== undefined) updateData.seo_title = post.seoTitle
-      if (post.metaDescription !== undefined) updateData.meta_description = post.metaDescription
+    const updateData: Record<string, string | number | boolean | string[] | null | undefined> = {}
+    if (post.title) updateData.title = post.title
+    if (post.slug) updateData.slug = post.slug
+    if (post.excerpt) updateData.excerpt = post.excerpt
+    if (post.content) updateData.content = post.content
+    if (post.category) updateData.category = post.category
+    if (post.imageUrl !== undefined) updateData.avatar_url = post.imageUrl
+    if (post.readTime) updateData.read_time = post.readTime
+    if (post.isFeatured !== undefined) updateData.is_featured = post.isFeatured
+    if (post.publishedAt) updateData.published_at = post.publishedAt
+    if (post.tags) updateData.tags = post.tags
+    if (post.seoTitle !== undefined) updateData.seo_title = post.seoTitle
+    if (post.metaDescription !== undefined) updateData.meta_description = post.metaDescription
 
-      await fetch(`${DATA_API_URL}/blogs?id=eq.${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...this.getAuthHeader()
-        },
-        body: JSON.stringify(updateData)
-      })
-      await this.logAction('BLOG_UPDATE', `BLOGS/${id}`, 'Success', post)
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Blog post update failed:', error)
+    const { error } = await supabase
+      .from('blog_posts')
+      .update(updateData)
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Blog post update failed:', error)
       return false
     }
+    await this.logAction('BLOG_UPDATE', `BLOGS/${id}`, 'Success', post)
+    return true
   }
 
   async deleteBlogPost(id: string, slug: string): Promise<boolean> {
-    try {
-      await fetch(`${DATA_API_URL}/blogs?id=eq.${id}`, {
-        method: 'DELETE',
-        headers: this.getAuthHeader()
-      })
-      await this.logAction('BLOG_DELETE', `BLOGS/${slug}`, 'Warning')
-      return true
-    } catch (error) {
-      console.error('[SYSTEM] Blog post deletion failed:', error)
+    const { error } = await supabase
+      .from('blog_posts')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Blog post deletion failed:', error)
       return false
     }
+    await this.logAction('BLOG_DELETE', `BLOGS/${slug}`, 'Warning')
+    return true
   }
 }
 
 export const adminService = AdminService.getInstance()
-
