@@ -8,8 +8,9 @@ export default function OrderSummary() {
   const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
-    <div className="w-full px-6 md:px-12 py-12 bg-off-white min-h-screen">
-      <div className="max-w-3xl mx-auto">
+    <div className="bg-off-white min-h-screen">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+        <div className="max-w-3xl mx-auto">
         <div className="bg-white border border-stone-200 rounded-sm shadow-xl overflow-hidden">
           {/* Success Header */}
           <div className="bg-brand-green p-10 text-center text-white relative overflow-hidden">
@@ -137,6 +138,7 @@ export default function OrderSummary() {
           <p className="text-xs text-stone-400 font-meta uppercase tracking-widest flex items-center justify-center flex-wrap gap-1">
             Problems with your order? <Link to="/contact" className="text-brand-green font-bold hover:underline whitespace-nowrap">Contact Support</Link>
           </p>
+        </div>
         </div>
       </div>
     </div>

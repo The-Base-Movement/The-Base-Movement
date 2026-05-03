@@ -1,51 +1,23 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ShoppingBag, ArrowLeft, Trash2, Plus, Minus, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-
-const initialCart = [
-  {
-    id: 1,
-    name: 'The Base Premium T-Shirt',
-    price: 85.00,
-    quantity: 1,
-    size: 'M',
-    color: 'Jet Black',
-    image: null
-  },
-  {
-    id: 2,
-    name: 'Ghana First Signature Cap',
-    price: 55.00,
-    quantity: 2,
-    size: 'One Size',
-    color: 'Movement Green',
-    image: null
-  }
-]
+import { useStore } from '@/hooks/useStore'
 
 export default function Cart() {
-  const [items, setItems] = useState(initialCart)
+  const { cart, removeFromCart, updateCartQuantity } = useStore()
 
-  const updateQuantity = (id: number, delta: number) => {
-    setItems(items.map(item => 
-      item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-    ))
-  }
-
-  const removeItem = (id: number) => {
-    setItems(items.filter(item => item.id !== id))
-  }
-
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  const shipping = 25.00
+  const subtotal = cart.reduce((sum, item) => {
+    const price = typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price
+    return sum + (price * item.quantity)
+  }, 0)
+  const shipping = cart.length > 0 ? 25.00 : 0
   const total = subtotal + shipping
 
   return (
-    <div className="w-full px-6 md:px-12 py-12 bg-off-white min-h-screen">
-      <Breadcrumbs />
-      <div className="max-w-6xl mx-auto">
+    <div className="bg-off-white min-h-screen">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+        <Breadcrumbs />
         <header className="mb-12">
           <h1 className="font-h1 text-2xl sm:text-h2 text-stone-900 mb-2 flex items-center gap-3">
             <ShoppingBag className="w-8 h-8 text-[var(--brand-green)] shrink-0" />
@@ -56,43 +28,49 @@ export default function Cart() {
           </p>
         </header>
 
-        {items.length > 0 ? (
+        {cart.length > 0 ? (
           <div className="grid lg:grid-cols-12 gap-12">
             {/* Cart Items List */}
             <div className="lg:col-span-8 space-y-4">
-              {items.map((item) => (
-                <div key={item.id} className="bg-white border border-stone-200 p-6 rounded-sm shadow-sm flex flex-col md:flex-row gap-6 relative group">
+              {cart.map((item) => (
+                <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="bg-white border border-stone-200 p-6 rounded-sm shadow-sm flex flex-col md:flex-row gap-6 relative group">
                   <div className="w-24 h-24 bg-stone-100 rounded-sm overflow-hidden shrink-0 flex items-center justify-center">
-                    <ShoppingBag className="w-10 h-10 text-stone-300" />
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <ShoppingBag className="w-10 h-10 text-stone-300" />
+                    )}
                   </div>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-4">
                       <Link 
-                        to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${item.id}` : `/store/product/${item.id}`}
+                        to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${item.slug}` : `/store/product/${item.slug}`}
                         className="font-bold text-stone-900 text-sm sm:text-base leading-tight hover:text-[var(--brand-green)] transition-colors"
                       >
                         {item.name}
                       </Link>
-                      <p className="font-bold text-[var(--brand-green)] text-sm sm:text-base whitespace-nowrap shrink-0">GHS {item.price.toFixed(2)}</p>
+                      <p className="font-bold text-[var(--brand-green)] text-sm sm:text-base whitespace-nowrap shrink-0">
+                        {typeof item.price === 'string' && item.price.startsWith('GHS') ? item.price : `GHS ${parseFloat(String(item.price)).toFixed(2)}`}
+                      </p>
                     </div>
                     
                     <div className="flex flex-wrap gap-4 text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-4">
-                      <span>Size: {item.size}</span>
-                      <span>Color: {item.color}</span>
+                      {item.selectedSize && <span>Size: {item.selectedSize}</span>}
+                      {item.selectedColor && <span>Color: {item.selectedColor}</span>}
                     </div>
 
                     <div className="flex items-center justify-between mt-auto">
                       <div className="flex items-center h-9 border border-stone-200 bg-white rounded-sm overflow-hidden">
                         <button 
-                          onClick={() => updateQuantity(item.id, -1)}
+                          onClick={() => updateCartQuantity(item.id, Math.max(1, item.quantity - 1))}
                           className="w-9 h-full flex items-center justify-center hover:bg-stone-50"
                         >
                           <Minus className="w-3 h-3 text-stone-500" />
                         </button>
                         <span className="w-10 text-center text-xs font-bold text-stone-900">{item.quantity}</span>
                         <button 
-                          onClick={() => updateQuantity(item.id, 1)}
+                          onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
                           className="w-9 h-full flex items-center justify-center hover:bg-stone-50"
                         >
                           <Plus className="w-3 h-3 text-stone-500" />
@@ -100,7 +78,7 @@ export default function Cart() {
                       </div>
 
                       <button 
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeFromCart(item.id)}
                         className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold uppercase tracking-widest"
                       >
                         <Trash2 className="w-4 h-4" />

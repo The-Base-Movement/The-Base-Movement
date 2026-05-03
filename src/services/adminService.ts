@@ -589,40 +589,6 @@ class AdminService {
     })
   }
 
-  async getStoreProducts(): Promise<Product[]> {
-    const { data, error } = await supabase
-      .from('store_inventory')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.warn('[DATABASE] Failed to fetch products:', error);
-      return [];
-    }
-
-    return (data || []).map((p: {
-      id: string;
-      name: string;
-      slug: string;
-      price_ghs: number;
-      category: string | null;
-      status: string | null;
-      image_url: string | null;
-      description: string | null;
-      rating: number | null;
-    }) => ({
-      id: p.id,
-      name: p.name,
-      slug: p.slug,
-      price: `GHS ${Number(p.price_ghs).toFixed(2)}`,
-      description: p.description || '',
-      status: p.status || 'Available',
-      category: p.category || 'General',
-      rating: Number(p.rating) || 5.0,
-      image: p.image_url || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=800'
-    }));
-  }
-
   async getDonationCampaigns(status: 'Active' | 'Closed' = 'Active'): Promise<DonationCampaign[]> {
     const { data, error } = await supabase
       .from('donation_campaigns')
@@ -801,6 +767,64 @@ class AdminService {
       image: i.image_emoji,
       color: i.brand_color
     }))
+  }
+
+  async getStoreProducts(): Promise<Product[]> {
+    const { data, error } = await supabase
+      .from('store_inventory')
+      .select('*')
+      .eq('status', 'Available')
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch store products:', error)
+      return []
+    }
+
+    return (data || []).map((i) => ({
+      id: i.id,
+      name: i.name,
+      slug: i.slug || i.name.toLowerCase().replace(/\s+/g, '-'),
+      price: `GHS ${i.price_ghs}`,
+      description: i.description || 'Official movement gear. Designed for patriots.',
+      status: i.status,
+      category: i.category,
+      rating: i.rating || 4.8,
+      reviews: i.reviews || 0,
+      image: i.image_url,
+      longDescription: i.description,
+      sizes: i.sizes || ['S', 'M', 'L', 'XL'],
+      colors: i.colors || ['Black', 'Green']
+    }))
+  }
+
+  async getProductBySlug(slug: string): Promise<Product | null> {
+    const { data, error } = await supabase
+      .from('store_inventory')
+      .select('*')
+      .eq('slug', slug)
+      .single()
+
+    if (error || !data) {
+      console.warn('[DATABASE] Product not found by slug:', slug)
+      return null
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      slug: data.slug,
+      price: `GHS ${data.price_ghs}`,
+      description: data.description || 'Official movement gear. Designed for patriots.',
+      status: data.status,
+      category: data.category,
+      rating: data.rating || 4.8,
+      reviews: data.reviews || 0,
+      image: data.image_url,
+      longDescription: data.description,
+      sizes: data.sizes || ['S', 'M', 'L', 'XL'],
+      colors: data.colors || ['Black', 'Green']
+    }
   }
 
   async addInventoryItem(item: Omit<InventoryItem, 'id'>): Promise<boolean> {

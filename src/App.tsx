@@ -74,7 +74,7 @@ export default function App() {
           <Route path="/donate" element={<Donate />} />
           <Route path="/login" element={<Login />} />
           <Route path="/store" element={<Store />} />
-          <Route path="/store/product/:id" element={<ProductDetails />} />
+          <Route path="/store/product/:slug" element={<ProductDetails />} />
           <Route path="/store/cart" element={<Cart />} />
           <Route path="/store/wishlist" element={<Wishlist />} />
           <Route path="/store/checkout" element={<Checkout />} />
@@ -95,7 +95,7 @@ export default function App() {
           <Route path="/dashboard/impact" element={<Impact />} />
           <Route path="/dashboard/polls" element={<Polls />} />
           <Route path="/dashboard/store" element={<Store />} />
-          <Route path="/dashboard/store/product/:id" element={<ProductDetails />} />
+          <Route path="/dashboard/store/product/:slug" element={<ProductDetails />} />
           <Route path="/dashboard/store/cart" element={<Cart />} />
           <Route path="/dashboard/store/wishlist" element={<Wishlist />} />
           <Route path="/dashboard/store/checkout" element={<Checkout />} />

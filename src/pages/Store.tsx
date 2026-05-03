@@ -34,23 +34,36 @@ export default function Store() {
   const [itemsPerPage, setItemsPerPage] = useState(12)
 
   useEffect(() => {
+    let isMounted = true
     async function fetchProducts() {
       setLoading(true)
-      const data = await adminService.getStoreProducts()
-      setProducts(data)
-      setLoading(false)
+      try {
+        const data = await adminService.getStoreProducts()
+        if (isMounted) {
+          setProducts(data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch products:', err)
+      } finally {
+        if (isMounted) setLoading(false)
+      }
     }
     fetchProducts()
 
     const updateItemsPerPage = () => {
       const width = window.innerWidth
-      if (width < 640) setItemsPerPage(6) // Mobile
-      else if (width < 1024) setItemsPerPage(8) // Tablet
-      else setItemsPerPage(12) // Desktop
+      let perPage = 12
+      if (width < 640) perPage = 6
+      else if (width < 1024) perPage = 8
+      
+      if (isMounted) setItemsPerPage(perPage)
     }
     updateItemsPerPage()
     window.addEventListener('resize', updateItemsPerPage)
-    return () => window.removeEventListener('resize', updateItemsPerPage)
+    return () => {
+      isMounted = false
+      window.removeEventListener('resize', updateItemsPerPage)
+    }
   }, [])
 
   const filteredProducts = products.filter(p => {
@@ -68,7 +81,8 @@ export default function Store() {
 
 
   return (
-    <div className="w-full px-6 md:px-12 py-12 bg-off-white min-h-screen">
+    <div className="bg-off-white min-h-screen">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
       <Breadcrumbs />
       {/* Store Header */}
       <header className="mb-12">
@@ -265,6 +279,7 @@ export default function Store() {
         title={shareData.title}
         url={shareData.url}
       />
+      </div>
     </div>
   )
 }

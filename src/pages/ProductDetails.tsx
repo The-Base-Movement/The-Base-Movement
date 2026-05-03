@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ShoppingBag, ArrowLeft, Star, Plus, Minus, ShieldCheck, Truck, RefreshCw, Heart, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -6,108 +6,98 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'The Base Premium T-Shirt',
-    slug: 'premium-t-shirt',
-    price: 'GHS 85.00',
-    description: '100% heavy cotton with high-density movement branding. Designed for durability and comfort during movement activities.',
-    longDescription: 'Our signature movement t-shirt is engineered for the modern citizen. Made from 240gsm premium cotton, it features reinforced stitching and a specialized high-density print of "The Base" logo that won\'t fade or crack. Each shirt is pre-shrunk to ensure a perfect fit that lasts.',
-    status: 'Available',
-    category: 'Apparel',
-    rating: 4.9,
-    reviews: 128,
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: ['Jet Black', 'Movement Green', 'Stone White']
-  },
-  {
-    id: 2,
-    name: 'Ghana First Signature Cap',
-    slug: 'signature-cap',
-    price: 'GHS 55.00',
-    description: 'Structured 6-panel cap with premium 3D embroidery.',
-    longDescription: 'Crafted from premium brushed cotton twill, this signature cap features high-definition 3D embroidery of the "Ghana First" slogan. With a structured 6-panel design and an adjustable brass buckle, it offers both a superior fit and a bold statement of patriotism.',
-    status: 'Available',
-    category: 'Accessories',
-    rating: 4.8,
-    reviews: 84,
-    sizes: ['One Size'],
-    colors: ['Black', 'Forest Green', 'Sand']
-  },
-  {
-    id: 3,
-    name: 'Patriotic Movement Wristband',
-    slug: 'movement-wristband',
-    price: 'GHS 15.00',
-    description: 'Eco-friendly silicone with debossed movement slogan.',
-    longDescription: 'Wear your support with pride. These durable, eco-friendly silicone wristbands feature debossed movement slogans that won\'t wear off. Available in the official movement colors, they are designed to be worn every day as a symbol of our collective commitment to a better Ghana.',
-    status: 'Available',
-    category: 'Accessories',
-    rating: 4.7,
-    reviews: 312,
-    sizes: ['M', 'L'],
-    colors: ['Green', 'Gold', 'Red']
-  },
-  {
-    id: 4,
-    name: 'Executive Movement Notebook',
-    slug: 'movement-notebook',
-    price: 'GHS 35.00',
-    description: 'Hardcover A5 with gold foil branding and 120gsm paper.',
-    longDescription: 'The essential tool for every organizer. This A5 hardcover notebook features elegant gold foil branding and 160 pages of premium 120gsm ivory paper, perfect for fountain pens. Includes a ribbon marker, elastic closure, and an expandable inner pocket for secure storage of movement flyers.',
-    status: 'Available',
-    category: 'Stationery',
-    rating: 4.9,
-    reviews: 56,
-    sizes: ['A5'],
-    colors: ['Navy Blue', 'Forest Green', 'Executive Black']
-  },
-  {
-    id: 5,
-    name: 'Movement Growth Hoodie',
-    slug: 'growth-hoodie',
-    price: 'GHS 180.00',
-    description: 'Oversized fit with screen-printed back graphics.',
-    longDescription: 'A blend of style and mission. Our Growth Hoodie is made from heavy-weight 400gsm fleece with a comfortable oversized fit. The back features a high-impact screen-printed graphic symbolizing the growth of the movement across all 16 regions of Ghana.',
-    status: 'Coming Soon',
-    category: 'Apparel',
-    rating: 5.0,
-    reviews: 0,
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: ['Slate Gray', 'Forest Green']
-  },
-  {
-    id: 6,
-    name: 'Founding Member Pin',
-    slug: 'member-pin',
-    price: 'GHS 25.00',
-    description: 'Enamel pin with polished gold finish and secure clasp.',
-    longDescription: 'The ultimate symbol of early commitment. This Founding Member Pin is struck from high-quality copper with a hard enamel finish and polished gold plating. It features a secure butterfly clasp on the reverse and comes in a presentation box, marking you as a pioneer of the movement.',
-    status: 'Available',
-    category: 'Limited Edition',
-    rating: 4.9,
-    reviews: 215,
-    sizes: ['One Size'],
-    colors: ['Gold']
-  }
-]
+import { adminService } from '@/services/adminService'
+import { toast } from 'sonner'
 
 export default function ProductDetails() {
-  const { id } = useParams() // This is now the slug
-  const { isInWishlist, addToWishlist, removeFromWishlist } = useStore()
+  const { slug } = useParams()
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
-  const [selectedSize, setSelectedSize] = useState('M')
-  const [selectedColor, setSelectedColor] = useState('Jet Black')
+  const [selectedSize, setSelectedSize] = useState('')
+  const [selectedColor, setSelectedColor] = useState('')
   const [showSizeGuide, setShowSizeGuide] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const { isInWishlist, addToWishlist, removeFromWishlist, addToCart } = useStore()
 
-  const product = products.find(p => p.slug === id) || products[0]
+  useEffect(() => {
+    let isMounted = true
+    const fetchProduct = async () => {
+      if (!slug) {
+        setLoading(false)
+        return
+      }
+      setLoading(true)
+      try {
+        const data = await adminService.getProductBySlug(slug)
+        if (isMounted) {
+          setProduct(data)
+          if (data) {
+            if (data.sizes && data.sizes.length > 0) setSelectedSize(data.sizes[0])
+            if (data.colors && data.colors.length > 0) setSelectedColor(data.colors[0])
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch product:', err)
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+    fetchProduct()
+    return () => { isMounted = false }
+  }, [slug])
+
+  const handleAddToCart = () => {
+    if (!product) return
+    
+    addToCart({
+      ...product,
+      quantity,
+      selectedSize,
+      selectedColor,
+      image: product.image || undefined
+    })
+    
+    toast.success(`${product.name} added to your bag`)
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-off-white min-h-screen">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
+          <div className="animate-pulse space-y-8">
+            <div className="h-4 w-32 bg-stone-200" />
+            <div className="grid md:grid-cols-2 gap-12">
+              <div className="aspect-square bg-stone-200 rounded-sm" />
+              <div className="space-y-6">
+                <div className="h-8 w-64 bg-stone-200" />
+                <div className="h-4 w-48 bg-stone-200" />
+                <div className="h-24 w-full bg-stone-200" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="bg-off-white min-h-screen">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 text-center">
+          <h2 className="text-2xl font-bold text-stone-900 mb-4">Product Not Found</h2>
+          <Link to="/store" className="text-brand-green font-bold hover:underline">Back to Store</Link>
+        </div>
+      </div>
+    )
+  }
+
+  const isComingSoon = product.status === 'Coming Soon'
   const isWishlisted = product ? isInWishlist(product.id) : false
 
   return (
-    <div className="w-full px-6 md:px-12 py-12 bg-off-white min-h-screen">
+    <div className="bg-off-white min-h-screen">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
       <Breadcrumbs />
       <Link 
         to={window.location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'}
@@ -122,7 +112,11 @@ export default function ProductDetails() {
         <div className="space-y-4">
           <div className="aspect-square bg-stone-100 rounded-sm overflow-hidden border border-stone-200">
             <div className="w-full h-full flex items-center justify-center">
-              <ShoppingBag className="w-32 h-32 text-stone-300" />
+              {product.image ? (
+                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              ) : (
+                <ShoppingBag className="w-32 h-32 text-stone-300" />
+              )}
             </div>
           </div>
           <div className="grid grid-cols-4 gap-4">
@@ -142,66 +136,70 @@ export default function ProductDetails() {
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map(i => (
-                  <Star key={i} className={`w-4 h-4 ${i <= 4 ? 'fill-warm-gold text-warm-gold' : 'text-stone-300'}`} />
+                  <Star key={i} className={`w-4 h-4 ${i <= (product.rating || 4.8) ? 'fill-warm-gold text-warm-gold' : 'text-stone-300'}`} />
                 ))}
-                <span className="ml-2 text-sm font-bold text-stone-900">{product.rating}</span>
+                <span className="ml-2 text-sm font-bold text-stone-900">{product.rating || '4.8'}</span>
               </div>
               <span className="text-stone-300">|</span>
-              <span className="text-sm text-stone-500">{product.reviews} Verified Reviews</span>
+              <span className="text-sm text-stone-500">{product.reviews || 0} Verified Reviews</span>
             </div>
             <p className="text-2xl font-bold text-brand-green">{product.price}</p>
           </div>
 
           <p className="text-stone-600 font-body-md leading-relaxed mb-10">
-            {product.longDescription}
+            {product.longDescription || product.description}
           </p>
 
           <div className="space-y-8 mb-10">
             {/* Color Selection */}
-            <div>
-              <p className="text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-4">Color: {selectedColor}</p>
-              <div className="flex gap-3">
-                {product.colors?.map(color => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`w-8 h-8 rounded-full border-2 transition-all ${
-                      selectedColor === color ? 'border-brand-green scale-110 shadow-md' : 'border-transparent shadow-sm'
-                    }`}
-                    style={{ backgroundColor: color === 'Jet Black' ? '#1a1a1a' : color === 'Movement Green' ? '#006B3C' : '#f5f5f4' }}
-                    title={color}
-                  />
-                ))}
+            {product.colors && product.colors.length > 0 && (
+              <div>
+                <p className="text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-4">Color: {selectedColor}</p>
+                <div className="flex gap-3">
+                  {product.colors.map(color => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`w-8 h-8 rounded-full border-2 transition-all ${
+                        selectedColor === color ? 'border-brand-green scale-110 shadow-md' : 'border-transparent shadow-sm'
+                      }`}
+                      style={{ backgroundColor: color.toLowerCase() === 'black' || color.toLowerCase() === 'jet black' ? '#1a1a1a' : color.toLowerCase() === 'green' || color.toLowerCase() === 'movement green' ? '#006B3C' : '#f5f5f4' }}
+                      title={color}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Size Selection */}
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <p className="text-[10px] font-bold text-stone-900 uppercase tracking-widest">Select Size</p>
-                <button 
-                  onClick={() => setShowSizeGuide(true)}
-                  className="text-[10px] font-bold text-brand-green uppercase tracking-widest hover:underline"
-                >
-                  Size Guide
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {product.sizes?.map(size => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`min-w-[48px] h-12 flex items-center justify-center border text-xs font-bold transition-all rounded-sm ${
-                      selectedSize === size
-                        ? 'bg-brand-green border-brand-green text-white shadow-md'
-                        : 'bg-white border-stone-200 text-stone-600 hover:border-brand-green'
-                    }`}
+            {product.sizes && product.sizes.length > 0 && (
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <p className="text-[10px] font-bold text-stone-900 uppercase tracking-widest">Select Size</p>
+                  <button 
+                    onClick={() => setShowSizeGuide(true)}
+                    className="text-[10px] font-bold text-brand-green uppercase tracking-widest hover:underline"
                   >
-                    {size}
+                    Size Guide
                   </button>
-                ))}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map(size => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`min-w-[48px] h-12 flex items-center justify-center border text-xs font-bold transition-all rounded-sm ${
+                        selectedSize === size
+                          ? 'bg-brand-green border-brand-green text-white shadow-md'
+                          : 'bg-white border-stone-200 text-stone-600 hover:border-brand-green'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity */}
             <div>
@@ -225,10 +223,21 @@ export default function ProductDetails() {
           </div>
 
           <div className="flex gap-4 mb-12">
-            <Button asChild className="flex-1 h-14 bg-brand-green hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20">
-              <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}>
-                Add to Shopping Bag
-              </Link>
+            <Button 
+              onClick={handleAddToCart}
+              disabled={isComingSoon}
+              className={`flex-1 h-14 text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg ${
+                isComingSoon 
+                  ? 'bg-stone-200 text-stone-400 cursor-not-allowed' 
+                  : 'bg-[var(--brand-green)] hover:opacity-90 text-white shadow-brand-green/20'
+              }`}
+            >
+              {isComingSoon ? 'Coming Soon' : (
+                <div className="flex items-center justify-center gap-2">
+                  <ShoppingBag className="w-4 h-4" />
+                  Add to Bag
+                </div>
+              )}
             </Button>
             <button 
               onClick={() => {
@@ -277,12 +286,12 @@ export default function ProductDetails() {
       <section className="mt-24">
         <h2 className="font-h2 text-h3 text-stone-900 mb-12">You Might Also Like</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Mock recommended products would go here */}
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="aspect-[4/5] bg-stone-100 rounded-sm animate-pulse" />
           ))}
         </div>
       </section>
+
       {/* Size Guide Modal */}
       {showSizeGuide && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
@@ -346,6 +355,7 @@ export default function ProductDetails() {
           </div>
         </div>
       )}
+
       {/* Share Modal */}
       <ShareModal 
         isOpen={isShareModalOpen} 
@@ -353,6 +363,7 @@ export default function ProductDetails() {
         title={`Check out the ${product.name} at The Base Movement Store!`}
         url={window.location.href}
       />
+      </div>
     </div>
   )
 }
