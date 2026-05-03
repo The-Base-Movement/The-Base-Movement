@@ -36,6 +36,7 @@ import { Loader2 } from 'lucide-react'
 
 // Mock Data for Products
 export default function AdminStore() {
+  const [products, setProducts] = useState<InventoryItem[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -47,7 +48,15 @@ export default function AdminStore() {
   }
 
   useEffect(() => {
-    fetchInventory()
+    let isMounted = true
+    const init = async () => {
+      const data = await adminService.getInventory()
+      if (isMounted) {
+        setProducts(data)
+      }
+    }
+    init()
+    return () => { isMounted = false }
   }, [])
 
   const handleOpenModal = (product?: InventoryItem) => {
