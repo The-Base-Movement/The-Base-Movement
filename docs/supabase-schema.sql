@@ -52,12 +52,15 @@ CREATE TABLE comments (
 CREATE TABLE store_inventory (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
     category VARCHAR(100),
     price_ghs DECIMAL NOT NULL,
     stock_quantity INTEGER DEFAULT 0,
-    status VARCHAR(50),
-    image_emoji TEXT,
-    brand_color VARCHAR(7)
+    status VARCHAR(50) DEFAULT 'Available',
+    image_url TEXT,
+    description TEXT,
+    rating DECIMAL DEFAULT 5.0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
 -- Reviews Table
@@ -100,6 +103,35 @@ CREATE TABLE poll_options (
     poll_id UUID REFERENCES polls(id) ON DELETE CASCADE,
     label VARCHAR(255) NOT NULL,
     votes INTEGER DEFAULT 0
+);
+
+-- Donation Campaigns
+CREATE TABLE donation_campaigns (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    target_amount DECIMAL NOT NULL,
+    raised_amount DECIMAL DEFAULT 0,
+    end_date TIMESTAMP WITH TIME ZONE,
+    status VARCHAR(50) DEFAULT 'Active',
+    image_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+-- Donations Records
+CREATE TABLE donations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_id UUID REFERENCES users(id),
+    campaign_id UUID REFERENCES donation_campaigns(id),
+    full_name VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    amount DECIMAL NOT NULL,
+    country VARCHAR(100),
+    payment_method VARCHAR(100),
+    receipt_url TEXT,
+    status VARCHAR(50) DEFAULT 'Pending', -- Pending, Verified, Rejected
+    show_on_dashboard BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
 -- Audit Logs

@@ -2,18 +2,19 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Phone, Globe, Check, ArrowDownToLine, Activity, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { adminService, type DonationRecord, type DonationCampaign } from '@/services/adminService'
+import { toast } from 'sonner'
 
-// Mock contribution data for the logged-in user
-const MOCK_CONTRIBUTIONS = [
-  { date: 'Apr 28, 2026', amount: 'GHS 500.00', method: 'MTN MoMo', status: 'Verified', id: '#TB-8492' },
-  { date: 'Mar 15, 2026', amount: 'GHS 250.00', method: 'MTN MoMo', status: 'Verified', id: '#TB-7210' },
-  { date: 'Feb 10, 2026', amount: 'GHS 500.00', method: 'TapTap Send', status: 'Verified', id: '#TB-6105' }
-]
+// Mock data removed in favor of live Supabase fetching
 
 export default function Donate() {
   const [submitted, setSubmitted] = useState(false)
   const [activeStep, setActiveStep] = useState(1)
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
+  const [contributions, setContributions] = useState<DonationRecord[]>([])
+  const [campaigns, setCampaigns] = useState<DonationCampaign[]>([])
+  const [pastCampaigns, setPastCampaigns] = useState<DonationCampaign[]>([])
+  const [loading, setLoading] = useState(true)
 
   // Auth & Pre-fill states (Initialized directly to avoid cascading renders)
   const [isLoggedIn] = useState(() => !!localStorage.getItem('userName'))
@@ -28,9 +29,51 @@ export default function Donate() {
       amount: '',
       country: 'GH',
       membershipNumber: storedMemberId,
-      showOnDashboard: !!storedName
+      showOnDashboard: !!storedName,
+      campaignId: ''
     }
   })
+
+  useEffect(() => {
+    async function fetchCampaigns() {
+      const [activeData, pastData] = await Promise.all([
+        adminService.getDonationCampaigns('Active'),
+        adminService.getDonationCampaigns('Closed')
+      ])
+      setCampaigns(activeData)
+      setPastCampaigns(pastData)
+      
+      // Auto-select first active campaign if none selected
+      if (activeData.length > 0) {
+        setFormData(prev => {
+          if (!prev.campaignId) {
+            return { ...prev, campaignId: activeData[0].id }
+          }
+          return prev
+        })
+      }
+    }
+    fetchCampaigns()
+  }, [])
+
+  useEffect(() => {
+    async function fetchHistory() {
+      if (!formData.phone) {
+        setContributions([])
+        setLoading(false)
+        return
+      }
+      
+      setLoading(true)
+      const historyData = await adminService.getMemberDonations(formData.phone)
+      setContributions(historyData)
+      setLoading(false)
+    }
+    
+    // Debounce history fetching to avoid excessive calls while typing
+    const timer = setTimeout(fetchHistory, 500)
+    return () => clearTimeout(timer)
+  }, [formData.phone])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,9 +105,21 @@ export default function Donate() {
     return () => window.removeEventListener('scroll', checkScroll)
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
+    
+    const success = await adminService.submitDonation({
+      ...formData,
+      paymentMethod: 'MTN MoMo', // Default for now
+      memberId: localStorage.getItem('userId') // If available
+    })
+
+    if (success) {
+      setSubmitted(true)
+      toast.success('Donation submitted for verification!')
+    } else {
+      toast.error('Failed to submit donation. Please check your details.')
+    }
   }
 
   return (
@@ -141,6 +196,62 @@ export default function Donate() {
           </div>
         ) : (
           <div className="relative">
+            {/* Active Campaigns Section */}
+            <section className="mt-12">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-bold text-charcoal-dark tracking-tight font-meta">Active Campaigns</h2>
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-1">Direct your support to specific movement priorities</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-64 bg-slate-100 animate-pulse rounded-none border border-slate-200" />
+                  ))
+                ) : campaigns.map(c => (
+                  <div key={c.id} className="bg-white border border-slate-200 p-6 flex flex-col group hover:shadow-lg transition-all duration-300">
+                    <div className="aspect-video bg-slate-100 mb-4 overflow-hidden relative">
+                      {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />}
+                      <div className="absolute top-3 right-3">
+                        <span className="bg-[var(--brand-green)] text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-lg">Active</span>
+                      </div>
+                    </div>
+                    <h3 className="font-bold text-charcoal-dark font-meta text-lg mb-2 group-hover:text-[var(--brand-green)] transition-colors">{c.title}</h3>
+                    <p className="text-xs text-slate-500 mb-6 line-clamp-2 leading-relaxed">{c.description}</p>
+                    
+                    <div className="mt-auto">
+                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                        <span>Progress</span>
+                        <span className="text-[var(--brand-green)]">{Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 mb-4">
+                        <div 
+                          className="h-full bg-[var(--brand-green)] transition-all duration-1000" 
+                          style={{ width: `${Math.min(100, (c.raisedAmount / c.targetAmount) * 100)}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Raised</p>
+                          <p className="text-sm font-bold text-charcoal-dark font-meta tracking-tight">GHS {c.raisedAmount.toLocaleString()}</p>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, campaignId: c.id }))
+                            document.getElementById('donor-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                          }}
+                          className="text-[10px] font-bold text-[var(--brand-green)] uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all"
+                        >
+                          Support <ArrowDownToLine className="w-3 h-3 rotate-[-90deg]" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch pt-12">
               
               <div id="payment-section" className="bg-charcoal-dark text-white p-8 md:p-10 shadow-xl relative overflow-hidden flex flex-col scroll-mt-[180px]">
@@ -251,6 +362,25 @@ export default function Donate() {
                     </div>
                   </div>
 
+                  <div className="space-y-2">
+                    <label htmlFor="campaign" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
+                      Select Campaign <span className="text-[var(--brand-red)]">*</span>
+                    </label>
+                    <select 
+                      id="campaign" 
+                      required 
+                      value={formData.campaignId}
+                      onChange={(e) => setFormData({ ...formData, campaignId: e.target.value })}
+                      onFocus={() => setActiveStep(2)} 
+                      className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none bg-slate-50/50"
+                      style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7rem top 50%', backgroundSize: '.65rem auto' }}
+                    >
+                      {campaigns.map(c => (
+                        <option key={c.id} value={c.id}>{c.title}</option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div className="bg-slate-50 border border-slate-200 p-6 rounded-none space-y-4">
                     <p className="text-[10px] font-bold font-meta uppercase tracking-widest text-slate-500">Member Tracking</p>
                     <input id="membership" placeholder="ID Number (Optional)" className="w-full bg-white border border-slate-200 p-4 text-sm font-meta placeholder-slate-300 focus:outline-none focus:border-[var(--brand-green)] transition-all" />
@@ -358,6 +488,45 @@ export default function Donate() {
 
             </div>
 
+            {/* Movement Victories Section */}
+            {pastCampaigns.length > 0 && (
+              <section className="mt-24">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold text-charcoal-dark tracking-tight font-meta flex items-center gap-3">
+                      <Check className="w-6 h-6 text-[var(--brand-green)]" />
+                      Movement Victories
+                    </h2>
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-1">Proof of what we can achieve when patriots unite</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 opacity-75">
+                  {pastCampaigns.map(c => (
+                    <div key={c.id} className="bg-white border border-slate-200 p-5 flex flex-col relative grayscale hover:grayscale-0 transition-all duration-500">
+                      <div className="absolute top-4 right-4 z-10">
+                        <span className="bg-black text-white text-[8px] font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-xl flex items-center gap-1">
+                          <Check className="w-2 h-2" /> 100% Funded
+                        </span>
+                      </div>
+                      <div className="aspect-square bg-slate-50 mb-4 overflow-hidden opacity-50">
+                        {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover" />}
+                      </div>
+                      <h4 className="font-bold text-charcoal-dark font-meta text-sm mb-1">{c.title}</h4>
+                      <p className="text-[11px] text-slate-500 mb-4 line-clamp-2">{c.description}</p>
+                      <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between items-center">
+                        <div>
+                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Total Impact</p>
+                          <p className="text-xs font-bold text-[var(--brand-green)]">GHS {c.raisedAmount.toLocaleString()}</p>
+                        </div>
+                        <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest italic">Campaign Completed</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Contribution History Section */}
             <section className="mt-20">
               <div className="flex items-center justify-between mb-8">
@@ -394,15 +563,19 @@ export default function Donate() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                      {[
-                        { date: 'Apr 28, 2026', amount: 'GHS 500.00', method: 'MTN MoMo', status: 'Verified', id: '#TB-8492' },
-                        { date: 'Mar 15, 2026', amount: 'GHS 250.00', method: 'MTN MoMo', status: 'Verified', id: '#TB-7210' },
-                        { date: 'Feb 10, 2026', amount: 'GHS 500.00', method: 'TapTap Send', status: 'Verified', id: '#TB-6105' }
-                      ].map((item, idx) => (
+                      {loading ? (
+                        <tr>
+                          <td colSpan={5} className="p-10 text-center text-slate-400 italic font-meta text-xs uppercase tracking-widest">
+                            Fetching contribution history...
+                          </td>
+                        </tr>
+                      ) : contributions.length > 0 ? (
+                        contributions.map((item, idx) => (
                         <tr key={idx} className="hover:bg-slate-50/50 transition-colors group">
                           <td className="p-5">
                             <p className="text-sm font-semibold text-charcoal-dark">{item.date}</p>
-                            <p className="text-xs text-slate-400 font-meta font-semibold uppercase tracking-widest">{item.id}</p>
+                            <p className="text-[9px] text-[var(--brand-green)] font-bold uppercase tracking-wider mt-0.5">{item.campaignTitle || 'General Fund'}</p>
+                            <p className="text-[10px] text-slate-400 font-meta font-semibold uppercase tracking-widest">{item.id}</p>
                           </td>
                           <td className="p-5">
                             <p className="text-sm font-bold text-charcoal-dark">{item.amount}</p>
@@ -425,18 +598,22 @@ export default function Donate() {
                             </button>
                           </td>
                         </tr>
-                      ))}
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="p-12 text-center">
+                            <Activity className="w-8 h-8 text-slate-200 mx-auto mb-3" />
+                            <p className="text-slate-400 font-meta text-xs uppercase tracking-widest">No contributions recorded yet.</p>
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
 
                 {/* Mobile Card View */}
                 <div className="sm:hidden divide-y divide-slate-100">
-                  {[
-                    { date: 'Apr 28, 2026', amount: 'GHS 500.00', method: 'MTN MoMo', status: 'Verified', id: '#TB-8492' },
-                    { date: 'Mar 15, 2026', amount: 'GHS 250.00', method: 'MTN MoMo', status: 'Verified', id: '#TB-7210' },
-                    { date: 'Feb 10, 2026', amount: 'GHS 500.00', method: 'TapTap Send', status: 'Verified', id: '#TB-6105' }
-                  ].map((item, idx) => (
+                  {contributions.map((item, idx) => (
                     <div key={idx} className="p-6 bg-white space-y-4">
                       <div className="flex justify-between items-start">
                         <div>
@@ -495,7 +672,7 @@ export default function Donate() {
                    </div>
 
                    <div className="flex-1 overflow-y-auto p-0">
-                     {MOCK_CONTRIBUTIONS.length > 0 ? (
+                     {contributions.length > 0 ? (
                        <table className="w-full text-left border-collapse">
                          <thead>
                            <tr className="bg-slate-50 border-b border-slate-100">
@@ -506,7 +683,7 @@ export default function Donate() {
                            </tr>
                          </thead>
                          <tbody className="divide-y divide-slate-50">
-                           {MOCK_CONTRIBUTIONS.map((item, idx) => (
+                           {contributions.map((item, idx) => (
                              <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
                                <td className="p-5">
                                  <p className="text-sm font-semibold text-charcoal-dark">{item.date}</p>
@@ -542,7 +719,7 @@ export default function Donate() {
 
                    <div className="p-6 border-t border-slate-100 flex items-center justify-between bg-slate-50 sticky bottom-0 z-10">
                      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                       {MOCK_CONTRIBUTIONS.length} Records Found
+                       {contributions.length} Records Found
                      </div>
                      <div className="flex gap-4">
                        <button 

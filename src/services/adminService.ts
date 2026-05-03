@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
 import { allChapters } from '../data/chaptersData'
+import type { Product } from '@/types/product'
 
 export interface Member {
   id: string
@@ -66,6 +67,27 @@ export interface InventoryItem {
   status: 'Stable' | 'Low Stock' | 'Critical' | 'Processing'
   image: string
   color: string
+}
+
+export interface DonationCampaign {
+  id: string
+  title: string
+  description: string
+  targetAmount: number
+  raisedAmount: number
+  endDate: string
+  status: 'Active' | 'Closed'
+  imageUrl?: string
+}
+
+export interface DonationRecord {
+  id: string
+  date: string
+  amount: string
+  method: string
+  status: 'Pending' | 'Verified' | 'Rejected'
+  reference: string
+  campaignTitle?: string
 }
 
 export interface PollStats {
@@ -542,6 +564,137 @@ class AdminService {
         }))
       };
     })
+  }
+
+  async getStoreProducts(): Promise<Product[]> {
+    const { data, error } = await supabase
+      .from('store_inventory')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch products:', error);
+      return [];
+    }
+
+    return (data || []).map((p: {
+      id: string;
+      name: string;
+      slug: string;
+      price_ghs: number;
+      category: string | null;
+      status: string | null;
+      image_url: string | null;
+      description: string | null;
+      rating: number | null;
+    }) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      price: `GHS ${Number(p.price_ghs).toFixed(2)}`,
+      description: p.description || '',
+      status: p.status || 'Available',
+      category: p.category || 'General',
+      rating: Number(p.rating) || 5.0,
+      image: p.image_url || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=800'
+    }));
+  }
+
+  async getDonationCampaigns(status: 'Active' | 'Closed' = 'Active'): Promise<DonationCampaign[]> {
+    const { data, error } = await supabase
+      .from('donation_campaigns')
+      .select('*')
+      .eq('status', status)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch campaigns:', error);
+      return [];
+    }
+
+    interface DBCampaign {
+      id: string
+      title: string
+      description: string
+      target_amount: number
+      raised_amount: number
+      end_date: string
+      status: 'Active' | 'Closed'
+      image_url: string
+    }
+
+    return (data || []).map((c: DBCampaign) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      targetAmount: Number(c.target_amount),
+      raisedAmount: Number(c.raised_amount),
+      endDate: c.end_date,
+      status: c.status,
+      imageUrl: c.image_url
+    }));
+  }
+
+  async getMemberDonations(memberPhone: string): Promise<DonationRecord[]> {
+    const { data, error } = await supabase
+      .from('donations')
+      .select('*, donation_campaigns(title)')
+      .eq('phone', memberPhone)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch donation history:', error);
+      return [];
+    }
+
+    interface DBDonation {
+      id: string
+      created_at: string
+      amount: number
+      payment_method: string
+      status: 'Pending' | 'Verified' | 'Rejected'
+      donation_campaigns: { title: string }
+    }
+
+    return (data || []).map((d: DBDonation) => ({
+      id: d.id.substring(0, 8).toUpperCase(),
+      date: new Date(d.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      amount: `GHS ${Number(d.amount).toFixed(2)}`,
+      method: d.payment_method || 'MoMo',
+      status: d.status,
+      reference: `#TB-${d.id.substring(0, 4).toUpperCase()}`,
+      campaignTitle: d.donation_campaigns?.title
+    }));
+  }
+
+  async submitDonation(donationData: {
+    fullName: string
+    phone: string
+    amount: string
+    country: string
+    paymentMethod?: string
+    showOnDashboard: boolean
+    memberId?: string | null
+    campaignId?: string | null
+  }): Promise<boolean> {
+    const { error } = await supabase
+      .from('donations')
+      .insert({
+        full_name: donationData.fullName,
+        phone: donationData.phone,
+        amount: parseFloat(donationData.amount),
+        country: donationData.country,
+        payment_method: donationData.paymentMethod || 'MTN MoMo',
+        show_on_dashboard: donationData.showOnDashboard,
+        member_id: donationData.memberId || null,
+        campaign_id: donationData.campaignId || null
+      });
+
+    if (error) {
+      console.error('[DATABASE] Donation submission failed:', error);
+      return false;
+    }
+    return true;
   }
 
   async voteInPoll(pollId: string, optionId: string): Promise<boolean> {

@@ -6,73 +6,13 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'
+import { adminService } from '@/services/adminService'
 
 const categories = ['All', 'Apparel', 'Accessories', 'Stationery', 'Limited Edition']
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'The Base Premium T-Shirt',
-    slug: 'premium-t-shirt',
-    price: 'GHS 85.00',
-    description: '100% heavy cotton with high-density movement branding.',
-    status: 'Available',
-    category: 'Apparel',
-    rating: 4.9
-  },
-  {
-    id: 2,
-    name: 'Ghana First Signature Cap',
-    slug: 'signature-cap',
-    price: 'GHS 55.00',
-    description: 'Structured 6-panel cap with premium 3D embroidery.',
-    status: 'Available',
-    category: 'Accessories',
-    rating: 4.8
-  },
-  {
-    id: 3,
-    name: 'Patriotic Movement Wristband',
-    slug: 'movement-wristband',
-    price: 'GHS 15.00',
-    description: 'Eco-friendly silicone with debossed movement slogan.',
-    status: 'Available',
-    category: 'Accessories',
-    rating: 4.7
-  },
-  {
-    id: 4,
-    name: 'Executive Movement Notebook',
-    slug: 'movement-notebook',
-    price: 'GHS 35.00',
-    description: 'Hardcover A5 with gold foil branding and 120gsm paper.',
-    status: 'Available',
-    category: 'Stationery',
-    rating: 4.9
-  },
-  {
-    id: 5,
-    name: 'Movement Growth Hoodie',
-    slug: 'growth-hoodie',
-    price: 'GHS 180.00',
-    description: 'Oversized fit with screen-printed back graphics.',
-    status: 'Coming Soon',
-    category: 'Apparel',
-    rating: 5.0
-  },
-  {
-    id: 6,
-    name: 'Founding Member Pin',
-    slug: 'member-pin',
-    price: 'GHS 25.00',
-    description: 'Enamel pin with polished gold finish and secure clasp.',
-    status: 'Available',
-    category: 'Limited Edition',
-    rating: 4.9
-  }
-]
-
 export default function Store() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -94,6 +34,14 @@ export default function Store() {
   const [itemsPerPage, setItemsPerPage] = useState(12)
 
   useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true)
+      const data = await adminService.getStoreProducts()
+      setProducts(data)
+      setLoading(false)
+    }
+    fetchProducts()
+
     const updateItemsPerPage = () => {
       const width = window.innerWidth
       if (width < 640) setItemsPerPage(6) // Mobile
@@ -225,7 +173,11 @@ export default function Store() {
 
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {paginatedProducts.length > 0 ? (
+        {loading ? (
+          Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="aspect-[3/4] bg-stone-200 animate-pulse rounded-sm" />
+          ))
+        ) : paginatedProducts.length > 0 ? (
           paginatedProducts.map((product) => (
             <ProductCard key={product.id} product={product} onShare={handleShare} />
           ))
