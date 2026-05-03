@@ -44,6 +44,7 @@ import AdminSettings from './pages/admin/Settings'
 import AdminMemberVerification from './pages/admin/MemberVerification'
 import AdminRegions from './pages/admin/Regions'
 import AdminBlogs from './pages/admin/Blogs'
+import AdminLeadershipHub from './pages/admin/LeadershipHub'
 
 import { Toaster } from './components/ui/toaster'
 
@@ -111,6 +112,7 @@ export default function App() {
         {/* ── Admin routes (Admin Sidebar + Topbar) ── */}
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/leadership" element={<AdminLeadershipHub />} />
           <Route path="/admin/members" element={<AdminMembers />} />
           <Route path="/admin/verification" element={<AdminMemberVerification />} />
           <Route path="/admin/chapters" element={<AdminChapters />} />

@@ -90,13 +90,6 @@ export interface DonationRecord {
   campaignTitle?: string
 }
 
-export interface PollStats {
-  totalEngagements: string
-  activePolls: number
-  avgResponseTime: string
-  feedbackRate: string
-}
-
 export interface RegionalStat {
   region: string
   memberCount: number
@@ -104,6 +97,19 @@ export interface RegionalStat {
   activePolls: number
   performance: 'High' | 'Medium' | 'Low'
   color: string
+}
+
+export interface ChapterApplication {
+  id: string
+  applicant_id: string
+  applicant_name?: string
+  proposed_chapter_name: string
+  region: string
+  constituency: string
+  experience_summary: string
+  vision_statement: string
+  status: 'Pending' | 'Approved' | 'Rejected'
+  created_at: string
 }
 
 export interface GrowthTrend {
@@ -1089,6 +1095,60 @@ class AdminService {
     }
     await this.logAction('BLOG_DELETE', `BLOGS/${slug}`, 'Warning')
     return true
+  async getChapterApplications(): Promise<ChapterApplication[]> {
+    const { data, error } = await supabase
+      .from('chapter_applications')
+      .select('*, users(full_name)')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch chapter applications:', error);
+      return [];
+    }
+
+    interface DBApplication {
+      id: string
+      applicant_id: string
+      proposed_chapter_name: string
+      region: string
+      constituency: string
+      experience_summary: string
+      vision_statement: string
+      status: 'Pending' | 'Approved' | 'Rejected'
+      created_at: string
+      users: { full_name: string }
+    }
+
+    return (data || []).map((app: DBApplication) => ({
+      id: app.id,
+      applicant_id: app.applicant_id,
+      applicant_name: app.users?.full_name,
+      proposed_chapter_name: app.proposed_chapter_name,
+      region: app.region,
+      constituency: app.constituency,
+      experience_summary: app.experience_summary,
+      vision_statement: app.vision_statement,
+      status: app.status,
+      created_at: app.created_at
+    }));
+  }
+
+  async approveChapterApplication(appId: string, notes: string = ''): Promise<boolean> {
+    const user = await authService.getCurrentUser();
+    if (!user) return false;
+
+    const { error } = await supabase.rpc('approve_chapter_application', {
+      app_id: appId,
+      admin_uid: user.id,
+      notes: notes
+    });
+
+    if (error) {
+      console.error('[DATABASE] Approval failed:', error);
+      return false;
+    }
+
+    return true;
   }
 }
 
