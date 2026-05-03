@@ -22,20 +22,88 @@ import {
 import { cn } from '@/lib/utils'
 import { adminService, type InventoryItem } from '@/services/adminService'
 import { toast } from 'sonner'
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter,
+  DialogDescription
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Loader2 } from 'lucide-react'
 
 // Mock Data for Products
 export default function AdminStore() {
-  const [products, setProducts] = useState<InventoryItem[]>([])
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState('All')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<Partial<InventoryItem> | null>(null)
+
+  const fetchInventory = async () => {
+    const data = await adminService.getInventory()
+    setProducts(data)
+  }
 
   useEffect(() => {
-    const fetchInventory = async () => {
-      const data = await adminService.getInventory()
-      setProducts(data)
-    }
     fetchInventory()
   }, [])
+
+  const handleOpenModal = (product?: InventoryItem) => {
+    setSelectedProduct(product || {
+      name: '',
+      category: 'Apparel',
+      price: 'GHS 0.00',
+      stock: 0,
+      status: 'Stable',
+      image: '👕',
+      color: '#000000'
+    })
+    setIsModalOpen(true)
+  }
+
+  const handleSave = async () => {
+    if (!selectedProduct?.name || !selectedProduct?.price) {
+      toast.error("Please fill in all required fields")
+      return
+    }
+
+    setIsSaving(true)
+    let success = false
+
+    if ('id' in selectedProduct && selectedProduct.id) {
+      success = await adminService.updateInventoryItem(selectedProduct.id, selectedProduct)
+    } else {
+      success = await adminService.addInventoryItem(selectedProduct as Omit<InventoryItem, 'id'>)
+    }
+
+    if (success) {
+      toast.success(selectedProduct.id ? "Product updated" : "Product added to movement catalog")
+      setIsModalOpen(false)
+      fetchInventory()
+    } else {
+      toast.error("Failed to save product")
+    }
+    setIsSaving(false)
+  }
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to remove ${name} from the movement catalog?`)) return
+    
+    setIsDeleting(id)
+    const success = await adminService.deleteInventoryItem(id, name)
+    if (success) {
+      toast.success(`${name} removed from inventory`)
+      fetchInventory()
+    } else {
+      toast.error("Failed to delete item")
+    }
+    setIsDeleting(null)
+  }
+
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeCategory, setActiveCategory] = useState('All')
 
   const lowStockItems = products.filter(p => p.stock < 50 && p.stock > 0)
   const categories = ['All', ...new Set(products.map(p => p.category))]
@@ -60,7 +128,10 @@ export default function AdminStore() {
           <p className="text-stone-500 text-sm mt-1">Movement inventory, merchandising, and regional distribution.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="primary" className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
+          <Button 
+            onClick={() => handleOpenModal()}
+            className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800"
+          >
             <Plus className="w-4 h-4 mr-2" /> Add Inventory Item
           </Button>
         </div>
@@ -220,7 +291,7 @@ export default function AdminStore() {
                           variant="ghost" 
                           size="icon" 
                           className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)]"
-                          onClick={() => handleStoreAction('PRODUCT_EDIT', product.name)}
+                          onClick={() => handleOpenModal(product)}
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </Button>
@@ -228,11 +299,12 @@ export default function AdminStore() {
                           variant="ghost" 
                           size="icon" 
                           className="w-8 h-8 text-stone-400 hover:text-[var(--brand-red)]"
-                          onClick={() => handleStoreAction('PRODUCT_DELETE', product.name)}
+                          disabled={isDeleting === product.id}
+                          onClick={() => handleDelete(product.id, product.name)}
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          {isDeleting === product.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
                         </Button>
-                        <Button variant="ghost" size="icon" className="w-8 h-8 text-stone-400">
+                        <Button variant="ghost" size="icon" className="w-8 h-8 text-stone-400" onClick={() => handleStoreAction('INVENTORY_AUDIT', product.name)}>
                           <MoreHorizontal className="w-3.5 h-3.5" />
                         </Button>
                       </div>
@@ -298,6 +370,89 @@ export default function AdminStore() {
           <ShoppingBag className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5 rotate-12" />
         </div>
       </div>
+
+      {/* Add/Edit Product Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-none border-stone-200">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black font-meta uppercase tracking-tighter">
+              {selectedProduct?.id ? 'Edit Inventory Item' : 'New Movement Gear'}
+            </DialogTitle>
+            <DialogDescription className="text-xs uppercase tracking-widest font-bold text-stone-400">
+              Configure product metadata and logistical constraints.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right text-[10px] font-black uppercase tracking-widest">Name</Label>
+              <Input 
+                value={selectedProduct?.name || ''} 
+                onChange={e => setSelectedProduct(prev => ({ ...prev!, name: e.target.value }))}
+                className="col-span-3 h-10 rounded-none border-stone-200 text-xs" 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right text-[10px] font-black uppercase tracking-widest">Category</Label>
+              <Select 
+                value={selectedProduct?.category} 
+                onValueChange={v => setSelectedProduct(prev => ({ ...prev!, category: v }))}
+              >
+                <SelectTrigger className="col-span-3 h-10 rounded-none border-stone-200 text-xs font-bold">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent className="rounded-none">
+                  <SelectItem value="Apparel">Apparel</SelectItem>
+                  <SelectItem value="Accessories">Accessories</SelectItem>
+                  <SelectItem value="Print">Print Material</SelectItem>
+                  <SelectItem value="Digital">Digital Goods</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 items-center gap-4">
+                <Label className="text-right text-[10px] font-black uppercase tracking-widest">Price</Label>
+                <Input 
+                  value={selectedProduct?.price || ''} 
+                  onChange={e => setSelectedProduct(prev => ({ ...prev!, price: e.target.value }))}
+                  className="h-10 rounded-none border-stone-200 text-xs font-black" 
+                />
+              </div>
+              <div className="grid grid-cols-2 items-center gap-4">
+                <Label className="text-right text-[10px] font-black uppercase tracking-widest">Stock</Label>
+                <Input 
+                  type="number"
+                  value={selectedProduct?.stock || 0} 
+                  onChange={e => setSelectedProduct(prev => ({ ...prev!, stock: parseInt(e.target.value) }))}
+                  className="h-10 rounded-none border-stone-200 text-xs font-black" 
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right text-[10px] font-black uppercase tracking-widest">Image (Emoji)</Label>
+              <Input 
+                value={selectedProduct?.image || ''} 
+                onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}
+                placeholder="👕, 🧢, 🎒"
+                className="col-span-3 h-10 rounded-none border-stone-200 text-lg text-center" 
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-none text-[10px] font-black uppercase tracking-widest h-11 px-6">
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSave} 
+              disabled={isSaving}
+              className="rounded-none text-[10px] font-black uppercase tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800 h-11 px-8 min-w-[140px]"
+            >
+              {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -803,6 +803,67 @@ class AdminService {
     }))
   }
 
+  async addInventoryItem(item: Omit<InventoryItem, 'id'>): Promise<boolean> {
+    const { error } = await supabase
+      .from('store_inventory')
+      .insert({
+        name: item.name,
+        category: item.category,
+        price_ghs: parseFloat(item.price.replace(/[^0-9.]/g, '')),
+        stock_quantity: item.stock,
+        status: item.status,
+        image_emoji: item.image,
+        brand_color: item.color
+      })
+
+    if (error) {
+      console.error('[DATABASE] Failed to add inventory item:', error)
+      return false
+    }
+
+    await this.logAction('STORE_ADD', `STORE/${item.name}`, 'Success', item)
+    return true
+  }
+
+  async updateInventoryItem(id: string, item: Partial<InventoryItem>): Promise<boolean> {
+    const updateData: Record<string, string | number | null | undefined> = {}
+    if (item.name) updateData.name = item.name
+    if (item.category) updateData.category = item.category
+    if (item.price) updateData.price_ghs = parseFloat(item.price.replace(/[^0-9.]/g, ''))
+    if (item.stock !== undefined) updateData.stock_quantity = item.stock
+    if (item.status) updateData.status = item.status
+    if (item.image) updateData.image_emoji = item.image
+    if (item.color) updateData.brand_color = item.color
+
+    const { error } = await supabase
+      .from('store_inventory')
+      .update(updateData)
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to update inventory item:', error)
+      return false
+    }
+
+    await this.logAction('STORE_UPDATE', `STORE/${id}`, 'Success', item)
+    return true
+  }
+
+  async deleteInventoryItem(id: string, name: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('store_inventory')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to delete inventory item:', error)
+      return false
+    }
+
+    await this.logAction('STORE_DELETE', `STORE/${name}`, 'Warning')
+    return true
+  }
+
   // --- Analytics ---
   async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
     const [usersRes, chaptersRes] = await Promise.all([
