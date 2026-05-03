@@ -45,6 +45,7 @@ import AdminMemberVerification from './pages/admin/MemberVerification'
 import AdminRegions from './pages/admin/Regions'
 import AdminBlogs from './pages/admin/Blogs'
 import AdminLeadershipHub from './pages/admin/LeadershipHub'
+import AdminDonations from './pages/admin/DonationVerification'
 
 import { Toaster } from './components/ui/toaster'
 
@@ -113,6 +114,7 @@ export default function App() {
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/leadership" element={<AdminLeadershipHub />} />
+          <Route path="/admin/donations" element={<AdminDonations />} />
           <Route path="/admin/members" element={<AdminMembers />} />
           <Route path="/admin/verification" element={<AdminMemberVerification />} />
           <Route path="/admin/chapters" element={<AdminChapters />} />

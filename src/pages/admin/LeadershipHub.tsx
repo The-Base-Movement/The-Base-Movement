@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   ShieldCheck, 
   UserCheck, 
@@ -30,16 +30,16 @@ export default function LeadershipHub() {
   const [searchQuery, setSearchQuery] = useState('')
   const { toast } = useToast()
 
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     setIsLoading(true)
     const data = await adminService.getChapterApplications()
     setApplications(data)
     setIsLoading(false)
-  }
+  }, [])
 
   useEffect(() => {
     fetchApplications()
-  }, [])
+  }, [fetchApplications])
 
   const handleApprove = async (appId: string, name: string) => {
     const success = await adminService.approveChapterApplication(appId, 'Approved by SuperAdmin via Command Center')
