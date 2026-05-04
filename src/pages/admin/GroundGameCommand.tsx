@@ -78,8 +78,7 @@ export default function GroundGameCommand() {
             Election Day logistics, voter registration tracking, and door-to-door canvassing command. Mobilizing the grassroots with precision.
           </p>
         </div>
-        <div className="flex flex-col items-end relative z-10">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 mb-2">Verified Patriots</span>
+        <div className="flex flex-col items-end relative z-10 gap-4">
           <div className="flex items-center gap-5 bg-stone-50 p-4 border border-stone-100 shadow-inner">
             <div className="text-right">
               <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest block">Registered Voters</span>
@@ -89,6 +88,17 @@ export default function GroundGameCommand() {
             </div>
             <div className="h-10 w-[2px] bg-stone-200" />
             <Vote className="w-8 h-8 text-[var(--brand-green)]" />
+          </div>
+          
+          <div className="flex items-center gap-5 bg-stone-50 p-4 border border-stone-100 shadow-inner w-full">
+            <div className="text-right flex-1">
+              <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest block">Campaign Outreach</span>
+              <span className="text-2xl font-black italic tracking-tighter text-stone-900">
+                {totalContacts.toLocaleString()} <span className="text-[10px] text-stone-400 not-italic">Doors</span>
+              </span>
+            </div>
+            <div className="h-8 w-[2px] bg-stone-200" />
+            <ClipboardList className="w-6 h-6 text-stone-400" />
           </div>
         </div>
       </div>
