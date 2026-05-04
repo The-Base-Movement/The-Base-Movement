@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { MessageSquare, Send, Brain, Target, ArrowRight } from 'lucide-react'
+import { MessageSquare, Send, Brain, Target } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
