@@ -146,13 +146,14 @@ export default function PollsManagement() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm">
+        <Card className="rounded-none border-stone-200">
           <CardContent className="p-6">
-            <div className="flex flex-col gap-1">
-              <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Active Polls</p>
-              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{stats?.activePolls ?? "..."}</h3>
-              <p className="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-tight">Across all regions</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-2">National Sentiment</p>
+            <div className="flex items-end gap-3">
+              <h3 className="text-2xl font-black font-meta text-[var(--brand-green)]">{stats?.nationalSentimentScore || "..."}%</h3>
+              <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-none mb-1">POSSITIVE</span>
             </div>
+            <p className="text-[9px] text-stone-400 uppercase tracking-wider mt-2">Live Engagement Analysis</p>
           </CardContent>
         </Card>
         <Card className="rounded-none border-stone-200 shadow-sm">

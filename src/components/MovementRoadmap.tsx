@@ -1,17 +1,7 @@
 import { useState, useEffect } from 'react'
-import { CheckCircle2, Circle, Clock, Flag } from 'lucide-react'
+import { CheckCircle2, Circle, Clock, Flag, TrendingUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { adminService } from '@/services/adminService'
-
-export interface Milestone {
-  id: string
-  title: string
-  description: string
-  target_date: string
-  status: 'Upcoming' | 'In Progress' | 'Completed'
-  category: string
-  importance_level: 'Normal' | 'High' | 'Critical'
-}
+import { adminService, type Milestone } from '@/services/adminService'
 
 export function MovementRoadmap() {
   const [milestones, setMilestones] = useState<Milestone[]>([])
@@ -19,7 +9,7 @@ export function MovementRoadmap() {
 
   useEffect(() => {
     async function fetchMilestones() {
-      const data = await adminService.getMilestones()
+      const data = await adminService.getRoadmapForecast()
       if (data && data.length > 0) {
         setMilestones(data)
       } else {
@@ -118,6 +108,15 @@ export function MovementRoadmap() {
                     <span>{milestone.category}</span>
                     <span className="w-1 h-1 bg-stone-200 rounded-full" />
                     <span>Target: {new Date(milestone.target_date).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
+                    {milestone.forecasted_date && (
+                      <>
+                        <span className="w-1 h-1 bg-stone-200 rounded-full" />
+                        <span className="text-[var(--brand-green)] flex items-center gap-1">
+                          <TrendingUp className="w-3 h-3" />
+                          Forecast: {new Date(milestone.forecasted_date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

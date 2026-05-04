@@ -103,7 +103,7 @@ export default function AdminOrders() {
 
   const statCards = stats ? [
     { label: 'Total Orders',   value: stats.totalOrders,      color: 'text-stone-900', sub: `GHS ${stats.totalRevenue.toFixed(2)} total revenue` },
-    { label: 'Pending',        value: stats.pendingOrders,    color: 'text-amber-600',   sub: 'Awaiting processing' },
+    { label: 'Avg Delivery',   value: `${(stats.avgDeliveryDays || 0).toFixed(1)}d`, color: 'text-blue-600', sub: 'Dispatch to Delivery Latency' },
     { label: 'In Transit',     value: stats.dispatchedOrders, color: 'text-violet-600',  sub: 'Dispatched to customers' },
     { label: 'Delivered',      value: stats.deliveredOrders,  color: 'text-emerald-600', sub: `GHS ${stats.revenueToday.toFixed(2)} today` },
   ] : []

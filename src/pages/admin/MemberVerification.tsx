@@ -19,6 +19,8 @@ import {
   Lock,
   FileText,
   Loader2,
+  Cpu,
+  Fingerprint,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -57,6 +59,8 @@ export default function MemberVerification() {
   const [showPhotoFull, setShowPhotoFull] = useState(false)
   const [viewingVaultRecord, setViewingVaultRecord] = useState<PendingVerification | null>(null)
   const [loading, setLoading] = useState(true)
+  const [aiAnalyzing, setAiAnalyzing] = useState(false)
+  const [aiResult, setAiResult] = useState<{ confidence: number, matches: string[], flagged: boolean } | null>(null)
 
   useEffect(() => {
     async function loadVerifications() {
@@ -103,6 +107,27 @@ export default function MemberVerification() {
     setMembers(prev => [newMember, ...prev])
     setSelectedMember(newMember)
     setShowRegForm(false)
+    setAiResult(null)
+  }
+
+  const handleAiScan = async () => {
+    if (!selectedMember) return
+    setAiAnalyzing(true)
+    setAiResult(null)
+    try {
+      const result = await adminService.verifyMemberID(selectedMember.id)
+      setAiResult(result)
+      if (result.flagged) {
+        toast.warning(`AI Alert: Low confidence score (${result.confidence}%). Please review carefully.`)
+      } else {
+        toast.success(`AI Scan Complete: High identity match confidence.`)
+      }
+    } catch (err) {
+      console.error('[AI-ASSISTANT] Scan failed:', err)
+      toast.error("AI Assistant unavailable.")
+    } finally {
+      setAiAnalyzing(false)
+    }
   }
 
   // ── Approve / Reject ──────────────────────────────────────────────────────
@@ -225,7 +250,10 @@ export default function MemberVerification() {
                           ? 'bg-[var(--brand-black)] text-white'
                           : 'hover:bg-stone-50'
                       )}
-                      onClick={() => setSelectedMember(member)}
+                      onClick={() => {
+                        setSelectedMember(member)
+                        setAiResult(null)
+                      }}
                     >
                       {/* Avatar + name */}
                       <div className="flex items-center gap-4">
@@ -434,6 +462,56 @@ export default function MemberVerification() {
                         )}>{label}</span>
                       </div>
                     ))}
+                  </div>
+
+                  {/* AI Assistant Section */}
+                  <div className="border-t border-white/10 pt-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-[9px] font-black uppercase tracking-widest text-stone-400">AI Security Assistant</h4>
+                      {aiResult && (
+                        <span className={cn(
+                          "text-[8px] font-black px-1.5 py-0.5 uppercase tracking-widest",
+                          aiResult.flagged ? "bg-red-500 text-white" : "bg-emerald-500 text-white"
+                        )}>
+                          {aiResult.confidence}% Match
+                        </span>
+                      )}
+                    </div>
+                    
+                    {!aiResult && !aiAnalyzing && (
+                      <Button
+                        variant="ghost"
+                        onClick={handleAiScan}
+                        className="w-full h-11 border border-white/10 bg-white/5 text-white hover:bg-white/10 text-[9px] font-black uppercase tracking-widest rounded-none"
+                      >
+                        <Cpu className="w-4 h-4 mr-2" /> Start Identity Scan
+                      </Button>
+                    )}
+
+                    {aiAnalyzing && (
+                      <div className="p-4 bg-white/5 border border-white/10 flex flex-col items-center gap-3 animate-pulse">
+                        <Fingerprint className="w-6 h-6 text-[var(--brand-gold)] animate-bounce" />
+                        <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Analyzing Biometrics...</p>
+                      </div>
+                    )}
+
+                    {aiResult && (
+                      <div className={cn(
+                        "p-4 border",
+                        aiResult.flagged ? "bg-red-500/10 border-red-500/20" : "bg-emerald-500/10 border-emerald-500/20"
+                      )}>
+                        <div className="flex flex-wrap gap-2">
+                          {aiResult.matches.map(m => (
+                            <span key={m} className="text-[8px] font-black uppercase tracking-widest text-white/60 bg-white/5 px-2 py-1">
+                              {m}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-[9px] text-white/40 mt-3 italic uppercase tracking-tighter">
+                          * Neural scan of official database records completed.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Action buttons */}

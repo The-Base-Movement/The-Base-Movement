@@ -9,7 +9,8 @@ import {
   Filter,
   CheckCircle2,
   XCircle,
-  FileText
+  FileText,
+  Download,
 } from 'lucide-react'
 import { 
   Card, 
@@ -28,6 +29,7 @@ export default function LeadershipHub() {
   const [applications, setApplications] = useState<ChapterApplication[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
   const { toast } = useToast()
 
   const fetchApplications = useCallback(async (silent = false) => {
@@ -67,6 +69,35 @@ export default function LeadershipHub() {
     }
   }
 
+  const handleGenerateReport = async () => {
+    setIsGenerating(true)
+    try {
+      const report = await adminService.generateComplianceReport()
+      const blob = new Blob([report], { type: 'application/json' })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `THE-BASE-COMPLIANCE-REPORT-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      
+      toast({
+        title: "REPORT GENERATED",
+        description: "Compliance audit manifest has been downloaded.",
+      })
+    } catch (err) {
+      console.error('[AUDIT] Report generation failed:', err)
+      toast({
+        title: "GENERATION FAILED",
+        description: "Could not compile movement audit data.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   const filteredApps = applications.filter(app => 
     app.applicant_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     app.proposed_chapter_name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -83,6 +114,18 @@ export default function LeadershipHub() {
             Managing the movement's grassroots leadership pipeline.
           </p>
         </div>
+        <Button 
+          onClick={handleGenerateReport}
+          disabled={isGenerating}
+          className="bg-[var(--brand-black)] text-white hover:bg-stone-800 h-11 px-6 text-[10px] font-black uppercase tracking-widest rounded-none border-b-2 border-[var(--brand-gold)]"
+        >
+          {isGenerating ? (
+            <Clock className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4 mr-2 text-[var(--brand-gold)]" />
+          )}
+          Generate Compliance Audit
+        </Button>
       </div>
 
       {/* Intelligence & Filtering */}
