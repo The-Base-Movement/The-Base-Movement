@@ -206,7 +206,13 @@ export default function Register() {
             constituency: formData.constituency,
             chapter: formData.chapter,
             profession: formData.profession,
-            status: 'Active',
+            status: 'Pending',
+            verification_status: 'In Review',
+            age_range: formData.ageRange,
+            education_level: formData.educationLevel,
+            emergency_name: formData.emergencyContactName,
+            emergency_relationship: formData.emergencyRelationship,
+            emergency_phone: formData.emergencyNumber,
             avatar_url: finalAvatarUrl
           })
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   ShieldCheck,
   XCircle,
@@ -18,6 +18,7 @@ import {
   History,
   Lock,
   FileText,
+  Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -28,95 +29,15 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { adminService } from '@/services/adminService'
+import { adminService, type PendingVerification } from '@/services/adminService'
 import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
-interface PendingMember {
-  id: string
-  name: string
-  region: string
-  constituency: string
-  platform: string
-  country: string
-  phone: string
-  gender: string
-  ageRange: string
-  profession: string
-  educationLevel: string
-  emergencyName: string
-  emergencyRelationship: string
-  emergencyPhone: string
-  submitted: string
-  status: 'In Review' | 'Processing' | 'Flagged' | 'Approved' | 'Rejected'
-  photoUrl: string | null
-  chapter?: string
-}
+// PendingVerification type imported from adminService
 
-// ── Seed mock data ─────────────────────────────────────────────────────────────
-const seedMembers: PendingMember[] = [
-  {
-    id: 'TBM-GH-262891',
-    name: 'Emmanuel Tetteh',
-    region: 'Greater Accra',
-    constituency: 'Tema West',
-    platform: 'GHANA',
-    country: 'Ghana',
-    phone: '+233 24 111 2222',
-    gender: 'Male',
-    ageRange: '26-40',
-    profession: 'Engineer',
-    educationLevel: "Bachelor's Degree",
-    emergencyName: 'Abena Tetteh',
-    emergencyRelationship: 'Spouse',
-    emergencyPhone: '+233 20 333 4444',
-    submitted: '2 hours ago',
-    status: 'In Review',
-    photoUrl: null,
-  },
-  {
-    id: 'TBM-GH-261473',
-    name: 'Yaa Konadu',
-    region: 'Ashanti',
-    constituency: 'Oforikrom',
-    platform: 'GHANA',
-    country: 'Ghana',
-    phone: '+233 55 234 5678',
-    gender: 'Female',
-    ageRange: '16-25',
-    profession: 'Student',
-    educationLevel: "Bachelor's Degree",
-    emergencyName: 'Kwame Konadu',
-    emergencyRelationship: 'Parent',
-    emergencyPhone: '+233 24 876 5432',
-    submitted: '5 hours ago',
-    status: 'Processing',
-    photoUrl: null,
-  },
-  {
-    id: 'TBM-GH-260912',
-    name: 'Ishmael Mensah',
-    region: 'Western',
-    constituency: 'Effia',
-    platform: 'GHANA',
-    country: 'Ghana',
-    phone: '+233 27 456 7890',
-    gender: 'Male',
-    ageRange: '41-60',
-    profession: 'Fisherman',
-    educationLevel: 'JHS / Middle School',
-    emergencyName: 'Comfort Mensah',
-    emergencyRelationship: 'Spouse',
-    emergencyPhone: '+233 20 111 9090',
-    submitted: '1 day ago',
-    status: 'Flagged',
-    photoUrl: null,
-  },
-]
-
-const statusColor = (status: PendingMember['status']) => {
+const statusColor = (status: PendingVerification['status']) => {
   if (status === 'In Review')  return 'bg-amber-500/10 text-amber-600 border-amber-200'
   if (status === 'Processing') return 'bg-stone-500/10 text-stone-700 border-stone-200'
   if (status === 'Flagged')    return 'bg-red-500/10 text-red-600 border-red-200'
@@ -127,18 +48,32 @@ const statusColor = (status: PendingMember['status']) => {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 export default function MemberVerification() {
-  const [members, setMembers] = useState<PendingMember[]>(seedMembers)
-  const [selectedMember, setSelectedMember] = useState<PendingMember | null>(null)
+  const [members, setMembers] = useState<PendingVerification[]>([])
+  const [selectedMember, setSelectedMember] = useState<PendingVerification | null>(null)
   const [showRegForm, setShowRegForm] = useState(false)
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<PendingMember['status'] | 'All'>('All')
+  const [statusFilter, setStatusFilter] = useState<PendingVerification['status'] | 'All'>('All')
   const [currentPage, setCurrentPage] = useState(1)
   const [showPhotoFull, setShowPhotoFull] = useState(false)
-  const [viewingVaultRecord, setViewingVaultRecord] = useState<PendingMember | null>(null)
+  const [viewingVaultRecord, setViewingVaultRecord] = useState<PendingVerification | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadVerifications() {
+      setLoading(true)
+      try {
+        const data = await adminService.getPendingVerifications()
+        setMembers(data)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadVerifications()
+  }, [])
 
   const PAGE_SIZE = 10
 
-  const STATUS_OPTIONS: (PendingMember['status'] | 'All')[] = [
+  const STATUS_OPTIONS: (PendingVerification['status'] | 'All')[] = [
     'All', 'In Review', 'Processing', 'Flagged', 'Approved', 'Rejected'
   ]
 
@@ -146,7 +81,7 @@ export default function MemberVerification() {
 
   // ── Handle new registration submitted via the wired form ──────────────────
   const handleNewRegistration = (data: RegistrationSubmission) => {
-    const newMember: PendingMember = {
+    const newMember: PendingVerification = {
       id: data.registrationNumber,
       name: data.fullName,
       region: data.region || data.country,
@@ -173,7 +108,7 @@ export default function MemberVerification() {
   // ── Approve / Reject ──────────────────────────────────────────────────────
   const handleVerdict = async (approve: boolean) => {
     if (!selectedMember) return
-    const newStatus: PendingMember['status'] = approve ? 'Approved' : 'Rejected'
+    const newStatus: PendingVerification['status'] = approve ? 'Approved' : 'Rejected'
     
     // Optimistic UI
     setMembers(prev =>
@@ -206,7 +141,7 @@ export default function MemberVerification() {
 
   // Reset to page 1 whenever the filter or search changes
   const handleSearch = (val: string) => { setSearch(val); setCurrentPage(1) }
-  const handleFilter = (val: PendingMember['status'] | 'All') => { setStatusFilter(val); setCurrentPage(1) }
+  const handleFilter = (val: PendingVerification['status'] | 'All') => { setStatusFilter(val); setCurrentPage(1) }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -260,7 +195,7 @@ export default function MemberVerification() {
                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
                 <select
                   value={statusFilter}
-                  onChange={e => handleFilter(e.target.value as PendingMember['status'] | 'All')}
+                  onChange={e => handleFilter(e.target.value as PendingVerification['status'] | 'All')}
                   className="h-9 pl-9 pr-8 text-[9px] font-black uppercase tracking-widest rounded-none border border-stone-200 bg-white text-stone-700 focus:outline-none focus:border-[var(--brand-black)] appearance-none cursor-pointer transition-colors"
                 >
                   {STATUS_OPTIONS.map(s => (
@@ -270,7 +205,12 @@ export default function MemberVerification() {
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              {filtered.length === 0 ? (
+              {loading ? (
+                <div className="py-24 flex flex-col items-center justify-center gap-4">
+                  <Loader2 className="w-8 h-8 text-[var(--brand-green)] animate-spin" />
+                  <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Fetching Identity Files...</p>
+                </div>
+              ) : filtered.length === 0 ? (
                 <div className="py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
                   No registrations match your search.
                 </div>

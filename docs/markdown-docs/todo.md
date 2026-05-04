@@ -21,9 +21,21 @@ This TODO list outlines the next strategic horizons for the movement's platform 
 - [ ] **Interactive Roadmap**: Provide members with a real-time viewport into the movement's national milestones.
 
 ## 4. Technical Hardening & Scale
+- [x] **Database Hardening**: Fix Supabase PostgREST array formatting (`400 Bad Request`) and resolve recursive RLS policy loops (`500 Internal Server Error`) on the `admins` table.
+- [x] **Performance Optimization**: Implement dynamic, responsive pagination for the Chapters network grid to prevent DOM overload.
 - [ ] **Advanced RLS Policies**: Refine Row Level Security for multi-tenant regional data isolation.
 - [ ] **Image Optimization Pipeline**: Implement high-fidelity cropping and processing for member-uploaded chapter photos.
 - [ ] **System Pulse Telemetry**: Develop a live "Health Check" dashboard for real-time API monitoring.
+
+## 5. Storefront & Transactions (Immediate)
+- [ ] **Order Submission**: Update `Checkout.tsx` to insert completed transactions, shipping details, and order lines into a `store_orders` Supabase table.
+
+## 6. Dashboard & Database Integrations (Immediate)
+- [ ] **Member Dashboard Metrics**: Replace hardcoded metrics with real aggregations in `Dashboard.tsx`.
+- [ ] **Growth Trends**: Create the `membership_growth_view` in the database so `getGrowthTrends()` executes successfully.
+- [ ] **Member Verification**: Transition `admin/MemberVerification.tsx` to pull pending verifications directly from Supabase.
+- [ ] **Polls & Surveys**: Update `admin/Polls.tsx` and `adminService.ts` to fully integrate with the `polls` and `poll_options` tables, removing mock fallbacks.
+- [ ] **Blog Posts**: Update `BlogPost.tsx` to fetch actual post content from the `blog_posts` table based on the URL slug.
 
 ---
 *Absolute Integrity. Absolute Precision. The Base.*

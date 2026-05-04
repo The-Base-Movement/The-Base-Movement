@@ -44,9 +44,6 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
-      // Simulate network delay for "Synchronizing Live Data" feel
-      await new Promise(resolve => setTimeout(resolve, 800))
-      
       // 1. Fetch Live Growth Stats
       const liveStats = await adminService.getGrowthStats()
       setStats(liveStats)

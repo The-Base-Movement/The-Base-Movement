@@ -6,10 +6,13 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
 import { adminService } from '@/services/adminService'
 import type { Region } from '@/services/adminService'
+import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
 
 export default function Checkout() {
   const navigate = useNavigate()
-  const { cart } = useStore()
+  const { cart, clearCart } = useStore()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card'>('momo')
   const [isDiaspora, setIsDiaspora] = useState(false)
   const [dbCountries, setDbCountries] = useState<{ name: string; is_diaspora: boolean }[]>([])
@@ -63,18 +66,77 @@ export default function Checkout() {
     setFormData({ ...formData, [name]: value })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const path = window.location.pathname.includes('/dashboard') ? '/dashboard/store/summary' : '/store/summary'
-    navigate(path)
-  }
-
   const subtotal = cart.reduce((sum, item) => {
     const price = typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price
     return sum + (price * item.quantity)
   }, 0)
   const shipping = cart.length > 0 ? 25.00 : 0
   const total = subtotal + shipping
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (cart.length === 0) {
+      toast.error('Your shopping bag is empty.')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+
+      // 1. Insert Master Order Record
+      const { data: order, error: orderError } = await supabase
+        .from('store_orders')
+        .insert({
+          customer_id: session?.user?.id || null,
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          shipping_address: formData.address,
+          city: formData.city,
+          country: formData.country,
+          region_or_state: isDiaspora ? formData.stateProvince : formData.region,
+          payment_method: paymentMethod,
+          subtotal,
+          shipping_fee: shipping,
+          total_amount: total,
+          status: 'Pending'
+        })
+        .select('id')
+        .single()
+
+      if (orderError) throw orderError
+
+      // 2. Insert Associated Order Line Items
+      const orderItems = cart.map(item => ({
+        order_id: order.id,
+        product_id: item.id,
+        quantity: item.quantity,
+        price_at_purchase: typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price
+      }))
+
+      const { error: itemsError } = await supabase
+        .from('store_order_items')
+        .insert(orderItems)
+
+      if (itemsError) throw itemsError
+
+      // 3. Cleanup & Forward
+      toast.success('Order placed successfully! Check your email for details.')
+      clearCart()
+      
+      const path = window.location.pathname.includes('/dashboard') ? '/dashboard/store/summary' : '/store/summary'
+      navigate(path, { state: { orderId: order.id } })
+      
+    } catch (err: unknown) {
+      console.error('Checkout failed:', err)
+      const errorMessage = err instanceof Error ? err.message : 'Failed to process checkout. Please try again.'
+      toast.error(errorMessage)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="bg-off-white min-h-screen">
@@ -305,8 +367,12 @@ export default function Checkout() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20">
-                Complete Purchase
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
+              >
+                {isSubmitting ? 'Processing Order...' : 'Complete Purchase'}
               </Button>
 
               <div className="mt-8 space-y-4">

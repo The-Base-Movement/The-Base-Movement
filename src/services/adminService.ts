@@ -127,6 +127,27 @@ export interface GrowthTrend {
   count: number
 }
 
+export interface PendingVerification {
+  id: string
+  name: string
+  region: string
+  constituency: string
+  platform: string
+  country: string
+  phone: string
+  gender: string
+  ageRange: string
+  profession: string
+  educationLevel: string
+  emergencyName: string
+  emergencyRelationship: string
+  emergencyPhone: string
+  submitted: string
+  status: 'In Review' | 'Processing' | 'Flagged' | 'Approved' | 'Rejected'
+  photoUrl: string | null
+  chapter?: string
+}
+
 export interface ActivityLog {
   id: number
   type: 'registration' | 'chapter' | 'poll' | 'store' | 'security'
@@ -432,6 +453,40 @@ class AdminService {
     window.dispatchEvent(new Event('storage'))
 
     return true
+  }
+
+  async getPendingVerifications(): Promise<PendingVerification[]> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .in('verification_status', ['In Review', 'Processing', 'Flagged'])
+      .order('joined_at', { ascending: false })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch pending verifications:', error)
+      return []
+    }
+
+    return (data || []).map(u => ({
+      id: u.registration_number,
+      name: u.full_name,
+      region: u.region,
+      constituency: u.constituency,
+      platform: u.platform,
+      country: u.country,
+      phone: u.phone_number,
+      gender: u.gender,
+      ageRange: u.age_range,
+      profession: u.profession,
+      educationLevel: u.education_level,
+      emergencyName: u.emergency_name,
+      emergencyRelationship: u.emergency_relationship,
+      emergencyPhone: u.emergency_phone,
+      submitted: new Date(u.joined_at).toLocaleString(),
+      status: u.verification_status,
+      photoUrl: u.avatar_url,
+      chapter: u.chapter
+    }))
   }
 
   async verifyMember(id: string, approve: boolean, reason?: string, chapterName?: string): Promise<boolean> {
