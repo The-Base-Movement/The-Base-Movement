@@ -6,15 +6,13 @@ import {
   Package, 
   AlertTriangle, 
   TrendingUp, 
-  MoreHorizontal,
   Edit3,
-  Trash2,
   Trash2,
   Box,
   Truck,
-  FileText,
+  History,
   Clock,
-  History
+  ArrowRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -25,7 +23,7 @@ import {
   CardTitle 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { adminService, type InventoryItem } from '@/services/adminService'
+import { adminService, type InventoryItem, type ResourceRequest, type LogisticsAuditEntry } from '@/services/adminService'
 import { toast } from 'sonner'
 import { 
   Dialog, 
@@ -43,6 +41,7 @@ import { Loader2 } from 'lucide-react'
 export default function AdminStore() {
   const [products, setProducts] = useState<InventoryItem[]>([])
   const [requests, setRequests] = useState<ResourceRequest[]>([])
+  const [auditLogs, setAuditLogs] = useState<LogisticsAuditEntry[]>([])
   const [activeTab, setActiveTab] = useState<'inventory' | 'requests' | 'audit'>('inventory')
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -53,12 +52,14 @@ export default function AdminStore() {
   const fetchData = async () => {
     setIsLoading(true)
     try {
-      const [inv, reqs] = await Promise.all([
+      const [inv, reqs, logs] = await Promise.all([
         adminService.getInventory(),
-        adminService.getResourceRequests()
+        adminService.getResourceRequests(),
+        adminService.getLogisticsAudit()
       ])
       setProducts(inv)
       setRequests(reqs)
+      setAuditLogs(logs)
     } finally {
       setIsLoading(false)
     }
@@ -97,6 +98,7 @@ export default function AdminStore() {
     }
 
     if (success) {
+      handleStoreAction(selectedProduct.id ? 'UPDATE_INVENTORY' : 'ADD_INVENTORY', selectedProduct.name!)
       toast.success(selectedProduct.id ? "Product updated" : "Product added to movement catalog")
       setIsModalOpen(false)
       fetchData()
@@ -112,6 +114,7 @@ export default function AdminStore() {
     setIsDeleting(id)
     const success = await adminService.deleteInventoryItem(id, name)
     if (success) {
+      handleStoreAction('REMOVE_INVENTORY', name)
       toast.success(`${name} removed from inventory`)
       fetchData()
     } else {
@@ -123,6 +126,7 @@ export default function AdminStore() {
   const handleStatusUpdate = async (id: string, status: ResourceRequest['status']) => {
     const success = await adminService.updateResourceRequestStatus(id, status)
     if (success) {
+      handleStoreAction('STATUS_UPDATE', `Request ${id.slice(0, 8)}`)
       toast.success(`Request marked as ${status}`)
       fetchData()
     }
@@ -173,6 +177,15 @@ export default function AdminStore() {
             >
               <Truck className="w-3.5 h-3.5 mr-2 inline" /> Requests
             </button>
+            <button 
+              onClick={() => setActiveTab('audit')}
+              className={cn(
+                "px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                activeTab === 'audit' ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+              )}
+            >
+              <History className="w-3.5 h-3.5 mr-2 inline" /> Audit Hub
+            </button>
           </div>
           {activeTab === 'inventory' && (
             <Button 
@@ -186,24 +199,31 @@ export default function AdminStore() {
       </div>
 
       {/* Critical Alerts Banner */}
-      {lowStockItems.length > 0 && (
-        <div className="bg-amber-50 border-l-4 border-amber-500 p-4 flex items-center justify-between animate-in slide-in-from-top-4 duration-500">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-amber-900">Inventory Alert</p>
-              <p className="text-xs text-amber-700">{lowStockItems.length} items require immediate replenishment to maintain movement visibility.</p>
-            </div>
-          </div>
-          <Button variant="outline" size="sm" className="h-8 text-[9px] font-black uppercase border-amber-200 text-amber-700 hover:bg-amber-100">
-            View Alerts
-          </Button>
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-stone-50/50 border border-dashed border-stone-200">
+          <Loader2 className="w-8 h-8 animate-spin text-stone-300" />
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Synchronizing Movement Vault...</p>
         </div>
-      )}
+      ) : (
+        <>
+          {lowStockItems.length > 0 && (
+            <div className="bg-amber-50 border-l-4 border-amber-500 p-4 flex items-center justify-between animate-in slide-in-from-top-4 duration-500">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                  <AlertTriangle className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-amber-900">Inventory Alert</p>
+                  <p className="text-xs text-amber-700">{lowStockItems.length} items require immediate replenishment to maintain movement visibility.</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" className="h-8 text-[9px] font-black uppercase border-amber-200 text-amber-700 hover:bg-amber-100">
+                View Alerts
+              </Button>
+            </div>
+          )}
 
-      {/* Store Performance Stats */}
+          {/* Store Performance Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="rounded-none border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
@@ -216,24 +236,36 @@ export default function AdminStore() {
         </Card>
         <Card className="rounded-none border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Active Orders</p>
-            <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">42</h3>
-            <span className="text-[9px] font-bold text-amber-600 mt-1 uppercase tracking-tight">12 Pending Shipment</span>
+            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Active Requests</p>
+            <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{requests.filter(r => r.status === 'Pending').length}</h3>
+            <span className="text-[9px] font-bold text-amber-600 mt-1 uppercase tracking-tight">Pending Approval</span>
           </CardContent>
         </Card>
         <Card className="rounded-none border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Stock Items</p>
-            <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">1,820</h3>
-            <span className="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-tight">Across 24 Products</span>
+            <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
+            <span className="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-tight">Across {products.length} Products</span>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm bg-red-50/10 border-red-100">
+        <Card className={cn(
+          "rounded-none border-stone-200 shadow-sm",
+          lowStockItems.length > 0 ? "bg-red-50/10 border-red-100" : ""
+        )}>
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[9px] font-black text-[var(--brand-red)] uppercase tracking-[0.2em]">Stock Alerts</p>
-            <h3 className="text-2xl font-black font-meta text-[var(--brand-red)]">3</h3>
-            <span className="text-[9px] font-black text-[var(--brand-red)]/60 flex items-center gap-1 mt-1 uppercase tracking-tight">
-              <AlertTriangle className="w-3 h-3" /> Requires Attention
+            <p className={cn(
+              "text-[9px] font-black uppercase tracking-[0.2em]",
+              lowStockItems.length > 0 ? "text-[var(--brand-red)]" : "text-stone-400"
+            )}>Stock Alerts</p>
+            <h3 className={cn(
+              "text-2xl font-black font-meta",
+              lowStockItems.length > 0 ? "text-[var(--brand-red)]" : "text-[var(--brand-black)]"
+            )}>{lowStockItems.length}</h3>
+            <span className={cn(
+              "text-[9px] font-black flex items-center gap-1 mt-1 uppercase tracking-tight",
+              lowStockItems.length > 0 ? "text-[var(--brand-red)]/60" : "text-stone-400"
+            )}>
+              <AlertTriangle className="w-3 h-3" /> {lowStockItems.length > 0 ? "Requires Attention" : "All Stock Stable"}
             </span>
           </CardContent>
         </Card>
@@ -360,7 +392,7 @@ export default function AdminStore() {
             </div>
           </CardContent>
         </Card>
-      ) : (
+      ) : activeTab === 'requests' ? (
         <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
             <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
@@ -425,7 +457,7 @@ export default function AdminStore() {
                         </span>
                       </td>
                       <td className="px-6 py-5 text-right">
-                        <Select onValueChange={(v) => handleStatusUpdate(req.id, v)}>
+                        <Select onValueChange={(v: ResourceRequest['status']) => handleStatusUpdate(req.id, v)}>
                           <SelectTrigger className="w-32 h-8 text-[9px] font-black uppercase tracking-widest rounded-none border-stone-200">
                             <SelectValue placeholder="Update Status" />
                           </SelectTrigger>
@@ -443,6 +475,81 @@ export default function AdminStore() {
                     <tr>
                       <td colSpan={6} className="px-6 py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
                         No active resource requests from the field.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+          <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
+            <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
+              <History className="w-4 h-4 text-stone-500" />
+              Logistics Audit Vault
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-stone-100 bg-stone-50/10">
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Timestamp</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Action</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Resource</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Change</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Location</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-50">
+                  {auditLogs.map((log) => (
+                    <tr key={log.id} className="hover:bg-stone-50/50 transition-colors">
+                      <td className="px-6 py-5 whitespace-nowrap">
+                        <div className="flex items-center gap-2 text-stone-400">
+                          <Clock className="w-3 h-3" />
+                          <span className="text-[10px] font-bold">
+                            {new Date(log.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className={cn(
+                          "px-2 py-0.5 text-[9px] font-black uppercase tracking-widest border",
+                          log.action === 'DISPATCHED' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
+                          log.action === 'REPLENISHED' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                          "bg-stone-50 text-stone-700 border-stone-100"
+                        )}>
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className="text-xs font-black text-stone-900 uppercase tracking-tight">
+                          {log.productName || 'Unknown Asset'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className={cn(
+                          "text-xs font-black",
+                          log.quantityChange > 0 ? "text-[var(--brand-green)]" : "text-[var(--brand-red)]"
+                        )}>
+                          {log.quantityChange > 0 ? '+' : ''}{log.quantityChange}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-stone-500">
+                          <span>{log.sourceLocation}</span>
+                          <ArrowRight className="w-3 h-3" />
+                          <span>{log.destinationLocation || 'Internal'}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {auditLogs.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
+                        The Logistics Vault is empty. No movements recorded.
                       </td>
                     </tr>
                   )}
@@ -506,6 +613,8 @@ export default function AdminStore() {
           <ShoppingBag className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5 rotate-12" />
         </div>
       </div>
+    </>
+  )}
 
       {/* Add/Edit Product Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

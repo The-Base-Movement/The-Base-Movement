@@ -1114,7 +1114,12 @@ class AdminService {
       priority: req.priority,
       notes: req.notes,
       createdAt: req.created_at,
-      items: (req.resource_request_items || []).map((item: any) => ({
+      items: (req.resource_request_items || []).map((item: { 
+        id: string, 
+        product_id: string, 
+        quantity: number, 
+        store_inventory: { name: string } | null 
+      }) => ({
         id: item.id,
         productId: item.product_id,
         productName: item.store_inventory?.name,
