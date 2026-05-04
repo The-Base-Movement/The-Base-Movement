@@ -116,6 +116,7 @@ export interface Milestone {
   target_date: string
   status: 'Completed' | 'In Progress' | 'Upcoming'
   category: string
+  importance_level: 'Normal' | 'High' | 'Critical'
 }
 
 export interface ChapterApplication {

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Zap, 
   Activity, 
   Database, 
   Globe, 
   ShieldCheck, 
-  AlertTriangle,
   RefreshCw,
   Cpu,
   BarChart3
@@ -20,8 +19,6 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -34,7 +31,6 @@ import {
 export function SystemHealthDashboard() {
   const [latencyData, setLatencyData] = useState<{ time: string, value: number }[]>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [systemUptime, setSystemUptime] = useState('99.98%')
 
   // Generate mock real-time latency data
   useEffect(() => {

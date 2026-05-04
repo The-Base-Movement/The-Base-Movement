@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CheckCircle2, Circle, Clock, ArrowRight, Flag } from 'lucide-react'
+import { CheckCircle2, Circle, Clock, Flag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 
