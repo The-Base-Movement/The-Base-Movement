@@ -3,10 +3,9 @@ import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Vote, ArrowRight, Clock, Lock } from 'lucide-react'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
-import { adminService, type Poll } from '@/services/adminService'
+import { adminService } from '@/services/adminService'
+import type { Poll, PollOption } from '@/types/admin'
 import { toast } from 'sonner'
-
-// Interfaces are now imported from adminService
 
 export default function Polls() {
   const [polls, setPolls] = useState<Poll[]>([])
@@ -45,7 +44,7 @@ export default function Polls() {
             voted: true,
             userSelection: optionId,
             totalVotes: p.totalVotes + 1,
-            options: p.options.map(o => o.id === optionId ? { ...o, votes: o.votes + 1 } : o)
+            options: p.options.map((o: PollOption) => o.id === optionId ? { ...o, votes: o.votes + 1 } : o)
           }
         }
         return p
@@ -168,7 +167,7 @@ export default function Polls() {
                             return 'rgba(206, 17, 38, 0.05)';
                           };
 
-                          return poll.options.map(option => {
+                          return poll.options.map((option: PollOption) => {
                             const percentage = Math.round((option.votes / poll.totalVotes) * 100);
                             return (
                               <div key={option.id} className="space-y-1">

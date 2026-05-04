@@ -6,12 +6,6 @@ import { CommentSection } from '@/components/CommentSection'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import { Loader2 } from 'lucide-react'
 
-const slugify = (text: string) => {
-  return text
-    .toLowerCase()
-    .replace(/[^\w ]+/g, '')
-    .replace(/ +/g, '-')
-}
 
 export default function BlogPost() {
   const { id: slug } = useParams<{ id: string }>()

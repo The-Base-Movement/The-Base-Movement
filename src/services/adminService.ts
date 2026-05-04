@@ -63,9 +63,21 @@ import type {
   AdminUser
 } from '@/types/admin'
 
-
-
-
+// Re-export all types so consumers can import from either location
+export type {
+  Member, Region, Chapter, Poll, PollOption, InventoryItem,
+  DonationCampaign, DonationRecord, DonationDetail,
+  FieldEvent, MobilizationLedger, RegionalStat, Milestone,
+  FieldDirective, FieldReport, ChapterApplication, Achievement,
+  LogisticsVelocity, InventoryAlert, MemberFeedback, SentimentTelemetry,
+  ImpactProjection, RapidResponseDirective, CrisisIncident, MediaCounterNarrative,
+  VoterRegistration, CanvassingCampaign, CanvasserLog, GOTVTransportRequest,
+  FieldAction, RallyAttendance, ChapterLeaderboard, LeaderboardEntry,
+  MovementPulse, GrowthTrend, PendingVerification, ActivityLog,
+  PollStats, Order, OrderStats, OrderItem, BlogPost, ResourceRequest,
+  LogisticsAuditEntry, AuditLogEntry, AdminRole, AdminPermission,
+  SentimentStat, Broadcast, Notification, AdminUser
+} from '@/types/admin'
 
 
 

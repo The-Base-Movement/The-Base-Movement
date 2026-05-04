@@ -523,6 +523,9 @@ export interface BlogPost {
   content: string
   authorId: string
   authorName?: string
+  authorRole?: string
+  authorImage?: string
+  authorBio?: string
   category: string
   imageUrl?: string
   readTime: string
@@ -541,8 +544,14 @@ export interface Order {
   email: string
   phone: string
   address: string
+  shipping_address?: string
+  city?: string
+  region_or_state?: string
+  country?: string
   region: string
   constituency: string
+  subtotal?: number
+  shipping_fee?: number
   total_amount: number
   status: 'Pending' | 'Processing' | 'Dispatched' | 'Delivered' | 'Cancelled'
   payment_method: string

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Phone, Globe, Check, ArrowDownToLine, Activity, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { adminService, type DonationRecord, type DonationCampaign } from '@/services/adminService'
+import { adminService } from '@/services/adminService'
+import type { DonationRecord, DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
 
 // Mock data removed in favor of live Supabase fetching
