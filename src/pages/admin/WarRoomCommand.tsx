@@ -69,24 +69,31 @@ export default function WarRoomCommand() {
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
       {/* ⚔️ War Room Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-stone-200">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="h-1 w-12 bg-red-600" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 animate-pulse">DEFCON Systems Active</span>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-stone-800 carbon-fiber p-10 shadow-2xl relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-900/50 to-transparent pointer-events-none" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-1 w-12 tactical-gradient-red" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--brand-red)] animate-pulse">DEFCON Systems Active</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tighter text-stone-900 font-meta italic uppercase flex items-center gap-4">
-            War <span className="text-stone-400">Room</span>
-            <ShieldAlert className="w-10 h-10 text-red-600" />
+          <h1 className="text-6xl font-black tracking-tighter text-white font-meta italic uppercase flex items-center gap-4">
+            War <span className="text-stone-500">Room</span>
+            <ShieldAlert className="w-12 h-12 text-[var(--brand-red)] animate-pulse" />
           </h1>
-          <p className="text-stone-400 text-sm font-medium tracking-wide max-w-xl mt-2">
-            Real-time crisis management, rapid response dispatch, and media counter-narrative control.
+          <p className="text-stone-400 text-sm font-medium tracking-wide max-w-2xl mt-3 leading-relaxed">
+            Real-time movement intelligence, rapid response dispatch, and institutional threat neutralization. Integrated DEFCON monitoring engaged.
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button className="bg-red-600 text-white hover:bg-red-700 rounded-none h-12 px-6 font-black text-[10px] uppercase tracking-widest shadow-xl">
-            <Siren className="w-4 h-4 mr-2 animate-pulse" /> Dispatch Rapid Response
-          </Button>
+        <div className="flex flex-col items-end relative z-10">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-500 mb-2">Operational Readiness</span>
+          <div className="flex items-center gap-4 bg-black/40 backdrop-blur-md p-4 border border-white/5">
+            <div className="text-right">
+              <span className="text-[9px] font-black text-stone-500 uppercase tracking-widest block">Strategic Level</span>
+              <span className="text-3xl font-black italic tracking-tighter text-[var(--brand-red)]">LEVEL 2</span>
+            </div>
+            <div className="h-10 w-[2px] bg-stone-800" />
+            <Zap className="w-8 h-8 text-[var(--brand-gold)] animate-bounce" />
+          </div>
         </div>
       </div>
 

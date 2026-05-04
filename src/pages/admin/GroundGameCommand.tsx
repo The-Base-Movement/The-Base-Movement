@@ -63,27 +63,32 @@ export default function GroundGameCommand() {
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
       {/* 🗳️ Ground Game Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-stone-200">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="h-1 w-12 bg-[var(--brand-green)]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--brand-green)]">Operation Ground Game</span>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-stone-200 bg-white p-10 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-1 w-12 tactical-gradient-green" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--brand-green)]">Operation Ground Game</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tighter text-stone-900 font-meta italic uppercase flex items-center gap-4">
+          <h1 className="text-6xl font-black tracking-tighter text-stone-900 font-meta italic uppercase flex items-center gap-4">
             Ground <span className="text-stone-400">Command</span>
-            <MapPin className="w-10 h-10 text-[var(--brand-green)]" />
+            <MapPin className="w-12 h-12 text-[var(--brand-green)] animate-bounce" />
           </h1>
-          <p className="text-stone-400 text-sm font-medium tracking-wide max-w-xl mt-2">
-            Election Day logistics, voter registration tracking, and door-to-door canvassing command.
+          <p className="text-stone-500 text-sm font-medium tracking-wide max-w-2xl mt-3 leading-relaxed">
+            Election Day logistics, voter registration tracking, and door-to-door canvassing command. Mobilizing the grassroots with precision.
           </p>
         </div>
-        <div className="flex flex-col items-end">
-          <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-1">Verified Voters</span>
-          <div className="flex items-center gap-3">
-            <span className="text-4xl font-black italic tracking-tighter text-[var(--brand-green)]">
-              {verifiedVoters.toLocaleString()}
-            </span>
-            <Vote className="w-6 h-6 text-[var(--brand-green)]" />
+        <div className="flex flex-col items-end relative z-10">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 mb-2">Verified Patriots</span>
+          <div className="flex items-center gap-5 bg-stone-50 p-4 border border-stone-100 shadow-inner">
+            <div className="text-right">
+              <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest block">Registered Voters</span>
+              <span className="text-4xl font-black italic tracking-tighter text-[var(--brand-green)]">
+                {verifiedVoters.toLocaleString()}
+              </span>
+            </div>
+            <div className="h-10 w-[2px] bg-stone-200" />
+            <Vote className="w-8 h-8 text-[var(--brand-green)]" />
           </div>
         </div>
       </div>

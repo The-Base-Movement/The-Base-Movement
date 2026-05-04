@@ -198,3 +198,44 @@
   background: linear-gradient(to bottom, var(--brand-red), var(--brand-yellow), var(--brand-green));
   border-radius: 10px;
 }
+
+/* Elite Industrial Design Tokens */
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply bg-stone-900/90 backdrop-blur-lg border border-white/10 shadow-2xl;
+  }
+
+  .carbon-fiber {
+    background-color: #1a1a1a;
+    background-image: 
+      linear-gradient(45deg, #222 25%, transparent 25%), 
+      linear-gradient(-45deg, #222 25%, transparent 25%), 
+      linear-gradient(45deg, transparent 75%, #222 75%), 
+      linear-gradient(-45deg, transparent 75%, #222 75%);
+    background-size: 4px 4px;
+  }
+
+  .tactical-gradient-red {
+    background: linear-gradient(135deg, #CE1126 0%, #8b0000 100%);
+  }
+
+  .tactical-gradient-green {
+    background: linear-gradient(135deg, #006B3F 0%, #004d2e 100%);
+  }
+
+  .tactical-gradient-gold {
+    background: linear-gradient(135deg, #DAA520 0%, #b8860b 100%);
+  }
+
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  .stat-card-tactical {
+    @apply bg-white border-l-4 border-[var(--brand-green)] p-6 shadow-sm hover:shadow-md transition-all;
+  }
+}

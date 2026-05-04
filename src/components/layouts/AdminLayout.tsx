@@ -143,7 +143,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     {item.label}
                   </span>
                   {isActive && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[var(--brand-red)] shadow-[0_0_15px_rgba(255,0,0,0.5)]" />
+                    <>
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[var(--brand-red)] shadow-[0_0_20px_rgba(206,17,38,0.8)]" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-red)]/5 to-transparent pointer-events-none" />
+                    </>
                   )}
                 </Link>
               )

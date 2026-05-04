@@ -71,31 +71,36 @@ export default function SentimentIntelligence() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
-      {/* 🧠 Intelligence Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-stone-200">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="h-1 w-12 bg-[var(--brand-red)]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--brand-red)]">AI Analytics</span>
+      {/* 🧠 Sentiment Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-stone-200 bg-white p-10 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-1 w-12 tactical-gradient-gold" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--brand-gold)]">Sentiment Intelligence Hub</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tighter text-stone-900 font-meta italic uppercase flex items-center gap-4">
-            Sentiment <span className="text-stone-400">Intelligence</span>
-            <Brain className="w-10 h-10 text-[var(--brand-red)] animate-pulse" />
+          <h1 className="text-6xl font-black tracking-tighter text-stone-900 font-meta italic uppercase flex items-center gap-4">
+            National <span className="text-stone-400">Sentiment</span>
+            <Brain className="w-12 h-12 text-[var(--brand-gold)] animate-pulse" />
           </h1>
-          <p className="text-stone-400 text-sm font-medium tracking-wide max-w-xl mt-2">
-            Real-time predictive polling and national mood analysis powered by movement telemetry.
+          <p className="text-stone-500 text-sm font-medium tracking-wide max-w-2xl mt-3 leading-relaxed">
+            AI-driven aggregation of member feedback, regional telemetry, and predictive mobilization impact forecasting. National pulse monitoring engaged.
           </p>
         </div>
-        <div className="flex flex-col items-end">
-          <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-1">National Pulse Index</span>
-          <div className="flex items-center gap-3">
-            <span className={cn(
-              "text-3xl font-black italic tracking-tighter",
-              nationalScore >= 0 ? "text-[var(--brand-green)]" : "text-[var(--brand-red)]"
-            )}>
-              {(nationalScore * 100).toFixed(1)}
-            </span>
-            <Activity className={cn("w-6 h-6", nationalScore >= 0 ? "text-[var(--brand-green)]" : "text-[var(--brand-red)]")} />
+        <div className="flex flex-col items-end relative z-10">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 mb-2">National Pulse Index</span>
+          <div className="flex items-center gap-5 bg-stone-50 p-4 border border-stone-100 shadow-inner">
+            <div className="text-right">
+              <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest block">Average Sentiment</span>
+              <span className={cn(
+                "text-4xl font-black italic tracking-tighter",
+                nationalScore >= 0 ? "text-[var(--brand-green)]" : "text-[var(--brand-red)]"
+              )}>
+                {(nationalScore * 100).toFixed(1)}
+              </span>
+            </div>
+            <div className="h-10 w-[2px] bg-stone-200" />
+            <Activity className={cn("w-8 h-8", nationalScore >= 0 ? "text-[var(--brand-green)]" : "text-[var(--brand-red)]")} />
           </div>
         </div>
       </div>
