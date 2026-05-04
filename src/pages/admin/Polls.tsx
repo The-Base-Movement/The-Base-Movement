@@ -107,6 +107,7 @@ export default function PollsManagement() {
         toast.error('Failed to delete poll.')
       }
     } catch (err) {
+      console.error('[POLLS] Delete operation failed:', err)
       toast.error('An error occurred while deleting the poll.')
     }
   }

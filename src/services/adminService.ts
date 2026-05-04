@@ -166,6 +166,9 @@ export interface BlogPost {
   content: string
   authorId: string
   authorName?: string
+  authorRole?: string
+  authorImage?: string
+  authorBio?: string
   category: string
   imageUrl?: string
   readTime: string
@@ -1294,6 +1297,40 @@ class AdminService {
       seoTitle: p.seo_title || undefined,
       metaDescription: p.meta_description || undefined
     }))
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('slug', slug)
+      .single()
+
+    if (error || !data) {
+      console.error('[DATABASE] Failed to fetch blog post by slug:', error)
+      return null
+    }
+
+    return {
+      id: data.id,
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      content: data.content,
+      authorId: data.author_id,
+      authorName: data.author_name || 'Admin',
+      authorRole: data.author_role,
+      authorImage: data.author_image,
+      authorBio: data.author_bio,
+      category: data.category,
+      imageUrl: data.image_url,
+      readTime: data.read_time,
+      isFeatured: data.is_featured,
+      publishedAt: data.published_at,
+      tags: data.tags || [],
+      seoTitle: data.seo_title,
+      metaDescription: data.meta_description
+    }
   }
 
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<boolean> {

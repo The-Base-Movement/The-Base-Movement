@@ -35,7 +35,7 @@ This TODO list outlines the next strategic horizons for the movement's platform 
 - [x] **Growth Trends**: Create the `membership_growth_view` in the database so `getGrowthTrends()` executes successfully.
 - [x] **Member Verification**: Transition `admin/MemberVerification.tsx` to pull pending verifications directly from Supabase.
 - [x] **Polls & Surveys**: Update admin/Polls.tsx and adminService.ts to fully integrate with the polls and poll_options tables, removing mock fallbacks.
-- [ ] **Blog Posts**: Update `BlogPost.tsx` to fetch actual post content from the `blog_posts` table based on the URL slug.
+- [x] **Blog Posts**: Update `BlogPost.tsx` to fetch actual post content from the `blog_posts` table based on the URL slug.
 
 ---
 *Absolute Integrity. Absolute Precision. The Base.*

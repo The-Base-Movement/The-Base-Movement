@@ -1,43 +1,10 @@
-import { useParams, Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom'
 import { Calendar, Clock, ChevronLeft, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { CommentSection } from '@/components/CommentSection'
-
-// Mock data for the authoritative blog post
-const blogPost = {
-  id: '1',
-  title: "The Industrialization of Ghana: A Vision for Sustainable Youth Employment",
-  excerpt: "Discover the movement's comprehensive roadmap for transforming Ghana into an industrial powerhouse, focused on creating millions of high-quality jobs for the youth.",
-  content: `
-    <p>The prosperity of any nation lies in its ability to transform raw materials into finished goods. For too long, Ghana has relied on the export of primary resources, leaving our youth vulnerable to global price fluctuations and limited employment opportunities. "The Base" movement believes that industrialization is not just an economic strategy; it is a moral imperative for national survival.</p>
-    
-    <h2>1. The Foundation of Our Economic Agenda</h2>
-    <p>Our agenda, "Ghana First," prioritizes the establishment of regional industrial hubs. These hubs are designed to leverage local resources—from the lithium deposits in Mfantseman to the vast agricultural potential of the Northern regions—to build a self-reliant economy.</p>
-    
-    <h2>2. Modernizing Agriculture through Technology</h2>
-    <p>Agriculture remains the backbone of our society, but it requires a technological revolution. By integrating high-tech irrigation systems and establishing state-of-the-art processing plants, we can ensure food security and create an agricultural value chain that employs thousands of young professionals.</p>
-    
-    <blockquote>"We are not just building factories; we are building the character of a new Ghana—one that is disciplined, innovative, and unapologetically ambitious."</blockquote>
-    
-    <h2>3. The Role of the Youth in National Transformation</h2>
-    <p>The youth are not the leaders of tomorrow; they are the catalysts of today. Our platform provides the training, resources, and institutional support necessary for young Ghanaians to take charge of the industrial landscape. Through "The Base," we are fostering a generation of creators, not just consumers.</p>
-    
-    <p>Join us as we embark on this historic journey. Together, we will build a Ghana that works for every citizen, where every young person has the opportunity to thrive and contribute to our collective greatness.</p>
-  `,
-  author: "Dr. George Oti Bonsu",
-  authorProfile: {
-    name: "Dr. George Oti Bonsu",
-    role: "Founder, The Base",
-    bio: "Visionary leader and advocate for the industrial transformation of Ghana. Dedicated to empowering the youth through disciplined civic engagement.",
-    image: "/founder.jpg"
-  },
-  authorRole: "Founder, The Base",
-  date: "October 28, 2024",
-  readTime: "8 min read",
-  category: "Policy & Agenda",
-  image: "/hero-bg.png",
-  tags: ["Industrialization", "Youth Employment", "Ghana First", "Economic Reform"]
-}
+import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
+import { Loader2 } from 'lucide-react'
 
 const slugify = (text: string) => {
   return text
@@ -47,13 +14,30 @@ const slugify = (text: string) => {
 }
 
 export default function BlogPost() {
-  useParams<{ id: string }>()
+  const { id: slug } = useParams<{ id: string }>()
   const location = useLocation()
+  const navigate = useNavigate()
   const isDashboard = location.pathname.startsWith('/dashboard')
   const baseUrl = isDashboard ? '/dashboard/blog' : '/blog'
 
-  // In a real app, you would fetch the post by id. Here we use the mock data.
-  const post = blogPost
+  const [post, setPost] = useState<BlogPostType | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchPost() {
+      if (!slug) return
+      setLoading(true)
+      try {
+        const data = await adminService.getBlogPostBySlug(slug)
+        if (data) {
+          setPost(data)
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPost()
+  }, [slug])
 
   const handleShare = (platform?: string) => {
     const url = window.location.href
@@ -88,6 +72,28 @@ export default function BlogPost() {
     window.open(shareUrl, '_blank', 'width=600,height=400')
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-8 h-8 text-[var(--brand-green)] animate-spin" />
+        <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Loading Insight File...</p>
+      </div>
+    )
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
+        <p className="text-sm font-bold text-stone-500 uppercase tracking-widest text-center">
+          Insight not found or has been moved to the vault.
+        </p>
+        <Button onClick={() => navigate(baseUrl)} variant="primary" className="h-11 px-8 rounded-none uppercase text-[10px] font-bold tracking-widest">
+          Return to Blog
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-white pb-20">
       <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
@@ -120,7 +126,7 @@ export default function BlogPost() {
                 {post.category}
               </span>
               <div className="flex items-center gap-4 text-stone-400 text-[10px] font-bold uppercase tracking-widest">
-                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.date}</span>
+                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'N/A'}</span>
                 <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {post.readTime}</span>
               </div>
             </div>
@@ -137,7 +143,7 @@ export default function BlogPost() {
           {/* Featured Image */}
           <div className="relative aspect-[21/9] overflow-hidden border border-stone-200">
             <img 
-              src={post.image} 
+              src={post.imageUrl || '/hero-bg.png'} 
               alt={post.title} 
               className="w-full h-full object-cover"
             />
@@ -153,17 +159,17 @@ export default function BlogPost() {
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">Authored By</p>
                   <div className="flex items-center gap-3">
                     <img 
-                      src={post.authorProfile?.image || '/founder.jpg'} 
-                      alt={post.authorProfile?.name} 
+                      src={post.authorImage || '/founder.jpg'} 
+                      alt={post.authorName} 
                       className="w-12 h-12 bg-charcoal-dark rounded-none object-cover"
                     />
                     <div>
-                      <p className="text-sm font-bold text-stone-900 leading-none mb-0">{post.authorProfile?.name}</p>
-                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0">{post.authorProfile?.role}</p>
+                      <p className="text-sm font-bold text-stone-900 leading-none mb-0">{post.authorName}</p>
+                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0">{post.authorRole}</p>
                     </div>
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed pt-2 mb-0">
-                    {post.authorProfile?.bio}
+                    {post.authorBio}
                   </p>
                 </div>
 
