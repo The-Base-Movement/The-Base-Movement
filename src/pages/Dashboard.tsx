@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { WelcomeModal } from '@/components/WelcomeModal'
 import { ShareModal } from '@/components/ShareModal'
-import { adminService } from '@/services/adminService'
-
-
+import { adminService, type Notification, type Achievement, type LeaderboardEntry } from '@/services/adminService'
+import { Trophy, Medal, TrendingUp, Zap, MapPin, ShieldCheck } from 'lucide-react'
+import { MovementRoadmap } from '@/components/MovementRoadmap'
 
 interface GrowthStats {
   joined_last_hour: number
@@ -28,9 +28,12 @@ interface MemberData {
 export default function Dashboard() {
   const [stats, setStats] = useState<GrowthStats | null>(null)
   const [member, setMember] = useState<MemberData | null>(null)
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [achievements, setAchievements] = useState<Achievement[]>([])
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [shareData, setShareData] = useState({ title: '', url: '' })
 
   const handleShare = () => {
@@ -48,7 +51,7 @@ export default function Dashboard() {
       const liveStats = await adminService.getGrowthStats()
       setStats(liveStats)
 
-      // 2. Fetch Active Member Profile
+      // 2. Fetch Active Member Profile & Gamification Data
       const regNo = localStorage.getItem('userRegNo')
       if (regNo) {
         const liveMember = await adminService.getMemberProfile(regNo)
@@ -58,17 +61,29 @@ export default function Dashboard() {
             registration_number: liveMember.id,
             platform: liveMember.type === 'Premium' ? 'DIASPORA' : 'GHANA',
             phone_number: liveMember.phone,
-            age_range: 'Not Specified', // Default as it's not in the base Member interface
+            age_range: 'Not Specified',
             gender: liveMember.gender || 'Not Set',
             region: liveMember.region,
             constituency: liveMember.constituency,
             chapter: liveMember.chapter || 'Central Chapter',
             profession: 'Member'
           })
+
+          // Fetch achievements and localized leaderboard in the same scope
+          const [userAchievements, regionLeaderboard] = await Promise.all([
+            adminService.getMemberAchievements(regNo),
+            adminService.getLeaderboard(liveMember.region)
+          ])
+          setAchievements(userAchievements)
+          setLeaderboard(regionLeaderboard)
         }
       }
       
-      // Check if first time
+      // 3. Fetch Movement Directives
+      const userNotifications = await adminService.getNotifications()
+      setNotifications(userNotifications)
+
+      // 4. Welcome Experience (First Time Only)
       const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
       if (!hasSeenWelcome) {
         setIsWelcomeModalOpen(true)
@@ -138,8 +153,58 @@ export default function Dashboard() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
-        {/* Section 2: Member Details (Asymmetric Column) */}
+        {/* Section 2: Movement Directives (New Feed) */}
         <section className="lg:col-span-7">
+          <div className="bg-white border border-stone-200 rounded-sm shadow-sm overflow-hidden mb-8">
+            <div className="bg-stone-50 border-b border-stone-100 p-4 flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-widest text-[var(--brand-green)] flex items-center gap-2 m-0">
+                <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>campaign</span>
+                Movement Directives
+              </h3>
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{notifications.length} Active Alerts</span>
+            </div>
+            <div className="divide-y divide-stone-50 max-h-[400px] overflow-y-auto">
+              {notifications.length === 0 ? (
+                <div className="p-12 text-center">
+                  <span className="material-symbols-outlined text-stone-200 text-4xl mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 48" }}>notifications_off</span>
+                  <p className="text-xs text-stone-400 uppercase font-bold tracking-widest">Standing by for HQ directives</p>
+                </div>
+              ) : (
+                notifications.map((note) => (
+                  <div key={note.id} className={`p-6 transition-all border-l-4 ${note.is_read ? 'border-transparent' : 'border-[var(--brand-green)] bg-emerald-50/20'}`}>
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <div className="flex items-center gap-2">
+                        {note.type === 'Alert' && (
+                          <span className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-black uppercase tracking-widest rounded-none">Urgent</span>
+                        )}
+                        <h4 className={`text-sm font-black uppercase tracking-tight m-0 ${note.is_read ? 'text-stone-600' : 'text-stone-900'}`}>
+                          {note.title}
+                        </h4>
+                      </div>
+                      <span className="text-[9px] text-stone-400 font-bold uppercase tracking-widest shrink-0">
+                        {new Date(note.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-stone-500 leading-relaxed mb-4">{note.message}</p>
+                    {!note.is_read && (
+                      <button 
+                        onClick={async () => {
+                          const success = await adminService.markNotificationRead(note.id)
+                          if (success) {
+                            setNotifications(prev => prev.map(n => n.id === note.id ? { ...n, is_read: true } : n))
+                          }
+                        }}
+                        className="text-[9px] font-black uppercase tracking-widest text-[var(--brand-green)] hover:underline"
+                      >
+                        Acknowledge Directive
+                      </button>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
           <div className="bg-surface-warm border-t-[3px] border-t-warm-gold overflow-hidden rounded-sm shadow-sm">
             <div className="p-6 sm:p-8">
               <h3 className="mb-6 sm:mb-8 border-b border-divider-gold pb-4 text-on-surface">Member Identity Details</h3>
@@ -238,7 +303,79 @@ export default function Dashboard() {
         </section>
       </div>
 
-      {/* Section 4: Quick Actions (Functional Grid) */}
+      {/* Section 4: Achievements & Regional Leaderboard */}
+      <section className="mt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Achievements Gallery */}
+          <div className="bg-white border border-stone-200 rounded-sm shadow-sm overflow-hidden">
+            <div className="bg-stone-50 border-b border-stone-100 p-6 flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-widest text-stone-900 flex items-center gap-2 m-0">
+                <Trophy className="w-4 h-4 text-warm-gold" />
+                Movement Achievements
+              </h3>
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{achievements.length} Badges Earned</span>
+            </div>
+            <div className="p-8 grid grid-cols-2 sm:grid-cols-3 gap-6">
+              {achievements.map((achievement) => (
+                <div key={achievement.id} className="flex flex-col items-center text-center group">
+                  <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mb-3 border-2 border-transparent group-hover:border-warm-gold/30 group-hover:bg-warm-gold/5 transition-all">
+                    {achievement.icon === 'Zap' && <Zap className="w-6 h-6 text-warm-gold" />}
+                    {achievement.icon === 'MapPin' && <MapPin className="w-6 h-6 text-warm-gold" />}
+                    {achievement.icon === 'ShieldCheck' && <ShieldCheck className="w-6 h-6 text-warm-gold" />}
+                    {achievement.icon === 'TrendingUp' && <TrendingUp className="w-6 h-6 text-warm-gold" />}
+                  </div>
+                  <p className="text-[10px] font-black uppercase tracking-tight text-stone-900 m-0">{achievement.name}</p>
+                  <p className="text-[8px] text-stone-400 font-bold uppercase mt-1 leading-tight">{achievement.description}</p>
+                </div>
+              ))}
+              {/* Locked Badges */}
+              <div className="flex flex-col items-center text-center opacity-40">
+                <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mb-3 border-2 border-stone-100 grayscale">
+                  <Medal className="w-6 h-6 text-stone-300" />
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-tight text-stone-400 m-0">Mobilizer</p>
+                <p className="text-[8px] text-stone-300 font-bold uppercase mt-1 leading-tight">Locked (500 Points)</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Regional Leaderboard */}
+          <div className="bg-white border border-stone-200 rounded-sm shadow-sm overflow-hidden">
+            <div className="bg-stone-50 border-b border-stone-100 p-6 flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-widest text-stone-900 flex items-center gap-2 m-0">
+                <TrendingUp className="w-4 h-4 text-[var(--brand-green)]" />
+                {member?.region || 'National'} Leaderboard
+              </h3>
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Top 5 Mobilizers</span>
+            </div>
+            <div className="divide-y divide-stone-50">
+              {leaderboard.map((entry) => (
+                <div key={entry.name} className="p-4 flex items-center justify-between hover:bg-stone-50/50 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <span className={`w-6 h-6 rounded-none flex items-center justify-center text-[10px] font-black ${
+                      entry.rank === 1 ? 'bg-warm-gold text-white' : 
+                      entry.rank === 2 ? 'bg-stone-300 text-stone-600' : 
+                      entry.rank === 3 ? 'bg-amber-600/30 text-amber-900' : 'bg-stone-100 text-stone-400'
+                    }`}>
+                      {entry.rank}
+                    </span>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-tight text-stone-900 m-0">{entry.name}</p>
+                      <p className="text-[8px] text-stone-400 font-bold uppercase tracking-widest">{entry.region}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-black text-[var(--brand-green)] m-0">{entry.points.toLocaleString()}</p>
+                    <p className="text-[8px] text-stone-300 font-black uppercase tracking-widest">Points</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Quick Actions (Functional Grid) */}
       <section className="mt-12">
         <h3 className="text-on-surface mb-6">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -263,6 +400,11 @@ export default function Dashboard() {
             <p className="font-meta text-[11px] text-on-surface">Edit Profile</p>
           </Link>
         </div>
+      </section>
+
+      {/* Section 6: Interactive Movement Roadmap */}
+      <section className="mt-20">
+        <MovementRoadmap />
       </section>
 
       {/* Movement Visual Anchor */}

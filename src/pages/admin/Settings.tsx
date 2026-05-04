@@ -10,8 +10,10 @@ import {
   ShieldCheck,
   Search,
   Camera,
-  Loader2
+  Loader2,
+  Zap
 } from 'lucide-react'
+import { SystemHealthDashboard } from '@/components/admin/SystemHealthDashboard'
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
 import { authService } from '@/services/authService'
 import { toast } from 'sonner'
@@ -42,9 +44,12 @@ export default function AdminSettings() {
     { id: 'system', label: 'System Preferences', icon: Globe },
     { id: 'security', label: 'Security', icon: Lock },
     { id: 'audit', label: 'Audit Vault', icon: ShieldCheck },
+    { id: 'operational', label: 'Operational Pulse', icon: Zap },
   ]
 
   const [auditSearch, setAuditSearch] = useState('')
+  const [auditFilter, setAuditFilter] = useState('All Status')
+  const [auditResourceFilter, setAuditResourceFilter] = useState('All Resources')
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [adminData, setAdminData] = useState<AdminUser | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -370,9 +375,40 @@ export default function AdminSettings() {
                       className="pl-10 h-11 rounded-none border-stone-200 text-xs"
                     />
                   </div>
-                  <Button variant="outline" className="h-11 px-6 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest">
-                    Export Vault
-                  </Button>
+                  <div className="flex gap-2">
+                    <select 
+                      value={auditFilter}
+                      onChange={(e) => setAuditFilter(e.target.value)}
+                      className="h-11 px-4 bg-stone-50 border border-stone-200 text-[10px] font-black uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-[var(--brand-gold)] cursor-pointer"
+                    >
+                      <option>All Status</option>
+                      <option>Success</option>
+                      <option>Warning</option>
+                      <option>Failure</option>
+                    </select>
+                    <select 
+                      value={auditResourceFilter}
+                      onChange={(e) => setAuditResourceFilter(e.target.value)}
+                      className="h-11 px-4 bg-stone-50 border border-stone-200 text-[10px] font-black uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-[var(--brand-gold)] cursor-pointer"
+                    >
+                      <option>All Resources</option>
+                      <option>MEMBERS</option>
+                      <option>STORE</option>
+                      <option>BLOGS</option>
+                      <option>SYSTEM</option>
+                    </select>
+                    <Button 
+                      variant="outline" 
+                      className="h-11 px-6 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-black)] hover:text-white"
+                      onClick={() => {
+                        toast.success('PREPARING FORENSIC EXPORT', {
+                          description: 'Compiling movement audit telemetry...'
+                        })
+                      }}
+                    >
+                      Export Vault
+                    </Button>
+                  </div>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
@@ -386,11 +422,16 @@ export default function AdminSettings() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-50">
-                      {auditLogs.filter(log => 
-                        log.adminName.toLowerCase().includes(auditSearch.toLowerCase()) ||
-                        log.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
-                        log.resource.toLowerCase().includes(auditSearch.toLowerCase())
-                      ).map((log) => (
+                      {auditLogs.filter(log => {
+                        const matchesSearch = log.adminName.toLowerCase().includes(auditSearch.toLowerCase()) ||
+                          log.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
+                          log.resource.toLowerCase().includes(auditSearch.toLowerCase());
+                        
+                        const matchesStatus = auditFilter === 'All Status' || log.status === auditFilter;
+                        const matchesResource = auditResourceFilter === 'All Resources' || log.resource.includes(auditResourceFilter);
+                        
+                        return matchesSearch && matchesStatus && matchesResource;
+                      }).map((log) => (
                         <tr key={log.id} className="hover:bg-stone-50/50 transition-colors">
                           <td className="p-4">
                             <p className="text-[10px] font-bold text-stone-500 whitespace-nowrap">
@@ -422,6 +463,17 @@ export default function AdminSettings() {
                 </div>
               </CardContent>
             </Card>
+          )}
+          
+          {activeTab === 'operational' && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="bg-[var(--brand-black)] text-white p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[var(--brand-red)]/10 to-transparent" />
+                <h2 className="text-3xl font-black font-meta uppercase tracking-tighter relative z-10">Operational Intelligence</h2>
+                <p className="text-stone-400 text-sm mt-1 relative z-10">Real-time monitoring of movement infrastructure and data engine performance.</p>
+              </div>
+              <SystemHealthDashboard />
+            </div>
           )}
         </div>
       </div>

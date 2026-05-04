@@ -4,6 +4,7 @@ import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, CheckCircle
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import MembershipCard from '../components/MembershipCard'
+import { getCroppedImg } from '@/lib/imageUtils'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 
@@ -82,7 +83,7 @@ export default function Register() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
-  const [, setCroppedAreaPixels] = useState<Area | null>(null)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
 
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels)
@@ -156,13 +157,18 @@ export default function Register() {
         
         // 1. Upload Avatar to Supabase Storage
         let finalAvatarUrl = photoUrl
-        if (photoUrl && photoUrl.startsWith('data:')) {
+        if (photoUrl && croppedAreaPixels) {
           try {
-            const blob = dataURLtoBlob(photoUrl)
+            const croppedBlob = await getCroppedImg(photoUrl, croppedAreaPixels)
+            if (!croppedBlob) throw new Error('Cropping failed')
+            
             const fileName = `${regNo}.jpg`
             const { error: uploadError } = await supabase.storage
               .from('avatars')
-              .upload(fileName, blob, { upsert: true })
+              .upload(fileName, croppedBlob, { 
+                upsert: true,
+                contentType: 'image/jpeg'
+              })
 
             if (uploadError) throw uploadError
 

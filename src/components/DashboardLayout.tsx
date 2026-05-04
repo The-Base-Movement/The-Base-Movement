@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
+import { adminService } from '@/services/adminService'
 
 export default function DashboardLayout() {
   const location = useLocation()
@@ -13,6 +14,7 @@ export default function DashboardLayout() {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     const readProfile = () => {
@@ -30,6 +32,14 @@ export default function DashboardLayout() {
       setUserRegNo(localStorage.getItem('userRegNo') || '')
     }
     readProfile()
+    
+    // Fetch unread notification count
+    const fetchUnread = async () => {
+      const notes = await adminService.getNotifications()
+      setUnreadCount(notes.filter(n => !n.is_read).length)
+    }
+    fetchUnread()
+
     window.addEventListener('storage', readProfile)
     return () => window.removeEventListener('storage', readProfile)
   }, [])
@@ -274,7 +284,11 @@ export default function DashboardLayout() {
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
                 >notifications</span>
                 {/* Unread badge */}
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-red-500 rounded-full ring-2 ring-white text-[8px] flex items-center justify-center text-white font-black">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
 
               {/* Divider */}

@@ -20,8 +20,10 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import type { GrowthTrend, SentimentStat, AuditLogEntry, RegionalStat } from '@/services/adminService'
+import type { GrowthTrend, SentimentStat, AuditLogEntry, RegionalStat, LogisticsLatency } from '@/services/adminService'
 import { useState, useEffect } from 'react'
+import { GhanaGrowthMap } from '@/components/admin/GhanaGrowthMap'
+import { PulseReport } from '@/components/admin/PulseReport'
 import { 
   AreaChart, 
   Area, 
@@ -88,6 +90,7 @@ export default function AdminDashboard() {
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
   const [globalStats, setGlobalStats] = useState<{ label: string, value: string, change: string }[]>([])
+  const [logisticsData, setLogisticsData] = useState<LogisticsLatency[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const navigate = useNavigate()
 
@@ -96,18 +99,20 @@ export default function AdminDashboard() {
       console.log('[SYSTEM] Dashboard: Starting data fetch...')
       setIsLoading(true)
       try {
-        const [growth, sentiment, audit, regions, stats] = await Promise.all([
+        const [growth, sentiment, audit, regions, stats, logistics] = await Promise.all([
           adminService.getGrowthTrends(),
           adminService.getSentimentAnalysis(),
           adminService.getSystemAuditLogs(),
           adminService.getRegionalStats(),
-          adminService.getGlobalStats()
+          adminService.getGlobalStats(),
+          adminService.getLogisticsLatency()
         ])
         setGrowthData(growth)
         setSentimentStats(sentiment)
         setAuditLogs(audit)
         setRegionalStats(regions)
         setGlobalStats(stats)
+        setLogisticsData(logistics)
         console.log('[SYSTEM] Dashboard: Data fetch complete.')
       } catch (error) {
         console.error('[SYSTEM] Dashboard: Data fetch failed:', error)
@@ -220,6 +225,11 @@ export default function AdminDashboard() {
         )}
       </div>
 
+      {/* Movement Pulse Report */}
+      <section className="animate-in fade-in slide-in-from-top-4 duration-1000">
+        <PulseReport />
+      </section>
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
         {/* Main Intelligence Hub (Left/Middle Column) */}
         <div className="xl:col-span-2 space-y-8">
@@ -282,45 +292,61 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Regional Impact Intelligence Hub */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {regionalStats.slice(0, 4).map((region) => (
-              <Card key={region.region} className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white group hover:border-[var(--brand-gold)] transition-all">
-                <CardHeader className="p-6 pb-4 flex flex-row items-center justify-between space-y-0">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-stone-400 group-hover:text-[var(--brand-gold)] transition-colors" />
-                    <CardTitle className="text-[10px] font-black uppercase tracking-widest text-stone-900">{region.region}</CardTitle>
-                  </div>
-                  <span className={cn("text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border", 
-                    region.performance === 'High' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                    region.performance === 'Medium' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-rose-50 text-rose-600 border-rose-100'
-                  )}>
-                    {region.performance} IMPACT
-                  </span>
-                </CardHeader>
-                <CardContent className="p-6 pt-0 space-y-4">
-                  <div className="flex justify-between items-end">
-                    <div>
-                      <p className="text-2xl font-black font-meta text-stone-900 leading-none">{region.memberCount.toLocaleString()}</p>
-                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Total Members</p>
+          <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
+            <CardHeader className="p-8 border-b border-stone-100">
+              <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-[var(--brand-gold)]" />
+                Regional Expansion Map
+              </CardTitle>
+              <CardDescription className="text-xs mt-1">Geospatial visualization of movement density across Ghana's 16 regions.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="grid grid-cols-1 lg:grid-cols-2">
+                <div className="border-r border-stone-100">
+                  <GhanaGrowthMap 
+                    data={regionalStats} 
+                    onRegionClick={(region) => {
+                      toast({
+                        title: `${region.toUpperCase()} REGIONAL FOCUS`,
+                        description: `Retrieving detailed telemetry for ${region}...`,
+                      })
+                    }} 
+                  />
+                </div>
+                <div className="divide-y divide-stone-50 max-h-[500px] overflow-y-auto">
+                  {regionalStats.map((region) => (
+                    <div key={region.region} className="p-6 hover:bg-stone-50/50 transition-all group">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-2 h-2 rounded-full" 
+                            style={{ backgroundColor: region.color }} 
+                          />
+                          <p className="text-[10px] font-black uppercase tracking-widest text-stone-900">{region.region}</p>
+                        </div>
+                        <span className={cn("text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border", 
+                          region.performance === 'High' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                          region.performance === 'Medium' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-rose-50 text-rose-600 border-rose-100'
+                        )}>
+                          {region.performance}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <p className="text-xl font-black font-meta text-stone-900 leading-none">{region.memberCount.toLocaleString()}</p>
+                          <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Total Members</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-black text-stone-600">{region.chapters}</p>
+                          <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Chapters</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-black text-stone-600">{region.chapters}</p>
-                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Chapters</p>
-                    </div>
-                  </div>
-                  <div className="h-1 w-full bg-stone-50 overflow-hidden">
-                    <div 
-                      className="h-full transition-all duration-1000" 
-                      style={{ 
-                        width: `${(region.memberCount / 200000) * 100}%`,
-                        backgroundColor: region.color 
-                      }} 
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* System Audit Intelligence Hub */}
           <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
@@ -394,7 +420,60 @@ export default function AdminDashboard() {
               </div>
             </CardContent>
           </Card>
-        </div>
+
+        {/* Logistics Intelligence Hub */}
+        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white mt-8">
+          <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-[var(--brand-green)]" />
+                Logistics Intelligence
+              </CardTitle>
+              <CardDescription className="text-xs mt-1">Mobilization latency and regional supply chain efficiency.</CardDescription>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-xl font-black font-meta">3.2 Days</p>
+                <p className="text-[8px] font-black uppercase tracking-widest text-stone-400">Avg Mobilization Velocity</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 divide-x divide-y divide-stone-50">
+              {logisticsData.map((item) => (
+                <div key={item.region} className="p-6 hover:bg-stone-50/50 transition-colors">
+                  <div className="flex justify-between items-start mb-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">{item.region}</p>
+                    <span className={cn("text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border", 
+                      item.efficiency === 'High' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                      item.efficiency === 'Medium' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-rose-50 text-rose-600 border-rose-100'
+                    )}>
+                      {item.efficiency} Efficiency
+                    </span>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-2xl font-black font-meta text-stone-900 leading-none">{item.avgDispatchToDeliveryDays}d</p>
+                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Avg Delivery Time</p>
+                    </div>
+                    <div className="flex justify-between items-end">
+                      <div className="flex-1 mr-4">
+                        <div className="h-1 w-full bg-stone-50 overflow-hidden">
+                          <div 
+                            className="h-full bg-[var(--brand-green)]" 
+                            style={{ width: `${(1 / item.avgDispatchToDeliveryDays) * 100}%` }} 
+                          />
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black text-stone-600">{item.totalDispatches} Shipments</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
         {/* Status & Quick Insights (Right Sidebar) */}
         <div className="space-y-8">

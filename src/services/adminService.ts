@@ -109,6 +109,15 @@ export interface RegionalStat {
   color: string
 }
 
+export interface Milestone {
+  id: string
+  title: string
+  description: string
+  target_date: string
+  status: 'Completed' | 'In Progress' | 'Upcoming'
+  category: string
+}
+
 export interface ChapterApplication {
   id: string
   applicant_id: string
@@ -120,6 +129,37 @@ export interface ChapterApplication {
   vision_statement: string
   status: 'Pending' | 'Approved' | 'Rejected'
   created_at: string
+}
+
+export interface Achievement {
+  id: string
+  name: string
+  icon: string
+  description: string
+  awarded_at?: string
+}
+
+export interface LeaderboardEntry {
+  name: string
+  points: number
+  region: string
+  rank: number
+}
+
+export interface RegionalPulse {
+  name: string
+  growth: number
+  activity: number
+  status: 'Ascending' | 'Stable' | 'Descending'
+}
+
+export interface MovementPulse {
+  nationalGrowth: number
+  activeChapters: number
+  totalMobilizationPoints: number
+  topPerformingRegion: string
+  logisticsHealth: number
+  regionalPulse: RegionalPulse[]
 }
 
 export interface GrowthTrend {
@@ -156,6 +196,20 @@ export interface ActivityLog {
   details: string
   icon: string
   color: string
+}
+
+export interface PollStats {
+  totalEngagements: string
+  activePolls: number
+  avgResponseTime: string
+  feedbackRate: string
+}
+
+export interface LogisticsLatency {
+  region: string
+  avgDispatchToDeliveryDays: number
+  totalDispatches: number
+  efficiency: 'High' | 'Medium' | 'Low'
 }
 
 export interface BlogPost {
@@ -241,11 +295,29 @@ export interface SentimentStat {
   color: string
 }
 
-export interface PollStats {
-  totalEngagements: string
-  activePolls: number
-  avgResponseTime: string
-  feedbackRate: string
+
+export interface Broadcast {
+  id: string
+  sender_id: string
+  sender_name?: string
+  title: string
+  content: string
+  target_type: 'ALL' | 'REGION' | 'CONSTITUENCY'
+  target_value?: string
+  priority: 'Normal' | 'High' | 'Urgent'
+  status: 'Draft' | 'Sent' | 'Cancelled'
+  created_at: string
+}
+
+export interface Notification {
+  id: string
+  user_id: string
+  broadcast_id?: string
+  title: string
+  message: string
+  type: 'Info' | 'Alert' | 'Action'
+  is_read: boolean
+  created_at: string
 }
 
 export interface AdminUser {
@@ -254,6 +326,21 @@ export interface AdminUser {
   role: AdminRole
   region?: string
   permissions: AdminPermission[]
+}
+
+export interface Achievement {
+  id: string
+  name: string
+  icon: string
+  description: string
+  awarded_at?: string
+}
+
+export interface LeaderboardEntry {
+  name: string
+  points: number
+  region: string
+  rank: number
 }
 
 class AdminService {
@@ -1736,6 +1823,251 @@ class AdminService {
       return false;
     }
     return true;
+  }
+
+  // --- Communication Engine (Field Mobilization) ---
+
+  async getBroadcasts(): Promise<Broadcast[]> {
+    try {
+      const { data, error } = await supabase
+        .from('broadcasts')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('Error fetching broadcasts:', error)
+      return []
+    }
+  }
+
+  async sendBroadcast(broadcast: Omit<Broadcast, 'id' | 'created_at'>): Promise<boolean> {
+    try {
+      const user = authService.getUser()
+      if (!user) return false
+
+      const { data: bData, error: bError } = await supabase
+        .from('broadcasts')
+        .insert([{
+          ...broadcast,
+          sender_id: user.id
+        }])
+        .select()
+        .single()
+
+      if (bError) throw bError
+
+      // Now create individual notifications for members based on target
+      let memberQuery = supabase.from('users').select('id')
+      
+      if (broadcast.target_type === 'REGION') {
+        memberQuery = memberQuery.eq('region', broadcast.target_value)
+      } else if (broadcast.target_type === 'CONSTITUENCY') {
+        memberQuery = memberQuery.eq('constituency', broadcast.target_value)
+      }
+
+      const { data: members, error: mError } = await memberQuery
+      if (mError) throw mError
+
+      if (members && members.length > 0) {
+        const notifications = members.map(m => ({
+          user_id: m.id,
+          broadcast_id: bData.id,
+          title: broadcast.title,
+          message: broadcast.content,
+          type: broadcast.priority === 'Urgent' ? 'Alert' : 'Info'
+        }))
+
+        // Batch insert for performance
+        const { error: nError } = await supabase
+          .from('notifications')
+          .insert(notifications)
+
+        if (nError) throw nError
+      }
+
+      await this.logAction('SEND_BROADCAST', `TARGET/${broadcast.target_type}`, 'Success', { title: broadcast.title })
+      return true
+    } catch (error) {
+      console.error('Error sending broadcast:', error)
+      this.logAction('SEND_BROADCAST', `TARGET/${broadcast.target_type}`, 'Failure')
+      return false
+    }
+  }
+
+  async getNotifications(userId?: string): Promise<Notification[]> {
+    try {
+      const targetUserId = userId || authService.getUser()?.id
+      if (!targetUserId) return []
+
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', targetUserId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('Error fetching notifications:', error)
+      return []
+    }
+  }
+
+  async markNotificationRead(id: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('id', id)
+
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('Error marking notification as read:', error)
+      return false
+    }
+  }
+
+  async getBroadcastMetrics(broadcastId: string): Promise<{ total: number, read: number }> {
+    try {
+      const { count: total, error: tError } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('broadcast_id', broadcastId)
+
+      if (tError) throw tError
+
+      const { count: read, error: rError } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('broadcast_id', broadcastId)
+        .eq('is_read', true)
+
+      if (rError) throw rError
+
+      return { total: total || 0, read: read || 0 }
+    } catch (error) {
+      console.error('Error fetching broadcast metrics:', error)
+      return { total: 0, read: 0 }
+    }
+  }
+
+  async getLogisticsLatency(): Promise<LogisticsLatency[]> {
+    console.log('[SYSTEM] Admin: Fetching logistics latency telemetry...')
+    // Mock implementation for high-fidelity visualization
+    const regions = ['Greater Accra', 'Ashanti', 'Western', 'Central', 'Eastern', 'Volta', 'Northern']
+    return regions.map(region => ({
+      region,
+      avgDispatchToDeliveryDays: Number((Math.random() * 5 + 1).toFixed(1)),
+      totalDispatches: Math.floor(Math.random() * 500 + 100),
+      efficiency: Math.random() > 0.7 ? 'High' : Math.random() > 0.3 ? 'Medium' : 'Low'
+    }))
+  }
+
+  async getLeaderboard(region?: string): Promise<LeaderboardEntry[]> {
+    try {
+      let query = supabase
+        .from('movement_leaderboard')
+        .select('full_name, total_points, region, national_rank, regional_rank')
+        .order('total_points', { ascending: false })
+        .limit(10)
+
+      if (region) {
+        query = query.eq('region', region)
+      }
+
+      const { data, error } = await query
+
+      if (error) throw error
+      
+      return (data || []).map(entry => ({
+        name: entry.full_name,
+        points: entry.total_points,
+        region: entry.region,
+        rank: region ? entry.regional_rank : entry.national_rank
+      }))
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error)
+      return []
+    }
+  }
+
+  async getMemberAchievements(userId: string): Promise<Achievement[]> {
+    try {
+      const { data, error } = await supabase
+        .from('member_achievements')
+        .select(`
+          awarded_at,
+          achievements (
+            id,
+            name,
+            icon,
+            description
+          )
+        `)
+        .eq('user_id', userId)
+
+      if (error) throw error
+
+      interface AchievementRecord {
+        awarded_at: string
+        achievements: {
+          id: string
+          name: string
+          icon: string
+          description: string
+        }
+      }
+
+      return (data as unknown as AchievementRecord[] || []).map((item) => ({
+        id: item.achievements.id,
+        name: item.achievements.name,
+        icon: item.achievements.icon,
+        description: item.achievements.description,
+        awarded_at: item.awarded_at
+      }))
+    } catch (error) {
+      console.error('Error fetching achievements:', error)
+      return []
+    }
+  }
+
+  async getMovementPulse(): Promise<MovementPulse> {
+    console.log('[SYSTEM] Admin: Generating National Movement Pulse Report...')
+    // In production, this would be a complex aggregation query
+    // High-fidelity mock for strategic visualization
+    return {
+      nationalGrowth: 12.5,
+      activeChapters: 42,
+      totalMobilizationPoints: 125400,
+      topPerformingRegion: 'Ashanti',
+      logisticsHealth: 94,
+      regionalPulse: [
+        { name: 'Greater Accra', growth: 15.2, activity: 92, status: 'Ascending' },
+        { name: 'Ashanti', growth: 18.5, activity: 95, status: 'Ascending' },
+        { name: 'Western', growth: 8.4, activity: 78, status: 'Stable' },
+        { name: 'Central', growth: 10.1, activity: 84, status: 'Ascending' },
+        { name: 'Northern', growth: 5.2, activity: 65, status: 'Stable' },
+        { name: 'Volta', growth: 9.8, activity: 81, status: 'Stable' }
+      ]
+    }
+  }
+
+  async getMilestones(): Promise<Milestone[]> {
+    try {
+      const { data, error } = await supabase
+        .from('movement_milestones')
+        .select('*')
+        .order('target_date', { ascending: true })
+
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('Error fetching milestones:', error)
+      return []
+    }
   }
 }
 

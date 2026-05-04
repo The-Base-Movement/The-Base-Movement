@@ -26,6 +26,7 @@ import BlogPost from './pages/BlogPost'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Wishlist from './pages/Wishlist'
+import VerifyID from './pages/VerifyID'
 
 // Dashboard pages
 import Dashboard from './pages/Dashboard'
@@ -47,6 +48,7 @@ import AdminBlogs from './pages/admin/Blogs'
 import AdminLeadershipHub from './pages/admin/LeadershipHub.tsx'
 import AdminDonations from './pages/admin/DonationVerification.tsx'
 import AdminAdministrators from './pages/admin/Administrators'
+import AdminBroadcasts from './pages/admin/Broadcasts'
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -86,6 +88,7 @@ export default function App() {
           <Route path="/chapters" element={<Navigate to="/dashboard/chapters" replace />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/verify/:id" element={<VerifyID />} />
           <Route path="/admin-login" element={<AdminLogin />} />
         </Route>
 
@@ -126,6 +129,7 @@ export default function App() {
           <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin/regions" element={<AdminRegions />} />
           <Route path="/admin/blogs" element={<AdminBlogs />} />
+          <Route path="/admin/broadcasts" element={<AdminBroadcasts />} />
           <Route path="/admin/administrators" element={<AdminAdministrators />} />
         </Route>
       </Routes>
