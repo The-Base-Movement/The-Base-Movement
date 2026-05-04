@@ -1,3 +1,19 @@
+export interface ProductImage {
+  id: string;
+  url: string;
+  alt_text?: string;
+  display_order: number;
+}
+
+export interface ProductReview {
+  id: string;
+  patriot_name: string;
+  rating: number;
+  content: string;
+  is_verified: boolean;
+  created_at: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -12,4 +28,10 @@ export interface Product {
   sizes?: string[];
   colors?: string[];
   reviews?: number;
+  // Premium Fields
+  is_featured?: boolean;
+  customization_allowed?: boolean;
+  specifications?: Record<string, string>;
+  gallery_images?: ProductImage[];
+  reviews_data?: ProductReview[];
 }

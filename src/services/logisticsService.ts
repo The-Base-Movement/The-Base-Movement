@@ -81,7 +81,11 @@ class LogisticsService {
   async getProductBySlug(slug: string): Promise<Product | null> {
     const { data, error } = await supabase
       .from('store_inventory')
-      .select('*')
+      .select(`
+        *,
+        product_images (*),
+        product_reviews (*)
+      `)
       .eq('slug', slug)
       .maybeSingle()
 
@@ -95,6 +99,9 @@ class LogisticsService {
       return all.find(p => p.slug === slug) || null
     }
 
+    // Sort images by display order
+    const gallery = (data.product_images || []).sort((a: any, b: any) => a.display_order - b.display_order)
+
     return {
       id: data.id,
       name: data.name,
@@ -106,9 +113,26 @@ class LogisticsService {
       rating: data.rating || 4.8,
       reviews: data.reviews || 0,
       image: data.image_url,
-      longDescription: data.description,
+      longDescription: data.long_description || data.description,
       sizes: data.sizes || ['S', 'M', 'L', 'XL'],
-      colors: data.colors || ['Black', 'Green']
+      colors: data.colors || ['Black', 'Green'],
+      is_featured: data.is_featured,
+      customization_allowed: data.customization_allowed,
+      specifications: data.specifications,
+      gallery_images: gallery.map((img: any) => ({
+        id: img.id,
+        url: img.url,
+        alt_text: img.alt_text,
+        display_order: img.display_order
+      })),
+      reviews_data: (data.product_reviews || []).map((rev: any) => ({
+        id: rev.id,
+        patriot_name: rev.patriot_name,
+        rating: rev.rating,
+        content: rev.content,
+        is_verified: rev.is_verified,
+        created_at: rev.created_at
+      }))
     }
   }
 
@@ -484,6 +508,30 @@ class LogisticsService {
     } catch (error) {
       console.error('[DATABASE] Failed to fetch logistics velocity:', error)
       return []
+    }
+  }
+
+  async getRegionalAvailability(productId: string, region: string): Promise<{ available: boolean; message: string }> {
+    // Logic: In a real system, this would check a 'regional_stock' table.
+    // For now, we simulate logic where certain heavy/limited items aren't in remote regions.
+    
+    const remoteRegions = ['Upper West', 'Upper East', 'North East', 'Savannah']
+    const isRemote = remoteRegions.includes(region)
+    
+    // Simulate some products being restricted
+    // (In production, this would be a query to store_inventory_regional)
+    const isRestricted = productId.length % 7 === 0 // Mock restriction logic
+    
+    if (isRemote && isRestricted) {
+      return { 
+        available: false, 
+        message: `This item is currently out of stock for the ${region} region due to logistical constraints.` 
+      }
+    }
+    
+    return { 
+      available: true, 
+      message: `Available for fulfillment in ${region}.` 
     }
   }
 
