@@ -574,13 +574,13 @@ export default function Dashboard() {
             <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>how_to_vote</span>
             <p className="font-meta text-[11px] text-on-surface">Opinion Polls</p>
           </Link>
-          <Link className="bg-surface-warm border-t-[3px] border-t-[var(--brand-red)] p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/dashboard/feedback">
+          <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/dashboard/feedback">
             <span className="material-symbols-outlined text-[var(--brand-red)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>record_voice_over</span>
             <p className="font-meta text-[11px] text-on-surface">Feedback Hub</p>
           </Link>
-          <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/dashboard/donate">
-            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>volunteer_activism</span>
-            <p className="font-meta text-[11px] text-on-surface">Donate / Support</p>
+          <Link className="bg-surface-warm border-t-[3px] border-t-[var(--brand-green)] p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/dashboard/canvass">
+            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>content_paste_go</span>
+            <p className="font-meta text-[11px] text-on-surface">Canvass</p>
           </Link>
           <Link className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 flex flex-col items-center text-center hover:bg-stone-200 transition-colors group rounded-sm shadow-sm" to="/settings">
             <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>manage_accounts</span>

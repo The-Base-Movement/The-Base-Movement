@@ -33,6 +33,7 @@ import Dashboard from './pages/Dashboard'
 import ProfileSettings from './pages/ProfileSettings'
 import Polls from './pages/Polls'
 import FeedbackHub from './pages/FeedbackHub'
+import CanvasserClipboard from './pages/CanvasserClipboard'
 
 // Admin pages
 import AdminLayout from './components/layouts/AdminLayout'
@@ -117,6 +118,7 @@ export default function App() {
           <Route path="/dashboard/store/checkout" element={<Checkout />} />
           <Route path="/dashboard/store/summary" element={<OrderSummary />} />
           <Route path="/dashboard/feedback" element={<FeedbackHub />} />
+          <Route path="/dashboard/canvass" element={<CanvasserClipboard />} />
           <Route path="/dashboard/donate" element={<Donate />} />
           <Route path="/dashboard/contact" element={<Contact />} />
           <Route path="/dashboard/members" element={<Members />} />

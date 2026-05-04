@@ -359,6 +359,32 @@ export default function ProfileSettings() {
               Your digital card is real-time verifiable. Use the QR code to present your credentials at official movement events.
             </p>
           </div>
+
+          {/* Phase 14: Voter Registration Pipeline */}
+          <div className="bg-white border border-stone-200 p-8 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="font-meta font-bold text-[10px] text-stone-400 uppercase tracking-widest flex items-center gap-2">
+                <span className="material-symbols-outlined text-[14px]">how_to_vote</span> Election Readiness
+              </h4>
+              <span className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[8px] font-black uppercase tracking-widest">Unverified</span>
+            </div>
+            <p className="text-[11px] text-stone-500 mb-4 leading-relaxed">
+              Verify your official voter registration to unlock the Patriot Ground Game badge. Your polling station data secures our election day logistics.
+            </p>
+            <div className="space-y-3">
+              <input
+                type="text"
+                placeholder="Polling Station Code (e.g. C021001A)"
+                className="w-full border-b-2 border-stone-100 bg-stone-50 px-3 py-2 text-xs text-stone-900 font-bold focus:outline-none focus:border-[var(--brand-green)] transition-all"
+              />
+              <button 
+                type="button"
+                className="w-full py-2.5 bg-stone-900 text-white font-meta font-black uppercase tracking-widest text-[9px] hover:bg-[var(--brand-green)] transition-colors"
+              >
+                Submit Voter ID
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Column 2: Personal Information Form (xl:col-span-7) */}
