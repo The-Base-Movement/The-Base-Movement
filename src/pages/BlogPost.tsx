@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { CommentSection } from '@/components/CommentSection'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import { Loader2 } from 'lucide-react'
+import { Helmet } from 'react-helmet-async'
 
 
 export default function BlogPost() {
@@ -81,19 +82,39 @@ export default function BlogPost() {
 
   if (!post) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
-        <p className="text-sm font-bold text-stone-500 uppercase tracking-widest text-center">
-          Insight not found or has been moved to the vault.
-        </p>
-        <Button onClick={() => navigate(baseUrl)} variant="primary" className="h-11 px-8 rounded-none uppercase text-[10px] font-bold tracking-widest">
-          Return to Blog
-        </Button>
-      </div>
+      <>
+        <Helmet>
+          <title>Insight Not Found | The Base Movement</title>
+          <meta name="robots" content="noindex" />
+        </Helmet>
+        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
+          <p className="text-sm font-bold text-stone-500 uppercase tracking-widest text-center">
+            Insight not found or has been moved to the vault.
+          </p>
+          <Button onClick={() => navigate(baseUrl)} variant="primary" className="h-11 px-8 rounded-none uppercase text-[10px] font-bold tracking-widest">
+            Return to Blog
+          </Button>
+        </div>
+      </>
     )
   }
 
+  const pageTitle = post.seoTitle || post.title
+  const pageDescription = post.metaDescription || post.excerpt || `Read "${post.title}" on The Base Movement.`
+  const canonicalUrl = `${window.location.origin}/blog/${post.slug}`
+
   return (
     <div className="min-h-screen bg-white pb-20">
+      <Helmet>
+        <title>{pageTitle} | The Base Movement</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonicalUrl} />
+        {post.imageUrl && <meta property="og:image" content={post.imageUrl} />}
+        <link rel="canonical" href={canonicalUrl} />
+      </Helmet>
       <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <Link 

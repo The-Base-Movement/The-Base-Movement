@@ -4,6 +4,7 @@ import { ArrowRight, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
+import { Helmet } from 'react-helmet-async'
 
 const categoryColors: Record<string, string> = {
   Movement: 'bg-[var(--brand-green)]/10 text-[var(--brand-green)]',
@@ -48,6 +49,13 @@ export default function Blog() {
 
   return (
     <div className="bg-surface-warm font-body-md min-h-screen">
+      <Helmet>
+        <title>Insights & Movement News | The Base Movement</title>
+        <meta name="description" content="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement." />
+        <meta property="og:title" content="Insights & Movement News | The Base Movement" />
+        <meta property="og:description" content="Ideas, analysis and movement news from The Base." />
+        <meta property="og:type" content="website" />
+      </Helmet>
       {/* Hero */}
       <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-[var(--brand-green)]">
         <div className="max-w-[1280px] mx-auto">
