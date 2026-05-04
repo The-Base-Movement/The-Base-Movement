@@ -45,6 +45,7 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
+import { Editor } from '@tinymce/tinymce-react'
 import { adminService } from '@/services/adminService'
 import type { BlogPost } from '@/types/admin'
 import { useToast } from '@/hooks/use-toast'
@@ -439,13 +440,18 @@ export default function AdminBlogs() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Main Content (Markdown/HTML)</Label>
-                  <Textarea 
-                    required
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Main Content</Label>
+                  <Editor
+                    apiKey='ky4xtv1lrw74kgz3s89jm1m0tw6d1supmj4xpnbibfjk5qkz'
                     value={formData.content}
-                    onChange={(e) => setFormData({...formData, content: e.target.value})}
-                    placeholder="The full analysis..." 
-                    className="rounded-none border-stone-200 min-h-[300px] text-xs font-medium leading-relaxed"
+                    onEditorChange={(content) => setFormData({...formData, content})}
+                    init={{
+                      height: 500,
+                      menubar: false,
+                      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                      content_style: 'body { font-family: "Public Sans", sans-serif; font-size:14px; color: #44403c; line-height: 1.6; }'
+                    }}
                   />
                 </div>
               </div>
