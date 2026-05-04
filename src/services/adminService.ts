@@ -93,7 +93,7 @@ class AdminService {
     this.currentUser = {
       id: 'USR-001',
       email: 'admin@thebase.gh',
-      name: 'National Admin HQ',
+      name: 'System Administrator',
       role: 'SUPER_ADMIN',
       permissions: [
         { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },

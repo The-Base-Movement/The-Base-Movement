@@ -7,12 +7,9 @@ import {
   Edit2, 
   Trash2, 
   Eye,
-  Globe,
-  Tag,
+  Star,
   Calendar,
-  Clock,
-  CheckCircle2,
-  AlertCircle
+  Clock
 } from 'lucide-react'
 import { 
   Card, 
@@ -22,14 +19,6 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter,
-  DialogDescription
-} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,28 +42,62 @@ import { useToast } from '@/hooks/use-toast'
 export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  
+  // Persist view state
+  const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(() => {
+    return (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
+  })
   const [isDeleting, setIsDeleting] = useState(false)
-  const [editingPost, setEditPost] = useState<BlogPost | null>(null)
+  const [editingPost, setEditPost] = useState<BlogPost | null>(() => {
+    const saved = sessionStorage.getItem('blogs_editingPost')
+    return saved ? JSON.parse(saved) : null
+  })
+  const [viewPost, setViewPost] = useState<BlogPost | null>(() => {
+    const saved = sessionStorage.getItem('blogs_viewPost')
+    return saved ? JSON.parse(saved) : null
+  })
   const [searchQuery, setSearchQuery] = useState('')
   const { toast } = useToast()
 
-  // Form State
-  const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>({
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
-    authorId: 'USR-001',
-    category: 'Movement',
-    imageUrl: '',
-    readTime: '5 min read',
-    isFeatured: false,
-    publishedAt: new Date().toISOString(),
-    tags: [],
-    seoTitle: '',
-    metaDescription: ''
+  // Persist form state so drafts aren't lost on reload
+  const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>(() => {
+    const saved = sessionStorage.getItem('blogs_formData')
+    if (saved) return JSON.parse(saved)
+    return {
+      title: '',
+      slug: '',
+      excerpt: '',
+      content: '',
+      authorId: 'USR-001',
+      category: 'Movement',
+      imageUrl: '',
+      readTime: '5 min read',
+      isFeatured: false,
+      publishedAt: new Date().toISOString(),
+      tags: [],
+      seoTitle: '',
+      metaDescription: ''
+    }
   })
+
+  // Sync state to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem('blogs_currentView', currentView)
+  }, [currentView])
+
+  useEffect(() => {
+    if (editingPost) sessionStorage.setItem('blogs_editingPost', JSON.stringify(editingPost))
+    else sessionStorage.removeItem('blogs_editingPost')
+  }, [editingPost])
+
+  useEffect(() => {
+    if (viewPost) sessionStorage.setItem('blogs_viewPost', JSON.stringify(viewPost))
+    else sessionStorage.removeItem('blogs_viewPost')
+  }, [viewPost])
+
+  useEffect(() => {
+    sessionStorage.setItem('blogs_formData', JSON.stringify(formData))
+  }, [formData])
 
   const fetchPosts = useCallback(async () => {
     setIsLoading(true)
@@ -97,7 +120,7 @@ export default function AdminBlogs() {
     fetchPosts()
   }, [fetchPosts])
 
-  const handleOpenDialog = (post?: BlogPost) => {
+  const handleEditPost = (post?: BlogPost) => {
     if (post) {
       setEditPost(post)
       setFormData({
@@ -133,7 +156,12 @@ export default function AdminBlogs() {
         metaDescription: ''
       })
     }
-    setIsDialogOpen(true)
+    setCurrentView('edit')
+  }
+
+  const handleViewPost = (post: BlogPost) => {
+    setViewPost(post)
+    setCurrentView('view')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -155,16 +183,16 @@ export default function AdminBlogs() {
 
       if (success) {
         toast({
-          title: editingPost ? "INTEL UPDATED" : "INTEL PUBLISHED",
-          description: `Policy brief "${formData.title}" has been synchronized.`,
+          title: editingPost ? "Post Updated" : "Post Published",
+          description: `The post "${formData.title}" has been saved successfully.`,
         })
-        setIsDialogOpen(false)
+        setCurrentView('list')
         fetchPosts()
       }
     } catch {
       toast({
-        title: "TRANSMISSION FAILED",
-        description: "Failed to persist blog data to the movement vault.",
+        title: "Error",
+        description: "Failed to save the blog post.",
         variant: "destructive",
       })
     } finally {
@@ -173,15 +201,15 @@ export default function AdminBlogs() {
   }
 
   const handleDelete = async (post: BlogPost) => {
-    if (!confirm(`Are you sure you want to expunge "${post.title}" from the records?`)) return
+    if (!confirm(`Are you sure you want to delete "${post.title}"?`)) return
 
     setIsDeleting(true)
     try {
       const success = await adminService.deleteBlogPost(post.id, post.slug)
       if (success) {
         toast({
-          title: "RECORD EXPUNGED",
-          description: "The article has been permanently removed from the public eye.",
+          title: "Post Deleted",
+          description: "The post has been permanently removed.",
         })
         fetchPosts()
       }
@@ -197,77 +225,355 @@ export default function AdminBlogs() {
     post.category.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  if (currentView === 'edit') {
+    return (
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-stone-500">
+            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-[var(--brand-black)] text-sm font-medium" onClick={() => setCurrentView('list')}>
+              Blog Posts
+            </Button>
+            <span className="text-sm text-stone-400">/</span>
+            <span className="text-sm font-semibold text-[var(--brand-black)]">{editingPost ? 'Edit Post' : 'Create New Post'}</span>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-3xl font-bold text-[var(--brand-black)] tracking-tight">
+            {editingPost ? 'Edit Post' : 'Create New Post'}
+          </h2>
+          <p className="text-stone-500 text-sm mt-1">
+            Fill in the details below to configure and publish your post.
+          </p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          
+          {/* Main Content Column */}
+          <div className="lg:col-span-2 space-y-8">
+            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-stone-900 text-sm">Post Details</h3>
+              </div>
+              <CardContent className="p-8 space-y-8">
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Article Title</Label>
+                  <Input 
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    placeholder="e.g. The Future of Industry" 
+                    className="rounded-md border-stone-200 h-11 text-sm placeholder:text-stone-400"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Slug</Label>
+                  <Input 
+                    value={formData.slug}
+                    onChange={(e) => setFormData({...formData, slug: e.target.value})}
+                    placeholder="the-future-of-industry" 
+                    className="rounded-md border-stone-200 h-11 text-sm placeholder:text-stone-400"
+                  />
+                  <p className="text-xs font-medium text-stone-500">The URL-friendly name for this post. Leave blank to auto-generate from the title.</p>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Excerpt</Label>
+                  <Textarea 
+                    required
+                    value={formData.excerpt}
+                    onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
+                    placeholder="A brief 1-2 sentence summary for article cards..." 
+                    className="rounded-md border-stone-200 min-h-[100px] text-sm leading-relaxed"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-stone-900 text-sm">Content</h3>
+              </div>
+              <CardContent className="p-0 border-0">
+                <div className="p-8">
+                  <div className="rounded-lg border border-stone-200 overflow-hidden shadow-inner bg-stone-50/30">
+                    <Editor
+                      apiKey='ky4xtv1lrw74kgz3s89jm1m0tw6d1supmj4xpnbibfjk5qkz'
+                      value={formData.content}
+                      onEditorChange={(content) => setFormData({...formData, content})}
+                      init={{
+                        height: 750,
+                        menubar: false,
+                        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                        content_style: 'body { font-family: "Inter", sans-serif; font-size:16px; color: #1c1917; line-height: 1.75; padding: 3rem; background: white; }',
+                        skin: 'oxide',
+                        content_css: 'default',
+                        border_width: 0
+                      }}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Sidebar Column */}
+          <div className="space-y-8 sticky top-6">
+            
+            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-[var(--brand-black)] text-base">Publishing</h3>
+              </div>
+              <CardContent className="p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1 pr-4">
+                    <Label className="text-sm font-bold text-stone-800">Featured Post</Label>
+                    <p className="text-xs font-medium text-stone-500 leading-tight">Pin this post to the top of the insights feed.</p>
+                  </div>
+                  <Switch 
+                    checked={formData.isFeatured}
+                    onCheckedChange={(val) => setFormData({...formData, isFeatured: val})}
+                  />
+                </div>
+
+                <div className="space-y-3 pt-6 border-t border-stone-100">
+                  <Label className="text-sm font-bold text-stone-800">Category</Label>
+                  <Select 
+                    value={formData.category}
+                    onValueChange={(val) => setFormData({...formData, category: val})}
+                  >
+                    <SelectTrigger className="rounded-md border-stone-200 h-11 text-sm font-medium">
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Movement">Movement</SelectItem>
+                      <SelectItem value="Youth">Youth</SelectItem>
+                      <SelectItem value="Economy">Economy</SelectItem>
+                      <SelectItem value="Diaspora">Diaspora</SelectItem>
+                      <SelectItem value="Integrity">Integrity</SelectItem>
+                      <SelectItem value="Community">Community</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-3 pt-6 border-t border-stone-100">
+                  <Label className="text-sm font-bold text-stone-800">Featured Image URL</Label>
+                  <Input 
+                    value={formData.imageUrl}
+                    onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                    placeholder="https://..." 
+                    className="rounded-md border-stone-200 h-11 text-sm"
+                  />
+                  <p className="text-xs font-medium text-stone-500">Provide a direct, valid HTTPS link to an image.</p>
+                </div>
+
+                <div className="space-y-3 pt-6 border-t border-stone-100">
+                  <Label className="text-sm font-bold text-stone-800">Est. Read Time</Label>
+                  <Input 
+                    value={formData.readTime}
+                    onChange={(e) => setFormData({...formData, readTime: e.target.value})}
+                    placeholder="5 min read" 
+                    className="rounded-md border-stone-200 h-11 text-sm"
+                  />
+                  <p className="text-xs font-medium text-stone-500">Suggested format: "5 min read"</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-[var(--brand-black)] text-base">SEO Settings</h3>
+              </div>
+              <CardContent className="p-6 space-y-6">
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Meta Title</Label>
+                  <Input 
+                    value={formData.seoTitle}
+                    onChange={(e) => setFormData({...formData, seoTitle: e.target.value})}
+                    placeholder="Title for search engines..." 
+                    className="rounded-md border-stone-200 h-11 text-sm"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Keywords</Label>
+                  <Input 
+                    value={formData.tags.join(', ')}
+                    onChange={(e) => setFormData({...formData, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)})}
+                    placeholder="ghana, industry, jobs" 
+                    className="rounded-md border-stone-200 h-11 text-sm"
+                  />
+                  <p className="text-xs font-medium text-stone-500">Comma separated tags.</p>
+                </div>
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Meta Description</Label>
+                  <Textarea 
+                    value={formData.metaDescription}
+                    onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
+                    placeholder="Brief description for search result snippets..." 
+                    className="rounded-md border-stone-200 min-h-[80px] text-sm leading-relaxed"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex flex-col gap-3 pt-4">
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full h-12 rounded-lg bg-[var(--brand-green)] text-white hover:bg-emerald-700 text-sm font-bold transition-all shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98]"
+              >
+                {isLoading ? 'Saving...' : editingPost ? 'Update Post' : 'Publish Post'}
+              </Button>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                onClick={() => setCurrentView('list')}
+                className="w-full h-11 rounded-lg text-xs font-bold text-stone-400 hover:text-stone-600 hover:bg-stone-100 transition-colors"
+              >
+                Discard Changes
+              </Button>
+            </div>
+            
+          </div>
+        </form>
+      </div>
+    )
+  }
+
+  if (currentView === 'view' && viewPost) {
+    return (
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-stone-500">
+            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-[var(--brand-black)] text-sm font-medium" onClick={() => setCurrentView('list')}>
+              Blog Posts
+            </Button>
+            <span className="text-sm text-stone-400">/</span>
+            <span className="text-sm font-semibold text-[var(--brand-black)]">View Post</span>
+          </div>
+          <Button 
+            onClick={() => handleEditPost(viewPost)}
+            className="h-10 px-6 text-sm font-bold bg-[var(--brand-black)] text-white hover:bg-stone-800 flex items-center gap-2 rounded-lg"
+          >
+            <Edit2 className="w-3 h-3" /> Edit Post
+          </Button>
+        </div>
+        
+        <Card className="rounded-xl border-stone-200 bg-white overflow-hidden max-w-4xl mx-auto shadow-sm">
+          {viewPost.imageUrl && (
+            <div className="w-full h-[400px] relative">
+              <img src={viewPost.imageUrl} alt={viewPost.title} className="w-full h-full object-cover" />
+            </div>
+          )}
+          <CardContent className="p-10 md:p-16">
+            <div className="flex items-center gap-4 mb-6">
+              <Badge variant="secondary" className="bg-stone-100 text-stone-600 border-none px-3 py-1 text-xs font-semibold rounded-full">
+                {viewPost.category}
+              </Badge>
+              <div className="flex items-center gap-1.5 text-stone-400">
+                <Calendar className="w-4 h-4" />
+                <span className="text-xs font-medium">{new Date(viewPost.publishedAt).toLocaleDateString()}</span>
+              </div>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-bold text-[var(--brand-black)] tracking-tight leading-tight mb-6">
+              {viewPost.title}
+            </h1>
+            
+            <div className="text-lg text-stone-500 font-medium leading-relaxed mb-10 border-l-4 border-stone-200 pl-6 italic">
+              {viewPost.excerpt}
+            </div>
+
+            <div 
+              className="prose prose-stone max-w-none prose-p:text-stone-600 prose-p:leading-relaxed prose-headings:text-[var(--brand-black)] prose-headings:font-bold"
+              dangerouslySetInnerHTML={{ __html: viewPost.content }}
+            />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter leading-none">Insights Management</h1>
-          <p className="text-stone-500 text-sm mt-2 flex items-center gap-2">
-            <span className="w-2 h-2 bg-[var(--brand-green)] rounded-full animate-pulse" />
-            Propagating movement ideology through analysis.
+          <h1 className="text-3xl font-bold text-[var(--brand-black)] tracking-tight">Blog Posts</h1>
+          <p className="text-stone-500 text-sm mt-1">
+            Manage and publish articles for the movement insights feed.
           </p>
         </div>
         <Button 
-          onClick={() => handleOpenDialog()}
-          className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800 flex items-center gap-2"
+          onClick={() => handleEditPost()}
+          className="h-11 px-6 text-sm font-bold bg-[var(--brand-green)] text-white hover:bg-emerald-700 flex items-center gap-2 rounded-lg shadow-sm"
         >
-          <Plus className="w-4 h-4" /> Create New Brief
+          <Plus className="w-4 h-4" /> Create New Post
         </Button>
       </div>
 
       {/* Control Bar */}
-      <div className="bg-white border border-stone-200 p-4 flex flex-wrap items-center gap-4">
-        <div className="flex-1 min-w-[240px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-          <input 
-            type="text" 
-            placeholder="Search movement insights..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-10 pr-4 bg-stone-50 border-none text-[10px] font-bold uppercase tracking-tight placeholder:text-stone-400 focus:ring-1 focus:ring-[var(--brand-gold)] transition-all"
-          />
+      <Card className="rounded-xl border-stone-200 bg-white p-2 shadow-sm">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex-1 min-w-[240px] relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+            <input 
+              type="text" 
+              placeholder="Search posts by title or category..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-10 pl-10 pr-4 bg-stone-50 border-none rounded-lg text-sm font-medium focus:ring-1 focus:ring-stone-200 transition-all placeholder:text-stone-400"
+            />
+          </div>
+          <div className="flex items-center gap-3 pr-2">
+            <Select defaultValue="all">
+              <SelectTrigger className="h-10 w-[160px] bg-white border-stone-200 text-sm font-semibold rounded-lg">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="Movement">Movement</SelectItem>
+                <SelectItem value="Youth">Youth</SelectItem>
+                <SelectItem value="Economy">Economy</SelectItem>
+                <SelectItem value="Diaspora">Diaspora</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Select defaultValue="all">
-            <SelectTrigger className="h-10 w-[140px] bg-stone-50 border-none text-[10px] font-black uppercase tracking-widest">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Sectors</SelectItem>
-              <SelectItem value="Movement">Movement</SelectItem>
-              <SelectItem value="Youth">Youth</SelectItem>
-              <SelectItem value="Economy">Economy</SelectItem>
-              <SelectItem value="Diaspora">Diaspora</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="ghost" className="h-10 px-4 text-[10px] font-black uppercase tracking-widest text-[var(--brand-red)] hover:bg-rose-50">
-            Audit Archive
-          </Button>
-        </div>
-      </div>
+      </Card>
 
       {/* Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {isLoading ? (
           Array(6).fill(0).map((_, i) => (
-            <Card key={i} className="rounded-none border-stone-100 animate-pulse">
+            <Card key={i} className="rounded-xl border-stone-200 animate-pulse bg-white">
               <div className="h-48 bg-stone-100" />
               <CardContent className="p-6 space-y-4">
-                <div className="h-4 bg-stone-100 w-3/4" />
-                <div className="h-4 bg-stone-100 w-1/2" />
+                <div className="h-4 bg-stone-100 w-3/4 rounded" />
+                <div className="h-4 bg-stone-100 w-1/2 rounded" />
               </CardContent>
             </Card>
           ))
         ) : filteredPosts.length === 0 ? (
-          <div className="col-span-full py-20 text-center bg-white border border-dashed border-stone-200">
-            <FileText className="w-12 h-12 text-stone-200 mx-auto mb-4" />
-            <h3 className="text-sm font-black uppercase tracking-widest text-stone-400">No Intelligence Found</h3>
-            <p className="text-xs text-stone-400 mt-1">Refine your search or deploy a new policy brief.</p>
+          <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-stone-100 rounded-2xl">
+            <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-8 h-8 text-stone-200" />
+            </div>
+            <h3 className="text-lg font-bold text-stone-900">No posts found</h3>
+            <p className="text-sm text-stone-500 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
+            <Button 
+              variant="outline" 
+              onClick={() => setSearchQuery('')}
+              className="mt-6 rounded-lg border-stone-200"
+            >
+              Clear Search
+            </Button>
           </div>
         ) : (
           filteredPosts.map((post) => (
-            <Card key={post.id} className="rounded-none border-stone-200 group hover:border-[var(--brand-gold)] transition-all overflow-hidden bg-white">
+            <Card key={post.id} className="rounded-xl border-stone-200 group hover:border-stone-300 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
               <div className="aspect-video relative overflow-hidden bg-stone-100">
                 {post.imageUrl ? (
                   <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -277,67 +583,56 @@ export default function AdminBlogs() {
                   </div>
                 )}
                 <div className="absolute top-4 left-4">
-                  <Badge className="bg-[var(--brand-black)] text-white text-[8px] font-black uppercase tracking-widest rounded-none border-none">
+                  <Badge className="bg-white/90 backdrop-blur-sm text-stone-800 text-[10px] font-bold uppercase tracking-wider rounded-full border-none shadow-sm px-3">
                     {post.category}
                   </Badge>
                 </div>
                 {post.isFeatured && (
                   <div className="absolute top-4 right-4">
-                    <div className="w-6 h-6 bg-[var(--brand-gold)] flex items-center justify-center text-white">
-                      <Plus className="w-3 h-3 rotate-45" />
+                    <div className="w-7 h-7 bg-[var(--brand-green)] rounded-full flex items-center justify-center text-white shadow-lg">
+                      <Star className="w-3.5 h-3.5 fill-white" />
                     </div>
                   </div>
                 )}
               </div>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-black font-meta text-[var(--brand-black)] uppercase tracking-tight leading-tight group-hover:text-[var(--brand-green)] transition-colors">
+              <CardContent className="p-6 flex-1 flex flex-col">
+                <div className="flex justify-between items-start mb-3 gap-2">
+                  <h3 className="text-lg font-bold text-stone-900 leading-tight group-hover:text-[var(--brand-green)] transition-colors line-clamp-2">
                     {post.title}
                   </h3>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreVertical className="w-4 h-4" />
+                      <Button variant="ghost" className="h-8 w-8 p-0 shrink-0 hover:bg-stone-100 rounded-full">
+                        <MoreVertical className="w-4 h-4 text-stone-400" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-none font-meta">
-                      <DropdownMenuItem onClick={() => handleOpenDialog(post)} className="text-[10px] font-bold uppercase tracking-widest gap-2">
-                        <Edit2 className="w-3 h-3" /> Edit Post
+                    <DropdownMenuContent align="end" className="rounded-xl border-stone-200 shadow-xl p-2 w-48">
+                      <DropdownMenuItem onClick={() => handleEditPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
+                        <Edit2 className="w-4 h-4 text-stone-400" /> Edit Post
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-[10px] font-bold uppercase tracking-widest gap-2">
-                        <Eye className="w-3 h-3" /> View Post
+                      <DropdownMenuItem onClick={() => handleViewPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
+                        <Eye className="w-4 h-4 text-stone-400" /> View Post
                       </DropdownMenuItem>
-                      <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="text-[10px] font-bold uppercase tracking-widest gap-2 text-[var(--brand-red)]">
-                        <Trash2 className="w-3 h-3" /> Delete Post
+                      <div className="h-px bg-stone-100 my-1" />
+                      <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5 text-red-600 focus:text-red-600 focus:bg-red-50">
+                        <Trash2 className="w-4 h-4" /> Delete Post
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <p className="text-stone-500 text-xs line-clamp-2 mb-6 font-medium leading-relaxed">
+                <p className="text-stone-500 text-sm line-clamp-2 mb-6 font-medium leading-relaxed flex-1">
                   {post.excerpt}
                 </p>
-                <div className="flex items-center justify-between pt-6 border-t border-stone-50">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="w-3 h-3 text-stone-400" />
-                      <span className="text-[9px] font-bold text-stone-400 uppercase">
-                        {new Date(post.publishedAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3 h-3 text-stone-400" />
-                      <span className="text-[9px] font-bold text-stone-400 uppercase">{post.readTime}</span>
+                <div className="flex items-center justify-between pt-5 border-t border-stone-100 mt-auto">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5 text-stone-400">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span className="text-[11px] font-semibold">{new Date(post.publishedAt).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  <div className="flex -space-x-1">
-                    {post.tags.slice(0, 2).map(tag => (
-                      <div key={tag} className="w-4 h-4 rounded-full bg-stone-100 border border-white flex items-center justify-center">
-                        <Tag className="w-2 h-2 text-stone-400" />
-                      </div>
-                    ))}
-                    {post.tags.length > 2 && (
-                      <div className="text-[8px] font-bold text-stone-400 ml-2">+{post.tags.length - 2}</div>
-                    )}
+                  <div className="flex items-center gap-1.5 text-stone-400">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span className="text-[11px] font-semibold">{post.readTime}</span>
                   </div>
                 </div>
               </CardContent>
@@ -346,199 +641,6 @@ export default function AdminBlogs() {
         )}
       </div>
 
-      {/* Deployment Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-none border-stone-200 p-0 font-meta">
-          <form onSubmit={handleSubmit}>
-            <DialogHeader className="p-8 bg-[var(--brand-black)] text-white border-b border-white/10">
-              <DialogTitle className="text-2xl font-black uppercase tracking-tighter">
-                {editingPost ? 'Edit Movement Intelligence' : 'Draft New Policy Brief'}
-              </DialogTitle>
-              <DialogDescription className="text-stone-400 text-xs font-bold uppercase tracking-widest mt-1">
-                Establish the narrative. All communications must align with the national agenda.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="p-8 space-y-10 bg-white">
-              {/* Core Intel */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 border-b border-stone-100 pb-2">
-                  <FileText className="w-4 h-4 text-[var(--brand-green)]" />
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Core Intelligence</h4>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Article Title</Label>
-                    <Input 
-                      required
-                      value={formData.title}
-                      onChange={(e) => setFormData({...formData, title: e.target.value})}
-                      placeholder="e.g., THE INDUSTRIALIZATION OF THE NORTH" 
-                      className="rounded-none border-stone-200 h-12 text-sm font-bold placeholder:text-stone-300"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Resource Identifier (Slug)</Label>
-                    <Input 
-                      value={formData.slug}
-                      onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                      placeholder="the-industrialization-of-the-north" 
-                      className="rounded-none border-stone-200 h-12 text-sm font-bold placeholder:text-stone-300"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Sector/Category</Label>
-                    <Select 
-                      value={formData.category}
-                      onValueChange={(val) => setFormData({...formData, category: val})}
-                    >
-                      <SelectTrigger className="rounded-none border-stone-200 h-12 text-xs font-bold uppercase tracking-tight">
-                        <SelectValue placeholder="Select Category" />
-                      </SelectTrigger>
-                      <SelectContent className="font-meta">
-                        <SelectItem value="Movement">Movement</SelectItem>
-                        <SelectItem value="Youth">Youth</SelectItem>
-                        <SelectItem value="Economy">Economy</SelectItem>
-                        <SelectItem value="Diaspora">Diaspora</SelectItem>
-                        <SelectItem value="Integrity">Integrity</SelectItem>
-                        <SelectItem value="Community">Community</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Featured Image URL</Label>
-                    <Input 
-                      value={formData.imageUrl}
-                      onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                      placeholder="https://images.unsplash.com/..." 
-                      className="rounded-none border-stone-200 h-12 text-xs font-bold"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Est. Read Time</Label>
-                    <Input 
-                      value={formData.readTime}
-                      onChange={(e) => setFormData({...formData, readTime: e.target.value})}
-                      placeholder="5 min read" 
-                      className="rounded-none border-stone-200 h-12 text-xs font-bold"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Strategic Excerpt</Label>
-                  <Textarea 
-                    required
-                    value={formData.excerpt}
-                    onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
-                    placeholder="Brief summary for list cards..." 
-                    className="rounded-none border-stone-200 min-h-[100px] text-xs font-medium leading-relaxed"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Main Content</Label>
-                  <Editor
-                    apiKey='ky4xtv1lrw74kgz3s89jm1m0tw6d1supmj4xpnbibfjk5qkz'
-                    value={formData.content}
-                    onEditorChange={(content) => setFormData({...formData, content})}
-                    init={{
-                      height: 500,
-                      menubar: false,
-                      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                      content_style: 'body { font-family: "Public Sans", sans-serif; font-size:14px; color: #44403c; line-height: 1.6; }'
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* SEO & Optimization */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 border-b border-stone-100 pb-2">
-                  <Globe className="w-4 h-4 text-[var(--brand-gold)]" />
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">SEO & Transmission Optimization</h4>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">SEO Meta Title</Label>
-                    <Input 
-                      value={formData.seoTitle}
-                      onChange={(e) => setFormData({...formData, seoTitle: e.target.value})}
-                      placeholder="Title for search engines..." 
-                      className="rounded-none border-stone-200 h-12 text-xs font-bold"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Keywords/Tags (Comma Separated)</Label>
-                    <Input 
-                      value={formData.tags.join(', ')}
-                      onChange={(e) => setFormData({...formData, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)})}
-                      placeholder="ghana, industry, jobs, movement" 
-                      className="rounded-none border-stone-200 h-12 text-xs font-bold"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-stone-500">SEO Meta Description</Label>
-                  <Textarea 
-                    value={formData.metaDescription}
-                    onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
-                    placeholder="Brief description for search result snippets..." 
-                    className="rounded-none border-stone-200 min-h-[80px] text-xs font-medium leading-relaxed"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-stone-50 border border-stone-100">
-                  <div className="flex items-center gap-3">
-                    <Switch 
-                      checked={formData.isFeatured}
-                      onCheckedChange={(val) => setFormData({...formData, isFeatured: val})}
-                    />
-                    <div>
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-stone-900">Featured Intelligence</Label>
-                      <p className="text-[8px] font-bold text-stone-400 uppercase tracking-tight">Pin this brief to the top of the insights feed.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="w-3 h-3 text-[var(--brand-gold)]" />
-                    <span className="text-[8px] font-black uppercase tracking-widest text-[var(--brand-gold)]">High Visibility</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <DialogFooter className="p-8 bg-stone-50 border-t border-stone-100 sm:justify-between flex-row items-center gap-4">
-              <div className="hidden sm:flex items-center gap-2 text-stone-400">
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-stone-400">Ready for propagation</span>
-              </div>
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setIsDialogOpen(false)}
-                  className="flex-1 sm:flex-none h-12 px-8 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-stone-100"
-                >
-                  Discard
-                </Button>
-                <Button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="flex-1 sm:flex-none h-12 px-8 rounded-none bg-[var(--brand-green)] text-white hover:bg-emerald-700 text-[10px] font-black uppercase tracking-widest"
-                >
-                  {isLoading ? 'SYNCHRONIZING...' : editingPost ? 'Update Vault' : 'Deploy Intelligence'}
-                </Button>
-              </div>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

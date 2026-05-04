@@ -25,20 +25,20 @@ import {
   Vote,
   ChevronDown
 } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'
-import type { AdminPermission } from '@/types/admin'
+
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     'Core': true,
-    'People & Network': false,
-    'Intelligence & Ops': false,
-    'Finance & Logistics': false,
+    'People': false,
+    'Operations': false,
+    'Finance': false,
     'Communications': false
   })
   const location = useLocation()
@@ -62,7 +62,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       ]
     },
     {
-      label: "People & Network",
+      label: "People",
       icon: Users,
       items: [
         { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
@@ -74,20 +74,20 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       ]
     },
     {
-      label: "Intelligence & Ops",
+      label: "Operations",
       icon: Target,
       items: [
         { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
         { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Analysis', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization Metrics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/directives', icon: Target, label: 'Tactical Ops', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/rally-command', icon: Target, label: 'Rally Command', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/ground-game', icon: Vote, label: 'Ground Game', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/war-room', icon: ShieldAlert, label: 'The War Room', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/directives', icon: Target, label: 'Operations', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/rally-command', icon: Target, label: 'Events', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/ground-game', icon: Vote, label: 'Canvassing', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/war-room', icon: ShieldAlert, label: 'Alerts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     },
     {
-      label: "Finance & Logistics",
+      label: "Finance",
       icon: DollarSign,
       items: [
         { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
@@ -178,7 +178,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     <div className="flex items-center gap-3">
                       <group.icon className="w-5 h-5 shrink-0" />
                       <span className={cn(
-                        "text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300",
+                        "text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-300",
                         isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 w-0"
                       )}>
                         {group.label}
@@ -204,17 +204,17 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2.5 ml-8 transition-all relative group/item",
+                            "flex items-center gap-3 px-3 py-2 ml-8 transition-all relative group/item rounded-md mr-4",
                             isActive 
                               ? "bg-white/10 text-white" 
-                              : "text-stone-400 hover:text-white hover:bg-white/5"
+                              : "text-stone-500 hover:text-stone-200 hover:bg-white/5"
                           )}
                           onClick={() => {
                             if (window.innerWidth < 1024) setIsSidebarOpen(false)
                           }}
                         >
                           <span className={cn(
-                            "text-[9px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300",
+                            "text-xs font-medium tracking-wide whitespace-nowrap transition-all duration-300",
                             isSidebarOpen ? "opacity-100" : "opacity-0"
                           )}>
                             {item.label}
@@ -245,10 +245,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             >
               <LogOut className="w-5 h-5 group-hover:text-red-500 shrink-0" />
               <span className={cn(
-                "text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300",
+                "text-[11px] font-medium whitespace-nowrap transition-all duration-300",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0"
               )}>
-                Sign Out
+                Sign out
               </span>
             </button>
           </div>
@@ -280,8 +280,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               </div>
               <input 
                 type="text" 
-                placeholder="Search command center..."
-                className="pl-14 h-12 w-[400px] bg-stone-50 border border-stone-100 focus:bg-white focus:border-[var(--brand-black)] focus:ring-0 transition-all text-[11px] outline-none uppercase font-black tracking-widest placeholder:text-stone-300 shadow-sm focus:shadow-md"
+                placeholder="Search..."
+                className="pl-14 h-12 w-[400px] bg-stone-50 border border-stone-100 focus:bg-white focus:border-stone-300 focus:ring-0 transition-all text-sm outline-none font-medium placeholder:text-stone-300 shadow-sm focus:shadow-md rounded-lg"
               />
               <div className="absolute right-4 flex items-center gap-1 opacity-40 group-focus-within:opacity-0 transition-opacity">
                 <span className="px-1.5 py-0.5 border border-stone-300 text-[8px] font-bold">⌘</span>
@@ -311,8 +311,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 </p>
                 <div className="flex items-center justify-end gap-1.5 mt-1.5">
                   <span className="w-1 h-1 bg-emerald-500 rounded-full" />
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest leading-none">
-                    {user?.role.replace('_', ' ') || 'HQ Access'}
+                  <p className="text-[10px] font-medium text-stone-400 uppercase tracking-wider leading-none">
+                    {user?.role === 'SUPER_ADMIN' ? 'Administrator' : 'Staff'}
                   </p>
                 </div>
               </div>
