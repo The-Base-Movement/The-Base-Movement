@@ -58,6 +58,7 @@ import AdminLogisticsIntelligence from './pages/admin/LogisticsIntelligence'
 import AdminRallyCommand from './pages/admin/RallyCommand'
 import AdminSentimentIntelligence from './pages/admin/SentimentIntelligence'
 import AdminWarRoomCommand from './pages/admin/WarRoomCommand'
+import AdminGroundGameCommand from './pages/admin/GroundGameCommand'
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -137,6 +138,7 @@ export default function App() {
           <Route path="rally-command" element={<AdminRallyCommand />} />
           <Route path="sentiment-intelligence" element={<AdminSentimentIntelligence />} />
           <Route path="war-room" element={<AdminWarRoomCommand />} />
+          <Route path="ground-game" element={<AdminGroundGameCommand />} />
           <Route path="donations" element={<AdminDonations />} />
           <Route path="/admin/members" element={<AdminMembers />} />
           <Route path="/admin/verification" element={<AdminMemberVerification />} />

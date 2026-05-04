@@ -21,7 +21,8 @@ import {
   Target,
   Trophy,
   Brain,
-  ShieldAlert
+  ShieldAlert,
+  Vote
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -60,6 +61,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     { to: '/admin/rally-command', icon: Target, label: 'Rally Command', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Intelligence', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/war-room', icon: ShieldAlert, label: 'The War Room', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+    { to: '/admin/ground-game', icon: Vote, label: 'Ground Game', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/blogs', icon: FileText, label: 'Insights', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
     { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },

@@ -280,6 +280,58 @@ export interface MediaCounterNarrative {
   created_at: string
 }
 
+export interface VoterRegistration {
+  id: string
+  user_id: string
+  registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER'
+  polling_station_id: string | null
+  verification_document_url: string | null
+  verified_by: string | null
+  verified_at: string | null
+  created_at: string
+}
+
+export interface CanvassingCampaign {
+  id: string
+  title: string
+  description: string
+  target_constituency: string
+  target_wards: string[]
+  start_date: string
+  end_date: string
+  goal_contacts: number
+  status: 'DRAFT' | 'ACTIVE' | 'COMPLETED'
+  commander_id: string | null
+  created_at: string
+}
+
+export interface CanvasserLog {
+  id: string
+  campaign_id: string
+  canvasser_id: string
+  location_lat: number | null
+  location_lng: number | null
+  address_notes: string | null
+  contact_name: string | null
+  interaction_result: 'STRONG_SUPPORT' | 'LEANING' | 'UNDECIDED' | 'HOSTILE' | 'NOT_HOME'
+  key_issues: string[] | null
+  needs_follow_up: boolean
+  created_at: string
+}
+
+export interface GOTVTransportRequest {
+  id: string
+  requester_id: string
+  pickup_address: string
+  polling_station_id: string
+  requested_time: string
+  passengers: number
+  status: 'PENDING' | 'DISPATCHED' | 'COMPLETED' | 'CANCELLED'
+  assigned_driver_id: string | null
+  notes: string | null
+  created_at: string
+}
+
 export interface FieldAction {
   id: string
   title: string
@@ -2825,6 +2877,65 @@ class AdminService {
       return (data || []) as MediaCounterNarrative[]
     } catch (error) {
       console.error('[DATABASE] Failed to fetch counter narratives:', error)
+      return []
+    }
+  }
+
+  // --- Phase 14: Operation "Ground Game" (Voter Registration & Turnout) ---
+
+  async getVoterRegistrations(): Promise<VoterRegistration[]> {
+    try {
+      const { data, error } = await supabase
+        .from('voter_registrations')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return (data || []) as VoterRegistration[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch voter registrations:', error)
+      return []
+    }
+  }
+
+  async getCanvassingCampaigns(): Promise<CanvassingCampaign[]> {
+    try {
+      const { data, error } = await supabase
+        .from('canvassing_campaigns')
+        .select('*')
+        .order('start_date', { ascending: true })
+      if (error) throw error
+      return (data || []) as CanvassingCampaign[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch canvassing campaigns:', error)
+      return []
+    }
+  }
+
+  async getCanvasserLogs(campaignId?: string): Promise<CanvasserLog[]> {
+    try {
+      let query = supabase.from('canvasser_logs').select('*').order('created_at', { ascending: false })
+      if (campaignId) {
+        query = query.eq('campaign_id', campaignId)
+      }
+      const { data, error } = await query
+      if (error) throw error
+      return (data || []) as CanvasserLog[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch canvasser logs:', error)
+      return []
+    }
+  }
+
+  async getGOTVTransportRequests(): Promise<GOTVTransportRequest[]> {
+    try {
+      const { data, error } = await supabase
+        .from('gotv_transport_requests')
+        .select('*')
+        .order('requested_time', { ascending: true })
+      if (error) throw error
+      return (data || []) as GOTVTransportRequest[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch GOTV transport requests:', error)
       return []
     }
   }
