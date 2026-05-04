@@ -27,20 +27,20 @@ class PollService {
       return []
     }
 
-    return (data || []).map((p: any) => {
-      const rawOptions = p.poll_options || []
+    return (data || []).map((p: Record<string, unknown>) => {
+      const rawOptions = (p.poll_options as Record<string, unknown>[] | null) || []
       return {
-        id: p.id,
-        question: p.question,
-        status: p.status,
-        totalVotes: p.total_votes || 0,
-        region: p.region || 'National',
-        category: p.category || 'General',
-        endDate: p.end_date || 'N/A',
-        options: rawOptions.map((o: any) => ({
-          id: o.id,
-          label: o.label,
-          votes: o.votes || 0
+        id: p.id as string,
+        question: p.question as string,
+        status: p.status as Poll['status'],
+        totalVotes: (p.total_votes as number) || 0,
+        region: (p.region as string) || 'National',
+        category: (p.category as string) || 'General',
+        endDate: (p.end_date as string) || 'N/A',
+        options: rawOptions.map((o: Record<string, unknown>) => ({
+          id: o.id as string,
+          label: o.label as string,
+          votes: (o.votes as number) || 0
         }))
       }
     })

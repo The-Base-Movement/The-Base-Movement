@@ -24,25 +24,25 @@ class ContentService {
       return []
     }
 
-    return (data || []).map((p: any) => ({
-      id: p.id,
-      title: p.title,
-      slug: p.slug,
-      excerpt: p.excerpt,
-      content: p.content,
-      authorId: p.author_id,
-      authorName: p.author_name || 'Admin',
-      authorRole: p.author_role,
-      authorImage: p.author_image,
-      authorBio: p.author_bio,
-      category: p.category,
-      imageUrl: p.image_url,
-      readTime: p.read_time,
-      isFeatured: p.is_featured,
-      publishedAt: p.published_at,
-      tags: p.tags || [],
-      seoTitle: p.seo_title,
-      metaDescription: p.meta_description
+    return (data || []).map((p: Record<string, unknown>) => ({
+      id: p.id as string,
+      title: p.title as string,
+      slug: p.slug as string,
+      excerpt: p.excerpt as string,
+      content: p.content as string,
+      authorId: p.author_id as string,
+      authorName: (p.author_name as string) || 'Admin',
+      authorRole: p.author_role as string | undefined,
+      authorImage: p.author_image as string | undefined,
+      authorBio: p.author_bio as string | undefined,
+      category: p.category as string,
+      imageUrl: p.image_url as string | undefined,
+      readTime: p.read_time as string,
+      isFeatured: p.is_featured as boolean,
+      publishedAt: p.published_at as string,
+      tags: (p.tags as string[]) || [],
+      seoTitle: p.seo_title as string | undefined,
+      metaDescription: p.meta_description as string | undefined
     }))
   }
 

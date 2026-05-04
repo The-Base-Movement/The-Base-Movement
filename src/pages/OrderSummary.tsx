@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Printer, Share2, ShoppingBag, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { adminService } from '@/services/adminService'
-import type { Order } from '@/types/admin'
+import type { Order, OrderItem } from '@/types/admin'
 
 export default function OrderSummary() {
   const location = useLocation()
@@ -103,7 +103,7 @@ export default function OrderSummary() {
               <div className="relative z-10">
                 <h3 className="font-h3 text-xl text-stone-900 mb-6 uppercase tracking-tight">Items Ordered</h3>
                 <div className="space-y-4">
-                {order.items.map((item: any) => (
+                {order.items.map((item: OrderItem) => (
                   <div key={item.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 bg-stone-50 px-4 rounded-sm">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-white flex items-center justify-center border border-stone-100 shrink-0">
