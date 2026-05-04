@@ -22,7 +22,8 @@ import {
   Trophy,
   Brain,
   ShieldAlert,
-  Vote
+  Vote,
+  ChevronDown
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -33,6 +34,13 @@ import type { AdminPermission } from '@/types/admin'
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024)
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    'Core': true,
+    'People & Network': false,
+    'Intelligence & Ops': false,
+    'Finance & Logistics': false,
+    'Communications': false
+  })
   const location = useLocation()
   const navigate = useNavigate()
   const user = adminService.getCurrentUser()
@@ -43,35 +51,73 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
   }, [navigate])
 
-  const navItems: ( { to: string, icon: LucideIcon, label: string, permission?: { action: AdminPermission['action'], resource: AdminPermission['resource'] } } )[] = [
-    { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
-    { to: '/admin/leadership', icon: Zap, label: 'Leadership Hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
-    { to: '/admin/chapter-hub', icon: MapPin, label: 'Chapter Hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
-    { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
-    { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-    { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-    { to: '/admin/chapters', icon: MapPin, label: 'Chapters', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
-    { to: '/admin/regions', icon: MapPin, label: 'Regions', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
-    { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
-    { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcast Hub', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/directives', icon: Target, label: 'Tactical Ops', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization Metrics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Logistics Intelligence', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/rally-command', icon: Target, label: 'Rally Command', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Intelligence', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/war-room', icon: ShieldAlert, label: 'The War Room', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/ground-game', icon: Vote, label: 'Ground Game', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/blogs', icon: FileText, label: 'Insights', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-    { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
-    { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
-    { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+  const navGroups = [
+    {
+      label: "Core",
+      icon: LayoutDashboard,
+      items: [
+        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
+        { to: '/admin/blogs', icon: FileText, label: 'Insights', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+      ]
+    },
+    {
+      label: "People & Network",
+      icon: Users,
+      items: [
+        { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/leadership', icon: Zap, label: 'Leadership Hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+        { to: '/admin/chapters', icon: MapPin, label: 'Chapters', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+        { to: '/admin/regions', icon: MapPin, label: 'Regions', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+      ]
+    },
+    {
+      label: "Intelligence & Ops",
+      icon: Target,
+      items: [
+        { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
+        { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Analysis', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization Metrics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/directives', icon: Target, label: 'Tactical Ops', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/rally-command', icon: Target, label: 'Rally Command', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/ground-game', icon: Vote, label: 'Ground Game', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/war-room', icon: ShieldAlert, label: 'The War Room', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+      ]
+    },
+    {
+      label: "Finance & Logistics",
+      icon: DollarSign,
+      items: [
+        { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
+        { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
+        { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
+        { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Logistics Intel', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+      ]
+    },
+    {
+      label: "Communications",
+      icon: Megaphone,
+      items: [
+        { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcast Hub', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+      ]
+    }
   ]
 
-  const filteredNavItems = navItems.filter(item => {
-    if (!item.permission) return true
-    return adminService.can(item.permission.action, item.permission.resource)
-  })
+  const filteredNavGroups = navGroups.map(group => ({
+    ...group,
+    items: group.items.filter(item => {
+      if (!item.permission) return true;
+      // @ts-expect-error type assertion
+      return adminService.can(item.permission.action, item.permission.resource);
+    })
+  })).filter(group => group.items.length > 0)
+
+  const toggleGroup = (groupLabel: string) => {
+    if (!isSidebarOpen) setIsSidebarOpen(true)
+    setOpenGroups(prev => ({ ...prev, [groupLabel]: !prev[groupLabel] }))
+  }
 
   const handleLogout = () => {
     // Basic logout logic
@@ -79,7 +125,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 font-inter text-stone-900 flex overflow-hidden">
+    <div className="h-screen bg-stone-50 font-inter text-stone-900 flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       <div 
         className={cn(
@@ -115,40 +161,75 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 py-8 px-4 space-y-1 overflow-y-auto">
-            {filteredNavItems.map((item) => {
-              const isActive = location.pathname === item.to
+          <nav className="flex-1 py-6 px-3 space-y-4 overflow-y-auto">
+            {filteredNavGroups.map((group) => {
+              const isOpen = openGroups[group.label]
+
               return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={cn(
-                    "flex items-center gap-4 px-4 py-3.5 transition-all relative group",
-                    isActive 
-                      ? "bg-white/10 text-white" 
-                      : "text-stone-400 hover:text-white hover:bg-white/5"
-                  )}
-                  onClick={() => {
-                    if (window.innerWidth < 1024) setIsSidebarOpen(false)
-                  }}
-                >
-                  <item.icon className={cn(
-                    "w-5 h-5 shrink-0 transition-transform group-hover:scale-110",
-                    isActive ? "text-[var(--brand-red)]" : ""
-                  )} />
-                  <span className={cn(
-                    "text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300",
-                    isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 w-0"
+                <div key={group.label} className="space-y-1">
+                  {/* Group Header */}
+                  <button
+                    onClick={() => toggleGroup(group.label)}
+                    className={cn(
+                      "w-full flex items-center justify-between px-3 py-2 text-stone-400 hover:text-white hover:bg-white/5 transition-colors group",
+                      isSidebarOpen ? "" : "justify-center"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <group.icon className="w-5 h-5 shrink-0" />
+                      <span className={cn(
+                        "text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300",
+                        isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 w-0"
+                      )}>
+                        {group.label}
+                      </span>
+                    </div>
+                    {isSidebarOpen && (
+                      <ChevronDown className={cn(
+                        "w-4 h-4 transition-transform duration-200",
+                        isOpen ? "rotate-180" : ""
+                      )} />
+                    )}
+                  </button>
+
+                  {/* Group Items */}
+                  <div className={cn(
+                    "overflow-hidden transition-all duration-300",
+                    isOpen && isSidebarOpen ? "max-h-[500px] opacity-100 mt-1" : "max-h-0 opacity-0"
                   )}>
-                    {item.label}
-                  </span>
-                  {isActive && (
-                    <>
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[var(--brand-red)] shadow-[0_0_20px_rgba(206,17,38,0.8)]" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-red)]/5 to-transparent pointer-events-none" />
-                    </>
-                  )}
-                </Link>
+                    {group.items.map((item) => {
+                      const isActive = location.pathname === item.to
+                      return (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          className={cn(
+                            "flex items-center gap-3 px-3 py-2.5 ml-8 transition-all relative group/item",
+                            isActive 
+                              ? "bg-white/10 text-white" 
+                              : "text-stone-400 hover:text-white hover:bg-white/5"
+                          )}
+                          onClick={() => {
+                            if (window.innerWidth < 1024) setIsSidebarOpen(false)
+                          }}
+                        >
+                          <span className={cn(
+                            "text-[9px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300",
+                            isSidebarOpen ? "opacity-100" : "opacity-0"
+                          )}>
+                            {item.label}
+                          </span>
+                          {isActive && (
+                            <>
+                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-6 bg-[var(--brand-red)] shadow-[0_0_10px_rgba(206,17,38,0.8)]" />
+                              <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-red)]/5 to-transparent pointer-events-none" />
+                            </>
+                          )}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
               )
             })}
           </nav>
