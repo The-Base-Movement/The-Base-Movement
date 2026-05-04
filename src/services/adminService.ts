@@ -284,7 +284,7 @@ class AdminService {
       .order('joined_at', { ascending: false })
 
     if (adminIdList.length > 0) {
-      query.not('id', 'in', adminIdList)
+      query.not('id', 'in', `(${adminIdList.join(',')})`)
     }
 
     const { data, error } = await query

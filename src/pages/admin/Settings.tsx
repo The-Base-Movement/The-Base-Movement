@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   User, 
   Shield, 
@@ -12,7 +12,7 @@ import {
   Camera,
   Loader2
 } from 'lucide-react'
-import { adminService, type AuditLogEntry } from '@/services/adminService'
+import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
 import { authService } from '@/services/authService'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
@@ -46,7 +46,7 @@ export default function AdminSettings() {
 
   const [auditSearch, setAuditSearch] = useState('')
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
-  const [adminData, setAdminData] = useState<any>(null)
+  const [adminData, setAdminData] = useState<AdminUser | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
   // Profile Form State
@@ -93,8 +93,8 @@ export default function AdminSettings() {
         avatar_url: profileForm.avatarUrl
       })
       toast.success('Profile updated successfully')
-    } catch (error: any) {
-      toast.error(error.message)
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'An error occurred')
     } finally {
       setIsSaving(false)
     }
@@ -111,8 +111,8 @@ export default function AdminSettings() {
       await authService.updatePassword(passwordForm.newPassword)
       toast.success('Password updated successfully')
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
-    } catch (error: any) {
-      toast.error(error.message)
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'An error occurred')
     } finally {
       setIsSaving(false)
     }

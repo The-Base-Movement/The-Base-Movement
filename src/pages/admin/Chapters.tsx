@@ -31,6 +31,10 @@ export default function ChaptersManagement() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending'>('All')
   
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isMobile, setIsMobile] = useState(false)
+  
   // Chapter Form State
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingChapterId, setEditingChapterId] = useState<string | null>(null)
@@ -48,7 +52,14 @@ export default function ChaptersManagement() {
       setRegionalStats(stats)
     }
     fetchStats()
+
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+
 
   const handleSaveChapter = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -125,6 +136,14 @@ export default function ChaptersManagement() {
     chapters.reduce((sum, c) => sum + (c.member_count || 0), 0), 
     [chapters]
   )
+
+  const itemsPerPage = isMobile ? 8 : 12
+  const totalPages = Math.ceil(filteredChapters.length / itemsPerPage)
+  
+  const currentChapters = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage
+    return filteredChapters.slice(start, start + itemsPerPage)
+  }, [filteredChapters, currentPage, itemsPerPage])
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -282,14 +301,14 @@ export default function ChaptersManagement() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
           <Input 
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
             placeholder="Search chapters by name, region or country..." 
             className="pl-10 h-11 rounded-none border-stone-200"
           />
         </div>
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending')}
+          onChange={(e) => { setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending'); setCurrentPage(1); }}
           className="h-11 px-4 text-[10px] font-bold uppercase tracking-widest rounded-none border border-stone-200 bg-white focus:outline-none focus:border-[var(--brand-black)]"
         >
           <option value="All">All Statuses</option>
@@ -300,7 +319,7 @@ export default function ChaptersManagement() {
 
       {/* Chapters Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredChapters.map((chapter) => (
+        {currentChapters.map((chapter) => (
           <Card key={chapter.id} className="rounded-none border-stone-200 shadow-sm hover:shadow-md transition-all group overflow-hidden">
             <CardHeader className="p-6 border-b border-stone-50 bg-stone-50/50">
               <div className="flex justify-between items-start">
@@ -381,6 +400,49 @@ export default function ChaptersManagement() {
           </button>
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-stone-200">
+          <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center md:text-left w-full md:w-auto">
+            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredChapters.length)} of {filteredChapters.length} Chapters
+          </span>
+          <div className="flex items-center justify-center gap-2 w-full md:w-auto">
+            <Button
+              variant="outline"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              className="h-8 px-4 text-[10px] font-black uppercase tracking-widest rounded-none border-stone-200"
+            >
+              Previous
+            </Button>
+            <div className="flex items-center gap-1 overflow-x-auto max-w-[200px] [&::-webkit-scrollbar]:hidden">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={cn(
+                    "min-w-[32px] h-8 px-2 text-[10px] font-black transition-colors shrink-0",
+                    currentPage === i + 1 
+                      ? "bg-[var(--brand-black)] text-white" 
+                      : "text-stone-400 hover:bg-stone-100 hover:text-[var(--brand-black)]"
+                  )}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+            <Button
+              variant="outline"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              className="h-8 px-4 text-[10px] font-black uppercase tracking-widest rounded-none border-stone-200"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Chapter Editor Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
