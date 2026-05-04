@@ -18,7 +18,8 @@ import {
   DollarSign,
   ShoppingBag,
   Megaphone,
-  Target
+  Target,
+  Trophy
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -52,6 +53,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
     { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcast Hub', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/directives', icon: Target, label: 'Tactical Ops', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+    { to: '/admin/metrics', icon: Trophy, label: 'Mobilization Metrics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/blogs', icon: FileText, label: 'Insights', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
     { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { WelcomeModal } from '@/components/WelcomeModal'
 import { ShareModal } from '@/components/ShareModal'
 import { adminService, type Notification, type Achievement, type LeaderboardEntry } from '@/services/adminService'
-import { Trophy, Medal, TrendingUp, Zap, MapPin, ShieldCheck } from 'lucide-react'
+import { Trophy, Medal, TrendingUp, Award } from 'lucide-react'
 import { MovementRoadmap } from '@/components/MovementRoadmap'
 
 interface GrowthStats {
@@ -33,6 +33,8 @@ export default function Dashboard() {
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [achievements, setAchievements] = useState<Achievement[]>([])
+  const [allAvailableAchievements, setAllAvailableAchievements] = useState<Achievement[]>([])
+  const [totalPoints, setTotalPoints] = useState(0)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [shareData, setShareData] = useState({ title: '', url: '' })
 
@@ -70,12 +72,16 @@ export default function Dashboard() {
           })
 
           // Fetch achievements and localized leaderboard in the same scope
-          const [userAchievements, regionLeaderboard] = await Promise.all([
-            adminService.getMemberAchievements(regNo),
-            adminService.getLeaderboard(liveMember.region)
+          const [userAchievements, regionLeaderboard, userPoints, allPossible] = await Promise.all([
+            adminService.getMemberAchievements(liveMember.id),
+            adminService.getLeaderboard(liveMember.region),
+            adminService.getMemberPoints(liveMember.id),
+            adminService.getAchievements()
           ])
           setAchievements(userAchievements)
           setLeaderboard(regionLeaderboard)
+          setTotalPoints(userPoints)
+          setAllAvailableAchievements(allPossible)
         }
       }
       
@@ -258,6 +264,37 @@ export default function Dashboard() {
           </div>
         </section>
 
+        {/* Mobilization Impact Progress */}
+        <div className="bg-white border border-stone-200 rounded-sm shadow-sm p-6 sm:p-8 col-span-1 lg:col-span-12 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xs font-black uppercase tracking-widest text-stone-900 m-0 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-[var(--brand-green)]" />
+                Mobilization Impact
+              </h3>
+              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">Total points earned through direct action.</p>
+            </div>
+            <span className="text-2xl font-black italic tracking-tighter text-[var(--brand-green)]">{totalPoints.toLocaleString()}</span>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="h-4 bg-stone-100 rounded-none overflow-hidden relative border border-stone-200">
+              <div 
+                className="h-full bg-[var(--brand-green)] transition-all duration-1000 ease-out relative"
+                style={{ width: `${Math.min((totalPoints / 1000) * 100, 100)}%` }}
+              >
+                <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.1)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.1)_50%,rgba(255,255,255,0.1)_75%,transparent_75%,transparent)] bg-[length:20px_20px] animate-[progress-stripe_2s_linear_infinite]" />
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">Next Milestone: Chapter Leader</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-stone-600">
+                {1000 - totalPoints > 0 ? `${1000 - totalPoints} points remaining` : 'Elite Achievement Unlocked'}
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Section 3: Referral/Invite (Sidebar Column) */}
         <section className="lg:col-span-5 flex flex-col gap-6">
           <div className="bg-primary-container p-6 md:p-8 border-none relative overflow-hidden group rounded-sm shadow-sm">
@@ -315,27 +352,31 @@ export default function Dashboard() {
               </h3>
               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{achievements.length} Badges Earned</span>
             </div>
-            <div className="p-8 grid grid-cols-2 sm:grid-cols-3 gap-6">
+            <div className="p-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
+              {/* Earned Badges */}
               {achievements.map((achievement) => (
                 <div key={achievement.id} className="flex flex-col items-center text-center group">
-                  <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mb-3 border-2 border-transparent group-hover:border-warm-gold/30 group-hover:bg-warm-gold/5 transition-all">
-                    {achievement.icon === 'Zap' && <Zap className="w-6 h-6 text-warm-gold" />}
-                    {achievement.icon === 'MapPin' && <MapPin className="w-6 h-6 text-warm-gold" />}
-                    {achievement.icon === 'ShieldCheck' && <ShieldCheck className="w-6 h-6 text-warm-gold" />}
-                    {achievement.icon === 'TrendingUp' && <TrendingUp className="w-6 h-6 text-warm-gold" />}
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 border-2 border-warm-gold/50 bg-[radial-gradient(circle_at_center,_rgba(184,134,11,0.1)_0%,transparent_100%)] shadow-sm group-hover:scale-110 transition-transform">
+                    <Award className="w-8 h-8 text-warm-gold" />
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-tight text-stone-900 m-0">{achievement.name}</p>
                   <p className="text-[8px] text-stone-400 font-bold uppercase mt-1 leading-tight">{achievement.description}</p>
                 </div>
               ))}
-              {/* Locked Badges */}
-              <div className="flex flex-col items-center text-center opacity-40">
-                <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mb-3 border-2 border-stone-100 grayscale">
-                  <Medal className="w-6 h-6 text-stone-300" />
+
+              {/* Next Milestones (Locked) */}
+              {allAvailableAchievements
+                .filter(a => !achievements.some(ea => ea.id === a.id))
+                .slice(0, 3)
+                .map((locked) => (
+                <div key={locked.id} className="flex flex-col items-center text-center opacity-40 group">
+                  <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mb-3 border-2 border-stone-100 grayscale">
+                    <Medal className="w-6 h-6 text-stone-300" />
+                  </div>
+                  <p className="text-[10px] font-black uppercase tracking-tight text-stone-400 m-0">{locked.name}</p>
+                  <p className="text-[8px] text-stone-300 font-bold uppercase mt-1 leading-tight">Locked ({locked.points_awarded || 0} Points)</p>
                 </div>
-                <p className="text-[10px] font-black uppercase tracking-tight text-stone-400 m-0">Mobilizer</p>
-                <p className="text-[8px] text-stone-300 font-bold uppercase mt-1 leading-tight">Locked (500 Points)</p>
-              </div>
+              ))}
             </div>
           </div>
 

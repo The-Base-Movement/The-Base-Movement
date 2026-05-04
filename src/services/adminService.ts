@@ -201,6 +201,13 @@ export interface ChapterLeaderboard {
   regional_rank: number
 }
 
+export interface LeaderboardEntry {
+  name: string
+  points: number
+  region: string
+  rank: number
+}
+
 export interface RegionalPulse {
   name: string
   growth: number
@@ -2095,11 +2102,11 @@ class AdminService {
 
       if (error) throw error
       
-      return (data || []).map(entry => ({
+      return (data || []).map((entry, index) => ({
         name: entry.full_name,
         points: entry.total_points,
         region: entry.region,
-        rank: region ? entry.regional_rank : entry.national_rank
+        rank: region ? entry.regional_rank : (entry.national_rank || index + 1)
       }))
     } catch (error) {
       console.error('Error fetching leaderboard:', error)
@@ -2107,64 +2114,53 @@ class AdminService {
     }
   }
 
-  async getMemberAchievements(userId: string): Promise<Achievement[]> {
-    try {
-      const { data, error } = await supabase
-        .from('member_achievements')
-        .select(`
-          awarded_at,
-          achievements (
-            id,
-            name,
-            icon,
-            description
-          )
-        `)
-        .eq('user_id', userId)
-
-      if (error) throw error
-
-      interface AchievementRecord {
-        awarded_at: string
-        achievements: {
-          id: string
-          name: string
-          icon: string
-          description: string
-        }
-      }
-
-      return (data as unknown as AchievementRecord[] || []).map((item) => ({
-        id: item.achievements.id,
-        name: item.achievements.name,
-        icon: item.achievements.icon,
-        description: item.achievements.description,
-        awarded_at: item.awarded_at
-      }))
-    } catch (error) {
-      console.error('Error fetching achievements:', error)
-      return []
-    }
-  }
-
   async getMovementPulse(): Promise<MovementPulse> {
-    console.log('[SYSTEM] Admin: Generating National Movement Pulse Report...')
-    // In production, this would be a complex aggregation query
-    // High-fidelity mock for strategic visualization
-    return {
-      nationalGrowth: 12.5,
-      activeChapters: 42,
-      totalMobilizationPoints: 125400,
-      topPerformingRegion: 'Ashanti',
-      logisticsHealth: 94,
-      regionalPulse: [
-        { name: 'Greater Accra', growth: 15.2, activity: 92, status: 'Ascending' },
-        { name: 'Ashanti', growth: 18.5, activity: 95, status: 'Ascending' },
-        { name: 'Western', growth: 8.4, activity: 78, status: 'Stable' },
-        { name: 'Central', growth: 10.1, activity: 84, status: 'Ascending' },
-        { name: 'Northern', growth: 5.2, activity: 65, status: 'Stable' },
-        { name: 'Volta', growth: 9.8, activity: 81, status: 'Stable' }
-      ]
+    try {
+      const [leaderboardRes, chaptersRes] = await Promise.all([
+        supabase.from('movement_leaderboard').select('total_points, region'),
+        supabase.from('chapter_performance_telemetry').select('*')
+      ])
+
+      const leaderboard = leaderboardRes.data || []
+      const chapters = chaptersRes.data || []
+
+      const totalPoints = leaderboard.reduce((sum, u) => sum + (u.total_points || 0), 0)
+      const activeChapters = chapters.length
+      
+      // Calculate regional performance activity (points per chapter)
+      const regionalPulse = chapters.map(c => ({
+        name: `${c.chapter} (${c.region})`,
+        growth: 0, // Placeholder for future growth calculation
+        activity: Math.round((c.aggregate_chapter_points / (c.total_patriots || 1)) * 10) / 10,
+        status: (c.aggregate_chapter_points > 1000 ? 'Ascending' : 'Stable') as 'Ascending' | 'Stable' | 'Descending'
+      }))
+
+      // Find top region
+      const regions = [...new Set(leaderboard.map(u => u.region))]
+      const regionalPoints = regions.map(r => ({
+        region: r,
+        points: leaderboard.filter(u => u.region === r).reduce((sum, u) => sum + (u.total_points || 0), 0)
+      }))
+      const topRegion = regionalPoints.sort((a, b) => b.points - a.points)[0]?.region || 'N/A'
+
+      return {
+        nationalGrowth: 12.5, // Keep mock for now
+        activeChapters,
+        totalMobilizationPoints: totalPoints,
+        topPerformingRegion: topRegion,
+        logisticsHealth: 94, // Keep mock for now
+        regionalPulse: regionalPulse.slice(0, 6)
+      }
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch movement pulse:', error)
+      return {
+        nationalGrowth: 0,
+        activeChapters: 0,
+        totalMobilizationPoints: 0,
+        topPerformingRegion: 'N/A',
+        logisticsHealth: 0,
+        regionalPulse: []
+      }
     }
   }
 
@@ -2473,13 +2469,50 @@ class AdminService {
   async getRegionalLeaderboard(): Promise<ChapterLeaderboard[]> {
     try {
       const { data, error } = await supabase
-        .from('regional_performance_leaderboard')
+        .from('chapter_performance_telemetry')
         .select('*')
+        .order('regional_chapter_rank', { ascending: true })
       if (error) throw error
-      return data || []
+      
+      return (data || []).map(item => ({
+        region: item.region,
+        chapter: item.chapter,
+        total_patriots: item.total_patriots,
+        total_mobilization_points: item.aggregate_chapter_points,
+        achievements_unlocked: item.total_chapter_achievements,
+        regional_rank: item.regional_chapter_rank
+      }))
     } catch (error) {
       console.error('[DATABASE] Failed to fetch regional leaderboard:', error)
       return []
+    }
+  }
+
+  async getMemberAchievements(userId: string): Promise<Achievement[]> {
+    try {
+      const { data, error } = await supabase
+        .from('member_achievements')
+        .select('achievement_id, achievements(*)')
+        .eq('user_id', userId)
+      if (error) throw error
+      return (data || []).map(item => item.achievements) as unknown as Achievement[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch member achievements:', error)
+      return []
+    }
+  }
+
+  async getMemberPoints(userId: string): Promise<number> {
+    try {
+      const { data, error } = await supabase
+        .from('member_points')
+        .select('points')
+        .eq('user_id', userId)
+      if (error) throw error
+      return (data || []).reduce((acc, curr) => acc + curr.points, 0)
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch member points:', error)
+      return 0
     }
   }
 }

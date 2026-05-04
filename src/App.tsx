@@ -45,13 +45,14 @@ import AdminSettings from './pages/admin/Settings'
 import AdminMemberVerification from './pages/admin/MemberVerification'
 import AdminRegions from './pages/admin/Regions'
 import AdminBlogs from './pages/admin/Blogs'
-import AdminLeadershipHub from './pages/admin/LeadershipHub.tsx'
-import AdminDonations from './pages/admin/DonationVerification.tsx'
+import AdminLeadershipHub from './pages/admin/LeadershipHub'
+import AdminDonations from './pages/admin/DonationVerification'
 import AdminAdministrators from './pages/admin/Administrators'
 import AdminBroadcasts from './pages/admin/Broadcasts'
 import AdminOrders from './pages/admin/Orders'
-import AdminChapterHub from './pages/admin/ChapterLeadHub.tsx'
-import AdminFieldDirectives from './pages/admin/FieldDirectives.tsx'
+import AdminChapterHub from './pages/admin/ChapterLeadHub'
+import AdminFieldDirectives from './pages/admin/FieldDirectives'
+import AdminMobilizationMetrics from './pages/admin/MobilizationMetrics'
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -125,6 +126,7 @@ export default function App() {
           <Route path="leadership" element={<AdminLeadershipHub />} />
           <Route path="chapter-hub" element={<AdminChapterHub />} />
           <Route path="directives" element={<AdminFieldDirectives />} />
+          <Route path="metrics" element={<AdminMobilizationMetrics />} />
           <Route path="donations" element={<AdminDonations />} />
           <Route path="/admin/members" element={<AdminMembers />} />
           <Route path="/admin/verification" element={<AdminMemberVerification />} />
