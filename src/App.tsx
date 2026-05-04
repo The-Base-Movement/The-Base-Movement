@@ -32,6 +32,7 @@ import VerifyID from './pages/VerifyID'
 import Dashboard from './pages/Dashboard'
 import ProfileSettings from './pages/ProfileSettings'
 import Polls from './pages/Polls'
+import FeedbackHub from './pages/FeedbackHub'
 
 // Admin pages
 import AdminLayout from './components/layouts/AdminLayout'
@@ -55,6 +56,7 @@ import AdminFieldDirectives from './pages/admin/FieldDirectives'
 import AdminMobilizationMetrics from './pages/admin/MobilizationMetrics'
 import AdminLogisticsIntelligence from './pages/admin/LogisticsIntelligence'
 import AdminRallyCommand from './pages/admin/RallyCommand'
+import AdminSentimentIntelligence from './pages/admin/SentimentIntelligence'
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -112,6 +114,7 @@ export default function App() {
           <Route path="/dashboard/store/wishlist" element={<Wishlist />} />
           <Route path="/dashboard/store/checkout" element={<Checkout />} />
           <Route path="/dashboard/store/summary" element={<OrderSummary />} />
+          <Route path="/dashboard/feedback" element={<FeedbackHub />} />
           <Route path="/dashboard/donate" element={<Donate />} />
           <Route path="/dashboard/contact" element={<Contact />} />
           <Route path="/dashboard/members" element={<Members />} />
@@ -131,6 +134,7 @@ export default function App() {
           <Route path="mobilization-metrics" element={<AdminMobilizationMetrics />} />
           <Route path="logistics-intelligence" element={<AdminLogisticsIntelligence />} />
           <Route path="rally-command" element={<AdminRallyCommand />} />
+          <Route path="sentiment-intelligence" element={<AdminSentimentIntelligence />} />
           <Route path="donations" element={<AdminDonations />} />
           <Route path="/admin/members" element={<AdminMembers />} />
           <Route path="/admin/verification" element={<AdminMemberVerification />} />

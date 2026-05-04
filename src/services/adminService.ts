@@ -209,6 +209,40 @@ export interface InventoryAlert {
   category: string
 }
 
+export interface MemberFeedback {
+  id: string
+  user_id: string
+  feedback_text: string
+  category: string
+  sentiment_score: number
+  sentiment_label: 'Positive' | 'Negative' | 'Neutral'
+  region: string
+  constituency: string
+  created_at: string
+}
+
+export interface SentimentTelemetry {
+  id: string
+  region: string
+  avg_sentiment: number
+  positive_count: number
+  negative_count: number
+  neutral_count: number
+  total_responses: number
+  last_updated: string
+}
+
+export interface ImpactProjection {
+  id: string
+  region: string
+  current_reach: number
+  projected_reach_30d: number
+  confidence_score: number
+  mobilization_velocity: number
+  potential_election_impact: number
+  last_updated: string
+}
+
 export interface FieldAction {
   id: string
   title: string
@@ -2652,6 +2686,63 @@ class AdminService {
       return true
     } catch (error) {
       console.error('[DATABASE] Failed to verify rally attendance:', error)
+      return false
+    }
+  }
+
+  // --- Phase 12: National Sentiment Analysis & Predictive Polling ---
+
+  async getMemberFeedback(): Promise<MemberFeedback[]> {
+    try {
+      const { data, error } = await supabase
+        .from('member_feedback')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return (data || []) as MemberFeedback[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch member feedback:', error)
+      return []
+    }
+  }
+
+  async getSentimentTelemetry(): Promise<SentimentTelemetry[]> {
+    try {
+      const { data, error } = await supabase
+        .from('national_sentiment_telemetry')
+        .select('*')
+        .order('avg_sentiment', { ascending: false })
+      if (error) throw error
+      return (data || []) as SentimentTelemetry[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch sentiment telemetry:', error)
+      return []
+    }
+  }
+
+  async getImpactProjections(): Promise<ImpactProjection[]> {
+    try {
+      const { data, error } = await supabase
+        .from('predictive_impact_projections')
+        .select('*')
+        .order('projected_reach_30d', { ascending: false })
+      if (error) throw error
+      return (data || []) as ImpactProjection[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch impact projections:', error)
+      return []
+    }
+  }
+
+  async submitMemberFeedback(feedback: Partial<MemberFeedback>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('member_feedback')
+        .insert([feedback])
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to submit member feedback:', error)
       return false
     }
   }

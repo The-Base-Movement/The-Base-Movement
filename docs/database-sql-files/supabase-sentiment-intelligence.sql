@@ -1,66 +1,87 @@
--- 🚩 THE BASE: SENTIMENT INTELLIGENCE PIPELINE
--- This script establishes the infrastructure for tracking and analyzing movement sentiment.
+-- Phase 12: National Sentiment Analysis & Predictive Polling
+-- AI-driven engagement analytics and impact modeling
 
--- 1. Ensure Polls has Category
-ALTER TABLE public.polls ADD COLUMN IF NOT EXISTS category text DEFAULT 'General';
-
--- 2. Create Poll Votes Table (if not exists)
-CREATE TABLE IF NOT EXISTS public.poll_votes (
-    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    poll_id uuid REFERENCES public.polls(id) ON DELETE CASCADE,
-    option_id uuid REFERENCES public.poll_options(id) ON DELETE CASCADE,
-    user_id uuid REFERENCES auth.users(id),
-    created_at timestamp with time zone DEFAULT now(),
-    UNIQUE(poll_id, user_id)
-);
-
--- 3. Create Member Feedback Table
+-- 1. Member Feedback & Sentiment Feed
 CREATE TABLE IF NOT EXISTS public.member_feedback (
-    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id uuid REFERENCES auth.users(id),
-    category text NOT NULL, -- e.g., 'Policy', 'Chapter', 'Leadership', 'Other'
-    content text NOT NULL,
-    sentiment_score float DEFAULT 0.0, -- -1.0 (Negative) to 1.0 (Positive)
-    is_reviewed boolean DEFAULT false,
-    created_at timestamp with time zone DEFAULT now()
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    feedback_text TEXT NOT NULL,
+    category VARCHAR DEFAULT 'General', -- Policy, Logistics, Leadership, Local
+    sentiment_score NUMERIC(3, 2), -- -1.0 to 1.0
+    sentiment_label VARCHAR, -- Positive, Negative, Neutral
+    region VARCHAR,
+    constituency VARCHAR,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- Enable RLS
+-- 2. National Sentiment Telemetry (Aggregated for Charts)
+CREATE TABLE IF NOT EXISTS public.national_sentiment_telemetry (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    region VARCHAR NOT NULL,
+    avg_sentiment NUMERIC(3, 2) DEFAULT 0,
+    positive_count INTEGER DEFAULT 0,
+    negative_count INTEGER DEFAULT 0,
+    neutral_count INTEGER DEFAULT 0,
+    total_responses INTEGER DEFAULT 0,
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+    UNIQUE(region)
+);
+
+-- 3. Predictive Polling Metrics (Impact Projection)
+CREATE TABLE IF NOT EXISTS public.predictive_impact_projections (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    region VARCHAR NOT NULL,
+    current_reach INTEGER DEFAULT 0,
+    projected_reach_30d INTEGER DEFAULT 0,
+    confidence_score NUMERIC(3, 2) DEFAULT 0.85,
+    mobilization_velocity NUMERIC(5, 2) DEFAULT 0, -- members per day
+    potential_election_impact NUMERIC(3, 2) DEFAULT 0, -- 0.0 to 1.0 (swing factor)
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+    UNIQUE(region)
+);
+
+-- 4. RLS Policies
 ALTER TABLE public.member_feedback ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.poll_votes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.national_sentiment_telemetry ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.predictive_impact_projections ENABLE ROW LEVEL SECURITY;
 
--- Policy: Members can only see/insert their own feedback
-CREATE POLICY "Users can insert their own feedback" ON public.member_feedback
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can submit their own feedback" 
+ON public.member_feedback FOR INSERT 
+WITH CHECK (user_id = auth.uid());
 
-CREATE POLICY "Admins can view all feedback" ON public.member_feedback
-    FOR SELECT USING (
-        EXISTS (
-            SELECT 1 FROM public.admins 
-            WHERE id = auth.uid()
-        )
-    );
+CREATE POLICY "Admins can view all feedback and analytics" 
+ON public.member_feedback FOR SELECT 
+USING (EXISTS (SELECT 1 FROM public.admins WHERE id = auth.uid()));
 
--- 4. Create Sentiment Intelligence View
--- This view correlates poll engagement with feedback sentiment
-CREATE OR REPLACE VIEW public.sentiment_intelligence AS
-SELECT 
-    f.category,
-    COUNT(f.id) as feedback_count,
-    AVG(f.sentiment_score) as avg_sentiment,
-    (
-        SELECT COUNT(*) 
-        FROM public.poll_votes pv
-        JOIN public.polls p ON pv.poll_id = p.id
-        WHERE p.category = f.category
-    ) as poll_engagement_count
-FROM public.member_feedback f
-GROUP BY f.category;
+CREATE POLICY "Anyone can view national sentiment" 
+ON public.national_sentiment_telemetry FOR SELECT 
+USING (TRUE);
 
--- 5. Mock Data for initialization
-INSERT INTO public.member_feedback (category, content, sentiment_score)
-VALUES 
-('Policy', 'I love the focus on industrialization in the Western region!', 0.8),
-('Leadership', 'We need more frequent updates from the National Steering Committee.', -0.2),
-('Chapter', 'Our Kumasi chapter is growing fast, but we need a larger meeting space.', 0.4)
-ON CONFLICT DO NOTHING;
+CREATE POLICY "Admins can manage projections" 
+ON public.predictive_impact_projections FOR ALL 
+USING (EXISTS (SELECT 1 FROM public.admins WHERE id = auth.uid()));
+
+-- 5. Automated Sentiment Aggregation Trigger
+CREATE OR REPLACE FUNCTION public.update_national_sentiment()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO public.national_sentiment_telemetry (region, avg_sentiment, total_responses, last_updated)
+    VALUES (
+        NEW.region, 
+        NEW.sentiment_score, 
+        1, 
+        NOW()
+    )
+    ON CONFLICT (region) DO UPDATE 
+    SET total_responses = public.national_sentiment_telemetry.total_responses + 1,
+        avg_sentiment = (public.national_sentiment_telemetry.avg_sentiment * public.national_sentiment_telemetry.total_responses + NEW.sentiment_score) / (public.national_sentiment_telemetry.total_responses + 1),
+        last_updated = NOW();
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER on_feedback_submitted
+    AFTER INSERT ON public.member_feedback
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_national_sentiment();

@@ -19,7 +19,8 @@ import {
   ShoppingBag,
   Megaphone,
   Target,
-  Trophy
+  Trophy,
+  Brain
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -56,6 +57,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization Metrics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Logistics Intelligence', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/rally-command', icon: Target, label: 'Rally Command', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+    { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Intelligence', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/blogs', icon: FileText, label: 'Insights', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
     { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
