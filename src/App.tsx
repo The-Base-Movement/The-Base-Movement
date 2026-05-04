@@ -50,6 +50,8 @@ import AdminDonations from './pages/admin/DonationVerification.tsx'
 import AdminAdministrators from './pages/admin/Administrators'
 import AdminBroadcasts from './pages/admin/Broadcasts'
 import AdminOrders from './pages/admin/Orders'
+import AdminChapterHub from './pages/admin/ChapterLeadHub.tsx'
+import AdminFieldDirectives from './pages/admin/FieldDirectives.tsx'
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -120,8 +122,10 @@ export default function App() {
         {/* ── Admin routes (Admin Sidebar + Topbar) ── */}
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/leadership" element={<AdminLeadershipHub />} />
-          <Route path="/admin/donations" element={<AdminDonations />} />
+          <Route path="leadership" element={<AdminLeadershipHub />} />
+          <Route path="chapter-hub" element={<AdminChapterHub />} />
+          <Route path="directives" element={<AdminFieldDirectives />} />
+          <Route path="donations" element={<AdminDonations />} />
           <Route path="/admin/members" element={<AdminMembers />} />
           <Route path="/admin/verification" element={<AdminMemberVerification />} />
           <Route path="/admin/chapters" element={<AdminChapters />} />

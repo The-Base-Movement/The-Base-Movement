@@ -100,6 +100,30 @@ export interface DonationDetail extends DonationRecord {
   verificationNotes?: string
 }
 
+export interface FieldEvent {
+  id: string
+  title: string
+  date: string
+  location: string
+  chapter: string
+  status: 'Planned' | 'In Progress' | 'Completed' | 'Cancelled'
+  attendees_expected: number
+  attendees_actual?: number
+  budget_allocated: number
+  budget_spent: number
+  type: 'Rally' | 'Town Hall' | 'Recruitment' | 'Training'
+}
+
+export interface MobilizationLedger {
+  id: string
+  chapter: string
+  transaction_type: 'Allocation' | 'Expenditure'
+  amount: number
+  description: string
+  timestamp: string
+  category: 'Logistics' | 'Media' | 'Venues' | 'Transport' | 'Other'
+}
+
 export interface RegionalStat {
   region: string
   memberCount: number
@@ -119,6 +143,31 @@ export interface Milestone {
   importance_level: 'Normal' | 'High' | 'Critical'
   target_members?: number
   forecasted_date?: string
+}
+
+export interface FieldDirective {
+  id: string
+  title: string
+  description: string
+  target_type: 'Global' | 'Regional' | 'Chapter' | 'Individual'
+  target_id?: string
+  priority: 'Low' | 'Normal' | 'High' | 'Urgent'
+  deadline?: string
+  points_awarded: number
+  status: 'Active' | 'Suspended' | 'Completed' | 'Expired'
+}
+
+export interface FieldReport {
+  id: string
+  directive_id: string
+  member_id: string
+  report_text?: string
+  media_url?: string
+  location_lat?: number
+  location_lng?: number
+  status: 'Pending' | 'Verified' | 'Rejected'
+  points_applied: boolean
+  created_at: string
 }
 
 export interface ChapterApplication {
@@ -385,6 +434,7 @@ export interface AdminUser {
   name: string
   role: AdminRole
   region?: string
+  chapter?: string
   permissions: AdminPermission[]
 }
 
@@ -2309,6 +2359,108 @@ class AdminService {
       return true
     } catch (error) {
       console.error('[DATABASE] Failed to update order status:', error)
+      return false
+    }
+  }
+
+  // --- PHASE 6: REGIONAL AUTONOMY & FIELD OPERATIONS ---
+
+  async getFieldEvents(chapterName?: string): Promise<FieldEvent[]> {
+    try {
+      let query = supabase.from('field_events').select('*')
+      if (chapterName) query = query.eq('chapter', chapterName)
+      
+      const { data, error } = await query.order('date', { ascending: false })
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch field events:', error)
+      return []
+    }
+  }
+
+  async updateFieldEvent(eventId: string, updates: Partial<FieldEvent>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('field_events')
+        .update(updates)
+        .eq('id', eventId)
+      
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to update field event:', error)
+      return false
+    }
+  }
+
+  async getMobilizationLedger(chapterName?: string): Promise<MobilizationLedger[]> {
+    try {
+      let query = supabase.from('mobilization_ledger').select('*')
+      if (chapterName) query = query.eq('chapter', chapterName)
+      
+      const { data, error } = await query.order('timestamp', { ascending: false })
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch mobilization ledger:', error)
+      return []
+    }
+  }
+
+  // --- PHASE 7: TACTICAL INTELLIGENCE & FIELD FEEDBACK ---
+
+  async getFieldDirectives(): Promise<FieldDirective[]> {
+    try {
+      const { data, error } = await supabase
+        .from('field_directives')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch field directives:', error)
+      return []
+    }
+  }
+
+  async createFieldDirective(directive: Omit<FieldDirective, 'id' | 'status'>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('field_directives')
+        .insert([directive])
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to create field directive:', error)
+      return false
+    }
+  }
+
+  async getFieldReports(directiveId?: string): Promise<FieldReport[]> {
+    try {
+      let query = supabase.from('field_reports').select('*')
+      if (directiveId) query = query.eq('directive_id', directiveId)
+      
+      const { data, error } = await query.order('created_at', { ascending: false })
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch field reports:', error)
+      return []
+    }
+  }
+
+  async verifyFieldReport(reportId: string, status: FieldReport['status']): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('field_reports')
+        .update({ status })
+        .eq('id', reportId)
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to verify field report:', error)
       return false
     }
   }

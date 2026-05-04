@@ -17,7 +17,8 @@ import {
   Zap,
   DollarSign,
   ShoppingBag,
-  Megaphone
+  Megaphone,
+  Target
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -41,6 +42,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const navItems: ( { to: string, icon: LucideIcon, label: string, permission?: { action: AdminPermission['action'], resource: AdminPermission['resource'] } } )[] = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
     { to: '/admin/leadership', icon: Zap, label: 'Leadership Hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+    { to: '/admin/chapter-hub', icon: MapPin, label: 'Chapter Hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
     { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
     { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
     { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
@@ -49,6 +51,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     { to: '/admin/regions', icon: MapPin, label: 'Regions', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
     { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
     { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcast Hub', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+    { to: '/admin/directives', icon: Target, label: 'Tactical Ops', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/blogs', icon: FileText, label: 'Insights', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
     { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },

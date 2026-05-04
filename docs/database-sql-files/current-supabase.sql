@@ -153,6 +153,22 @@ CREATE TABLE public.donations (
   CONSTRAINT donations_campaign_id_fkey FOREIGN KEY (campaign_id) REFERENCES public.donation_campaigns(id),
   CONSTRAINT donations_verified_by_fkey FOREIGN KEY (verified_by) REFERENCES public.admins(id)
 );
+CREATE TABLE public.field_events (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  date timestamp with time zone NOT NULL,
+  location text NOT NULL,
+  chapter text NOT NULL,
+  status text NOT NULL DEFAULT 'Planned'::text CHECK (status = ANY (ARRAY['Planned'::text, 'In Progress'::text, 'Completed'::text, 'Cancelled'::text])),
+  type text NOT NULL DEFAULT 'Rally'::text CHECK (type = ANY (ARRAY['Rally'::text, 'Town Hall'::text, 'Recruitment'::text, 'Training'::text])),
+  attendees_expected integer DEFAULT 0,
+  attendees_actual integer DEFAULT 0,
+  budget_allocated numeric DEFAULT 0.00,
+  budget_spent numeric DEFAULT 0.00,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT field_events_pkey PRIMARY KEY (id)
+);
 CREATE TABLE public.ghana_constituencies (
   id integer NOT NULL DEFAULT nextval('ghana_constituencies_id_seq'::regclass),
   region_id integer,
@@ -190,6 +206,17 @@ CREATE TABLE public.member_achievements (
   CONSTRAINT member_achievements_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id),
   CONSTRAINT member_achievements_achievement_id_fkey FOREIGN KEY (achievement_id) REFERENCES public.achievements(id)
 );
+CREATE TABLE public.member_feedback (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid,
+  category text NOT NULL,
+  content text NOT NULL,
+  sentiment_score double precision DEFAULT 0.0,
+  is_reviewed boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT member_feedback_pkey PRIMARY KEY (id),
+  CONSTRAINT member_feedback_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
 CREATE TABLE public.member_points (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   user_id uuid,
@@ -197,6 +224,18 @@ CREATE TABLE public.member_points (
   last_updated timestamp with time zone DEFAULT timezone('utc'::text, now()),
   CONSTRAINT member_points_pkey PRIMARY KEY (id),
   CONSTRAINT member_points_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.mobilization_ledger (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  chapter text NOT NULL,
+  transaction_type text NOT NULL CHECK (transaction_type = ANY (ARRAY['Allocation'::text, 'Expenditure'::text])),
+  amount numeric NOT NULL,
+  description text NOT NULL,
+  category text NOT NULL CHECK (category = ANY (ARRAY['Logistics'::text, 'Media'::text, 'Venues'::text, 'Transport'::text, 'Other'::text])),
+  timestamp timestamp with time zone DEFAULT now(),
+  created_by uuid,
+  CONSTRAINT mobilization_ledger_pkey PRIMARY KEY (id),
+  CONSTRAINT mobilization_ledger_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id)
 );
 CREATE TABLE public.movement_milestones (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -207,6 +246,7 @@ CREATE TABLE public.movement_milestones (
   category character varying,
   importance_level character varying DEFAULT 'Normal'::character varying,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  target_members integer,
   CONSTRAINT movement_milestones_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.notifications (
@@ -230,6 +270,17 @@ CREATE TABLE public.poll_options (
   CONSTRAINT poll_options_pkey PRIMARY KEY (id),
   CONSTRAINT poll_options_poll_id_fkey FOREIGN KEY (poll_id) REFERENCES public.polls(id)
 );
+CREATE TABLE public.poll_votes (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  poll_id uuid,
+  option_id uuid,
+  user_id uuid,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT poll_votes_pkey PRIMARY KEY (id),
+  CONSTRAINT poll_votes_poll_id_fkey FOREIGN KEY (poll_id) REFERENCES public.polls(id),
+  CONSTRAINT poll_votes_option_id_fkey FOREIGN KEY (option_id) REFERENCES public.poll_options(id),
+  CONSTRAINT poll_votes_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
 CREATE TABLE public.polls (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   question text NOT NULL,
@@ -238,6 +289,7 @@ CREATE TABLE public.polls (
   region character varying DEFAULT 'National'::character varying,
   end_date timestamp with time zone,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  category text DEFAULT 'General'::text,
   CONSTRAINT polls_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.resource_request_items (
@@ -316,6 +368,10 @@ CREATE TABLE public.store_orders (
   total_amount numeric NOT NULL,
   status character varying DEFAULT 'Pending'::character varying,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  processing_at timestamp with time zone,
+  dispatched_at timestamp with time zone,
+  delivered_at timestamp with time zone,
+  cancelled_at timestamp with time zone,
   CONSTRAINT store_orders_pkey PRIMARY KEY (id),
   CONSTRAINT store_orders_customer_id_fkey FOREIGN KEY (customer_id) REFERENCES auth.users(id)
 );
