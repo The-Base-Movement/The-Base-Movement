@@ -49,6 +49,7 @@ import AdminLeadershipHub from './pages/admin/LeadershipHub.tsx'
 import AdminDonations from './pages/admin/DonationVerification.tsx'
 import AdminAdministrators from './pages/admin/Administrators'
 import AdminBroadcasts from './pages/admin/Broadcasts'
+import AdminOrders from './pages/admin/Orders'
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -131,6 +132,7 @@ export default function App() {
           <Route path="/admin/blogs" element={<AdminBlogs />} />
           <Route path="/admin/broadcasts" element={<AdminBroadcasts />} />
           <Route path="/admin/administrators" element={<AdminAdministrators />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
         </Route>
       </Routes>
     </StoreProvider>

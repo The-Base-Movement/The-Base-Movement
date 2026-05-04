@@ -73,3 +73,23 @@ ON public.store_order_items FOR SELECT
 USING (
     EXISTS (SELECT 1 FROM public.admins WHERE admins.id = auth.uid())
 );
+
+-- 5. Admins can update order status (dispatch, deliver, cancel)
+CREATE POLICY "Admins can update order status"
+ON public.store_orders FOR UPDATE
+USING (
+    EXISTS (SELECT 1 FROM public.admins WHERE admins.id = auth.uid())
+)
+WITH CHECK (
+    EXISTS (SELECT 1 FROM public.admins WHERE admins.id = auth.uid())
+);
+
+-- 6. Performance indexes for dashboard pagination and telemetry
+CREATE INDEX IF NOT EXISTS idx_store_orders_created_at 
+ON public.store_orders (created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_store_orders_status 
+ON public.store_orders (status);
+
+CREATE INDEX IF NOT EXISTS idx_store_orders_customer 
+ON public.store_orders (customer_id);

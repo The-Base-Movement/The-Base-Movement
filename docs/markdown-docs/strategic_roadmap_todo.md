@@ -17,7 +17,7 @@ This roadmap tracks the high-fidelity operationalization of "The Base," transiti
 
 ## 🛒 Phase 3: Economic Engine & Logistics
 - [x] **Storefront Hardening**: Completed the premium UI for the movement merchandise hub.
-- [ ] **Order Lifecycle Automation**: Transition `Checkout.tsx` to handle live Supabase transactions and shipping logic.
+- [x] **Order Lifecycle Automation**: Built the Admin Orders command center with live status advancement, dispatch management, and telemetry.
 - [ ] **Logistics Latency Optimization**: Move from mock latency telemetry to real-time delivery tracking across the 16 regions.
 
 ## 📊 Phase 4: Intelligence & Growth

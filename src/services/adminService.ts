@@ -213,6 +213,53 @@ export interface LogisticsLatency {
   efficiency: 'High' | 'Medium' | 'Low'
 }
 
+export interface Country {
+  name: string
+  code?: string
+  dialing_code?: string
+  is_diaspora: boolean
+}
+
+export interface OrderItem {
+  id: string
+  order_id: string
+  product_id: string
+  product_name?: string
+  quantity: number
+  price_at_purchase: number
+  created_at: string
+}
+
+export interface Order {
+  id: string
+  customer_id: string | null
+  full_name: string
+  email: string
+  phone: string
+  shipping_address: string
+  city: string
+  country: string
+  region_or_state: string
+  payment_method: 'momo' | 'card'
+  subtotal: number
+  shipping_fee: number
+  total_amount: number
+  status: 'Pending' | 'Processing' | 'Dispatched' | 'Delivered' | 'Cancelled'
+  created_at: string
+  items?: OrderItem[]
+}
+
+export interface OrderStats {
+  totalOrders: number
+  pendingOrders: number
+  processingOrders: number
+  dispatchedOrders: number
+  deliveredOrders: number
+  cancelledOrders: number
+  totalRevenue: number
+  revenueToday: number
+}
+
 export interface BlogPost {
   id: string
   title: string
@@ -2068,6 +2115,102 @@ class AdminService {
     } catch (error) {
       console.error('Error fetching milestones:', error)
       return []
+    }
+  }
+
+  // ─── ORDER LIFECYCLE ENGINE ──────────────────────────────────────────────────
+
+  async getOrders(limit = 50): Promise<Order[]> {
+    try {
+      const { data, error } = await supabase
+        .from('store_orders')
+        .select(`
+          *,
+          store_order_items (
+            id,
+            order_id,
+            product_id,
+            quantity,
+            price_at_purchase,
+            created_at
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(limit)
+
+      if (error) throw error
+
+      return (data || []).map((o) => ({
+        ...o,
+        items: o.store_order_items || []
+      })) as Order[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch orders:', error)
+      return []
+    }
+  }
+
+  async getOrderStats(): Promise<OrderStats> {
+    try {
+      const { data, error } = await supabase
+        .from('store_orders')
+        .select('status, total_amount, created_at')
+
+      if (error) throw error
+
+      const orders = data || []
+      const today = new Date().toISOString().slice(0, 10)
+
+      const stats: OrderStats = {
+        totalOrders: orders.length,
+        pendingOrders: orders.filter(o => o.status === 'Pending').length,
+        processingOrders: orders.filter(o => o.status === 'Processing').length,
+        dispatchedOrders: orders.filter(o => o.status === 'Dispatched').length,
+        deliveredOrders: orders.filter(o => o.status === 'Delivered').length,
+        cancelledOrders: orders.filter(o => o.status === 'Cancelled').length,
+        totalRevenue: orders.reduce((sum, o) => sum + (o.total_amount || 0), 0),
+        revenueToday: orders
+          .filter(o => o.created_at?.slice(0, 10) === today)
+          .reduce((sum, o) => sum + (o.total_amount || 0), 0),
+      }
+
+      return stats
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch order stats:', error)
+      return {
+        totalOrders: 0, pendingOrders: 0, processingOrders: 0,
+        dispatchedOrders: 0, deliveredOrders: 0, cancelledOrders: 0,
+        totalRevenue: 0, revenueToday: 0
+      }
+    }
+  }
+
+  async updateOrderStatus(
+    orderId: string,
+    status: Order['status']
+  ): Promise<boolean> {
+    try {
+      const user = await authService.getUser()
+      if (!user) throw new Error('Unauthorized')
+
+      const { error } = await supabase
+        .from('store_orders')
+        .update({ status })
+        .eq('id', orderId)
+
+      if (error) throw error
+
+      await this.logAction(
+        'ORDER_UPDATE',
+        `ORDERS/${orderId}`,
+        'Success',
+        { message: `Status updated to ${status}` }
+      )
+
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to update order status:', error)
+      return false
     }
   }
 }

@@ -51,6 +51,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcast Hub', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/blogs', icon: FileText, label: 'Insights', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
     { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
+    { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
     { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
   ]
 
