@@ -28,7 +28,7 @@ This TODO list outlines the next strategic horizons for the movement's platform 
 - [ ] **System Pulse Telemetry**: Develop a live "Health Check" dashboard for real-time API monitoring.
 
 ## 5. Storefront & Transactions (Immediate)
-- [ ] **Order Submission**: Update `Checkout.tsx` to insert completed transactions, shipping details, and order lines into a `store_orders` Supabase table.
+- [x] **Order Submission**: Update Checkout.tsx to insert completed transactions, shipping details, and order lines into a store_orders Supabase table.
 
 ## 6. Dashboard & Database Integrations (Immediate)
 - [x] **Member Dashboard Metrics**: Replace hardcoded metrics with real aggregations in `Dashboard.tsx`.

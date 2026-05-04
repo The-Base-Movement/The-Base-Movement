@@ -40,6 +40,7 @@ export default function BlogPost() {
   }, [slug])
 
   const handleShare = (platform?: string) => {
+    if (!post) return
     const url = window.location.href
     const title = post.title
     
