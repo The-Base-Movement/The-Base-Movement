@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, MapPin, Globe } from 'lucide-react'
+import { adminService, type BlogPost } from '@/services/adminService'
 
 function AnimatedCounter({ target, duration = 2000 }: { target: number; duration?: number }) {
   const [count, setCount] = useState(0)
@@ -46,7 +47,12 @@ function AnimatedCounter({ target, duration = 2000 }: { target: number; duration
 
 export default function Home() {
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 })
-  
+  const [latestPosts, setLatestPosts] = useState<BlogPost[]>([])
+
+  useEffect(() => {
+    adminService.getBlogPosts().then(data => setLatestPosts(data.slice(0, 3))).catch(() => {})
+  }, [])
+
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     setMousePos({
@@ -196,43 +202,42 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Ghana First: Why Civic Participation Has Never Mattered More",
-                date: "April 28, 2026",
-                category: "Movement",
-                image: "https://images.unsplash.com/photo-1589519160732-576f165b9aad?w=800&q=80"
-              },
-              {
-                title: "Jobs, Skills and the Next Generation: Our Policy Position",
-                date: "April 22, 2026",
-                category: "Youth",
-                image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80"
-              },
-              {
-                title: "How Ghanaians Abroad Are Reshaping the Movement",
-                date: "April 15, 2026",
-                category: "Diaspora",
-                image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80"
-              }
-            ].map((news, i) => (
-              <Link key={i} to="/blog" className="group">
-                <div className="aspect-[16/10] overflow-hidden mb-6 border border-slate-200">
-                  <img 
-                    src={news.image} 
-                    alt={news.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+            {latestPosts.length === 0 ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="space-y-4">
+                  <div className="aspect-[16/10] bg-slate-100 animate-pulse" />
+                  <div className="h-4 bg-slate-100 animate-pulse w-3/4" />
+                  <div className="h-3 bg-slate-100 animate-pulse w-1/2" />
                 </div>
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[10px] font-meta font-bold text-[var(--brand-green)] uppercase tracking-widest">{news.category}</span>
-                  <span className="text-[10px] text-slate-400 font-meta">{news.date}</span>
-                </div>
-                <h3 className="text-lg font-meta font-bold text-charcoal-dark uppercase tracking-tight leading-tight group-hover:text-[var(--brand-green)] transition-colors">
-                  {news.title}
-                </h3>
-              </Link>
-            ))}
+              ))
+            ) : (
+              latestPosts.map((post) => (
+                <Link key={post.id} to={`/blog/${post.slug}`} className="group">
+                  <div className="aspect-[16/10] overflow-hidden mb-6 border border-slate-200 bg-stone-100">
+                    {post.imageUrl ? (
+                      <img
+                        src={post.imageUrl}
+                        alt={post.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200">
+                        <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest">The Base</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-[10px] font-meta font-bold text-[var(--brand-green)] uppercase tracking-widest">{post.category}</span>
+                    <span className="text-[10px] text-slate-400 font-meta">
+                      {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-meta font-bold text-charcoal-dark uppercase tracking-tight leading-tight group-hover:text-[var(--brand-green)] transition-colors">
+                    {post.title}
+                  </h3>
+                </Link>
+              ))
+            )}
           </div>
 
           <Link to="/blog" className="md:hidden flex items-center justify-center gap-2 mt-10 text-[var(--brand-green)] font-meta font-bold uppercase tracking-widest text-xs border border-[var(--brand-green)] py-4">

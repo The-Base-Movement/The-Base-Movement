@@ -51,10 +51,15 @@ class ContentService {
       .from('blog_posts')
       .select('*')
       .eq('slug', slug)
-      .single()
+      .maybeSingle()
 
-    if (error || !data) {
+    if (error) {
       console.error('[DATABASE] Failed to fetch blog post by slug:', error)
+      return null
+    }
+
+    if (!data) {
+      console.warn(`[DATABASE] No blog post found for slug: "${slug}"`)
       return null
     }
 
