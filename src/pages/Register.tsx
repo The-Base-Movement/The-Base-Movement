@@ -401,7 +401,7 @@ export default function Register() {
                 <FileText className="w-8 h-8 text-[var(--brand-green)]" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg mb-1">Local Membership (Ghana)</h3>
+                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-base mb-1">Local Membership (Ghana)</h3>
                 <p className="text-sm text-slate-500">For residents living and voting within the 16 regions of Ghana.</p>
               </div>
               <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-[var(--brand-green)] transition-colors" />
@@ -419,7 +419,7 @@ export default function Register() {
                 <User className="w-8 h-8 text-[var(--brand-gold)]" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg mb-1">Diaspora Membership</h3>
+                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-base mb-1">Diaspora Membership</h3>
                 <p className="text-sm text-slate-500">For Ghanaians living abroad who wish to support the movement.</p>
               </div>
               <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-[var(--brand-gold)] transition-colors" />
@@ -477,6 +477,13 @@ export default function Register() {
                   </span>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-12 pl-4 pt-8 border-t border-slate-200">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Need Assistance?</p>
+              <a href="mailto:info@thebasemovement.com" className="text-xs font-meta font-medium text-slate-500 hover:text-[var(--brand-green)] transition-colors">
+                info@thebasemovement.com
+              </a>
             </div>
           </div>
 
