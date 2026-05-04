@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
-import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, CheckCircle2, Loader2 } from 'lucide-react'
+import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, CheckCircle2, Loader2, Zap } from 'lucide-react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import MembershipCard from '../components/MembershipCard'
@@ -80,7 +80,62 @@ export default function Register() {
   }, []);
 
   const navigate = useNavigate()
+  const [isScanningId, setIsScanningId] = useState(false)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+
+  const handleIdScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setIsScanningId(true);
+    try {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+
+      const { data, error } = await supabase.functions.invoke('ocr-verify', {
+        body: { imageBase64: base64 }
+      });
+
+      if (error) throw error;
+      
+      if (data && data.success && data.data) {
+        toast.success(`Identity Verified: Welcome, ${data.data.fullName || 'Patriot'}`);
+        
+        setFormData(prev => ({
+          ...prev,
+          fullName: data.data.fullName || prev.fullName,
+          idNumber: data.data.idNumber || prev.idNumber,
+        }));
+        
+        if (data.data.dateOfBirth) {
+          const birthYear = new Date(data.data.dateOfBirth).getFullYear();
+          const currentYear = new Date().getFullYear();
+          const age = currentYear - birthYear;
+          
+          let computedAgeRange = '';
+          if (age >= 16 && age <= 25) computedAgeRange = '16-25';
+          else if (age >= 26 && age <= 40) computedAgeRange = '26-40';
+          else if (age >= 41 && age <= 60) computedAgeRange = '41-60';
+          else if (age > 60) computedAgeRange = '60+';
+          
+          if (computedAgeRange) {
+             setFormData(prev => ({ ...prev, ageRange: computedAgeRange }));
+          }
+        }
+      } else {
+        throw new Error(data?.error || 'Could not read ID card');
+      }
+      
+    } catch (err) {
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : 'Verification failed. Please enter details manually.');
+    } finally {
+      setIsScanningId(false);
+    }
+  };
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
@@ -98,6 +153,7 @@ export default function Register() {
   }
 
   const [formData, setFormData] = useState({
+    idNumber: '',
     fullName: '',
     countryCode: '+233',
     country: 'Ghana',
@@ -190,6 +246,7 @@ export default function Register() {
           .from('users')
           .insert({
             id: authData.user?.id,
+            national_id: formData.idNumber,
             full_name: formData.fullName,
             email: authEmail,
             registration_number: regNo,
@@ -431,15 +488,102 @@ export default function Register() {
                   <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
                     <h3 className="text-charcoal-dark">Step 1: Primary Details</h3>
                   </div>
+
+                  {/* AI Verification Scanner - Local Membership Only */}
+                  {platform === 'GHANA' && (
+                    <div className="relative overflow-hidden mb-10 bg-gradient-to-br from-charcoal-dark to-slate-900 rounded-lg p-8 border border-slate-800 shadow-2xl">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--brand-green)]/10 -mr-32 -mt-32 blur-3xl"></div>
+                      <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Zap className="w-5 h-5 text-warm-gold" />
+                            <h4 className="text-white font-meta font-bold tracking-tight text-lg">AI Identity Verification</h4>
+                          </div>
+                          <p className="text-slate-400 text-sm max-w-sm mb-0">
+                            Scan your Ghana Card or Voter ID to instantly auto-fill your profile and verify your membership.
+                          </p>
+                        </div>
+                        <div className="relative shrink-0">
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            capture="environment"
+                            onChange={handleIdScan} 
+                            disabled={isScanningId}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                          />
+                          <button 
+                            type="button"
+                            className="relative z-10 w-full sm:w-auto bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-meta font-bold uppercase tracking-widest text-[10px] h-12 px-6 shadow-lg shadow-brand-green/20"
+                          >
+                            {isScanningId ? (
+                              <span className="flex items-center"><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Scanning...</span>
+                            ) : (
+                              <span className="flex items-center"><Eye className="w-4 h-4 mr-2" /> Scan National ID</span>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Full Name</label>
-                    <input required value={formData.fullName} onChange={(e) => handleChange('fullName', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
+                      Full Name <span className="text-slate-400 ml-1">(First & Last Name)</span>
+                    </label>
+                    <input 
+                      required 
+                      pattern=".*\s+.*" 
+                      title="Please enter both your first and last name separated by a space."
+                      value={formData.fullName} 
+                      onChange={(e) => handleChange('fullName', e.target.value)} 
+                      className="w-full form-understate p-4 text-charcoal-dark text-sm" 
+                    />
                   </div>
+
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Membership Platform</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button
+                        type="button"
+                        onClick={() => handlePlatformChange('GHANA')}
+                        className={`p-4 border text-sm font-bold uppercase tracking-widest font-meta transition-all ${platform === 'GHANA' ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                      >
+                        Ghana Base
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handlePlatformChange('DIASPORA')}
+                        className={`p-4 border text-sm font-bold uppercase tracking-widest font-meta transition-all ${platform === 'DIASPORA' ? 'border-[var(--brand-gold)] bg-[var(--brand-gold)]/5 text-[var(--brand-gold)]' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                      >
+                        Diaspora Base
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {platform === 'GHANA' && (
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">National ID Number (Optional)</label>
+                      <input value={formData.idNumber} onChange={(e) => handleChange('idNumber', e.target.value)} placeholder="GHA-000000000-0" className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                    </div>
+                  )}
                   <div className="grid md:grid-cols-2 gap-8">
                     {platform === 'DIASPORA' && (
                       <div className="space-y-3">
                         <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Country</label>
-                        <select required value={formData.country} onChange={(e) => handleChange('country', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                        <select 
+                          required 
+                          value={formData.country} 
+                          onChange={(e) => {
+                            const selectedCountry = e.target.value;
+                            setFormData(prev => ({ 
+                              ...prev, 
+                              country: selectedCountry,
+                              countryCode: dbCountryCodes[selectedCountry] || prev.countryCode
+                            }));
+                          }} 
+                          className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                        >
                           <option value="">Select Country</option>
                           {dbCountries.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
@@ -461,7 +605,7 @@ export default function Register() {
                       <input 
                         type={showPassword ? 'text' : 'password'} 
                         required 
-                        minLength={6} 
+                        minLength={8} 
                         value={formData.password} 
                         onChange={(e) => handleChange('password', e.target.value)} 
                         className="w-full form-understate p-4 pr-12 text-charcoal-dark text-sm" 
@@ -474,6 +618,9 @@ export default function Register() {
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
+                    <p className="text-[10px] text-slate-400 font-meta leading-relaxed">
+                      Avoid weak passwords like <span className="text-charcoal-dark font-bold">"password123"</span> or <span className="text-charcoal-dark font-bold">"ghana2024"</span>. Use a mix of letters, numbers, and symbols.
+                    </p>
                   </div>
                 </div>
               )}

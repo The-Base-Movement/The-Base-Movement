@@ -34,5 +34,10 @@ This roadmap tracks the high-fidelity operationalization of "The Base," transiti
 - [x] **Consolidation**: Centralized all active roadmaps and task lists in the root `docs/` folder.
 - [x] **Legacy Decommissioning**: Purged redundant versions and eliminated all artificial latency patterns to ensure absolute strategic alignment.
 
+## 🤖 Phase 8: AI/OCR Identity Verification (Active)
+- [x] **Verification Infrastructure**: Initialize the AI/OCR member verification system for scanning national IDs (Ghana Card/Voter ID).
+- [ ] **Registration Integration**: Embed the OCR extraction pipeline directly into the multi-step registration workflow.
+- [x] **Edge Processing**: Offload intensive image analysis to Supabase Edge Functions for rapid validation.
+
 ---
 **Operational Status**: `ELITE` | **Fidelity**: `ELITE` | **Deployment**: `STABILIZED`
