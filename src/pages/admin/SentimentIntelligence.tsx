@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { 
   Brain, 
-  TrendingUp, 
   MessageSquare, 
   BarChart3, 
   Map, 
