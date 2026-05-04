@@ -132,16 +132,16 @@ export default function App() {
         {/* ── Admin routes (Admin Sidebar + Topbar) ── */}
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="leadership" element={<AdminLeadershipHub />} />
-          <Route path="chapter-hub" element={<AdminChapterHub />} />
-          <Route path="directives" element={<AdminFieldDirectives />} />
-          <Route path="mobilization-metrics" element={<AdminMobilizationMetrics />} />
-          <Route path="logistics-intelligence" element={<AdminLogisticsIntelligence />} />
-          <Route path="rally-command" element={<AdminRallyCommand />} />
-          <Route path="sentiment-intelligence" element={<AdminSentimentIntelligence />} />
-          <Route path="war-room" element={<AdminWarRoomCommand />} />
-          <Route path="ground-game" element={<AdminGroundGameCommand />} />
-          <Route path="donations" element={<AdminDonations />} />
+          <Route path="/admin/leadership" element={<AdminLeadershipHub />} />
+          <Route path="/admin/chapter-hub" element={<AdminChapterHub />} />
+          <Route path="/admin/directives" element={<AdminFieldDirectives />} />
+          <Route path="/admin/mobilization-metrics" element={<AdminMobilizationMetrics />} />
+          <Route path="/admin/logistics-intelligence" element={<AdminLogisticsIntelligence />} />
+          <Route path="/admin/rally-command" element={<AdminRallyCommand />} />
+          <Route path="/admin/sentiment-intelligence" element={<AdminSentimentIntelligence />} />
+          <Route path="/admin/war-room" element={<AdminWarRoomCommand />} />
+          <Route path="/admin/ground-game" element={<AdminGroundGameCommand />} />
+          <Route path="/admin/donations" element={<AdminDonations />} />
           <Route path="/admin/members" element={<AdminMembers />} />
           <Route path="/admin/verification" element={<AdminMemberVerification />} />
           <Route path="/admin/chapters" element={<AdminChapters />} />
