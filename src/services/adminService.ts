@@ -186,16 +186,19 @@ export interface ChapterApplication {
 export interface Achievement {
   id: string
   name: string
-  icon: string
   description: string
-  awarded_at?: string
+  icon: string
+  category: 'Mobilization' | 'Recruitment' | 'Consistency' | 'Events' | 'Leadership'
+  points_awarded: number
 }
 
-export interface LeaderboardEntry {
-  name: string
-  points: number
+export interface ChapterLeaderboard {
   region: string
-  rank: number
+  chapter: string
+  total_patriots: number
+  total_mobilization_points: number
+  achievements_unlocked: number
+  regional_rank: number
 }
 
 export interface RegionalPulse {
@@ -438,20 +441,7 @@ export interface AdminUser {
   permissions: AdminPermission[]
 }
 
-export interface Achievement {
-  id: string
-  name: string
-  icon: string
-  description: string
-  awarded_at?: string
-}
 
-export interface LeaderboardEntry {
-  name: string
-  points: number
-  region: string
-  rank: number
-}
 
 class AdminService {
   private static instance: AdminService
@@ -2462,6 +2452,34 @@ class AdminService {
     } catch (error) {
       console.error('[DATABASE] Failed to verify field report:', error)
       return false
+    }
+  }
+
+  // --- PHASE 8: GAMIFICATION & REGIONAL POWER ---
+
+  async getAchievements(): Promise<Achievement[]> {
+    try {
+      const { data, error } = await supabase
+        .from('achievements')
+        .select('*')
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch achievements:', error)
+      return []
+    }
+  }
+
+  async getRegionalLeaderboard(): Promise<ChapterLeaderboard[]> {
+    try {
+      const { data, error } = await supabase
+        .from('regional_performance_leaderboard')
+        .select('*')
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch regional leaderboard:', error)
+      return []
     }
   }
 }
