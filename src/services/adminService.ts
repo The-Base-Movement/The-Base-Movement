@@ -243,6 +243,43 @@ export interface ImpactProjection {
   last_updated: string
 }
 
+export interface RapidResponseDirective {
+  id: string
+  title: string
+  description: string
+  priority: 'CRITICAL' | 'HIGH' | 'ELEVATED'
+  target_region: string
+  action_type: 'FLASH_RALLY' | 'DIGITAL_STRIKE' | 'SUPPLY_RUN'
+  status: 'ACTIVE' | 'STANDBY' | 'RESOLVED'
+  created_by: string
+  expires_at: string | null
+  created_at: string
+}
+
+export interface CrisisIncident {
+  id: string
+  incident_type: 'PR_ATTACK' | 'LOGISTICAL_FAILURE' | 'PROTEST'
+  severity: 'LOW' | 'MODERATE' | 'SEVERE' | 'DEFCON1'
+  region: string
+  description: string
+  status: 'INVESTIGATING' | 'CONTAINED' | 'RESOLVED'
+  assigned_commander: string | null
+  resolution_notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface MediaCounterNarrative {
+  id: string
+  crisis_id: string
+  target_platform: 'TWITTER' | 'FACEBOOK' | 'RADIO' | 'TV'
+  approved_messaging: string
+  hashtags: string | null
+  dispatch_status: 'PENDING' | 'DEPLOYED'
+  deployment_time: string | null
+  created_at: string
+}
+
 export interface FieldAction {
   id: string
   title: string
@@ -2744,6 +2781,51 @@ class AdminService {
     } catch (error) {
       console.error('[DATABASE] Failed to submit member feedback:', error)
       return false
+    }
+  }
+
+  // --- Phase 13: The Movement War Room (Real-time Crisis & Rapid Response) ---
+
+  async getRapidResponseDirectives(): Promise<RapidResponseDirective[]> {
+    try {
+      const { data, error } = await supabase
+        .from('rapid_response_directives')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return (data || []) as RapidResponseDirective[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch rapid response directives:', error)
+      return []
+    }
+  }
+
+  async getCrisisIncidents(): Promise<CrisisIncident[]> {
+    try {
+      const { data, error } = await supabase
+        .from('crisis_incidents')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return (data || []) as CrisisIncident[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch crisis incidents:', error)
+      return []
+    }
+  }
+
+  async getMediaCounterNarratives(crisisId?: string): Promise<MediaCounterNarrative[]> {
+    try {
+      let query = supabase.from('media_counter_narratives').select('*').order('created_at', { ascending: false })
+      if (crisisId) {
+        query = query.eq('crisis_id', crisisId)
+      }
+      const { data, error } = await query
+      if (error) throw error
+      return (data || []) as MediaCounterNarrative[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch counter narratives:', error)
+      return []
     }
   }
 }
