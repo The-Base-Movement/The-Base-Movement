@@ -302,13 +302,13 @@ export default function AdminBlogs() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="rounded-none font-meta">
                       <DropdownMenuItem onClick={() => handleOpenDialog(post)} className="text-[10px] font-bold uppercase tracking-widest gap-2">
-                        <Edit2 className="w-3 h-3" /> Edit Intelligence
+                        <Edit2 className="w-3 h-3" /> Edit Post
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-[10px] font-bold uppercase tracking-widest gap-2">
-                        <Eye className="w-3 h-3" /> Preview Brief
+                        <Eye className="w-3 h-3" /> View Post
                       </DropdownMenuItem>
                       <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="text-[10px] font-bold uppercase tracking-widest gap-2 text-[var(--brand-red)]">
-                        <Trash2 className="w-3 h-3" /> Expunge Record
+                        <Trash2 className="w-3 h-3" /> Delete Post
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -348,7 +348,7 @@ export default function AdminBlogs() {
 
       {/* Deployment Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-none border-stone-200 p-0 font-meta">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-none border-stone-200 p-0 font-meta">
           <form onSubmit={handleSubmit}>
             <DialogHeader className="p-8 bg-[var(--brand-black)] text-white border-b border-white/10">
               <DialogTitle className="text-2xl font-black uppercase tracking-tighter">
