@@ -36,7 +36,7 @@ export default function GroundGameCommand() {
         adminService.getVoterRegistrations(),
         adminService.getCanvassingCampaigns(),
         adminService.getGOTVTransportRequests(),
-        adminService.getRecentCanvasserLogs()
+        adminService.getCanvasserLogs()
       ])
       setVoterRegs(voterData)
       setCampaigns(campData)
@@ -248,15 +248,17 @@ export default function GroundGameCommand() {
                       <div className="flex justify-between items-center mb-2">
                         <span className={cn(
                           "text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5",
-                          log.interaction_type === 'STRONG_SUPPORT' ? "bg-emerald-900/50 text-emerald-400" :
-                          log.interaction_type === 'LEANING_SUPPORT' ? "bg-blue-900/50 text-blue-400" :
-                          "bg-red-900/50 text-red-400"
+                          log.interaction_result === 'STRONG_SUPPORT' ? "bg-emerald-900/50 text-emerald-400" :
+                          log.interaction_result === 'LEANING' ? "bg-blue-900/50 text-blue-400" :
+                          log.interaction_result === 'UNDECIDED' ? "bg-yellow-900/50 text-yellow-400" :
+                          log.interaction_result === 'HOSTILE' ? "bg-red-900/50 text-red-400" :
+                          "bg-stone-900/50 text-stone-400"
                         )}>
-                          {log.interaction_type.replace('_', ' ')}
+                          {log.interaction_result.replace('_', ' ')}
                         </span>
                         <span className="text-[9px] font-bold text-stone-500">{format(new Date(log.created_at), 'HH:mm')}</span>
                       </div>
-                      <p className="text-[11px] text-stone-300 italic mb-2">"{log.notes || 'No notes provided'}"</p>
+                      <p className="text-[11px] text-stone-300 italic mb-2">"{log.address_notes || 'No notes provided'}"</p>
                       <div className="flex items-center gap-2">
                         <MapPin className="w-3 h-3 text-stone-600" />
                         <span className="text-[9px] font-black text-stone-500 uppercase tracking-widest">Sector {log.canvasser_id.substring(0, 4)}</span>
