@@ -59,7 +59,20 @@ export default function CanvasserClipboard() {
       const lat = 5.6037
       const lng = -0.1870
 
+      const payload = {
+        campaign_id: selectedCampaign.id,
+        canvasser_id: profile.id,
+        contact_name: contactName || null,
+        address_notes: addressNotes,
+        interaction_result: interactionResult,
+        key_issues: keyIssues,
+        needs_follow_up: needsFollowUp,
+        location_lat: lat,
+        location_lng: lng
+      }
+
       // Simulate API call for now since we don't have the explicit submit method in adminService yet
+      console.log('[CANVASSER] Submitting payload:', payload)
       await new Promise(resolve => setTimeout(resolve, 800))
       
       toast.success('Contact logged securely to HQ servers.')
@@ -199,7 +212,7 @@ export default function CanvasserClipboard() {
                     <button
                       key={res.val}
                       type="button"
-                      onClick={() => setInteractionResult(res.val as any)}
+                      onClick={() => setInteractionResult(res.val as 'STRONG_SUPPORT' | 'LEANING' | 'UNDECIDED' | 'HOSTILE' | 'NOT_HOME')}
                       className={cn(
                         "p-3 text-center border-2 transition-all",
                         interactionResult === res.val 
