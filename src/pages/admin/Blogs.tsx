@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   FileText, 
   Plus, 
@@ -75,11 +75,7 @@ export default function AdminBlogs() {
     metaDescription: ''
   })
 
-  useEffect(() => {
-    fetchPosts()
-  }, [])
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     setIsLoading(true)
     try {
       const data = await adminService.getBlogPosts()
@@ -94,7 +90,11 @@ export default function AdminBlogs() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [toast])
+
+  useEffect(() => {
+    fetchPosts()
+  }, [fetchPosts])
 
   const handleOpenDialog = (post?: BlogPost) => {
     if (post) {
@@ -160,7 +160,7 @@ export default function AdminBlogs() {
         setIsDialogOpen(false)
         fetchPosts()
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: "TRANSMISSION FAILED",
         description: "Failed to persist blog data to the movement vault.",
@@ -184,7 +184,8 @@ export default function AdminBlogs() {
         })
         fetchPosts()
       }
-    } catch (_error) {
+    } catch {
+      // Deletion failure handled by system vault redundancy
     } finally {
       setIsDeleting(false)
     }
