@@ -793,6 +793,57 @@ class AdminService {
     return true;
   }
 
+  async createPoll(poll: { question: string, region: string, status: string, endDate: string, options: string[] }): Promise<boolean> {
+    try {
+      const { data: pollData, error: pollError } = await supabase
+        .from('polls')
+        .insert({
+          question: poll.question,
+          region: poll.region,
+          status: poll.status,
+          end_date: poll.endDate,
+          total_votes: 0
+        })
+        .select()
+        .single()
+
+      if (pollError) throw pollError
+
+      const optionInserts = poll.options.map(opt => ({
+        poll_id: pollData.id,
+        label: opt,
+        votes: 0
+      }))
+
+      const { error: optionsError } = await supabase
+        .from('poll_options')
+        .insert(optionInserts)
+
+      if (optionsError) throw optionsError
+
+      await this.logAction('CREATE_POLL', `POLLS/${pollData.id}`, 'Success', { question: poll.question })
+      return true
+    } catch (err) {
+      console.error('[DATABASE] Failed to create poll:', err)
+      return false
+    }
+  }
+
+  async deletePoll(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('polls')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to delete poll:', error)
+      return false
+    }
+
+    await this.logAction('DELETE_POLL', `POLLS/${id}`, 'Warning')
+    return true
+  }
+
   async voteInPoll(pollId: string, optionId: string): Promise<boolean> {
     try {
       // 1. Get current counts

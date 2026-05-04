@@ -7,7 +7,10 @@ import {
   MoreVertical,
   MessageSquare,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  X,
+  Trash2,
+  Calendar
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -27,24 +30,85 @@ export default function PollsManagement() {
   const [stats, setStats] = useState<PollStats | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [newPoll, setNewPoll] = useState({
+    question: '',
+    region: 'National',
+    status: 'Active',
+    endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    options: ['', '']
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
+  const fetchData = async () => {
+    setIsLoading(true)
+    try {
       const [pollData, statData] = await Promise.all([
         adminService.getPolls(),
         adminService.getPollStats()
       ])
       setPolls(pollData)
       setStats(statData)
+    } finally {
       setIsLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchData()
   }, [])
 
   const handlePollAction = (action: string, pollTitle: string) => {
     adminService.logAction(action, `POLLS/${pollTitle}`, 'Success')
     toast.success(`${action.replace('_', ' ')}: ${pollTitle} updated in Audit Vault`)
+  }
+
+  const handleCreatePoll = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (newPoll.options.filter(o => o.trim()).length < 2) {
+      toast.error('Please provide at least 2 options.')
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const success = await adminService.createPoll({
+        ...newPoll,
+        options: newPoll.options.filter(o => o.trim())
+      })
+      if (success) {
+        toast.success('Poll created successfully!')
+        setShowCreateModal(false)
+        setNewPoll({
+          question: '',
+          region: 'National',
+          status: 'Active',
+          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          options: ['', '']
+        })
+        fetchData()
+      } else {
+        toast.error('Failed to create poll.')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleDeletePoll = async (id: string, question: string) => {
+    if (!window.confirm(`Are you sure you want to delete the poll: "${question}"?`)) return
+
+    try {
+      const success = await adminService.deletePoll(id)
+      if (success) {
+        toast.success('Poll deleted successfully.')
+        fetchData()
+      } else {
+        toast.error('Failed to delete poll.')
+      }
+    } catch (err) {
+      toast.error('An error occurred while deleting the poll.')
+    }
   }
 
   const filteredPolls = polls.filter(p => p.question.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -58,7 +122,11 @@ export default function PollsManagement() {
           <p className="text-stone-500 text-sm mt-1">Manage opinion polls, surveys, and movement feedback.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="primary" className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
+          <Button 
+            variant="primary" 
+            className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]"
+            onClick={() => setShowCreateModal(true)}
+          >
             <Plus className="w-4 h-4 mr-2" /> Create New Poll
           </Button>
         </div>
@@ -207,14 +275,24 @@ export default function PollsManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-5 text-right">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="text-stone-400"
-                        onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </Button>
+                      <div className="flex items-center gap-1 justify-end">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="text-stone-400 hover:text-red-500 transition-colors"
+                          onClick={() => handleDeletePoll(poll.id, poll.question)}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="text-stone-400"
+                          onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
+                        >
+                          <MoreVertical className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                   ))
@@ -258,6 +336,136 @@ export default function PollsManagement() {
           </div>
         </div>
       </div>
+      {/* Create Poll Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <Card className="w-full max-w-lg rounded-none border-stone-800 bg-white shadow-2xl animate-in zoom-in-95 duration-300">
+            <CardHeader className="p-6 border-b border-stone-100 flex flex-row items-center justify-between bg-stone-50/30">
+              <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                <Plus className="w-4 h-4 text-[var(--brand-red)]" />
+                Initialize New Campaign
+              </CardTitle>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 text-stone-400 hover:text-[var(--brand-red)]"
+                onClick={() => setShowCreateModal(false)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </CardHeader>
+            <form onSubmit={handleCreatePoll}>
+              <CardContent className="p-6 space-y-6">
+                {/* Question */}
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-stone-400">Campaign Question / Topic</label>
+                  <Input 
+                    required
+                    placeholder="e.g. Should we increase regional chapter funding?" 
+                    value={newPoll.question}
+                    onChange={e => setNewPoll({...newPoll, question: e.target.value})}
+                    className="rounded-none border-stone-200 focus:border-[var(--brand-black)]"
+                  />
+                </div>
+
+                {/* Options */}
+                <div className="space-y-3">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-stone-400 flex justify-between">
+                    Poll Options
+                    <span className="text-stone-300">Min 2 Required</span>
+                  </label>
+                  {newPoll.options.map((opt, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <Input 
+                        placeholder={`Option ${idx + 1}`} 
+                        value={opt}
+                        onChange={e => {
+                          const updated = [...newPoll.options]
+                          updated[idx] = e.target.value
+                          setNewPoll({...newPoll, options: updated})
+                        }}
+                        className="rounded-none border-stone-200"
+                      />
+                      {newPoll.options.length > 2 && (
+                        <Button 
+                          type="button"
+                          variant="ghost" 
+                          size="icon" 
+                          className="shrink-0 text-stone-300 hover:text-red-500"
+                          onClick={() => {
+                            const updated = newPoll.options.filter((_, i) => i !== idx)
+                            setNewPoll({...newPoll, options: updated})
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  <Button 
+                    type="button"
+                    variant="ghost" 
+                    className="h-8 text-[9px] font-bold uppercase tracking-widest text-stone-400 hover:text-[var(--brand-black)]"
+                    onClick={() => setNewPoll({...newPoll, options: [...newPoll.options, '']})}
+                  >
+                    <Plus className="w-3 h-3 mr-2" /> Add Option
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Region */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-stone-400">Target Region</label>
+                    <select
+                      value={newPoll.region}
+                      onChange={e => setNewPoll({...newPoll, region: e.target.value})}
+                      className="w-full h-10 px-3 text-xs border border-stone-200 rounded-none focus:outline-none focus:border-[var(--brand-black)]"
+                    >
+                      <option>National</option>
+                      <option>Greater Accra</option>
+                      <option>Ashanti</option>
+                      <option>Western</option>
+                      <option>Eastern</option>
+                      <option>Central</option>
+                    </select>
+                  </div>
+
+                  {/* End Date */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-stone-400">Expiration Date</label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
+                      <Input 
+                        type="date"
+                        value={newPoll.endDate}
+                        onChange={e => setNewPoll({...newPoll, endDate: e.target.value})}
+                        className="pl-9 h-10 text-xs rounded-none border-stone-200"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+              <div className="p-6 pt-0 flex gap-3">
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  className="flex-1 h-11 text-[10px] uppercase font-bold tracking-widest rounded-none border-stone-200"
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  Discard
+                </Button>
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 h-11 text-[10px] uppercase font-bold tracking-widest rounded-none bg-[var(--brand-black)] text-white hover:bg-stone-800"
+                >
+                  {isSubmitting ? 'Launching...' : 'Deploy Campaign'}
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

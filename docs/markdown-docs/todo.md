@@ -34,7 +34,7 @@ This TODO list outlines the next strategic horizons for the movement's platform 
 - [x] **Member Dashboard Metrics**: Replace hardcoded metrics with real aggregations in `Dashboard.tsx`.
 - [x] **Growth Trends**: Create the `membership_growth_view` in the database so `getGrowthTrends()` executes successfully.
 - [x] **Member Verification**: Transition `admin/MemberVerification.tsx` to pull pending verifications directly from Supabase.
-- [ ] **Polls & Surveys**: Update `admin/Polls.tsx` and `adminService.ts` to fully integrate with the `polls` and `poll_options` tables, removing mock fallbacks.
+- [x] **Polls & Surveys**: Update admin/Polls.tsx and adminService.ts to fully integrate with the polls and poll_options tables, removing mock fallbacks.
 - [ ] **Blog Posts**: Update `BlogPost.tsx` to fetch actual post content from the `blog_posts` table based on the URL slug.
 
 ---
