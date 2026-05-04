@@ -113,7 +113,7 @@ export default function Chapters() {
           setSubmissionSuccess(false)
           setChapterLocation('')
           setChapterDescription('')
-        }, 3000)
+        }, 500)
       } else {
         toast.error('Failed to submit chapter request. Please try again.')
       }

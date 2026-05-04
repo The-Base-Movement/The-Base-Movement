@@ -51,7 +51,7 @@ export function SystemHealthDashboard() {
 
   const handleManualRefresh = () => {
     setIsRefreshing(true)
-    setTimeout(() => setIsRefreshing(false), 1500)
+    setIsRefreshing(false)
   }
 
   const services = [

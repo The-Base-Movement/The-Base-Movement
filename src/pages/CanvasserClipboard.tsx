@@ -73,7 +73,6 @@ export default function CanvasserClipboard() {
 
       // Simulate API call for now since we don't have the explicit submit method in adminService yet
       console.log('[CANVASSER] Submitting payload:', payload)
-      await new Promise(resolve => setTimeout(resolve, 800))
       
       toast.success('Contact logged securely to HQ servers.')
       

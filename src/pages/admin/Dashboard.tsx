@@ -20,7 +20,8 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import type { GrowthTrend, SentimentStat, AuditLogEntry, RegionalStat, LogisticsLatency } from '@/services/adminService'
+import { logisticsService } from '@/services/logisticsService'
+import type { GrowthTrend, SentimentStat, AuditLogEntry, RegionalStat, LogisticsLatency } from '@/types/admin'
 import { useState, useEffect } from 'react'
 import { GhanaGrowthMap } from '@/components/admin/GhanaGrowthMap'
 import { PulseReport } from '@/components/admin/PulseReport'
@@ -105,7 +106,7 @@ export default function AdminDashboard() {
           adminService.getSystemAuditLogs(),
           adminService.getRegionalStats(),
           adminService.getGlobalStats(),
-          adminService.getLogisticsLatency()
+          logisticsService.getLogisticsLatency()
         ])
         setGrowthData(growth)
         setSentimentStats(sentiment)
@@ -134,14 +135,12 @@ export default function AdminDashboard() {
     })
     
     // Simulate high-speed processing
-    setTimeout(() => {
-      setIsExporting(false)
-      toast({
-        title: "EXPORT COMPLETE",
-        description: "Intelligence vault updated. File ready for regional HQ.",
-        variant: "default",
-      })
-    }, 2000)
+    setIsExporting(false)
+    toast({
+      title: "EXPORT COMPLETE",
+      description: "Intelligence vault updated. File ready for regional HQ.",
+      variant: "default",
+    })
   }
 
   const handlePlatformLogs = () => {

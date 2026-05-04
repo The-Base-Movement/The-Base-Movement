@@ -742,7 +742,6 @@ class AdminService {
 
   async generateComplianceReport(region = 'National'): Promise<string> {
     console.log(`[AUDIT-GEN] Generating ${region} compliance report...`)
-    await new Promise(r => setTimeout(r, 2000))
     
     const reportData = {
       timestamp: new Date().toISOString(),

@@ -7,7 +7,8 @@ import type {
   Order, 
   OrderStats,
   LogisticsVelocity,
-  InventoryAlert
+  InventoryAlert,
+  LogisticsLatency
 } from '@/types/admin'
 import type { Product } from '@/types/product'
 
@@ -463,13 +464,13 @@ class LogisticsService {
     return true
   }
 
-  async getLogisticsLatency(): Promise<{ region: string; avgDispatchToDeliveryDays: number; totalDispatches: number; efficiency: string }[]> {
+  async getLogisticsLatency(): Promise<LogisticsLatency[]> {
     const regions = ['Greater Accra', 'Ashanti', 'Western', 'Central', 'Eastern', 'Volta', 'Northern']
     return regions.map(region => ({
       region,
       avgDispatchToDeliveryDays: Number((Math.random() * 5 + 1).toFixed(1)),
       totalDispatches: Math.floor(Math.random() * 500 + 100),
-      efficiency: Math.random() > 0.7 ? 'High' : Math.random() > 0.3 ? 'Medium' : 'Low'
+      efficiency: (Math.random() > 0.7 ? 'High' : Math.random() > 0.3 ? 'Medium' : 'Low') as 'High' | 'Medium' | 'Low'
     }))
   }
 

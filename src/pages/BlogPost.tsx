@@ -21,6 +21,7 @@ export default function BlogPost() {
   const baseUrl = isDashboard ? '/dashboard/blog' : '/blog'
 
   const [post, setPost] = useState<BlogPostType | null>(null)
+  const [relatedPosts, setRelatedPosts] = useState<BlogPostType[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -32,6 +33,8 @@ export default function BlogPost() {
         if (data) {
           setPost(data)
         }
+        const allPosts = await adminService.getBlogPosts()
+        setRelatedPosts(allPosts.filter(p => p.slug !== slug).slice(0, 3))
       } finally {
         setLoading(false)
       }
@@ -271,15 +274,11 @@ export default function BlogPost() {
               <div className="mt-24">
                 <p className="text-[10px] font-bold text-warm-gold uppercase tracking-widest mb-10">Related Insights</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {[
-                    { id: '2', title: 'Jobs, Skills and the Next Generation', category: 'Youth', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80' },
-                    { id: '4', title: 'Accountability Starts at Home', category: 'Integrity', image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80' },
-                    { id: '5', title: "Ghana's Resource Wealth Analysis", category: 'Economy', image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&q=80' }
-                  ].map((related) => (
-                    <Link to={`${baseUrl}/${slugify(related.title)}`} key={related.id} className="block group">
+                  {relatedPosts.map((related) => (
+                    <Link to={`${baseUrl}/${related.slug}`} key={related.id} className="block group">
                       <article className="group cursor-pointer">
                         <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
-                          <img src={related.image} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                          <img src={related.imageUrl || '/hero-bg.png'} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                           <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                         </div>
                         <span className="text-[9px] font-bold text-[var(--brand-green)] uppercase tracking-widest mb-0">{related.category}</span>

@@ -52,7 +52,7 @@ export default function FeedbackHub() {
 
       if (success) {
         toast.success('Your sentiment has been recorded. HQ appreciates your tactical insight.')
-        setTimeout(() => navigate('/dashboard'), 1500)
+        navigate('/dashboard')
       } else {
         toast.error('Failed to submit feedback. Please try again.')
       }
