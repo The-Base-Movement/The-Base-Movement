@@ -53,7 +53,7 @@ export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [_isDeleting, setIsDeleting] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [editingPost, setEditPost] = useState<BlogPost | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { toast } = useToast()
@@ -160,7 +160,7 @@ export default function AdminBlogs() {
         setIsDialogOpen(false)
         fetchPosts()
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "TRANSMISSION FAILED",
         description: "Failed to persist blog data to the movement vault.",
@@ -184,12 +184,7 @@ export default function AdminBlogs() {
         })
         fetchPosts()
       }
-    } catch (error) {
-      toast({
-        title: "DELETION FAILED",
-        description: "The intelligence remains in the vault due to a system error.",
-        variant: "destructive",
-      })
+    } catch (_error) {
     } finally {
       setIsDeleting(false)
     }
@@ -310,7 +305,7 @@ export default function AdminBlogs() {
                       <DropdownMenuItem className="text-[10px] font-bold uppercase tracking-widest gap-2">
                         <Eye className="w-3 h-3" /> Preview Brief
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(post)} className="text-[10px] font-bold uppercase tracking-widest gap-2 text-[var(--brand-red)]">
+                      <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="text-[10px] font-bold uppercase tracking-widest gap-2 text-[var(--brand-red)]">
                         <Trash2 className="w-3 h-3" /> Expunge Record
                       </DropdownMenuItem>
                     </DropdownMenuContent>
