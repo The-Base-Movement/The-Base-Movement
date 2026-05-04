@@ -25,7 +25,14 @@ export function ChaptersProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    refreshChapters()
+    let cancelled = false
+    adminService.getChapters().then(data => {
+      if (!cancelled) {
+        setChapters(data)
+        setIsLoading(false)
+      }
+    })
+    return () => { cancelled = true }
   }, [])
 
   const addChapter = async (chapter: Omit<Chapter, 'id'>) => {
