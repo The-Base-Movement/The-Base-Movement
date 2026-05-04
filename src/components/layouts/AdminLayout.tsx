@@ -56,8 +56,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: "Core",
       icon: LayoutDashboard,
       items: [
-        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
-        { to: '/admin/blogs', icon: FileText, label: 'Insights', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+        { to: '/admin/blogs', icon: FileText, label: 'Blog Posts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     },
