@@ -83,7 +83,8 @@ class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.currentSession;
+    if (this.currentSession) return true;
+    return localStorage.getItem('supabase_session_active') === 'true';
   }
 
   getUser() {
