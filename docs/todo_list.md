@@ -18,3 +18,9 @@ This document tracks the remaining tasks required to transition the platform fro
 
 ## 📰 Content Management
 - [x] **Blog Posts**: Confirmed `BlogPost.tsx` fetches from `blog_posts` table via slug.
+
+## 🏗️ Architectural Hardening (Phase 12)
+- [x] **Service Decoupling**: Modularized `adminService.ts` into specialized domain services.
+- [x] **Type Stabilization**: Consolidated redundant definitions and resolved cross-module import conflicts.
+- [x] **Telemetry Hardening**: Removed all `any` types from logistics and order telemetry.
+- [x] **Verification Fidelity**: Implemented `verification_notes` column and service-level persistence.
