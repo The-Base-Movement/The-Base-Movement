@@ -7,7 +7,8 @@ import {
   ClipboardList,
   Crosshair,
   TrendingUp,
-  Map as MapIcon
+  Map as MapIcon,
+  Activity
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
@@ -21,6 +22,7 @@ export default function GroundGameCommand() {
   const [voterRegs, setVoterRegs] = useState<VoterRegistration[]>([])
   const [campaigns, setCampaigns] = useState<CanvassingCampaign[]>([])
   const [transportReqs, setTransportReqs] = useState<GOTVTransportRequest[]>([])
+  const [fieldLogs, setFieldLogs] = useState<CanvasserLog[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -30,14 +32,16 @@ export default function GroundGameCommand() {
   const fetchGroundGameIntelligence = async () => {
     setLoading(true)
     try {
-      const [voterData, campData, transData] = await Promise.all([
+      const [voterData, campData, transData, logData] = await Promise.all([
         adminService.getVoterRegistrations(),
         adminService.getCanvassingCampaigns(),
-        adminService.getGOTVTransportRequests()
+        adminService.getGOTVTransportRequests(),
+        adminService.getRecentCanvasserLogs()
       ])
       setVoterRegs(voterData)
       setCampaigns(campData)
       setTransportReqs(transData)
+      setFieldLogs(logData)
     } catch (error) {
       console.error('[GROUND_GAME] Failed to fetch intelligence:', error)
       toast.error('Failed to synchronize with Ground Game servers.')
@@ -214,6 +218,48 @@ export default function GroundGameCommand() {
                             Dispatch
                           </Button>
                         )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 📡 Live Field Activity */}
+          <Card className="rounded-none border-stone-200 shadow-sm bg-stone-900 text-white overflow-hidden relative">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
+            <CardHeader className="p-6 border-b border-stone-800 relative z-10">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-tight font-meta italic text-white flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-emerald-400" /> Live Field Ops
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 relative z-10">
+              <div className="divide-y divide-stone-800 max-h-[400px] overflow-y-auto sidebar-scroll">
+                {fieldLogs.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <p className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Awaiting field intelligence...</p>
+                  </div>
+                ) : (
+                  fieldLogs.map((log) => (
+                    <div key={log.id} className="p-5 hover:bg-stone-800/50 transition-colors">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className={cn(
+                          "text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5",
+                          log.interaction_type === 'STRONG_SUPPORT' ? "bg-emerald-900/50 text-emerald-400" :
+                          log.interaction_type === 'LEANING_SUPPORT' ? "bg-blue-900/50 text-blue-400" :
+                          "bg-red-900/50 text-red-400"
+                        )}>
+                          {log.interaction_type.replace('_', ' ')}
+                        </span>
+                        <span className="text-[9px] font-bold text-stone-500">{format(new Date(log.created_at), 'HH:mm')}</span>
+                      </div>
+                      <p className="text-[11px] text-stone-300 italic mb-2">"{log.notes || 'No notes provided'}"</p>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-3 h-3 text-stone-600" />
+                        <span className="text-[9px] font-black text-stone-500 uppercase tracking-widest">Sector {log.canvasser_id.substring(0, 4)}</span>
                       </div>
                     </div>
                   ))
