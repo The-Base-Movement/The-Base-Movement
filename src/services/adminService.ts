@@ -179,6 +179,41 @@ export interface BlogPost {
   metaDescription?: string
 }
 
+export interface ResourceRequestItem {
+  id: string
+  productId: string
+  productName?: string
+  quantity: number
+}
+
+export interface ResourceRequest {
+  id: string
+  requesterId: string
+  requesterName?: string
+  region: string
+  constituency?: string
+  status: 'Pending' | 'Approved' | 'Dispatched' | 'Delivered' | 'Rejected'
+  priority: 'Normal' | 'High' | 'Urgent'
+  notes?: string
+  createdAt: string
+  items: ResourceRequestItem[]
+}
+
+export interface LogisticsAuditEntry {
+  id: string
+  requestId?: string
+  productId: string
+  productName?: string
+  action: 'DISPATCHED' | 'RETURNED' | 'REPLENISHED' | 'ADJUSTED'
+  quantityChange: number
+  sourceLocation: string
+  destinationLocation?: string
+  performedBy: string
+  performerName?: string
+  notes?: string
+  timestamp: string
+}
+
 export interface AuditLogEntry {
   id: string
   timestamp: string
@@ -1053,8 +1088,80 @@ class AdminService {
       return false
     }
 
-    await this.logAction('STORE_DELETE', `STORE/${name}`, 'Warning')
+    this.logAction('DELETE_INVENTORY', name, 'Success')
     return true
+  }
+
+  // --- Logistics Operations ---
+
+  async getResourceRequests(): Promise<ResourceRequest[]> {
+    const { data, error } = await supabase
+      .from('resource_requests')
+      .select('*, resource_request_items(*, store_inventory(name))')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch resource requests:', error)
+      return []
+    }
+
+    return data.map(req => ({
+      id: req.id,
+      requesterId: req.requester_id,
+      region: req.region,
+      constituency: req.constituency,
+      status: req.status,
+      priority: req.priority,
+      notes: req.notes,
+      createdAt: req.created_at,
+      items: (req.resource_request_items || []).map((item: any) => ({
+        id: item.id,
+        productId: item.product_id,
+        productName: item.store_inventory?.name,
+        quantity: item.quantity
+      }))
+    }))
+  }
+
+  async updateResourceRequestStatus(id: string, status: ResourceRequest['status']): Promise<boolean> {
+    const { error } = await supabase
+      .from('resource_requests')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to update request status:', error)
+      return false
+    }
+
+    this.logAction(`RESOURCE_REQUEST_${status.toUpperCase()}`, `REQ-${id.substring(0,8)}`, 'Success')
+    return true
+  }
+
+  async getLogisticsAudit(): Promise<LogisticsAuditEntry[]> {
+    const { data, error } = await supabase
+      .from('logistics_audit')
+      .select('*, store_inventory(name)')
+      .order('timestamp', { ascending: false })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch logistics audit:', error)
+      return []
+    }
+
+    return data.map(entry => ({
+      id: entry.id,
+      requestId: entry.request_id,
+      productId: entry.product_id,
+      productName: entry.store_inventory?.name,
+      action: entry.action,
+      quantityChange: entry.quantity_change,
+      sourceLocation: entry.source_location,
+      destinationLocation: entry.destination_location,
+      performedBy: entry.performed_by,
+      notes: entry.notes,
+      timestamp: entry.timestamp
+    }))
   }
 
   // --- Analytics ---

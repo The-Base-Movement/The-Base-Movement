@@ -9,7 +9,12 @@ import {
   MoreHorizontal,
   Edit3,
   Trash2,
-  Box
+  Trash2,
+  Box,
+  Truck,
+  FileText,
+  Clock,
+  History
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -37,26 +42,30 @@ import { Loader2 } from 'lucide-react'
 // Mock Data for Products
 export default function AdminStore() {
   const [products, setProducts] = useState<InventoryItem[]>([])
+  const [requests, setRequests] = useState<ResourceRequest[]>([])
+  const [activeTab, setActiveTab] = useState<'inventory' | 'requests' | 'audit'>('inventory')
+  const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Partial<InventoryItem> | null>(null)
 
-  const fetchInventory = async () => {
-    const data = await adminService.getInventory()
-    setProducts(data)
+  const fetchData = async () => {
+    setIsLoading(true)
+    try {
+      const [inv, reqs] = await Promise.all([
+        adminService.getInventory(),
+        adminService.getResourceRequests()
+      ])
+      setProducts(inv)
+      setRequests(reqs)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
-    let isMounted = true
-    const init = async () => {
-      const data = await adminService.getInventory()
-      if (isMounted) {
-        setProducts(data)
-      }
-    }
-    init()
-    return () => { isMounted = false }
+    fetchData()
   }, [])
 
   const handleOpenModal = (product?: InventoryItem) => {
@@ -90,7 +99,7 @@ export default function AdminStore() {
     if (success) {
       toast.success(selectedProduct.id ? "Product updated" : "Product added to movement catalog")
       setIsModalOpen(false)
-      fetchInventory()
+      fetchData()
     } else {
       toast.error("Failed to save product")
     }
@@ -104,11 +113,19 @@ export default function AdminStore() {
     const success = await adminService.deleteInventoryItem(id, name)
     if (success) {
       toast.success(`${name} removed from inventory`)
-      fetchInventory()
+      fetchData()
     } else {
       toast.error("Failed to delete item")
     }
     setIsDeleting(null)
+  }
+
+  const handleStatusUpdate = async (id: string, status: ResourceRequest['status']) => {
+    const success = await adminService.updateResourceRequestStatus(id, status)
+    if (success) {
+      toast.success(`Request marked as ${status}`)
+      fetchData()
+    }
   }
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -137,12 +154,34 @@ export default function AdminStore() {
           <p className="text-stone-500 text-sm mt-1">Movement inventory, merchandising, and regional distribution.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button 
-            onClick={() => handleOpenModal()}
-            className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800"
-          >
-            <Plus className="w-4 h-4 mr-2" /> Add Inventory Item
-          </Button>
+          <div className="flex bg-stone-100 p-1 mr-2">
+            <button 
+              onClick={() => setActiveTab('inventory')}
+              className={cn(
+                "px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                activeTab === 'inventory' ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+              )}
+            >
+              <Package className="w-3.5 h-3.5 mr-2 inline" /> Inventory
+            </button>
+            <button 
+              onClick={() => setActiveTab('requests')}
+              className={cn(
+                "px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                activeTab === 'requests' ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+              )}
+            >
+              <Truck className="w-3.5 h-3.5 mr-2 inline" /> Requests
+            </button>
+          </div>
+          {activeTab === 'inventory' && (
+            <Button 
+              onClick={() => handleOpenModal()}
+              className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Add Item
+            </Button>
+          )}
         </div>
       </div>
 
@@ -200,131 +239,219 @@ export default function AdminStore() {
         </Card>
       </div>
 
-      {/* Inventory Management Table */}
-      <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
-        <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
-              <Package className="w-4 h-4 text-[var(--brand-red)]" />
-              Product Catalog
-            </CardTitle>
-            
-            {/* Category Filter Tabs */}
-            <div className="flex items-center bg-stone-100 p-1 rounded-none overflow-x-auto no-scrollbar">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={cn(
-                    "px-4 py-1.5 text-[9px] font-black uppercase tracking-tight transition-all",
-                    activeCategory === cat ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
-                  )}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+      {activeTab === 'inventory' ? (
+        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+          <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
+                <Package className="w-4 h-4 text-[var(--brand-red)]" />
+                National Inventory Vault
+              </CardTitle>
+              
+              <div className="flex items-center bg-stone-100 p-1 rounded-none overflow-x-auto no-scrollbar">
+                {categories.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={cn(
+                      "px-4 py-1.5 text-[9px] font-black uppercase tracking-tight transition-all",
+                      activeCategory === cat ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+                    )}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
 
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
-              <Input 
-                placeholder="Search products..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-9 text-xs rounded-none border-stone-200"
-              />
+              <div className="relative w-full md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
+                <Input 
+                  placeholder="Search vault..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 h-9 text-xs rounded-none border-stone-200"
+                />
+              </div>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-stone-100 bg-stone-50/10">
-                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Product</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Category</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Price</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">In Stock</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Status</th>
-                  <th className="px-6 py-4 text-right"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-50">
-                {filteredProducts.map((product) => (
-                  <tr key={product.id} className="hover:bg-stone-50/50 transition-colors group">
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-stone-100 flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all">
-                          {product.image}
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-stone-100 bg-stone-50/10">
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Product</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Category</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Price</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">In Stock</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-4 text-right"></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-50">
+                  {filteredProducts.map((product) => (
+                    <tr key={product.id} className="hover:bg-stone-50/50 transition-colors group">
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-stone-100 flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all">
+                            {product.image}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-black text-[var(--brand-black)] uppercase tracking-tight">{product.name}</span>
+                            <span className="text-[9px] font-bold text-stone-400 mt-0.5">{product.id}</span>
+                          </div>
                         </div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className="text-xs font-bold text-stone-600">{product.category}</span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className="text-xs font-black text-[var(--brand-black)]">{product.price}</span>
+                      </td>
+                      <td className="px-6 py-5 text-center">
+                        <span className={cn(
+                          "text-xs font-black",
+                          product.stock === 0 ? "text-[var(--brand-red)]" : product.stock < 50 ? "text-[var(--brand-gold)]" : "text-stone-900"
+                        )}>
+                          {product.stock.toLocaleString()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: product.color }} />
+                          <span className={cn(
+                            "px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border",
+                            product.status === 'Critical' 
+                              ? "bg-red-50 text-[var(--brand-red)] border-red-100" 
+                              : product.status === 'Low Stock'
+                              ? "bg-amber-50 text-[var(--brand-gold)] border-amber-100"
+                              : product.status === 'Processing'
+                              ? "bg-stone-50 text-[var(--brand-black)] border-stone-200"
+                              : "bg-emerald-50 text-[var(--brand-green)] border-emerald-100"
+                          )}>
+                            {product.status}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 text-right">
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)]"
+                            onClick={() => handleOpenModal(product)}
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="w-8 h-8 text-stone-400 hover:text-[var(--brand-red)]"
+                            disabled={isDeleting === product.id}
+                            onClick={() => handleDelete(product.id, product.name)}
+                          >
+                            {isDeleting === product.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+          <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
+            <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
+              <Truck className="w-4 h-4 text-[var(--brand-green)]" />
+              Regional Resource Requests
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-stone-100 bg-stone-50/10">
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Region</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Items</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Requested</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Priority</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-50">
+                  {requests.map((req) => (
+                    <tr key={req.id} className="hover:bg-stone-50/50 transition-colors">
+                      <td className="px-6 py-5">
                         <div className="flex flex-col">
-                          <span className="text-xs font-black text-[var(--brand-black)] uppercase tracking-tight">{product.name}</span>
-                          <span className="text-[9px] font-bold text-stone-400 mt-0.5">{product.id}</span>
+                          <span className="text-xs font-black text-stone-900 uppercase tracking-tight">{req.region}</span>
+                          <span className="text-[9px] font-bold text-stone-400 mt-0.5">{req.constituency || 'Regional HQ'}</span>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="text-xs font-bold text-stone-600">{product.category}</span>
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="text-xs font-black text-[var(--brand-black)]">{product.price}</span>
-                    </td>
-                    <td className="px-6 py-5 text-center">
-                      <span className={cn(
-                        "text-xs font-black",
-                        product.stock === 0 ? "text-[var(--brand-red)]" : product.stock < 50 ? "text-[var(--brand-gold)]" : "text-stone-900"
-                      )}>
-                        {product.stock.toLocaleString()}
-                      </span>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: product.color }} />
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="flex flex-col gap-1">
+                          {req.items.map(item => (
+                            <span key={item.id} className="text-[10px] font-bold text-stone-600">
+                              {item.quantity}x {item.productName || 'Unknown Product'}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className="text-xs font-bold text-stone-500">
+                          {new Date(req.createdAt).toLocaleDateString()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className={cn(
+                          "px-2 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-full",
+                          req.priority === 'Urgent' ? "bg-red-100 text-red-700" : req.priority === 'High' ? "bg-amber-100 text-amber-700" : "bg-stone-100 text-stone-600"
+                        )}>
+                          {req.priority}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
                         <span className={cn(
                           "px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border",
-                          product.status === 'Critical' 
-                            ? "bg-red-50 text-[var(--brand-red)] border-red-100" 
-                            : product.status === 'Low Stock'
-                            ? "bg-amber-50 text-[var(--brand-gold)] border-amber-100"
-                            : product.status === 'Processing'
-                            ? "bg-stone-50 text-[var(--brand-black)] border-stone-200"
-                            : "bg-emerald-50 text-[var(--brand-green)] border-emerald-100"
+                          req.status === 'Pending' ? "bg-amber-50 text-amber-700 border-amber-100" :
+                          req.status === 'Approved' ? "bg-blue-50 text-blue-700 border-blue-100" :
+                          req.status === 'Dispatched' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
+                          req.status === 'Delivered' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                          "bg-red-50 text-red-700 border-red-100"
                         )}>
-                          {product.status}
+                          {req.status}
                         </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-right">
-                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)]"
-                          onClick={() => handleOpenModal(product)}
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="w-8 h-8 text-stone-400 hover:text-[var(--brand-red)]"
-                          disabled={isDeleting === product.id}
-                          onClick={() => handleDelete(product.id, product.name)}
-                        >
-                          {isDeleting === product.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                        </Button>
-                        <Button variant="ghost" size="icon" className="w-8 h-8 text-stone-400" onClick={() => handleStoreAction('INVENTORY_AUDIT', product.name)}>
-                          <MoreHorizontal className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+                      </td>
+                      <td className="px-6 py-5 text-right">
+                        <Select onValueChange={(v) => handleStatusUpdate(req.id, v)}>
+                          <SelectTrigger className="w-32 h-8 text-[9px] font-black uppercase tracking-widest rounded-none border-stone-200">
+                            <SelectValue placeholder="Update Status" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-none">
+                            <SelectItem value="Approved">Approve</SelectItem>
+                            <SelectItem value="Dispatched">Dispatch</SelectItem>
+                            <SelectItem value="Delivered">Deliver</SelectItem>
+                            <SelectItem value="Rejected">Reject</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </td>
+                    </tr>
+                  ))}
+                  {requests.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
+                        No active resource requests from the field.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Quick Insights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

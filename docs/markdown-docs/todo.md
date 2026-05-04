@@ -9,8 +9,8 @@ This TODO list outlines the next strategic horizons for the movement's platform 
 - [ ] **Engagement Tracking**: Integrate read-receipt and response telemetry into the Dashboard.
 
 ## 2. Resource Logistics (Merchandise & Materials)
-- [ ] **National Inventory Vault**: Build the administrative module for tracking official movement assets (Tees, Caps, Flyers).
-- [ ] **Regional Fulfillment Workflow**: Implement the request-and-verify system for regional resource allocation.
+- [x] **National Inventory Vault**: Build the administrative module for tracking official movement assets (Tees, Caps, Flyers).
+- [x] **Regional Fulfillment Workflow**: Implement the request-and-verify system for regional resource allocation.
 - [ ] **Stock Intelligence**: Integrate low-inventory alerts into the Command Center (Red status when critical).
 - [ ] **Logistics Audit**: Track all material distributions with 100% accountability in the Audit Hub.
 
