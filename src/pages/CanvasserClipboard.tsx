@@ -3,7 +3,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ClipboardList, MapPin, User, FileText, CheckCircle2, ChevronRight, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { adminService } from '@/services/adminService'
-import type { CanvassingCampaign } from '@/services/adminService'
+import type { CanvassingCampaign } from '@/types/admin'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 

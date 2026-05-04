@@ -13,7 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { adminService } from '@/services/adminService'
-import type { RapidResponseDirective, CrisisIncident, MediaCounterNarrative } from '@/services/adminService'
+import type { RapidResponseDirective, CrisisIncident, MediaCounterNarrative } from '@/types/admin'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { toast } from 'sonner'

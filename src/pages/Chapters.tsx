@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { adminService } from '@/services/adminService'
+import { toast } from 'sonner'
 import { MapPin, Search, Plus, Filter, Building2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
@@ -94,16 +96,33 @@ export default function Chapters() {
   const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setSubmissionSuccess(true)
-    setTimeout(() => {
-      setIsRequestModalOpen(false)
-      setSubmissionSuccess(false)
-      setChapterLocation('')
-      setChapterDescription('')
-    }, 2000)
+    
+    try {
+      const success = await adminService.submitChapterApplication({
+        proposed_chapter_name: chapterLocation,
+        region: 'National', // Default or extracted from location
+        constituency: 'To be assigned',
+        vision_statement: chapterDescription,
+        experience_summary: 'Submitted via Chapter Request Hub'
+      })
+
+      if (success) {
+        setSubmissionSuccess(true)
+        setTimeout(() => {
+          setIsRequestModalOpen(false)
+          setSubmissionSuccess(false)
+          setChapterLocation('')
+          setChapterDescription('')
+        }, 3000)
+      } else {
+        toast.error('Failed to submit chapter request. Please try again.')
+      }
+    } catch (error) {
+      console.error('[CHAPTERS] Submission failed:', error)
+      toast.error('Strategic communication link failed.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const filteredChapters = (activeTab === 'ghana' ? ghanaChapters : diasporaChapters).filter(c => 

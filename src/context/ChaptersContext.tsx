@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import { adminService, type Chapter } from '@/services/adminService'
+import { adminService } from '@/services/adminService'
+import type { Chapter } from '@/types/admin'
 
 interface ChaptersContextValue {
   chapters: Chapter[]

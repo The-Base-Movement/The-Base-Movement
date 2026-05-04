@@ -46,7 +46,7 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { adminService } from '@/services/adminService'
-import type { BlogPost } from '@/services/adminService'
+import type { BlogPost } from '@/types/admin'
 import { useToast } from '@/hooks/use-toast'
 
 export default function AdminBlogs() {

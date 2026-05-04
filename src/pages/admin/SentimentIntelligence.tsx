@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { adminService } from '@/services/adminService'
-import type { MemberFeedback, SentimentTelemetry, ImpactProjection } from '@/services/adminService'
+import type { MemberFeedback, SentimentTelemetry, ImpactProjection } from '@/types/admin'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 

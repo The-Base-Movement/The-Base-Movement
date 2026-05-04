@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { adminService } from '@/services/adminService'
-import type { FieldAction, RallyAttendance } from '@/services/adminService'
+import type { FieldAction, RallyAttendance } from '@/types/admin'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { format } from 'date-fns'

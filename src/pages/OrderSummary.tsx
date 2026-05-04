@@ -1,11 +1,57 @@
-import { Link } from 'react-router-dom'
-import { ArrowRight, Printer, Share2, ShoppingBag } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { ArrowRight, Printer, Share2, ShoppingBag, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { adminService } from '@/services/adminService'
+import type { Order } from '@/types/admin'
 
 export default function OrderSummary() {
-  // In a real app, we'd fetch this from state or an API
-  const orderNumber = 'ORD-2024-8842-BASE'
-  const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  const location = useLocation()
+  const orderId = location.state?.orderId
+  const [order, setOrder] = useState<Order | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchOrder() {
+      if (!orderId) {
+        setLoading(false)
+        return
+      }
+      const data = await adminService.getOrderById(orderId)
+      setOrder(data)
+      setLoading(false)
+    }
+    fetchOrder()
+  }, [orderId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-off-white">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 text-[var(--brand-green)] animate-spin" />
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Retrieving Transaction Data...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-off-white">
+        <div className="max-w-md w-full p-8 text-center bg-white border border-stone-200">
+          <ShoppingBag className="w-12 h-12 text-stone-200 mx-auto mb-4" />
+          <h2 className="text-xl font-black font-meta uppercase tracking-tight text-stone-900">Order Not Found</h2>
+          <p className="text-xs text-stone-500 mt-2 mb-6 uppercase tracking-widest">The requested order could not be synchronized with the vault.</p>
+          <Button asChild className="w-full h-12 bg-stone-900 text-white rounded-none">
+            <Link to="/store">Back to Store</Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const date = new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  const orderNumber = order.id.substring(0, 8).toUpperCase()
 
   return (
     <div className="bg-off-white min-h-screen">
@@ -38,8 +84,8 @@ export default function OrderSummary() {
             <div className="flex flex-col gap-6 py-6 border-b border-stone-100 mb-8">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Order Number</p>
-                  <p className="font-bold text-stone-900 break-all sm:break-normal">{orderNumber}</p>
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Order Identifier</p>
+                  <p className="font-bold text-stone-900 break-all sm:break-normal">#{orderNumber}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1 sm:text-right">Date</p>
@@ -55,32 +101,22 @@ export default function OrderSummary() {
               </div>
               
               <div className="relative z-10">
-                <h3 className="font-h3 text-xl text-stone-900 mb-6">Items Ordered</h3>
+                <h3 className="font-h3 text-xl text-stone-900 mb-6 uppercase tracking-tight">Items Ordered</h3>
                 <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 bg-stone-50 px-4 rounded-sm">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white flex items-center justify-center border border-stone-100 shrink-0">
-                      <ShoppingBag className="w-6 h-6 text-stone-300" />
+                {order.items.map((item: any) => (
+                  <div key={item.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 bg-stone-50 px-4 rounded-sm">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white flex items-center justify-center border border-stone-100 shrink-0">
+                        <ShoppingBag className="w-6 h-6 text-stone-300" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-stone-900 text-sm leading-tight uppercase tracking-tight">{item.product_name || 'Official Gear'}</p>
+                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">Quantity: {item.quantity}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-stone-900 text-sm leading-tight">The Base Premium T-Shirt (M, Jet Black)</p>
-                      <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">Quantity: 1</p>
-                    </div>
+                    <p className="font-bold text-stone-900 text-sm whitespace-nowrap">GHS {Number(item.price_at_purchase * item.quantity).toFixed(2)}</p>
                   </div>
-                  <p className="font-bold text-stone-900 text-sm whitespace-nowrap">GHS 85.00</p>
-                </div>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 bg-stone-50 px-4 rounded-sm">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white flex items-center justify-center border border-stone-100 shrink-0">
-                      <ShoppingBag className="w-6 h-6 text-stone-300" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-stone-900 text-sm leading-tight">Ghana First Signature Cap (One Size, Green)</p>
-                      <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">Quantity: 2</p>
-                    </div>
-                  </div>
-                  <p className="font-bold text-stone-900 text-sm whitespace-nowrap">GHS 110.00</p>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -90,15 +126,15 @@ export default function OrderSummary() {
               <div className="space-y-4">
                 <div className="flex justify-between text-xs font-meta uppercase tracking-widest opacity-60">
                   <span>Subtotal</span>
-                  <span>GHS 195.00</span>
+                  <span>GHS {Number(order.subtotal).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xs font-meta uppercase tracking-widest opacity-60">
                   <span>Shipping</span>
-                  <span>GHS 25.00</span>
+                  <span>GHS {Number(order.shipping_fee).toFixed(2)}</span>
                 </div>
                 <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                  <span className="font-h3 text-lg uppercase tracking-tight">Total Paid</span>
-                  <span className="font-h3 text-2xl text-brand-green whitespace-nowrap">GHS 220.00</span>
+                  <span className="font-h3 text-lg uppercase tracking-tight">Total Paid via {order.payment_method?.toUpperCase()}</span>
+                  <span className="font-h3 text-2xl text-brand-green whitespace-nowrap">GHS {Number(order.total_amount).toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -110,8 +146,8 @@ export default function OrderSummary() {
                   <span className="material-symbols-outlined text-brand-green">mail</span>
                 </div>
                 <div>
-                  <p className="font-bold text-stone-900 text-sm mb-1">Confirmation Sent</p>
-                  <p className="text-xs text-stone-500 leading-relaxed">A detailed receipt and tracking information has been sent to your registered email address.</p>
+                  <p className="font-bold text-stone-900 text-sm mb-1 uppercase tracking-tight">Confirmation Sent</p>
+                  <p className="text-xs text-stone-500 leading-relaxed font-medium">A detailed receipt and tracking information has been sent to <span className="font-bold text-stone-900">{order.email}</span>.</p>
                 </div>
               </div>
 

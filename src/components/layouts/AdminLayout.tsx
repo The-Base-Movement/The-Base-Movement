@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'
-import type { AdminPermission } from '@/services/adminService'
+import type { AdminPermission } from '@/types/admin'
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024)

@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
 import { adminService } from '@/services/adminService'
-import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/services/adminService'
+import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/types/admin'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
