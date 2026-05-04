@@ -31,9 +31,9 @@ This TODO list outlines the next strategic horizons for the movement's platform 
 - [ ] **Order Submission**: Update `Checkout.tsx` to insert completed transactions, shipping details, and order lines into a `store_orders` Supabase table.
 
 ## 6. Dashboard & Database Integrations (Immediate)
-- [ ] **Member Dashboard Metrics**: Replace hardcoded metrics with real aggregations in `Dashboard.tsx`.
-- [ ] **Growth Trends**: Create the `membership_growth_view` in the database so `getGrowthTrends()` executes successfully.
-- [ ] **Member Verification**: Transition `admin/MemberVerification.tsx` to pull pending verifications directly from Supabase.
+- [x] **Member Dashboard Metrics**: Replace hardcoded metrics with real aggregations in `Dashboard.tsx`.
+- [x] **Growth Trends**: Create the `membership_growth_view` in the database so `getGrowthTrends()` executes successfully.
+- [x] **Member Verification**: Transition `admin/MemberVerification.tsx` to pull pending verifications directly from Supabase.
 - [ ] **Polls & Surveys**: Update `admin/Polls.tsx` and `adminService.ts` to fully integrate with the `polls` and `poll_options` tables, removing mock fallbacks.
 - [ ] **Blog Posts**: Update `BlogPost.tsx` to fetch actual post content from the `blog_posts` table based on the URL slug.
 
