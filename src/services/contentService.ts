@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { BlogPost } from '@/types/admin'
+import mediaManifest from '@/data/media-manifest.json'
 
 class ContentService {
   private static instance: ContentService
@@ -94,8 +95,12 @@ class ContentService {
         excerpt: post.excerpt,
         content: post.content,
         author_id: post.authorId,
+        author_name: post.authorName,
+        author_role: post.authorRole,
+        author_image: post.authorImage,
+        author_bio: post.authorBio,
         category: post.category,
-        avatar_url: post.imageUrl || null,
+        image_url: post.imageUrl || null,
         read_time: post.readTime,
         is_featured: post.isFeatured,
         published_at: post.publishedAt,
@@ -118,7 +123,11 @@ class ContentService {
     if (post.excerpt) updateData.excerpt = post.excerpt
     if (post.content) updateData.content = post.content
     if (post.category) updateData.category = post.category
-    if (post.imageUrl !== undefined) updateData.avatar_url = post.imageUrl
+    if (post.imageUrl !== undefined) updateData.image_url = post.imageUrl
+    if (post.authorName !== undefined) updateData.author_name = post.authorName
+    if (post.authorRole !== undefined) updateData.author_role = post.authorRole
+    if (post.authorImage !== undefined) updateData.author_image = post.authorImage
+    if (post.authorBio !== undefined) updateData.author_bio = post.authorBio
     if (post.readTime) updateData.read_time = post.readTime
     if (post.isFeatured !== undefined) updateData.is_featured = post.isFeatured
     if (post.publishedAt) updateData.published_at = post.publishedAt
@@ -149,6 +158,68 @@ class ContentService {
       return false
     }
     return true
+  }
+
+  // --- Media Operations ---
+
+  async uploadImage(file: File, path: string): Promise<string | null> {
+    try {
+      // Create a unique filename
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`
+      const filePath = `${path}/${fileName}`
+
+      // Upload the file to the 'media' bucket
+      const { error: uploadError } = await supabase.storage
+        .from('media')
+        .upload(filePath, file)
+
+      if (uploadError) {
+        console.error('[STORAGE] Upload failed:', uploadError)
+        return null
+      }
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('media')
+        .getPublicUrl(filePath)
+
+      return publicUrl
+    } catch (err) {
+      console.error('[STORAGE] Unexpected error during upload:', err)
+      return null
+    }
+  }
+
+  async getMediaFiles(path: string): Promise<string[]> {
+    const { data, error } = await supabase.storage
+      .from('media')
+      .list(path)
+
+    if (error) {
+      console.error('[STORAGE] Failed to list media files:', error)
+      return []
+    }
+
+    return (data || []).map(file => {
+      const { data: { publicUrl } } = supabase.storage
+        .from('media')
+        .getPublicUrl(`${path}/${file.name}`)
+      return publicUrl
+    })
+  }
+
+  async getLocalAssets(category: string): Promise<string[]> {
+    const files = mediaManifest.files || []
+    
+    switch (category) {
+      case 'logos-favicons':
+        return files.filter(f => f.includes('logo') || f.includes('favicon'))
+      case 'public-assets':
+        return files.filter(f => !f.includes('logos') && !f.includes('favicon') && !f.includes('blog-images') && !f.includes('author-images'))
+      default:
+        return []
+    }
   }
 }
 

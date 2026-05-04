@@ -53,6 +53,19 @@ class AuthService {
     return data;
   }
 
+  async signInWithGoogle(): Promise<void> {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/dashboard'
+      }
+    });
+
+    if (error) {
+      throw new Error(error.message || 'Google Sign-In failed');
+    }
+  }
+
   async signUp(email: string, password: string, name: string, image?: string): Promise<AuthResponse['data']> {
     const { data, error } = await supabase.auth.signUp({
       email,

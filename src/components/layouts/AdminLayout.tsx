@@ -8,7 +8,6 @@ import {
   Settings, 
   LogOut, 
   Menu, 
-  X, 
   Shield,
   Bell,
   Search,
@@ -23,7 +22,8 @@ import {
   Brain,
   ShieldAlert,
   Vote,
-  ChevronDown
+  ChevronDown,
+  Image as ImageIcon
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/Button'
@@ -58,6 +58,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       items: [
         { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/admin/blogs', icon: FileText, label: 'Blog Posts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/media', icon: ImageIcon, label: 'Media Library', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     },
@@ -154,14 +155,34 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 "transition-all duration-300 origin-left",
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
-                <p className="text-white font-black font-meta text-lg leading-none tracking-tighter uppercase whitespace-nowrap">The Base</p>
-                <p className="text-[var(--brand-red)] text-[8px] font-black uppercase tracking-[0.2em] mt-1 leading-none whitespace-nowrap">Admin Office</p>
+                <p className="text-white font-black font-meta text-lg leading-tight tracking-tighter uppercase whitespace-nowrap">The Base</p>
+                <p className="text-[var(--brand-red)] text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 leading-none whitespace-nowrap">Admin Office</p>
               </div>
             </Link>
           </div>
 
+
           {/* Navigation */}
-          <nav className="flex-1 py-6 px-3 space-y-4 overflow-y-auto">
+          <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto">
+            {/* View Site External Link */}
+            <a 
+              href="/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={cn(
+                "flex items-center gap-3 px-3 py-3 mb-6 mx-2 transition-all relative group bg-white/5 hover:bg-[var(--brand-red)] rounded-md border border-white/10 hover:border-[var(--brand-red)]",
+                isSidebarOpen ? "" : "justify-center px-0"
+              )}
+            >
+              <Zap className="w-5 h-5 text-[var(--brand-red)] group-hover:text-white shrink-0" />
+              <span className={cn(
+                "text-xs font-bold tracking-widest uppercase transition-all duration-300",
+                isSidebarOpen ? "opacity-100" : "opacity-0 w-0 hidden"
+              )}>
+                View Site
+              </span>
+            </a>
+
             {filteredNavGroups.map((group) => {
               const isOpen = openGroups[group.label]
 
@@ -257,74 +278,57 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        {/* Top Header - Redesigned */}
-        <header className="h-24 bg-white/80 backdrop-blur-md border-b border-stone-200/60 flex items-center justify-between px-6 md:px-10 sticky top-0 z-30 shrink-0">
-          <div className="flex items-center gap-8">
-            {/* Sidebar Toggle with Premium Hover */}
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="hover:bg-[var(--brand-black)] hover:text-white transition-all duration-300 rounded-none w-12 h-12 border border-transparent hover:border-white/20"
-              >
-                {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </Button>
-              <div className="h-8 w-px bg-stone-200 hidden lg:block" />
-            </div>
+        {/* Top Utility Bar - Clean, Compact, Functional */}
+        <header className="h-14 bg-white border-b border-stone-200 flex items-center justify-between px-6 sticky top-0 z-30 shrink-0">
+          <div className="flex items-center gap-4 flex-1">
+            {/* Sidebar Toggle */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="h-9 w-9 text-stone-500 hover:bg-stone-50 hover:text-[var(--brand-green)] transition-all"
+            >
+              <Menu className="w-4 h-4" />
+            </Button>
             
-            {/* Command Search - Refined */}
-            <div className="hidden lg:flex relative items-center group">
-              <div className="absolute left-4 p-1 bg-stone-100 rounded-sm group-focus-within:bg-[var(--brand-red)] transition-colors duration-300">
-                <Search className="w-3.5 h-3.5 text-stone-400 group-focus-within:text-white transition-colors" />
-              </div>
+            {/* Integrated Command Search */}
+            <div className="max-w-md w-full relative group hidden md:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 group-focus-within:text-[var(--brand-green)] transition-colors" />
               <input 
                 type="text" 
-                placeholder="Search..."
-                className="pl-14 h-12 w-[400px] bg-stone-50 border border-stone-100 focus:bg-white focus:border-stone-300 focus:ring-0 transition-all text-sm outline-none font-medium placeholder:text-stone-300 shadow-sm focus:shadow-md rounded-lg"
+                placeholder="Search command center..."
+                className="w-full h-9 pl-9 pr-4 bg-stone-50 border-transparent focus:bg-white focus:border-stone-200 focus:ring-0 transition-all text-xs outline-none font-medium placeholder:text-stone-400 rounded-md"
               />
-              <div className="absolute right-4 flex items-center gap-1 opacity-40 group-focus-within:opacity-0 transition-opacity">
-                <span className="px-1.5 py-0.5 border border-stone-300 text-[8px] font-bold">⌘</span>
-                <span className="px-1.5 py-0.5 border border-stone-300 text-[8px] font-bold">K</span>
-              </div>
             </div>
           </div>
 
-          {/* Topbar Actions - Polished */}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative group w-12 h-12 rounded-none hover:bg-stone-50">
-                <Bell className="w-5 h-5 text-stone-500 group-hover:rotate-12 group-hover:text-[var(--brand-red)] transition-all" />
-                <span className="absolute top-3.5 right-3.5 w-2 h-2 bg-[var(--brand-red)] rounded-full border-2 border-white animate-pulse" />
-              </Button>
-              <Button variant="ghost" size="icon" className="w-12 h-12 rounded-none hover:bg-stone-50 text-stone-500 hidden sm:flex">
-                <Shield className="w-5 h-5" />
-              </Button>
-            </div>
+          {/* Topbar Actions */}
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-stone-500 hover:bg-stone-50 hover:text-[var(--brand-green)] transition-all relative">
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-[var(--brand-red)] rounded-full border-2 border-white" />
+            </Button>
             
-            <div className="h-10 w-px bg-stone-200" />
+            <div className="h-4 w-px bg-stone-200 mx-1" />
             
-            <div className="flex items-center gap-5 pl-2 group cursor-pointer">
-              <div className="text-right hidden md:block">
-                <p className="text-[11px] font-black text-[var(--brand-black)] uppercase tracking-tight leading-none group-hover:text-[var(--brand-red)] transition-colors">
-                  {user?.name || 'Administrative Officer'}
+            {/* User Profile Chip */}
+            <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-stone-50 rounded-lg transition-colors cursor-pointer group">
+              <div className="text-right hidden sm:block">
+                <p className="text-[11px] font-bold text-stone-900 leading-tight">
+                  {user?.name || 'Staff Officer'}
                 </p>
-                <div className="flex items-center justify-end gap-1.5 mt-1.5">
-                  <span className="w-1 h-1 bg-emerald-500 rounded-full" />
-                  <p className="text-[10px] font-medium text-stone-400 uppercase tracking-wider leading-none">
-                    {user?.role === 'SUPER_ADMIN' ? 'Administrator' : 'Staff'}
-                  </p>
-                </div>
+                <p className="text-[9px] font-medium text-stone-400 uppercase tracking-wider mt-0.5 leading-none">
+                  {user?.role === 'SUPER_ADMIN' ? 'System Administrator' : 'Regional Admin'}
+                </p>
               </div>
-              <div className="relative shrink-0">
-                <div className="w-12 h-12 bg-[var(--brand-black)] text-white flex items-center justify-center font-black text-xs shadow-2xl relative z-10 group-hover:-translate-y-1 group-hover:-translate-x-1 transition-transform duration-300 uppercase">
-                  {user?.name.split(' ').map(n => n[0]).join('') || 'HQ'}
-                </div>
-                <div className="absolute inset-0 bg-[var(--brand-red)] translate-y-0.5 translate-x-0.5 z-0" />
+              <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-[10px] rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all">
+                {user?.name.split(' ').map(n => n[0]).join('') || 'HQ'}
               </div>
             </div>
           </div>
         </header>
+
+
 
         {/* Content Area */}
         <main className="flex-1 overflow-y-auto p-6 md:p-10 lg:p-12">

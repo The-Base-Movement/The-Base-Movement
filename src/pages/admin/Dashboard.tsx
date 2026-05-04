@@ -6,9 +6,9 @@ import {
   TrendingUp,
   ShieldCheck,
   Zap,
-  Globe,
-  ChevronRight
+  Globe
 } from 'lucide-react'
+
 import type { LucideIcon } from 'lucide-react'
 import { 
   Card, 
@@ -48,12 +48,11 @@ interface StatCardProps {
 // High-Fidelity Skeleton Loading Component
 function SkeletonCard() {
   return (
-    <Card className="rounded-none border-stone-100 shadow-none overflow-hidden relative">
-      <div className="absolute top-0 left-0 w-1 h-full bg-stone-100" />
+    <Card className="rounded-xl border-stone-200 shadow-none overflow-hidden bg-white">
       <CardContent className="p-6 space-y-4">
-        <div className="w-1/3 h-2 bg-stone-100 animate-pulse" />
-        <div className="w-2/3 h-8 bg-stone-100 animate-pulse" />
-        <div className="w-1/2 h-3 bg-stone-100 animate-pulse" />
+        <div className="w-1/3 h-2 bg-stone-100 animate-pulse rounded-full" />
+        <div className="w-2/3 h-8 bg-stone-50 animate-pulse rounded-md" />
+        <div className="w-1/2 h-3 bg-stone-100 animate-pulse rounded-full" />
       </CardContent>
     </Card>
   )
@@ -62,21 +61,20 @@ function SkeletonCard() {
 // High-Fidelity Stat Card Component
 function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
   return (
-    <Card className="rounded-none border-stone-200 shadow-sm group hover:shadow-md transition-all overflow-hidden relative">
-      <div className={cn("absolute top-0 left-0 w-1 h-full", color)} />
+    <Card className="rounded-xl border-stone-200 shadow-sm group hover:shadow-md transition-all overflow-hidden bg-white">
       <CardContent className="p-6">
         <div className="flex justify-between items-start">
-          <div className="space-y-2">
-            <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">{title}</p>
-            <h3 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">{value}</h3>
-            <div className="flex items-center gap-1.5">
-              <span className="flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5">
+          <div className="space-y-3">
+            <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{title}</p>
+            <h3 className="text-3xl font-bold text-stone-900 tracking-tight">{value}</h3>
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                 <TrendingUp className="w-3 h-3" /> {change}
               </span>
-              <span className="text-[9px] font-bold text-stone-400 uppercase tracking-tight">vs last week</span>
+              <span className="text-[9px] font-medium text-stone-400 uppercase tracking-tight">vs last week</span>
             </div>
           </div>
-          <div className={cn("w-12 h-12 flex items-center justify-center bg-stone-50 group-hover:scale-110 transition-transform", color.replace('bg-', 'text-'))}>
+          <div className={cn("w-12 h-12 flex items-center justify-center rounded-xl bg-stone-50 group-hover:scale-110 transition-transform", color.replace('bg-', 'text-'))}>
             <Icon className="w-6 h-6" />
           </div>
         </div>
@@ -84,6 +82,7 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
     </Card>
   )
 }
+
 
 export default function AdminDashboard() {
   const [growthData, setGrowthData] = useState<GrowthTrend[]>([])
@@ -148,65 +147,62 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Top Banner / Welcome */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter leading-none">Command Center</h1>
-          <p className="text-stone-500 text-sm mt-2 flex items-center gap-2">
+          <h1 className="text-4xl font-bold text-stone-900 tracking-tight">Command Center</h1>
+          <p className="text-stone-500 text-base mt-2 flex items-center gap-2">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            Live movement operations monitoring active.
+            Live movement telemetry active. Monitoring 16 regional HQs.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest border-stone-200"
+            className="h-10 px-5 text-xs font-bold text-stone-900 border-stone-200 hover:bg-stone-900 hover:text-white transition-all uppercase tracking-wider rounded-md"
             onClick={handleExport}
             disabled={isExporting}
           >
-            {isExporting ? 'GENERATING...' : 'Export Intelligence'}
+            {isExporting ? 'Generating...' : 'Export Intelligence'}
           </Button>
           <Button 
-            className="h-12 px-6 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800"
+            className="h-10 px-5 text-xs font-bold bg-stone-900 text-white hover:bg-stone-800 transition-all active:scale-95 uppercase tracking-wider rounded-md"
             onClick={handlePlatformLogs}
           >
-            Platform Logs
+            System Logs
           </Button>
         </div>
       </div>
 
-      {/* Advanced Filtering & Intelligence Hub */}
-      <div className="bg-white border border-stone-200 p-4 flex flex-wrap items-center gap-4">
+      {/* Intelligence Hub Filters */}
+      <div className="bg-white border border-stone-200 rounded-xl p-2 flex flex-wrap items-center gap-2 mb-8 shadow-sm">
         <div className="flex-1 min-w-[240px] relative">
-          <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+          <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
           <input 
             type="text" 
             placeholder="Search regional telemetry..." 
-            className="w-full h-10 pl-10 pr-4 bg-stone-50 border-none text-[10px] font-bold uppercase tracking-tight placeholder:text-stone-400 focus:ring-1 focus:ring-[var(--brand-gold)] transition-all"
+            className="w-full h-10 pl-11 pr-4 bg-stone-50 border-none text-xs font-medium placeholder:text-stone-400 focus:ring-1 focus:ring-stone-200 transition-all rounded-lg"
           />
         </div>
-        <div className="flex items-center gap-3">
-          <select className="h-10 px-4 bg-stone-50 border-none text-[10px] font-black uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-[var(--brand-gold)] cursor-pointer">
+        <div className="flex items-center gap-2">
+          <select className="h-10 px-4 bg-stone-50 border-none text-[10px] font-bold uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-stone-200 cursor-pointer rounded-lg">
             <option>All Regions</option>
             <option>Greater Accra</option>
             <option>Ashanti</option>
-            <option>Western</option>
-            <option>Central</option>
           </select>
-          <select className="h-10 px-4 bg-stone-50 border-none text-[10px] font-black uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-[var(--brand-gold)] cursor-pointer">
+          <select className="h-10 px-4 bg-stone-50 border-none text-[10px] font-bold uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-stone-200 cursor-pointer rounded-lg">
             <option>Last 7 Days</option>
             <option>Last 30 Days</option>
-            <option>This Quarter</option>
           </select>
-          <Button variant="ghost" className="h-10 px-4 text-[10px] font-black uppercase tracking-widest text-[var(--brand-red)] hover:bg-rose-50">
-            Reset Filters
+          <Button variant="ghost" className="h-10 px-4 text-[10px] font-bold uppercase tracking-widest text-stone-400 hover:text-stone-900">
+            Reset
           </Button>
         </div>
       </div>
 
-      {/* Primary Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
         {isLoading ? (
           <>
             <SkeletonCard />
@@ -216,16 +212,16 @@ export default function AdminDashboard() {
           </>
         ) : (
           <>
-            <StatCard title={globalStats[0]?.label || "Loading..."} value={globalStats[0]?.value || "..."} change={globalStats[0]?.change || "..."} icon={Users} color="bg-[var(--brand-red)]" />
-            <StatCard title={globalStats[1]?.label || "Loading..."} value={globalStats[1]?.value || "..."} change={globalStats[1]?.change || "..."} icon={MapPin} color="bg-[var(--brand-gold)]" />
-            <StatCard title={globalStats[2]?.label || "Loading..."} value={globalStats[2]?.value || "..."} change={globalStats[2]?.change || "..."} icon={Activity} color="bg-[var(--brand-black)]" />
-            <StatCard title={globalStats[3]?.label || "Loading..."} value={globalStats[3]?.value || "..."} change={globalStats[3]?.change || "..."} icon={ShoppingBag} color="bg-[var(--brand-green)]" />
+            <StatCard title={globalStats[0]?.label || "Members"} value={globalStats[0]?.value || "0"} change={globalStats[0]?.change || "0%"} icon={Users} color="bg-[var(--brand-red)]" />
+            <StatCard title={globalStats[1]?.label || "Chapters"} value={globalStats[1]?.value || "0"} change={globalStats[1]?.change || "0%"} icon={MapPin} color="bg-[var(--brand-gold)]" />
+            <StatCard title={globalStats[2]?.label || "Activity"} value={globalStats[2]?.value || "0"} change={globalStats[2]?.change || "0%"} icon={Activity} color="bg-stone-900" />
+            <StatCard title={globalStats[3]?.label || "Inventory"} value={globalStats[3]?.value || "0"} change={globalStats[3]?.change || "0%"} icon={ShoppingBag} color="bg-emerald-600" />
           </>
         )}
       </div>
 
       {/* Movement Pulse Report */}
-      <section className="animate-in fade-in slide-in-from-top-4 duration-1000">
+      <section className="mb-10">
         <PulseReport />
       </section>
 
@@ -233,14 +229,14 @@ export default function AdminDashboard() {
         {/* Main Intelligence Hub (Left/Middle Column) */}
         <div className="xl:col-span-2 space-y-8">
           {/* Growth Intelligence Visualization */}
-          <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
+          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
+                <CardTitle className="text-xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-[var(--brand-gold)]" />
                   Growth Intelligence
                 </CardTitle>
-                <CardDescription className="text-xs mt-1">Real-time member expansion telemetry across all regions.</CardDescription>
+                <CardDescription className="text-sm font-medium text-stone-400 mt-1">Real-time member expansion telemetry across all regions.</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="p-8 h-[350px]">
@@ -248,40 +244,38 @@ export default function AdminDashboard() {
                 <AreaChart data={growthData}>
                   <defs>
                     <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--brand-gold)" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="var(--brand-gold)" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f5f5f4" />
                   <XAxis 
                     dataKey="date" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fontWeight: 700, fill: '#a8a29e' }}
+                    tick={{ fontSize: 10, fontWeight: 600, fill: '#a8a29e' }}
                     dy={10}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fontWeight: 700, fill: '#a8a29e' }}
+                    tick={{ fontSize: 10, fontWeight: 600, fill: '#a8a29e' }}
                   />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: 'var(--brand-black)', 
+                      backgroundColor: '#1c1917', 
                       border: 'none', 
-                      borderRadius: '0', 
+                      borderRadius: '8px', 
                       color: 'white',
-                      fontSize: '10px',
-                      fontWeight: '900',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.1em'
+                      fontSize: '11px',
+                      fontWeight: '600'
                     }} 
                   />
                   <Area 
                     type="monotone" 
                     dataKey="count" 
-                    stroke="var(--brand-red)" 
-                    strokeWidth={3}
+                    stroke="#ce1126" 
+                    strokeWidth={2}
                     fillOpacity={1} 
                     fill="url(#colorGrowth)" 
                   />
@@ -291,13 +285,13 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Regional Impact Intelligence Hub */}
-          <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
+          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-8 border-b border-stone-100">
-              <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
+              <CardTitle className="text-xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-[var(--brand-gold)]" />
                 Regional Expansion Map
               </CardTitle>
-              <CardDescription className="text-xs mt-1">Geospatial visualization of movement density across Ghana's 16 regions.</CardDescription>
+              <CardDescription className="text-sm font-medium text-stone-400 mt-1">Geospatial visualization of movement density across Ghana's 16 regions.</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -314,30 +308,30 @@ export default function AdminDashboard() {
                 </div>
                 <div className="divide-y divide-stone-50 max-h-[500px] overflow-y-auto">
                   {regionalStats.map((region) => (
-                    <div key={region.region} className="p-6 hover:bg-stone-50/50 transition-all group">
+                    <div key={region.region} className="p-6 hover:bg-stone-50 transition-all group">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex items-center gap-2">
                           <div 
                             className="w-2 h-2 rounded-full" 
                             style={{ backgroundColor: region.color }} 
                           />
-                          <p className="text-[10px] font-black uppercase tracking-widest text-stone-900">{region.region}</p>
+                          <p className="text-xs font-bold text-stone-900 uppercase tracking-wide">{region.region}</p>
                         </div>
-                        <span className={cn("text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border", 
-                          region.performance === 'High' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                          region.performance === 'Medium' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-rose-50 text-rose-600 border-rose-100'
+                        <span className={cn("text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full", 
+                          region.performance === 'High' ? 'bg-emerald-50 text-emerald-600' : 
+                          region.performance === 'Medium' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
                         )}>
                           {region.performance}
                         </span>
                       </div>
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-xl font-black font-meta text-stone-900 leading-none">{region.memberCount.toLocaleString()}</p>
-                          <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Total Members</p>
+                          <p className="text-2xl font-bold text-stone-900 leading-none">{region.memberCount.toLocaleString()}</p>
+                          <p className="text-[10px] font-medium text-stone-400 uppercase tracking-widest mt-2">Total Members</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-black text-stone-600">{region.chapters}</p>
-                          <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Chapters</p>
+                          <p className="text-sm font-bold text-stone-600">{region.chapters}</p>
+                          <p className="text-[10px] font-medium text-stone-400 uppercase tracking-widest mt-1">Chapters</p>
                         </div>
                       </div>
                     </div>
@@ -348,57 +342,51 @@ export default function AdminDashboard() {
           </Card>
 
           {/* System Audit Intelligence Hub */}
-          <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
+          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
+                <CardTitle className="text-xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-[var(--brand-red)]" />
-                  System Audit Intelligence
+                  System Audit Feed
                 </CardTitle>
-                <CardDescription className="text-xs mt-1">High-fidelity tracking of all administrative operations.</CardDescription>
+                <CardDescription className="text-sm font-medium text-stone-400 mt-1">Real-time tracking of all administrative operations.</CardDescription>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">Live Audit Feed</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Live Stream</span>
               </div>
             </CardHeader>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-stone-50/50 border-b border-stone-100">
-                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Timestamp</th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Administrator</th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Action</th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Resource</th>
-                      <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Status</th>
+                    <tr className="bg-stone-50 border-b border-stone-100">
+                      <th className="p-4 text-[10px] font-bold uppercase tracking-widest text-stone-400">Timestamp</th>
+                      <th className="p-4 text-[10px] font-bold uppercase tracking-widest text-stone-400">Administrator</th>
+                      <th className="p-4 text-[10px] font-bold uppercase tracking-widest text-stone-400">Action</th>
+                      <th className="p-4 text-[10px] font-bold uppercase tracking-widest text-stone-400">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-stone-50">
+                  <tbody className="divide-y divide-stone-50 text-xs">
                     {auditLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-stone-50/50 transition-colors group">
-                        <td className="p-4">
-                          <p className="text-[10px] font-bold text-stone-400 whitespace-nowrap">
-                            {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                          </p>
+                      <tr key={log.id} className="hover:bg-stone-50 transition-colors">
+                        <td className="p-4 text-stone-500 font-medium">
+                          {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </td>
                         <td className="p-4">
                           <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-none bg-stone-100 flex items-center justify-center text-[8px] font-black">HQ</div>
-                            <span className="text-[10px] font-black text-stone-900 uppercase tracking-tight">{log.adminName}</span>
+                            <div className="w-6 h-6 rounded-md bg-stone-100 flex items-center justify-center text-[9px] font-bold">HQ</div>
+                            <span className="font-bold text-stone-900">{log.adminName}</span>
                           </div>
                         </td>
                         <td className="p-4">
-                          <span className="text-[10px] font-bold text-[var(--brand-black)] uppercase tracking-tight">{log.action}</span>
+                          <span className="font-medium text-stone-700">{log.action}</span>
                         </td>
-                        <td className="p-4">
-                          <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest">{log.resource}</span>
-                        </td>
-                        <td className="p-4">
-                          <span className={cn("px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border", 
-                            log.status === 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                            log.status === 'Warning' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
-                            'bg-rose-50 text-rose-600 border-rose-100'
+                        <td className="p-4 text-right">
+                          <span className={cn("px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full", 
+                            log.status === 'Success' ? 'bg-emerald-50 text-emerald-600' : 
+                            log.status === 'Warning' ? 'bg-amber-50 text-amber-600' : 
+                            'bg-rose-50 text-rose-600'
                           )}>
                             {log.status}
                           </span>
@@ -412,126 +400,117 @@ export default function AdminDashboard() {
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/admin/settings?tab=audit')}
-                  className="w-full h-12 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-black)] hover:text-white transition-all"
+                  className="w-full h-11 rounded-md border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-900 hover:text-white transition-all uppercase tracking-wider"
                 >
-                  Access Full Movement Audit Vault
+                  Access Full Audit Vault
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-        {/* Logistics Intelligence Hub */}
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white mt-8">
-          <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-[var(--brand-green)]" />
-                Logistics Intelligence
-              </CardTitle>
-              <CardDescription className="text-xs mt-1">Mobilization latency and regional supply chain efficiency.</CardDescription>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-xl font-black font-meta">3.2 Days</p>
-                <p className="text-[8px] font-black uppercase tracking-widest text-stone-400">Avg Mobilization Velocity</p>
+          {/* Logistics Intelligence Hub */}
+          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+            <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-emerald-600" />
+                  Logistics Intelligence
+                </CardTitle>
+                <CardDescription className="text-sm font-medium text-stone-400 mt-1">Mobilization latency and supply chain efficiency.</CardDescription>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 divide-x divide-y divide-stone-50">
-              {logisticsData.map((item) => (
-                <div key={item.region} className="p-6 hover:bg-stone-50/50 transition-colors">
-                  <div className="flex justify-between items-start mb-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">{item.region}</p>
-                    <span className={cn("text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border", 
-                      item.efficiency === 'High' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                      item.efficiency === 'Medium' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-rose-50 text-rose-600 border-rose-100'
-                    )}>
-                      {item.efficiency} Efficiency
-                    </span>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-2xl font-black font-meta text-stone-900 leading-none">{item.avgDispatchToDeliveryDays}d</p>
-                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Avg Delivery Time</p>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-stone-900">3.2 Days</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Avg Velocity</p>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-x divide-y divide-stone-50">
+                {logisticsData.slice(0, 4).map((item) => (
+                  <div key={item.region} className="p-6 hover:bg-stone-50 transition-colors">
+                    <div className="flex justify-between items-start mb-4">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">{item.region}</p>
+                      <span className={cn("text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full", 
+                        item.efficiency === 'High' ? 'bg-emerald-50 text-emerald-600' : 
+                        item.efficiency === 'Medium' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
+                      )}>
+                        {item.efficiency}
+                      </span>
                     </div>
-                    <div className="flex justify-between items-end">
-                      <div className="flex-1 mr-4">
-                        <div className="h-1 w-full bg-stone-50 overflow-hidden">
-                          <div 
-                            className="h-full bg-[var(--brand-green)]" 
-                            style={{ width: `${(1 / item.avgDispatchToDeliveryDays) * 100}%` }} 
-                          />
-                        </div>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-2xl font-bold text-stone-900 leading-none">{item.avgDispatchToDeliveryDays}d</p>
+                        <p className="text-[10px] font-medium text-stone-400 uppercase tracking-widest mt-2">Delivery Time</p>
                       </div>
-                      <span className="text-[10px] font-black text-stone-600">{item.totalDispatches} Shipments</span>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-stone-600">{item.totalDispatches}</p>
+                        <p className="text-[10px] font-medium text-stone-400 uppercase tracking-widest mt-1">Shipments</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Status & Quick Insights (Right Sidebar) */}
         <div className="space-y-8">
-          <Card className="rounded-none border-stone-200 shadow-sm">
+          <Card className="rounded-xl border-stone-200 shadow-sm bg-white">
             <CardHeader className="p-6 border-b border-stone-100">
-              <CardTitle className="text-xs font-black font-meta uppercase tracking-widest text-stone-400">System Status</CardTitle>
+              <CardTitle className="text-xs font-bold uppercase tracking-[0.2em] text-stone-400">System Status</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-stone-600">Database Engine</span>
-                <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">Operational</span>
+                <span className="px-2 py-1 text-[9px] font-bold uppercase bg-emerald-50 text-emerald-600 rounded-full">Operational</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-stone-600">Member API</span>
-                <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">99.9% Uptime</span>
+                <span className="px-2 py-1 text-[9px] font-bold uppercase bg-emerald-50 text-emerald-600 rounded-full">99.9% Up</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-stone-600">Merch Storefront</span>
-                <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">Active</span>
+                <span className="text-xs font-bold text-stone-600">Storefront</span>
+                <span className="px-2 py-1 text-[9px] font-bold uppercase bg-emerald-50 text-emerald-600 rounded-full">Active</span>
               </div>
-              <div className="pt-4 border-t border-stone-50">
-                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-2">Regional Traffic Heat</p>
-                <div className="h-2 w-full bg-stone-100 rounded-none overflow-hidden">
-                  <div className="h-full bg-[var(--brand-red)] w-3/4" />
+              <div className="pt-4 border-t border-stone-100">
+                <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">Regional Traffic</p>
+                <div className="h-1.5 w-full bg-stone-50 rounded-full overflow-hidden">
+                  <div className="h-full bg-[var(--brand-red)] w-3/4 rounded-full" />
                 </div>
-                <div className="flex justify-between mt-1.5">
-                  <span className="text-[9px] font-bold text-stone-400 uppercase">G. Accra</span>
-                  <span className="text-[9px] font-bold text-[var(--brand-red)] uppercase">Peak</span>
+                <div className="flex justify-between mt-2">
+                  <span className="text-[10px] font-bold text-stone-400">Accra</span>
+                  <span className="text-[10px] font-bold text-[var(--brand-red)]">Peak Flow</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="rounded-none border-stone-200 shadow-sm bg-white overflow-hidden">
+          <Card className="rounded-xl border-stone-200 shadow-sm bg-white">
             <CardHeader className="p-6 border-b border-stone-100">
-              <CardTitle className="text-xs font-black font-meta uppercase tracking-widest text-stone-400">Engagement Pulse</CardTitle>
+              <CardTitle className="text-xs font-bold uppercase tracking-[0.2em] text-stone-400">Engagement Pulse</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               {sentimentStats.map((stat) => (
-                <div key={stat.topic} className="space-y-2">
+                <div key={stat.topic} className="space-y-3">
                   <div className="flex justify-between items-end">
                     <div>
-                      <p className="text-[10px] font-black text-stone-900 uppercase tracking-tight">{stat.topic}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className={cn("text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5", 
+                      <p className="text-xs font-bold text-stone-900">{stat.topic}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={cn("text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-md", 
                           stat.sentiment === 'Positive' ? 'bg-emerald-50 text-emerald-600' : 
-                          stat.sentiment === 'Neutral' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
+                          stat.sentiment === 'Neutral' ? 'bg-stone-50 text-stone-400' : 'bg-rose-50 text-rose-600'
                         )}>
                           {stat.sentiment}
                         </span>
-                        <span className="text-[8px] font-bold text-stone-400 uppercase flex items-center gap-0.5">
-                          {stat.trend === 'Up' ? <TrendingUp className="w-2.5 h-2.5 text-emerald-500" /> : <Activity className="w-2.5 h-2.5 text-rose-500 rotate-180" />}
+                        <span className="text-[9px] font-bold text-stone-400 flex items-center gap-1">
+                          {stat.trend === 'Up' ? <TrendingUp className="w-2.5 h-2.5 text-emerald-500" /> : <Activity className="w-2.5 h-2.5 text-rose-500" />}
                           {stat.trend}
                         </span>
                       </div>
                     </div>
-                    <span className="text-sm font-black font-meta text-stone-900">{stat.score}%</span>
+                    <span className="text-base font-bold text-stone-900">{stat.score}%</span>
                   </div>
-                  <div className="h-1 w-full bg-stone-50 overflow-hidden">
+                  <div className="h-1 w-full bg-stone-50 rounded-full overflow-hidden">
                     <div 
                       className="h-full transition-all duration-1000" 
                       style={{ 
@@ -542,41 +521,34 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               ))}
-              <div className="pt-2">
-                <Button variant="ghost" className="w-full text-[9px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-black)] transition-colors">
-                  Detailed Sentiment Audit <ChevronRight className="w-3 h-3 ml-1" />
-                </Button>
-              </div>
             </CardContent>
           </Card>
 
-          <Card className="rounded-none border-stone-200 shadow-sm bg-[var(--brand-black)] text-white overflow-hidden relative group">
-            <Globe className="absolute -bottom-8 -right-8 w-40 h-40 text-white/5 group-hover:scale-110 transition-transform duration-1000" />
-            <CardHeader className="p-8 pb-4 relative z-10">
-              <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-500 flex items-center gap-2">
-                <Zap className="w-3.5 h-3.5 text-[var(--brand-red)]" /> System Pulse
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-8 pt-0 space-y-6 relative z-10">
+          <Card className="rounded-xl border-stone-200 shadow-sm bg-stone-900 text-white overflow-hidden relative group p-8">
+            <Globe className="absolute -bottom-10 -right-10 w-48 h-48 text-white/5 group-hover:scale-110 transition-transform duration-1000" />
+            <div className="relative z-10 space-y-6">
+              <div className="flex items-center gap-2 text-stone-500 text-[10px] font-bold uppercase tracking-[0.3em]">
+                <Zap className="w-4 h-4 text-[var(--brand-red)]" /> System Pulse
+              </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-black font-meta tracking-tighter">99.8%</p>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-[var(--brand-red)] mt-1">Operational Capacity</p>
+                  <p className="text-4xl font-bold tracking-tight">99.8%</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--brand-red)] mt-2">Operational</p>
                 </div>
-                <div className="w-12 h-12 flex items-center justify-center border border-white/10 relative">
-                  <div className="absolute inset-0 border border-[var(--brand-red)] animate-ping opacity-20" />
-                  <Activity className="w-5 h-5 text-white/40" />
+                <div className="w-12 h-12 flex items-center justify-center border border-white/10 rounded-xl relative">
+                  <div className="absolute inset-0 border border-[var(--brand-red)] animate-ping opacity-20 rounded-xl" />
+                  <Activity className="w-6 h-6 text-white/40" />
                 </div>
               </div>
-              <div className="pt-4 border-t border-white/5">
-                <p className="text-[9px] font-bold text-stone-500 uppercase tracking-widest">Active Data Streams</p>
-                <div className="mt-4 flex gap-1 h-8 items-end">
+              <div className="pt-6 border-t border-white/10">
+                <p className="text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-4">Active Telemetry</p>
+                <div className="flex gap-1.5 h-10 items-end">
                   {[40, 70, 45, 90, 65, 80, 50, 85, 30, 60].map((h, i) => (
-                    <div key={i} className="flex-1 bg-[var(--brand-red)] opacity-50 hover:opacity-100 transition-all duration-500" style={{ height: `${h}%` }} />
+                    <div key={i} className="flex-1 bg-[var(--brand-red)]/40 hover:bg-[var(--brand-red)] transition-all duration-500 rounded-t-sm" style={{ height: `${h}%` }} />
                   ))}
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
       </div>

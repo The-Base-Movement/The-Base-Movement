@@ -47,6 +47,7 @@ import AdminSettings from './pages/admin/Settings'
 import AdminMemberVerification from './pages/admin/MemberVerification'
 import AdminRegions from './pages/admin/Regions'
 import AdminBlogs from './pages/admin/Blogs'
+import AdminMediaLibrary from './pages/admin/MediaLibrary'
 import AdminLeadershipHub from './pages/admin/LeadershipHub'
 import AdminDonations from './pages/admin/DonationVerification'
 import AdminAdministrators from './pages/admin/Administrators'
@@ -150,6 +151,7 @@ export default function App() {
           <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin/regions" element={<AdminRegions />} />
           <Route path="/admin/blogs" element={<AdminBlogs />} />
+          <Route path="/admin/media" element={<AdminMediaLibrary />} />
           <Route path="/admin/broadcasts" element={<AdminBroadcasts />} />
           <Route path="/admin/administrators" element={<AdminAdministrators />} />
           <Route path="/admin/orders" element={<AdminOrders />} />

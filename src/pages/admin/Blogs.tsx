@@ -9,7 +9,8 @@ import {
   Eye,
   Star,
   Calendar,
-  Clock
+  Clock,
+  Upload
 } from 'lucide-react'
 import { 
   Card, 
@@ -36,6 +37,7 @@ import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { Editor } from '@tinymce/tinymce-react'
 import { adminService } from '@/services/adminService'
+import { contentService } from '@/services/contentService'
 import type { BlogPost } from '@/types/admin'
 import { useToast } from '@/hooks/use-toast'
 
@@ -76,7 +78,11 @@ export default function AdminBlogs() {
       publishedAt: new Date().toISOString(),
       tags: [],
       seoTitle: '',
-      metaDescription: ''
+      metaDescription: '',
+      authorName: '',
+      authorRole: '',
+      authorImage: '',
+      authorBio: ''
     }
   })
 
@@ -136,7 +142,11 @@ export default function AdminBlogs() {
         publishedAt: post.publishedAt,
         tags: post.tags,
         seoTitle: post.seoTitle || '',
-        metaDescription: post.metaDescription || ''
+        metaDescription: post.metaDescription || '',
+        authorName: post.authorName || '',
+        authorRole: post.authorRole || '',
+        authorImage: post.authorImage || '',
+        authorBio: post.authorBio || ''
       })
     } else {
       setEditPost(null)
@@ -153,7 +163,11 @@ export default function AdminBlogs() {
         publishedAt: new Date().toISOString(),
         tags: [],
         seoTitle: '',
-        metaDescription: ''
+        metaDescription: '',
+        authorName: '',
+        authorRole: '',
+        authorImage: '',
+        authorBio: ''
       })
     }
     setCurrentView('edit')
@@ -310,7 +324,13 @@ export default function AdminBlogs() {
                         content_style: 'body { font-family: "Inter", sans-serif; font-size:16px; color: #1c1917; line-height: 1.75; padding: 3rem; background: white; }',
                         skin: 'oxide',
                         content_css: 'default',
-                        border_width: 0
+                        border_width: 0,
+                        images_upload_handler: async (blobInfo: { blob: () => Blob; filename: () => string }) => {
+                          const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type });
+                          const url = await contentService.uploadImage(file, 'editor-content');
+                          if (!url) throw new Error('Upload failed');
+                          return url;
+                        }
                       }}
                     />
                   </div>
@@ -359,14 +379,39 @@ export default function AdminBlogs() {
                 </div>
 
                 <div className="space-y-3 pt-6 border-t border-stone-100">
-                  <Label className="text-sm font-bold text-stone-800">Featured Image URL</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-bold text-stone-800">Featured Image URL</Label>
+                    <div className="relative">
+                      <input 
+                        type="file" 
+                        id="blog-image-upload" 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          const url = await contentService.uploadImage(file, 'blog-images')
+                          if (url) {
+                            setFormData({...formData, imageUrl: url})
+                          }
+                        }}
+                      />
+                      <Label 
+                        htmlFor="blog-image-upload" 
+                        className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-green)] hover:text-emerald-700 cursor-pointer flex items-center gap-1.5 transition-colors"
+                      >
+                        <Upload className="w-3 h-3" />
+                        Upload Image
+                      </Label>
+                    </div>
+                  </div>
                   <Input 
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
                     placeholder="https://..." 
                     className="rounded-md border-stone-200 h-11 text-sm"
                   />
-                  <p className="text-xs font-medium text-stone-500">Provide a direct, valid HTTPS link to an image.</p>
+                  <p className="text-xs font-medium text-stone-500">Provide a direct URL or upload a file.</p>
                 </div>
 
                 <div className="space-y-3 pt-6 border-t border-stone-100">
@@ -378,6 +423,75 @@ export default function AdminBlogs() {
                     className="rounded-md border-stone-200 h-11 text-sm"
                   />
                   <p className="text-xs font-medium text-stone-500">Suggested format: "5 min read"</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-stone-900 text-sm">Author Information</h3>
+              </div>
+              <CardContent className="p-8 space-y-6">
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Author Name</Label>
+                  <Input 
+                    value={formData.authorName}
+                    onChange={(e) => setFormData({...formData, authorName: e.target.value})}
+                    placeholder="e.g. John Doe" 
+                    className="rounded-md border-stone-200 h-11 text-sm"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Author Role</Label>
+                  <Input 
+                    value={formData.authorRole}
+                    onChange={(e) => setFormData({...formData, authorRole: e.target.value})}
+                    placeholder="e.g. Communications Director" 
+                    className="rounded-md border-stone-200 h-11 text-sm"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-bold text-stone-800">Author Image URL</Label>
+                    <div className="relative">
+                      <input 
+                        type="file" 
+                        id="author-image-upload" 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          const url = await contentService.uploadImage(file, 'author-images')
+                          if (url) {
+                            setFormData({...formData, authorImage: url})
+                          }
+                        }}
+                      />
+                      <Label 
+                        htmlFor="author-image-upload" 
+                        className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-green)] hover:text-emerald-700 cursor-pointer flex items-center gap-1.5 transition-colors"
+                      >
+                        <Upload className="w-3 h-3" />
+                        Upload Photo
+                      </Label>
+                    </div>
+                  </div>
+                  <Input 
+                    value={formData.authorImage}
+                    onChange={(e) => setFormData({...formData, authorImage: e.target.value})}
+                    placeholder="https://..." 
+                    className="rounded-md border-stone-200 h-11 text-sm"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-stone-800">Author Bio</Label>
+                  <Textarea 
+                    value={formData.authorBio}
+                    onChange={(e) => setFormData({...formData, authorBio: e.target.value})}
+                    placeholder="Short professional bio..." 
+                    className="rounded-md border-stone-200 min-h-[80px] text-sm leading-relaxed"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -497,22 +611,23 @@ export default function AdminBlogs() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--brand-black)] tracking-tight">Blog Posts</h1>
-          <p className="text-stone-500 text-sm mt-1">
-            Manage and publish articles for the movement insights feed.
+          <h1 className="text-4xl font-bold text-stone-900 tracking-tight">Blog Intelligence</h1>
+          <p className="text-stone-500 text-base mt-2 max-w-xl">
+            Draft and publish strategic articles for the national movement insights feed.
           </p>
         </div>
         <Button 
           onClick={() => handleEditPost()}
-          className="h-11 px-6 text-sm font-bold bg-[var(--brand-green)] text-white hover:bg-emerald-700 flex items-center gap-2 rounded-lg shadow-sm"
+          className="h-11 px-6 text-xs font-bold bg-stone-900 text-white hover:bg-stone-800 flex items-center gap-2 rounded-md transition-all active:scale-95 uppercase tracking-wider"
         >
           <Plus className="w-4 h-4" /> Create New Post
         </Button>
       </div>
+
 
       {/* Control Bar */}
       <Card className="rounded-xl border-stone-200 bg-white p-2 shadow-sm">
