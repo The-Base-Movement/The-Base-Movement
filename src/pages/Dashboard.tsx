@@ -2,9 +2,14 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { WelcomeModal } from '@/components/WelcomeModal'
 import { ShareModal } from '@/components/ShareModal'
-import { adminService, type Notification, type Achievement, type LeaderboardEntry } from '@/services/adminService'
-import { Trophy, Medal, TrendingUp, Award } from 'lucide-react'
+import { adminService, type Notification, type Achievement, type LeaderboardEntry, type FieldAction } from '@/services/adminService'
+import { Trophy, Medal, TrendingUp, Award, MapPin, Navigation, Calendar, ShieldCheck, Users } from 'lucide-react'
 import { MovementRoadmap } from '@/components/MovementRoadmap'
+import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/Button'
 
 interface GrowthStats {
   joined_last_hour: number
@@ -37,6 +42,9 @@ export default function Dashboard() {
   const [totalPoints, setTotalPoints] = useState(0)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [shareData, setShareData] = useState({ title: '', url: '' })
+  const [fieldActions, setFieldActions] = useState<FieldAction[]>([])
+  const [checkingIn, setCheckingIn] = useState<string | null>(null)
+  const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null)
 
   const handleShare = () => {
     setShareData({
@@ -82,6 +90,10 @@ export default function Dashboard() {
           setLeaderboard(regionLeaderboard)
           setTotalPoints(userPoints)
           setAllAvailableAchievements(allPossible)
+
+          // Fetch Active Field Actions
+          const activeActions = await adminService.getFieldActions()
+          setFieldActions(activeActions.filter(a => a.status === 'Live' || a.status === 'Upcoming'))
         }
       }
       
@@ -101,6 +113,58 @@ export default function Dashboard() {
 
     fetchData()
   }, [])
+
+  const handleCheckIn = async (action: FieldAction) => {
+    setCheckingIn(action.id)
+    
+    // 1. Get User Location
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser.')
+      setCheckingIn(null)
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords
+      setUserLocation({ lat: latitude, lng: longitude })
+
+      try {
+        // In a real production app, we would verify the distance to action.location_lat/lng here
+        // For now, we'll proceed with the signal dispatch
+        const regNo = localStorage.getItem('userRegNo')
+        const profile = await adminService.getMemberProfile(regNo || '')
+        
+        if (!profile) throw new Error('Profile not found')
+
+        const { error } = await supabase
+          .from('field_action_attendance')
+          .insert([{
+            action_id: action.id,
+            user_id: profile.id,
+            check_in_lat: latitude,
+            check_in_lng: longitude,
+            is_verified: false, // Admin verifies later, or auto-verify if distance < radius
+            metadata: { platform: 'web_dashboard' }
+          }])
+
+        if (error) {
+          if (error.code === '23505') toast.error('You have already signaled attendance for this action.')
+          else throw error
+        } else {
+          toast.success(`Tactical signal dispatched from ${action.location_name}. Verification pending.`)
+        }
+      } catch (err) {
+        console.error('[GEOLOCATION] Signal failed:', err)
+        toast.error('Tactical signal failed to reach HQ.')
+      } finally {
+        setCheckingIn(null)
+      }
+    }, (error) => {
+      console.error('[GEOLOCATION] Access denied:', error)
+      toast.error('Please enable location services to check-in.')
+      setCheckingIn(null)
+    })
+  }
 
   if (loading) {
     return (
@@ -155,6 +219,84 @@ export default function Dashboard() {
             </h1>
             <p className="text-muted-gray mt-2 mb-0">Growing collective impact nationwide</p>
           </div>
+        </div>
+      </section>
+
+      {/* Section 2: Active Field Mobilization (Tactical Activation) */}
+      <section className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-on-surface flex items-center m-0">
+            <span className="material-symbols-outlined mr-2 text-[var(--brand-red)]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>stadium</span>
+            Active Field Mobilization
+          </h2>
+          <div className="flex items-center gap-4">
+            {userLocation && (
+              <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-100 animate-in fade-in slide-in-from-right-4 duration-500">
+                <ShieldCheck className="w-3 h-3 text-[var(--brand-green)]" />
+                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-[var(--brand-green)]">Signal Active: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <span className="flex h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Live National Signal</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {fieldActions.length === 0 ? (
+            <div className="lg:col-span-2 bg-surface-warm border-2 border-dashed border-stone-200 p-12 text-center rounded-sm">
+              <Calendar className="w-8 h-8 text-stone-200 mx-auto mb-3" />
+              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em]">No Active Field Actions Detected</p>
+              <p className="text-[9px] text-stone-300 font-bold uppercase mt-1">Check back later for national rallies and town halls.</p>
+            </div>
+          ) : (
+            fieldActions.map((action) => (
+              <div key={action.id} className="bg-white border border-stone-200 shadow-sm rounded-sm overflow-hidden flex flex-col md:flex-row group hover:border-stone-300 transition-all">
+                <div className="w-full md:w-32 bg-stone-900 flex flex-col items-center justify-center p-6 text-white border-b md:border-b-0 md:border-r border-white/5">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-stone-500 mb-1">{format(new Date(action.start_time), 'MMM')}</span>
+                  <span className="text-3xl font-black italic tracking-tighter">{format(new Date(action.start_time), 'dd')}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--brand-red)] mt-2">{format(new Date(action.start_time), 'HH:mm')}</span>
+                </div>
+                <div className="flex-1 p-6 relative">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className={cn(
+                      "text-[8px] font-black uppercase tracking-widest px-2 py-0.5",
+                      action.status === 'Live' ? "bg-red-100 text-red-600" : "bg-stone-100 text-stone-500"
+                    )}>
+                      {action.status}
+                    </span>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">{action.type}</span>
+                  </div>
+                  <h3 className="text-sm font-black uppercase tracking-tight text-stone-900 mb-2 leading-tight">{action.title}</h3>
+                  <div className="flex items-center gap-4 text-stone-400 mb-6">
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="w-3 h-3" />
+                      <span className="text-[9px] font-bold uppercase tracking-widest truncate max-w-[120px]">{action.location_name}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Users className="w-3 h-3" />
+                      <span className="text-[9px] font-bold uppercase tracking-widest">{action.target_attendance} Target</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-stone-50">
+                    <div className="flex items-center gap-2">
+                      <Navigation className="w-3.5 h-3.5 text-stone-300" />
+                      <span className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">{action.geofence_radius_meters}m Radius</span>
+                    </div>
+                    <Button 
+                      onClick={() => handleCheckIn(action)}
+                      className="bg-black text-white hover:bg-stone-800 rounded-none h-9 px-6 text-[9px] font-black uppercase tracking-widest shadow-lg"
+                      disabled={checkingIn === action.id}
+                    >
+                      {checkingIn === action.id ? 'Signaling...' : 'Field Check-in'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 

@@ -186,10 +186,58 @@ export interface ChapterApplication {
 export interface Achievement {
   id: string
   name: string
-  description: string
   icon: string
-  category: 'Mobilization' | 'Recruitment' | 'Consistency' | 'Events' | 'Leadership'
+  description: string
   points_awarded: number
+  category: string
+  points_required: number
+}
+
+export interface LogisticsVelocity {
+  region: string
+  total_orders: number
+  avg_dispatch_hours: number
+  avg_delivery_hours: number
+  fulfillment_rate: number
+}
+
+export interface InventoryAlert {
+  id: string
+  name: string
+  stock_quantity: number
+  low_stock_threshold: number
+  category: string
+}
+
+export interface FieldAction {
+  id: string
+  title: string
+  description: string
+  type: 'Rally' | 'Town Hall' | 'March' | 'Training'
+  status: 'Upcoming' | 'Live' | 'Completed' | 'Cancelled'
+  location_name: string
+  location_lat?: number
+  location_lng?: number
+  geofence_radius_meters: number
+  start_time: string
+  end_time?: string
+  target_attendance: number
+  actual_attendance?: number
+  region: string
+  constituency: string
+  created_at: string
+}
+
+export interface RallyAttendance {
+  id: string
+  action_id: string
+  user_id: string
+  user_name?: string
+  check_in_time: string
+  is_verified: boolean
+  points_awarded: number
+  check_in_lat?: number
+  check_in_lng?: number
 }
 
 export interface ChapterLeaderboard {
@@ -2513,6 +2561,98 @@ class AdminService {
     } catch (error) {
       console.error('[DATABASE] Failed to fetch member points:', error)
       return 0
+    }
+  }
+
+  async getLogisticsVelocity(): Promise<LogisticsVelocity[]> {
+    try {
+      const { data, error } = await supabase
+        .from('logistics_velocity_telemetry')
+        .select('*')
+      if (error) throw error
+      return (data || []) as LogisticsVelocity[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch logistics velocity:', error)
+      return []
+    }
+  }
+
+  async getInventoryAlerts(): Promise<InventoryAlert[]> {
+    try {
+      const { data: allItems, error: fetchError } = await supabase
+        .from('store_inventory')
+        .select('id, name, stock_quantity, low_stock_threshold, category')
+      
+      if (fetchError) throw fetchError
+      return (allItems || []).filter(item => 
+        item.stock_quantity <= (item.low_stock_threshold || 10)
+      ) as InventoryAlert[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch inventory alerts:', error)
+      return []
+    }
+  }
+
+  async getFieldActions(): Promise<FieldAction[]> {
+    try {
+      const { data, error } = await supabase
+        .from('field_actions')
+        .select('*, field_action_attendance(count)')
+        .order('start_time', { ascending: false })
+      
+      if (error) throw error
+      return (data || []).map(action => ({
+        ...action,
+        actual_attendance: action.field_action_attendance?.[0]?.count || 0
+      })) as FieldAction[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch field actions:', error)
+      return []
+    }
+  }
+
+  async getFieldActionAttendance(actionId: string): Promise<RallyAttendance[]> {
+    try {
+      const { data, error } = await supabase
+        .from('field_action_attendance')
+        .select('*, users(full_name)')
+        .eq('action_id', actionId)
+      
+      if (error) throw error
+      return (data || []).map(item => ({
+        ...item,
+        user_name: item.users?.full_name
+      })) as RallyAttendance[]
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch rally attendance:', error)
+      return []
+    }
+  }
+
+  async createFieldAction(action: Partial<FieldAction>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('field_actions')
+        .insert([action])
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to create field action:', error)
+      return false
+    }
+  }
+
+  async verifyRallyAttendance(attendanceId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('field_action_attendance')
+        .update({ is_verified: true })
+        .eq('id', attendanceId)
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to verify rally attendance:', error)
+      return false
     }
   }
 }

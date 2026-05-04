@@ -53,6 +53,8 @@ import AdminOrders from './pages/admin/Orders'
 import AdminChapterHub from './pages/admin/ChapterLeadHub'
 import AdminFieldDirectives from './pages/admin/FieldDirectives'
 import AdminMobilizationMetrics from './pages/admin/MobilizationMetrics'
+import AdminLogisticsIntelligence from './pages/admin/LogisticsIntelligence'
+import AdminRallyCommand from './pages/admin/RallyCommand'
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -126,7 +128,9 @@ export default function App() {
           <Route path="leadership" element={<AdminLeadershipHub />} />
           <Route path="chapter-hub" element={<AdminChapterHub />} />
           <Route path="directives" element={<AdminFieldDirectives />} />
-          <Route path="metrics" element={<AdminMobilizationMetrics />} />
+          <Route path="mobilization-metrics" element={<AdminMobilizationMetrics />} />
+          <Route path="logistics-intelligence" element={<AdminLogisticsIntelligence />} />
+          <Route path="rally-command" element={<AdminRallyCommand />} />
           <Route path="donations" element={<AdminDonations />} />
           <Route path="/admin/members" element={<AdminMembers />} />
           <Route path="/admin/verification" element={<AdminMemberVerification />} />
