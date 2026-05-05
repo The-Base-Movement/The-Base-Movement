@@ -15,7 +15,8 @@ import {
   ArrowUpDown,
   Download,
   X,
-  Trash
+  Trash,
+  MapPin
 } from 'lucide-react'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { logisticsService } from '@/services/logisticsService'
