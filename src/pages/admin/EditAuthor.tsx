@@ -133,7 +133,7 @@ export default function AdminEditAuthor() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900 font-outfit">
+          <h1 className="text-3xl font-bold tracking-tight text-stone-900 font-meta">
               {isEditing ? 'Edit Editorial Profile' : 'New Editorial Profile'}
             </h1>
             <p className="text-stone-500 text-sm">
