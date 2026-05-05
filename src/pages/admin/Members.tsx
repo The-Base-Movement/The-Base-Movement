@@ -393,15 +393,17 @@ export default function MembersList() {
             <div className="flex items-center gap-2 w-full md:w-auto p-1 bg-stone-50/50 md:bg-transparent rounded-xl md:rounded-none">
               <div className="h-8 w-px bg-stone-200 mx-2 hidden md:block" />
               
-              <div className="flex flex-col md:flex-row gap-1">
-                <span className="text-[9px] font-bold text-stone-400 px-2 md:hidden">Filters</span>
-                <Button variant="ghost" className="flex-1 md:flex-none h-10 px-4 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-white hover:shadow-sm transition-all text-[11px] font-medium tracking-wide">
-                  <MapPin className="w-4 h-4 mr-2 text-stone-300" /> All regions
-                </Button>
-                
-                <Button variant="ghost" className="flex-1 md:flex-none h-10 px-4 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-white hover:shadow-sm transition-all text-[11px] font-medium tracking-wide">
-                  <ShieldCheck className="w-4 h-4 mr-2 text-stone-300" /> All statuses
-                </Button>
+              <div className="flex flex-col w-full md:w-auto">
+                <span className="text-[9px] font-bold text-stone-400 px-2 md:hidden mb-1">Quick Filters</span>
+                <div className="flex flex-row gap-2">
+                  <Button variant="ghost" className="flex-1 md:flex-none h-10 px-3 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-white hover:shadow-sm transition-all text-[10px] font-medium tracking-wide border border-stone-100 md:border-none">
+                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-stone-300" /> Origins
+                  </Button>
+                  
+                  <Button variant="ghost" className="flex-1 md:flex-none h-10 px-3 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-white hover:shadow-sm transition-all text-[10px] font-medium tracking-wide border border-stone-100 md:border-none">
+                    <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-stone-300" /> Statuses
+                  </Button>
+                </div>
               </div>
 
               {(searchTerm !== '') && (
