@@ -68,7 +68,7 @@ export default function AdminAuthors() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-stone-900 mb-2 font-outfit">Author Directory</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-stone-900 mb-2 font-meta">Author Directory</h1>
           <p className="text-stone-500 text-sm max-w-xl">
             Manage the official editorial profiles, biographies, and access credentials for the movement's content creators.
           </p>

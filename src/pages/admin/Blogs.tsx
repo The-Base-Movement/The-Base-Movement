@@ -333,7 +333,7 @@ export default function AdminBlogs() {
                         toolbar_sticky_offset: 100,
                         plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
                         toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                        content_style: 'body { font-family: "Inter", sans-serif; font-size:16px; color: #1c1917; line-height: 1.75; padding: 3rem; background: white; }',
+                        content_style: 'body { font-family: "Public Sans", sans-serif; font-size:16px; color: #1c1917; line-height: 1.75; padding: 3rem; background: white; }',
                         skin: 'oxide',
                         content_css: 'default',
                         border_width: 0,
