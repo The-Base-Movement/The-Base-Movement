@@ -132,8 +132,22 @@ export default function TrashPage() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 mb-8 bg-stone-100 p-1.5 rounded-2xl w-fit border border-stone-200">
+      {/* Mobile Tab Dropdown */}
+      <div className="lg:hidden mb-8">
+        <select
+          value={activeTab}
+          onChange={(e) => setActiveTab(e.target.value as TrashTab)}
+          className="w-full h-12 bg-white border border-stone-200 rounded-xl px-4 text-sm font-bold focus:border-stone-900 outline-none shadow-sm"
+        >
+          <option value="blogs">Blog Posts ({blogs.length})</option>
+          <option value="products">Inventory Items ({products.length})</option>
+          <option value="media">Media Assets ({media.length})</option>
+          <option value="authors">Editorial Authors ({authors.length})</option>
+        </select>
+      </div>
+
+      {/* Tabs (Desktop Only) */}
+      <div className="hidden lg:flex items-center gap-2 mb-8 bg-stone-100 p-1.5 rounded-2xl w-fit border border-stone-200">
         <button
           onClick={() => setActiveTab('blogs')}
           className={cn(
