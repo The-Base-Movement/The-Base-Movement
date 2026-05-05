@@ -346,15 +346,15 @@ export default function LogisticsIntelligence() {
 
       {/* 📍 Supply Chain Map (Placeholder for high-fidelity visualization) */}
       <Card className="rounded-xl border-stone-200 shadow-sm bg-white overflow-hidden p-0">
-        <div className="bg-stone-900 p-8 flex items-center justify-between">
+        <div className="bg-stone-900 p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
-            <h3 className="text-white text-xl font-black normal-case font-meta">National supply chain map</h3>
-            <p className="text-[10px] font-bold normal-case text-stone-400 mt-1">Real-time visualization of material flow across the 16 regions.</p>
+            <h3 className="text-white text-xl font-black normal-case font-meta leading-tight">National supply chain map</h3>
+            <p className="text-[10px] font-bold normal-case text-stone-400 mt-2">Real-time visualization of material flow across the 16 regions.</p>
           </div>
           <Button 
             variant="outline" 
             onClick={() => toast.success('Initializing high-fidelity enterprise visualization protocol...')}
-            className="bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-lg h-12 px-6 font-bold text-[10px] normal-case shadow-sm"
+            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-lg h-12 px-8 font-bold text-[10px] normal-case shadow-sm transition-all"
           >
             <Map className="w-4 h-4 mr-2" /> Enterprise view
           </Button>

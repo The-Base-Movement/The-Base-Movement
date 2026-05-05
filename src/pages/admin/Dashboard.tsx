@@ -59,22 +59,22 @@ function SkeletonCard() {
 // Operational Stat Card Component
 function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
   return (
-    <Card className="rounded-xl border-stone-200 shadow-sm transition-all overflow-hidden bg-white">
-      <CardContent className="p-5">
-        <div className="flex justify-between items-start">
-          <div className="space-y-1">
-            <p className="text-[11px] font-bold text-stone-500 normal-case">{title}</p>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-2xl font-bold text-stone-900 tabular-nums">{value}</h3>
+    <Card className="rounded-xl border-stone-200 shadow-sm transition-all overflow-hidden bg-white hover:border-stone-300">
+      <CardContent className="p-4 sm:p-5">
+        <div className="flex justify-between items-start gap-4">
+          <div className="space-y-1.5 flex-1 min-w-0">
+            <p className="text-[10px] sm:text-[11px] font-bold text-stone-500 normal-case truncate">{title}</p>
+            <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-stone-900 tabular-nums truncate">{value}</h3>
               <span className={cn(
-                "text-[10px] font-bold flex items-center gap-0.5",
+                "text-[9px] sm:text-[10px] font-bold flex items-center gap-0.5 whitespace-nowrap",
                 change.startsWith('+') ? "text-emerald-600" : "text-stone-400"
               )}>
                 {change}
               </span>
             </div>
           </div>
-          <div className={cn("w-8 h-8 flex items-center justify-center rounded-lg bg-stone-50", color.replace('bg-', 'text-'))}>
+          <div className={cn("w-8 h-8 shrink-0 flex items-center justify-center rounded-lg bg-stone-50", color.replace('bg-', 'text-'))}>
             <Icon className="w-4 h-4" />
           </div>
         </div>
@@ -239,7 +239,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {isLoading ? (
           <>
             <SkeletonCard />
