@@ -114,7 +114,8 @@ class AuthService {
     }
   }
 
-  async updateProfile(updates: { full_name?: string; avatar_url?: string }): Promise<void> {
+  async updateProfile(updates: { full_name?: string; avatar_url?: string; phone?: string }): Promise<void> {
+
     const { error } = await supabase.auth.updateUser({
       data: updates
     });

@@ -89,23 +89,7 @@ class AdminService {
   private static instance: AdminService
   private currentUser: AdminUser | null = null
 
-  private constructor() {
-    this.currentUser = {
-      id: 'USR-001',
-      email: 'admin@thebase.gh',
-      name: 'System Administrator',
-      role: 'SUPER_ADMIN',
-      permissions: [
-        { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
-        { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
-        { action: 'MANAGE_POLLS', resource: 'POLLS' },
-        { action: 'MANAGE_INVENTORY', resource: 'STORE' },
-        { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
-        { action: 'APPOINT_LEAD', resource: 'CHAPTERS' },
-        { action: 'MANAGE_BLOGS', resource: 'BLOGS' }
-      ]
-    }
-  }
+  private constructor() {}
 
   public static getInstance(): AdminService {
     if (!AdminService.instance) {
@@ -114,7 +98,29 @@ class AdminService {
     return AdminService.instance
   }
 
+  async initialize(): Promise<AdminUser | null> {
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      
+      if (authError || !user) {
+        this.currentUser = null
+        return null
+      }
+
+      const adminData = await this.getAdminData(user.id)
+      this.currentUser = adminData
+      return adminData
+    } catch (error) {
+      console.error('[ADMIN SERVICE] Initialization failed:', error)
+      this.currentUser = null
+      return null
+    }
+  }
+
+
+
   public can(action: AdminPermission['action'], resource: AdminPermission['resource']): boolean {
+
     if (!authService.isAuthenticated()) return false
     if (!this.currentUser) return false
     if (this.currentUser.role === 'SUPER_ADMIN') return true
@@ -180,6 +186,14 @@ class AdminService {
 
   async getCountries(): Promise<{ name: string; dialing_code: string; is_diaspora: boolean }[]> {
     return memberService.getCountries()
+  }
+
+  async deleteMember(id: string): Promise<boolean> {
+    const success = await memberService.deleteMember(id)
+    if (success) {
+      await this.logAction('DELETE_MEMBER', `MEMBERS/${id}`, 'Warning')
+    }
+    return success
   }
 
   // --- Chapter Operations ---
@@ -584,19 +598,105 @@ class AdminService {
     return success
   }
 
-  async getAdminData(userId: string) {
+  async getAdminData(userId: string): Promise<AdminUser | null> {
     const { data, error } = await supabase
       .from('admins')
-      .select('*')
+      .select(`
+        *,
+        users!admins_id_fkey (
+          full_name,
+          email,
+          phone_number,
+          avatar_url
+        )
+      `)
       .eq('id', userId)
       .maybeSingle();
 
-    if (error) {
+    if (error || !data) {
       console.error('[DATABASE] Error fetching admin data:', error);
       return null;
     }
-    return data;
+
+    interface DBAdminResponse {
+      id: string
+      role: string
+      permissions: {
+        can_manage_members?: boolean
+        can_manage_chapters?: boolean
+        can_manage_polls?: boolean
+        can_manage_store?: boolean
+        can_view_audit_logs?: boolean
+        can_post_blog?: boolean
+        can_manage_donations?: boolean
+      }
+      assigned_region: string | null
+      users: {
+        full_name: string
+        email: string
+        phone_number: string
+        avatar_url: string
+      } | {
+        full_name: string
+        email: string
+        phone_number: string
+        avatar_url: string
+      }[] | null
+    }
+
+    const admin = data as unknown as DBAdminResponse;
+    const userProfile = Array.isArray(admin.users) ? admin.users[0] : admin.users;
+
+    // Map database JSON permissions to the AdminPermission[] format
+    const dbPermissions = admin.permissions || {};
+    const permissions: AdminPermission[] = [];
+
+    if (dbPermissions.can_manage_members) {
+      permissions.push({ action: 'VERIFY_MEMBER', resource: 'MEMBERS' });
+    }
+    if (dbPermissions.can_manage_chapters) {
+      permissions.push({ action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' });
+    }
+    if (dbPermissions.can_manage_polls) {
+      permissions.push({ action: 'MANAGE_POLLS', resource: 'POLLS' });
+    }
+    if (dbPermissions.can_manage_store) {
+      permissions.push({ action: 'MANAGE_INVENTORY', resource: 'STORE' });
+    }
+    if (dbPermissions.can_view_audit_logs) {
+      permissions.push({ action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' });
+    }
+    if (dbPermissions.can_post_blog) {
+      permissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' });
+    }
+    if (dbPermissions.can_manage_donations) {
+      permissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' });
+    }
+
+    // Normalize role string to match AdminRole type exactly
+    let role: AdminRole = 'VERIFIER';
+    const dbRole = admin.role?.toLowerCase() || '';
+    if (dbRole.includes('super')) role = 'SUPER_ADMIN';
+    else if (dbRole.includes('regional')) role = 'REGIONAL_DIRECTOR';
+    else if (dbRole.includes('leader') || dbRole.includes('constituency')) role = 'CONSTITUENCY_LEAD';
+
+
+    return {
+      id: admin.id,
+      email: userProfile?.email || '',
+      name: userProfile?.full_name || 'Admin',
+      role,
+      assigned_region: admin.assigned_region,
+      permissions,
+      phone: userProfile?.phone_number || '',
+      avatarUrl: userProfile?.avatar_url || ''
+    } as AdminUser;
   }
+
+
+
+
+
 
   async updateAdminData(userId: string, updates: { 
     role?: AdminRole; 
@@ -612,6 +712,18 @@ class AdminService {
       throw new Error(error.message || 'Failed to update admin data');
     }
   }
+
+  async updatePublicUserProfile(userId: string, updates: {
+    full_name?: string;
+    avatar_url?: string;
+    phone_number?: string;
+  }) {
+    return supabase
+      .from('users')
+      .update(updates)
+      .eq('id', userId);
+  }
+
 
   async getWishlist(userId: string): Promise<Product[]> {
     interface StoreInventoryDbRow {

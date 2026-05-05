@@ -15,7 +15,8 @@ export const buttonVariants = cva(
         danger:
           "bg-transparent border-2 border-red-100 text-[var(--brand-red)] hover:bg-[var(--brand-red)] hover:text-white",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-input bg-background hover:bg-stone-100 hover:text-stone-900",
+
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },

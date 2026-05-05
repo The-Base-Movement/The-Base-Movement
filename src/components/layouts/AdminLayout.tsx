@@ -30,6 +30,17 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import type { AdminUser } from '@/types/admin'
+
+
 
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
@@ -43,13 +54,46 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   })
   const location = useLocation()
   const navigate = useNavigate()
-  const user = adminService.getCurrentUser()
+  const [user, setUser] = useState<AdminUser | null>(adminService.getCurrentUser())
 
   useEffect(() => {
-    if (!adminService.getCurrentUser()) {
-      navigate('/admin-login')
+    const applyDensity = () => {
+      const density = localStorage.getItem('admin_interface_density') || 'Comfortable'
+      const root = document.documentElement
+      
+      if (density === 'Compact') {
+        root.style.setProperty('--admin-padding', '1.5rem')
+        root.style.setProperty('--admin-gap', '1rem')
+        root.style.setProperty('--admin-font-scale', '0.95')
+      } else if (density === 'High Density') {
+        root.style.setProperty('--admin-padding', '1rem')
+        root.style.setProperty('--admin-gap', '0.75rem')
+        root.style.setProperty('--admin-font-scale', '0.9')
+      } else {
+        root.style.setProperty('--admin-padding', '3rem')
+        root.style.setProperty('--admin-gap', '2rem')
+        root.style.setProperty('--admin-font-scale', '1')
+      }
     }
+
+    applyDensity()
+    window.addEventListener('admin_density_changed', applyDensity)
+    return () => window.removeEventListener('admin_density_changed', applyDensity)
+  }, [])
+
+  useEffect(() => {
+    const init = async () => {
+
+      const currentUser = await adminService.initialize()
+      if (!currentUser) {
+        navigate('/admin-login')
+      } else {
+        setUser(currentUser)
+      }
+    }
+    init()
   }, [navigate])
+
 
   const navGroups = [
     {
@@ -69,7 +113,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-        { to: '/admin/leadership', icon: Zap, label: 'Leadership Hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+
+        { to: '/admin/leadership', icon: Zap, label: 'Leadership', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
         { to: '/admin/chapters', icon: MapPin, label: 'Chapters', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
         { to: '/admin/regions', icon: MapPin, label: 'Regions', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
       ]
@@ -80,7 +125,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       items: [
         { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
         { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Analysis', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization Metrics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/directives', icon: Target, label: 'Operations', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/rally-command', icon: Target, label: 'Events', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/ground-game', icon: Vote, label: 'Canvassing', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
@@ -92,18 +137,19 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       icon: DollarSign,
       items: [
         { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
-        { to: '/admin/store', icon: ShoppingBag, label: 'Merchandise', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
+        { to: '/admin/store', icon: ShoppingBag, label: 'Store', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
         { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
-        { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Logistics Intel', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Logistics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     },
     {
       label: "Communications",
       icon: Megaphone,
       items: [
-        { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcast Hub', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcasts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     }
+
   ]
 
   const filteredNavGroups = navGroups.map(group => ({
@@ -156,8 +202,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
                 <p className="text-white font-black font-meta text-lg leading-tight tracking-tighter uppercase whitespace-nowrap">The Base</p>
-                <p className="text-[var(--brand-red)] text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 leading-none whitespace-nowrap">Admin Office</p>
+                <p className="text-[var(--brand-red)] text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 leading-none whitespace-nowrap">Administration</p>
               </div>
+
             </Link>
           </div>
 
@@ -311,31 +358,83 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             
             <div className="h-4 w-px bg-stone-200 mx-1" />
             
-            {/* User Profile Chip */}
-            <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-stone-50 rounded-lg transition-colors cursor-pointer group">
-              <div className="text-right hidden sm:block">
-                <p className="text-[11px] font-bold text-stone-900 leading-tight">
-                  {user?.name || 'Staff Officer'}
-                </p>
-                <p className="text-[9px] font-medium text-stone-400 uppercase tracking-wider mt-0.5 leading-none">
-                  {user?.role === 'SUPER_ADMIN' ? 'System Administrator' : 'Regional Admin'}
-                </p>
-              </div>
-              <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-[10px] rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all">
-                {user?.name.split(' ').map(n => n[0]).join('') || 'HQ'}
-              </div>
-            </div>
+            {/* User Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-stone-50 rounded-lg transition-colors cursor-pointer group">
+                  <div className="text-right hidden sm:block">
+                    <p className="text-[11px] font-bold text-stone-900 leading-tight">
+                      {user?.name || 'Staff Officer'}
+                    </p>
+                    <p className="text-[9px] font-medium text-stone-400 uppercase tracking-wider mt-0.5 leading-none">
+                      {user?.role === 'SUPER_ADMIN' 
+                        ? 'System Administrator' 
+                        : user?.role === 'REGIONAL_DIRECTOR'
+                          ? 'Regional Director'
+                          : user?.role === 'CONSTITUENCY_LEAD'
+                            ? 'Constituency Lead'
+                            : 'Staff Verifier'}
+                    </p>
+
+                  </div>
+                  <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-[10px] rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all overflow-hidden">
+                    {user?.avatarUrl ? (
+                      <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      user?.name.split(' ').map(n => n[0]).join('') || 'HQ'
+                    )}
+                  </div>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 mt-2">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-bold leading-none">{user?.name}</p>
+                    <p className="text-xs leading-none text-stone-500">{user?.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/settings" className="cursor-pointer w-full flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    <span>Administrative Settings</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/logs" className="cursor-pointer w-full flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    <span>View Audit Logs</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={handleLogout}
+                  className="text-red-600 focus:text-red-600 cursor-pointer flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+
         </header>
 
 
 
         {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-10 lg:p-12">
+        <main 
+          className="flex-1 overflow-y-auto transition-all duration-300 ease-in-out"
+          style={{ 
+            padding: 'var(--admin-padding, 2.5rem)',
+            fontSize: `calc(1rem * var(--admin-font-scale, 1))` 
+          }}
+        >
           <div className="max-w-7xl mx-auto w-full">
             {children || <Outlet />}
           </div>
         </main>
+
       </div>
     </div>
   )

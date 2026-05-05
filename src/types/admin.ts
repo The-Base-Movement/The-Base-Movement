@@ -472,7 +472,7 @@ export interface AuditLogEntry {
 export type AdminRole = 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER'
 
 export interface AdminPermission {
-  action: 'VERIFY_MEMBER' | 'MANAGE_CHAPTER' | 'MANAGE_POLLS' | 'MANAGE_INVENTORY' | 'VIEW_AUDIT_LOGS' | 'APPOINT_LEAD' | 'MANAGE_BLOGS' | 'MANAGE_DONATIONS'
+  action: 'VERIFY_MEMBER' | 'DELETE_MEMBER' | 'MANAGE_CHAPTER' | 'MANAGE_POLLS' | 'MANAGE_INVENTORY' | 'VIEW_AUDIT_LOGS' | 'APPOINT_LEAD' | 'MANAGE_BLOGS' | 'MANAGE_DONATIONS'
   resource: 'MEMBERS' | 'CHAPTERS' | 'POLLS' | 'STORE' | 'SYSTEM' | 'BLOGS' | 'DONATIONS'
 }
 
@@ -484,7 +484,11 @@ export interface AdminUser {
   region?: string
   chapter?: string
   permissions: AdminPermission[]
+  phone?: string
+  avatarUrl?: string
 }
+
+
 
 export interface Broadcast {
   id: string

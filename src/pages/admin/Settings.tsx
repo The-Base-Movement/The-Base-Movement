@@ -1,22 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+
 import { 
-  User, 
+  User as UserIcon, 
   Shield, 
   Globe, 
-  Lock, 
-  Save,
+  Lock,
   Users,
-  Key,
-  ShieldCheck,
-  Search,
+
   Camera,
   Loader2,
-  Zap
+  ChevronRight,
+  Smartphone,
+  History,
+  Search
 } from 'lucide-react'
-import { SystemHealthDashboard } from '@/components/admin/SystemHealthDashboard'
+
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
+import type { Factor, AuthError, Session, User } from '@supabase/supabase-js'
 import { authService } from '@/services/authService'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -29,6 +33,26 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { useSearchParams } from 'react-router-dom'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+
+type InterfaceDensity = 'Comfortable' | 'Compact' | 'High Density';
+
+interface SupabaseAuthWithMFA {
+  mfa: {
+    listFactors: () => Promise<{ data: { all: Factor[] }, error: AuthError | null }>;
+    enroll: (params: { factorType: 'totp' }) => Promise<{ data: { id: string, totp: { qr_code: string } }, error: AuthError | null }>;
+    challenge: (params: { factorId: string }) => Promise<{ data: { id: string }, error: AuthError | null }>;
+    verify: (params: { factorId: string, challengeId: string, code: string }) => Promise<{ data: { session: Session | null, user: User | null }, error: AuthError | null }>;
+    unenroll: (params: { factorId: string }) => Promise<{ error: AuthError | null }>;
+  };
+}
+
 
 export default function AdminSettings() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -39,12 +63,11 @@ export default function AdminSettings() {
   }
 
   const tabs = [
-    { id: 'profile', label: 'My Profile', icon: User },
+    { id: 'profile', label: 'My Profile', icon: UserIcon },
     { id: 'roles', label: 'Admin Roles', icon: Shield },
-    { id: 'system', label: 'System Preferences', icon: Globe },
+    { id: 'system', label: 'Preferences', icon: Globe },
     { id: 'security', label: 'Security', icon: Lock },
-    { id: 'audit', label: 'Audit Vault', icon: ShieldCheck },
-    { id: 'operational', label: 'Operational Pulse', icon: Zap },
+    { id: 'audit', label: 'Audit Log', icon: History },
   ]
 
   const [auditSearch, setAuditSearch] = useState('')
@@ -53,6 +76,18 @@ export default function AdminSettings() {
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [adminData, setAdminData] = useState<AdminUser | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [mfaFactors, setMfaFactors] = useState<Factor[]>([])
+  const [showMfaDialog, setShowMfaDialog] = useState(false)
+  const [mfaStep, setMfaStep] = useState<'qr' | 'verify'>('qr')
+  const [mfaEnrollData, setMfaEnrollData] = useState<{ id: string, qr: string } | null>(null)
+  const [mfaCode, setMfaCode] = useState('')
+  const [interfaceDensity, setInterfaceDensity] = useState<InterfaceDensity>(
+    (localStorage.getItem('admin_interface_density') as InterfaceDensity) || 'Comfortable'
+  )
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
 
   // Profile Form State
   const [profileForm, setProfileForm] = useState({
@@ -73,15 +108,15 @@ export default function AdminSettings() {
     const fetchData = async () => {
       const user = authService.getUser()
       if (user) {
-        setProfileForm({
-          fullName: user.user_metadata?.full_name || '',
-          email: user.email || '',
-          phone: user.user_metadata?.phone || '',
-          avatarUrl: user.user_metadata?.avatar_url || ''
-        })
-
         const data = await adminService.getAdminData(user.id)
         setAdminData(data)
+
+        setProfileForm({
+          fullName: data?.name || user.user_metadata?.full_name || '',
+          email: data?.email || user.email || '',
+          phone: data?.phone || user.user_metadata?.phone || '',
+          avatarUrl: user.user_metadata?.avatar_url || ''
+        })
       }
 
       const logs = await adminService.getSystemAuditLogs()
@@ -90,20 +125,179 @@ export default function AdminSettings() {
     fetchData()
   }, [])
 
+  // Fetch MFA factors
+  useEffect(() => {
+    const fetchMfa = async () => {
+      const { data, error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.listFactors();
+      if (!error && data) {
+        setMfaFactors(data.all || []);
+      }
+    };
+    fetchMfa();
+  }, []);
+
+  const handleStartMfaEnroll = async () => {
+    try {
+      const { data, error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.enroll({
+        factorType: 'totp'
+      });
+      
+      if (error) throw error;
+      
+      setMfaEnrollData({
+        id: data.id,
+        qr: data.totp.qr_code
+      });
+      setMfaStep('qr');
+      setShowMfaDialog(true);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to start MFA enrollment");
+    }
+  };
+
+  const handleVerifyMfa = async () => {
+    if (!mfaEnrollData || !mfaCode) return;
+    setIsSaving(true);
+    
+    try {
+      const auth = supabase.auth as unknown as SupabaseAuthWithMFA;
+      const challenge = await auth.mfa.challenge({ factorId: mfaEnrollData.id });
+      if (challenge.error) throw challenge.error;
+
+      const verify = await auth.mfa.verify({
+        factorId: mfaEnrollData.id,
+        challengeId: challenge.data.id,
+        code: mfaCode
+      });
+      
+      if (verify.error) throw verify.error;
+
+      toast.success("MFA successfully enabled!");
+      setShowMfaDialog(false);
+      // Refresh factors
+      const { data } = await auth.mfa.listFactors();
+      setMfaFactors(data?.all || []);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "MFA verification failed");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleUnenrollMfa = async (factorId: string) => {
+    if (!confirm("Are you sure you want to disable MFA? This will reduce your account security.")) return;
+    
+    try {
+      const { error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.unenroll({ factorId });
+      if (error) throw error;
+      
+      toast.success("MFA disabled");
+      const { data } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.listFactors();
+      setMfaFactors(data?.all || []);
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to disable MFA");
+    }
+  };
+
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file size (2MB limit)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image must be less than 2MB')
+      return
+    }
+
+    setIsUploading(true)
+    const toastId = toast.loading('Uploading avatar...')
+    
+    try {
+      const user = authService.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`
+      
+      const { error } = await adminService.uploadAvatar(fileName, file)
+      if (error) throw error
+
+      const publicUrl = adminService.getAvatarPublicUrl(fileName)
+      setProfileForm(prev => ({ ...prev, avatarUrl: publicUrl }))
+      toast.success('Avatar uploaded. Remember to save your profile changes.', { id: toastId })
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Upload failed', { id: toastId })
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+
+  const filteredLogs = auditLogs.filter(log => {
+    const matchesSearch = 
+      log.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
+      log.resource.toLowerCase().includes(auditSearch.toLowerCase()) ||
+      log.adminName.toLowerCase().includes(auditSearch.toLowerCase())
+    
+    const matchesStatus = auditFilter === 'All Status' || log.status === auditFilter
+    const matchesResource = auditResourceFilter === 'All Resources' || log.resource.includes(auditResourceFilter)
+    
+    return matchesSearch && matchesStatus && matchesResource
+  })
+
+
+
+
   const handleSaveProfile = async () => {
     setIsSaving(true)
+    const toastId = toast.loading('Syncing profile changes...')
     try {
+      const user = authService.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      // 1. Update Auth metadata
       await authService.updateProfile({
         full_name: profileForm.fullName,
-        avatar_url: profileForm.avatarUrl
+        avatar_url: profileForm.avatarUrl,
+        phone: profileForm.phone
       })
-      toast.success('Profile updated successfully')
+
+      // 2. Update public.users table to ensure DB visibility
+      const { error: dbError } = await adminService.updatePublicUserProfile(user.id, {
+        full_name: profileForm.fullName,
+        avatar_url: profileForm.avatarUrl,
+        phone_number: profileForm.phone
+      })
+
+      if (dbError) throw dbError
+
+      // 3. Refresh local data to confirm persistence
+      const updatedData = await adminService.getAdminData(user.id)
+      if (updatedData) {
+        setAdminData(updatedData)
+        setProfileForm(prev => ({
+          ...prev,
+          fullName: updatedData.name,
+          phone: updatedData.phone || '',
+          avatarUrl: updatedData.avatarUrl || ''
+        }))
+      }
+
+
+      toast.success('Profile updated successfully', { id: toastId })
     } catch (error: unknown) {
-      toast.error(error instanceof Error ? error.message : 'An error occurred')
+      toast.error(error instanceof Error ? error.message : 'An error occurred', { id: toastId })
     } finally {
       setIsSaving(false)
     }
   }
+
+
 
   const handleUpdatePassword = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -124,98 +318,128 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-5xl mx-auto pb-20">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">Admin Settings</h1>
-          <p className="text-stone-500 text-sm mt-1">Configure your administrative profile and system preferences.</p>
-        </div>
-        <Button variant="primary" className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]">
-          <Save className="w-4 h-4 mr-2" /> Save All Changes
-        </Button>
+      <div className="mb-10">
+        <h1 className="text-2xl font-bold text-stone-900">Settings</h1>
+        <p className="text-stone-400 text-xs mt-1 font-medium">Manage your administrative identity and system configuration.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="flex flex-col lg:flex-row gap-12">
         {/* Settings Navigation */}
-        <div className="lg:col-span-1 space-y-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all",
-                activeTab === tab.id 
-                  ? "bg-[var(--brand-black)] text-white shadow-lg shadow-black/10" 
-                  : "text-stone-500 hover:bg-stone-100"
-              )}
-            >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          ))}
+        <div className="w-full lg:w-64 space-y-1">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "w-full flex items-center justify-between px-4 py-3 rounded-lg text-xs font-semibold transition-all group",
+                  isActive 
+                    ? "bg-white text-stone-900 shadow-sm border border-stone-200" 
+                    : "text-stone-400 hover:text-stone-600 hover:bg-stone-50"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <tab.icon className={cn("w-4 h-4", isActive ? "text-[var(--brand-red)]" : "text-stone-300 group-hover:text-stone-400")} />
+                  {tab.label}
+                </div>
+                {isActive && <ChevronRight className="w-3.5 h-3.5 text-stone-300" />}
+              </button>
+            )
+          })}
         </div>
 
         {/* Settings Content Area */}
-        <div className="lg:col-span-3 space-y-8">
+        <div className="flex-1 min-w-0">
           {activeTab === 'profile' && (
-            <Card className="rounded-none border-stone-200 shadow-sm">
-              <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/30">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Administrative Profile</CardTitle>
-                    <CardDescription className="text-xs">Manage your personal admin account details.</CardDescription>
-                  </div>
-                  <Button 
-                    onClick={handleSaveProfile}
-                    disabled={isSaving}
-                    className="bg-[var(--brand-black)] text-white text-[10px] uppercase font-bold tracking-widest px-6"
-                  >
-                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                    Save Profile
-                  </Button>
-                </div>
+            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+              <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
+                <CardTitle className="text-sm font-bold text-stone-900">Profile</CardTitle>
+                <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Manage your public and internal administrative identity.</CardDescription>
               </CardHeader>
-              <CardContent className="p-8 space-y-6">
-                <div className="flex flex-col md:flex-row gap-8 items-start">
-                  <div className="relative group">
-                    <div className="w-24 h-24 bg-stone-100 flex items-center justify-center border-2 border-dashed border-stone-200 text-stone-400 font-bold text-xl overflow-hidden">
-                      {profileForm.avatarUrl ? (
-                        <img src={profileForm.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                      ) : (
-                        profileForm.fullName.split(' ').map(n => n[0]).join('').toUpperCase() || 'AD'
-                      )}
+              <CardContent className="p-8">
+                <div className="space-y-10">
+                  {/* Avatar Section */}
+                  <div className="flex items-center gap-6">
+                    <div className="relative group">
+                      <div className="w-20 h-20 rounded-full bg-stone-100 flex items-center justify-center border border-stone-200 overflow-hidden relative">
+                        {isUploading && (
+                          <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10">
+                            <Loader2 className="w-5 h-5 text-stone-900 animate-spin" />
+                          </div>
+                        )}
+                        {profileForm.avatarUrl ? (
+                          <img src={profileForm.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-stone-400 font-bold text-sm">
+                            {profileForm.fullName.split(' ').map(n => n[0]).join('').toUpperCase() || 'HQ'}
+                          </span>
+                        )}
+                      </div>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        onChange={handleFileChange} 
+                        accept="image/*" 
+                        className="hidden" 
+                      />
+                      <button 
+                        onClick={handleAvatarClick}
+                        disabled={isUploading}
+                        className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full z-20"
+                      >
+                        <Camera className="w-4 h-4" />
+                      </button>
                     </div>
-                    <button className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col gap-1">
-                      <Camera className="w-4 h-4" />
-                      <span className="text-[8px] font-black uppercase tracking-widest">Update</span>
-                    </button>
+
+                    <div>
+                      <p className="text-xs font-bold text-stone-900">Profile Image</p>
+                      <p className="text-[10px] text-stone-400 font-medium mt-1">PNG, JPG up to 2MB</p>
+                    </div>
                   </div>
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+
+                  {/* Form Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Full Name</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Full Name</Label>
                       <Input 
                         value={profileForm.fullName} 
                         onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
-                        className="h-11 rounded-none border-stone-200" 
+                        className="h-10 rounded-lg border-stone-200 bg-white focus:ring-[var(--brand-red)]/10 focus:border-[var(--brand-red)] transition-all text-xs font-medium" 
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Email Address</Label>
-                      <Input value={profileForm.email} disabled className="h-11 rounded-none border-stone-100 bg-stone-50 text-stone-400 italic" />
+                      <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Email Address</Label>
+                      <Input value={profileForm.email} disabled className="h-10 rounded-lg border-stone-100 bg-stone-50 text-stone-400 text-xs font-medium cursor-not-allowed" />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Administrative Role</Label>
-                      <Input value={adminData?.role || 'Loading...'} disabled className="h-11 rounded-none border-stone-100 bg-stone-50 text-stone-400 italic" />
+                      <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Administrative Role</Label>
+                      <div className="h-10 px-3 flex items-center rounded-lg border border-stone-100 bg-stone-50 text-stone-400 text-[10px] font-bold uppercase tracking-widest italic">
+                        {adminData?.role || (adminData ? 'Standard Staff' : 'HQ Officer')}
+                      </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Phone Number</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Phone Number</Label>
                       <Input 
                         value={profileForm.phone} 
                         onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                        className="h-11 rounded-none border-stone-200" 
+                        placeholder="+233 XX XXX XXXX"
+                        className="h-10 rounded-lg border-stone-200 bg-white focus:ring-[var(--brand-red)]/10 focus:border-[var(--brand-red)] transition-all text-xs font-medium" 
                       />
                     </div>
+                  </div>
+
+                  <div className="pt-6 flex justify-end border-t border-stone-100">
+                    <Button 
+                      onClick={handleSaveProfile}
+                      disabled={isSaving}
+                      className="h-9 px-6 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-all shadow-sm"
+                    >
+                      {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />}
+                      Update profile
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -223,68 +447,93 @@ export default function AdminSettings() {
           )}
 
           {activeTab === 'roles' && (
-            <div className="space-y-6">
-              <Card className="rounded-none border-stone-200 shadow-sm">
-                <CardHeader className="p-8 border-b border-stone-100">
-                  <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Role-Based Access Control</CardTitle>
-                  <CardDescription className="text-xs">Manage permissions and assign admin tiers across the movement.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-stone-100">
-                    {[
-                      { role: 'Super Admin', desc: 'Full system access across all modules and regions.', count: 2, icon: Shield },
-                      { role: 'Regional Admin', desc: 'Management rights restricted to assigned regions.', count: 16, icon: Globe },
-                      { role: 'Chapter Lead', desc: 'Chapter-level oversight and member verification.', count: 124, icon: Users },
-                      { role: 'Auditor', desc: 'Read-only access to financial and membership reports.', count: 4, icon: Key },
-                    ].map((item) => (
-                      <div key={item.role} className="p-6 flex items-center justify-between hover:bg-stone-50 transition-colors">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-stone-100 flex items-center justify-center text-[var(--brand-black)]">
-                            <item.icon className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-black text-[var(--brand-black)] uppercase tracking-tight">{item.role}</p>
-                            <p className="text-[10px] text-stone-400 font-medium">{item.desc}</p>
-                          </div>
+            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+              <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
+                <CardTitle className="text-sm font-bold text-stone-900">Administrative Roles</CardTitle>
+                <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Summary of active permission tiers across the movement infrastructure.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="divide-y divide-stone-50">
+                  {[
+                    { role: 'Super Admin', desc: 'Full system sovereignty and configuration rights.', count: 2, icon: Shield, color: 'text-[var(--brand-red)]' },
+                    { role: 'Regional Admin', desc: 'Operational oversight within assigned regional boundaries.', count: 16, icon: Globe, color: 'text-stone-900' },
+                    { role: 'Chapter Lead', desc: 'Local verification and mobilization management.', count: 124, icon: Users, color: 'text-stone-900' },
+                    { role: 'Audit View', desc: 'Read-only access to financial and telemetry streams.', count: 4, icon: History, color: 'text-stone-500' },
+                  ].map((item) => (
+                    <div key={item.role} className="p-6 flex items-center justify-between hover:bg-stone-50/50 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className={cn("w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center", item.color)}>
+                          <item.icon className="w-5 h-5" />
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{item.count} Active</span>
-                          <Button variant="ghost" className="h-8 text-[9px] font-black uppercase tracking-widest text-[var(--brand-red)]">
-                            Manage
-                          </Button>
+                        <div>
+                          <p className="text-xs font-bold text-stone-900">{item.role}</p>
+                          <p className="text-[10px] text-stone-400 font-medium mt-0.5">{item.desc}</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Button variant="outline" className="w-full h-14 border-2 border-dashed border-stone-200 text-stone-400 hover:border-[var(--brand-black)] hover:text-[var(--brand-black)] rounded-none text-[10px] font-black uppercase tracking-widest">
-                Define Custom Permission Set
-              </Button>
-            </div>
+                      <span className="px-3 py-1 bg-stone-50 border border-stone-100 rounded-full text-[9px] font-bold text-stone-400 uppercase tracking-wider">
+                        {item.count} Active
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="p-8 bg-stone-50/50 border-t border-stone-100 text-center">
+                  <p className="text-[10px] text-stone-400 font-medium italic">Role assignments are managed by System Administrators only.</p>
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {activeTab === 'system' && (
-            <Card className="rounded-none border-stone-200 shadow-sm">
-              <CardHeader className="p-8 border-b border-stone-100">
-                <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">System Preferences</CardTitle>
-                <CardDescription className="text-xs">Global configuration for platform behavior.</CardDescription>
+            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+              <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
+                <CardTitle className="text-sm font-bold text-stone-900">Preferences</CardTitle>
+                <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Configure your personal interface and notification behavior.</CardDescription>
               </CardHeader>
-              <CardContent className="p-8 space-y-8">
-                <div className="space-y-4">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-red)]">Notifications</h4>
-                  <div className="space-y-3">
+              <CardContent className="p-8 space-y-10">
+                <div className="space-y-6">
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Interface Density</p>
+                  <div className="grid grid-cols-3 gap-4">
+                    {['Comfortable', 'Compact', 'High Density'].map((mode) => (
+                      <button 
+                        key={mode} 
+                        onClick={() => {
+                          setInterfaceDensity(mode as InterfaceDensity)
+                          localStorage.setItem('admin_interface_density', mode)
+                          toast.success(`Density set to ${mode}`)
+                          // Trigger a global style update if needed
+                          window.dispatchEvent(new Event('admin_density_changed'))
+                        }}
+                        className={cn(
+                          "p-4 rounded-xl border text-[10px] font-bold transition-all text-center",
+                          mode === interfaceDensity 
+                            ? "border-stone-900 bg-stone-900 text-white shadow-md" 
+                            : "border-stone-200 text-stone-400 hover:border-stone-300 bg-white"
+                        )}
+                      >
+                        {mode}
+                      </button>
+                    ))}
+                  </div>
+
+                </div>
+
+                <div className="h-px bg-stone-100" />
+
+                <div className="space-y-6">
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Notifications</p>
+                  <div className="space-y-4">
                     {[
-                      'Real-time alerts for new registrations',
-                      'Weekly regional impact reports',
-                      'Security login notifications',
-                      'Poll results threshold alerts'
-                    ].map((pref) => (
-                      <div key={pref} className="flex items-center justify-between p-4 bg-stone-50 border border-stone-100">
-                        <span className="text-xs font-bold text-stone-700">{pref}</span>
-                        <div className="w-10 h-5 bg-[var(--brand-green)] flex items-center justify-end px-1 cursor-pointer">
-                          <div className="w-3 h-3 bg-white" />
+                      { id: 'reg', label: 'New Member Registrations', desc: 'Real-time alerts for regional growth' },
+                      { id: 'sec', label: 'Security Login Alerts', desc: 'Notify on new device recognition' },
+                      { id: 'audit', label: 'Critical Audit Events', desc: 'Alert on system modification' }
+                    ].map((item) => (
+                      <div key={item.id} className="flex items-center justify-between p-4 rounded-xl border border-stone-100 bg-stone-50/50">
+                        <div>
+                          <p className="text-xs font-bold text-stone-900">{item.label}</p>
+                          <p className="text-[10px] text-stone-400 font-medium">{item.desc}</p>
+                        </div>
+                        <div className="w-10 h-5 bg-emerald-500 rounded-full flex items-center justify-end px-1 cursor-pointer">
+                          <div className="w-3 h-3 bg-white rounded-full shadow-sm" />
                         </div>
                       </div>
                     ))}
@@ -293,190 +542,270 @@ export default function AdminSettings() {
               </CardContent>
             </Card>
           )}
+
           {activeTab === 'security' && (
-            <Card className="rounded-none border-stone-200 shadow-sm">
-              <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/30">
-                <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Security & Credentials</CardTitle>
-                <CardDescription className="text-xs">Update your password and manage account security.</CardDescription>
-              </CardHeader>
-              <CardContent className="p-8 space-y-8">
-                <div className="max-w-md space-y-6">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">New Password</Label>
-                      <Input 
-                        type="password" 
-                        value={passwordForm.newPassword}
-                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                        className="h-11 rounded-none border-stone-200" 
-                        placeholder="••••••••"
-                      />
+            <div className="space-y-8">
+              {/* Password Card */}
+              <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+                <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
+                  <CardTitle className="text-sm font-bold text-stone-900">Security Credentials</CardTitle>
+                  <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Rotate your password regularly to maintain account integrity.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="max-w-md space-y-6">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">New Password</Label>
+                        <Input 
+                          type="password" 
+                          value={passwordForm.newPassword}
+                          onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                          className="h-10 rounded-lg border-stone-200" 
+                          placeholder="••••••••"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Confirm New Password</Label>
+                        <Input 
+                          type="password" 
+                          value={passwordForm.confirmPassword}
+                          onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                          className="h-10 rounded-lg border-stone-200" 
+                          placeholder="••••••••"
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Confirm New Password</Label>
-                      <Input 
-                        type="password" 
-                        value={passwordForm.confirmPassword}
-                        onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                        className="h-11 rounded-none border-stone-200" 
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
                     <Button 
                       onClick={handleUpdatePassword}
                       disabled={isSaving || !passwordForm.newPassword}
-                      className="w-full h-12 bg-[var(--brand-red)] hover:bg-rose-700 text-white text-[10px] uppercase font-bold tracking-widest rounded-none shadow-lg shadow-rose-200"
+                      className="w-full h-10 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-all shadow-md"
                     >
-                      {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Lock className="w-4 h-4 mr-2" />}
-                      Update Security Credentials
+                      {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />}
+                      Update security credentials
                     </Button>
-                    <p className="mt-4 text-[10px] text-stone-400 leading-relaxed text-center italic">
-                      Passwords must be at least 8 characters long and include a mix of letters, numbers, and symbols for maximum security.
-                    </p>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
 
-                <div className="pt-8 border-t border-stone-100">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-stone-900 mb-4 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" /> Two-Factor Authentication
-                  </h4>
-                  <div className="p-6 bg-stone-50 border border-stone-100 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-stone-700">Multi-Factor Authentication (MFA)</p>
-                      <p className="text-[10px] text-stone-400 mt-1">Add an extra layer of security to your admin account.</p>
-                    </div>
-                    <Button variant="outline" className="h-10 text-[9px] font-black uppercase tracking-widest border-stone-200">
-                      Configure MFA
-                    </Button>
+              {/* MFA Card */}
+              <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+                <CardContent className="p-8">
+                   <div className="flex items-start gap-6">
+                     <div className={cn(
+                       "w-12 h-12 rounded-xl flex items-center justify-center border transition-all",
+                       mfaFactors.length > 0 ? "bg-emerald-50 border-emerald-100" : "bg-stone-50 border-stone-100"
+                     )}>
+                       <Smartphone className={cn(
+                         "w-6 h-6",
+                         mfaFactors.length > 0 ? "text-emerald-500" : "text-stone-400"
+                       )} />
+                     </div>
+                     <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <h4 className="text-sm font-bold text-stone-900">Two-Factor Authentication</h4>
+                          {mfaFactors.length > 0 ? (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-[9px] font-bold text-emerald-600 uppercase tracking-tighter">
+                              Protected
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-50 border border-amber-100 text-[9px] font-bold text-amber-600 uppercase tracking-tighter">
+                              Not Configured
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-stone-400 font-medium mt-1 leading-relaxed">
+                          Add an extra layer of security to your admin account by requiring a verification code from your mobile device.
+                        </p>
+                        <div className="flex gap-3 mt-4">
+                          {mfaFactors.length > 0 ? (
+                            <Button 
+                              variant="outline" 
+                              onClick={() => handleUnenrollMfa(mfaFactors[0].id)}
+                              className="h-8 px-4 text-[10px] font-bold border-red-100 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                            >
+                              Disable Protection
+                            </Button>
+                          ) : (
+                            <Button 
+                              variant="outline" 
+                              onClick={handleStartMfaEnroll}
+                              className="h-8 px-4 text-[10px] font-bold border-stone-200 rounded-lg transition-all"
+                            >
+                              Configure MFA
+                            </Button>
+                          )}
+                        </div>
+                     </div>
+                   </div>
+                </CardContent>
+              </Card>
+
+              {/* MFA Setup Dialog */}
+              <Dialog open={showMfaDialog} onOpenChange={setShowMfaDialog}>
+                <DialogContent className="max-w-md bg-white border-stone-200">
+                  <DialogHeader>
+                    <DialogTitle className="text-base font-bold text-stone-900">Configure Multi-Factor Authentication</DialogTitle>
+                    <DialogDescription className="text-xs text-stone-500 font-medium">
+                      Follow these steps to secure your administrative account.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="py-6 space-y-6">
+                    {mfaStep === 'qr' && mfaEnrollData && (
+                      <div className="space-y-6 flex flex-col items-center">
+                        <div className="p-4 bg-stone-50 rounded-2xl border border-stone-100">
+                          <img 
+                            src={mfaEnrollData.qr} 
+                            alt="MFA QR Code"
+                            className="w-48 h-48"
+                          />
+
+                        </div>
+                        <div className="space-y-2 text-center max-w-xs">
+                          <p className="text-[11px] font-bold text-stone-900">Scan this QR Code</p>
+                          <p className="text-[10px] text-stone-400 leading-relaxed font-medium">
+                            Use Google Authenticator, Authy, or any TOTP app to scan the code above.
+                          </p>
+                        </div>
+                        <Button 
+                          onClick={() => setMfaStep('verify')}
+                          className="w-full bg-stone-900 text-white font-bold text-xs h-10 rounded-xl"
+                        >
+                          I've scanned it, proceed
+                        </Button>
+                      </div>
+                    )}
+
+                    {mfaStep === 'verify' && (
+                      <div className="space-y-6">
+                        <div className="space-y-3">
+                          <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-500">Verification Code</Label>
+                          <Input 
+                            value={mfaCode}
+                            onChange={(e) => setMfaCode(e.target.value)}
+                            placeholder="000 000"
+                            className="h-12 text-center text-lg font-bold tracking-[0.5em] border-stone-200 rounded-xl"
+                            maxLength={6}
+                          />
+                          <p className="text-[10px] text-stone-400 font-medium text-center">
+                            Enter the 6-digit code shown in your authenticator app.
+                          </p>
+                        </div>
+                        <Button 
+                          onClick={handleVerifyMfa}
+                          disabled={isSaving || mfaCode.length < 6}
+                          className="w-full bg-[var(--brand-green)] text-white font-bold text-xs h-10 rounded-xl"
+                        >
+                          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify and Enable MFA"}
+                        </Button>
+                        <button 
+                          onClick={() => setMfaStep('qr')}
+                          className="w-full text-[10px] font-bold text-stone-400 uppercase tracking-widest hover:text-stone-600"
+                        >
+                          Go back to QR code
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </DialogContent>
+              </Dialog>
+
+            </div>
           )}
 
           {activeTab === 'audit' && (
-            <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
-              <CardHeader className="p-8 border-b border-stone-100 bg-charcoal-dark text-white relative">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
-                <CardTitle className="text-lg font-black font-meta uppercase tracking-tight">Movement Audit Vault</CardTitle>
-                <CardDescription className="text-stone-400 text-xs mt-1">High-fidelity traceability of every administrative decision and system modification.</CardDescription>
+            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+              <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20 flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-bold text-stone-900">Audit Log</CardTitle>
+                  <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Full traceability of administrative decisions and system modifications.</CardDescription>
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="h-8 px-3 text-[10px] font-bold border-stone-200 hover:bg-stone-50 rounded-lg"
+                  onClick={() => toast.success('Exporting audit log...')}
+                >
+                  Export Log
+                </Button>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="p-6 border-b border-stone-100 bg-stone-50/50 flex flex-col md:flex-row gap-4 items-center">
+                <div className="flex flex-col md:flex-row gap-4 p-6 bg-stone-50/50 border-b border-stone-100">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
                     <Input 
-                      placeholder="Search vault by administrator, action, or resource..." 
+                      placeholder="Search by action or resource..." 
                       value={auditSearch}
                       onChange={(e) => setAuditSearch(e.target.value)}
-                      className="pl-10 h-11 rounded-none border-stone-200 text-xs"
+                      className="pl-9 h-9 text-[11px] border-stone-200 bg-white rounded-lg focus:ring-0"
                     />
                   </div>
-                  <div className="flex gap-2">
-                    <select 
-                      value={auditFilter}
-                      onChange={(e) => setAuditFilter(e.target.value)}
-                      className="h-11 px-4 bg-stone-50 border border-stone-200 text-[10px] font-black uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-[var(--brand-gold)] cursor-pointer"
-                    >
-                      <option>All Status</option>
-                      <option>Success</option>
-                      <option>Warning</option>
-                      <option>Failure</option>
-                    </select>
-                    <select 
-                      value={auditResourceFilter}
-                      onChange={(e) => setAuditResourceFilter(e.target.value)}
-                      className="h-11 px-4 bg-stone-50 border border-stone-200 text-[10px] font-black uppercase tracking-widest text-stone-600 focus:ring-1 focus:ring-[var(--brand-gold)] cursor-pointer"
-                    >
-                      <option>All Resources</option>
-                      <option>MEMBERS</option>
-                      <option>STORE</option>
-                      <option>BLOGS</option>
-                      <option>SYSTEM</option>
-                    </select>
-                    <Button 
-                      variant="outline" 
-                      className="h-11 px-6 rounded-none border-stone-200 text-[10px] font-black uppercase tracking-widest hover:bg-[var(--brand-black)] hover:text-white"
-                      onClick={() => {
-                        toast.success('PREPARING FORENSIC EXPORT', {
-                          description: 'Compiling movement audit telemetry...'
-                        })
-                      }}
-                    >
-                      Export Vault
-                    </Button>
-                  </div>
+                  <select 
+                    value={auditFilter}
+                    onChange={(e) => setAuditFilter(e.target.value)}
+                    className="h-9 px-3 text-[11px] font-bold text-stone-600 border border-stone-200 bg-white rounded-lg focus:ring-0 outline-none"
+                  >
+                    <option>All Status</option>
+                    <option>Success</option>
+                    <option>Warning</option>
+                    <option>Failure</option>
+                  </select>
+
+                  <select 
+                    value={auditResourceFilter}
+                    onChange={(e) => setAuditResourceFilter(e.target.value)}
+                    className="h-9 px-3 text-[11px] font-bold text-stone-600 border border-stone-200 bg-white rounded-lg focus:ring-0 outline-none"
+                  >
+                    <option>All Resources</option>
+                    <option>MEMBERS</option>
+                    <option>CHAPTERS</option>
+                    <option>STORE</option>
+                    <option>SYSTEM</option>
+                    <option>BLOGS</option>
+                  </select>
                 </div>
+
+
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
+                  <table className="w-full text-left">
                     <thead>
-                      <tr className="bg-stone-50 border-b border-stone-100">
-                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Timestamp</th>
-                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Admin</th>
-                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Action</th>
-                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Resource</th>
-                        <th className="p-4 text-[9px] font-black uppercase tracking-widest text-stone-400">Status</th>
+                      <tr className="bg-stone-50/30 border-b border-stone-100">
+                        <th className="p-4 pl-8 text-[9px] font-bold uppercase tracking-widest text-stone-400">Timestamp</th>
+                        <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-stone-400">Admin</th>
+                        <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-stone-400">Action</th>
+                        <th className="p-4 pr-8 text-right text-[9px] font-bold uppercase tracking-widest text-stone-400">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-50">
-                      {auditLogs.filter(log => {
-                        const matchesSearch = log.adminName.toLowerCase().includes(auditSearch.toLowerCase()) ||
-                          log.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
-                          log.resource.toLowerCase().includes(auditSearch.toLowerCase());
-                        
-                        const matchesStatus = auditFilter === 'All Status' || log.status === auditFilter;
-                        const matchesResource = auditResourceFilter === 'All Resources' || log.resource.includes(auditResourceFilter);
-                        
-                        return matchesSearch && matchesStatus && matchesResource;
-                      }).map((log) => (
-                        <tr key={log.id} className="hover:bg-stone-50/50 transition-colors">
-                          <td className="p-4">
-                            <p className="text-[10px] font-bold text-stone-500 whitespace-nowrap">
-                              {new Date(log.timestamp).toLocaleString()}
-                            </p>
-                          </td>
-                          <td className="p-4">
-                            <span className="text-[10px] font-black text-stone-900 uppercase tracking-tight">{log.adminName}</span>
-                          </td>
-                          <td className="p-4">
-                            <span className="text-[10px] font-bold text-[var(--brand-black)] uppercase tracking-tight">{log.action}</span>
-                          </td>
-                          <td className="p-4">
-                            <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest">{log.resource}</span>
-                          </td>
-                          <td className="p-4">
-                            <span className={cn("px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border", 
-                              log.status === 'Success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                              log.status === 'Warning' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
-                              'bg-rose-50 text-rose-600 border-rose-100'
-                            )}>
-                              {log.status}
-                            </span>
-                          </td>
+                      {filteredLogs.length > 0 ? (
+                        filteredLogs.slice(0, 15).map((log) => (
+
+                          <tr key={log.id} className="hover:bg-stone-50/50 transition-colors">
+                            <td className="p-4 pl-8 text-[10px] font-medium text-stone-400">
+                              {new Date(log.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                            </td>
+                            <td className="p-4 text-xs font-bold text-stone-900">{log.adminName.split(' ')[0]}</td>
+                            <td className="p-4 text-[11px] font-medium text-stone-600 italic">{log.action.toLowerCase()}</td>
+                            <td className="p-4 pr-8 text-right">
+                              <div className={cn("w-1.5 h-1.5 rounded-full inline-block", 
+                                log.status === 'Success' ? "bg-emerald-500" : "bg-amber-500"
+                              )} />
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} className="p-20 text-center text-stone-400 text-xs italic">No activity logs recorded.</td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
               </CardContent>
             </Card>
           )}
-          
-          {activeTab === 'operational' && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="bg-[var(--brand-black)] text-white p-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[var(--brand-red)]/10 to-transparent" />
-                <h2 className="text-3xl font-black font-meta uppercase tracking-tighter relative z-10">Operational Intelligence</h2>
-                <p className="text-stone-400 text-sm mt-1 relative z-10">Real-time monitoring of movement infrastructure and data engine performance.</p>
-              </div>
-              <SystemHealthDashboard />
-            </div>
-          )}
         </div>
       </div>
     </div>
   )
 }
+

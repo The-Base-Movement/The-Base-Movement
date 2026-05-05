@@ -261,6 +261,19 @@ class MemberService {
     if (error || !Array.isArray(data)) return []
     return data
   }
+
+  async deleteMember(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('registration_number', id)
+
+    if (error) {
+      console.error('[DATABASE] Member deletion failed:', error)
+      return false
+    }
+    return true
+  }
 }
 
 export const memberService = MemberService.getInstance()
