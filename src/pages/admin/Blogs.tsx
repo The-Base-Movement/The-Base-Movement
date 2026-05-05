@@ -40,6 +40,8 @@ import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import type { BlogPost } from '@/types/admin'
 import { useToast } from '@/hooks/use-toast'
+import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
+import { toast as sonnerToast } from 'sonner'
 
 export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -50,6 +52,7 @@ export default function AdminBlogs() {
     return (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
   })
   const [isDeleting, setIsDeleting] = useState(false)
+  const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null)
   const [editingPost, setEditPost] = useState<BlogPost | null>(() => {
     const saved = sessionStorage.getItem('blogs_editingPost')
     return saved ? JSON.parse(saved) : null
@@ -214,21 +217,28 @@ export default function AdminBlogs() {
     }
   }
 
-  const handleDelete = async (post: BlogPost) => {
-    if (!confirm(`Are you sure you want to delete "${post.title}"?`)) return
+  const handleDelete = (post: BlogPost) => {
+    setPostToDelete(post)
+  }
+
+  const handleConfirmedDelete = async () => {
+    if (!postToDelete) return
 
     setIsDeleting(true)
     try {
-      const success = await adminService.deleteBlogPost(post.id, post.slug)
+      const success = await contentService.deleteBlogPost(postToDelete.id)
       if (success) {
-        toast({
-          title: "Post Deleted",
-          description: "The post has been permanently removed.",
-        })
+        sonnerToast.success(`"${postToDelete.title}" moved to trash`)
+        setPostToDelete(null)
         fetchPosts()
+        
+        // Log action
+        adminService.logAction('TRASH_BLOG', `BLOG/${postToDelete.title}`, 'Success')
+      } else {
+        sonnerToast.error("Failed to move post to trash")
       }
     } catch {
-      // Deletion failure handled by system vault redundancy
+      sonnerToast.error("An error occurred during deletion")
     } finally {
       setIsDeleting(false)
     }
@@ -313,7 +323,7 @@ export default function AdminBlogs() {
                 <div className="p-8">
                   <div className="rounded-lg border border-stone-200 overflow-hidden shadow-inner bg-stone-50/30">
                     <Editor
-                      apiKey='ky4xtv1lrw74kgz3s89jm1m0tw6d1supmj4xpnbibfjk5qkz'
+                      apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
                       value={formData.content}
                       onEditorChange={(content) => setFormData({...formData, content})}
                       init={{
@@ -633,8 +643,8 @@ export default function AdminBlogs() {
 
 
       {/* Control Bar */}
-      <Card className="rounded-xl border-stone-200 bg-white p-2 shadow-sm">
-        <div className="flex flex-wrap items-center gap-4">
+      <Card className="rounded-xl border-stone-200 bg-white p-2 shadow-sm mb-10">
+        <div className="flex flex-wrap items-center gap-8 px-2 py-1">
           <div className="flex-1 min-w-[240px] relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
             <input 
@@ -759,6 +769,17 @@ export default function AdminBlogs() {
         )}
       </div>
 
+      {/* Delete Confirmation */}
+      <DeleteConfirmationModal 
+        isOpen={!!postToDelete}
+        onClose={() => setPostToDelete(null)}
+        onConfirm={handleConfirmedDelete}
+        title="Move to Trash"
+        description="This article will be moved to the trash vault. You can restore it within 30 days before it is permanently purged."
+        itemName={postToDelete?.title || ''}
+        isLoading={isDeleting}
+        isPermanent={false}
+      />
     </div>
   )
 }

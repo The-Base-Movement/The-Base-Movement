@@ -10,8 +10,11 @@ import {
   Image as ImageIcon,
   FileText,
   Filter,
-  ExternalLink
+  ExternalLink,
+  Trash2
 } from 'lucide-react'
+import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
+import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -23,6 +26,7 @@ export default function MediaLibrary() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const [activeFolder, setActiveFolder] = useState('blog-images')
+  const [assetToDelete, setAssetToDelete] = useState<string | null>(null)
 
   const folders = [
     { id: 'blog-images', label: 'Blog Posts', icon: ImageIcon },
@@ -90,6 +94,30 @@ export default function MediaLibrary() {
   const filteredFiles = files.filter(url => 
     url.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const handleConfirmedDelete = async () => {
+    if (!assetToDelete) return
+
+    setIsLoading(true)
+    try {
+      const success = await contentService.deleteMediaFile(assetToDelete)
+      if (success) {
+        toast.success('Asset moved to trash')
+        setAssetToDelete(null)
+        loadFiles()
+        
+        // Log action
+        const filename = assetToDelete.split('/').pop() || 'Unknown'
+        adminService.logAction('TRASH_MEDIA', `MEDIA/${filename}`, 'Success')
+      } else {
+        toast.error('Failed to move asset to trash')
+      }
+    } catch {
+      toast.error('An error occurred during deletion')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="animate-in fade-in duration-500 pb-20">
@@ -261,6 +289,14 @@ export default function MediaLibrary() {
                               <ExternalLink className="w-4 h-4" />
                             </a>
                           </Button>
+                          <Button 
+                            size="icon" 
+                            variant="secondary" 
+                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-red-50 text-stone-900 hover:text-red-600 shadow-xl"
+                            onClick={() => setAssetToDelete(url)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                       <div className="mt-2 px-1">
@@ -279,6 +315,17 @@ export default function MediaLibrary() {
           </Card>
         </div>
       </div>
+
+      <DeleteConfirmationModal 
+        isOpen={!!assetToDelete}
+        onClose={() => setAssetToDelete(null)}
+        onConfirm={handleConfirmedDelete}
+        title="Move to Trash"
+        description="This asset will be moved to the trash vault. You can restore it within 30 days before it is permanently purged from storage."
+        itemName={assetToDelete?.split('/').pop() || ''}
+        isLoading={isLoading}
+        isPermanent={false}
+      />
     </div>
   )
 }

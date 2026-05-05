@@ -23,7 +23,8 @@ import {
   ShieldAlert,
   Vote,
   ChevronDown,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Trash2
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/Button'
@@ -110,6 +111,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/admin/blogs', icon: FileText, label: 'Blog Posts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/media', icon: ImageIcon, label: 'Media Library', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/trash', icon: Trash2, label: 'Trash Vault', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     },

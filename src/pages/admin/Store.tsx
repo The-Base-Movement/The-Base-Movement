@@ -17,6 +17,8 @@ import {
   X,
   Trash
 } from 'lucide-react'
+import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
+import { logisticsService } from '@/services/logisticsService'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { 
@@ -163,16 +165,21 @@ export default function AdminStore() {
     if (!deleteConfirm) return
     
     setIsDeleting(deleteConfirm.id)
-    const success = await adminService.deleteInventoryItem(deleteConfirm.id, deleteConfirm.name)
-    if (success) {
-      handleStoreAction('REMOVE_INVENTORY', deleteConfirm.name)
-      toast.success(`${deleteConfirm.name} removed from inventory`)
-      fetchData()
-    } else {
-      toast.error("Failed to delete item")
+    try {
+      const success = await logisticsService.deleteInventoryItem(deleteConfirm.id)
+      if (success) {
+        handleStoreAction('TRASH_INVENTORY', deleteConfirm.name)
+        toast.success(`"${deleteConfirm.name}" moved to trash vault`)
+        fetchData()
+      } else {
+        toast.error("Failed to move item to trash")
+      }
+    } catch {
+      toast.error("An error occurred during deletion")
+    } finally {
+      setIsDeleting(null)
+      setDeleteConfirm(null)
     }
-    setIsDeleting(null)
-    setDeleteConfirm(null)
   }
 
   const handleStatusUpdate = async (id: string, status: ResourceRequest['status']) => {
@@ -781,6 +788,18 @@ export default function AdminStore() {
       </div>
     </>
   )}
+
+      {/* Delete Confirmation */}
+      <DeleteConfirmationModal 
+        isOpen={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        onConfirm={handleDelete}
+        title="Move to Trash"
+        description="This product will be moved to the trash vault. You can restore it within 30 days before it is permanently removed from the catalog."
+        itemName={deleteConfirm?.name || ''}
+        isLoading={!!isDeleting}
+        isPermanent={false}
+      />
 
       {/* Add/Edit Product Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

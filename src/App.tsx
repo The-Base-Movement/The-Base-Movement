@@ -62,6 +62,7 @@ import AdminRallyCommand from './pages/admin/RallyCommand'
 import AdminSentimentIntelligence from './pages/admin/SentimentIntelligence'
 import AdminWarRoomCommand from './pages/admin/WarRoomCommand'
 import AdminGroundGameCommand from './pages/admin/GroundGameCommand'
+import AdminTrash from './pages/admin/Trash'
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -157,6 +158,7 @@ export default function App() {
           <Route path="/admin/broadcasts/new" element={<AdminNewBroadcast />} />
           <Route path="/admin/administrators" element={<AdminAdministrators />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/trash" element={<AdminTrash />} />
         </Route>
       </Routes>
     </StoreProvider>

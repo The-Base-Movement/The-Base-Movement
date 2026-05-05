@@ -42,6 +42,7 @@ class LogisticsService {
     const { data, error } = await supabase
       .from('store_inventory')
       .select('*, product_images(url)')
+      .is('deleted_at', null)
       .order('name', { ascending: true })
 
     if (error) {
@@ -67,6 +68,7 @@ class LogisticsService {
       .from('store_inventory')
       .select('*')
       .eq('status', 'Available')
+      .is('deleted_at', null)
       .order('name', { ascending: true })
 
     if (error) {
@@ -100,6 +102,7 @@ class LogisticsService {
         product_reviews (*)
       `)
       .eq('slug', slug)
+      .is('deleted_at', null)
       .maybeSingle()
 
     if (error) {
@@ -243,14 +246,66 @@ class LogisticsService {
   async deleteInventoryItem(id: string): Promise<boolean> {
     const { error } = await supabase
       .from('store_inventory')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to soft delete inventory item:', error)
+      return false
+    }
+
+    return true
+  }
+
+  async getTrashedInventory(): Promise<InventoryItem[]> {
+    const { data, error } = await supabase
+      .from('store_inventory')
+      .select('*, product_images(url)')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch trashed inventory:', error)
+      return []
+    }
+
+    return (data as any[] || []).map((i) => ({
+      id: i.id,
+      name: i.name,
+      category: i.category,
+      price: `GHS ${i.price_ghs}`,
+      stock: i.stock_quantity,
+      status: i.status,
+      image: i.image_emoji || i.product_images?.[0]?.url || '📦',
+      images: i.product_images?.map((img: any) => img.url) || [],
+      color: i.brand_color,
+      deletedAt: i.deleted_at
+    }))
+  }
+
+  async restoreInventoryItem(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('store_inventory')
+      .update({ deleted_at: null })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to restore inventory item:', error)
+      return false
+    }
+    return true
+  }
+
+  async permanentlyDeleteInventoryItem(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('store_inventory')
       .delete()
       .eq('id', id)
 
     if (error) {
-      console.error('[DATABASE] Failed to delete inventory item:', error)
+      console.error('[DATABASE] Permanent inventory deletion failed:', error)
       return false
     }
-
     return true
   }
 

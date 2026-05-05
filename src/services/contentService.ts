@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import type { BlogPost } from '@/types/admin'
+import type { BlogPost, MediaAsset } from '@/types/admin'
 import mediaManifest from '@/data/media-manifest.json'
 
 class ContentService {
@@ -18,6 +18,7 @@ class ContentService {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
+      .is('deleted_at', null)
       .order('published_at', { ascending: false })
 
     if (error) {
@@ -52,6 +53,7 @@ class ContentService {
       .from('blog_posts')
       .select('*')
       .eq('slug', slug)
+      .is('deleted_at', null)
       .maybeSingle()
 
     if (error) {
@@ -150,11 +152,67 @@ class ContentService {
   async deleteBlogPost(id: string): Promise<boolean> {
     const { error } = await supabase
       .from('blog_posts')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Blog post soft deletion failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async getTrashedBlogPosts(): Promise<BlogPost[]> {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch trashed posts:', error)
+      return []
+    }
+
+    return (data || []).map((p) => ({
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      excerpt: p.excerpt,
+      content: p.content,
+      authorId: p.author_id,
+      authorName: p.author_name || 'Admin',
+      category: p.category,
+      imageUrl: p.image_url,
+      readTime: p.read_time,
+      isFeatured: p.is_featured,
+      publishedAt: p.published_at,
+      deletedAt: p.deleted_at,
+      tags: p.tags || []
+    }))
+  }
+
+  async restoreBlogPost(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('blog_posts')
+      .update({ deleted_at: null })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to restore blog post:', error)
+      return false
+    }
+    return true
+  }
+
+  async permanentlyDeleteBlogPost(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('blog_posts')
       .delete()
       .eq('id', id)
 
     if (error) {
-      console.error('[DATABASE] Blog post deletion failed:', error)
+      console.error('[DATABASE] Permanent blog post deletion failed:', error)
       return false
     }
     return true
@@ -179,6 +237,15 @@ class ContentService {
         return null
       }
 
+      // Track in media_library table
+      await supabase.from('media_library').insert({
+        filename: file.name,
+        url: `${supabase.storage.from('media').getPublicUrl(filePath).data.publicUrl}`,
+        folder: path,
+        size_bytes: file.size,
+        mime_type: file.type
+      })
+
       // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('media')
@@ -192,6 +259,25 @@ class ContentService {
   }
 
   async getMediaFiles(path: string): Promise<string[]> {
+    // We now query the media_library table instead of just listing storage
+    // to support soft deletes and metadata.
+    const { data, error } = await supabase
+      .from('media_library')
+      .select('url')
+      .eq('folder', path)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch media from library:', error)
+      // Fallback to storage list if database fails
+      return this.getMediaFilesFromStorage(path)
+    }
+
+    return (data || []).map(item => item.url)
+  }
+
+  private async getMediaFilesFromStorage(path: string): Promise<string[]> {
     const { data, error } = await supabase.storage
       .from('media')
       .list(path)
@@ -207,6 +293,84 @@ class ContentService {
         .getPublicUrl(`${path}/${file.name}`)
       return publicUrl
     })
+  }
+
+  async deleteMediaFile(url: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('media_library')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('url', url)
+
+    if (error) {
+      console.error('[DATABASE] Media soft deletion failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async getTrashedMedia(): Promise<MediaAsset[]> {
+    const { data, error } = await supabase
+      .from('media_library')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch trashed media:', error)
+      return []
+    }
+
+    return data || []
+  }
+
+  async restoreMediaFile(url: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('media_library')
+      .update({ deleted_at: null })
+      .eq('url', url)
+
+    if (error) {
+      console.error('[DATABASE] Failed to restore media file:', error)
+      return false
+    }
+    return true
+  }
+
+  async permanentlyDeleteMediaFile(url: string): Promise<boolean> {
+    // This is more complex because it involves storage deletion
+    try {
+      // 1. Get path from URL
+      const urlObj = new URL(url)
+      const pathParts = urlObj.pathname.split('/')
+      // Assuming URL format: .../media/folder/filename
+      const mediaIdx = pathParts.indexOf('media')
+      const storagePath = pathParts.slice(mediaIdx + 1).join('/')
+
+      // 2. Delete from storage
+      const { error: storageError } = await supabase.storage
+        .from('media')
+        .remove([storagePath])
+
+      if (storageError) {
+        console.warn('[STORAGE] Failed to remove file from storage, proceeding with DB cleanup:', storageError)
+      }
+
+      // 3. Delete from DB
+      const { error: dbError } = await supabase
+        .from('media_library')
+        .delete()
+        .eq('url', url)
+
+      if (dbError) {
+        console.error('[DATABASE] Permanent media deletion failed:', dbError)
+        return false
+      }
+
+      return true
+    } catch (err) {
+      console.error('[SERVICE] Unexpected error in permanent deletion:', err)
+      return false
+    }
   }
 
   async getLocalAssets(category: string): Promise<string[]> {

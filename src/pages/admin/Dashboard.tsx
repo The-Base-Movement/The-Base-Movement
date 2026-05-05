@@ -3,7 +3,8 @@ import {
   MapPin, 
   ShoppingBag, 
   Activity,
-  Globe
+  Globe,
+  Trash2
 } from 'lucide-react'
 
 
@@ -88,8 +89,8 @@ export default function AdminDashboard() {
   const [sentimentStats, setSentimentStats] = useState<SentimentStat[]>([])
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
-  const [globalStats, setGlobalStats] = useState<{ label: string, value: string, change: string }[]>([])
   const [logisticsData, setLogisticsData] = useState<LogisticsLatency[]>([])
+  const [trashCount, setTrashCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const navigate = useNavigate()
 
@@ -98,13 +99,16 @@ export default function AdminDashboard() {
       console.log('[SYSTEM] Dashboard: Starting data fetch...')
       setIsLoading(true)
       try {
-        const [growth, sentiment, audit, regions, stats, logistics] = await Promise.all([
+        const [growth, sentiment, audit, regions, stats, logistics, trashedBlogs, trashedProducts, trashedMedia] = await Promise.all([
           adminService.getGrowthTrends(),
           adminService.getSentimentAnalysis(),
           adminService.getSystemAuditLogs(),
           adminService.getRegionalStats(),
           adminService.getGlobalStats(),
-          logisticsService.getLogisticsLatency()
+          logisticsService.getLogisticsLatency(),
+          contentService.getTrashedBlogPosts(),
+          logisticsService.getTrashedInventory(),
+          contentService.getTrashedMedia()
         ])
         setGrowthData(growth)
         setSentimentStats(sentiment)
@@ -112,6 +116,7 @@ export default function AdminDashboard() {
         setRegionalStats(regions)
         setGlobalStats(stats)
         setLogisticsData(logistics)
+        setTrashCount(trashedBlogs.length + trashedProducts.length + trashedMedia.length)
         console.log('[SYSTEM] Dashboard: Data fetch complete.')
       } catch (error) {
         console.error('[SYSTEM] Dashboard: Data fetch failed:', error)
@@ -244,7 +249,7 @@ export default function AdminDashboard() {
           <>
             <StatCard title="Members" value={globalStats[0]?.value || "0"} change={globalStats[0]?.change || "0%"} icon={Users} color="bg-[var(--brand-red)]" />
             <StatCard title="Chapters" value={globalStats[1]?.value || "0"} change={globalStats[1]?.change || "0%"} icon={MapPin} color="bg-[var(--brand-gold)]" />
-            <StatCard title="Activity" value={globalStats[2]?.value || "0"} change={globalStats[2]?.change || "0%"} icon={Activity} color="bg-stone-900" />
+            <StatCard title="Trash Vault" value={trashCount.toString()} change="30d retention" icon={Trash2} color="bg-stone-500" />
             <StatCard title="Inventory" value={globalStats[3]?.value || "0"} change={globalStats[3]?.change || "0%"} icon={ShoppingBag} color="bg-emerald-600" />
           </>
         )}

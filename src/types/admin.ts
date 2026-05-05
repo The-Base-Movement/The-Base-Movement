@@ -41,6 +41,17 @@ export interface PollOption {
   votes: number
 }
 
+export interface MediaAsset {
+  id: string
+  filename: string
+  url: string
+  folder: string
+  size_bytes: number
+  mime_type: string
+  created_at: string
+  deleted_at?: string | null
+}
+
 export interface Poll {
   id: string
   question: string
