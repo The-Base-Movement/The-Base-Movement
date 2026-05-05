@@ -138,7 +138,7 @@ export default function PollsManagement() {
       </div>
 
       {/* Engagement Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
@@ -198,7 +198,8 @@ export default function PollsManagement() {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
+          {/* Desktop Table */}
+          <div className="overflow-x-auto hidden md:block">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-stone-100 bg-stone-50/10">
@@ -305,6 +306,85 @@ export default function PollsManagement() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden divide-y divide-stone-100">
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="p-6 animate-pulse space-y-4">
+                  <div className="h-4 bg-stone-100 w-3/4 rounded" />
+                  <div className="h-3 bg-stone-50 w-1/2 rounded" />
+                  <div className="h-8 bg-stone-100 w-full rounded-lg" />
+                </div>
+              ))
+            ) : filteredPolls.length === 0 ? (
+              <div className="p-12 text-center text-stone-400 text-xs font-bold">
+                No matching polls found.
+              </div>
+            ) : (
+              filteredPolls.map((poll) => (
+                <div key={poll.id} className="p-6 space-y-6">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-bold text-stone-900 leading-tight">{poll.question}</h4>
+                      <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{poll.id}</p>
+                    </div>
+                    <div className={cn(
+                      "px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter border rounded-full",
+                      poll.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100"
+                    )}>
+                      {poll.status}
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-stone-50 rounded-xl border border-stone-100 space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Responses</span>
+                      <span className="text-sm font-bold text-stone-900">{poll.totalVotes.toLocaleString()}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full transition-all duration-1000" 
+                        style={{ 
+                          width: poll.totalVotes > 10000 ? '90%' : poll.totalVotes > 5000 ? '60%' : '30%', 
+                          backgroundColor: poll.status === 'Active' ? 'var(--brand-green)' : 'var(--brand-gold)' 
+                        }} 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Region</p>
+                      <p className="text-xs font-bold text-stone-900">{poll.region}</p>
+                    </div>
+                    <div className="space-y-1 text-right">
+                      <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Expires</p>
+                      <p className="text-xs font-bold text-stone-600">{poll.endDate}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 h-10 rounded-xl border-stone-200 text-stone-600 text-[10px] font-bold"
+                      onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
+                    >
+                      Manage Campaign
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="h-10 w-10 rounded-xl border-stone-200 text-stone-400 hover:text-red-600"
+                      onClick={() => handleDeletePoll(poll.id, poll.question)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
