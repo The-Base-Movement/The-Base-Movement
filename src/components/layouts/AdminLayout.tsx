@@ -183,7 +183,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   }
 
   return (
-    <div className="h-screen bg-stone-50 font-inter text-stone-900 flex overflow-hidden">
+    <div className="h-screen bg-stone-50 font-meta text-stone-900 flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       <div 
         className={cn(
