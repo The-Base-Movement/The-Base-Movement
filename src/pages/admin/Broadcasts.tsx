@@ -88,7 +88,7 @@ export default function Broadcasts() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
@@ -139,12 +139,12 @@ export default function Broadcasts() {
         {/* Previous Broadcasts */}
         <div className="lg:col-span-2 space-y-6">
           <Card className="rounded-xl border-stone-200 shadow-xl overflow-hidden">
-            <CardHeader className="border-b border-stone-100 bg-stone-50/50">
-              <div className="flex items-center justify-between">
+            <CardHeader className="border-b border-stone-100 bg-stone-50/50 p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <CardTitle className="text-lg font-bold tracking-tight flex items-center gap-2">
                   <Shield className="w-4 h-4" /> Broadcast history
                 </CardTitle>
-                <div className="relative w-64">
+                <div className="relative w-full sm:w-64">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
                   <Input 
                     placeholder="Search broadcasts..." 
