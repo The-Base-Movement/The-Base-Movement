@@ -315,35 +315,35 @@ export default function AdminStore() {
           )}
 
           {/* Store Performance Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[10px] font-bold text-stone-400 tracking-tight">Total stock value</p>
-            <h3 className="text-2xl font-bold text-stone-900">
+            <h3 className="text-xl md:text-2xl font-bold text-stone-900">
               GHS {products.reduce((acc, p) => acc + (parseFloat(p.price.replace(/[^0-9.-]+/g, '')) * p.stock), 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </h3>
             <span className="text-[9px] font-bold text-stone-400 flex items-center gap-1 mt-1">
-              <TrendingUp className="w-3 h-3" /> Estimated inventory value
+              <TrendingUp className="w-3 h-3" /> Estimated value
             </span>
           </CardContent>
         </Card>
         <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[10px] font-bold text-stone-400 tracking-tight">Active requests</p>
-            <h3 className="text-2xl font-bold text-stone-900">{requests.filter(r => r.status === 'Pending').length}</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-stone-900">{requests.filter(r => r.status === 'Pending').length}</h3>
             <span className={cn(
-              "text-[10px] font-bold mt-1",
+              "text-[9px] font-bold mt-1",
               requests.filter(r => r.status === 'Pending').length > 0 ? "text-amber-600" : "text-stone-400"
             )}>
-              {requests.filter(r => r.status === 'Pending').length > 0 ? 'Pending approval' : 'No pending requests'}
+              {requests.filter(r => r.status === 'Pending').length > 0 ? 'Pending approval' : 'No pending'}
             </span>
           </CardContent>
         </Card>
         <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[10px] font-bold text-stone-400 tracking-tight">Stock items</p>
-            <h3 className="text-2xl font-bold text-stone-900">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
-            <span className="text-[10px] font-bold text-stone-400 mt-1">Across {products.length} products</span>
+            <h3 className="text-xl md:text-2xl font-bold text-stone-900">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
+            <span className="text-[9px] font-bold text-stone-400 mt-1">Across {products.length} products</span>
           </CardContent>
         </Card>
         <Card className={cn(
@@ -356,14 +356,14 @@ export default function AdminStore() {
               lowStockItems.length > 0 ? "text-red-600" : "text-stone-400"
             )}>Stock alerts</p>
             <h3 className={cn(
-              "text-2xl font-bold",
+              "text-xl md:text-2xl font-bold",
               lowStockItems.length > 0 ? "text-red-600" : "text-stone-900"
             )}>{lowStockItems.length}</h3>
             <span className={cn(
-              "text-[10px] font-bold flex items-center gap-1 mt-1",
+              "text-[9px] font-bold flex items-center gap-1 mt-1",
               lowStockItems.length > 0 ? "text-red-600/60" : "text-stone-400"
             )}>
-              <AlertTriangle className="w-3 h-3" /> {lowStockItems.length > 0 ? "Requires attention" : "All stock stable"}
+              <AlertTriangle className="w-3 h-3" /> {lowStockItems.length > 0 ? "Attention" : "All stable"}
             </span>
           </CardContent>
         </Card>
@@ -405,7 +405,8 @@ export default function AdminStore() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-stone-100 bg-stone-50/10">
@@ -498,6 +499,69 @@ export default function AdminStore() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden divide-y divide-stone-100">
+              {sortedAndFilteredProducts.map((product) => (
+                <div key={product.id} className="p-6 space-y-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-stone-100 rounded-xl flex items-center justify-center text-2xl border border-stone-200 overflow-hidden shrink-0">
+                        {product.image?.startsWith('http') ? (
+                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span>{product.image}</span>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-bold text-stone-900 tracking-tight">{product.name}</h4>
+                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">#ITM-{product.id.substring(0, 6)}</p>
+                      </div>
+                    </div>
+                    <div className={cn(
+                      "px-2.5 py-1 text-[9px] font-bold tracking-tight border rounded-full",
+                      product.status === 'Critical' ? "bg-red-50 text-red-600 border-red-100" :
+                      product.status === 'Low Stock' ? "bg-amber-50 text-amber-600 border-amber-100" :
+                      "bg-emerald-50 text-emerald-600 border-emerald-100"
+                    )}>
+                      {product.status}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-stone-50 rounded-xl border border-stone-100">
+                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Price</p>
+                      <p className="text-sm font-black text-stone-900">{product.price}</p>
+                    </div>
+                    <div className="p-4 bg-stone-50 rounded-xl border border-stone-100">
+                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Stock</p>
+                      <p className={cn(
+                        "text-sm font-black",
+                        product.stock < 50 ? "text-amber-600" : "text-stone-900"
+                      )}>{product.stock.toLocaleString()}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 h-11 rounded-xl border-stone-200 text-stone-600 text-[10px] font-bold"
+                      onClick={() => handleOpenModal(product)}
+                    >
+                      <Edit3 className="w-3.5 h-3.5 mr-2" /> Edit Asset
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="h-11 w-11 rounded-xl border-stone-200 text-stone-400 hover:text-red-600"
+                      onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
           <CardFooter className="px-6 py-4 bg-stone-50/50 border-t border-stone-100 flex items-center justify-between">
             <div className="flex items-center gap-6">
@@ -528,7 +592,8 @@ export default function AdminStore() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-stone-100 bg-stone-50/10">
@@ -598,19 +663,80 @@ export default function AdminStore() {
                       </td>
                     </tr>
                   ))}
-                  {requests.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="px-6 py-16 text-center">
-                        <div className="flex flex-col items-center gap-3">
-                          <Truck className="w-8 h-8 text-stone-200" />
-                          <span className="text-stone-400 text-xs font-bold">No active resource requests from the field.</span>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Request Cards */}
+            <div className="md:hidden divide-y divide-stone-100">
+              {requests.map((req) => (
+                <div key={req.id} className="p-6 space-y-6">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-sm font-bold text-stone-900 tracking-tight">{req.region}</h4>
+                      <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{req.constituency || 'Regional HQ'}</p>
+                    </div>
+                    <div className={cn(
+                      "px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-full",
+                      req.priority === 'Urgent' ? "bg-red-100 text-red-700" : "bg-stone-100 text-stone-600"
+                    )}>
+                      {req.priority}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Requested Items</p>
+                    <div className="p-4 bg-stone-50 rounded-xl border border-stone-100 space-y-2">
+                      {req.items.map(item => (
+                        <div key={item.id} className="flex justify-between items-center">
+                          <span className="text-[11px] font-bold text-stone-900">{item.productName}</span>
+                          <span className="text-xs font-black text-stone-400">x{item.quantity}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Status</p>
+                      <div className={cn(
+                        "px-2.5 py-1 text-[10px] font-bold tracking-tight border rounded-md",
+                        req.status === 'Pending' ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-emerald-50 text-emerald-700 border-emerald-100"
+                      )}>
+                        {req.status}
+                      </div>
+                    </div>
+                    <div className="text-right space-y-1">
+                      <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Date</p>
+                      <p className="text-xs font-bold text-stone-900">{new Date(req.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <Select onValueChange={(v: ResourceRequest['status']) => handleStatusUpdate(req.id, v)}>
+                      <SelectTrigger className="w-full h-11 text-xs font-bold tracking-tight rounded-xl border-stone-200">
+                        <SelectValue placeholder="Update Request Status" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="Approved">Approve</SelectItem>
+                        <SelectItem value="Dispatched">Dispatch</SelectItem>
+                        <SelectItem value="Delivered">Deliver</SelectItem>
+                        <SelectItem value="Rejected">Reject</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {requests.length === 0 && (
+              <div className="p-16 text-center">
+                <div className="flex flex-col items-center gap-3">
+                  <Truck className="w-8 h-8 text-stone-200" />
+                  <span className="text-stone-400 text-xs font-bold">No active resource requests.</span>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       ) : (
@@ -657,7 +783,8 @@ export default function AdminStore() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-stone-100 bg-stone-50/10">
@@ -711,19 +838,60 @@ export default function AdminStore() {
                       </td>
                     </tr>
                   ))}
-                  {auditLogs.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-16 text-center">
-                        <div className="flex flex-col items-center gap-3">
-                          <History className="w-8 h-8 text-stone-200" />
-                          <span className="text-stone-400 text-xs font-bold">No audit entries recorded yet.</span>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Audit Cards */}
+            <div className="md:hidden divide-y divide-stone-100">
+              {auditLogs.map((log) => (
+                <div key={log.id} className="p-6 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-2 text-stone-400">
+                      <Clock className="w-3 h-3" />
+                      <span className="text-[9px] font-bold">
+                        {new Date(log.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                      </span>
+                    </div>
+                    <div className={cn(
+                      "px-2 py-0.5 text-[9px] font-bold tracking-tight border rounded-md",
+                      log.action === 'DISPATCHED' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
+                      log.action === 'REPLENISHED' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                      "bg-stone-50 text-stone-700 border-stone-100"
+                    )}>
+                      {log.action}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <h4 className="text-sm font-bold text-stone-900 tracking-tight">{log.productName || 'Unknown Asset'}</h4>
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-stone-400 mt-2">
+                        <MapPin className="w-3 h-3" />
+                        <span>{log.sourceLocation}</span>
+                        <ArrowRight className="w-2.5 h-2.5" />
+                        <span>{log.destinationLocation || 'Internal'}</span>
+                      </div>
+                    </div>
+                    <div className={cn(
+                      "text-lg font-black",
+                      log.quantityChange > 0 ? "text-emerald-600" : "text-red-600"
+                    )}>
+                      {log.quantityChange > 0 ? '+' : ''}{log.quantityChange}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {auditLogs.length === 0 && (
+              <div className="p-16 text-center">
+                <div className="flex flex-col items-center gap-3">
+                  <History className="w-8 h-8 text-stone-200" />
+                  <span className="text-stone-400 text-xs font-bold">No audit entries recorded.</span>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
