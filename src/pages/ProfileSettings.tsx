@@ -265,7 +265,7 @@ export default function ProfileSettings() {
             </style>
           </head>
           <body>
-            <img src="${imgData}" onload="setTimeout(() = /> { window.print(); }, 200);" />
+            <img src="${imgData}" onload="setTimeout(() => { window.print(); }, 200);" />
           </body>
         </html>
       `)
