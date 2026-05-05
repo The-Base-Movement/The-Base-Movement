@@ -159,7 +159,8 @@ export default function LogisticsIntelligence() {
               value: `${health}%`, 
               sub: 'Logistics Efficiency', 
               icon: health >= 80 ? CheckCircle2 : AlertTriangle, 
-              color: health >= 80 ? 'text-[var(--brand-green)]' : health >= 51 ? 'text-amber-500' : 'text-red-500' 
+              color: health >= 80 ? 'text-[var(--brand-green)]' : health >= 51 ? 'text-amber-500' : 'text-red-500',
+              className: 'col-span-2 md:col-span-1'
             },
             { label: 'Urgent Alerts', value: alerts.length, sub: 'Inventory Alerts', icon: AlertTriangle, color: alerts.length > 0 ? 'text-red-500' : 'text-stone-400' },
             { label: 'Avg Dispatch', value: `${avgDispatch}h`, sub: '30 Day Aggregate', icon: Clock, color: 'text-blue-500' },
@@ -171,7 +172,7 @@ export default function LogisticsIntelligence() {
               color: Number(avgFulfillment) >= 80 ? 'text-orange-500' : Number(avgFulfillment) >= 51 ? 'text-amber-500' : 'text-red-500' 
             },
           ].map((stat, i) => (
-            <Card key={i} className="rounded-xl border-stone-200 shadow-sm bg-white p-6 hover:border-stone-400 transition-colors">
+            <Card key={i} className={cn("rounded-xl border-stone-200 shadow-sm bg-white p-6 hover:border-stone-400 transition-colors", stat.className)}>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[10px] font-bold normal-case text-stone-400">{stat.label}</span>
                 <stat.icon className={cn("w-5 h-5", stat.color)} />
@@ -243,7 +244,8 @@ export default function LogisticsIntelligence() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
+              {/* Desktop Table */}
+              <table className="w-full text-left hidden md:table">
                 <thead className="bg-stone-50 border-b border-stone-100">
                   <tr>
                     <th className="px-6 py-4 text-[9px] font-bold normal-case text-stone-400">Jurisdiction</th>
@@ -290,6 +292,53 @@ export default function LogisticsIntelligence() {
                   )}
                 </tbody>
               </table>
+
+              {/* Mobile Jurisdictional Cards */}
+              <div className="md:hidden divide-y divide-stone-100">
+                {velocity.length === 0 ? (
+                  <div className="p-12 text-center">
+                    <p className="text-[10px] font-bold text-stone-400 normal-case">No dispatch telemetry available</p>
+                  </div>
+                ) : (
+                  velocity.map((v, idx) => (
+                    <div key={idx} className="p-6 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h4 className="text-sm font-black text-stone-900">{v.region || 'Unknown'}</h4>
+                        <div className="px-3 py-1 bg-stone-100 rounded-full">
+                          <p className="text-[9px] font-bold text-stone-600 uppercase tracking-tight">{v.total_orders} Orders</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-[8px] font-bold text-stone-400 uppercase tracking-widest">Dispatch Time</p>
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-3 h-3 text-stone-400" />
+                            <p className="text-xs font-black text-stone-900">{v.avg_dispatch_hours}h</p>
+                          </div>
+                        </div>
+                        <div className="space-y-1 text-right">
+                          <p className="text-[8px] font-bold text-stone-400 uppercase tracking-widest">Delivery</p>
+                          <p className="text-xs font-black text-stone-900">{v.avg_delivery_hours}h</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-[8px] font-bold text-stone-400 uppercase tracking-widest">
+                          <span>Fulfillment Rate</span>
+                          <span className="text-[var(--brand-green)]">{v.fulfillment_rate}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-[var(--brand-green)] transition-all duration-1000" 
+                            style={{ width: `${v.fulfillment_rate}%` }} 
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
