@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Upload, Loader2, Save, Image as ImageIcon } from 'lucide-react'
+import { Upload, Loader2, Save, Image as ImageIcon } from 'lucide-react'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -127,26 +128,18 @@ export default function AdminEditAuthor() {
 
   return (
     <div className="max-w-4xl space-y-8 animate-in fade-in duration-500">
+      <Breadcrumbs />
+      
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => navigate('/admin/authors')}
-            className="hover:bg-stone-200"
-          >
-            <ArrowLeft className="w-5 h-5 text-stone-600" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-stone-900 font-outfit">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-stone-900 font-outfit">
               {isEditing ? 'Edit Editorial Profile' : 'New Editorial Profile'}
             </h1>
             <p className="text-stone-500 text-sm">
-              Configure credentials and biographical intelligence for the movement's content creators.
+              Configure credentials and biographical information for the movement's content creators.
             </p>
           </div>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -255,7 +248,7 @@ export default function AdminEditAuthor() {
 
             {/* Biographical Data */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest border-b border-stone-100 pb-2">Biographical Intelligence</h3>
+              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest border-b border-stone-100 pb-2">Biographical Information</h3>
               
               <div className="space-y-2">
                 <Label className="text-sm font-bold text-stone-700">Professional Biography</Label>

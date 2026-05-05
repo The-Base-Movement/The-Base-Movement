@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   Loader2,
   Shield,
-  ChevronRight,
   MessageSquare,
   Mail,
   Smartphone
@@ -25,7 +24,8 @@ import { toast } from "sonner"
 import { adminService } from '@/services/adminService'
 import type { Broadcast, Region } from '@/services/adminService'
 import { cn } from "@/lib/utils"
-import { useNavigate, Link, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 export default function NewBroadcast() {
   const navigate = useNavigate()
@@ -120,13 +120,7 @@ export default function NewBroadcast() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto pb-20">
       {/* Breadcrumb & Header */}
       <div className="space-y-4 px-4 md:px-0">
-        <nav className="flex items-center gap-2 text-[10px] font-bold normal-case text-stone-400">
-          <Link to="/admin/broadcasts" className="hover:text-stone-900 transition-colors flex items-center gap-1">
-            Communication hub
-          </Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-stone-900">New broadcast</span>
-        </nav>
+        <Breadcrumbs />
         
         <div className="flex items-center justify-between">
           <div>
