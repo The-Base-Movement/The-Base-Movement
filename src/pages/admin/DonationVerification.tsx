@@ -156,29 +156,29 @@ export default function FinancialAudit() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-stone-500 tracking-tight">Total Contributions</p>
-            <h3 className="text-2xl font-bold text-stone-900">{stats.totalContributions.toLocaleString()}</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-stone-900">{stats.totalContributions.toLocaleString()}</h3>
             <span className="text-[10px] font-bold text-stone-400 mt-1">All-time recorded volume</span>
           </CardContent>
         </Card>
         <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-stone-500 tracking-tight">Pending Review</p>
-            <h3 className="text-2xl font-bold text-amber-600">{stats.pendingCount.toLocaleString()}</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-amber-600">{stats.pendingCount.toLocaleString()}</h3>
             <span className="text-[10px] font-bold text-amber-600/70 mt-1">Awaiting administrative clearance</span>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-stone-200 shadow-sm">
+        <Card className="rounded-xl border-stone-200 shadow-sm col-span-2 md:col-span-1">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-stone-500 tracking-tight">Approved Amount</p>
             <h3 className="text-2xl font-bold text-emerald-600">GH₵ {stats.approvedAmount.toLocaleString()}</h3>
             <span className="text-[10px] font-bold text-emerald-600/70 mt-1">Total cleared funds</span>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-stone-200 shadow-sm">
+        <Card className="rounded-xl border-stone-200 shadow-sm col-span-2 md:col-span-1">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-stone-500 tracking-tight">Flagged Transactions</p>
             <h3 className="text-2xl font-bold text-rose-600">{stats.flaggedCount.toLocaleString()}</h3>
