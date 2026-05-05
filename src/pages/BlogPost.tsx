@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom'
-import { Calendar, Clock, ChevronLeft, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send } from 'lucide-react'
+import { Calendar, Clock, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send } from 'lucide-react'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Button } from '@/components/ui/Button'
 import { CommentSection } from '@/components/CommentSection'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
@@ -117,12 +118,7 @@ export default function BlogPost() {
       </Helmet>
       <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <Link 
-            to={baseUrl} 
-            className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-green)] transition-colors text-[10px] font-bold uppercase tracking-widest"
-          >
-            <ChevronLeft className="w-4 h-4" /> Back to Insights
-          </Link>
+          <Breadcrumbs currentLabel={post.title} />
           <div className="flex items-center gap-3">
              <Button 
               onClick={() => handleShare()}
