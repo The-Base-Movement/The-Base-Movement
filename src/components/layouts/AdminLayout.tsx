@@ -55,6 +55,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const location = useLocation()
   const navigate = useNavigate()
   const [user, setUser] = useState<AdminUser | null>(adminService.getCurrentUser())
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
   useEffect(() => {
     const applyDensity = () => {
@@ -83,12 +84,18 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
   useEffect(() => {
     const init = async () => {
-
+      // Import here dynamically or just use global import, but we'll use window.localStorage directly
+      // Wait, we need authService. Let's import it at the top.
       const currentUser = await adminService.initialize()
       if (!currentUser) {
         navigate('/admin-login')
       } else {
         setUser(currentUser)
+        
+        // Attempt to resolve avatar URL using auth metadata or localStorage fallback
+        const authUser = JSON.parse(localStorage.getItem('sb-yymncrshblmzeuomomnz-auth-token') || '{}')?.user
+        const fallbackAvatar = authUser?.user_metadata?.avatar_url || localStorage.getItem('userAvatar')
+        setAvatarUrl(currentUser.avatarUrl || fallbackAvatar || null)
       }
     }
     init()
@@ -201,8 +208,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 "transition-all duration-300 origin-left",
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
-                <p className="text-white font-black font-meta text-lg leading-tight tracking-tighter normal-case whitespace-nowrap">The Base</p>
-                <p className="text-stone-500 text-[9px] font-bold normal-case mt-0.5 leading-none whitespace-nowrap">Admin panel</p>
+                <p className="text-white font-bold text-lg leading-tight tracking-tight whitespace-nowrap">The Base</p>
+                <p className="text-stone-500 text-[10px] font-bold mt-0.5 leading-none whitespace-nowrap">Admin panel</p>
               </div>
 
             </Link>
@@ -217,7 +224,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               target="_blank" 
               rel="noopener noreferrer"
               className={cn(
-                "flex items-center gap-3 px-3 py-2 mb-6 mx-2 transition-all relative group bg-white/5 hover:bg-white/10 rounded-md border border-white/10",
+                "flex items-center gap-3 px-3 py-2 mb-6 mx-2 transition-all relative group bg-white/5 hover:bg-white/10 rounded-lg border border-white/10",
                 isSidebarOpen ? "" : "justify-center px-0"
               )}
             >
@@ -246,7 +253,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     <div className="flex items-center gap-3">
                       <group.icon className="w-5 h-5 shrink-0" />
                       <span className={cn(
-                        "text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-300",
+                        "text-xs font-bold tracking-tight whitespace-nowrap transition-all duration-300",
                         isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 w-0"
                       )}>
                         {group.label}
@@ -272,7 +279,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2 ml-8 transition-all relative group/item rounded-md mr-4",
+                            "flex items-center gap-3 px-3 py-2 ml-8 transition-all relative group/item rounded-lg mr-4",
                             isActive 
                               ? "bg-white/10 text-white" 
                               : "text-stone-500 hover:text-stone-200 hover:bg-white/5"
@@ -344,7 +351,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               <input 
                 type="text" 
                 placeholder="Search..."
-                className="w-full h-9 pl-9 pr-4 bg-stone-50 border-transparent focus:bg-white focus:border-stone-200 focus:ring-0 transition-all text-xs outline-none font-medium placeholder:text-stone-400 rounded-md"
+                className="w-full h-9 pl-9 pr-4 bg-stone-50 border-transparent focus:bg-white focus:border-stone-200 focus:ring-0 transition-all text-xs outline-none font-medium placeholder:text-stone-400 rounded-lg"
               />
             </div>
           </div>
@@ -375,8 +382,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
                   </div>
                   <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-[10px] rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all overflow-hidden">
-                    {user?.avatarUrl ? (
-                      <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt={user?.name || ''} className="w-full h-full object-cover" />
                     ) : (
                       user?.name.split(' ').map(n => n[0]).join('') || 'HQ'
                     )}

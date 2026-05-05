@@ -45,10 +45,10 @@ interface StatCardProps {
 // Operational Skeleton Component
 function SkeletonCard() {
   return (
-    <Card className="rounded-lg border-stone-200 shadow-none overflow-hidden bg-white">
+    <Card className="rounded-xl border-stone-200 shadow-none overflow-hidden bg-white">
       <CardContent className="p-5 space-y-3">
         <div className="w-1/4 h-2 bg-stone-100 animate-pulse rounded-full" />
-        <div className="w-1/2 h-6 bg-stone-50 animate-pulse rounded-md" />
+        <div className="w-1/2 h-6 bg-stone-50 animate-pulse rounded-lg" />
       </CardContent>
     </Card>
   )
@@ -57,11 +57,11 @@ function SkeletonCard() {
 // Operational Stat Card Component
 function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
   return (
-    <Card className="rounded-lg border-stone-200 shadow-sm transition-all overflow-hidden bg-white">
+    <Card className="rounded-xl border-stone-200 shadow-sm transition-all overflow-hidden bg-white">
       <CardContent className="p-5">
         <div className="flex justify-between items-start">
           <div className="space-y-1">
-            <p className="text-[11px] font-bold text-stone-500 tracking-wider">{title}</p>
+            <p className="text-[11px] font-bold text-stone-500 normal-case">{title}</p>
             <div className="flex items-baseline gap-2">
               <h3 className="text-2xl font-bold text-stone-900 tabular-nums">{value}</h3>
               <span className={cn(
@@ -164,22 +164,25 @@ export default function AdminDashboard() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-      {/* Top Header - Operational */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <Activity className="w-8 h-8 text-stone-900" />
+            Operational dashboard
+          </h1>
           <div className="flex items-center gap-4 mt-1">
             <p className="text-stone-400 text-xs flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-              16 regions tracked
+              16 regions active
             </p>
-            <p className="text-stone-400 text-xs font-medium">Updated 2m ago</p>
+            <p className="text-stone-400 text-xs font-medium">Telemetry updated 2m ago</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="h-8 px-3 text-xs font-semibold text-stone-600 border-stone-200 hover:bg-stone-50 hover:text-stone-900 transition-all rounded-md"
+            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all"
             onClick={handleExport}
             disabled={isExporting}
           >
@@ -187,12 +190,11 @@ export default function AdminDashboard() {
           </Button>
 
           <Button 
-            className="h-8 px-3 text-xs font-semibold bg-stone-900 text-white hover:bg-stone-800 transition-all rounded-md"
+            className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all"
             onClick={handlePlatformLogs}
           >
             View logs
           </Button>
-
         </div>
       </div>
 
@@ -229,7 +231,7 @@ export default function AdminDashboard() {
                 <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Rolling 30-day expansion trend</CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <select className="h-7 px-2 bg-white border border-stone-200 text-[10px] font-bold text-stone-600 rounded-md outline-none">
+                <select className="h-7 px-2 bg-white border border-stone-200 text-[10px] font-bold text-stone-600 rounded-lg outline-none">
                   <option>Last 30 Days</option>
                   <option>Last 90 Days</option>
                 </select>

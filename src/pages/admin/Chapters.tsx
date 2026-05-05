@@ -148,25 +148,28 @@ export default function ChaptersManagement() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-black font-meta text-stone-900 tracking-tighter">Chapters</h1>
-          <p className="text-stone-500 text-sm mt-1 font-medium">Coordinate regional cells and constituency headquarters.</p>
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <MapPin className="w-8 h-8 text-stone-900" />
+            Chapters
+          </h1>
+          <p className="text-stone-500 text-sm mt-1">Coordinate regional cells and constituency headquarters.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
             onClick={() => toast.info("Accessing audit vault...")}
-            className="h-11 text-[10px] font-bold tracking-wider border-stone-200 rounded-xl shadow-sm"
+            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all flex items-center gap-2"
           >
-            <History className="w-4 h-4 mr-2" /> View audit trail
+            <History className="w-3.5 h-3.5" /> View audit trail
           </Button>
           {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
             <Button 
               onClick={openAddModal}
-              className="h-11 text-[10px] font-bold tracking-wider bg-stone-900 text-white hover:bg-stone-800 rounded-xl shadow-md"
+              className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all flex items-center gap-2"
             >
-              <Plus className="w-4 h-4 mr-2" /> Establish new chapter
+              <Plus className="w-3.5 h-3.5" /> Establish new chapter
             </Button>
           )}
         </div>
@@ -180,7 +183,7 @@ export default function ChaptersManagement() {
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-[10px] font-bold tracking-wider opacity-80">Total chapters</p>
+              <p className="text-[10px] font-bold opacity-80 normal-case">Total chapters</p>
               <h3 className="text-2xl font-black font-meta">{chapters.length}</h3>
             </div>
           </CardContent>
@@ -191,7 +194,7 @@ export default function ChaptersManagement() {
               <Users className="w-6 h-6 text-stone-900" />
             </div>
             <div>
-              <p className="text-[10px] font-bold tracking-wider text-stone-400">Movement size</p>
+              <p className="text-[10px] font-bold text-stone-400 normal-case">Movement size</p>
               <h3 className="text-2xl font-black font-meta text-stone-900">{totalMembers.toLocaleString()}</h3>
             </div>
           </CardContent>
@@ -203,11 +206,11 @@ export default function ChaptersManagement() {
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] font-bold tracking-wider text-stone-400 group-hover:text-stone-900 transition-colors">{stat.region}</p>
+                <p className="text-[10px] font-bold text-stone-400 group-hover:text-stone-900 transition-colors normal-case">{stat.region}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <h3 className="text-xl font-black font-meta text-stone-900">{stat.memberCount.toLocaleString()}</h3>
                   <div className={cn(
-                    "px-1.5 py-0.5 text-[8px] font-bold tracking-wider border rounded",
+                    "px-1.5 py-0.5 text-[8px] font-bold border rounded normal-case",
                     stat.performance === 'High' && "bg-emerald-50 text-[var(--brand-green)] border-[var(--brand-green)]/20",
                     stat.performance === 'Medium' && "bg-amber-50 text-[var(--brand-gold)] border-[var(--brand-gold)]/20",
                     stat.performance === 'Low' && "bg-red-50 text-[var(--brand-red)] border-[var(--brand-red)]/20",
@@ -235,15 +238,15 @@ export default function ChaptersManagement() {
           <div className="flex gap-4">
             <div className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 bg-emerald-500 rounded-sm" />
-              <span className="text-[9px] font-bold tracking-wider text-stone-500">High strength</span>
+              <span className="text-[9px] font-bold text-stone-500 normal-case">High strength</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 bg-amber-500 rounded-sm" />
-              <span className="text-[9px] font-bold tracking-wider text-stone-500">Moderate</span>
+              <span className="text-[9px] font-bold text-stone-500 normal-case">Moderate</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 bg-stone-300 rounded-sm" />
-              <span className="text-[9px] font-bold tracking-wider text-stone-500">Emerging</span>
+              <span className="text-[9px] font-bold text-stone-500 normal-case">Emerging</span>
             </div>
           </div>
         </CardHeader>
@@ -266,18 +269,18 @@ export default function ChaptersManagement() {
                 <circle cx="100" cy="125" r="8" fill="var(--brand-black)" />
              </svg>
              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-300 transform -rotate-45">National Geospatial Grid</span>
+                <span className="text-[10px] font-black normal-case text-stone-300 transform -rotate-45">National Geospatial Grid</span>
              </div>
           </div>
           
           <div className="flex-1 space-y-6 w-full">
-            <h4 className="text-xs font-bold tracking-wider text-stone-400 border-b border-stone-100 pb-2">Regional performance tier</h4>
+            <h4 className="text-xs font-bold text-stone-400 border-b border-stone-100 pb-2 normal-case">Regional performance tier</h4>
             <div className="space-y-4">
               {regionalStats.map((stat) => (
                 <div key={stat.region} className="group cursor-pointer">
                   <div className="flex justify-between items-center mb-1.5">
-                    <span className="text-[10px] font-bold tracking-tight text-stone-600 group-hover:text-stone-900 transition-colors">{stat.region}</span>
-                    <span className="text-[10px] font-bold text-stone-400">{stat.performance} impact</span>
+                    <span className="text-[10px] font-bold text-stone-600 group-hover:text-stone-900 transition-colors normal-case">{stat.region}</span>
+                    <span className="text-[10px] font-bold text-stone-400 normal-case">{stat.performance} impact</span>
                   </div>
                   <div className="h-1.5 w-full bg-stone-100 overflow-hidden rounded-full">
                     <div 
@@ -308,7 +311,7 @@ export default function ChaptersManagement() {
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending'); setCurrentPage(1); }}
-          className="h-11 px-4 text-[10px] font-bold tracking-wider rounded-xl border border-stone-200 bg-white focus:outline-none focus:border-stone-400 shadow-sm"
+          className="h-11 px-4 text-[10px] font-bold rounded-xl border border-stone-200 bg-white focus:outline-none focus:border-stone-400 shadow-sm normal-case"
         >
           <option value="All">All statuses</option>
           <option value="Active">Active</option>
@@ -323,13 +326,13 @@ export default function ChaptersManagement() {
             <CardHeader className="p-6 border-b border-stone-50 bg-stone-50/50">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <span className="text-[9px] font-bold text-stone-400 tracking-wider">{chapter.id.slice(0, 8).toUpperCase()}</span>
+                  <span className="text-[9px] font-bold text-stone-400 normal-case">{chapter.id.slice(0, 8)}</span>
                   <CardTitle className="text-sm font-bold text-stone-900 tracking-tight leading-tight">
                     {chapter.name}
                   </CardTitle>
                 </div>
                 <div className={cn(
-                  "px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border",
+                  "px-2 py-0.5 text-[8px] font-bold border normal-case rounded-full",
                   (chapter.status === 'Active') ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100"
                 )}>
                   {chapter.status}
@@ -339,13 +342,13 @@ export default function ChaptersManagement() {
             <CardContent className="p-6 space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1 group/lead">
-                  <p className="text-[9px] font-bold text-stone-400 tracking-wider flex items-center gap-1">
+                  <p className="text-[9px] font-bold text-stone-400 normal-case flex items-center gap-1">
                     <Crown className="w-2.5 h-2.5 text-amber-500" /> Regional hub
                   </p>
                   <p className="text-xs font-bold text-stone-900 tracking-tight truncate">{chapter.city_or_region}</p>
                 </div>
                 <div className="space-y-1 text-right">
-                  <p className="text-[9px] font-bold text-stone-400 tracking-wider">Strength</p>
+                  <p className="text-[9px] font-bold text-stone-400 normal-case">Strength</p>
                   <p className="text-xs font-bold text-stone-900 flex items-center justify-end gap-1">
                     <Users className="w-3 h-3 text-emerald-500" />
                     {(chapter.member_count || 0).toLocaleString()}
@@ -366,7 +369,7 @@ export default function ChaptersManagement() {
                     <Button 
                       variant="outline" 
                       onClick={() => openEditModal(chapter)}
-                      className="h-9 px-0 text-[8px] font-bold tracking-wider border-stone-100 hover:bg-stone-900 hover:text-white transition-all rounded-lg"
+                      className="h-9 px-0 text-[8px] font-bold border-stone-100 hover:bg-stone-900 hover:text-white transition-all rounded-lg normal-case"
                     >
                       Manage hub
                     </Button>
@@ -375,7 +378,7 @@ export default function ChaptersManagement() {
                     <Button 
                       variant="ghost" 
                       onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
-                      className="h-9 px-0 text-[8px] font-bold tracking-wider text-stone-400 hover:text-red-600 transition-colors"
+                      className="h-9 px-0 text-[8px] font-bold text-stone-400 hover:text-red-600 transition-colors normal-case"
                     >
                       Delete chapter <ChevronRight className="w-3 h-3 ml-1" />
                     </Button>
@@ -395,7 +398,7 @@ export default function ChaptersManagement() {
             <div className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-stone-900 group-hover:text-white transition-all">
               <Plus className="w-6 h-6" />
             </div>
-            <span className="text-[10px] font-bold tracking-wider">Establish new chapter</span>
+            <span className="text-[10px] font-bold normal-case">Establish new chapter</span>
           </button>
         )}
       </div>
@@ -403,15 +406,15 @@ export default function ChaptersManagement() {
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-stone-200">
-          <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center md:text-left w-full md:w-auto">
-            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredChapters.length)} of {filteredChapters.length} Chapters
+          <span className="text-[10px] font-bold text-stone-400 normal-case text-center md:text-left w-full md:w-auto">
+            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredChapters.length)} of {filteredChapters.length} chapters
           </span>
           <div className="flex items-center justify-center gap-2 w-full md:w-auto">
             <Button
               variant="outline"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="h-8 px-4 text-[10px] font-bold tracking-wider rounded-lg border-stone-200"
+              className="h-8 px-4 text-[10px] font-bold rounded-lg border-stone-200 normal-case"
             >
               Previous
             </Button>
@@ -435,7 +438,7 @@ export default function ChaptersManagement() {
               variant="outline"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              className="h-8 px-4 text-[10px] font-bold tracking-wider rounded-lg border-stone-200"
+              className="h-8 px-4 text-[10px] font-bold rounded-lg border-stone-200 normal-case"
             >
               Next
             </Button>
@@ -461,7 +464,7 @@ export default function ChaptersManagement() {
           <form onSubmit={handleSaveChapter} className="p-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 tracking-wider">Chapter name</label>
+                <label className="text-[10px] font-bold text-stone-400 normal-case">Chapter name</label>
                 <Input 
                   required
                   placeholder="e.g. Adabraka hub"
@@ -471,7 +474,7 @@ export default function ChaptersManagement() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 tracking-wider">City / region</label>
+                <label className="text-[10px] font-bold text-stone-400 normal-case">City / region</label>
                 <Input 
                   required
                   placeholder="e.g. Accra"
@@ -484,7 +487,7 @@ export default function ChaptersManagement() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 tracking-wider">Country</label>
+                <label className="text-[10px] font-bold text-stone-400 normal-case">Country</label>
                 <Input 
                   required
                   placeholder="e.g. Ghana"
@@ -494,7 +497,7 @@ export default function ChaptersManagement() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 tracking-wider">Hub status</label>
+                <label className="text-[10px] font-bold text-stone-400 normal-case">Hub status</label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
@@ -507,7 +510,7 @@ export default function ChaptersManagement() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-stone-400 tracking-wider">Mission description</label>
+              <label className="text-[10px] font-bold text-stone-400 normal-case">Mission description</label>
               <Textarea 
                 required
                 placeholder="Describe the chapter's focus area..."
@@ -522,13 +525,13 @@ export default function ChaptersManagement() {
                 type="button" 
                 variant="outline" 
                 onClick={closeModal}
-                className="text-[10px] font-bold tracking-wider rounded-lg shadow-sm"
+                className="text-[10px] font-bold rounded-lg shadow-sm normal-case"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
-                className="bg-stone-900 text-white hover:bg-stone-800 font-bold text-[10px] tracking-wider rounded-lg px-8 shadow-md"
+                className="bg-stone-900 text-white hover:bg-stone-800 font-bold text-[10px] rounded-lg px-8 shadow-md normal-case"
               >
                 {editingChapterId ? 'Update hub' : 'Create chapter'}
               </Button>

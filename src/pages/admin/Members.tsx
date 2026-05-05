@@ -78,14 +78,14 @@ export default function MembersList() {
 
   const handleVerify = async (id: string, name: string) => {
     if (!adminService.can('VERIFY_MEMBER', 'MEMBERS')) {
-      toast({ title: "PERMISSION DENIED", description: "You do not have authorization to verify patriots.", variant: "destructive" })
+      toast({ title: "Permission denied", description: "You do not have authorization to verify members.", variant: "destructive" })
       return
     }
 
     if (window.confirm(`Are you sure you want to verify and admit ${name} into the movement?`)) {
       const success = await adminService.verifyMember(id, true, 'Administrative Approval')
       if (success) {
-        toast({ title: "PATRIOT VERIFIED", description: `${name} has been successfully admitted.` })
+        toast({ title: "Member verified", description: `${name} has been successfully admitted.` })
         // Refresh members
         const data = await adminService.getMembers()
         setMembers(data)
@@ -230,12 +230,12 @@ export default function MembersList() {
   // Bulk Actions
   const handleBulkVerify = async () => {
     if (!adminService.can('VERIFY_MEMBER', 'MEMBERS')) {
-      toast({ title: "PERMISSION DENIED", description: "You lack the authority for bulk verification.", variant: "destructive" })
+      toast({ title: "Permission denied", description: "You lack the authority for bulk verification.", variant: "destructive" })
       return
     }
 
     const count = selectedIds.size
-    if (window.confirm(`Are you sure you want to verify and admit all ${count} selected patriots?`)) {
+    if (window.confirm(`Are you sure you want to verify and admit all ${count} selected members?`)) {
       let successCount = 0
       for (const id of selectedIds) {
         const success = await adminService.verifyMember(id, true, 'Bulk Administrative Approval')
@@ -317,27 +317,30 @@ export default function MembersList() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black font-meta text-stone-900 tracking-tighter normal-case">Member directory</h1>
-          <p className="text-stone-500 text-sm mt-1 font-medium">Manage and coordinate the movement's registered members.</p>
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <Users className="w-8 h-8 text-stone-900" />
+            Member directory
+          </h1>
+          <p className="text-stone-500 text-sm mt-1">Manage and coordinate registered members.</p>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="h-11 px-5 rounded-xl border-stone-200 text-[11px] font-bold tracking-wider hover:bg-stone-50 hover:text-stone-900 shadow-sm transition-all text-stone-600"
+            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all"
             onClick={handleExport}
             disabled={isExporting || members.length === 0}
           >
-            <Download className="w-4 h-4 mr-2 text-stone-300" />
-            {isExporting ? 'Generating...' : 'Export members data'}
+            <Download className="w-3.5 h-3.5 mr-2 text-stone-400" />
+            {isExporting ? 'Generating...' : 'Export directory'}
           </Button>
           <Button 
-            className="h-11 px-6 rounded-xl bg-stone-900 text-white text-[11px] font-bold tracking-wider hover:bg-stone-800 shadow-lg shadow-stone-200 transition-all"
+            className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all"
             onClick={handleAddMember}
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Add new member
+            <Plus className="w-3.5 h-3.5 mr-2" />
+            Add member
           </Button>
         </div>
       </div>
@@ -358,7 +361,7 @@ export default function MembersList() {
               <div className="flex-1">
                 <p className="text-[10px] font-bold text-stone-400">{stat.label}</p>
                 {isLoading ? (
-                  <div className="h-7 w-16 bg-stone-100 animate-pulse rounded-md mt-1" />
+                  <div className="h-7 w-16 bg-stone-100 animate-pulse rounded-lg mt-1" />
                 ) : (
                   <p className="text-xl font-black text-stone-900 leading-tight mt-0.5">
                     {stat.value.toLocaleString()}

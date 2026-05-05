@@ -92,7 +92,8 @@ class MemberService {
         users!admins_id_fkey (
           full_name,
           email,
-          region
+          region,
+          avatar_url
         )
       `)
 
@@ -101,7 +102,7 @@ class MemberService {
       return []
     }
 
-    const typedData = data as unknown as AdminDbResponse[]
+    const typedData = data as unknown as (AdminDbResponse & { users: { avatar_url: string | null } })[]
 
     return typedData.map((a) => ({
       id: a.id,
@@ -109,7 +110,8 @@ class MemberService {
       email: a.users?.email || 'hq@thebase.gh',
       role: a.role as AdminRole,
       region: a.users?.region || 'National HQ',
-      permissions: a.permissions as AdminPermission[]
+      permissions: a.permissions as AdminPermission[],
+      avatarUrl: a.users?.avatar_url || undefined
     }))
   }
 

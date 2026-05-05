@@ -172,29 +172,31 @@ export default function MemberVerification() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-black font-meta text-stone-900 tracking-tighter">
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <ShieldCheck className="w-8 h-8 text-stone-900" />
             Member verification
           </h1>
-          <p className="text-stone-500 text-sm mt-1 font-medium">
-            Review and approve new member registrations for movement security.
-          </p>
+          <p className="text-stone-500 text-sm mt-1">Review and approve new member registrations for movement security.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {pendingCount > 0 && (
-            <div className="px-4 py-2 bg-amber-50 border border-amber-100 flex items-center gap-2 rounded-xl">
+            <div className="hidden md:flex px-4 py-2 bg-amber-50 border border-amber-100 items-center gap-2 rounded-xl shadow-sm">
               <AlertCircle className="w-4 h-4 text-amber-500" />
-              <span className="text-[10px] font-bold text-amber-600 normal-case">
-                {pendingCount} pending review{pendingCount !== 1 ? 's' : ''}
-              </span>
+              <div className="text-right">
+                <span className="text-[9px] font-bold text-amber-600 uppercase tracking-wider block">Pending</span>
+                <span className="text-sm font-bold text-amber-700 tracking-tight">
+                  {pendingCount} review{pendingCount !== 1 ? 's' : ''}
+                </span>
+              </div>
             </div>
           )}
           <Button
-            className="h-11 text-[10px] font-bold bg-stone-900 text-white hover:bg-stone-800 rounded-xl shadow-md normal-case"
+            className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all flex items-center gap-2"
             onClick={() => setShowRegForm(true)}
           >
-            <UserPlus className="w-4 h-4 mr-2" /> Register new member
+            <UserPlus className="w-3.5 h-3.5" /> Register new member
           </Button>
         </div>
       </div>

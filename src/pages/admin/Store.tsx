@@ -152,47 +152,50 @@ export default function AdminStore() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">Logistics & Supply</h1>
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <Package className="w-8 h-8 text-stone-900" />
+            Logistics and supply
+          </h1>
           <p className="text-stone-500 text-sm mt-1">Movement inventory, merchandising, and regional distribution.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex bg-stone-100 p-1 mr-2">
+        <div className="flex items-center gap-4">
+          <div className="flex bg-stone-100 p-1 rounded-xl">
             <button 
               onClick={() => setActiveTab('inventory')}
               className={cn(
-                "px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
-                activeTab === 'inventory' ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+                "px-5 py-2 text-[10px] font-bold rounded-lg transition-all",
+                activeTab === 'inventory' ? "bg-white text-stone-900 shadow-sm" : "text-stone-400 hover:text-stone-600"
               )}
             >
-              <Package className="w-3.5 h-3.5 mr-2 inline" /> Inventory
+              <Package className="w-3.5 h-3.5 mr-1.5 inline" /> Inventory
             </button>
             <button 
               onClick={() => setActiveTab('requests')}
               className={cn(
-                "px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
-                activeTab === 'requests' ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+                "px-5 py-2 text-[10px] font-bold rounded-lg transition-all",
+                activeTab === 'requests' ? "bg-white text-stone-900 shadow-sm" : "text-stone-400 hover:text-stone-600"
               )}
             >
-              <Truck className="w-3.5 h-3.5 mr-2 inline" /> Requests
+              <Truck className="w-3.5 h-3.5 mr-1.5 inline" /> Requests
             </button>
             <button 
               onClick={() => setActiveTab('audit')}
               className={cn(
-                "px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
-                activeTab === 'audit' ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+                "px-5 py-2 text-[10px] font-bold rounded-lg transition-all",
+                activeTab === 'audit' ? "bg-white text-stone-900 shadow-sm" : "text-stone-400 hover:text-stone-600"
               )}
             >
-              <History className="w-3.5 h-3.5 mr-2 inline" /> Audit Hub
+              <History className="w-3.5 h-3.5 mr-1.5 inline" /> Audit
             </button>
           </div>
           {activeTab === 'inventory' && (
             <Button 
               onClick={() => handleOpenModal()}
-              className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800"
+              className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all flex items-center gap-2"
             >
-              <Plus className="w-4 h-4 mr-2" /> Add Item
+              <Plus className="w-3.5 h-3.5" /> Add item
             </Button>
           )}
         </div>
@@ -202,7 +205,7 @@ export default function AdminStore() {
       {isLoading ? (
         <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-stone-50/50 border border-dashed border-stone-200">
           <Loader2 className="w-8 h-8 animate-spin text-stone-300" />
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Synchronizing Movement Vault...</p>
+          <p className="text-xs font-bold tracking-tight text-stone-400">Synchronizing movement vault...</p>
         </div>
       ) : (
         <>
@@ -213,12 +216,12 @@ export default function AdminStore() {
                   <AlertTriangle className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-amber-900">Inventory Alert</p>
-                  <p className="text-xs text-amber-700">{lowStockItems.length} items require immediate replenishment to maintain movement visibility.</p>
+                  <p className="text-xs font-bold text-amber-900">Inventory alert</p>
+                  <p className="text-xs text-amber-700">Some items require replenishment soon.</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="h-8 text-[9px] font-black uppercase border-amber-200 text-amber-700 hover:bg-amber-100">
-                View Alerts
+              <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold border-amber-200 text-amber-700 hover:bg-amber-100 rounded-xl">
+                View alerts
               </Button>
             </div>
           )}
@@ -227,8 +230,8 @@ export default function AdminStore() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="rounded-none border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Total Sales (MTD)</p>
-            <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">GHS 14,250</h3>
+            <p className="text-[10px] font-bold text-stone-400 tracking-tight">Total sales (MTD)</p>
+            <h3 className="text-2xl font-bold text-stone-900">GHS 14,250</h3>
             <span className="text-[9px] font-bold text-emerald-600 flex items-center gap-1 mt-1">
               <TrendingUp className="w-3 h-3" /> +8.4% vs last month
             </span>
@@ -236,16 +239,16 @@ export default function AdminStore() {
         </Card>
         <Card className="rounded-none border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Active Requests</p>
-            <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{requests.filter(r => r.status === 'Pending').length}</h3>
-            <span className="text-[9px] font-bold text-amber-600 mt-1 uppercase tracking-tight">Pending Approval</span>
+            <p className="text-[10px] font-bold text-stone-400 tracking-tight">Active requests</p>
+            <h3 className="text-2xl font-bold text-stone-900">{requests.filter(r => r.status === 'Pending').length}</h3>
+            <span className="text-[10px] font-bold text-amber-600 mt-1">Pending approval</span>
           </CardContent>
         </Card>
         <Card className="rounded-none border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Stock Items</p>
-            <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
-            <span className="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-tight">Across {products.length} Products</span>
+            <p className="text-[10px] font-bold text-stone-400 tracking-tight">Stock items</p>
+            <h3 className="text-2xl font-bold text-stone-900">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
+            <span className="text-[10px] font-bold text-stone-400 mt-1">Across {products.length} products</span>
           </CardContent>
         </Card>
         <Card className={cn(
@@ -254,18 +257,18 @@ export default function AdminStore() {
         )}>
           <CardContent className="p-6 flex flex-col gap-1">
             <p className={cn(
-              "text-[9px] font-black uppercase tracking-[0.2em]",
-              lowStockItems.length > 0 ? "text-[var(--brand-red)]" : "text-stone-400"
-            )}>Stock Alerts</p>
+              "text-[10px] font-bold tracking-tight",
+              lowStockItems.length > 0 ? "text-red-600" : "text-stone-400"
+            )}>Stock alerts</p>
             <h3 className={cn(
-              "text-2xl font-black font-meta",
-              lowStockItems.length > 0 ? "text-[var(--brand-red)]" : "text-[var(--brand-black)]"
+              "text-2xl font-bold",
+              lowStockItems.length > 0 ? "text-red-600" : "text-stone-900"
             )}>{lowStockItems.length}</h3>
             <span className={cn(
-              "text-[9px] font-black flex items-center gap-1 mt-1 uppercase tracking-tight",
-              lowStockItems.length > 0 ? "text-[var(--brand-red)]/60" : "text-stone-400"
+              "text-[10px] font-bold flex items-center gap-1 mt-1",
+              lowStockItems.length > 0 ? "text-red-600/60" : "text-stone-400"
             )}>
-              <AlertTriangle className="w-3 h-3" /> {lowStockItems.length > 0 ? "Requires Attention" : "All Stock Stable"}
+              <AlertTriangle className="w-3 h-3" /> {lowStockItems.length > 0 ? "Requires attention" : "All stock stable"}
             </span>
           </CardContent>
         </Card>
@@ -275,9 +278,9 @@ export default function AdminStore() {
         <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
-                <Package className="w-4 h-4 text-[var(--brand-red)]" />
-                National Inventory Vault
+              <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
+                <Package className="w-4 h-4 text-red-600" />
+                Inventory library
               </CardTitle>
               
               <div className="flex items-center bg-stone-100 p-1 rounded-none overflow-x-auto no-scrollbar">
@@ -286,8 +289,8 @@ export default function AdminStore() {
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
                     className={cn(
-                      "px-4 py-1.5 text-[9px] font-black uppercase tracking-tight transition-all",
-                      activeCategory === cat ? "bg-white text-[var(--brand-black)] shadow-sm" : "text-stone-400 hover:text-stone-600"
+                      "px-4 py-1.5 text-[10px] font-bold tracking-tight transition-all",
+                      activeCategory === cat ? "bg-white text-stone-900 shadow-sm" : "text-stone-400 hover:text-stone-600"
                     )}
                   >
                     {cat}
@@ -311,11 +314,11 @@ export default function AdminStore() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-stone-100 bg-stone-50/10">
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Product</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Category</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Price</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">In Stock</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Product</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Category</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Price</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center">In stock</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Status</th>
                     <th className="px-6 py-4 text-right"></th>
                   </tr>
                 </thead>
@@ -328,7 +331,7 @@ export default function AdminStore() {
                             {product.image}
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-xs font-black text-[var(--brand-black)] uppercase tracking-tight">{product.name}</span>
+                            <span className="text-xs font-bold text-stone-900 tracking-tight">{product.name}</span>
                             <span className="text-[9px] font-bold text-stone-400 mt-0.5">{product.id}</span>
                           </div>
                         </div>
@@ -351,14 +354,14 @@ export default function AdminStore() {
                         <div className="flex items-center gap-2">
                           <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: product.color }} />
                           <span className={cn(
-                            "px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border",
+                            "px-2.5 py-1 text-[10px] font-bold tracking-tight border rounded-md",
                             product.status === 'Critical' 
-                              ? "bg-red-50 text-[var(--brand-red)] border-red-100" 
+                              ? "bg-red-50 text-red-600 border-red-100" 
                               : product.status === 'Low Stock'
-                              ? "bg-amber-50 text-[var(--brand-gold)] border-amber-100"
+                              ? "bg-amber-50 text-amber-600 border-amber-100"
                               : product.status === 'Processing'
-                              ? "bg-stone-50 text-[var(--brand-black)] border-stone-200"
-                              : "bg-emerald-50 text-[var(--brand-green)] border-emerald-100"
+                              ? "bg-stone-50 text-stone-900 border-stone-200"
+                              : "bg-emerald-50 text-emerald-600 border-emerald-100"
                           )}>
                             {product.status}
                           </span>
@@ -395,9 +398,9 @@ export default function AdminStore() {
       ) : activeTab === 'requests' ? (
         <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
-            <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
-              <Truck className="w-4 h-4 text-[var(--brand-green)]" />
-              Regional Resource Requests
+            <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
+              <Truck className="w-4 h-4 text-emerald-600" />
+              Regional resource requests
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -405,11 +408,11 @@ export default function AdminStore() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-stone-100 bg-stone-50/10">
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Region</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Items</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Requested</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Priority</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Region</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Items</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Requested</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Priority</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Status</th>
                     <th className="px-6 py-4 text-right">Action</th>
                   </tr>
                 </thead>
@@ -418,7 +421,7 @@ export default function AdminStore() {
                     <tr key={req.id} className="hover:bg-stone-50/50 transition-colors">
                       <td className="px-6 py-5">
                         <div className="flex flex-col">
-                          <span className="text-xs font-black text-stone-900 uppercase tracking-tight">{req.region}</span>
+                          <span className="text-xs font-bold text-stone-900 tracking-tight">{req.region}</span>
                           <span className="text-[9px] font-bold text-stone-400 mt-0.5">{req.constituency || 'Regional HQ'}</span>
                         </div>
                       </td>
@@ -438,7 +441,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
-                          "px-2 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-full",
+                          "px-2 py-0.5 text-[10px] font-bold tracking-tight rounded-full",
                           req.priority === 'Urgent' ? "bg-red-100 text-red-700" : req.priority === 'High' ? "bg-amber-100 text-amber-700" : "bg-stone-100 text-stone-600"
                         )}>
                           {req.priority}
@@ -446,7 +449,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
-                          "px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border",
+                          "px-2.5 py-1 text-[10px] font-bold tracking-tight border rounded-md",
                           req.status === 'Pending' ? "bg-amber-50 text-amber-700 border-amber-100" :
                           req.status === 'Approved' ? "bg-blue-50 text-blue-700 border-blue-100" :
                           req.status === 'Dispatched' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
@@ -458,7 +461,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5 text-right">
                         <Select onValueChange={(v: ResourceRequest['status']) => handleStatusUpdate(req.id, v)}>
-                          <SelectTrigger className="w-32 h-8 text-[9px] font-black uppercase tracking-widest rounded-none border-stone-200">
+                          <SelectTrigger className="w-32 h-8 text-[10px] font-bold tracking-tight rounded-lg border-stone-200">
                             <SelectValue placeholder="Update Status" />
                           </SelectTrigger>
                           <SelectContent className="rounded-none">
@@ -486,9 +489,9 @@ export default function AdminStore() {
       ) : (
         <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
-            <CardTitle className="text-xs font-black font-meta uppercase tracking-widest flex items-center gap-2">
+            <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
               <History className="w-4 h-4 text-stone-500" />
-              Logistics Audit Vault
+              Logistics audit vault
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -496,11 +499,11 @@ export default function AdminStore() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-stone-100 bg-stone-50/10">
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Timestamp</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Action</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Resource</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Change</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Location</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Timestamp</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Action</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Resource</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Change</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Location</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-50">
@@ -516,7 +519,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
-                          "px-2 py-0.5 text-[9px] font-black uppercase tracking-widest border",
+                          "px-2 py-0.5 text-[10px] font-bold tracking-tight border rounded-md",
                           log.action === 'DISPATCHED' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
                           log.action === 'REPLENISHED' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
                           "bg-stone-50 text-stone-700 border-stone-100"
@@ -525,7 +528,7 @@ export default function AdminStore() {
                         </span>
                       </td>
                       <td className="px-6 py-5">
-                        <span className="text-xs font-black text-stone-900 uppercase tracking-tight">
+                        <span className="text-xs font-bold text-stone-900 tracking-tight">
                           {log.productName || 'Unknown Asset'}
                         </span>
                       </td>
@@ -549,7 +552,7 @@ export default function AdminStore() {
                   {auditLogs.length === 0 && (
                     <tr>
                       <td colSpan={5} className="px-6 py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
-                        The Logistics Vault is empty. No movements recorded.
+                        The logistics vault is empty. No movements recorded.
                       </td>
                     </tr>
                   )}
@@ -564,32 +567,32 @@ export default function AdminStore() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="p-8 border border-stone-200 bg-white space-y-6">
           <div className="flex items-center justify-between">
-            <h4 className="text-lg font-black font-meta uppercase tracking-tighter text-[var(--brand-black)]">Fulfillment Status</h4>
+            <h4 className="text-lg font-bold tracking-tight text-stone-900">Fulfillment status</h4>
             <Box className="w-5 h-5 text-stone-300" />
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                <span className="text-stone-400">Shipped Orders</span>
-                <span className="text-[var(--brand-green)]">82%</span>
+              <div className="flex justify-between text-[10px] font-bold tracking-tight">
+                <span className="text-stone-400">Shipped orders</span>
+                <span className="text-emerald-600">82%</span>
               </div>
               <div className="w-full h-1.5 bg-stone-100 overflow-hidden">
                 <div className="h-full bg-[var(--brand-green)] w-[82%]" />
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+              <div className="flex justify-between text-[10px] font-bold tracking-tight">
                 <span className="text-stone-400">Processing</span>
-                <span className="text-[var(--brand-gold)]">12%</span>
+                <span className="text-amber-600">12%</span>
               </div>
               <div className="w-full h-1.5 bg-stone-100 overflow-hidden">
                 <div className="h-full bg-[var(--brand-gold)] w-[12%]" />
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+              <div className="flex justify-between text-[10px] font-bold tracking-tight">
                 <span className="text-stone-400">Returns / Issues</span>
-                <span className="text-[var(--brand-red)]">6%</span>
+                <span className="text-red-600">6%</span>
               </div>
               <div className="w-full h-1.5 bg-stone-100 overflow-hidden">
                 <div className="h-full bg-[var(--brand-red)] w-[6%]" />
@@ -600,14 +603,14 @@ export default function AdminStore() {
 
         <div className="p-8 bg-[var(--brand-red)] text-white relative overflow-hidden flex flex-col justify-between">
           <div className="relative z-10 space-y-4">
-            <h4 className="text-lg font-black font-meta uppercase tracking-tighter">Merch Strategy 2024</h4>
+            <h4 className="text-lg font-bold tracking-tight">Merch strategy 2024</h4>
             <p className="text-xs text-red-100 leading-relaxed max-w-sm">
               Standardize regional distribution by the end of Q2. New "Chapter Founder" apparel series ready for production.
             </p>
           </div>
           <div className="relative z-10 pt-6">
-            <Button variant="outline" className="h-10 text-[10px] uppercase font-bold tracking-widest border-white/20 text-white hover:bg-white/10">
-              View Production Docs
+            <Button variant="outline" className="h-10 text-[10px] font-bold tracking-tight border-white/20 text-white hover:bg-white/10 rounded-xl">
+              View production docs
             </Button>
           </div>
           <ShoppingBag className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5 rotate-12" />
@@ -618,35 +621,35 @@ export default function AdminStore() {
 
       {/* Add/Edit Product Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-none border-stone-200">
+        <DialogContent className="sm:max-w-[500px] rounded-xl border-stone-200">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black font-meta uppercase tracking-tighter">
-              {selectedProduct?.id ? 'Edit Inventory Item' : 'New Movement Gear'}
+            <DialogTitle className="text-xl font-bold tracking-tight">
+              {selectedProduct?.id ? 'Edit inventory item' : 'New movement gear'}
             </DialogTitle>
-            <DialogDescription className="text-xs uppercase tracking-widest font-bold text-stone-400">
+            <DialogDescription className="text-xs font-bold text-stone-400">
               Configure product metadata and logistical constraints.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right text-[10px] font-black uppercase tracking-widest">Name</Label>
+              <Label className="text-right text-[10px] font-bold tracking-tight">Name</Label>
               <Input 
                 value={selectedProduct?.name || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, name: e.target.value }))}
-                className="col-span-3 h-10 rounded-none border-stone-200 text-xs" 
+                className="col-span-3 h-10 rounded-lg border-stone-200 text-xs" 
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right text-[10px] font-black uppercase tracking-widest">Category</Label>
+              <Label className="text-right text-[10px] font-bold tracking-tight">Category</Label>
               <Select 
                 value={selectedProduct?.category} 
                 onValueChange={v => setSelectedProduct(prev => ({ ...prev!, category: v }))}
               >
-                <SelectTrigger className="col-span-3 h-10 rounded-none border-stone-200 text-xs font-bold">
+                <SelectTrigger className="col-span-3 h-10 rounded-lg border-stone-200 text-xs font-bold">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent className="rounded-none">
+                <SelectContent className="rounded-lg">
                   <SelectItem value="Apparel">Apparel</SelectItem>
                   <SelectItem value="Accessories">Accessories</SelectItem>
                   <SelectItem value="Print">Print Material</SelectItem>
@@ -656,42 +659,42 @@ export default function AdminStore() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid grid-cols-2 items-center gap-4">
-                <Label className="text-right text-[10px] font-black uppercase tracking-widest">Price</Label>
+                <Label className="text-right text-[10px] font-bold tracking-tight">Price</Label>
                 <Input 
                   value={selectedProduct?.price || ''} 
                   onChange={e => setSelectedProduct(prev => ({ ...prev!, price: e.target.value }))}
-                  className="h-10 rounded-none border-stone-200 text-xs font-black" 
+                  className="h-10 rounded-lg border-stone-200 text-xs font-black" 
                 />
               </div>
               <div className="grid grid-cols-2 items-center gap-4">
-                <Label className="text-right text-[10px] font-black uppercase tracking-widest">Stock</Label>
+                <Label className="text-right text-[10px] font-bold tracking-tight">Stock</Label>
                 <Input 
                   type="number"
                   value={selectedProduct?.stock || 0} 
                   onChange={e => setSelectedProduct(prev => ({ ...prev!, stock: parseInt(e.target.value) }))}
-                  className="h-10 rounded-none border-stone-200 text-xs font-black" 
+                  className="h-10 rounded-lg border-stone-200 text-xs font-black" 
                 />
               </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right text-[10px] font-black uppercase tracking-widest">Image (Emoji)</Label>
+              <Label className="text-right text-[10px] font-bold tracking-tight">Image (Emoji)</Label>
               <Input 
                 value={selectedProduct?.image || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}
                 placeholder="👕, 🧢, 🎒"
-                className="col-span-3 h-10 rounded-none border-stone-200 text-lg text-center" 
+                className="col-span-3 h-10 rounded-lg border-stone-200 text-lg text-center" 
               />
             </div>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-none text-[10px] font-black uppercase tracking-widest h-11 px-6">
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl text-[10px] font-bold tracking-tight h-10 px-6">
               Cancel
             </Button>
             <Button 
               onClick={handleSave} 
               disabled={isSaving}
-              className="rounded-none text-[10px] font-black uppercase tracking-widest bg-[var(--brand-black)] text-white hover:bg-stone-800 h-11 px-8 min-w-[140px]"
+              className="rounded-xl text-[10px] font-bold tracking-tight bg-stone-900 text-white hover:bg-stone-800 h-10 px-8 min-w-[140px]"
             >
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Changes'}
             </Button>

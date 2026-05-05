@@ -51,18 +51,15 @@ export default function AdminRegions() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black font-meta text-stone-900 tracking-tighter">
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <MapPin className="w-8 h-8 text-stone-900" />
             Regions & constituencies
           </h1>
-          <p className="text-stone-500 text-sm mt-1 font-medium">
-            Manage all 16 administrative regions and their {totalConstituencies} constituencies.
-          </p>
+          <p className="text-stone-500 text-sm mt-1">Manage administrative regions and regional jurisdictions.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button
-            className="h-11 text-[10px] font-bold bg-stone-900 text-white hover:bg-stone-800 rounded-xl shadow-md normal-case"
-          >
-            <Plus className="w-4 h-4 mr-2" /> Add region
+          <Button className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all">
+            <Plus className="w-3.5 h-3.5 mr-2" /> Add region
           </Button>
         </div>
       </div>
@@ -76,7 +73,7 @@ export default function AdminRegions() {
             </div>
             <div>
               <p className="text-[9px] font-bold normal-case opacity-60">Regions</p>
-              <p className="text-2xl font-black font-meta">16</p>
+              <p className="text-2xl font-bold tracking-tight">16</p>
             </div>
           </CardContent>
         </Card>
@@ -87,7 +84,7 @@ export default function AdminRegions() {
             </div>
             <div>
               <p className="text-[9px] font-bold normal-case text-stone-400">Constituencies</p>
-              <p className="text-2xl font-black font-meta text-stone-900">{totalConstituencies}</p>
+              <p className="text-2xl font-bold tracking-tight text-stone-900">{totalConstituencies}</p>
             </div>
           </CardContent>
         </Card>
@@ -98,7 +95,7 @@ export default function AdminRegions() {
             </div>
             <div>
               <p className="text-[9px] font-bold normal-case text-stone-400">Avg. per region</p>
-              <p className="text-2xl font-black font-meta text-stone-900">
+              <p className="text-2xl font-bold tracking-tight text-stone-900">
                 {Math.round(totalConstituencies / 16)}
               </p>
             </div>

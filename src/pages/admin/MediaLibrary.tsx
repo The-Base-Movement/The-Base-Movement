@@ -93,21 +93,22 @@ export default function MediaLibrary() {
   return (
     <div className="animate-in fade-in duration-500 pb-20">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-bold text-stone-900 tracking-tight">Media library</h1>
-          <p className="text-stone-500 text-base mt-2 max-w-xl">
-            Central repository for all movement assets. Organize, search, and deploy media across the platform.
-          </p>
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <ImageIcon className="w-8 h-8 text-stone-900" />
+            Media library
+          </h1>
+          <p className="text-stone-500 text-sm mt-1">Central repository for movement assets and deployment media.</p>
         </div>
         
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="rounded-md border-stone-200 h-10 px-4 text-xs font-bold text-stone-900 hover:bg-stone-50 transition-all tracking-wide"
+            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all"
             onClick={loadFiles}
           >
-            Refresh
+            Refresh library
           </Button>
 
           <div className="relative">
@@ -120,7 +121,7 @@ export default function MediaLibrary() {
               disabled={isUploading}
             />
             <Button 
-              className="rounded-md bg-stone-900 text-white hover:bg-stone-800 h-10 px-5 text-xs font-bold transition-all active:scale-95 tracking-wide flex items-center gap-2"
+              className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all flex items-center gap-2"
               asChild
               disabled={isUploading}
             >
@@ -128,7 +129,7 @@ export default function MediaLibrary() {
                 {isUploading ? (
                   <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  <Upload className="w-4 h-4" />
+                  <Upload className="w-3.5 h-3.5" />
                 )}
                 {isUploading ? 'Uploading...' : 'Upload asset'}
               </label>
@@ -143,7 +144,7 @@ export default function MediaLibrary() {
         <div className="space-y-6">
           <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-stone-100 bg-stone-50">
-              <h3 className="font-bold text-stone-900 text-xs tracking-wider">Asset categories</h3>
+              <h3 className="font-bold text-stone-900 text-xs normal-case">Asset categories</h3>
             </div>
             <CardContent className="p-2">
               <div className="space-y-1">
@@ -173,7 +174,7 @@ export default function MediaLibrary() {
               </div>
               <div>
                 <h4 className="font-bold text-sm">Storage usage</h4>
-                <p className="text-[10px] text-stone-400 tracking-wider">Supabase cloud</p>
+                <p className="text-[10px] text-stone-400 normal-case">Supabase cloud</p>
               </div>
             </div>
             <div className="space-y-3">
@@ -181,8 +182,8 @@ export default function MediaLibrary() {
                 <div className="h-full bg-emerald-500 w-[12%]" />
               </div>
               <div className="flex justify-between text-[10px] font-bold text-stone-400">
-                <span>0.6 GB USED</span>
-                <span>5 GB TOTAL</span>
+                <span className="normal-case">0.6 GB used</span>
+                <span className="normal-case">5 GB total</span>
               </div>
             </div>
           </Card>
@@ -265,7 +266,7 @@ export default function MediaLibrary() {
                         <p className="text-[10px] font-bold text-stone-900 truncate">
                           {url.split('/').pop()}
                         </p>
-                        <p className="text-[9px] text-stone-400 font-medium uppercase tracking-widest mt-0.5">
+                        <p className="text-[9px] text-stone-400 font-medium normal-case mt-0.5">
                           {activeFolder.replace('-', ' ')}
                         </p>
                       </div>

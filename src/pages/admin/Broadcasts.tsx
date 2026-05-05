@@ -137,62 +137,65 @@ export default function Broadcasts() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">Communication Hub</h1>
-          <p className="text-stone-500 text-sm mt-1">Direct HQ-to-Field mobilization and regional directives.</p>
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <Megaphone className="w-8 h-8 text-stone-900" />
+            Communication hub
+          </h1>
+          <p className="text-stone-500 text-sm mt-1">Direct HQ-to-field mobilization and regional directives.</p>
         </div>
         <Button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-[var(--brand-black)] hover:bg-stone-800 text-white rounded-none h-12 px-8 font-black uppercase tracking-widest text-xs shadow-xl"
+          className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all flex items-center gap-2"
         >
-          <Plus className="w-4 h-4 mr-2" /> New Broadcast
+          <Plus className="w-3.5 h-3.5" /> New broadcast
         </Button>
       </div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
+        <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <Megaphone className="w-4 h-4 text-stone-400" />
-              <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter">Total</Badge>
+              <Badge variant="outline" className="text-[10px] font-bold normal-case">Total</Badge>
             </div>
-            <div className="text-3xl font-black text-[var(--brand-black)]">{broadcasts.length}</div>
-            <div className="text-[10px] text-stone-500 uppercase font-bold tracking-widest mt-1">Deployments</div>
+            <div className="text-3xl font-bold text-stone-900">{broadcasts.length}</div>
+            <div className="text-[10px] text-stone-500 font-bold normal-case mt-1">Deployments</div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
+        <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <AlertOctagon className="w-4 h-4 text-red-500" />
-              <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter border-red-100 text-red-600">Urgent</Badge>
+              <Badge variant="outline" className="text-[10px] font-bold normal-case border-red-100 text-red-600">Urgent</Badge>
             </div>
-            <div className="text-3xl font-black text-red-600">{broadcasts.filter(b => b.priority === 'Urgent').length}</div>
-            <div className="text-[10px] text-stone-500 uppercase font-bold tracking-widest mt-1">Critical Alerts</div>
+            <div className="text-3xl font-bold text-red-600">{broadcasts.filter(b => b.priority === 'Urgent').length}</div>
+            <div className="text-[10px] text-stone-500 font-bold normal-case mt-1">Critical alerts</div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
+        <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <Users className="w-4 h-4 text-stone-400" />
-              <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter">Reach</Badge>
+              <Badge variant="outline" className="text-[10px] font-bold normal-case">Reach</Badge>
             </div>
-            <div className="text-3xl font-black text-[var(--brand-black)]">100%</div>
-            <div className="text-[10px] text-stone-500 uppercase font-bold tracking-widest mt-1">Field Saturation</div>
+            <div className="text-3xl font-bold text-stone-900">100%</div>
+            <div className="text-[10px] text-stone-500 font-bold normal-case mt-1">Field saturation</div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
+        <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden relative group hover:border-[var(--brand-red)] transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <Clock className="w-4 h-4 text-stone-400" />
-              <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter">Uptime</Badge>
+              <Badge variant="outline" className="text-[10px] font-bold normal-case">Uptime</Badge>
             </div>
-            <div className="text-3xl font-black text-[var(--brand-black)]">24/7</div>
-            <div className="text-[10px] text-stone-500 uppercase font-bold tracking-widest mt-1">Direct Connection</div>
+            <div className="text-3xl font-bold text-stone-900">24/7</div>
+            <div className="text-[10px] text-stone-500 font-bold normal-case mt-1">Direct connection</div>
           </CardContent>
         </Card>
       </div>
@@ -201,17 +204,17 @@ export default function Broadcasts() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Previous Broadcasts */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="rounded-none border-stone-200 shadow-xl overflow-hidden">
+          <Card className="rounded-xl border-stone-200 shadow-xl overflow-hidden">
             <CardHeader className="border-b border-stone-100 bg-stone-50/50">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-black font-meta uppercase tracking-tighter flex items-center gap-2">
-                  <Shield className="w-4 h-4" /> Deployment History
+                <CardTitle className="text-lg font-bold tracking-tight flex items-center gap-2">
+                  <Shield className="w-4 h-4" /> Deployment history
                 </CardTitle>
                 <div className="relative w-64">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
                   <Input 
                     placeholder="Search directives..." 
-                    className="pl-9 h-8 text-xs rounded-none border-stone-200 focus:ring-0 focus:border-stone-400"
+                    className="pl-9 h-8 text-xs rounded-lg border-stone-200 focus:ring-0 focus:border-stone-400"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -222,12 +225,12 @@ export default function Broadcasts() {
               {isLoading ? (
                 <div className="p-12 text-center">
                   <Loader2 className="w-8 h-8 animate-spin mx-auto text-stone-300 mb-4" />
-                  <p className="text-xs text-stone-500 uppercase font-black tracking-widest">Retrieving Secure Comm Logs...</p>
+                  <p className="text-xs text-stone-500 font-bold normal-case">Retrieving secure comm logs...</p>
                 </div>
               ) : filteredBroadcasts.length === 0 ? (
                 <div className="p-12 text-center">
                   <Megaphone className="w-8 h-8 mx-auto text-stone-200 mb-4" />
-                  <p className="text-xs text-stone-500 uppercase font-black tracking-widest">No active deployments found</p>
+                  <p className="text-xs text-stone-500 font-bold normal-case">No active deployments found</p>
                 </div>
               ) : (
                 <div className="divide-y divide-stone-100">
@@ -236,20 +239,20 @@ export default function Broadcasts() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <Badge className={cn("text-[8px] font-black uppercase tracking-[0.2em] rounded-none px-2", getPriorityColor(broadcast.priority))}>
+                            <Badge className={cn("text-[8px] font-bold normal-case rounded-full px-2", getPriorityColor(broadcast.priority))}>
                               {broadcast.priority}
                             </Badge>
-                            <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest text-stone-400 rounded-none border-stone-200">
+                            <Badge variant="outline" className="text-[8px] font-bold normal-case text-stone-400 rounded-full border-stone-200">
                               {broadcast.target_type === 'ALL' ? 'National' : broadcast.target_value}
                             </Badge>
                           </div>
-                          <h3 className="font-black font-meta text-lg uppercase tracking-tight text-[var(--brand-black)] group-hover:text-[var(--brand-red)] transition-colors">
+                          <h3 className="font-bold text-lg tracking-tight text-stone-900 group-hover:text-red-600 transition-colors">
                             {broadcast.title}
                           </h3>
                           <p className="text-stone-600 text-sm leading-relaxed max-w-2xl">
                             {broadcast.content}
                           </p>
-                          <div className="flex items-center gap-4 mt-4 text-[10px] text-stone-400 font-bold uppercase tracking-widest">
+                          <div className="flex items-center gap-4 mt-4 text-[10px] text-stone-400 font-bold normal-case">
                             <span className="flex items-center gap-1.5">
                               <Clock className="w-3 h-3" /> {new Date(broadcast.created_at).toLocaleString()}
                             </span>
@@ -275,10 +278,10 @@ export default function Broadcasts() {
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded-none border border-stone-200 h-8"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded-lg border border-stone-200 h-8 normal-case"
                           onClick={() => fetchMetrics(broadcast.id)}
                         >
-                          Refresh Stats
+                          Refresh stats
                         </Button>
                       </div>
                     </div>
@@ -291,9 +294,9 @@ export default function Broadcasts() {
 
         {/* Sidebar: Mobilization Templates */}
         <div className="space-y-6">
-          <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
             <CardHeader className="border-b border-stone-100 bg-stone-50/50">
-              <CardTitle className="text-sm font-black font-meta uppercase tracking-widest">Mobilization Presets</CardTitle>
+              <CardTitle className="text-sm font-bold normal-case">Mobilization presets</CardTitle>
             </CardHeader>
             <CardContent className="p-4 space-y-4">
               {[
@@ -317,10 +320,10 @@ export default function Broadcasts() {
                   }}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-black)]">{template.title}</span>
+                    <span className="text-[10px] font-bold normal-case text-[var(--brand-black)]">{template.title}</span>
                     <Plus className="w-3 h-3 text-stone-300 group-hover:text-[var(--brand-black)]" />
                   </div>
-                  <div className="text-[9px] text-stone-400 uppercase font-bold tracking-tighter">
+                  <div className="text-[9px] text-stone-400 font-bold normal-case">
                     {template.priority} • {template.type === 'ALL' ? 'National' : 'Segmented'}
                   </div>
                 </div>
@@ -328,15 +331,15 @@ export default function Broadcasts() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-none bg-[var(--brand-black)] text-white border-none shadow-xl overflow-hidden relative">
+          <Card className="rounded-xl bg-stone-900 text-white border-none shadow-xl overflow-hidden relative">
             <CardContent className="p-6 relative z-10">
               <AlertOctagon className="w-8 h-8 text-[var(--brand-red)] mb-4" />
-              <h4 className="text-lg font-black font-meta uppercase tracking-tighter mb-2">Protocol Red</h4>
-              <p className="text-xs text-stone-400 leading-relaxed mb-6">
+              <h4 className="text-lg font-bold tracking-tight mb-2">Protocol red</h4>
+              <p className="text-xs text-stone-400 leading-relaxed mb-6 font-medium">
                 Urgent mobilization triggers immediate notifications to all connected field assets. Use only for critical directives.
               </p>
-              <Button className="w-full bg-[var(--brand-red)] hover:bg-red-700 text-white rounded-none font-black uppercase tracking-widest text-[10px] h-10 border-none">
-                Emergency Alert
+              <Button className="w-full bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-[10px] h-10 border-none shadow-lg">
+                Emergency alert
               </Button>
             </CardContent>
             <Megaphone className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5 rotate-12" />
@@ -346,20 +349,20 @@ export default function Broadcasts() {
 
       {/* New Broadcast Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-none border-stone-200">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-black font-meta uppercase tracking-tighter">New Directive Deployment</DialogTitle>
-            <DialogDescription className="text-xs text-stone-500 uppercase font-bold tracking-widest">
+        <DialogContent className="sm:max-w-[500px] rounded-xl border-stone-200 overflow-hidden bg-white p-0">
+          <DialogHeader className="p-8 bg-stone-900 text-white">
+            <DialogTitle className="text-xl font-bold tracking-tight">New directive deployment</DialogTitle>
+            <DialogDescription className="text-xs text-stone-400 font-medium mt-1">
               Deploying a movement-wide communication to the field.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 py-4">
+          <div className="space-y-6 p-8">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Directive Title</label>
+              <label className="text-[10px] font-bold normal-case text-stone-400">Directive title</label>
               <Input 
-                placeholder="e.g. NATIONAL REGISTRATION WAVE" 
-                className="rounded-none border-stone-200 h-11 text-sm font-bold placeholder:font-normal"
+                placeholder="e.g. National registration wave" 
+                className="rounded-lg border-stone-200 h-11 text-sm font-bold placeholder:font-normal shadow-sm"
                 value={newBroadcast.title}
                 onChange={(e) => setNewBroadcast({...newBroadcast, title: e.target.value})}
               />
@@ -367,38 +370,38 @@ export default function Broadcasts() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Target Segment</label>
+                <label className="text-[10px] font-bold normal-case text-stone-400">Target segment</label>
                 <Select 
                   value={newBroadcast.target_type}
                   onValueChange={(v: 'ALL' | 'REGION' | 'CONSTITUENCY') => setNewBroadcast({...newBroadcast, target_type: v, target_value: ''})}
                 >
-                  <SelectTrigger className="rounded-none border-stone-200 h-11 text-[10px] font-bold uppercase tracking-widest">
-                    <SelectValue placeholder="Select Target" />
+                  <SelectTrigger className="rounded-lg border-stone-200 h-11 text-[10px] font-bold normal-case shadow-sm">
+                    <SelectValue placeholder="Select target" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-none border-stone-200">
-                    <SelectItem value="ALL" className="text-[10px] font-bold uppercase tracking-widest">National (All)</SelectItem>
-                    <SelectItem value="REGION" className="text-[10px] font-bold uppercase tracking-widest">Regional</SelectItem>
-                    <SelectItem value="CONSTITUENCY" className="text-[10px] font-bold uppercase tracking-widest">Constituency</SelectItem>
+                  <SelectContent className="rounded-lg border-stone-200">
+                    <SelectItem value="ALL" className="text-[10px] font-bold normal-case">National (all)</SelectItem>
+                    <SelectItem value="REGION" className="text-[10px] font-bold normal-case">Regional</SelectItem>
+                    <SelectItem value="CONSTITUENCY" className="text-[10px] font-bold normal-case">Constituency</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Priority Level</label>
+                <label className="text-[10px] font-bold normal-case text-stone-400">Priority level</label>
                 <Select 
                   value={newBroadcast.priority}
                   onValueChange={(v: 'Normal' | 'High' | 'Urgent') => setNewBroadcast({...newBroadcast, priority: v})}
                 >
                   <SelectTrigger className={cn(
-                    "rounded-none border-stone-200 h-11 text-[10px] font-bold uppercase tracking-widest",
+                    "rounded-lg border-stone-200 h-11 text-[10px] font-bold normal-case shadow-sm",
                     newBroadcast.priority === 'Urgent' ? "text-red-600 border-red-200" : ""
                   )}>
-                    <SelectValue placeholder="Select Priority" />
+                    <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-none border-stone-200">
-                    <SelectItem value="Normal" className="text-[10px] font-bold uppercase tracking-widest">Normal</SelectItem>
-                    <SelectItem value="High" className="text-[10px] font-bold uppercase tracking-widest text-orange-600">High Priority</SelectItem>
-                    <SelectItem value="Urgent" className="text-[10px] font-bold uppercase tracking-widest text-red-600">Urgent (Level Red)</SelectItem>
+                  <SelectContent className="rounded-lg border-stone-200">
+                    <SelectItem value="Normal" className="text-[10px] font-bold normal-case">Normal</SelectItem>
+                    <SelectItem value="High" className="text-[10px] font-bold normal-case text-orange-600">High priority</SelectItem>
+                    <SelectItem value="Urgent" className="text-[10px] font-bold normal-case text-red-600">Urgent (Level Red)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -406,27 +409,27 @@ export default function Broadcasts() {
 
             {newBroadcast.target_type !== 'ALL' && (
               <div className="space-y-2 animate-in slide-in-from-top-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-stone-500">
-                  {newBroadcast.target_type === 'REGION' ? 'Select Region' : 'Constituency Name'}
+                <label className="text-[10px] font-bold normal-case text-stone-400">
+                  {newBroadcast.target_type === 'REGION' ? 'Select region' : 'Constituency name'}
                 </label>
                 {newBroadcast.target_type === 'REGION' ? (
                   <Select 
                     value={newBroadcast.target_value}
                     onValueChange={(v) => setNewBroadcast({...newBroadcast, target_value: v})}
                   >
-                    <SelectTrigger className="rounded-none border-stone-200 h-11 text-[10px] font-bold uppercase tracking-widest">
-                      <SelectValue placeholder="Select Region" />
+                    <SelectTrigger className="rounded-lg border-stone-200 h-11 text-[10px] font-bold normal-case shadow-sm">
+                      <SelectValue placeholder="Select region" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-none border-stone-200">
+                    <SelectContent className="rounded-lg border-stone-200">
                       {regions.map((r: RegionalStat) => (
-                        <SelectItem key={r.region} value={r.region} className="text-[10px] font-bold uppercase tracking-widest">{r.region}</SelectItem>
+                        <SelectItem key={r.region} value={r.region} className="text-[10px] font-bold normal-case">{r.region}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 ) : (
                   <Input 
-                    placeholder="Enter Constituency Name" 
-                    className="rounded-none border-stone-200 h-11 text-sm font-bold"
+                    placeholder="Enter constituency name" 
+                    className="rounded-lg border-stone-200 h-11 text-sm font-bold shadow-sm"
                     value={newBroadcast.target_value}
                     onChange={(e) => setNewBroadcast({...newBroadcast, target_value: e.target.value})}
                   />
@@ -435,28 +438,28 @@ export default function Broadcasts() {
             )}
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-stone-500">Directive Content</label>
+              <label className="text-[10px] font-bold normal-case text-stone-400">Directive content</label>
               <Textarea 
                 placeholder="Detailed instructions for the field..." 
-                className="rounded-none border-stone-200 min-h-[120px] text-sm font-bold placeholder:font-normal leading-relaxed"
+                className="rounded-lg border-stone-200 min-h-[120px] text-sm font-bold placeholder:font-normal leading-relaxed shadow-sm"
                 value={newBroadcast.content}
                 onChange={(e) => setNewBroadcast({...newBroadcast, content: e.target.value})}
               />
             </div>
           </div>
 
-          <DialogFooter className="border-t border-stone-100 pt-6">
+          <DialogFooter className="border-t border-stone-100 p-8 pt-6">
             <Button 
               variant="outline" 
               onClick={() => setIsModalOpen(false)}
-              className="rounded-none h-11 px-6 text-[10px] font-black uppercase tracking-widest border-stone-200"
+              className="rounded-lg h-11 px-6 text-[10px] font-bold border-stone-200 normal-case shadow-sm"
             >
               Cancel
             </Button>
             <Button 
               disabled={isSending}
               onClick={handleSend}
-              className="rounded-none h-11 px-8 text-[10px] font-black uppercase tracking-widest bg-[var(--brand-black)] hover:bg-stone-800 text-white min-w-[140px]"
+              className="rounded-lg h-11 px-8 text-[10px] font-bold bg-stone-900 hover:bg-stone-800 text-white min-w-[140px] normal-case shadow-md"
             >
               {isSending ? (
                 <>
@@ -464,7 +467,7 @@ export default function Broadcasts() {
                 </>
               ) : (
                 <>
-                  <Send className="w-3.5 h-3.5 mr-2" /> Deploy Directive
+                  <Send className="w-3.5 h-3.5 mr-2" /> Deploy directive
                 </>
               )}
             </Button>

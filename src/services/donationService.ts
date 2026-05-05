@@ -14,15 +14,20 @@ class DonationService {
     return DonationService.instance
   }
 
-  async getPendingDonations(): Promise<DonationDetail[]> {
-    const { data, error } = await supabase
+  async getDonations(status?: string): Promise<DonationDetail[]> {
+    let query = supabase
       .from('donations')
       .select('*, donation_campaigns(title)')
-      .eq('status', 'Pending')
       .order('created_at', { ascending: false })
 
+    if (status && status !== 'All') {
+      query = query.eq('status', status)
+    }
+
+    const { data, error } = await query
+
     if (error) {
-      console.warn('[DATABASE] Failed to fetch pending donations:', error)
+      console.warn('[DATABASE] Failed to fetch donations:', error)
       return []
     }
 
@@ -56,6 +61,27 @@ class DonationService {
       campaignId: d.campaign_id,
       memberId: d.member_id
     }))
+  }
+
+  async getPendingDonations(): Promise<DonationDetail[]> {
+    return this.getDonations('Pending')
+  }
+
+  async getDonationStats(): Promise<{ totalContributions: number, pendingCount: number, approvedAmount: number, flaggedCount: number }> {
+    const { data, error } = await supabase
+      .from('donations')
+      .select('amount, status')
+
+    if (error || !data) {
+      return { totalContributions: 0, pendingCount: 0, approvedAmount: 0, flaggedCount: 0 }
+    }
+
+    return {
+      totalContributions: data.length,
+      pendingCount: data.filter(d => d.status === 'Pending').length,
+      approvedAmount: data.filter(d => d.status === 'Verified').reduce((sum, d) => sum + Number(d.amount), 0),
+      flaggedCount: data.filter(d => d.status === 'Rejected').length // We'll map Rejected to Flagged for now
+    }
   }
 
   async verifyDonation(donationId: string, status: 'Verified' | 'Rejected', notes: string = ''): Promise<boolean> {

@@ -318,11 +318,16 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-5xl mx-auto pb-20">
+    <div className="space-y-8 animate-in fade-in duration-500">
       {/* Page Header */}
-      <div className="mb-10">
-        <h1 className="text-2xl font-bold text-stone-900">Settings</h1>
-        <p className="text-stone-400 text-xs mt-1 font-medium">Manage your administrative identity and system configuration.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div>
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <Globe className="w-8 h-8 text-stone-900" />
+            System settings
+          </h1>
+          <p className="text-stone-500 text-sm mt-1">Manage your administrative identity and platform configuration.</p>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-12">
@@ -374,7 +379,7 @@ export default function AdminSettings() {
                           <img src={profileForm.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
                           <span className="text-stone-400 font-bold text-sm">
-                            {profileForm.fullName.split(' ').map(n => n[0]).join('').toUpperCase() || 'HQ'}
+                            {profileForm.fullName.split(' ').map(n => n[0]).join('') || 'HQ'}
                           </span>
                         )}
                       </div>
@@ -403,7 +408,7 @@ export default function AdminSettings() {
                   {/* Form Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold tracking-wider text-stone-500">Full name</Label>
+                      <Label className="text-[10px] font-bold text-stone-500 normal-case">Full name</Label>
                       <Input 
                         value={profileForm.fullName} 
                         onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
@@ -411,17 +416,20 @@ export default function AdminSettings() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold tracking-wider text-stone-500">Email address</Label>
+                      <Label className="text-[10px] font-bold text-stone-500 normal-case">Email address</Label>
                       <Input value={profileForm.email} disabled className="h-10 rounded-lg border-stone-100 bg-stone-50 text-stone-400 text-xs font-medium cursor-not-allowed" />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold tracking-wider text-stone-500">Administrative role</Label>
-                      <div className="h-10 px-3 flex items-center rounded-lg border border-stone-100 bg-stone-50 text-stone-400 text-[10px] font-bold uppercase tracking-widest italic">
-                        {adminData?.role || (adminData ? 'Standard Staff' : 'HQ Officer')}
+                      <Label className="text-[10px] font-bold text-stone-500 normal-case">Administrative role</Label>
+                      <div className="h-10 px-3 flex items-center rounded-lg border border-stone-100 bg-stone-50 text-stone-400 text-[10px] font-bold normal-case">
+                        {adminData?.role === 'SUPER_ADMIN' ? 'Super Admin' : 
+                         adminData?.role === 'REGIONAL_DIRECTOR' ? 'Regional Director' :
+                         adminData?.role === 'CONSTITUENCY_LEAD' ? 'Constituency Lead' :
+                         adminData?.role || (adminData ? 'Standard Staff' : 'HQ Officer')}
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold tracking-wider text-stone-500">Phone number</Label>
+                      <Label className="text-[10px] font-bold text-stone-500 normal-case">Phone number</Label>
                       <Input 
                         value={profileForm.phone} 
                         onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
@@ -435,7 +443,7 @@ export default function AdminSettings() {
                     <Button 
                       onClick={handleSaveProfile}
                       disabled={isSaving}
-                      className="h-9 px-6 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-all shadow-sm"
+                      className="h-9 px-6 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-all shadow-sm normal-case"
                     >
                       {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />}
                       Update profile
@@ -470,7 +478,7 @@ export default function AdminSettings() {
                           <p className="text-[10px] text-stone-400 font-medium mt-0.5">{item.desc}</p>
                         </div>
                       </div>
-                      <span className="px-3 py-1 bg-stone-50 border border-stone-100 rounded-full text-[9px] font-bold text-stone-400 tracking-wider">
+                      <span className="px-3 py-1 bg-stone-50 border border-stone-100 rounded-full text-[9px] font-bold text-stone-400 normal-case">
                         {item.count} active
                       </span>
                     </div>
@@ -491,7 +499,7 @@ export default function AdminSettings() {
               </CardHeader>
               <CardContent className="p-8 space-y-10">
                 <div className="space-y-6">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-wider">Interface density</p>
+                  <p className="text-[10px] font-bold text-stone-400 normal-case">Interface density</p>
                   <div className="grid grid-cols-3 gap-4">
                     {['Comfortable', 'Compact', 'High Density'].map((mode) => (
                       <button 
@@ -520,7 +528,7 @@ export default function AdminSettings() {
                 <div className="h-px bg-stone-100" />
 
                 <div className="space-y-6">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-wider">Notifications</p>
+                  <p className="text-[10px] font-bold text-stone-400 normal-case">Notifications</p>
                   <div className="space-y-4">
                     {[
                       { id: 'reg', label: 'New Member Registrations', desc: 'Real-time alerts for regional growth' },
@@ -555,7 +563,7 @@ export default function AdminSettings() {
                   <div className="max-w-md space-y-6">
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-bold tracking-wider text-stone-500">New password</Label>
+                        <Label className="text-[10px] font-bold text-stone-500 normal-case">New password</Label>
                         <Input 
                           type="password" 
                           value={passwordForm.newPassword}
@@ -565,7 +573,7 @@ export default function AdminSettings() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-bold tracking-wider text-stone-500">Confirm new password</Label>
+                        <Label className="text-[10px] font-bold text-stone-500 normal-case">Confirm new password</Label>
                         <Input 
                           type="password" 
                           value={passwordForm.confirmPassword}
@@ -578,7 +586,7 @@ export default function AdminSettings() {
                     <Button 
                       onClick={handleUpdatePassword}
                       disabled={isSaving || !passwordForm.newPassword}
-                      className="w-full h-10 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-all shadow-md"
+                      className="w-full h-10 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-all shadow-md normal-case"
                     >
                       {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />}
                       Update security credentials
@@ -655,7 +663,7 @@ export default function AdminSettings() {
                       <div className="space-y-6 flex flex-col items-center">
                         <div className="p-4 bg-stone-50 rounded-2xl border border-stone-100">
                           <img 
-                            src={mfaEnrollData.qr} 
+                            src={mfaEnrollData?.qr} 
                             alt="MFA QR Code"
                             className="w-48 h-48"
                           />

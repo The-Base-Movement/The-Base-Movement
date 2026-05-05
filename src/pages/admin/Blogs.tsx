@@ -277,7 +277,7 @@ export default function AdminBlogs() {
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                     placeholder="e.g. The future of industry" 
-                    className="rounded-md border-stone-200 h-11 text-sm placeholder:text-stone-400"
+                    className="rounded-lg border-stone-200 h-11 text-sm placeholder:text-stone-400"
                   />
                 </div>
 
@@ -287,7 +287,7 @@ export default function AdminBlogs() {
                     value={formData.slug}
                     onChange={(e) => setFormData({...formData, slug: e.target.value})}
                     placeholder="the-future-of-industry" 
-                    className="rounded-md border-stone-200 h-11 text-sm placeholder:text-stone-400"
+                    className="rounded-lg border-stone-200 h-11 text-sm placeholder:text-stone-400"
                   />
                   <p className="text-xs font-medium text-stone-500">The URL-friendly name for this post. Leave blank to auto-generate from the title.</p>
                 </div>
@@ -299,7 +299,7 @@ export default function AdminBlogs() {
                     value={formData.excerpt}
                     onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
                     placeholder="A brief 1-2 sentence summary for article cards..." 
-                    className="rounded-md border-stone-200 min-h-[100px] text-sm leading-relaxed"
+                    className="rounded-lg border-stone-200 min-h-[100px] text-sm leading-relaxed"
                   />
                 </div>
               </CardContent>
@@ -366,7 +366,7 @@ export default function AdminBlogs() {
                     value={formData.category}
                     onValueChange={(val) => setFormData({...formData, category: val})}
                   >
-                    <SelectTrigger className="rounded-md border-stone-200 h-11 text-sm font-medium">
+                    <SelectTrigger className="rounded-lg border-stone-200 h-11 text-sm font-medium">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -411,7 +411,7 @@ export default function AdminBlogs() {
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
                     placeholder="https://example.com/image.jpg" 
-                    className="rounded-md border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-stone-200 h-11 text-sm"
                   />
                   <p className="text-xs font-medium text-stone-500">Provide a direct URL or upload a file.</p>
                 </div>
@@ -422,7 +422,7 @@ export default function AdminBlogs() {
                     value={formData.readTime}
                     onChange={(e) => setFormData({...formData, readTime: e.target.value})}
                     placeholder="5 min read" 
-                    className="rounded-md border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-stone-200 h-11 text-sm"
                   />
                   <p className="text-xs font-medium text-stone-500">Suggested format: "5 min read"</p>
                 </div>
@@ -440,7 +440,7 @@ export default function AdminBlogs() {
                     value={formData.authorName}
                     onChange={(e) => setFormData({...formData, authorName: e.target.value})}
                     placeholder="e.g. John Doe" 
-                    className="rounded-md border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-stone-200 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
@@ -449,7 +449,7 @@ export default function AdminBlogs() {
                     value={formData.authorRole}
                     onChange={(e) => setFormData({...formData, authorRole: e.target.value})}
                     placeholder="e.g. Communications Director" 
-                    className="rounded-md border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-stone-200 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
@@ -483,7 +483,7 @@ export default function AdminBlogs() {
                     value={formData.authorImage}
                     onChange={(e) => setFormData({...formData, authorImage: e.target.value})}
                     placeholder="https://..." 
-                    className="rounded-md border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-stone-200 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
@@ -492,7 +492,7 @@ export default function AdminBlogs() {
                     value={formData.authorBio}
                     onChange={(e) => setFormData({...formData, authorBio: e.target.value})}
                     placeholder="Short professional bio..." 
-                    className="rounded-md border-stone-200 min-h-[80px] text-sm leading-relaxed"
+                    className="rounded-lg border-stone-200 min-h-[80px] text-sm leading-relaxed"
                   />
                 </div>
               </CardContent>
@@ -509,7 +509,7 @@ export default function AdminBlogs() {
                     value={formData.seoTitle}
                     onChange={(e) => setFormData({...formData, seoTitle: e.target.value})}
                     placeholder="Title for search engines..." 
-                    className="rounded-md border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-stone-200 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
@@ -518,7 +518,7 @@ export default function AdminBlogs() {
                     value={formData.tags.join(', ')}
                     onChange={(e) => setFormData({...formData, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)})}
                     placeholder="ghana, industry, jobs" 
-                    className="rounded-md border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-stone-200 h-11 text-sm"
                   />
                   <p className="text-xs font-medium text-stone-500">Comma separated tags.</p>
                 </div>
@@ -528,7 +528,7 @@ export default function AdminBlogs() {
                     value={formData.metaDescription}
                     onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
                     placeholder="Brief description for search result snippets..." 
-                    className="rounded-md border-stone-200 min-h-[80px] text-sm leading-relaxed"
+                    className="rounded-lg border-stone-200 min-h-[80px] text-sm leading-relaxed"
                   />
                 </div>
               </CardContent>
@@ -615,18 +615,19 @@ export default function AdminBlogs() {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-bold text-stone-900 tracking-tight">Blog posts</h1>
-          <p className="text-stone-500 text-base mt-2 max-w-xl">
-            Draft and publish strategic articles for the movement insights feed.
-          </p>
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+            <FileText className="w-8 h-8 text-stone-900" />
+            Blog posts
+          </h1>
+          <p className="text-stone-500 text-sm mt-1">Draft and publish strategic articles for the movement feed.</p>
         </div>
         <Button 
           onClick={() => handleEditPost()}
-          className="h-11 px-6 text-xs font-bold bg-stone-900 text-white hover:bg-stone-800 flex items-center gap-2 rounded-md transition-all active:scale-95 tracking-wide normal-case"
+          className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all"
         >
-          <Plus className="w-4 h-4" /> Create new post
+          <Plus className="w-3.5 h-3.5 mr-2" /> Create new post
         </Button>
       </div>
 

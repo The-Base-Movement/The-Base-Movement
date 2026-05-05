@@ -152,6 +152,35 @@ class AdminService {
     return memberService.getAdministrators()
   }
 
+  async provisionAdministrator(id: string, role: AdminRole, permissions: AdminPermission[]): Promise<boolean> {
+    const { error } = await supabase
+      .from('admins')
+      .insert([{ id, role, permissions }])
+
+    if (error) {
+      console.error('[ADMIN SERVICE] Provisioning failed:', error)
+      return false
+    }
+
+    await this.logAction('ADMIN_PROVISION', `ADMINS/${id}`, 'Success', { role })
+    return true
+  }
+
+  async revokeAdministrator(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('admins')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[ADMIN SERVICE] Revocation failed:', error)
+      return false
+    }
+
+    await this.logAction('ADMIN_REVOKE', `ADMINS/${id}`, 'Warning')
+    return true
+  }
+
   async getMemberProfile(regNo: string): Promise<Member | null> {
     return memberService.getMemberProfile(regNo)
   }
@@ -586,8 +615,16 @@ class AdminService {
     return success
   }
 
+  async getDonations(status?: string): Promise<DonationDetail[]> {
+    return donationService.getDonations(status)
+  }
+
   async getPendingDonations(): Promise<DonationDetail[]> {
     return donationService.getPendingDonations()
+  }
+
+  async getDonationStats() {
+    return donationService.getDonationStats()
   }
 
   async verifyDonation(donationId: string, status: 'Verified' | 'Rejected', notes: string = ''): Promise<boolean> {
