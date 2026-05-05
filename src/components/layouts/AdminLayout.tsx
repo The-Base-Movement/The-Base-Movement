@@ -221,7 +221,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
 
           {/* Navigation */}
-          <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto">
+          <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto overflow-x-hidden">
             {/* View Site External Link */}
             <a 
               href="/" 

@@ -181,7 +181,7 @@
   background: #f1f5ee;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, var(--brand-red), var(--brand-gold), var(--brand-green));
+  background: linear-gradient(to right, var(--brand-red), var(--brand-gold), var(--brand-green));
   border-radius: 4px;
 }
 
@@ -195,7 +195,7 @@
 }
 
 .sidebar-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, var(--brand-red), var(--brand-yellow), var(--brand-green));
+  background: linear-gradient(to right, var(--brand-red), var(--brand-yellow), var(--brand-green));
   border-radius: 10px;
 }
 
