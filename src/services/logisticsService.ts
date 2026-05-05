@@ -8,7 +8,9 @@ import type {
   OrderStats,
   LogisticsVelocity,
   InventoryAlert,
-  LogisticsLatency
+  InventoryAlert,
+  LogisticsLatency,
+  DBInventoryItem
 } from '@/types/admin'
 import type { Product } from '@/types/product'
 
@@ -27,18 +29,6 @@ class LogisticsService {
   // --- Store & Inventory ---
 
   async getInventory(): Promise<InventoryItem[]> {
-    interface DBInventoryItem {
-      id: string
-      name: string
-      category: string
-      price_ghs: number
-      stock_quantity: number
-      status: 'Stable' | 'Low Stock' | 'Critical' | 'Processing'
-      image_emoji: string
-      brand_color: string
-      product_images?: { url: string }[]
-    }
-
     const { data, error } = await supabase
       .from('store_inventory')
       .select('*, product_images(url)')
@@ -260,7 +250,7 @@ class LogisticsService {
   async getTrashedInventory(): Promise<InventoryItem[]> {
     const { data, error } = await supabase
       .from('store_inventory')
-      .select('*, product_images(url)')
+      .select('*')
       .not('deleted_at', 'is', null)
       .order('deleted_at', { ascending: false })
 
@@ -269,15 +259,15 @@ class LogisticsService {
       return []
     }
 
-    return (data as any[] || []).map((i) => ({
+    return (data as unknown as DBInventoryItem[] || []).map((i) => ({
       id: i.id,
       name: i.name,
       category: i.category,
       price: `GHS ${i.price_ghs}`,
       stock: i.stock_quantity,
       status: i.status,
-      image: i.image_emoji || i.product_images?.[0]?.url || '📦',
-      images: i.product_images?.map((img: any) => img.url) || [],
+      image: i.image_emoji || i.image_url || '📦',
+      images: i.image_url ? [i.image_url] : [],
       color: i.brand_color,
       deletedAt: i.deleted_at
     }))

@@ -90,6 +90,7 @@ export default function AdminDashboard() {
   const [sentimentStats, setSentimentStats] = useState<SentimentStat[]>([])
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
+  const [globalStats, setGlobalStats] = useState<{ label: string, value: string, change: string }[]>([])
   const [logisticsData, setLogisticsData] = useState<LogisticsLatency[]>([])
   const [trashCount, setTrashCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)

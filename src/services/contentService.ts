@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import type { BlogPost, MediaAsset } from '@/types/admin'
+import type { BlogPost, MediaAsset, Author } from '@/types/admin'
 import mediaManifest from '@/data/media-manifest.json'
 
 class ContentService {
@@ -384,6 +384,181 @@ class ContentService {
       default:
         return []
     }
+  }
+
+  // --- Authors Management ---
+
+  async getAuthors(): Promise<Author[]> {
+    interface DBAuthor {
+      id: string
+      name: string
+      slug: string
+      role?: string
+      bio?: string
+      image_url?: string
+      created_at: string
+      deleted_at?: string | null
+    }
+
+    const { data, error } = await supabase
+      .from('authors')
+      .select('*')
+      .is('deleted_at', null)
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch authors:', error)
+      return []
+    }
+
+    return (data as DBAuthor[] || []).map((a) => ({
+      id: a.id,
+      name: a.name,
+      slug: a.slug,
+      role: a.role,
+      bio: a.bio,
+      imageUrl: a.image_url,
+      createdAt: a.created_at,
+      deletedAt: a.deleted_at
+    }))
+  }
+
+  async getAuthorById(id: string): Promise<Author | null> {
+    const { data, error } = await supabase
+      .from('authors')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle()
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch author:', error)
+      return null
+    }
+
+    if (!data) return null
+
+    return {
+      id: data.id,
+      name: data.name,
+      slug: data.slug,
+      role: data.role,
+      bio: data.bio,
+      imageUrl: data.image_url,
+      createdAt: data.created_at,
+      deletedAt: data.deleted_at
+    }
+  }
+
+  async createAuthor(author: Omit<Author, 'id' | 'createdAt'>): Promise<boolean> {
+    const { error } = await supabase
+      .from('authors')
+      .insert({
+        name: author.name,
+        slug: author.slug,
+        role: author.role,
+        bio: author.bio,
+        image_url: author.imageUrl
+      })
+
+    if (error) {
+      console.error('[DATABASE] Failed to create author:', error)
+      return false
+    }
+    return true
+  }
+
+  async updateAuthor(id: string, author: Partial<Author>): Promise<boolean> {
+    const updateData: Record<string, string> = {}
+    if (author.name !== undefined) updateData.name = author.name
+    if (author.slug !== undefined) updateData.slug = author.slug
+    if (author.role !== undefined) updateData.role = author.role
+    if (author.bio !== undefined) updateData.bio = author.bio
+    if (author.imageUrl !== undefined) updateData.image_url = author.imageUrl
+
+    const { error } = await supabase
+      .from('authors')
+      .update(updateData)
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to update author:', error)
+      return false
+    }
+    return true
+  }
+
+  async deleteAuthor(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('authors')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to soft-delete author:', error)
+      return false
+    }
+    return true
+  }
+
+  async getTrashedAuthors(): Promise<Author[]> {
+    interface DBAuthor {
+      id: string
+      name: string
+      slug: string
+      role?: string
+      bio?: string
+      image_url?: string
+      created_at: string
+      deleted_at?: string | null
+    }
+
+    const { data, error } = await supabase
+      .from('authors')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch trashed authors:', error)
+      return []
+    }
+
+    return (data as DBAuthor[] || []).map((a) => ({
+      id: a.id,
+      name: a.name,
+      slug: a.slug,
+      role: a.role,
+      bio: a.bio,
+      imageUrl: a.image_url,
+      createdAt: a.created_at,
+      deletedAt: a.deleted_at
+    }))
+  }
+
+  async restoreAuthor(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('authors')
+      .update({ deleted_at: null })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to restore author:', error)
+      return false
+    }
+    return true
+  }
+
+  async permanentlyDeleteAuthor(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('authors')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to permanently delete author:', error)
+      return false
+    }
+    return true
   }
 }
 

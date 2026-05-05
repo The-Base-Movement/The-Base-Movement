@@ -41,6 +41,17 @@ export interface PollOption {
   votes: number
 }
 
+export interface Author {
+  id: string
+  name: string
+  slug: string
+  role?: string
+  bio?: string
+  imageUrl?: string
+  createdAt: string
+  deletedAt?: string | null
+}
+
 export interface MediaAsset {
   id: string
   filename: string
@@ -63,6 +74,20 @@ export interface Poll {
   options: PollOption[]
   voted?: boolean
   userSelection?: string
+}
+
+export interface DBInventoryItem {
+  id: string
+  name: string
+  category: string
+  price_ghs: number
+  stock_quantity: number
+  status: 'Stable' | 'Low Stock' | 'Critical' | 'Processing'
+  image_emoji: string
+  brand_color: string
+  image_url?: string
+  product_images?: { url: string }[]
+  deleted_at?: string | null
 }
 
 export interface InventoryItem {

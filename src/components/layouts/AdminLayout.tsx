@@ -24,7 +24,8 @@ import {
   Vote,
   ChevronDown,
   Image as ImageIcon,
-  Trash2
+  Trash2,
+  PenTool
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/Button'
@@ -122,6 +123,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/authors', icon: PenTool, label: 'Authors', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
 
         { to: '/admin/leadership', icon: Zap, label: 'Leadership', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
         { to: '/admin/chapters', icon: MapPin, label: 'Chapters', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
