@@ -177,8 +177,8 @@ export default function Administrators() {
         </CardContent>
       </Card>
 
-      {/* Admins Table */}
-      <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
+      {/* Admins Table (Desktop) */}
+      <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -311,6 +311,118 @@ export default function Administrators() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Admins Grid (Mobile) */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i} className="rounded-xl border-stone-200 shadow-sm animate-pulse">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-stone-100 rounded-lg" />
+                  <div className="space-y-2">
+                    <div className="h-4 bg-stone-100 w-32" />
+                    <div className="h-3 bg-stone-100 w-24" />
+                  </div>
+                </div>
+                <div className="h-8 bg-stone-100 w-full rounded-lg" />
+              </CardContent>
+            </Card>
+          ))
+        ) : filteredAdmins.length === 0 ? (
+          <div className="text-center py-10 text-stone-400 font-bold text-xs">
+            No authorized personnel found.
+          </div>
+        ) : (
+          filteredAdmins.map((admin) => (
+            <Card key={admin.id} className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className={cn(
+                      "w-12 h-12 flex items-center justify-center font-bold text-sm shadow-md overflow-hidden rounded-xl",
+                      admin.role === 'SUPER_ADMIN' ? "bg-red-600 text-white" : "bg-stone-900 text-white"
+                    )}>
+                      {admin.avatarUrl ? (
+                        <img src={admin.avatarUrl} alt={admin.name} className="w-full h-full object-cover" />
+                      ) : (
+                        admin.name.split(' ').map(n => n[0]).join('')
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-stone-900 tracking-tight">{admin.name}</h4>
+                      <p className="text-[10px] font-bold text-stone-400 mt-0.5 uppercase tracking-widest">{admin.id}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-stone-50 rounded-full border border-stone-100">
+                    {admin.role === 'SUPER_ADMIN' ? (
+                      <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
+                    ) : (
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                    )}
+                    <span className={cn(
+                      "text-[9px] font-black uppercase tracking-tighter",
+                      admin.role === 'SUPER_ADMIN' ? "text-red-600" : "text-emerald-600"
+                    )}>
+                      {admin.role.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-stone-50 rounded-xl border border-stone-100">
+                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Region</span>
+                    <span className="text-[10px] font-bold text-stone-900 uppercase">{admin.region || 'National HQ'}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 h-10 rounded-xl border-stone-200 text-stone-600 text-[10px] font-bold hover:bg-stone-50"
+                      onClick={() => {
+                        setSelectedAdmin(admin)
+                        setIsActivityModalOpen(true)
+                      }}
+                    >
+                      <Zap className="w-3.5 h-3.5 mr-2" /> Activity
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          className="h-10 px-4 rounded-xl border-stone-200 text-stone-400 hover:text-red-600"
+                        >
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 rounded-xl border-stone-200">
+                        <DropdownMenuLabel className="text-[10px] font-bold text-stone-400">Admin Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          className="text-xs font-bold py-2"
+                          onSelect={() => {
+                            setSelectedAdmin(admin)
+                            setIsPermissionsModalOpen(true)
+                          }}
+                        >
+                          Edit Permissions
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          className="text-xs font-bold text-red-600 py-2 hover:bg-red-50 focus:bg-red-50"
+                          onSelect={() => handleRevoke(admin.id, admin.name)}
+                        >
+                          Revoke Access
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
 
       {/* Security Advisory */}
       <div className="bg-stone-50 border border-stone-200 p-8 text-stone-600 relative overflow-hidden rounded-xl shadow-sm">
