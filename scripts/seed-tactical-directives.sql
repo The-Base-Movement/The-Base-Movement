@@ -209,7 +209,7 @@ BEGIN
         'Which industrial sector should be the movement''s primary focus for the first 100 days of the national implementation?',
         'Active',
         'National',
-        (CURRENT_DATE + INTERVAL '14 days')::text,
+        (CURRENT_DATE + INTERVAL '14 days'),
         'Strategy'
     ) RETURNING id INTO admin_id; -- Reuse admin_id variable to hold poll_id temporarily
 
@@ -227,7 +227,7 @@ BEGIN
     VALUES (
         'Phase 1: Stabilization Complete',
         'National digital infrastructure stabilized. Command center hardened and tactical seeding initialized.',
-        CURRENT_DATE::text,
+        CURRENT_DATE,
         'Completed',
         'Infrastructure',
         'High',
