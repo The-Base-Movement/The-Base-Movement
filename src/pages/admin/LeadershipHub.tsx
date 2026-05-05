@@ -148,7 +148,7 @@ export default function LeadershipHub() {
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         <Card className="rounded-xl border-stone-200 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-[var(--brand-red)]" />
           <CardContent className="p-6">
@@ -165,7 +165,7 @@ export default function LeadershipHub() {
             </h3>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-stone-200 shadow-sm relative overflow-hidden">
+        <Card className="rounded-xl border-stone-200 shadow-sm relative overflow-hidden col-span-2 md:col-span-1">
           <div className="absolute top-0 left-0 w-1 h-full bg-[var(--brand-green)]" />
           <CardContent className="p-6">
             <p className="text-[10px] font-bold text-stone-400 normal-case">New leaders appointed</p>
