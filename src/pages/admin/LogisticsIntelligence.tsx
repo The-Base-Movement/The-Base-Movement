@@ -141,7 +141,7 @@ export default function LogisticsIntelligence() {
       </div>
 
       {/* 📊 High-Impact Telemetry */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {(() => {
           const avgDispatch = velocity.length > 0 
             ? (velocity.reduce((sum, v) => sum + v.avg_dispatch_hours, 0) / velocity.length).toFixed(1) 
@@ -157,16 +157,16 @@ export default function LogisticsIntelligence() {
             { 
               label: 'Supply Chain Health', 
               value: `${health}%`, 
-              sub: 'Global Logistics Efficiency', 
+              sub: 'Logistics Efficiency', 
               icon: health >= 80 ? CheckCircle2 : AlertTriangle, 
               color: health >= 80 ? 'text-[var(--brand-green)]' : health >= 51 ? 'text-amber-500' : 'text-red-500' 
             },
-            { label: 'Urgent Stock Alerts', value: alerts.length, sub: 'Inventory Below Threshold', icon: AlertTriangle, color: alerts.length > 0 ? 'text-red-500' : 'text-stone-400' },
-            { label: 'Avg Dispatch Time', value: `${avgDispatch}h`, sub: 'Last 30 Day Aggregate', icon: Clock, color: 'text-blue-500' },
+            { label: 'Urgent Alerts', value: alerts.length, sub: 'Inventory Alerts', icon: AlertTriangle, color: alerts.length > 0 ? 'text-red-500' : 'text-stone-400' },
+            { label: 'Avg Dispatch', value: `${avgDispatch}h`, sub: '30 Day Aggregate', icon: Clock, color: 'text-blue-500' },
             { 
               label: 'Fulfillment Rate', 
               value: `${avgFulfillment}%`, 
-              sub: 'Verified Regional Delivery', 
+              sub: 'Verified Delivery', 
               icon: Number(avgFulfillment) >= 80 ? TrendingUp : AlertTriangle, 
               color: Number(avgFulfillment) >= 80 ? 'text-orange-500' : Number(avgFulfillment) >= 51 ? 'text-amber-500' : 'text-red-500' 
             },
@@ -177,7 +177,7 @@ export default function LogisticsIntelligence() {
                 <stat.icon className={cn("w-5 h-5", stat.color)} />
               </div>
               <div>
-                <p className="text-3xl font-black tracking-tighter text-stone-900">{stat.value}</p>
+                <p className="text-xl md:text-3xl font-black tracking-tighter text-stone-900">{stat.value}</p>
                 <p className="text-[10px] font-bold text-stone-400 normal-case mt-1">{stat.sub}</p>
               </div>
             </Card>
