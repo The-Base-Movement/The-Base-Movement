@@ -283,7 +283,7 @@ export interface RapidResponseDirective {
   description: string
   priority: 'CRITICAL' | 'HIGH' | 'ELEVATED'
   target_region: string
-  action_type: 'FLASH_RALLY' | 'DIGITAL_STRIKE' | 'SUPPLY_RUN'
+  action_type: 'FLASH_RALLY' | 'DIGITAL_STRIKE' | 'SUPPLY_RUN' | 'FIELD_SURVEY'
   status: 'ACTIVE' | 'STANDBY' | 'RESOLVED'
   created_by: string
   expires_at: string | null
