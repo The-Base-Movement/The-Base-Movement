@@ -176,7 +176,7 @@ export default function ChaptersManagement() {
       </div>
 
       {/* Chapters Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <Card className="rounded-xl border-stone-200 shadow-sm bg-stone-900 text-white">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-white/10 flex items-center justify-center rounded-lg">
@@ -199,8 +199,11 @@ export default function ChaptersManagement() {
             </div>
           </CardContent>
         </Card>
-        {regionalStats.slice(0, 3).map((stat) => (
-          <Card key={stat.region} className="rounded-xl border-stone-200 shadow-sm overflow-hidden relative group cursor-pointer">
+        {regionalStats.slice(0, 3).map((stat, idx) => (
+          <Card key={stat.region} className={cn(
+            "rounded-xl border-stone-200 shadow-sm overflow-hidden relative group cursor-pointer",
+            idx === 2 ? "col-span-2 md:col-span-1" : ""
+          )}>
             <CardContent className="p-6 flex items-center gap-4 relative z-10">
               <div className="w-12 h-12 bg-stone-100 flex items-center justify-center transition-colors group-hover:bg-stone-900 group-hover:text-white rounded-lg">
                 <MapPin className="w-5 h-5" />
@@ -227,7 +230,7 @@ export default function ChaptersManagement() {
 
       {/* Regional Impact Intelligence Map */}
       <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
-        <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
+        <CardHeader className="p-8 border-b border-stone-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <CardTitle className="text-lg font-bold tracking-tight flex items-center gap-2 text-stone-900">
               <Globe className="w-5 h-5 text-stone-400" />
@@ -235,18 +238,18 @@ export default function ChaptersManagement() {
             </CardTitle>
             <CardDescription className="text-xs mt-1 font-medium text-stone-400">Geospatial distribution of chapters and mobilization strength.</CardDescription>
           </div>
-          <div className="flex gap-4">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-sm" />
-              <span className="text-[9px] font-bold text-stone-500 normal-case">High strength</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 md:flex md:gap-4 w-full md:w-auto">
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-sm shrink-0" />
+              <span className="text-[9px] font-black text-stone-500 uppercase tracking-tight">High strength</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-amber-500 rounded-sm" />
-              <span className="text-[9px] font-bold text-stone-500 normal-case">Moderate</span>
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 bg-amber-500 rounded-sm shrink-0" />
+              <span className="text-[9px] font-black text-stone-500 uppercase tracking-tight">Moderate</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-stone-300 rounded-sm" />
-              <span className="text-[9px] font-bold text-stone-500 normal-case">Emerging</span>
+            <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
+              <div className="w-2.5 h-2.5 bg-stone-300 rounded-sm shrink-0" />
+              <span className="text-[9px] font-black text-stone-500 uppercase tracking-tight">Emerging density</span>
             </div>
           </div>
         </CardHeader>
