@@ -8,7 +8,8 @@ import {
   Search,
   Filter,
   RefreshCw,
-  Eye
+  Eye,
+  Download
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/Button'
@@ -40,6 +41,8 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState<Order['status'] | 'ALL'>('ALL')
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [regionFilter, setRegionFilter] = useState<string>('ALL')
+  const [dateFilter, setDateFilter] = useState<'ALL' | 'TODAY' | 'WEEK' | 'MONTH'>('ALL')
 
   const loadData = async (silent = false) => {
     if (!silent) setLoading(true)
@@ -93,19 +96,86 @@ export default function AdminOrders() {
 
   const filtered = orders.filter(o => {
     const matchesStatus = statusFilter === 'ALL' || o.status === statusFilter
+    const matchesRegion = regionFilter === 'ALL' || o.region_or_state === regionFilter
+    
+    // Date Filtering
+    let matchesDate = true
+    if (dateFilter !== 'ALL') {
+      const orderDate = new Date(o.created_at)
+      const now = new Date()
+      if (dateFilter === 'TODAY') {
+        matchesDate = orderDate.toDateString() === now.toDateString()
+      } else if (dateFilter === 'WEEK') {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        matchesDate = orderDate >= weekAgo
+      } else if (dateFilter === 'MONTH') {
+        const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
+        matchesDate = orderDate >= monthAgo
+      }
+    }
+
     const q = search.toLowerCase()
     const matchesSearch = !q || 
       o.full_name.toLowerCase().includes(q) || 
       o.email.toLowerCase().includes(q) ||
       o.id.toLowerCase().includes(q)
-    return matchesStatus && matchesSearch
+    return matchesStatus && matchesSearch && matchesRegion && matchesDate
   })
 
+  const regions = [...new Set(orders.map(o => o.region_or_state).filter(Boolean))] as string[]
+
+  const handleExport = () => {
+    try {
+      const headers = ['Order ID', 'Customer', 'Email', 'Region', 'Amount', 'Status', 'Date']
+      const csvData = filtered.map(o => [
+        o.id,
+        `"${o.full_name}"`,
+        o.email,
+        o.region_or_state || 'N/A',
+        o.total_amount,
+        o.status,
+        new Date(o.created_at).toLocaleDateString()
+      ])
+      const csvContent = [headers.join(','), ...csvData.map(row => row.join(','))].join('\n')
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.setAttribute('href', url)
+      link.setAttribute('download', `orders_export_${new Date().toISOString().split('T')[0]}.csv`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      toast.success(`Exported ${filtered.length} order records.`)
+    } catch {
+      toast.error('Failed to export orders.')
+    }
+  }
+
   const statCards = stats ? [
-    { label: 'Total Orders',   value: stats.totalOrders,      color: 'text-stone-900', sub: `GHS ${stats.totalRevenue.toFixed(2)} total revenue` },
-    { label: 'Avg Delivery',   value: `${(stats.avgDeliveryDays || 0).toFixed(1)}d`, color: 'text-blue-600', sub: 'Dispatch to Delivery Latency' },
-    { label: 'In Transit',     value: stats.dispatchedOrders, color: 'text-violet-600',  sub: 'Dispatched to customers' },
-    { label: 'Delivered',      value: stats.deliveredOrders,  color: 'text-emerald-600', sub: `GHS ${stats.revenueToday.toFixed(2)} today` },
+    { 
+      label: 'Total Orders',   
+      value: stats.totalOrders,      
+      color: 'text-stone-900', 
+      sub: `GHS ${stats.totalRevenue.toFixed(2)} total revenue` 
+    },
+    { 
+      label: 'Avg Delivery',   
+      value: `${(stats.avgDeliveryDays || 0).toFixed(1)}d`, 
+      color: (stats.avgDeliveryDays ?? 0) === 0 ? 'text-stone-400' : (stats.avgDeliveryDays ?? 0) <= 3 ? 'text-emerald-600' : (stats.avgDeliveryDays ?? 0) <= 5 ? 'text-amber-500' : 'text-red-500', 
+      sub: 'Dispatch to Delivery Latency' 
+    },
+    { 
+      label: 'In Transit',     
+      value: stats.dispatchedOrders, 
+      color: stats.dispatchedOrders === 0 ? 'text-stone-400' : 'text-violet-600',  
+      sub: 'Dispatched to customers' 
+    },
+    { 
+      label: 'Delivered',      
+      value: stats.deliveredOrders,  
+      color: stats.deliveredOrders === 0 ? 'text-stone-400' : 'text-emerald-600', 
+      sub: `GHS ${stats.revenueToday.toFixed(2)} today` 
+    },
   ] : []
 
   return (
@@ -115,18 +185,28 @@ export default function AdminOrders() {
         <div>
           <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
             <Package className="w-8 h-8 text-stone-900" />
-            Order command center
+            Order management
           </h1>
           <p className="text-stone-500 text-sm mt-1">Live merchandise dispatch and fulfillment intelligence.</p>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => loadData(true)}
-          className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all flex items-center gap-2"
-        >
-          <RefreshCw className={cn('w-3.5 h-3.5', refreshing && 'animate-spin')} />
-          Sync
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all flex items-center gap-2"
+          >
+            <Download className="w-3.5 h-3.5" />
+            Export orders
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => loadData(true)}
+            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all flex items-center gap-2"
+          >
+            <RefreshCw className={cn('w-3.5 h-3.5', refreshing && 'animate-spin')} />
+            Sync
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -152,7 +232,7 @@ export default function AdminOrders() {
           <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
             <CardHeader className="p-6 border-b border-stone-100 flex flex-row items-center justify-between gap-4">
               <CardTitle className="text-xs font-bold normal-case text-stone-400 flex items-center gap-2">
-                <Package className="w-4 h-4" /> Live order feed
+                <Package className="w-4 h-4" /> Order feed
               </CardTitle>
               <div className="flex items-center gap-3">
                 {/* Search */}
@@ -180,6 +260,34 @@ export default function AdminOrders() {
                     ))}
                   </select>
                 </div>
+                {/* Date filter */}
+                <div className="relative">
+                  <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                  <select
+                    value={dateFilter}
+                    onChange={e => setDateFilter(e.target.value as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}
+                    className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
+                  >
+                    <option value="ALL">All Time</option>
+                    <option value="TODAY">Today</option>
+                    <option value="WEEK">Last 7 Days</option>
+                    <option value="MONTH">This Month</option>
+                  </select>
+                </div>
+                {/* Region filter */}
+                <div className="relative">
+                  <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                  <select
+                    value={regionFilter}
+                    onChange={e => setRegionFilter(e.target.value)}
+                    className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
+                  >
+                    <option value="ALL">All Regions</option>
+                    {regions.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </CardHeader>
             <div className="overflow-x-auto">
@@ -192,6 +300,7 @@ export default function AdminOrders() {
                 <div className="p-16 text-center">
                   <Package className="w-8 h-8 text-stone-200 mx-auto mb-3" />
                   <p className="text-[10px] font-bold normal-case text-stone-400">No orders found</p>
+                  <p className="text-[9px] text-stone-300 normal-case mt-1">Orders will appear here once customers complete purchases</p>
                 </div>
               ) : (
                 <table className="w-full text-xs">

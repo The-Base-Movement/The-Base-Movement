@@ -52,6 +52,7 @@ import AdminLeadershipHub from './pages/admin/LeadershipHub'
 import AdminDonations from './pages/admin/DonationVerification'
 import AdminAdministrators from './pages/admin/Administrators'
 import AdminBroadcasts from './pages/admin/Broadcasts'
+import AdminNewBroadcast from './pages/admin/NewBroadcast'
 import AdminOrders from './pages/admin/Orders'
 import AdminChapterHub from './pages/admin/ChapterLeadHub'
 import AdminFieldDirectives from './pages/admin/FieldDirectives'
@@ -153,6 +154,7 @@ export default function App() {
           <Route path="/admin/blogs" element={<AdminBlogs />} />
           <Route path="/admin/media" element={<AdminMediaLibrary />} />
           <Route path="/admin/broadcasts" element={<AdminBroadcasts />} />
+          <Route path="/admin/broadcasts/new" element={<AdminNewBroadcast />} />
           <Route path="/admin/administrators" element={<AdminAdministrators />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
         </Route>

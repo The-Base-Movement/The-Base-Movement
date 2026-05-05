@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
-import { allChapters } from '../data/chaptersData'
 import type { ChapterApplication, ChapterLeaderboard, Chapter } from '@/types/admin'
 
 class ChapterService {
@@ -15,19 +14,7 @@ class ChapterService {
     return ChapterService.instance
   }
 
-  private getFallbackChapters(): Chapter[] {
-    return allChapters.map(c => ({
-      id: c.id,
-      name: c.name,
-      city_or_region: c.city_or_region,
-      country: c.country,
-      leader_name: 'Unassigned',
-      member_count: c.membersCount,
-      status: c.status as Chapter['status'],
-      description: c.description,
-      details_url: c.details_url
-    }))
-  }
+
 
   async getChapters(): Promise<Chapter[]> {
     const { data, error } = await supabase
@@ -37,7 +24,7 @@ class ChapterService {
 
     if (error) {
       console.error('[DATABASE] Chapters Fetch Error:', error)
-      return this.getFallbackChapters()
+      return []
     }
 
     return data.map((c) => ({

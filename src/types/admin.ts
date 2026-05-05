@@ -497,6 +497,7 @@ export interface Broadcast {
   sender_name?: string
   title: string
   content: string
+  channel: 'SMS' | 'Email' | 'Push' | 'In-app'
   target_type: 'ALL' | 'REGION' | 'CONSTITUENCY'
   target_value?: string
   priority: 'Normal' | 'High' | 'Urgent'

@@ -119,8 +119,13 @@ export default function AdminSettings() {
         })
       }
 
-      const logs = await adminService.getSystemAuditLogs()
-      setAuditLogs(logs)
+      try {
+        const logs = await adminService.getSystemAuditLogs()
+        setAuditLogs(logs)
+      } catch (err) {
+        console.error('[SETTINGS] Failed to synchronize audit telemetry:', err)
+        toast.error('Failed to synchronize administrative audit logs')
+      }
     }
     fetchData()
   }, [])
@@ -314,6 +319,61 @@ export default function AdminSettings() {
       toast.error(error instanceof Error ? error.message : 'An error occurred')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleExportLogs = () => {
+    if (auditLogs.length === 0) {
+      toast.error('No administrative logs available for export')
+      return
+    }
+
+    const toastId = toast.loading('Preparing movement audit report...')
+
+    try {
+      // Use full auditLogs for export to ensure "the log we have" is completely captured
+      const logsToExport = auditLogs
+      
+      const headers = ['Timestamp', 'Officer', 'Action', 'Resource', 'Status', 'Technical Details']
+      const rows = logsToExport.map(log => [
+        new Date(log.timestamp).toLocaleString(),
+        log.adminName,
+        log.action,
+        log.resource,
+        log.status,
+        log.details ? JSON.stringify(log.details).replace(/"/g, '""') : 'N/A'
+      ])
+
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => {
+          const content = String(cell ?? '')
+          return `"${content.replace(/"/g, '""')}"`
+        }).join(','))
+      ].join('\n')
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      link.setAttribute('href', url)
+      link.setAttribute('download', `base_audit_report_${timestamp}.csv`)
+      link.style.visibility = 'hidden'
+      
+      document.body.appendChild(link)
+      link.click()
+      
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+      }, 100)
+      
+      toast.success('Movement audit report exported successfully', { id: toastId })
+    } catch (error) {
+      console.error('[SETTINGS] Critical export failure:', error)
+      toast.error('Failed to generate audit report', { id: toastId })
     }
   }
 
@@ -731,7 +791,7 @@ export default function AdminSettings() {
                 <Button 
                   variant="outline" 
                   className="h-8 px-3 text-[10px] font-bold border-stone-200 hover:bg-stone-50 rounded-lg"
-                  onClick={() => toast.success('Exporting audit log...')}
+                  onClick={handleExportLogs}
                 >
                   Export log
                 </Button>

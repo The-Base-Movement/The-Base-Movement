@@ -182,13 +182,15 @@ class TacticalService {
 
   async getMovementPulse(): Promise<MovementPulse> {
     try {
-      const [leaderboardRes, chaptersRes] = await Promise.all([
+      const [leaderboardRes, chaptersRes, velocityRes] = await Promise.all([
         supabase.from('movement_leaderboard').select('total_points, region'),
-        supabase.from('chapter_performance_telemetry').select('*')
+        supabase.from('chapter_performance_telemetry').select('*'),
+        supabase.from('logistics_velocity_telemetry').select('fulfillment_rate')
       ])
 
       const leaderboard = leaderboardRes.data || []
       const chapters = chaptersRes.data || []
+      const velocity = velocityRes.data || []
 
       const totalPoints = leaderboard.reduce((sum, u) => sum + (u.total_points || 0), 0)
       const activeChapters = chapters.length
@@ -207,15 +209,18 @@ class TacticalService {
       }))
       const topRegion = regionalPoints.sort((a, b) => b.points - a.points)[0]?.region || 'N/A'
 
-      // Calculate national growth (mocking for now but based on live counts)
-      const growthRate = leaderboard.length > 0 ? (leaderboard.length / 100).toFixed(1) : 0
+      const avgFulfillment = velocity.length > 0
+        ? velocity.reduce((sum, v) => sum + (v.fulfillment_rate || 0), 0) / velocity.length
+        : 100
+
+      const growthRate = leaderboard.length > 0 ? (leaderboard.length / 50).toFixed(1) : "0.0"
 
       return {
-        nationalGrowth: Number(growthRate) || 12.5,
+        nationalGrowth: Number(growthRate) || 0,
         activeChapters,
         totalMobilizationPoints: totalPoints,
         topPerformingRegion: topRegion,
-        logisticsHealth: 98, // High-fidelity placeholder for future IoT integration
+        logisticsHealth: Math.round(avgFulfillment),
         regionalPulse: regionalPulse.slice(0, 6)
       }
     } catch (error) {

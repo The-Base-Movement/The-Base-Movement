@@ -549,13 +549,28 @@ class LogisticsService {
   }
 
   async getLogisticsLatency(): Promise<LogisticsLatency[]> {
-    const regions = ['Greater Accra', 'Ashanti', 'Western', 'Central', 'Eastern', 'Volta', 'Northern']
-    return regions.map(region => ({
-      region,
-      avgDispatchToDeliveryDays: Number((Math.random() * 5 + 1).toFixed(1)),
-      totalDispatches: Math.floor(Math.random() * 500 + 100),
-      efficiency: (Math.random() > 0.7 ? 'High' : Math.random() > 0.3 ? 'Medium' : 'Low') as 'High' | 'Medium' | 'Low'
-    }))
+    try {
+      const { data, error } = await supabase
+        .from('logistics_velocity_telemetry')
+        .select('region, avg_dispatch_hours, avg_delivery_hours, total_orders')
+
+      if (error || !data) return []
+
+      return data.map(item => {
+        const totalHours = (item.avg_dispatch_hours || 0) + (item.avg_delivery_hours || 0)
+        const avgDays = Number((totalHours / 24).toFixed(1))
+        
+        return {
+          region: item.region,
+          avgDispatchToDeliveryDays: avgDays || 0,
+          totalDispatches: item.total_orders || 0,
+          efficiency: (avgDays < 3 && avgDays > 0) ? 'High' : (avgDays < 5 && avgDays > 0) ? 'Medium' : 'Low'
+        }
+      })
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch logistics latency:', error)
+      return []
+    }
   }
 
   async getLogisticsVelocity(): Promise<LogisticsVelocity[]> {

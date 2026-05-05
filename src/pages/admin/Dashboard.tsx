@@ -126,35 +126,68 @@ export default function AdminDashboard() {
   const [isExporting, setIsExporting] = useState(false)
 
   const handleExport = async () => {
+    if (regionalStats.length === 0) {
+      toast({
+        title: "No data available",
+        description: "There is no regional data to export at this time.",
+        variant: "destructive"
+      })
+      return
+    }
+
     setIsExporting(true)
     toast({
       title: "Generating export",
-      description: "Aggregating regional data into CSV format...",
+      description: "Aggregating regional performance telemetry...",
     })
     
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1200))
-    
-    // Trigger dummy download
-    const dummyData = "Date,Category,Value\n" + 
-      new Date().toISOString() + ",Members," + (globalStats[0]?.value || "0") + "\n" +
-      new Date().toISOString() + ",Chapters," + (globalStats[1]?.value || "0") + "\n";
-    
-    const blob = new Blob([dummyData], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.setAttribute('hidden', '');
-    a.setAttribute('href', url);
-    a.setAttribute('download', `the_base_export_${new Date().getTime()}.csv`);
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    try {
+      // Aggregate real regional data
+      const headers = ['Region', 'Member Count', 'Chapters', 'Performance Status', 'Activity Level']
+      const rows = regionalStats.map(r => [
+        r.region,
+        r.memberCount,
+        r.chapters,
+        r.performance,
+        r.memberCount > 1000 ? 'Peak' : r.memberCount > 100 ? 'High' : 'Normal'
+      ])
 
-    setIsExporting(false)
-    toast({
-      title: "Export complete",
-      description: "The CSV file has been generated and downloaded successfully.",
-    })
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      ].join('\n')
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      
+      const timestamp = new Date().toISOString().split('T')[0]
+      a.setAttribute('href', url)
+      a.setAttribute('download', `base_regional_performance_${timestamp}.csv`)
+      a.style.display = 'none'
+      
+      document.body.appendChild(a)
+      a.click()
+      
+      setTimeout(() => {
+        document.body.removeChild(a)
+        window.URL.revokeObjectURL(url)
+      }, 100)
+
+      setIsExporting(false)
+      toast({
+        title: "Export complete",
+        description: "The regional performance report has been successfully generated.",
+      })
+    } catch (error) {
+      console.error('[DASHBOARD] Export failure:', error)
+      setIsExporting(false)
+      toast({
+        title: "Export failed",
+        description: "A critical error occurred during data aggregation.",
+        variant: "destructive"
+      })
+    }
   }
 
 

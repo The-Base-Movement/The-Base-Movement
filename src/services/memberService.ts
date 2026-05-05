@@ -13,22 +13,7 @@ class MemberService {
     return MemberService.instance
   }
 
-  private getFallbackMembers(): Member[] {
-    return [
-      {
-        id: 'PAT-001',
-        name: 'Ghana Patriot',
-        email: 'patriot@thebase.org',
-        phone: '0240000001',
-        region: 'Greater Accra',
-        constituency: 'Ayawaso West',
-        status: 'Active',
-        joined: new Date().toLocaleDateString(),
-        type: 'Premium',
-        chapter: 'Central Accra'
-      }
-    ]
-  }
+
 
   async getMembers(): Promise<Member[]> {
     const { data: adminIds } = await supabase
@@ -49,8 +34,8 @@ class MemberService {
     const { data, error } = await query
 
     if (error) {
-      console.warn('[DATABASE] Falling back to mock members:', error)
-      return this.getFallbackMembers()
+      console.warn('[DATABASE] Failed to fetch members:', error)
+      return []
     }
 
     return data.map((u) => ({

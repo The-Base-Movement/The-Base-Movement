@@ -2,6 +2,21 @@ import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
 import type { AuditLogEntry, ActivityLog } from '@/types/admin'
 
+interface AuditLogResponse {
+  id: string
+  timestamp: string
+  admin_id: string | null
+  action: string
+  resource: string
+  status: 'Success' | 'Failure' | 'Warning'
+  metadata: Record<string, unknown>
+  admins: {
+    users: {
+      full_name: string
+    } | null
+  } | null
+}
+
 class AuditService {
   private static instance: AuditService
 
@@ -37,16 +52,27 @@ class AuditService {
   async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
     const { data, error } = await supabase
       .from('audit_logs')
-      .select('*')
+      .select(`
+        *,
+        admins!fk_admin_id (
+          users!admins_id_fkey (
+            full_name
+          )
+        )
+      `)
       .order('timestamp', { ascending: false })
-      .limit(50)
+      .limit(100)
 
-    if (error || !Array.isArray(data)) return []
-    return data.map((log) => ({
+    if (error || !Array.isArray(data)) {
+      console.warn('[DATABASE] Audit logs fetch failed:', error)
+      return []
+    }
+
+    return (data as unknown as AuditLogResponse[]).map((log) => ({
       id: log.id,
       timestamp: log.timestamp,
       adminId: log.admin_id || 'SYS',
-      adminName: log.admin_id ? 'Regional Admin' : 'National HQ',
+      adminName: log.admins?.users?.full_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
       action: log.action,
       resource: log.resource,
       status: log.status,
@@ -57,16 +83,27 @@ class AuditService {
   async getAuditLogsForResource(resourceId: string): Promise<AuditLogEntry[]> {
     const { data, error } = await supabase
       .from('audit_logs')
-      .select('*')
+      .select(`
+        *,
+        admins!fk_admin_id (
+          users!admins_id_fkey (
+            full_name
+          )
+        )
+      `)
       .eq('resource', resourceId)
       .order('timestamp', { ascending: false })
 
-    if (error || !Array.isArray(data)) return []
-    return data.map((log) => ({
+    if (error || !Array.isArray(data)) {
+      console.warn('[DATABASE] Resource audit fetch failed:', error)
+      return []
+    }
+
+    return (data as unknown as AuditLogResponse[]).map((log) => ({
       id: log.id,
       timestamp: log.timestamp,
       adminId: log.admin_id || 'SYS',
-      adminName: log.admin_id ? 'Regional Admin' : 'National HQ',
+      adminName: log.admins?.users?.full_name || (log.admin_id ? 'Authorized Officer' : 'National HQ'),
       action: log.action,
       resource: log.resource,
       status: log.status,

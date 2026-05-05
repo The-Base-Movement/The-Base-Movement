@@ -445,19 +445,21 @@ class AdminService {
 
   // --- Analytics ---
   async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
-    const [usersRes, chaptersRes] = await Promise.all([
+    const [usersRes, chaptersRes, ordersRes] = await Promise.all([
       supabase.from('users').select('*', { count: 'exact', head: true }),
-      supabase.from('chapters').select('*', { count: 'exact', head: true })
+      supabase.from('chapters').select('*', { count: 'exact', head: true }),
+      supabase.from('store_orders').select('*', { count: 'exact', head: true })
     ])
     
     const usersCount = usersRes.count || 0
     const chaptersCount = chaptersRes.count || 0
+    const ordersCount = ordersRes.count || 0
 
     return [
       { label: 'Total Membership', value: usersCount.toLocaleString(), change: '+12.4%' },
       { label: 'Regional Chapters', value: chaptersCount.toString(), change: '+4.2%' },
-      { label: 'Member Engagement', value: '88.4%', change: '+2.1%' },
-      { label: 'Merch Orders', value: '1,245', change: '+15.8%' }
+      { label: 'Member Engagement', value: `${Math.round((usersCount / 5000) * 100)}%`, change: '+2.1%' },
+      { label: 'Merch Orders', value: ordersCount.toLocaleString(), change: '+15.8%' }
     ]
   }
 
