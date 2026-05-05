@@ -16,15 +16,18 @@ import { logisticsService } from '@/services/logisticsService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
-import type { BlogPost, InventoryItem, MediaAsset } from '@/types/admin'
+import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
 
-type TrashTab = 'blogs' | 'products' | 'media'
+import { PenTool } from 'lucide-react'
+
+type TrashTab = 'blogs' | 'products' | 'media' | 'authors'
 
 export default function TrashPage() {
   const [activeTab, setActiveTab] = useState<TrashTab>('blogs')
   const [blogs, setBlogs] = useState<BlogPost[]>([])
   const [products, setProducts] = useState<InventoryItem[]>([])
   const [media, setMedia] = useState<MediaAsset[]>([])
+  const [authors, setAuthors] = useState<Author[]>([])
   const [isLoading, setIsLoading] = useState(true)
   
   // Modal State
@@ -43,14 +46,16 @@ export default function TrashPage() {
   const loadTrash = useCallback(async () => {
     setIsLoading(true)
     try {
-      const [trashedBlogs, trashedProducts, trashedMedia] = await Promise.all([
+      const [trashedBlogs, trashedProducts, trashedMedia, trashedAuthors] = await Promise.all([
         contentService.getTrashedBlogPosts(),
         logisticsService.getTrashedInventory(),
-        contentService.getTrashedMedia()
+        contentService.getTrashedMedia(),
+        contentService.getTrashedAuthors()
       ])
       setBlogs(trashedBlogs)
       setProducts(trashedProducts)
       setMedia(trashedMedia)
+      setAuthors(trashedAuthors)
     } catch {
       toast.error('Failed to load trash contents')
     } finally {
@@ -68,6 +73,7 @@ export default function TrashPage() {
       if (type === 'blogs') success = await contentService.restoreBlogPost(idOrUrl)
       if (type === 'products') success = await logisticsService.restoreInventoryItem(idOrUrl)
       if (type === 'media') success = await contentService.restoreMediaFile(idOrUrl)
+      if (type === 'authors') success = await contentService.restoreAuthor(idOrUrl)
 
       if (success) {
         toast.success('Item restored successfully')
@@ -88,6 +94,7 @@ export default function TrashPage() {
       if (deleteModal.type === 'blogs') success = await contentService.permanentlyDeleteBlogPost(deleteModal.id)
       if (deleteModal.type === 'products') success = await logisticsService.permanentlyDeleteInventoryItem(deleteModal.id)
       if (deleteModal.type === 'media') success = await contentService.permanentlyDeleteMediaFile(deleteModal.id)
+      if (deleteModal.type === 'authors') success = await contentService.permanentlyDeleteAuthor(deleteModal.id)
 
       if (success) {
         toast.success('Item permanently deleted')
@@ -163,6 +170,18 @@ export default function TrashPage() {
           <ImageIcon className="w-3.5 h-3.5" />
           Media Assets ({media.length})
         </button>
+        <button
+          onClick={() => setActiveTab('authors')}
+          className={cn(
+            "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
+            activeTab === 'authors' 
+              ? "bg-white text-stone-900 shadow-sm border border-stone-200" 
+              : "text-stone-500 hover:text-stone-700"
+          )}
+        >
+          <PenTool className="w-3.5 h-3.5" />
+          Authors ({authors.length})
+        </button>
       </div>
 
       {/* Retention Notice */}
@@ -187,7 +206,8 @@ export default function TrashPage() {
           </div>
         ) : (activeTab === 'blogs' && blogs.length === 0) || 
             (activeTab === 'products' && products.length === 0) || 
-            (activeTab === 'media' && media.length === 0) ? (
+            (activeTab === 'media' && media.length === 0) ||
+            (activeTab === 'authors' && authors.length === 0) ? (
           <div className="bg-white border border-stone-200 rounded-3xl p-12 text-center">
             <div className="w-20 h-20 rounded-3xl bg-stone-50 flex items-center justify-center mx-auto mb-4">
               <Trash className="w-10 h-10 text-stone-200" />
@@ -233,6 +253,19 @@ export default function TrashPage() {
                 onDelete={() => setDeleteModal({ isOpen: true, type: 'media', id: item.url, name: item.filename })}
                 daysRemaining={formatDaysRemaining(item.deleted_at)}
                 image={item.url}
+              />
+            ))}
+            {activeTab === 'authors' && authors.map(author => (
+              <TrashItemCard
+                key={author.id}
+                title={author.name}
+                subtitle={author.role || 'Contributor'}
+                deletedAt={author.deletedAt!}
+                onRestore={() => handleRestore('authors', author.id)}
+                onDelete={() => setDeleteModal({ isOpen: true, type: 'authors', id: author.id, name: author.name })}
+                daysRemaining={formatDaysRemaining(author.deletedAt!)}
+                image={author.imageUrl}
+                icon={<PenTool className="w-5 h-5" />}
               />
             ))}
           </div>
