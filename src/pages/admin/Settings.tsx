@@ -403,7 +403,7 @@ export default function AdminSettings() {
                   {/* Form Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Full Name</Label>
+                      <Label className="text-[10px] font-bold tracking-wider text-stone-500">Full name</Label>
                       <Input 
                         value={profileForm.fullName} 
                         onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
@@ -411,17 +411,17 @@ export default function AdminSettings() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Email Address</Label>
+                      <Label className="text-[10px] font-bold tracking-wider text-stone-500">Email address</Label>
                       <Input value={profileForm.email} disabled className="h-10 rounded-lg border-stone-100 bg-stone-50 text-stone-400 text-xs font-medium cursor-not-allowed" />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Administrative Role</Label>
+                      <Label className="text-[10px] font-bold tracking-wider text-stone-500">Administrative role</Label>
                       <div className="h-10 px-3 flex items-center rounded-lg border border-stone-100 bg-stone-50 text-stone-400 text-[10px] font-bold uppercase tracking-widest italic">
                         {adminData?.role || (adminData ? 'Standard Staff' : 'HQ Officer')}
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Phone Number</Label>
+                      <Label className="text-[10px] font-bold tracking-wider text-stone-500">Phone number</Label>
                       <Input 
                         value={profileForm.phone} 
                         onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
@@ -470,8 +470,8 @@ export default function AdminSettings() {
                           <p className="text-[10px] text-stone-400 font-medium mt-0.5">{item.desc}</p>
                         </div>
                       </div>
-                      <span className="px-3 py-1 bg-stone-50 border border-stone-100 rounded-full text-[9px] font-bold text-stone-400 uppercase tracking-wider">
-                        {item.count} Active
+                      <span className="px-3 py-1 bg-stone-50 border border-stone-100 rounded-full text-[9px] font-bold text-stone-400 tracking-wider">
+                        {item.count} active
                       </span>
                     </div>
                   ))}
@@ -491,7 +491,7 @@ export default function AdminSettings() {
               </CardHeader>
               <CardContent className="p-8 space-y-10">
                 <div className="space-y-6">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Interface Density</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-wider">Interface density</p>
                   <div className="grid grid-cols-3 gap-4">
                     {['Comfortable', 'Compact', 'High Density'].map((mode) => (
                       <button 
@@ -520,7 +520,7 @@ export default function AdminSettings() {
                 <div className="h-px bg-stone-100" />
 
                 <div className="space-y-6">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Notifications</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-wider">Notifications</p>
                   <div className="space-y-4">
                     {[
                       { id: 'reg', label: 'New Member Registrations', desc: 'Real-time alerts for regional growth' },
@@ -555,7 +555,7 @@ export default function AdminSettings() {
                   <div className="max-w-md space-y-6">
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">New Password</Label>
+                        <Label className="text-[10px] font-bold tracking-wider text-stone-500">New password</Label>
                         <Input 
                           type="password" 
                           value={passwordForm.newPassword}
@@ -565,7 +565,7 @@ export default function AdminSettings() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Confirm New Password</Label>
+                        <Label className="text-[10px] font-bold tracking-wider text-stone-500">Confirm new password</Label>
                         <Input 
                           type="password" 
                           value={passwordForm.confirmPassword}
@@ -609,7 +609,7 @@ export default function AdminSettings() {
                             </span>
                           ) : (
                             <span className="px-2 py-0.5 rounded-full bg-amber-50 border border-amber-100 text-[9px] font-bold text-amber-600 uppercase tracking-tighter">
-                              Not Configured
+                              Not configured
                             </span>
                           )}
                         </div>
@@ -623,7 +623,7 @@ export default function AdminSettings() {
                               onClick={() => handleUnenrollMfa(mfaFactors[0].id)}
                               className="h-8 px-4 text-[10px] font-bold border-red-100 text-red-600 hover:bg-red-50 rounded-lg transition-all"
                             >
-                              Disable Protection
+                              Disable protection
                             </Button>
                           ) : (
                             <Button 
@@ -679,7 +679,7 @@ export default function AdminSettings() {
                     {mfaStep === 'verify' && (
                       <div className="space-y-6">
                         <div className="space-y-3">
-                          <Label className="text-[10px] font-bold uppercase tracking-widest text-stone-500">Verification Code</Label>
+                          <Label className="text-[10px] font-bold tracking-wider text-stone-500">Verification code</Label>
                           <Input 
                             value={mfaCode}
                             onChange={(e) => setMfaCode(e.target.value)}
@@ -725,7 +725,7 @@ export default function AdminSettings() {
                   className="h-8 px-3 text-[10px] font-bold border-stone-200 hover:bg-stone-50 rounded-lg"
                   onClick={() => toast.success('Exporting audit log...')}
                 >
-                  Export Log
+                  Export log
                 </Button>
               </CardHeader>
               <CardContent className="p-0">
@@ -769,10 +769,10 @@ export default function AdminSettings() {
                   <table className="w-full text-left">
                     <thead>
                       <tr className="bg-stone-50/30 border-b border-stone-100">
-                        <th className="p-4 pl-8 text-[9px] font-bold uppercase tracking-widest text-stone-400">Timestamp</th>
-                        <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-stone-400">Admin</th>
-                        <th className="p-4 text-[9px] font-bold uppercase tracking-widest text-stone-400">Action</th>
-                        <th className="p-4 pr-8 text-right text-[9px] font-bold uppercase tracking-widest text-stone-400">Status</th>
+                        <th className="p-4 pl-8 text-[9px] font-bold tracking-wider text-stone-400">Timestamp</th>
+                        <th className="p-4 text-[9px] font-bold tracking-wider text-stone-400">Admin</th>
+                        <th className="p-4 text-[9px] font-bold tracking-wider text-stone-400">Action</th>
+                        <th className="p-4 pr-8 text-right text-[9px] font-bold tracking-wider text-stone-400">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-50">

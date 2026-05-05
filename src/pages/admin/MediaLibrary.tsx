@@ -95,7 +95,7 @@ export default function MediaLibrary() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-bold text-stone-900 tracking-tight">Media Library</h1>
+          <h1 className="text-4xl font-bold text-stone-900 tracking-tight">Media library</h1>
           <p className="text-stone-500 text-base mt-2 max-w-xl">
             Central repository for all movement assets. Organize, search, and deploy media across the platform.
           </p>
@@ -104,7 +104,7 @@ export default function MediaLibrary() {
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="rounded-md border-stone-200 h-10 px-4 text-xs font-bold text-stone-900 hover:bg-stone-900 hover:text-white transition-all uppercase tracking-wider"
+            className="rounded-md border-stone-200 h-10 px-4 text-xs font-bold text-stone-900 hover:bg-stone-50 transition-all tracking-wide"
             onClick={loadFiles}
           >
             Refresh
@@ -120,7 +120,7 @@ export default function MediaLibrary() {
               disabled={isUploading}
             />
             <Button 
-              className="rounded-md bg-stone-900 text-white hover:bg-stone-800 h-10 px-5 text-xs font-bold transition-all active:scale-95 uppercase tracking-wider flex items-center gap-2"
+              className="rounded-md bg-stone-900 text-white hover:bg-stone-800 h-10 px-5 text-xs font-bold transition-all active:scale-95 tracking-wide flex items-center gap-2"
               asChild
               disabled={isUploading}
             >
@@ -130,7 +130,7 @@ export default function MediaLibrary() {
                 ) : (
                   <Upload className="w-4 h-4" />
                 )}
-                {isUploading ? 'Uploading...' : 'Upload Asset'}
+                {isUploading ? 'Uploading...' : 'Upload asset'}
               </label>
             </Button>
           </div>
@@ -143,7 +143,7 @@ export default function MediaLibrary() {
         <div className="space-y-6">
           <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-stone-100 bg-stone-50">
-              <h3 className="font-bold text-stone-900 text-xs uppercase tracking-widest">Asset Categories</h3>
+              <h3 className="font-bold text-stone-900 text-xs tracking-wider">Asset categories</h3>
             </div>
             <CardContent className="p-2">
               <div className="space-y-1">
@@ -172,8 +172,8 @@ export default function MediaLibrary() {
                 <Filter className="w-5 h-5 text-emerald-400" />
               </div>
               <div>
-                <h4 className="font-bold text-sm">Storage Usage</h4>
-                <p className="text-[10px] text-stone-400 uppercase tracking-widest">Supabase Cloud</p>
+                <h4 className="font-bold text-sm">Storage usage</h4>
+                <p className="text-[10px] text-stone-400 tracking-wider">Supabase cloud</p>
               </div>
             </div>
             <div className="space-y-3">

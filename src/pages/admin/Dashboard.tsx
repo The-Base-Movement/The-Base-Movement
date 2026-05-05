@@ -61,7 +61,7 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
       <CardContent className="p-5">
         <div className="flex justify-between items-start">
           <div className="space-y-1">
-            <p className="text-[11px] font-medium text-stone-500 uppercase tracking-wider">{title}</p>
+            <p className="text-[11px] font-bold text-stone-500 tracking-wider">{title}</p>
             <div className="flex items-baseline gap-2">
               <h3 className="text-2xl font-bold text-stone-900 tabular-nums">{value}</h3>
               <span className={cn(
@@ -297,10 +297,10 @@ export default function AdminDashboard() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-stone-50/50 border-b border-stone-100">
-                    <th className="p-4 pl-6 text-[10px] font-bold uppercase tracking-wider text-stone-400">Region</th>
-                    <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-stone-400">Members</th>
-                    <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-stone-400">Chapters</th>
-                    <th className="p-4 pr-6 text-right text-[10px] font-bold uppercase tracking-wider text-stone-400">Status</th>
+                    <th className="p-4 pl-6 text-[10px] font-bold tracking-wider text-stone-400">Region</th>
+                    <th className="p-4 text-[10px] font-bold tracking-wider text-stone-400">Members</th>
+                    <th className="p-4 text-[10px] font-bold tracking-wider text-stone-400">Chapters</th>
+                    <th className="p-4 pr-6 text-right text-[10px] font-bold tracking-wider text-stone-400">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-50">
@@ -316,7 +316,7 @@ export default function AdminDashboard() {
                         <td className="p-4 text-xs font-medium text-stone-600 tabular-nums">{region.memberCount.toLocaleString()}</td>
                         <td className="p-4 text-xs font-medium text-stone-600 tabular-nums">{region.chapters}</td>
                         <td className="p-4 pr-6 text-right">
-                          <span className={cn("px-2 py-0.5 text-[9px] font-bold uppercase rounded-full", 
+                          <span className={cn("px-2 py-0.5 text-[9px] font-bold rounded-full", 
                             region.performance === 'High' ? "bg-emerald-50 text-emerald-600" : "bg-stone-100 text-stone-500"
                           )}>
                             {region.performance}
@@ -391,7 +391,7 @@ export default function AdminDashboard() {
                   logisticsData.slice(0, 3).map((item) => (
                     <div key={item.region} className="space-y-2">
                       <div className="flex justify-between items-end">
-                        <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wide">{item.region}</p>
+                        <p className="text-[10px] font-bold text-stone-500 tracking-wide">{item.region}</p>
                         <p className="text-xs font-bold text-stone-900 tabular-nums">{item.avgDispatchToDeliveryDays}d <span className="text-[10px] font-medium text-stone-400 ml-1">avg</span></p>
                       </div>
                       <div className="h-1 w-full bg-stone-50 rounded-full overflow-hidden">
@@ -406,7 +406,7 @@ export default function AdminDashboard() {
                 )}
                 <div className="pt-4">
                    <div className="bg-stone-50 rounded-lg p-4 flex justify-between items-center border border-stone-100/50">
-                     <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">Overall Velocity</p>
+                      <p className="text-[10px] font-bold text-stone-500 tracking-wider">Overall velocity</p>
                      <p className="text-sm font-bold text-stone-900 tracking-tight">3.2 Days</p>
                    </div>
                 </div>
@@ -420,7 +420,7 @@ export default function AdminDashboard() {
           {/* Health & Status Consolidated */}
           <Card className="rounded-xl border-stone-200 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/20">
-              <CardTitle className="text-[11px] font-bold uppercase tracking-wider text-stone-500">Operations Health</CardTitle>
+              <CardTitle className="text-[11px] font-bold tracking-wider text-stone-500">Operations health</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-8">
               {/* System Health */}
@@ -443,7 +443,7 @@ export default function AdminDashboard() {
 
               {/* Engagement Pulse (Simplified) */}
               <div className="space-y-6">
-                <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Sentiment Pulse</p>
+                <p className="text-[10px] font-bold text-stone-400 tracking-wider">Sentiment pulse</p>
                 {sentimentStats.length > 0 && sentimentStats.some(s => s.score > 0) ? (
                   sentimentStats.slice(0, 3).map((stat) => (
                     <div key={stat.topic} className="space-y-2">
@@ -471,11 +471,11 @@ export default function AdminDashboard() {
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-6">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Core System</span>
+                    <span className="text-[10px] font-bold tracking-wider text-white/40">Core system</span>
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold tabular-nums tracking-tighter">99.8%</span>
-                    <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest">Uptime</span>
+                    <span className="text-[10px] font-medium text-white/30 tracking-wider">Uptime</span>
                   </div>
                 </div>
               </div>
@@ -485,7 +485,7 @@ export default function AdminDashboard() {
           {/* Regional Traffic Summary */}
           <Card className="rounded-xl border-stone-200 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/20">
-              <CardTitle className="text-[11px] font-bold uppercase tracking-wider text-stone-500">Regional Traffic</CardTitle>
+              <CardTitle className="text-[11px] font-bold tracking-wider text-stone-500">Regional traffic</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-6">

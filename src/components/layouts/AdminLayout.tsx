@@ -201,8 +201,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 "transition-all duration-300 origin-left",
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
-                <p className="text-white font-black font-meta text-lg leading-tight tracking-tighter uppercase whitespace-nowrap">The Base</p>
-                <p className="text-[var(--brand-red)] text-[8px] font-black uppercase tracking-[0.2em] mt-0.5 leading-none whitespace-nowrap">Administration</p>
+                <p className="text-white font-black font-meta text-lg leading-tight tracking-tighter normal-case whitespace-nowrap">The Base</p>
+                <p className="text-stone-500 text-[9px] font-bold normal-case mt-0.5 leading-none whitespace-nowrap">Admin panel</p>
               </div>
 
             </Link>
@@ -217,16 +217,16 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               target="_blank" 
               rel="noopener noreferrer"
               className={cn(
-                "flex items-center gap-3 px-3 py-3 mb-6 mx-2 transition-all relative group bg-white/5 hover:bg-[var(--brand-red)] rounded-md border border-white/10 hover:border-[var(--brand-red)]",
+                "flex items-center gap-3 px-3 py-2 mb-6 mx-2 transition-all relative group bg-white/5 hover:bg-white/10 rounded-md border border-white/10",
                 isSidebarOpen ? "" : "justify-center px-0"
               )}
             >
-              <Zap className="w-5 h-5 text-[var(--brand-red)] group-hover:text-white shrink-0" />
+              <Zap className="w-4 h-4 text-stone-400 group-hover:text-white shrink-0" />
               <span className={cn(
-                "text-xs font-bold tracking-widest uppercase transition-all duration-300",
+                "text-[11px] font-medium tracking-wide transition-all duration-300 text-stone-400 group-hover:text-white",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0 hidden"
               )}>
-                View Site
+                View site
               </span>
             </a>
 
@@ -343,7 +343,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 group-focus-within:text-[var(--brand-green)] transition-colors" />
               <input 
                 type="text" 
-                placeholder="Search command center..."
+                placeholder="Search..."
                 className="w-full h-9 pl-9 pr-4 bg-stone-50 border-transparent focus:bg-white focus:border-stone-200 focus:ring-0 transition-all text-xs outline-none font-medium placeholder:text-stone-400 rounded-md"
               />
             </div>
@@ -363,12 +363,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-stone-50 rounded-lg transition-colors cursor-pointer group">
                   <div className="text-right hidden sm:block">
-                    <p className="text-[11px] font-bold text-stone-900 leading-tight">
-                      {user?.name || 'Staff Officer'}
-                    </p>
-                    <p className="text-[9px] font-medium text-stone-400 uppercase tracking-wider mt-0.5 leading-none">
+                    <p className="text-[9px] font-medium text-stone-400 mt-0.5 leading-none">
                       {user?.role === 'SUPER_ADMIN' 
-                        ? 'System Administrator' 
+                        ? 'System Admin' 
                         : user?.role === 'REGIONAL_DIRECTOR'
                           ? 'Regional Director'
                           : user?.role === 'CONSTITUENCY_LEAD'
@@ -397,13 +394,13 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 <DropdownMenuItem asChild>
                   <Link to="/admin/settings" className="cursor-pointer w-full flex items-center gap-2">
                     <Settings className="w-4 h-4" />
-                    <span>Administrative Settings</span>
+                    <span>Administrative settings</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/admin/logs" className="cursor-pointer w-full flex items-center gap-2">
                     <FileText className="w-4 h-4" />
-                    <span>View Audit Logs</span>
+                    <span>View audit logs</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

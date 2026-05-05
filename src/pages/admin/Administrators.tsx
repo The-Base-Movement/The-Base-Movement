@@ -47,31 +47,33 @@ export default function Administrators() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter flex items-center gap-3">
-            <Shield className="w-8 h-8 text-[var(--brand-red)]" />
-            Admin Command Access
+        <div>
+          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] tracking-tighter flex items-center gap-3">
+            <Shield className="w-8 h-8 text-stone-900" />
+            Administrators
           </h1>
-          <p className="text-stone-500 text-sm mt-1">Authorized personnel with movement leadership credentials.</p>
+          <p className="text-stone-500 text-sm mt-1 font-medium">Authorized personnel with leadership credentials.</p>
+        </div>
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            className="rounded-none bg-[var(--brand-black)] text-white text-[10px] px-6 font-black uppercase tracking-widest hover:bg-stone-800"
-            onClick={() => toast({ title: "AUTHORIZATION REQUIRED", description: "Please use the Identity Vault to provision new administrators.", variant: "destructive" })}
+            className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold tracking-wider hover:bg-stone-800 shadow-sm"
+            onClick={() => toast({ title: "Authorization required", description: "Please use the Identity Vault to provision new administrators.", variant: "destructive" })}
           >
             <UserPlus className="w-3.5 h-3.5 mr-2" />
-            Provision Admin
+            Provision administrator
           </Button>
         </div>
       </div>
 
       {/* Search Card */}
-      <Card className="rounded-none border-stone-200 shadow-sm">
+      <Card className="rounded-xl border-stone-200 shadow-sm">
         <CardContent className="p-6">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
             <input 
               placeholder="Search by name, ID or role..." 
-              className="w-full pl-10 pr-4 h-11 bg-stone-50 border border-stone-100 focus:bg-white focus:border-[var(--brand-black)] focus:ring-0 transition-all text-[11px] outline-none uppercase font-black tracking-widest placeholder:text-stone-300 shadow-sm"
+              className="w-full pl-10 pr-4 h-11 bg-stone-50 border border-stone-100 focus:bg-white focus:border-stone-400 focus:ring-0 transition-all text-[11px] outline-none font-bold tracking-wide placeholder:text-stone-300 rounded-lg"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -80,16 +82,16 @@ export default function Administrators() {
       </Card>
 
       {/* Admins Table */}
-      <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+      <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-stone-50 border-b border-stone-200">
-                  <th className="px-6 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest">Administrator</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest">Access Level</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest">Region</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest text-right">Actions</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-wider">Administrator</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-wider">Access level</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-wider">Region</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100">
@@ -133,10 +135,10 @@ export default function Administrators() {
                             <ShieldCheck className="w-4 h-4 text-emerald-500" />
                           )}
                           <span className={cn(
-                            "text-[10px] font-black uppercase tracking-widest",
+                            "text-[10px] font-bold tracking-wider",
                             admin.role === 'SUPER_ADMIN' ? "text-[var(--brand-red)]" : "text-emerald-600"
                           )}>
-                            {admin.role}
+                            {admin.role.toLowerCase().replace('_', ' ')}
                           </span>
                         </div>
                       </td>
@@ -174,16 +176,16 @@ export default function Administrators() {
       </Card>
 
       {/* Security Advisory */}
-      <div className="bg-[var(--brand-black)] p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-1 h-full bg-[var(--brand-red)]" />
+      <div className="bg-stone-900 p-8 text-white relative overflow-hidden rounded-xl">
+        <div className="absolute top-0 left-0 w-1 h-full bg-stone-700" />
         <div className="flex items-center gap-6 relative z-10">
-          <div className="w-12 h-12 bg-white/10 flex items-center justify-center shrink-0">
-            <ShieldCheck className="w-6 h-6 text-[var(--brand-red)]" />
+          <div className="w-12 h-12 bg-white/10 flex items-center justify-center shrink-0 rounded-lg">
+            <ShieldCheck className="w-6 h-6 text-stone-400" />
           </div>
           <div>
-            <h3 className="text-sm font-black uppercase tracking-widest mb-1">Security Protocol Alpha</h3>
-            <p className="text-stone-400 text-xs leading-relaxed max-w-2xl">
-              Administrative access is strictly governed by the movement's encryption standards. All actions within the command center are logged in the immutable Audit Vault for transparency and security.
+            <h3 className="text-sm font-bold tracking-wider mb-1">Security protocol</h3>
+            <p className="text-stone-400 text-xs leading-relaxed max-w-2xl font-medium">
+              Administrative access is governed by movement encryption standards. All actions within the command center are logged in the audit vault for transparency and security.
             </p>
           </div>
         </div>

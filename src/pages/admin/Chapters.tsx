@@ -150,24 +150,23 @@ export default function ChaptersManagement() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">Chapter Network</h1>
-          <p className="text-stone-500 text-sm mt-1">Coordinate regional cells and constituency headquarters.</p>
+          <h1 className="text-3xl font-black font-meta text-stone-900 tracking-tighter">Chapters</h1>
+          <p className="text-stone-500 text-sm mt-1 font-medium">Coordinate regional cells and constituency headquarters.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            onClick={() => toast.info("Accessing Audit Vault...")}
-            className="h-11 text-[10px] uppercase font-bold tracking-widest border-stone-200"
+            onClick={() => toast.info("Accessing audit vault...")}
+            className="h-11 text-[10px] font-bold tracking-wider border-stone-200 rounded-xl shadow-sm"
           >
-            <History className="w-4 h-4 mr-2" /> View Audit Trail
+            <History className="w-4 h-4 mr-2" /> View audit trail
           </Button>
           {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
             <Button 
-              variant="primary" 
               onClick={openAddModal}
-              className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]"
+              className="h-11 text-[10px] font-bold tracking-wider bg-stone-900 text-white hover:bg-stone-800 rounded-xl shadow-md"
             >
-              <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
+              <Plus className="w-4 h-4 mr-2" /> Establish new chapter
             </Button>
           )}
         </div>
@@ -175,40 +174,40 @@ export default function ChaptersManagement() {
 
       {/* Chapters Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="rounded-none border-stone-200 shadow-sm bg-[var(--brand-black)] text-white">
+        <Card className="rounded-xl border-stone-200 shadow-sm bg-stone-900 text-white">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/10 flex items-center justify-center">
+            <div className="w-12 h-12 bg-white/10 flex items-center justify-center rounded-lg">
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Total Chapters</p>
+              <p className="text-[10px] font-bold tracking-wider opacity-80">Total chapters</p>
               <h3 className="text-2xl font-black font-meta">{chapters.length}</h3>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm bg-white">
+        <Card className="rounded-xl border-stone-200 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-stone-100 flex items-center justify-center">
-              <Users className="w-6 h-6 text-[var(--brand-black)]" />
+            <div className="w-12 h-12 bg-stone-100 flex items-center justify-center rounded-lg">
+              <Users className="w-6 h-6 text-stone-900" />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Movement Size</p>
-              <h3 className="text-2xl font-black font-meta text-[var(--brand-black)]">{totalMembers.toLocaleString()}</h3>
+              <p className="text-[10px] font-bold tracking-wider text-stone-400">Movement size</p>
+              <h3 className="text-2xl font-black font-meta text-stone-900">{totalMembers.toLocaleString()}</h3>
             </div>
           </CardContent>
         </Card>
         {regionalStats.slice(0, 3).map((stat) => (
-          <Card key={stat.region} className="rounded-none border-stone-200 shadow-sm overflow-hidden relative group cursor-pointer">
+          <Card key={stat.region} className="rounded-xl border-stone-200 shadow-sm overflow-hidden relative group cursor-pointer">
             <CardContent className="p-6 flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 bg-stone-100 flex items-center justify-center transition-colors group-hover:bg-[var(--brand-black)] group-hover:text-white">
+              <div className="w-12 h-12 bg-stone-100 flex items-center justify-center transition-colors group-hover:bg-stone-900 group-hover:text-white rounded-lg">
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 group-hover:text-[var(--brand-black)] transition-colors">{stat.region}</p>
+                <p className="text-[10px] font-bold tracking-wider text-stone-400 group-hover:text-stone-900 transition-colors">{stat.region}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <h3 className="text-xl font-black font-meta text-[var(--brand-black)]">{stat.memberCount.toLocaleString()}</h3>
+                  <h3 className="text-xl font-black font-meta text-stone-900">{stat.memberCount.toLocaleString()}</h3>
                   <div className={cn(
-                    "px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest border",
+                    "px-1.5 py-0.5 text-[8px] font-bold tracking-wider border rounded",
                     stat.performance === 'High' && "bg-emerald-50 text-[var(--brand-green)] border-[var(--brand-green)]/20",
                     stat.performance === 'Medium' && "bg-amber-50 text-[var(--brand-gold)] border-[var(--brand-gold)]/20",
                     stat.performance === 'Low' && "bg-red-50 text-[var(--brand-red)] border-[var(--brand-red)]/20",
@@ -218,7 +217,7 @@ export default function ChaptersManagement() {
                 </div>
               </div>
             </CardContent>
-            <div className="absolute bottom-0 left-0 h-1 bg-[var(--brand-red)] transition-all duration-300 w-0 group-hover:w-full" style={{ backgroundColor: stat.color }} />
+            <div className="absolute bottom-0 left-0 h-1 bg-stone-200 transition-all duration-300 w-0 group-hover:w-full" style={{ backgroundColor: stat.color }} />
           </Card>
         ))}
       </div>
@@ -227,24 +226,24 @@ export default function ChaptersManagement() {
       <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
         <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
-              <Globe className="w-5 h-5 text-[var(--brand-red)]" />
-              Regional Movement Density
+            <CardTitle className="text-lg font-bold tracking-tight flex items-center gap-2 text-stone-900">
+              <Globe className="w-5 h-5 text-stone-400" />
+              Regional movement density
             </CardTitle>
-            <CardDescription className="text-xs mt-1">Geospatial distribution of chapters and mobilization strength.</CardDescription>
+            <CardDescription className="text-xs mt-1 font-medium text-stone-400">Geospatial distribution of chapters and mobilization strength.</CardDescription>
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-[var(--brand-green)]" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-stone-500">High Strength</span>
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-sm" />
+              <span className="text-[9px] font-bold tracking-wider text-stone-500">High strength</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-[var(--brand-gold)]" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-stone-500">Moderate</span>
+              <div className="w-2.5 h-2.5 bg-amber-500 rounded-sm" />
+              <span className="text-[9px] font-bold tracking-wider text-stone-500">Moderate</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-[var(--brand-red)]" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-stone-500">Emerging</span>
+              <div className="w-2.5 h-2.5 bg-stone-300 rounded-sm" />
+              <span className="text-[9px] font-bold tracking-wider text-stone-500">Emerging</span>
             </div>
           </div>
         </CardHeader>
@@ -272,15 +271,15 @@ export default function ChaptersManagement() {
           </div>
           
           <div className="flex-1 space-y-6 w-full">
-            <h4 className="text-xs font-black uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-2">Regional Performance Tier</h4>
+            <h4 className="text-xs font-bold tracking-wider text-stone-400 border-b border-stone-100 pb-2">Regional performance tier</h4>
             <div className="space-y-4">
               {regionalStats.map((stat) => (
                 <div key={stat.region} className="group cursor-pointer">
                   <div className="flex justify-between items-center mb-1.5">
-                    <span className="text-[10px] font-black uppercase tracking-tight text-stone-600 group-hover:text-[var(--brand-black)] transition-colors">{stat.region}</span>
-                    <span className="text-[10px] font-bold text-stone-400 uppercase">{stat.performance} Impact</span>
+                    <span className="text-[10px] font-bold tracking-tight text-stone-600 group-hover:text-stone-900 transition-colors">{stat.region}</span>
+                    <span className="text-[10px] font-bold text-stone-400">{stat.performance} impact</span>
                   </div>
-                  <div className="h-1.5 w-full bg-stone-100 overflow-hidden rounded-none">
+                  <div className="h-1.5 w-full bg-stone-100 overflow-hidden rounded-full">
                     <div 
                       className="h-full transition-all duration-1000" 
                       style={{ 
@@ -303,15 +302,15 @@ export default function ChaptersManagement() {
             value={search}
             onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
             placeholder="Search chapters by name, region or country..." 
-            className="pl-10 h-11 rounded-none border-stone-200"
+            className="pl-10 h-11 rounded-xl border-stone-200 shadow-sm"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending'); setCurrentPage(1); }}
-          className="h-11 px-4 text-[10px] font-bold uppercase tracking-widest rounded-none border border-stone-200 bg-white focus:outline-none focus:border-[var(--brand-black)]"
+          className="h-11 px-4 text-[10px] font-bold tracking-wider rounded-xl border border-stone-200 bg-white focus:outline-none focus:border-stone-400 shadow-sm"
         >
-          <option value="All">All Statuses</option>
+          <option value="All">All statuses</option>
           <option value="Active">Active</option>
           <option value="Pending">Pending</option>
         </select>
@@ -320,12 +319,12 @@ export default function ChaptersManagement() {
       {/* Chapters Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {currentChapters.map((chapter) => (
-          <Card key={chapter.id} className="rounded-none border-stone-200 shadow-sm hover:shadow-md transition-all group overflow-hidden">
+          <Card key={chapter.id} className="rounded-xl border-stone-200 shadow-sm hover:shadow-md transition-all group overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-stone-50 bg-stone-50/50">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <span className="text-[9px] font-black text-[var(--brand-red)] uppercase tracking-wider">{chapter.id.slice(0, 8).toUpperCase()}</span>
-                  <CardTitle className="text-sm font-black text-[var(--brand-black)] uppercase tracking-tight leading-tight">
+                  <span className="text-[9px] font-bold text-stone-400 tracking-wider">{chapter.id.slice(0, 8).toUpperCase()}</span>
+                  <CardTitle className="text-sm font-bold text-stone-900 tracking-tight leading-tight">
                     {chapter.name}
                   </CardTitle>
                 </div>
@@ -340,15 +339,15 @@ export default function ChaptersManagement() {
             <CardContent className="p-6 space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1 group/lead">
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest flex items-center gap-1">
-                    <Crown className="w-2.5 h-2.5 text-[var(--brand-gold)]" /> Regional Hub
+                  <p className="text-[9px] font-bold text-stone-400 tracking-wider flex items-center gap-1">
+                    <Crown className="w-2.5 h-2.5 text-amber-500" /> Regional hub
                   </p>
-                  <p className="text-xs font-black text-stone-900 uppercase tracking-tight truncate">{chapter.city_or_region}</p>
+                  <p className="text-xs font-bold text-stone-900 tracking-tight truncate">{chapter.city_or_region}</p>
                 </div>
                 <div className="space-y-1 text-right">
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Strength</p>
-                  <p className="text-xs font-black text-stone-900 flex items-center justify-end gap-1">
-                    <Users className="w-3 h-3 text-[var(--brand-green)]" />
+                  <p className="text-[9px] font-bold text-stone-400 tracking-wider">Strength</p>
+                  <p className="text-xs font-bold text-stone-900 flex items-center justify-end gap-1">
+                    <Users className="w-3 h-3 text-emerald-500" />
                     {(chapter.member_count || 0).toLocaleString()}
                   </p>
                 </div>
@@ -358,7 +357,7 @@ export default function ChaptersManagement() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5 text-stone-400" />
-                    <span className="text-[10px] font-bold text-stone-500 uppercase tracking-tight">Ghana</span>
+                    <span className="text-[10px] font-bold text-stone-500 tracking-tight">Ghana</span>
                   </div>
                 </div>
                 
@@ -367,18 +366,18 @@ export default function ChaptersManagement() {
                     <Button 
                       variant="outline" 
                       onClick={() => openEditModal(chapter)}
-                      className="h-9 px-0 text-[8px] font-black uppercase tracking-widest border-stone-100 hover:bg-stone-900 hover:text-white transition-all"
+                      className="h-9 px-0 text-[8px] font-bold tracking-wider border-stone-100 hover:bg-stone-900 hover:text-white transition-all rounded-lg"
                     >
-                      Manage Hub
+                      Manage hub
                     </Button>
                   )}
                   {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                     <Button 
                       variant="ghost" 
                       onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
-                      className="h-9 px-0 text-[8px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-red)] transition-colors"
+                      className="h-9 px-0 text-[8px] font-bold tracking-wider text-stone-400 hover:text-red-600 transition-colors"
                     >
-                      Delete Chapter <ChevronRight className="w-3 h-3 ml-1" />
+                      Delete chapter <ChevronRight className="w-3 h-3 ml-1" />
                     </Button>
                   )}
                 </div>
@@ -391,12 +390,12 @@ export default function ChaptersManagement() {
         {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
           <button 
             onClick={openAddModal}
-            className="border-2 border-dashed border-stone-200 rounded-none p-8 flex flex-col items-center justify-center gap-4 text-stone-400 hover:border-[var(--brand-red)] hover:text-[var(--brand-red)] transition-all group"
+            className="border-2 border-dashed border-stone-200 rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-stone-400 hover:border-stone-400 hover:text-stone-600 transition-all group bg-white"
           >
-            <div className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-[var(--brand-red)] group-hover:text-white transition-all">
+            <div className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-stone-900 group-hover:text-white transition-all">
               <Plus className="w-6 h-6" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-widest">Establish New Chapter</span>
+            <span className="text-[10px] font-bold tracking-wider">Establish new chapter</span>
           </button>
         )}
       </div>
@@ -412,7 +411,7 @@ export default function ChaptersManagement() {
               variant="outline"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="h-8 px-4 text-[10px] font-black uppercase tracking-widest rounded-none border-stone-200"
+              className="h-8 px-4 text-[10px] font-bold tracking-wider rounded-lg border-stone-200"
             >
               Previous
             </Button>
@@ -422,10 +421,10 @@ export default function ChaptersManagement() {
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
                   className={cn(
-                    "min-w-[32px] h-8 px-2 text-[10px] font-black transition-colors shrink-0",
+                    "min-w-[32px] h-8 px-2 text-[10px] font-bold transition-colors shrink-0 rounded-lg",
                     currentPage === i + 1 
-                      ? "bg-[var(--brand-black)] text-white" 
-                      : "text-stone-400 hover:bg-stone-100 hover:text-[var(--brand-black)]"
+                      ? "bg-stone-900 text-white shadow-sm" 
+                      : "text-stone-400 hover:bg-stone-50 hover:text-stone-900"
                   )}
                 >
                   {i + 1}
@@ -436,7 +435,7 @@ export default function ChaptersManagement() {
               variant="outline"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              className="h-8 px-4 text-[10px] font-black uppercase tracking-widest rounded-none border-stone-200"
+              className="h-8 px-4 text-[10px] font-bold tracking-wider rounded-lg border-stone-200"
             >
               Next
             </Button>
@@ -447,10 +446,10 @@ export default function ChaptersManagement() {
       {/* Chapter Editor Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[500px] border-none rounded-none p-0 overflow-hidden bg-white">
-          <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
-            <DialogTitle className="text-xl font-bold tracking-tight uppercase font-meta">
-              {editingChapterId ? 'Configure Regional Hub' : 'Establish New Chapter'}
+          <DialogHeader className="p-8 bg-stone-900 text-white relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-stone-700"></div>
+            <DialogTitle className="text-xl font-bold tracking-tight">
+              {editingChapterId ? 'Configure regional hub' : 'Establish new chapter'}
             </DialogTitle>
             <DialogDescription className="text-stone-400 text-xs mt-2">
               {editingChapterId 
@@ -462,44 +461,44 @@ export default function ChaptersManagement() {
           <form onSubmit={handleSaveChapter} className="p-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Chapter Name</label>
+                <label className="text-[10px] font-bold text-stone-400 tracking-wider">Chapter name</label>
                 <Input 
                   required
-                  placeholder="e.g. Adabraka Hub"
+                  placeholder="e.g. Adabraka hub"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
+                  className="h-12 bg-stone-50 border-stone-200 rounded-xl focus:ring-0 focus:border-stone-400 font-medium text-sm shadow-sm"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">City / Region</label>
+                <label className="text-[10px] font-bold text-stone-400 tracking-wider">City / region</label>
                 <Input 
                   required
                   placeholder="e.g. Accra"
                   value={formData.city_or_region}
                   onChange={(e) => setFormData({...formData, city_or_region: e.target.value})}
-                  className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
+                  className="h-12 bg-stone-50 border-stone-200 rounded-xl focus:ring-0 focus:border-stone-400 font-medium text-sm shadow-sm"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Country</label>
+                <label className="text-[10px] font-bold text-stone-400 tracking-wider">Country</label>
                 <Input 
                   required
                   placeholder="e.g. Ghana"
                   value={formData.country}
                   onChange={(e) => setFormData({...formData, country: e.target.value})}
-                  className="h-12 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm"
+                  className="h-12 bg-stone-50 border-stone-200 rounded-xl focus:ring-0 focus:border-stone-400 font-medium text-sm shadow-sm"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Hub Status</label>
+                <label className="text-[10px] font-bold text-stone-400 tracking-wider">Hub status</label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full h-12 bg-stone-50 border border-stone-200 rounded-none focus:ring-brand-green px-4 text-sm font-medium"
+                  className="w-full h-12 bg-stone-50 border border-stone-200 rounded-xl focus:ring-0 focus:border-stone-400 px-4 text-sm font-medium shadow-sm outline-none"
                 >
                   <option value="Pending">Pending</option>
                   <option value="Active">Active</option>
@@ -508,13 +507,13 @@ export default function ChaptersManagement() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Mission Description</label>
+              <label className="text-[10px] font-bold text-stone-400 tracking-wider">Mission description</label>
               <Textarea 
                 required
                 placeholder="Describe the chapter's focus area..."
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="min-h-[100px] bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-sm p-4"
+                className="min-h-[100px] bg-stone-50 border-stone-200 rounded-xl focus:ring-0 focus:border-stone-400 font-medium text-sm p-4 shadow-sm"
               />
             </div>
 
@@ -523,15 +522,15 @@ export default function ChaptersManagement() {
                 type="button" 
                 variant="outline" 
                 onClick={closeModal}
-                className="text-[10px] font-bold uppercase tracking-widest rounded-none"
+                className="text-[10px] font-bold tracking-wider rounded-lg shadow-sm"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
-                className="bg-[var(--brand-black)] text-white hover:bg-stone-800 font-bold text-[10px] uppercase tracking-widest rounded-none px-8"
+                className="bg-stone-900 text-white hover:bg-stone-800 font-bold text-[10px] tracking-wider rounded-lg px-8 shadow-md"
               >
-                {editingChapterId ? 'Update Hub' : 'Create Chapter'}
+                {editingChapterId ? 'Update hub' : 'Create chapter'}
               </Button>
             </DialogFooter>
           </form>

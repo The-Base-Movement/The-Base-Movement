@@ -71,7 +71,7 @@ export default function AdminBlogs() {
       excerpt: '',
       content: '',
       authorId: 'USR-001',
-      category: 'Movement',
+      category: '',
       imageUrl: '',
       readTime: '5 min read',
       isFeatured: false,
@@ -243,20 +243,20 @@ export default function AdminBlogs() {
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-stone-500">
-            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-[var(--brand-black)] text-sm font-medium" onClick={() => setCurrentView('list')}>
-              Blog Posts
+          <div className="flex items-center gap-2 text-stone-500 normal-case">
+            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-stone-900 text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
+              Blog posts
             </Button>
             <span className="text-sm text-stone-400">/</span>
-            <span className="text-sm font-semibold text-[var(--brand-black)]">{editingPost ? 'Edit Post' : 'Create New Post'}</span>
+            <span className="text-sm font-semibold text-stone-900 normal-case">{editingPost ? 'Edit post' : 'Create new post'}</span>
           </div>
         </div>
 
         <div>
-          <h2 className="text-3xl font-bold text-[var(--brand-black)] tracking-tight">
-            {editingPost ? 'Edit Post' : 'Create New Post'}
+          <h2 className="text-3xl font-bold text-stone-900 tracking-tight normal-case">
+            {editingPost ? 'Edit post' : 'Create new post'}
           </h2>
-          <p className="text-stone-500 text-sm mt-1">
+          <p className="text-stone-500 text-sm mt-1 font-medium">
             Fill in the details below to configure and publish your post.
           </p>
         </div>
@@ -266,17 +266,17 @@ export default function AdminBlogs() {
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-8">
             <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-stone-900 text-sm">Post Details</h3>
+              <div className="p-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-stone-900 text-xs normal-case">Post details</h3>
               </div>
               <CardContent className="p-8 space-y-8">
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Article Title</Label>
+                  <Label className="text-sm font-bold text-stone-800">Article title</Label>
                   <Input 
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    placeholder="e.g. The Future of Industry" 
+                    placeholder="e.g. The future of industry" 
                     className="rounded-md border-stone-200 h-11 text-sm placeholder:text-stone-400"
                   />
                 </div>
@@ -306,8 +306,8 @@ export default function AdminBlogs() {
             </Card>
 
             <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-stone-900 text-sm">Content</h3>
+              <div className="p-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-stone-900 text-xs normal-case">Content</h3>
               </div>
               <CardContent className="p-0 border-0">
                 <div className="p-8">
@@ -319,6 +319,8 @@ export default function AdminBlogs() {
                       init={{
                         height: 750,
                         menubar: false,
+                        toolbar_sticky: true,
+                        toolbar_sticky_offset: 100,
                         plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
                         toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
                         content_style: 'body { font-family: "Inter", sans-serif; font-size:16px; color: #1c1917; line-height: 1.75; padding: 3rem; background: white; }',
@@ -343,13 +345,13 @@ export default function AdminBlogs() {
           <div className="space-y-8 sticky top-6">
             
             <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-[var(--brand-black)] text-base">Publishing</h3>
+              <div className="p-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-stone-900 text-sm normal-case">Publishing</h3>
               </div>
               <CardContent className="p-6 space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1 pr-4">
-                    <Label className="text-sm font-bold text-stone-800">Featured Post</Label>
+                    <Label className="text-sm font-bold text-stone-800">Featured post</Label>
                     <p className="text-xs font-medium text-stone-500 leading-tight">Pin this post to the top of the insights feed.</p>
                   </div>
                   <Switch 
@@ -365,7 +367,7 @@ export default function AdminBlogs() {
                     onValueChange={(val) => setFormData({...formData, category: val})}
                   >
                     <SelectTrigger className="rounded-md border-stone-200 h-11 text-sm font-medium">
-                      <SelectValue placeholder="Select Category" />
+                      <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Movement">Movement</SelectItem>
@@ -380,7 +382,7 @@ export default function AdminBlogs() {
 
                 <div className="space-y-3 pt-6 border-t border-stone-100">
                   <div className="flex items-center justify-between">
-                    <Label className="text-sm font-bold text-stone-800">Featured Image URL</Label>
+                    <Label className="text-sm font-bold text-stone-800">Featured image URL</Label>
                     <div className="relative">
                       <input 
                         type="file" 
@@ -398,24 +400,24 @@ export default function AdminBlogs() {
                       />
                       <Label 
                         htmlFor="blog-image-upload" 
-                        className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-green)] hover:text-emerald-700 cursor-pointer flex items-center gap-1.5 transition-colors"
+                        className="text-[10px] font-bold text-[var(--brand-green)] hover:text-emerald-700 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
                       >
                         <Upload className="w-3 h-3" />
-                        Upload Image
+                        Upload image
                       </Label>
                     </div>
                   </div>
                   <Input 
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                    placeholder="https://..." 
+                    placeholder="https://example.com/image.jpg" 
                     className="rounded-md border-stone-200 h-11 text-sm"
                   />
                   <p className="text-xs font-medium text-stone-500">Provide a direct URL or upload a file.</p>
                 </div>
 
                 <div className="space-y-3 pt-6 border-t border-stone-100">
-                  <Label className="text-sm font-bold text-stone-800">Est. Read Time</Label>
+                  <Label className="text-sm font-bold text-stone-800">Est. read time</Label>
                   <Input 
                     value={formData.readTime}
                     onChange={(e) => setFormData({...formData, readTime: e.target.value})}
@@ -428,12 +430,12 @@ export default function AdminBlogs() {
             </Card>
 
             <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-stone-900 text-sm">Author Information</h3>
+              <div className="p-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-stone-900 text-sm normal-case">Author information</h3>
               </div>
               <CardContent className="p-8 space-y-6">
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Author Name</Label>
+                  <Label className="text-sm font-bold text-stone-800">Author name</Label>
                   <Input 
                     value={formData.authorName}
                     onChange={(e) => setFormData({...formData, authorName: e.target.value})}
@@ -442,7 +444,7 @@ export default function AdminBlogs() {
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Author Role</Label>
+                  <Label className="text-sm font-bold text-stone-800">Author role</Label>
                   <Input 
                     value={formData.authorRole}
                     onChange={(e) => setFormData({...formData, authorRole: e.target.value})}
@@ -452,7 +454,7 @@ export default function AdminBlogs() {
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label className="text-sm font-bold text-stone-800">Author Image URL</Label>
+                    <Label className="text-sm font-bold text-stone-800">Author image URL</Label>
                     <div className="relative">
                       <input 
                         type="file" 
@@ -470,10 +472,10 @@ export default function AdminBlogs() {
                       />
                       <Label 
                         htmlFor="author-image-upload" 
-                        className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-green)] hover:text-emerald-700 cursor-pointer flex items-center gap-1.5 transition-colors"
+                        className="text-[10px] font-bold text-[var(--brand-green)] hover:text-emerald-700 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
                       >
                         <Upload className="w-3 h-3" />
-                        Upload Photo
+                        Upload photo
                       </Label>
                     </div>
                   </div>
@@ -485,7 +487,7 @@ export default function AdminBlogs() {
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Author Bio</Label>
+                  <Label className="text-sm font-bold text-stone-800">Author bio</Label>
                   <Textarea 
                     value={formData.authorBio}
                     onChange={(e) => setFormData({...formData, authorBio: e.target.value})}
@@ -497,12 +499,12 @@ export default function AdminBlogs() {
             </Card>
 
             <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-[var(--brand-black)] text-base">SEO Settings</h3>
+              <div className="p-4 border-b border-stone-100 bg-stone-50">
+                <h3 className="font-bold text-stone-900 text-sm normal-case">SEO settings</h3>
               </div>
               <CardContent className="p-6 space-y-6">
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Meta Title</Label>
+                  <Label className="text-sm font-bold text-stone-800">Meta title</Label>
                   <Input 
                     value={formData.seoTitle}
                     onChange={(e) => setFormData({...formData, seoTitle: e.target.value})}
@@ -521,7 +523,7 @@ export default function AdminBlogs() {
                   <p className="text-xs font-medium text-stone-500">Comma separated tags.</p>
                 </div>
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Meta Description</Label>
+                  <Label className="text-sm font-bold text-stone-800">Meta description</Label>
                   <Textarea 
                     value={formData.metaDescription}
                     onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
@@ -536,17 +538,17 @@ export default function AdminBlogs() {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full h-12 rounded-lg bg-[var(--brand-green)] text-white hover:bg-emerald-700 text-sm font-bold transition-all shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98]"
+                className="w-full h-12 rounded-lg bg-stone-900 text-white hover:bg-stone-800 text-sm font-bold transition-all shadow-md active:scale-[0.98] normal-case"
               >
-                {isLoading ? 'Saving...' : editingPost ? 'Update Post' : 'Publish Post'}
+                {isLoading ? 'Saving...' : editingPost ? 'Update post' : 'Publish post'}
               </Button>
               <Button 
                 type="button" 
                 variant="ghost" 
                 onClick={() => setCurrentView('list')}
-                className="w-full h-11 rounded-lg text-xs font-bold text-stone-400 hover:text-stone-600 hover:bg-stone-100 transition-colors"
+                className="w-full h-11 rounded-lg text-xs font-bold text-stone-400 hover:text-stone-600 hover:bg-stone-50 transition-colors normal-case"
               >
-                Discard Changes
+                Discard changes
               </Button>
             </div>
             
@@ -560,18 +562,18 @@ export default function AdminBlogs() {
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-stone-500">
-            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-[var(--brand-black)] text-sm font-medium" onClick={() => setCurrentView('list')}>
-              Blog Posts
+          <div className="flex items-center gap-2 text-stone-500 normal-case">
+            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-stone-900 text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
+              Blog posts
             </Button>
             <span className="text-sm text-stone-400">/</span>
-            <span className="text-sm font-semibold text-[var(--brand-black)]">View Post</span>
+            <span className="text-sm font-semibold text-stone-900 normal-case">View post</span>
           </div>
           <Button 
             onClick={() => handleEditPost(viewPost)}
-            className="h-10 px-6 text-sm font-bold bg-[var(--brand-black)] text-white hover:bg-stone-800 flex items-center gap-2 rounded-lg"
+            className="h-10 px-6 text-sm font-bold bg-stone-900 text-white hover:bg-stone-800 flex items-center gap-2 rounded-lg"
           >
-            <Edit2 className="w-3 h-3" /> Edit Post
+            <Edit2 className="w-3 h-3" /> Edit post
           </Button>
         </div>
         
@@ -615,16 +617,16 @@ export default function AdminBlogs() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-bold text-stone-900 tracking-tight">Blog Intelligence</h1>
+          <h1 className="text-4xl font-bold text-stone-900 tracking-tight">Blog posts</h1>
           <p className="text-stone-500 text-base mt-2 max-w-xl">
-            Draft and publish strategic articles for the national movement insights feed.
+            Draft and publish strategic articles for the movement insights feed.
           </p>
         </div>
         <Button 
           onClick={() => handleEditPost()}
-          className="h-11 px-6 text-xs font-bold bg-stone-900 text-white hover:bg-stone-800 flex items-center gap-2 rounded-md transition-all active:scale-95 uppercase tracking-wider"
+          className="h-11 px-6 text-xs font-bold bg-stone-900 text-white hover:bg-stone-800 flex items-center gap-2 rounded-md transition-all active:scale-95 tracking-wide normal-case"
         >
-          <Plus className="w-4 h-4" /> Create New Post
+          <Plus className="w-4 h-4" /> Create new post
         </Button>
       </div>
 
@@ -681,9 +683,9 @@ export default function AdminBlogs() {
             <Button 
               variant="outline" 
               onClick={() => setSearchQuery('')}
-              className="mt-6 rounded-lg border-stone-200"
+              className="mt-6 rounded-lg border-stone-200 font-bold text-xs px-6"
             >
-              Clear Search
+              Clear search
             </Button>
           </div>
         ) : (
@@ -698,7 +700,7 @@ export default function AdminBlogs() {
                   </div>
                 )}
                 <div className="absolute top-4 left-4">
-                  <Badge className="bg-white/90 backdrop-blur-sm text-stone-800 text-[10px] font-bold uppercase tracking-wider rounded-full border-none shadow-sm px-3">
+                  <Badge className="bg-white/90 backdrop-blur-sm text-stone-800 text-[10px] font-bold tracking-wider rounded-full border-none shadow-sm px-3">
                     {post.category}
                   </Badge>
                 </div>
@@ -723,14 +725,14 @@ export default function AdminBlogs() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="rounded-xl border-stone-200 shadow-xl p-2 w-48">
                       <DropdownMenuItem onClick={() => handleEditPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
-                        <Edit2 className="w-4 h-4 text-stone-400" /> Edit Post
+                        <Edit2 className="w-4 h-4 text-stone-400" /> Edit post
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleViewPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
-                        <Eye className="w-4 h-4 text-stone-400" /> View Post
+                        <Eye className="w-4 h-4 text-stone-400" /> View post
                       </DropdownMenuItem>
                       <div className="h-px bg-stone-100 my-1" />
                       <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5 text-red-600 focus:text-red-600 focus:bg-red-50">
-                        <Trash2 className="w-4 h-4" /> Delete Post
+                        <Trash2 className="w-4 h-4" /> Delete post
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

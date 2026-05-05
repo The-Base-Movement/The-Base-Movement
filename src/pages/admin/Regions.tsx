@@ -51,55 +51,54 @@ export default function AdminRegions() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black font-meta text-[var(--brand-black)] uppercase tracking-tighter">
-            Regions & Constituencies
+          <h1 className="text-3xl font-black font-meta text-stone-900 tracking-tighter">
+            Regions & constituencies
           </h1>
-          <p className="text-stone-500 text-sm mt-1">
+          <p className="text-stone-500 text-sm mt-1 font-medium">
             Manage all 16 administrative regions and their {totalConstituencies} constituencies.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Button
-            variant="primary"
-            className="h-11 text-[10px] uppercase font-bold tracking-widest bg-[var(--brand-black)]"
+            className="h-11 text-[10px] font-bold bg-stone-900 text-white hover:bg-stone-800 rounded-xl shadow-md normal-case"
           >
-            <Plus className="w-4 h-4 mr-2" /> Add Region
+            <Plus className="w-4 h-4 mr-2" /> Add region
           </Button>
         </div>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="rounded-none border-stone-200 shadow-sm bg-[var(--brand-black)] text-white">
+        <Card className="rounded-xl border-stone-200 shadow-sm bg-stone-900 text-white">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 bg-white/10 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-white/10 flex items-center justify-center shrink-0 rounded-lg">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-widest opacity-60">Regions</p>
+              <p className="text-[9px] font-bold normal-case opacity-60">Regions</p>
               <p className="text-2xl font-black font-meta">16</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm">
+        <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 bg-stone-100 flex items-center justify-center shrink-0">
-              <MapPin className="w-5 h-5 text-[var(--brand-red)]" />
+            <div className="w-10 h-10 bg-stone-100 flex items-center justify-center shrink-0 rounded-lg">
+              <MapPin className="w-5 h-5 text-red-600" />
             </div>
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-stone-400">Constituencies</p>
-              <p className="text-2xl font-black font-meta text-[var(--brand-black)]">{totalConstituencies}</p>
+              <p className="text-[9px] font-bold normal-case text-stone-400">Constituencies</p>
+              <p className="text-2xl font-black font-meta text-stone-900">{totalConstituencies}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm md:col-span-2">
+        <Card className="rounded-xl border-stone-200 shadow-sm md:col-span-2">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 bg-emerald-50 flex items-center justify-center shrink-0">
-              <MapPin className="w-5 h-5 text-[var(--brand-green)]" />
+            <div className="w-10 h-10 bg-emerald-50 flex items-center justify-center shrink-0 rounded-lg">
+              <MapPin className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-stone-400">Avg. per Region</p>
-              <p className="text-2xl font-black font-meta text-[var(--brand-black)]">
+              <p className="text-[9px] font-bold normal-case text-stone-400">Avg. per region</p>
+              <p className="text-2xl font-black font-meta text-stone-900">
                 {Math.round(totalConstituencies / 16)}
               </p>
             </div>
@@ -114,7 +113,7 @@ export default function AdminRegions() {
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           placeholder="Search regions or constituencies..."
-          className="pl-10 h-11 rounded-none border-stone-200"
+          className="pl-10 h-11 rounded-xl border-stone-200 shadow-sm"
         />
       </div>
 
@@ -136,7 +135,7 @@ export default function AdminRegions() {
             </Card>
           ))
         ) : filteredRegions.length === 0 ? (
-          <div className="py-20 text-center text-stone-400 text-sm font-bold uppercase tracking-widest border border-dashed border-stone-200">
+          <div className="py-20 text-center text-stone-400 text-sm font-bold tracking-wider border border-dashed border-stone-200 rounded-xl bg-white/50">
             No matching geographical data found.
           </div>
         ) : (
@@ -148,7 +147,7 @@ export default function AdminRegions() {
             )
 
             return (
-              <Card key={region.id} className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+              <Card key={region.id} className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
                 {/* Region Header Row */}
                 <button
                   className="w-full flex items-center justify-between px-6 py-4 hover:bg-stone-50 transition-colors group"
@@ -156,24 +155,24 @@ export default function AdminRegions() {
                 >
                   <div className="flex items-center gap-4">
                     <div className={cn(
-                      "w-8 h-8 flex items-center justify-center transition-colors",
-                      isExpanded ? "bg-[var(--brand-black)] text-white" : "bg-stone-100 text-stone-500 group-hover:bg-stone-200"
+                      "w-8 h-8 flex items-center justify-center transition-colors rounded-lg",
+                      isExpanded ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-500 group-hover:bg-stone-200"
                     )}>
                       <MapPin className="w-4 h-4" />
                     </div>
                     <div className="text-left">
-                      <p className="text-sm font-black uppercase tracking-tight text-[var(--brand-black)]">
+                      <p className="text-sm font-bold tracking-tight text-stone-900">
                         {region.name}
                       </p>
-                      <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">
-                        {region.constituencies.length} Constituencies
+                      <p className="text-[10px] text-stone-400 font-bold tracking-wider">
+                        {region.constituencies.length} constituencies
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     {/* Action buttons — stop propagation so they don't toggle expand */}
                     <button
-                      className="p-1.5 rounded text-stone-300 hover:text-[var(--brand-black)] hover:bg-stone-100 transition-colors"
+                      className="p-1.5 rounded-lg text-stone-300 hover:text-stone-900 hover:bg-stone-100 transition-colors"
                       onClick={e => { e.stopPropagation(); handleAction('REGION_EDIT', region.name) }}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -202,14 +201,14 @@ export default function AdminRegions() {
                           value={cSearch}
                           onChange={e => setConstituencySearch(prev => ({ ...prev, [region.id]: e.target.value }))}
                           placeholder="Filter constituencies..."
-                          className="pl-9 h-9 rounded-none border-stone-200 text-xs"
+                          className="pl-9 h-9 rounded-lg border-stone-200 text-xs shadow-sm"
                         />
                       </div>
                       <Button
                         variant="outline"
-                        className="h-9 px-4 text-[9px] font-black uppercase tracking-widest rounded-none border-stone-200"
+                        className="h-9 px-4 text-[9px] font-bold tracking-wider rounded-lg border-stone-200"
                       >
-                        <Plus className="w-3 h-3 mr-1.5" /> Add Constituency
+                        <Plus className="w-3 h-3 mr-1.5" /> Add constituency
                       </Button>
                     </div>
 
@@ -218,9 +217,9 @@ export default function AdminRegions() {
                       {visibleConstituencies.map(con => (
                         <div
                           key={con}
-                          className="group flex items-center justify-between gap-1 px-3 py-2 bg-white border border-stone-200 hover:border-[var(--brand-black)] transition-colors"
+                          className="group flex items-center justify-between gap-1 px-3 py-2 bg-white border border-stone-200 hover:border-stone-400 transition-colors rounded-lg"
                         >
-                          <span className="text-[10px] font-bold uppercase tracking-tight text-stone-600 group-hover:text-[var(--brand-black)] truncate">
+                          <span className="text-[10px] font-bold tracking-tight text-stone-600 group-hover:text-stone-900 truncate">
                             {con}
                           </span>
                           <button
@@ -232,8 +231,8 @@ export default function AdminRegions() {
                         </div>
                       ))}
                       {visibleConstituencies.length === 0 && (
-                        <p className="col-span-full text-center text-[10px] text-stone-400 uppercase tracking-widest py-4">
-                          No match.
+                        <p className="col-span-full text-center text-[10px] text-stone-400 font-bold tracking-wider py-4">
+                          No match found.
                         </p>
                       )}
                     </div>
