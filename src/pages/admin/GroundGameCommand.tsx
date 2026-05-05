@@ -65,7 +65,7 @@ export default function GroundGameCommand() {
   const totalContacts = campaigns.reduce((acc, curr) => acc + (curr.goal_contacts || 0), 0) // Placeholder logic
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700">
       {/* 🗳️ Ground game header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>

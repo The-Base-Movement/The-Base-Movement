@@ -109,7 +109,7 @@ export default function LogisticsIntelligence() {
   }
 
   return (
-    <div className="p-8 pb-16 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700">
       {/* 🚀 Header & Tactical Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
