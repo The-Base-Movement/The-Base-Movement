@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import { logisticsService } from '@/services/logisticsService'
+import { contentService } from '@/services/contentService'
 import type { GrowthTrend, SentimentStat, AuditLogEntry, RegionalStat, LogisticsLatency } from '@/types/admin'
 import { useState, useEffect } from 'react'
 
