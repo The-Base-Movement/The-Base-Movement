@@ -8,7 +8,6 @@ import type {
   OrderStats,
   LogisticsVelocity,
   InventoryAlert,
-  InventoryAlert,
   LogisticsLatency,
   DBInventoryItem
 } from '@/types/admin'

@@ -467,7 +467,7 @@ class ContentService {
     }
     
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
-    await adminService.logAction('Author Profile Created', `Added new editorial profile for ${author.name}`, adminId)
+    await adminService.logAction('Create Author', 'AUTHORS', 'Success', { name: author.name, adminId })
     
     return true
   }
@@ -491,7 +491,7 @@ class ContentService {
     }
     
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
-    await adminService.logAction('Author Profile Updated', `Modified editorial profile ${id}`, adminId)
+    await adminService.logAction('Update Author', 'AUTHORS', 'Success', { id, adminId })
     
     return true
   }
@@ -508,7 +508,7 @@ class ContentService {
     }
     
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
-    await adminService.logAction('Author Profile Trashed', `Moved editorial profile ${id} to the trash vault`, adminId)
+    await adminService.logAction('Trash Author', 'AUTHORS', 'Success', { id, adminId })
     
     return true
   }
@@ -560,7 +560,7 @@ class ContentService {
     }
     
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
-    await adminService.logAction('Author Profile Restored', `Restored editorial profile ${id} from the trash vault`, adminId)
+    await adminService.logAction('Restore Author', 'AUTHORS', 'Success', { id, adminId })
     
     return true
   }
@@ -577,7 +577,7 @@ class ContentService {
     }
     
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
-    await adminService.logAction('Author Profile Deleted', `Permanently deleted editorial profile ${id} from the system`, adminId)
+    await adminService.logAction('Delete Author', 'AUTHORS', 'Success', { id, adminId })
     
     return true
   }

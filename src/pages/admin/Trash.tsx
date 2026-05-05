@@ -224,10 +224,10 @@ export default function TrashPage() {
                 key={post.id}
                 title={post.title}
                 subtitle={post.category}
-                deletedAt={post.deletedAt!}
+                deletedAt={post.deletedAt || new Date().toISOString()}
                 onRestore={() => handleRestore('blogs', post.id)}
                 onDelete={() => setDeleteModal({ isOpen: true, type: 'blogs', id: post.id, name: post.title })}
-                daysRemaining={formatDaysRemaining(post.deletedAt!)}
+                daysRemaining={formatDaysRemaining(post.deletedAt || new Date().toISOString())}
                 icon={<FileText className="w-5 h-5" />}
               />
             ))}
@@ -236,10 +236,10 @@ export default function TrashPage() {
                 key={product.id}
                 title={product.name}
                 subtitle={product.category}
-                deletedAt={product.deletedAt!}
+                deletedAt={product.deletedAt || new Date().toISOString()}
                 onRestore={() => handleRestore('products', product.id)}
                 onDelete={() => setDeleteModal({ isOpen: true, type: 'products', id: product.id, name: product.name })}
-                daysRemaining={formatDaysRemaining(product.deletedAt!)}
+                daysRemaining={formatDaysRemaining(product.deletedAt || new Date().toISOString())}
                 icon={<Package className="w-5 h-5" />}
               />
             ))}
@@ -248,10 +248,10 @@ export default function TrashPage() {
                 key={item.id}
                 title={item.filename}
                 subtitle={item.folder}
-                deletedAt={item.deleted_at}
+                deletedAt={item.deleted_at || new Date().toISOString()}
                 onRestore={() => handleRestore('media', item.url)}
                 onDelete={() => setDeleteModal({ isOpen: true, type: 'media', id: item.url, name: item.filename })}
-                daysRemaining={formatDaysRemaining(item.deleted_at)}
+                daysRemaining={formatDaysRemaining(item.deleted_at || new Date().toISOString())}
                 image={item.url}
               />
             ))}
@@ -260,10 +260,10 @@ export default function TrashPage() {
                 key={author.id}
                 title={author.name}
                 subtitle={author.role || 'Contributor'}
-                deletedAt={author.deletedAt!}
+                deletedAt={author.deletedAt || new Date().toISOString()}
                 onRestore={() => handleRestore('authors', author.id)}
                 onDelete={() => setDeleteModal({ isOpen: true, type: 'authors', id: author.id, name: author.name })}
-                daysRemaining={formatDaysRemaining(author.deletedAt!)}
+                daysRemaining={formatDaysRemaining(author.deletedAt || new Date().toISOString())}
                 image={author.imageUrl}
                 icon={<PenTool className="w-5 h-5" />}
               />

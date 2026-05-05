@@ -100,6 +100,7 @@ export interface InventoryItem {
   image: string
   images?: string[]
   color: string
+  deletedAt?: string | null
 }
 
 export interface DonationCampaign {
@@ -576,6 +577,7 @@ export interface BlogPost {
   tags: string[]
   seoTitle?: string
   metaDescription?: string
+  deletedAt?: string | null
 }
 
 export interface Order {

@@ -209,8 +209,8 @@ export default function AdminAuthors() {
         onConfirm={handleDelete}
         title="Move to Trash Vault?"
         description={`Are you sure you want to move ${deleteConfirm?.name} to the trash? Their profile will be hidden from the platform but can be restored within 30 days.`}
-        isDeleting={isDeleting === deleteConfirm?.id}
-        actionLabel="Move to Trash"
+        itemName={deleteConfirm?.name || ''}
+        isLoading={isDeleting === deleteConfirm?.id}
       />
     </div>
   )
