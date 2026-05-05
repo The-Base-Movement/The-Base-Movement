@@ -169,7 +169,8 @@ export default function LogisticsIntelligence() {
               value: `${avgFulfillment}%`, 
               sub: 'Verified Delivery', 
               icon: Number(avgFulfillment) >= 80 ? TrendingUp : AlertTriangle, 
-              color: Number(avgFulfillment) >= 80 ? 'text-orange-500' : Number(avgFulfillment) >= 51 ? 'text-amber-500' : 'text-red-500' 
+              color: Number(avgFulfillment) >= 80 ? 'text-orange-500' : Number(avgFulfillment) >= 51 ? 'text-amber-500' : 'text-red-500',
+              className: 'col-span-2 md:col-span-1'
             },
           ].map((stat, i) => (
             <Card key={i} className={cn("rounded-xl border-stone-200 shadow-sm bg-white p-6 hover:border-stone-400 transition-colors", stat.className)}>
