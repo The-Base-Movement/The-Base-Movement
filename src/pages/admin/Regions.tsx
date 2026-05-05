@@ -88,7 +88,7 @@ export default function AdminRegions() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-stone-200 shadow-sm md:col-span-2">
+        <Card className="rounded-xl border-stone-200 shadow-sm col-span-2 md:col-span-2">
           <CardContent className="p-5 flex items-center gap-4">
             <div className="w-10 h-10 bg-emerald-50 flex items-center justify-center shrink-0 rounded-lg">
               <MapPin className="w-5 h-5 text-emerald-600" />
