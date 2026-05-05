@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import type { BlogPost, MediaAsset, Author } from '@/types/admin'
+import { adminService } from '@/services/adminService'
 import mediaManifest from '@/data/media-manifest.json'
 
 class ContentService {
@@ -464,6 +465,10 @@ class ContentService {
       console.error('[DATABASE] Failed to create author:', error)
       return false
     }
+    
+    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    await adminService.logAction('Author Profile Created', `Added new editorial profile for ${author.name}`, adminId)
+    
     return true
   }
 
@@ -484,6 +489,10 @@ class ContentService {
       console.error('[DATABASE] Failed to update author:', error)
       return false
     }
+    
+    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    await adminService.logAction('Author Profile Updated', `Modified editorial profile ${id}`, adminId)
+    
     return true
   }
 
@@ -497,6 +506,10 @@ class ContentService {
       console.error('[DATABASE] Failed to soft-delete author:', error)
       return false
     }
+    
+    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    await adminService.logAction('Author Profile Trashed', `Moved editorial profile ${id} to the trash vault`, adminId)
+    
     return true
   }
 
@@ -545,6 +558,10 @@ class ContentService {
       console.error('[DATABASE] Failed to restore author:', error)
       return false
     }
+    
+    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    await adminService.logAction('Author Profile Restored', `Restored editorial profile ${id} from the trash vault`, adminId)
+    
     return true
   }
 
@@ -558,6 +575,10 @@ class ContentService {
       console.error('[DATABASE] Failed to permanently delete author:', error)
       return false
     }
+    
+    const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
+    await adminService.logAction('Author Profile Deleted', `Permanently deleted editorial profile ${id} from the system`, adminId)
+    
     return true
   }
 }

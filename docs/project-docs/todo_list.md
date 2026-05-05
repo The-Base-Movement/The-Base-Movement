@@ -19,6 +19,9 @@ This document tracks the remaining tasks required to transition the platform fro
 ## 📰 Content Management
 - [x] **Blog Post Types**: Hardened `BlogPost` interface and redirected imports to `@/types/admin`.
 - [x] **Blog Fetching**: Update `BlogPost.tsx` to fetch actual post content from the `blog_posts` table based on the URL slug.
+- [x] **Editorial Author Directory**: Built the `Authors.tsx` view with live data fetching, soft-delete functionality, and UI parity.
+- [x] **Author Creation/Editing**: Created `EditAuthor.tsx` with high-fidelity inputs, photo upload simulation, and strict dependency management.
+- [x] **Administrative Navigation**: Replaced hardcoded breadcrumbs with the global `<Breadcrumbs />` component across the command center.
 
 ## 📑 Documentation Governance (Phase 15)
 - [x] **Consolidate Root Docs**: Sync artifacts from `brain/` to project `docs/` folder.

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, PenTool, Edit3, Trash2, Shield, Loader2, ArrowRight } from 'lucide-react'
+import { Plus, Search, PenTool, Edit3, Trash2, Shield, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { contentService } from '@/services/contentService'
 import type { Author } from '@/types/admin'
@@ -15,6 +15,7 @@ export default function AdminAuthors() {
   const [isLoading, setIsLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string, name: string } | null>(null)
+  const [roleFilter, setRoleFilter] = useState('All Roles')
 
   useEffect(() => {
     fetchAuthors()
@@ -53,10 +54,14 @@ export default function AdminAuthors() {
     }
   }
 
-  const filteredAuthors = authors.filter(a => 
-    a.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (a.role && a.role.toLowerCase().includes(searchQuery.toLowerCase()))
-  )
+  const uniqueRoles = Array.from(new Set(authors.map(a => a.role || 'Contributor'))).sort()
+
+  const filteredAuthors = authors.filter(a => {
+    const matchesSearch = a.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (a.role && a.role.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesRole = roleFilter === 'All Roles' || (a.role || 'Contributor') === roleFilter;
+    return matchesSearch && matchesRole;
+  })
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -82,14 +87,26 @@ export default function AdminAuthors() {
       {/* Main Content */}
       <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
         <div className="p-6 border-b border-stone-100 bg-stone-50/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="relative w-full md:w-96">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-            <Input 
-              placeholder="Search by name or role..." 
-              className="pl-9 bg-white border-stone-200 focus-visible:ring-[var(--brand-red)]"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <div className="relative w-full sm:w-80">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+              <Input 
+                placeholder="Search by name or role..." 
+                className="pl-9 bg-white border-stone-200 focus-visible:ring-[var(--brand-red)]"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="h-10 px-3 py-2 text-sm font-medium rounded-md border border-stone-200 bg-white text-stone-700 focus:outline-none focus:ring-2 focus:ring-[var(--brand-red)] focus:border-transparent cursor-pointer"
+            >
+              <option value="All Roles">All Roles</option>
+              {uniqueRoles.map(role => (
+                <option key={role} value={role}>{role}</option>
+              ))}
+            </select>
           </div>
           <div className="flex items-center gap-2 text-sm text-stone-500 font-medium bg-white px-4 py-2 rounded-lg border border-stone-200 shadow-sm">
             <Shield className="w-4 h-4 text-stone-400" />
