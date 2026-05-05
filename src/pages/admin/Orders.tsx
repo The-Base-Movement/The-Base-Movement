@@ -235,58 +235,123 @@ export default function AdminOrders() {
                 <Package className="w-4 h-4" /> Order feed
               </CardTitle>
               <div className="flex items-center gap-3">
-                {/* Search */}
-                <div className="relative">
+                {/* Search - Always Visible but scaled */}
+                <div className="relative w-full md:w-48">
                   <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                   <input
                     type="text"
                     placeholder="Search orders..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 w-48 normal-case rounded-lg"
+                    className="pl-9 pr-4 h-9 md:h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 w-full normal-case rounded-xl md:rounded-lg"
                   />
                 </div>
-                {/* Status filter */}
-                <div className="relative">
-                  <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                  <select
-                    value={statusFilter}
-                    onChange={e => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
-                    className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
-                  >
-                    <option value="ALL">All Statuses</option>
-                    {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+
+                {/* Desktop Filters */}
+                <div className="hidden md:flex items-center gap-3">
+                  <div className="relative">
+                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <select
+                      value={statusFilter}
+                      onChange={e => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
+                      className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
+                    >
+                      <option value="ALL">All Statuses</option>
+                      {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="relative">
+                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <select
+                      value={dateFilter}
+                      onChange={e => setDateFilter(e.target.value as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}
+                      className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
+                    >
+                      <option value="ALL">All Time</option>
+                      <option value="TODAY">Today</option>
+                      <option value="WEEK">Last 7 Days</option>
+                      <option value="MONTH">This Month</option>
+                    </select>
+                  </div>
+                  <div className="relative">
+                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <select
+                      value={regionFilter}
+                      onChange={e => setRegionFilter(e.target.value)}
+                      className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
+                    >
+                      <option value="ALL">All Regions</option>
+                      {regions.map(r => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                {/* Date filter */}
-                <div className="relative">
-                  <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                  <select
-                    value={dateFilter}
-                    onChange={e => setDateFilter(e.target.value as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}
-                    className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
-                  >
-                    <option value="ALL">All Time</option>
-                    <option value="TODAY">Today</option>
-                    <option value="WEEK">Last 7 Days</option>
-                    <option value="MONTH">This Month</option>
-                  </select>
-                </div>
-                {/* Region filter */}
-                <div className="relative">
-                  <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                  <select
-                    value={regionFilter}
-                    onChange={e => setRegionFilter(e.target.value)}
-                    className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
-                  >
-                    <option value="ALL">All Regions</option>
-                    {regions.map(r => (
-                      <option key={r} value={r}>{r}</option>
-                    ))}
-                  </select>
+
+                {/* Mobile Unified Filter Button (Compound) */}
+                <div className="md:hidden">
+                   <Dialog>
+                     <Button variant="outline" size="sm" className="h-9 px-3 border-stone-200 rounded-xl bg-stone-50">
+                       <Filter className="w-4 h-4" />
+                     </Button>
+                     <DialogContent className="max-w-[90vw] rounded-2xl">
+                       <DialogHeader>
+                         <DialogTitle className="text-sm font-bold tracking-tight">Refine Order Feed</DialogTitle>
+                         <DialogDescription className="text-[10px] font-bold text-stone-400">Apply tactical filters to the current dispatch ledger.</DialogDescription>
+                       </DialogHeader>
+                       <div className="space-y-4 py-4">
+                         <div className="space-y-2">
+                           <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Fulfillment Status</p>
+                           <select
+                              value={statusFilter}
+                              onChange={e => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
+                              className="w-full h-11 px-4 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900"
+                            >
+                              <option value="ALL">All Statuses</option>
+                              {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
+                                <option key={s} value={s}>{s}</option>
+                              ))}
+                            </select>
+                         </div>
+                         <div className="space-y-2">
+                           <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Temporal Range</p>
+                           <select
+                              value={dateFilter}
+                              onChange={e => setDateFilter(e.target.value as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}
+                              className="w-full h-11 px-4 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900"
+                            >
+                              <option value="ALL">All Time</option>
+                              <option value="TODAY">Today</option>
+                              <option value="WEEK">Last 7 Days</option>
+                              <option value="MONTH">This Month</option>
+                            </select>
+                         </div>
+                         <div className="space-y-2">
+                           <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Movement Region</p>
+                           <select
+                              value={regionFilter}
+                              onChange={e => setRegionFilter(e.target.value)}
+                              className="w-full h-11 px-4 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900"
+                            >
+                              <option value="ALL">All Regions</option>
+                              {regions.map(r => (
+                                <option key={r} value={r}>{r}</option>
+                              ))}
+                            </select>
+                         </div>
+                       </div>
+                       <DialogFooter>
+                          <Button 
+                            onClick={() => {}} // Close automatically on change or via button
+                            className="w-full h-11 bg-stone-900 text-white rounded-xl text-xs font-bold"
+                          >
+                            Apply Filters
+                          </Button>
+                       </DialogFooter>
+                     </DialogContent>
+                   </Dialog>
                 </div>
               </div>
             </CardHeader>
@@ -303,7 +368,9 @@ export default function AdminOrders() {
                   <p className="text-[9px] text-stone-300 normal-case mt-1">Orders will appear here once customers complete purchases</p>
                 </div>
               ) : (
-                <table className="w-full text-xs">
+                <>
+                {/* Desktop Table */}
+                <table className="w-full text-xs hidden md:table">
                   <thead>
                     <tr className="border-b border-stone-100 bg-stone-50">
                       {['Order ID', 'Customer', 'Region', 'Amount', 'Payment', 'Status', 'Date', 'Actions'].map(h => (
@@ -371,17 +438,6 @@ export default function AdminOrders() {
                                   {updatingId === order.id ? '...' : `→ ${nextStatus}`}
                                 </Button>
                               )}
-                              {order.status !== 'Cancelled' && order.status !== 'Delivered' && (
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => handleCancel(order)}
-                                  disabled={updatingId === order.id}
-                                  className="h-7 px-2 text-[9px] font-bold normal-case text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl"
-                                >
-                                  Cancel
-                                </Button>
-                              )}
                             </div>
                           </td>
                         </tr>
@@ -389,6 +445,74 @@ export default function AdminOrders() {
                     })}
                   </tbody>
                 </table>
+
+                {/* Mobile Order Cards */}
+                <div className="md:hidden divide-y divide-stone-100">
+                  {filtered.map(order => {
+                    const cfg = STATUS_CONFIG[order.status]
+                    const StatusIcon = cfg.icon
+                    const nextStatus = NEXT_STATUS[order.status]
+                    return (
+                      <div 
+                        key={order.id} 
+                        className={cn(
+                          "p-6 space-y-6 transition-colors",
+                          selectedOrder?.id === order.id ? "bg-stone-50" : "bg-white"
+                        )}
+                        onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-mono font-bold text-stone-400 tracking-widest uppercase">#{order.id.slice(0, 8)}</p>
+                            <h4 className="text-sm font-black text-stone-900">{order.full_name}</h4>
+                            <p className="text-[10px] font-bold text-stone-400">{order.region_or_state || 'Unknown Region'}</p>
+                          </div>
+                          <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-bold normal-case border rounded-full', cfg.bg, cfg.color)}>
+                            <StatusIcon className="w-2.5 h-2.5" />
+                            {cfg.label}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="p-4 bg-white border border-stone-200 rounded-2xl shadow-sm">
+                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Value</p>
+                            <p className="text-sm font-black text-stone-900">GHS {Number(order.total_amount).toFixed(2)}</p>
+                          </div>
+                          <div className="p-4 bg-white border border-stone-200 rounded-2xl shadow-sm">
+                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Payment</p>
+                            <p className="text-sm font-black text-stone-900 capitalize">{order.payment_method}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-2">
+                          <Button
+                            variant="outline"
+                            className="flex-1 h-11 rounded-xl border-stone-200 text-stone-600 text-[10px] font-bold"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedOrder(order);
+                            }}
+                          >
+                            <Eye className="w-3.5 h-3.5 mr-2" /> Details
+                          </Button>
+                          {nextStatus && (
+                            <Button
+                              className="flex-1 h-11 bg-stone-900 text-white rounded-xl text-[10px] font-bold"
+                              disabled={updatingId === order.id}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleStatusAdvance(order);
+                              }}
+                            >
+                              {updatingId === order.id ? '...' : `→ ${nextStatus}`}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+                </>
               )}
             </div>
           </Card>
