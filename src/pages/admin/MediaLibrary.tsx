@@ -27,6 +27,7 @@ export default function MediaLibrary() {
   const folders = [
     { id: 'blog-images', label: 'Blog Posts', icon: ImageIcon },
     { id: 'author-images', label: 'Authors', icon: ImageIcon },
+    { id: 'product-images', label: 'Product Images', icon: ImageIcon },
     { id: 'logos-favicons', label: 'Logos & Favicons', icon: ImageIcon },
     { id: 'public-assets', label: 'Public Assets', icon: ImageIcon },
     { id: 'editor-content', label: 'Editor Media', icon: FileText },

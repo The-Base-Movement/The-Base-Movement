@@ -27,9 +27,21 @@ class LogisticsService {
   // --- Store & Inventory ---
 
   async getInventory(): Promise<InventoryItem[]> {
+    interface DBInventoryItem {
+      id: string
+      name: string
+      category: string
+      price_ghs: number
+      stock_quantity: number
+      status: 'Stable' | 'Low Stock' | 'Critical' | 'Processing'
+      image_emoji: string
+      brand_color: string
+      product_images?: { url: string }[]
+    }
+
     const { data, error } = await supabase
       .from('store_inventory')
-      .select('*')
+      .select('*, product_images(url)')
       .order('name', { ascending: true })
 
     if (error) {
@@ -37,14 +49,15 @@ class LogisticsService {
       return []
     }
 
-    return data.map((i) => ({
+    return (data as unknown as DBInventoryItem[] || []).map((i) => ({
       id: i.id,
       name: i.name,
       category: i.category,
       price: `GHS ${i.price_ghs}`,
       stock: i.stock_quantity,
       status: i.status,
-      image: i.image_emoji,
+      image: i.image_emoji || i.product_images?.[0]?.url || '📦',
+      images: i.product_images?.map(img => img.url) || [],
       color: i.brand_color
     }))
   }
@@ -99,33 +112,56 @@ class LogisticsService {
       return all.find(p => p.slug === slug) || null
     }
 
+    interface DBProduct {
+      id: string
+      name: string
+      slug: string
+      price_ghs: number
+      description: string
+      long_description?: string
+      status: string
+      category: string
+      rating?: number
+      reviews?: number
+      image_url: string
+      sizes?: string[]
+      colors?: string[]
+      is_featured?: boolean
+      customization_allowed?: boolean
+      specifications?: Record<string, string | number | boolean | null>
+      product_images?: { id: string, url: string, alt_text: string, display_order: number }[]
+      product_reviews?: { id: string, patriot_name: string, rating: number, content: string, is_verified: boolean, created_at: string }[]
+    }
+
+    const typedData = data as unknown as DBProduct
+
     // Sort images by display order
-    const gallery = (data.product_images || []).sort((a: any, b: any) => a.display_order - b.display_order)
+    const gallery = (typedData.product_images || []).sort((a, b) => a.display_order - b.display_order)
 
     return {
-      id: data.id,
-      name: data.name,
-      slug: data.slug,
-      price: `GHS ${data.price_ghs}`,
-      description: data.description || 'Official movement gear. Designed for patriots.',
-      status: data.status,
-      category: data.category,
-      rating: data.rating || 4.8,
-      reviews: data.reviews || 0,
-      image: data.image_url,
-      longDescription: data.long_description || data.description,
-      sizes: data.sizes || ['S', 'M', 'L', 'XL'],
-      colors: data.colors || ['Black', 'Green'],
-      is_featured: data.is_featured,
-      customization_allowed: data.customization_allowed,
-      specifications: data.specifications,
-      gallery_images: gallery.map((img: any) => ({
+      id: typedData.id,
+      name: typedData.name,
+      slug: typedData.slug,
+      price: `GHS ${typedData.price_ghs}`,
+      description: typedData.description || 'Official movement gear. Designed for patriots.',
+      status: typedData.status,
+      category: typedData.category,
+      rating: typedData.rating || 4.8,
+      reviews: typedData.reviews || 0,
+      image: typedData.image_url,
+      longDescription: typedData.long_description || typedData.description,
+      sizes: typedData.sizes || ['S', 'M', 'L', 'XL'],
+      colors: typedData.colors || ['Black', 'Green'],
+      is_featured: typedData.is_featured,
+      customization_allowed: typedData.customization_allowed,
+      specifications: typedData.specifications,
+      gallery_images: gallery.map((img) => ({
         id: img.id,
         url: img.url,
         alt_text: img.alt_text,
         display_order: img.display_order
       })),
-      reviews_data: (data.product_reviews || []).map((rev: any) => ({
+      reviews_data: (typedData.product_reviews || []).map((rev) => ({
         id: rev.id,
         patriot_name: rev.patriot_name,
         rating: rev.rating,
@@ -137,7 +173,7 @@ class LogisticsService {
   }
 
   async addInventoryItem(item: Omit<InventoryItem, 'id'>): Promise<boolean> {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('store_inventory')
       .insert({
         name: item.name,
@@ -148,17 +184,28 @@ class LogisticsService {
         image_emoji: item.image,
         brand_color: item.color
       })
+      .select()
+      .single()
 
     if (error) {
       console.error('[DATABASE] Failed to add inventory item:', error)
       return false
     }
 
+    if (item.images && item.images.length > 0) {
+      const imageInserts = item.images.map((url, idx) => ({
+        product_id: data.id,
+        url,
+        display_order: idx
+      }))
+      await supabase.from('product_images').insert(imageInserts)
+    }
+
     return true
   }
 
   async updateInventoryItem(id: string, item: Partial<InventoryItem>): Promise<boolean> {
-    const updateData: Record<string, string | number | null | undefined> = {}
+    const updateData: Record<string, string | number> = {}
     if (item.name) updateData.name = item.name
     if (item.category) updateData.category = item.category
     if (item.price) updateData.price_ghs = parseFloat(item.price.replace(/[^0-9.]/g, ''))
@@ -175,6 +222,19 @@ class LogisticsService {
     if (error) {
       console.error('[DATABASE] Failed to update inventory item:', error)
       return false
+    }
+
+    if (item.images) {
+      // Refresh gallery
+      await supabase.from('product_images').delete().eq('product_id', id)
+      if (item.images.length > 0) {
+        const imageInserts = item.images.map((url, idx) => ({
+          product_id: id,
+          url,
+          display_order: idx
+        }))
+        await supabase.from('product_images').insert(imageInserts)
+      }
     }
 
     return true

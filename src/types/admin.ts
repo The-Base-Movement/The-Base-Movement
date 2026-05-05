@@ -62,6 +62,7 @@ export interface InventoryItem {
   stock: number
   status: 'Stable' | 'Low Stock' | 'Critical' | 'Processing'
   image: string
+  images?: string[]
   color: string
 }
 

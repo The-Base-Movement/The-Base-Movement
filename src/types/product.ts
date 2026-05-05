@@ -31,7 +31,7 @@ export interface Product {
   // Premium Fields
   is_featured?: boolean;
   customization_allowed?: boolean;
-  specifications?: Record<string, string>;
+  specifications?: Record<string, string | number | boolean | null>;
   gallery_images?: ProductImage[];
   reviews_data?: ProductReview[];
 }

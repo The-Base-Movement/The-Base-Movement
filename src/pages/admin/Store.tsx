@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { 
-  ShoppingBag, 
   Plus, 
   Search, 
   Package, 
@@ -12,7 +11,11 @@ import {
   Truck,
   History,
   Clock,
-  ArrowRight
+  ArrowRight,
+  ArrowUpDown,
+  Download,
+  X,
+  Trash
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/input'
@@ -20,11 +23,13 @@ import {
   Card, 
   CardContent, 
   CardHeader, 
-  CardTitle 
+  CardTitle,
+  CardFooter
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService, type InventoryItem, type ResourceRequest, type LogisticsAuditEntry } from '@/services/adminService'
 import { toast } from 'sonner'
+import { contentService } from '@/services/contentService'
 import { 
   Dialog, 
   DialogContent, 
@@ -33,11 +38,21 @@ import {
   DialogFooter,
   DialogDescription
 } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Loader2 } from 'lucide-react'
 
-// Mock Data for Products
+
 export default function AdminStore() {
   const [products, setProducts] = useState<InventoryItem[]>([])
   const [requests, setRequests] = useState<ResourceRequest[]>([])
@@ -48,6 +63,42 @@ export default function AdminStore() {
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Partial<InventoryItem> | null>(null)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string, name: string } | null>(null)
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setIsUploadingImage(true)
+    try {
+      const url = await contentService.uploadImage(file, 'product-images')
+      if (url) {
+        setSelectedProduct(prev => {
+          const currentImages = prev?.images || []
+          return { 
+            ...prev!, 
+            images: [...currentImages, url],
+            image: prev?.image || url // Set as primary if none
+          }
+        })
+        toast.success('Product image added to gallery')
+      } else {
+        toast.error('Image upload failed')
+      }
+    } catch {
+      toast.error('An error occurred during upload')
+    } finally {
+      setIsUploadingImage(false)
+      if (e.target) e.target.value = ''
+    }
+  }
+
+  const removeImage = (url: string) => {
+    setSelectedProduct(prev => ({
+      ...prev!,
+      images: prev?.images?.filter(img => img !== url) || []
+    }))
+  }
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -108,19 +159,20 @@ export default function AdminStore() {
     setIsSaving(false)
   }
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to remove ${name} from the movement catalog?`)) return
+  const handleDelete = async () => {
+    if (!deleteConfirm) return
     
-    setIsDeleting(id)
-    const success = await adminService.deleteInventoryItem(id, name)
+    setIsDeleting(deleteConfirm.id)
+    const success = await adminService.deleteInventoryItem(deleteConfirm.id, deleteConfirm.name)
     if (success) {
-      handleStoreAction('REMOVE_INVENTORY', name)
-      toast.success(`${name} removed from inventory`)
+      handleStoreAction('REMOVE_INVENTORY', deleteConfirm.name)
+      toast.success(`${deleteConfirm.name} removed from inventory`)
       fetchData()
     } else {
       toast.error("Failed to delete item")
     }
     setIsDeleting(null)
+    setDeleteConfirm(null)
   }
 
   const handleStatusUpdate = async (id: string, status: ResourceRequest['status']) => {
@@ -136,12 +188,41 @@ export default function AdminStore() {
   const [activeCategory, setActiveCategory] = useState('All')
 
   const lowStockItems = products.filter(p => p.stock < 50 && p.stock > 0)
-  const categories = ['All', ...new Set(products.map(p => p.category))]
+  const categories = ['All', 'Apparel', 'Accessories', 'Lifestyle', 'Stationery', 'Limited Edition']
 
-  const filteredProducts = products.filter(p => {
+  const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryItem; direction: 'asc' | 'desc' } | null>(null)
+
+  const handleSort = (key: keyof InventoryItem) => {
+    setSortConfig(current => {
+      if (current?.key === key) {
+        if (current.direction === 'asc') return { key, direction: 'desc' }
+        return null
+      }
+      return { key, direction: 'asc' }
+    })
+  }
+
+  const sortedAndFilteredProducts = [...products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCategory = activeCategory === 'All' || p.category === activeCategory
     return matchesSearch && matchesCategory
+  })].sort((a, b) => {
+    if (!sortConfig) return 0
+    const { key, direction } = sortConfig
+    const aVal = a[key] ?? ''
+    const bVal = b[key] ?? ''
+    
+    let aComp = aVal
+    let bComp = bVal
+
+    if (key === 'price') {
+      aComp = parseFloat((aVal as string).replace(/[^0-9.-]+/g,"")) || 0
+      bComp = parseFloat((bVal as string).replace(/[^0-9.-]+/g,"")) || 0
+    }
+
+    if (aComp < bComp) return direction === 'asc' ? -1 : 1
+    if (aComp > bComp) return direction === 'asc' ? 1 : -1
+    return 0
   })
 
   const handleStoreAction = (action: string, productName: string) => {
@@ -228,23 +309,30 @@ export default function AdminStore() {
 
           {/* Store Performance Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="rounded-none border-stone-200 shadow-sm">
+        <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[10px] font-bold text-stone-400 tracking-tight">Total sales (MTD)</p>
-            <h3 className="text-2xl font-bold text-stone-900">GHS 14,250</h3>
-            <span className="text-[9px] font-bold text-emerald-600 flex items-center gap-1 mt-1">
-              <TrendingUp className="w-3 h-3" /> +8.4% vs last month
+            <p className="text-[10px] font-bold text-stone-400 tracking-tight">Total stock value</p>
+            <h3 className="text-2xl font-bold text-stone-900">
+              GHS {products.reduce((acc, p) => acc + (parseFloat(p.price.replace(/[^0-9.-]+/g, '')) * p.stock), 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </h3>
+            <span className="text-[9px] font-bold text-stone-400 flex items-center gap-1 mt-1">
+              <TrendingUp className="w-3 h-3" /> Estimated inventory value
             </span>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm">
+        <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[10px] font-bold text-stone-400 tracking-tight">Active requests</p>
             <h3 className="text-2xl font-bold text-stone-900">{requests.filter(r => r.status === 'Pending').length}</h3>
-            <span className="text-[10px] font-bold text-amber-600 mt-1">Pending approval</span>
+            <span className={cn(
+              "text-[10px] font-bold mt-1",
+              requests.filter(r => r.status === 'Pending').length > 0 ? "text-amber-600" : "text-stone-400"
+            )}>
+              {requests.filter(r => r.status === 'Pending').length > 0 ? 'Pending approval' : 'No pending requests'}
+            </span>
           </CardContent>
         </Card>
-        <Card className="rounded-none border-stone-200 shadow-sm">
+        <Card className="rounded-xl border-stone-200 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[10px] font-bold text-stone-400 tracking-tight">Stock items</p>
             <h3 className="text-2xl font-bold text-stone-900">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
@@ -252,7 +340,7 @@ export default function AdminStore() {
           </CardContent>
         </Card>
         <Card className={cn(
-          "rounded-none border-stone-200 shadow-sm",
+          "rounded-xl border-stone-200 shadow-sm",
           lowStockItems.length > 0 ? "bg-red-50/10 border-red-100" : ""
         )}>
           <CardContent className="p-6 flex flex-col gap-1">
@@ -275,15 +363,15 @@ export default function AdminStore() {
       </div>
 
       {activeTab === 'inventory' ? (
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+        <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-                <Package className="w-4 h-4 text-red-600" />
-                Inventory library
+                <Package className="w-4 h-4 text-stone-900" />
+                Inventory
               </CardTitle>
               
-              <div className="flex items-center bg-stone-100 p-1 rounded-none overflow-x-auto no-scrollbar">
+              <div className="flex items-center bg-stone-100 p-1 rounded-xl overflow-x-auto no-scrollbar">
                 {categories.map(cat => (
                   <button
                     key={cat}
@@ -301,10 +389,10 @@ export default function AdminStore() {
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
                 <Input 
-                  placeholder="Search vault..." 
+                  placeholder="Search products..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-9 text-xs rounded-none border-stone-200"
+                  className="pl-9 h-9 text-xs rounded-xl border-stone-200"
                 />
               </div>
             </div>
@@ -316,23 +404,33 @@ export default function AdminStore() {
                   <tr className="border-b border-stone-100 bg-stone-50/10">
                     <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Product</th>
                     <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Category</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Price</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center">In stock</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight cursor-pointer hover:text-stone-600 transition-colors" onClick={() => handleSort('price')}>
+                      <div className="flex items-center gap-1">Price <ArrowUpDown className="w-3 h-3" /></div>
+                    </th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center cursor-pointer hover:text-stone-600 transition-colors" onClick={() => handleSort('stock')}>
+                      <div className="flex items-center justify-center gap-1">In stock <ArrowUpDown className="w-3 h-3" /></div>
+                    </th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight cursor-pointer hover:text-stone-600 transition-colors" onClick={() => handleSort('status')}>
+                      <div className="flex items-center gap-1">Status <ArrowUpDown className="w-3 h-3" /></div>
+                    </th>
                     <th className="px-6 py-4 text-right"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-50">
-                  {filteredProducts.map((product) => (
+                  {sortedAndFilteredProducts.map((product) => (
                     <tr key={product.id} className="hover:bg-stone-50/50 transition-colors group">
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-stone-100 flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all">
-                            {product.image}
+                          <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center text-xl overflow-hidden">
+                            {product.image?.startsWith('http') ? (
+                              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="grayscale group-hover:grayscale-0 transition-all">{product.image}</span>
+                            )}
                           </div>
                           <div className="flex flex-col">
                             <span className="text-xs font-bold text-stone-900 tracking-tight">{product.name}</span>
-                            <span className="text-[9px] font-bold text-stone-400 mt-0.5">{product.id}</span>
+                            <span className="text-[9px] font-bold text-stone-400 mt-0.5 uppercase">#ITM-{product.id.substring(0, 6)}</span>
                           </div>
                         </div>
                       </td>
@@ -368,11 +466,11 @@ export default function AdminStore() {
                         </div>
                       </td>
                       <td className="px-6 py-5 text-right">
-                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-1">
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="w-8 h-8 text-stone-400 hover:text-[var(--brand-black)]"
+                            className="w-8 h-8 text-stone-600 hover:text-[var(--brand-black)] bg-stone-100/50 hover:bg-stone-100 rounded-lg transition-all"
                             onClick={() => handleOpenModal(product)}
                           >
                             <Edit3 className="w-3.5 h-3.5" />
@@ -380,9 +478,9 @@ export default function AdminStore() {
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="w-8 h-8 text-stone-400 hover:text-[var(--brand-red)]"
+                            className="w-8 h-8 text-stone-600 hover:text-[var(--brand-red)] bg-stone-100/50 hover:bg-stone-100 rounded-lg transition-all"
                             disabled={isDeleting === product.id}
-                            onClick={() => handleDelete(product.id, product.name)}
+                            onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                           >
                             {isDeleting === product.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
                           </Button>
@@ -394,9 +492,28 @@ export default function AdminStore() {
               </table>
             </div>
           </CardContent>
+          <CardFooter className="px-6 py-4 bg-stone-50/50 border-t border-stone-100 flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                <span className="text-[10px] font-bold text-stone-500 tracking-tight">Stable: {products.filter(p => p.status === 'Stable').length}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]" />
+                <span className="text-[10px] font-bold text-stone-500 tracking-tight">Low stock: {products.filter(p => p.status === 'Low Stock').length}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" />
+                <span className="text-[10px] font-bold text-stone-500 tracking-tight">Critical: {products.filter(p => p.status === 'Critical').length}</span>
+              </div>
+            </div>
+            <div className="text-[10px] font-bold text-stone-400 italic">
+              Showing {sortedAndFilteredProducts.length} movement assets in the current view
+            </div>
+          </CardFooter>
         </Card>
       ) : activeTab === 'requests' ? (
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+        <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
             <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
               <Truck className="w-4 h-4 text-emerald-600" />
@@ -413,7 +530,7 @@ export default function AdminStore() {
                     <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Requested</th>
                     <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Priority</th>
                     <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight">Status</th>
-                    <th className="px-6 py-4 text-right">Action</th>
+                    <th className="px-6 py-4 text-[10px] font-bold text-stone-400 tracking-tight text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-50">
@@ -464,7 +581,7 @@ export default function AdminStore() {
                           <SelectTrigger className="w-32 h-8 text-[10px] font-bold tracking-tight rounded-lg border-stone-200">
                             <SelectValue placeholder="Update Status" />
                           </SelectTrigger>
-                          <SelectContent className="rounded-none">
+                          <SelectContent className="rounded-xl">
                             <SelectItem value="Approved">Approve</SelectItem>
                             <SelectItem value="Dispatched">Dispatch</SelectItem>
                             <SelectItem value="Delivered">Deliver</SelectItem>
@@ -476,8 +593,11 @@ export default function AdminStore() {
                   ))}
                   {requests.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
-                        No active resource requests from the field.
+                      <td colSpan={6} className="px-6 py-16 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <Truck className="w-8 h-8 text-stone-200" />
+                          <span className="text-stone-400 text-xs font-bold">No active resource requests from the field.</span>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -487,12 +607,47 @@ export default function AdminStore() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden">
+        <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
-            <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-              <History className="w-4 h-4 text-stone-500" />
-              Logistics audit vault
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
+                <History className="w-4 h-4 text-stone-500" />
+                Audit log
+              </CardTitle>
+              <Button
+                variant="outline"
+                className="h-10 px-6 text-[10px] font-bold normal-case border-stone-200 bg-white text-stone-600 shadow-sm rounded-xl hover:bg-stone-50"
+                disabled={auditLogs.length === 0}
+                onClick={() => {
+                  try {
+                    const headers = ['Timestamp', 'Action', 'Resource', 'Quantity Change', 'Source', 'Destination']
+                    const csvData = auditLogs.map(log => [
+                      new Date(log.timestamp).toLocaleString(),
+                      log.action,
+                      `"${log.productName || 'Unknown'}"`,
+                      log.quantityChange,
+                      `"${log.sourceLocation}"`,
+                      `"${log.destinationLocation || 'Internal'}"`
+                    ])
+                    const csvContent = [headers.join(','), ...csvData.map(row => row.join(','))].join('\n')
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+                    const url = URL.createObjectURL(blob)
+                    const link = document.createElement('a')
+                    link.setAttribute('href', url)
+                    link.setAttribute('download', `audit_log_${new Date().toISOString().split('T')[0]}.csv`)
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                    toast.success(`Exported ${auditLogs.length} audit records.`)
+                  } catch {
+                    toast.error('Failed to export audit log.')
+                  }
+                }}
+              >
+                <Download className="w-3.5 h-3.5 mr-2" />
+                Export log
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -551,8 +706,11 @@ export default function AdminStore() {
                   ))}
                   {auditLogs.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-stone-400 text-xs font-bold uppercase tracking-widest">
-                        The logistics vault is empty. No movements recorded.
+                      <td colSpan={5} className="px-6 py-16 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <History className="w-8 h-8 text-stone-200" />
+                          <span className="text-stone-400 text-xs font-bold">No audit entries recorded yet.</span>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -563,58 +721,63 @@ export default function AdminStore() {
         </Card>
       )}
 
-      {/* Quick Insights Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="p-8 border border-stone-200 bg-white space-y-6">
-          <div className="flex items-center justify-between">
-            <h4 className="text-lg font-bold tracking-tight text-stone-900">Fulfillment status</h4>
-            <Box className="w-5 h-5 text-stone-300" />
-          </div>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-bold tracking-tight">
-                <span className="text-stone-400">Shipped orders</span>
-                <span className="text-emerald-600">82%</span>
+      {/* Fulfillment Intelligence Breakdown */}
+      {requests.length > 0 && (() => {
+        const total = requests.length
+        const delivered = requests.filter(r => r.status === 'Delivered').length
+        const processing = requests.filter(r => r.status === 'Approved' || r.status === 'Dispatched').length
+        const rejected = requests.filter(r => r.status === 'Rejected').length
+        const deliveredPct = Math.round((delivered / total) * 100)
+        const processingPct = Math.round((processing / total) * 100)
+        const rejectedPct = Math.round((rejected / total) * 100)
+        return (
+          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
+            <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30">
+              <CardTitle className="text-sm font-bold tracking-tight flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Box className="w-4 h-4 text-stone-900" />
+                  Fulfillment intelligence
+                </div>
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Live metrics</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-[10px] font-bold tracking-tight">
+                    <span className="text-stone-400 uppercase">Delivered</span>
+                    <span className="text-emerald-600">{deliveredPct}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${deliveredPct}%` }} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-[10px] font-bold tracking-tight">
+                    <span className="text-stone-400 uppercase">In progress</span>
+                    <span className="text-amber-600">{processingPct}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-amber-400 rounded-full transition-all duration-1000" style={{ width: `${processingPct}%` }} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-[10px] font-bold tracking-tight">
+                    <span className="text-stone-400 uppercase">Rejected</span>
+                    <span className="text-red-600">{rejectedPct}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-red-400 rounded-full transition-all duration-1000" style={{ width: `${rejectedPct}%` }} />
+                  </div>
+                </div>
               </div>
-              <div className="w-full h-1.5 bg-stone-100 overflow-hidden">
-                <div className="h-full bg-[var(--brand-green)] w-[82%]" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-bold tracking-tight">
-                <span className="text-stone-400">Processing</span>
-                <span className="text-amber-600">12%</span>
-              </div>
-              <div className="w-full h-1.5 bg-stone-100 overflow-hidden">
-                <div className="h-full bg-[var(--brand-gold)] w-[12%]" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-bold tracking-tight">
-                <span className="text-stone-400">Returns / Issues</span>
-                <span className="text-red-600">6%</span>
-              </div>
-              <div className="w-full h-1.5 bg-stone-100 overflow-hidden">
-                <div className="h-full bg-[var(--brand-red)] w-[6%]" />
-              </div>
-            </div>
-          </div>
-        </div>
+            </CardContent>
+          </Card>
+        )
+      })()}
 
-        <div className="p-8 bg-[var(--brand-red)] text-white relative overflow-hidden flex flex-col justify-between">
-          <div className="relative z-10 space-y-4">
-            <h4 className="text-lg font-bold tracking-tight">Merch strategy 2024</h4>
-            <p className="text-xs text-red-100 leading-relaxed max-w-sm">
-              Standardize regional distribution by the end of Q2. New "Chapter Founder" apparel series ready for production.
-            </p>
-          </div>
-          <div className="relative z-10 pt-6">
-            <Button variant="outline" className="h-10 text-[10px] font-bold tracking-tight border-white/20 text-white hover:bg-white/10 rounded-xl">
-              View production docs
-            </Button>
-          </div>
-          <ShoppingBag className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5 rotate-12" />
-        </div>
+      <div className="pt-8 mt-8 border-t border-stone-100 flex flex-col md:flex-row items-center justify-between gap-4 pb-12">
+        <p className="text-[10px] font-bold text-stone-400">© 2026 The Base Movement</p>
       </div>
     </>
   )}
@@ -676,14 +839,52 @@ export default function AdminStore() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right text-[10px] font-bold tracking-tight">Image (Emoji)</Label>
-              <Input 
-                value={selectedProduct?.image || ''} 
-                onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}
-                placeholder="👕, 🧢, 🎒"
-                className="col-span-3 h-10 rounded-lg border-stone-200 text-lg text-center" 
-              />
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Product Gallery</Label>
+              <div className="col-span-3 space-y-4">
+                {/* Image Grid */}
+                <div className="grid grid-cols-4 gap-2">
+                  {(selectedProduct?.images || []).map((url, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border border-stone-200 bg-stone-50 group">
+                      <img src={url} alt={`Product ${idx}`} className="w-full h-full object-cover" />
+                      <button 
+                        onClick={() => removeImage(url)}
+                        className="absolute top-1 right-1 w-5 h-5 bg-stone-900/80 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {/* Upload Placeholder */}
+                  <label className="aspect-square rounded-lg border border-dashed border-stone-300 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-stone-50 transition-colors">
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={isUploadingImage}
+                    />
+                    {isUploadingImage ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-stone-400" />
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4 text-stone-400" />
+                        <span className="text-[8px] font-bold text-stone-400">Add Image</span>
+                      </>
+                    )}
+                  </label>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                   <Label className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Icon Fallback</Label>
+                   <Input 
+                    value={selectedProduct?.image?.startsWith('http') ? '' : (selectedProduct?.image || '')} 
+                    onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}
+                    placeholder="👕, 🧢, 🎒"
+                    className="h-9 rounded-lg border-stone-200 text-lg text-center w-24" 
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -701,6 +902,33 @@ export default function AdminStore() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Delete Confirmation Modal */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent className="rounded-2xl border-stone-200">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold tracking-tight flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+                <Trash className="w-5 h-5" />
+              </div>
+              Remove item?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs font-bold text-stone-500 leading-relaxed">
+              Are you sure you want to remove <span className="text-stone-900">"{deleteConfirm?.name}"</span> from the movement catalog? This action will archive all associated inventory data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
+            <AlertDialogCancel className="rounded-xl text-[10px] font-bold tracking-tight h-10 px-6 border-stone-200">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete}
+              className="rounded-xl text-[10px] font-bold tracking-tight bg-red-600 text-white hover:bg-red-700 h-10 px-8"
+            >
+              Confirm Removal
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

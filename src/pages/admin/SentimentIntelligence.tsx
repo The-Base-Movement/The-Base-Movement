@@ -239,7 +239,7 @@ export default function SentimentIntelligence() {
                         <span className="text-[9px] font-bold text-stone-400">{format(new Date(item.created_at), 'MMM dd, HH:mm')}</span>
                       </div>
                       <p className="text-sm text-stone-700 mb-3 leading-relaxed">
-                        {item.feedback_text || (item as any).content || (item as any).text || "Sentiment intercept recorded without textual content."}
+                        {item.feedback_text || (item as MemberFeedback & { content?: string; text?: string }).content || (item as MemberFeedback & { content?: string; text?: string }).text || "Sentiment intercept recorded without textual content."}
                       </p>
                       <div className="flex items-center gap-2">
                         <Map className="w-3 h-3 text-stone-300" />

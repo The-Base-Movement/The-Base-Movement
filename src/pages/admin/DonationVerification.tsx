@@ -46,7 +46,16 @@ export default function FinancialAudit() {
   }, [statusFilter])
 
   useEffect(() => {
-    fetchData()
+    let ignore = false
+    const timer = setTimeout(() => {
+      if (!ignore) {
+        void fetchData()
+      }
+    }, 0)
+    return () => {
+      ignore = true
+      clearTimeout(timer)
+    }
   }, [fetchData])
 
   const handleVerify = async (donationId: string, name: string, status: 'Verified' | 'Rejected') => {
@@ -105,7 +114,7 @@ export default function FinancialAudit() {
         title: "Export complete",
         description: `Successfully downloaded ${filteredDonations.length} transaction records.`
       })
-    } catch (err) {
+    } catch {
       toast({
         title: "Export failed",
         description: "There was an error compiling the ledger data.",
@@ -186,7 +195,7 @@ export default function FinancialAudit() {
               {['Pending', 'Verified', 'Rejected', 'All'].map(status => (
                 <button
                   key={status}
-                  onClick={() => setStatusFilter(status as any)}
+                  onClick={() => setStatusFilter(status as 'All' | 'Pending' | 'Verified' | 'Rejected')}
                   className={cn(
                     "px-4 py-2 text-[10px] font-bold rounded-lg transition-all",
                     statusFilter === status ? "bg-stone-900 text-white shadow-sm" : "text-stone-500 hover:text-stone-900 hover:bg-stone-50"
