@@ -17,6 +17,19 @@ import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
 import { toast } from 'sonner'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from '@/components/ui/dropdown-menu'
 
 const STATUS_CONFIG: Record<Order['status'], { label: string; color: string; bg: string; icon: typeof Package }> = {
   Pending:    { label: 'Pending',    color: 'text-amber-600',   bg: 'bg-amber-50 border-amber-200',    icon: Clock },
@@ -292,66 +305,85 @@ export default function AdminOrders() {
 
                 {/* Mobile Unified Filter Button (Compound) */}
                 <div className="md:hidden">
-                   <Dialog>
-                     <Button variant="outline" size="sm" className="h-9 px-3 border-stone-200 rounded-xl bg-stone-50">
-                       <Filter className="w-4 h-4" />
-                     </Button>
-                     <DialogContent className="max-w-[90vw] rounded-2xl">
-                       <DialogHeader>
-                         <DialogTitle className="text-sm font-bold tracking-tight">Refine Order Feed</DialogTitle>
-                         <DialogDescription className="text-[10px] font-bold text-stone-400">Apply tactical filters to the current dispatch ledger.</DialogDescription>
-                       </DialogHeader>
-                       <div className="space-y-4 py-4">
-                         <div className="space-y-2">
-                           <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Fulfillment Status</p>
-                           <select
-                              value={statusFilter}
-                              onChange={e => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
-                              className="w-full h-11 px-4 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900"
-                            >
-                              <option value="ALL">All Statuses</option>
-                              {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
-                                <option key={s} value={s}>{s}</option>
-                              ))}
-                            </select>
-                         </div>
-                         <div className="space-y-2">
-                           <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Temporal Range</p>
-                           <select
-                              value={dateFilter}
-                              onChange={e => setDateFilter(e.target.value as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}
-                              className="w-full h-11 px-4 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900"
-                            >
-                              <option value="ALL">All Time</option>
-                              <option value="TODAY">Today</option>
-                              <option value="WEEK">Last 7 Days</option>
-                              <option value="MONTH">This Month</option>
-                            </select>
-                         </div>
-                         <div className="space-y-2">
-                           <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Movement Region</p>
-                           <select
-                              value={regionFilter}
-                              onChange={e => setRegionFilter(e.target.value)}
-                              className="w-full h-11 px-4 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900"
-                            >
-                              <option value="ALL">All Regions</option>
-                              {regions.map(r => (
-                                <option key={r} value={r}>{r}</option>
-                              ))}
-                            </select>
-                         </div>
-                       </div>
-                       <DialogFooter>
-                          <Button 
-                            onClick={() => {}} // Close automatically on change or via button
-                            className="w-full h-11 bg-stone-900 text-white rounded-xl text-xs font-bold"
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-9 px-3 border-stone-200 rounded-xl bg-stone-50">
+                        <Filter className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 rounded-2xl p-2 shadow-xl border-stone-100" align="end">
+                      <DropdownMenuLabel className="text-[10px] font-bold text-stone-400 uppercase tracking-widest px-2 py-1.5">
+                        Refine Feed
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-stone-50" />
+                      
+                      {/* Status Submenu */}
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-stone-600 rounded-lg">
+                          <Package className="w-3.5 h-3.5 mr-2 text-stone-400" />
+                          Fulfillment status
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuSubContent className="rounded-xl border-stone-100 shadow-lg">
+                          <DropdownMenuRadioGroup value={statusFilter} onValueChange={(v) => setStatusFilter(v as Order['status'] | 'ALL')}>
+                            <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Statuses</DropdownMenuRadioItem>
+                            {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
+                              <DropdownMenuRadioItem key={s} value={s} className="text-[11px] font-bold">{s}</DropdownMenuRadioItem>
+                            ))}
+                          </DropdownMenuRadioGroup>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuSub>
+
+                      {/* Date Submenu */}
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-stone-600 rounded-lg">
+                          <Clock className="w-3.5 h-3.5 mr-2 text-stone-400" />
+                          Temporal range
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuSubContent className="rounded-xl border-stone-100 shadow-lg">
+                          <DropdownMenuRadioGroup value={dateFilter} onValueChange={(v) => setDateFilter(v as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}>
+                            <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Time</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="TODAY" className="text-[11px] font-bold">Today</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="WEEK" className="text-[11px] font-bold">Last 7 Days</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="MONTH" className="text-[11px] font-bold">This Month</DropdownMenuRadioItem>
+                          </DropdownMenuRadioGroup>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuSub>
+
+                      {/* Region Submenu */}
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-stone-600 rounded-lg">
+                          <Filter className="w-3.5 h-3.5 mr-2 text-stone-400" />
+                          Movement region
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuSubContent className="rounded-xl border-stone-100 shadow-lg">
+                          <DropdownMenuRadioGroup value={regionFilter} onValueChange={setRegionFilter}>
+                            <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Regions</DropdownMenuRadioItem>
+                            {regions.map(r => (
+                              <DropdownMenuRadioItem key={r} value={r} className="text-[11px] font-bold">{r}</DropdownMenuRadioItem>
+                            ))}
+                          </DropdownMenuRadioGroup>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuSub>
+
+                      {/* Reset Action */}
+                      {(statusFilter !== 'ALL' || dateFilter !== 'ALL' || regionFilter !== 'ALL') && (
+                        <>
+                          <DropdownMenuSeparator className="bg-stone-50" />
+                          <DropdownMenuItem 
+                            onClick={() => {
+                              setStatusFilter('ALL')
+                              setDateFilter('ALL')
+                              setRegionFilter('ALL')
+                            }}
+                            className="text-[11px] font-bold text-red-600 focus:text-red-600 focus:bg-red-50 rounded-lg"
                           >
-                            Apply Filters
-                          </Button>
-                       </DialogFooter>
-                     </DialogContent>
-                   </Dialog>
+                            <RefreshCw className="w-3.5 h-3.5 mr-2" />
+                            Reset filters
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </CardHeader>
