@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import PublicLayout from './components/PublicLayout'
 import DashboardLayout from './components/DashboardLayout'
 import { StoreProvider } from './types/StoreProvider'
@@ -76,6 +77,7 @@ export default function App() {
       <ReadingProgressBar />
       <Toaster />
       <SonnerToaster position="top-right" richColors />
+      <Analytics />
       <Routes>
         {/* Redirects */}
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
