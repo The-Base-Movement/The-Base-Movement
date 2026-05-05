@@ -169,8 +169,23 @@ export default function MediaLibrary() {
 
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Sidebar - Folders */}
-        <div className="space-y-6">
+        {/* Mobile Category Dropdown */}
+        <div className="lg:hidden mb-6">
+          <select
+            value={activeFolder}
+            onChange={(e) => setActiveFolder(e.target.value)}
+            className="w-full h-12 bg-white border border-stone-200 rounded-xl px-4 text-sm font-bold focus:border-stone-900 outline-none shadow-sm"
+          >
+            {folders.map((folder) => (
+              <option key={folder.id} value={folder.id}>
+                {folder.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Sidebar - Folders (Desktop Only) */}
+        <div className="hidden lg:block space-y-6">
           <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-stone-100 bg-stone-50">
               <h3 className="font-bold text-stone-900 text-xs normal-case">Asset categories</h3>
@@ -194,27 +209,6 @@ export default function MediaLibrary() {
                 ))}
               </div>
             </CardContent>
-          </Card>
-
-          <Card className="rounded-xl border-stone-200 shadow-sm bg-stone-900 text-white overflow-hidden p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                <Filter className="w-5 h-5 text-emerald-400" />
-              </div>
-              <div>
-                <h4 className="font-bold text-sm">Storage usage</h4>
-                <p className="text-[10px] text-stone-400 normal-case">Supabase cloud</p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 w-[12%]" />
-              </div>
-              <div className="flex justify-between text-[10px] font-bold text-stone-400">
-                <span className="normal-case">0.6 GB used</span>
-                <span className="normal-case">5 GB total</span>
-              </div>
-            </div>
           </Card>
         </div>
 
@@ -312,6 +306,35 @@ export default function MediaLibrary() {
                 </div>
               )}
             </CardContent>
+          </Card>
+
+          {/* Storage Usage Section (Moved to Bottom) */}
+          <Card className="rounded-2xl border-stone-200 shadow-sm bg-stone-900 text-white overflow-hidden p-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+              <div className="flex items-center gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center shrink-0">
+                  <Filter className="w-7 h-7 text-emerald-400" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg">Cloud storage intelligence</h4>
+                  <p className="text-xs text-stone-400 normal-case mt-1">Real-time usage monitoring for Supabase storage buckets.</p>
+                </div>
+              </div>
+              
+              <div className="flex-1 max-w-md space-y-4">
+                <div className="flex justify-between text-[11px] font-bold text-stone-400 uppercase tracking-widest">
+                  <span>Capacity utilization</span>
+                  <span className="text-emerald-400">12%</span>
+                </div>
+                <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 w-[12%] shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                </div>
+                <div className="flex justify-between text-[10px] font-bold text-stone-500 uppercase tracking-tight">
+                  <span className="normal-case">0.6 GB consumed</span>
+                  <span className="normal-case">5.0 GB limit</span>
+                </div>
+              </div>
+            </div>
           </Card>
         </div>
       </div>
