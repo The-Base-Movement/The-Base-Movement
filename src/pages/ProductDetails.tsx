@@ -10,6 +10,7 @@ import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
+import { logisticsService } from '@/services/logisticsService'
 
 export default function ProductDetails() {
   const { slug } = useParams()
@@ -77,8 +78,6 @@ export default function ProductDetails() {
     if (!product) return
     setCheckingAvailability(true)
     try {
-      // Import logisticsService dynamically to avoid circular dependencies if any
-      const { logisticsService } = await import('@/services/logisticsService')
       const result = await logisticsService.getRegionalAvailability(product.id, selectedRegion)
       setAvailability(result)
     } catch (err) {
