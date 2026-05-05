@@ -68,7 +68,7 @@ export default function MobilizationMetrics() {
       </div>
 
       {/* 📊 National Intelligence Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
           { label: 'Impact Points', value: pulse?.totalMobilizationPoints?.toLocaleString() || '0', sub: 'Total performance score', icon: Target, color: 'text-[var(--brand-green)]' },
           { label: 'Active Chapters', value: pulse?.activeChapters || '0', sub: 'Verified chapters', icon: Shield, color: 'text-blue-500' },
@@ -81,7 +81,7 @@ export default function MobilizationMetrics() {
               <stat.icon className={cn("w-5 h-5", stat.color)} />
             </div>
             <div>
-              <p className="text-3xl font-bold tracking-tight text-stone-900">{stat.value}</p>
+              <p className="text-xl md:text-3xl font-bold tracking-tight text-stone-900">{stat.value}</p>
               <p className="text-[9px] font-bold text-stone-400 mt-1">{stat.sub}</p>
             </div>
           </Card>
@@ -99,7 +99,8 @@ export default function MobilizationMetrics() {
             <TrendingUp className="w-6 h-6 text-stone-300" />
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-stone-50 border-b border-stone-100">
@@ -167,6 +168,71 @@ export default function MobilizationMetrics() {
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Leaderboard Cards */}
+            <div className="md:hidden divide-y divide-stone-100">
+              {loading ? (
+                Array(3).fill(0).map((_, i) => (
+                  <div key={i} className="p-6 animate-pulse space-y-4">
+                    <div className="h-4 bg-stone-100 w-3/4 rounded" />
+                    <div className="h-12 bg-stone-50 w-full rounded-xl" />
+                  </div>
+                ))
+              ) : leaderboard.length === 0 ? (
+                <div className="p-12 text-center text-stone-400 font-bold text-[10px]">
+                  No regional mobilization data.
+                </div>
+              ) : (
+                leaderboard.map((entry, index) => (
+                  <div key={entry.chapter} className="p-6 space-y-6">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-4">
+                        <div className={cn(
+                          "w-10 h-10 flex items-center justify-center font-bold text-sm rounded-xl shadow-md",
+                          index === 0 ? "bg-yellow-500 text-black" : 
+                          index === 1 ? "bg-stone-300 text-stone-800" :
+                          index === 2 ? "bg-orange-300 text-orange-900" :
+                          "bg-stone-100 text-stone-500"
+                        )}>
+                          {index + 1}
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-stone-900 tracking-tight">{entry.chapter}</h4>
+                          <p className="text-[10px] font-bold text-stone-400 flex items-center gap-1 mt-0.5 uppercase tracking-widest">
+                            <MapPin className="w-3 h-3" /> {entry.region}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Points</p>
+                        <p className="text-lg font-black text-stone-900 tracking-tighter">{entry.total_mobilization_points.toLocaleString()}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center border border-stone-100">
+                          <Users className="w-4 h-4 text-stone-500" />
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-stone-400 uppercase">Members</p>
+                          <p className="text-xs font-bold text-stone-900">{entry.total_patriots}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
+                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center border border-stone-100">
+                          <Zap className="w-4 h-4 text-yellow-500" />
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-stone-400 uppercase">Badges</p>
+                          <p className="text-xs font-bold text-stone-900">{entry.achievements_unlocked}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
