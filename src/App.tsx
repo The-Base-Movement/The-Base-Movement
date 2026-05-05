@@ -74,13 +74,11 @@ const AdminTrash = lazy(() => import('./pages/admin/Trash'))
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
-import PerformanceAudit from './components/PerformanceAudit'
 
 export default function App() {
   return (
     <PerformanceProvider>
       <StoreProvider>
-        <PerformanceAudit />
         <ScrollToTop />
         <ReadingProgressBar />
         <Toaster />
