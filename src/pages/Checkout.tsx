@@ -17,6 +17,8 @@ export default function Checkout() {
   const [isDiaspora, setIsDiaspora] = useState(false)
   const [dbCountries, setDbCountries] = useState<{ name: string; is_diaspora: boolean }[]>([])
   const [dbRegions, setDbRegions] = useState<Region[]>([])
+  const [userPoints, setUserPoints] = useState(0)
+  const [usePoints, setUsePoints] = useState(false)
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -35,10 +37,18 @@ export default function Checkout() {
     let isMounted = true
     async function loadData() {
       try {
+        const { data: { session } } = await supabase.auth.getSession()
+        
         const [cList, rList] = await Promise.all([
           adminService.getCountries(),
           adminService.getRegions()
         ])
+
+        if (session?.user?.id) {
+          const points = await adminService.getMemberPoints(session.user.id)
+          if (isMounted) setUserPoints(points)
+        }
+
         if (isMounted) {
           setDbCountries(cList)
           setDbRegions(rList)
@@ -71,7 +81,12 @@ export default function Checkout() {
     return sum + (price * item.quantity)
   }, 0)
   const shipping = cart.length > 0 ? 25.00 : 0
-  const total = subtotal + shipping
+  
+  // Point conversion logic: 100 points = 1 GHS
+  const pointsValue = Math.floor(userPoints / 100)
+  const appliedPointsValue = usePoints ? Math.min(pointsValue, subtotal) : 0
+  const total = subtotal + shipping - appliedPointsValue
+  const pointsToRedeem = appliedPointsValue * 100
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,6 +116,8 @@ export default function Checkout() {
           subtotal,
           shipping_fee: shipping,
           total_amount: total,
+          points_redeemed: usePoints ? pointsToRedeem : 0,
+          points_value_ghs: appliedPointsValue,
           status: 'Pending'
         })
         .select('id')
@@ -122,7 +139,17 @@ export default function Checkout() {
 
       if (itemsError) throw itemsError
 
-      // 3. Cleanup & Forward
+      // 3. Deduct points if used
+      if (usePoints && session?.user?.id) {
+        await supabase.from('member_points').insert({
+          user_id: session.user.id,
+          points: -pointsToRedeem,
+          reason: `Store Redemption: Order #${order.id.substring(0,8)}`,
+          reference_id: order.id
+        })
+      }
+
+      // 4. Cleanup & Forward
       toast.success('Order placed successfully! Check your email for details.')
       clearCart()
       
@@ -361,6 +388,35 @@ export default function Checkout() {
                   <span>Shipping</span>
                   <span className="font-bold text-stone-900">GHS {shipping.toFixed(2)}</span>
                 </div>
+
+                {userPoints > 100 && (
+                  <div className="pt-4 border-t border-stone-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="usePoints"
+                          checked={usePoints}
+                          onChange={(e) => setUsePoints(e.target.checked)}
+                          className="w-4 h-4 rounded border-stone-300 text-[var(--brand-green)] focus:ring-[var(--brand-green)]"
+                        />
+                        <label htmlFor="usePoints" className="text-[10px] font-bold text-stone-900 uppercase tracking-widest cursor-pointer">
+                          Redeem Points
+                        </label>
+                      </div>
+                      <span className="text-[10px] font-bold text-[var(--brand-green)] uppercase tracking-widest">
+                        {userPoints.toLocaleString()} Available
+                      </span>
+                    </div>
+                    {usePoints && (
+                      <div className="flex justify-between text-xs text-[var(--brand-green)] uppercase tracking-wider animate-in fade-in slide-in-from-top-1">
+                        <span>Points Discount</span>
+                        <span className="font-bold">- GHS {appliedPointsValue.toFixed(2)}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="pt-4 border-t border-stone-200 flex justify-between items-center">
                   <span className="font-h3 text-lg text-stone-900">Total</span>
                   <span className="font-h3 text-xl text-[var(--brand-green)]">GHS {total.toFixed(2)}</span>

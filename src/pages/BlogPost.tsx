@@ -157,11 +157,10 @@ export default function BlogPost() {
 
           {/* Featured Image */}
           <div className="relative aspect-[21/9] overflow-hidden border border-stone-200">
-            <img 
-              src={post.imageUrl || '/hero-bg.png'} 
+            <img src={post.imageUrl || '/hero-bg.png'} 
               alt={post.title} 
               className="w-full h-full object-cover"
-            />
+             decoding="async" loading="lazy" />
             <div className="absolute inset-0 bg-charcoal-dark/10"></div>
           </div>
 
@@ -173,11 +172,10 @@ export default function BlogPost() {
                 <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">Authored By</p>
                   <div className="flex items-center gap-3">
-                    <img 
-                      src={post.authorImage || '/founder.jpg'} 
+                    <img src={post.authorImage || '/founder.jpg'} 
                       alt={post.authorName} 
                       className="w-12 h-12 bg-charcoal-dark rounded-none object-cover"
-                    />
+                     decoding="async" loading="lazy" />
                     <div>
                       <p className="text-sm font-bold text-stone-900 leading-none mb-0">{post.authorName}</p>
                       <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0">{post.authorRole}</p>
@@ -289,7 +287,7 @@ export default function BlogPost() {
                     <Link to={`${baseUrl}/${related.slug}`} key={related.id} className="block group">
                       <article className="group cursor-pointer">
                         <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
-                          <img src={related.imageUrl || '/hero-bg.png'} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                          <img src={related.imageUrl || '/hero-bg.png'} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />
                           <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                         </div>
                         <span className="text-[9px] font-bold text-[var(--brand-green)] uppercase tracking-widest mb-0">{related.category}</span>

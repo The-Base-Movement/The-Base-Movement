@@ -4,7 +4,7 @@ import PublicLayout from './components/PublicLayout'
 import DashboardLayout from './components/DashboardLayout'
 import { StoreProvider } from './types/StoreProvider'
 import ScrollToTop from './components/ScrollToTop'
-import { ReadingProgressBar } from './components/ReadingProgressBar'
+import ReadingProgressBar from './components/ReadingProgressBar'
 import { LoadingScreen } from './components/LoadingScreen'
 import { PerformanceProvider } from './context/PerformanceContext'
 

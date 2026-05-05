@@ -103,7 +103,7 @@ export default function DashboardLayout() {
       <nav className={`fixed left-0 top-0 h-full flex flex-col bg-stone-100 dark:bg-zinc-950 text-emerald-700 dark:text-emerald-400 w-64 border-r border-stone-200 dark:border-zinc-800 z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         {/* Fixed Header */}
         <div className="px-6 py-8 flex items-center gap-3 bg-stone-100 dark:bg-zinc-950 z-10 shrink-0">
-          <img src="/logo.png" alt="The Base Logo" className="h-10 w-10" />
+          <img src="/logo.png" alt="The Base Logo" className="h-10 w-10"  decoding="async" />
           <div>
             <h1 className="text-lg text-emerald-900 dark:text-white leading-none mb-0">The Base</h1>
             <p className="text-[9px] text-warm-gold font-bold tracking-widest mt-1 mb-0 uppercase">Civic Movement</p>
@@ -187,11 +187,10 @@ export default function DashboardLayout() {
 
           {/* Leader Portrait */}
           <div className="mx-4 my-8 overflow-hidden rounded-none relative group shrink-0 shadow-lg">
-            <img
-              src="/founder.jpg"
+            <img src="/founder.jpg"
               alt="Dr. George Oti Bonsu The Base Movement Founder"
               className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
-            />
+             decoding="async" />
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-brand-green/90 via-brand-green/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-3">
@@ -250,7 +249,7 @@ export default function DashboardLayout() {
               </button>
               <div className="flex items-center gap-2">
                 <Link to="/dashboard" className="flex items-center gap-2">
-                  <img src="/logo.png" alt="The Base" className="h-6 w-6" />
+                  <img src="/logo.png" alt="The Base" className="h-6 w-6"  decoding="async" />
                   <span className="text-[var(--brand-green)] font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
                 <div className="hidden sm:flex items-center gap-2 text-[10px] text-stone-400 tracking-widest uppercase font-bold">
@@ -299,11 +298,10 @@ export default function DashboardLayout() {
                 {/* Avatar: real photo or initials fallback */}
                 <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-brand-green/20 group-hover:ring-brand-green/50 transition-all shadow-sm shrink-0">
                   {avatarUrl ? (
-                    <img
-                      src={avatarUrl}
+                    <img src={avatarUrl}
                       alt={userName}
                       className="w-full h-full object-cover"
-                    />
+                     decoding="async" />
                   ) : (
                     <div className="w-full h-full bg-[var(--brand-green)] flex items-center justify-center text-white text-xs font-bold font-meta tracking-wider">
                       {initials || 'M'}

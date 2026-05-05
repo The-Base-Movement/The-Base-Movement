@@ -36,7 +36,7 @@ export default function Cart() {
                 <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="bg-white border border-stone-200 p-6 rounded-sm shadow-sm flex flex-col md:flex-row gap-6 relative group">
                   <div className="w-24 h-24 bg-stone-100 rounded-sm overflow-hidden shrink-0 flex items-center justify-center">
                     {item.image ? (
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                     ) : (
                       <ShoppingBag className="w-10 h-10 text-stone-300" />
                     )}

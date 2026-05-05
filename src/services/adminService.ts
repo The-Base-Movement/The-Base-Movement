@@ -1056,6 +1056,14 @@ class AdminService {
     return intelligenceService.getRapidResponseDirectives()
   }
 
+  async createRapidResponseDirective(directive: Omit<RapidResponseDirective, 'id' | 'created_at'>): Promise<boolean> {
+    const success = await intelligenceService.createRapidResponseDirective(directive)
+    if (success) {
+      await this.logAction('CREATE_RAPID_DIRECTIVE', `DIRECTIVES/${directive.title}`, 'Success', { title: directive.title })
+    }
+    return success
+  }
+
   async getCrisisIncidents(): Promise<CrisisIncident[]> {
     return intelligenceService.getCrisisIncidents()
   }

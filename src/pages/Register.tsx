@@ -382,7 +382,7 @@ export default function Register() {
       <main className="bg-surface-warm font-body-md min-h-screen flex flex-col justify-center py-12 px-4">
         <div className="max-w-xl w-full mx-auto">
           <div className="text-center mb-10">
-            <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6" />
+            <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6"  decoding="async" />
             <h1 className="text-3xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
             <div className="w-16 h-1 bg-[var(--brand-red)] mx-auto mb-4"></div>
             <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest font-meta">Membership Registration</h2>
@@ -440,7 +440,7 @@ export default function Register() {
     <main className="bg-surface-warm font-body-md min-h-screen">
       <div className="bg-white border-b border-slate-200 pt-16 pb-12 px-4 text-center">
         <div className="max-w-6xl mx-auto">
-          <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6" />
+          <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6"  decoding="async" />
           <h1 className="text-charcoal-dark mb-2">The Base</h1>
           <div className="w-24 h-1.5 mx-auto mb-4 flex">
             <div className="flex-1 bg-[var(--brand-red)]"></div>

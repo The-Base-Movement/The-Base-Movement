@@ -154,7 +154,7 @@ export default function FieldDirectives() {
               <Card key={report.id} className="rounded-xl border-stone-200 shadow-sm overflow-hidden flex flex-col">
                 <div className="aspect-video bg-stone-100 relative group overflow-hidden">
                   {report.media_url ? (
-                    <img src={report.media_url} alt="Field verification" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={report.media_url} alt="Field verification" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"  decoding="async" loading="lazy" />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-stone-300">
                       <Camera className="w-8 h-8 mb-2 opacity-20" />
@@ -183,7 +183,7 @@ export default function FieldDirectives() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 bg-stone-100 rounded-full flex items-center justify-center overflow-hidden border border-stone-200">
-                        <img src={`https://i.pravatar.cc/100?u=${report.member_id}`} alt="Patriot" className="w-full h-full object-cover" />
+                        <img src={`https://i.pravatar.cc/100?u=${report.member_id}`} alt="Patriot" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       </div>
                       <div>
                         <p className="text-[10px] font-bold normal-case tracking-tight leading-none mb-1">Patriot #{report.member_id.slice(0, 5)}</p>

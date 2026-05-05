@@ -66,7 +66,7 @@ export default function VerifyID() {
         {/* Branding */}
         <div className="text-center space-y-2">
           <div className="inline-block p-3 bg-white shadow-xl rounded-[12px] border border-stone-100">
-            <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain" />
+            <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain"  decoding="async" loading="lazy" />
           </div>
           <h1 className="text-xl font-black font-meta uppercase tracking-tighter">The Base Movement</h1>
           <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Official Verification Portal</p>
@@ -99,7 +99,7 @@ export default function VerifyID() {
               <div className="w-24 h-24 bg-white p-1 rounded-full shadow-xl mx-auto mb-4 border-2 border-emerald-500">
                 <div className="w-full h-full rounded-full overflow-hidden bg-stone-100">
                   {member.avatar_url ? (
-                    <img src={member.avatar_url} alt={member.full_name} className="w-full h-full object-cover" />
+                    <img src={member.avatar_url} alt={member.full_name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-stone-300">
                       <User className="w-10 h-10" />

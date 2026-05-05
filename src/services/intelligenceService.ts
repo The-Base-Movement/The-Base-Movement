@@ -251,6 +251,19 @@ class IntelligenceService {
     }
   }
 
+  async createRapidResponseDirective(directive: Omit<RapidResponseDirective, 'id' | 'created_at'>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('rapid_response_directives')
+        .insert([directive])
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to create rapid response directive:', error)
+      return false
+    }
+  }
+
   async getCrisisIncidents(): Promise<CrisisIncident[]> {
     try {
       const { data, error } = await supabase

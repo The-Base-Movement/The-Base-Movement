@@ -170,7 +170,7 @@ export default function ChapterLeadHub() {
                     <div className="flex -space-x-2">
                       {[1, 2, 3].map(i => (
                         <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-stone-200 flex items-center justify-center text-[8px] font-black overflow-hidden">
-                          <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="attendee" className="w-full h-full object-cover" />
+                          <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="attendee" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                         </div>
                       ))}
                       <div className="w-7 h-7 rounded-full border-2 border-white bg-[var(--brand-black)] flex items-center justify-center text-[8px] font-black text-white">

@@ -61,13 +61,13 @@ export default function OrderSummary() {
           {/* Success Header */}
           <div className="bg-brand-green p-10 text-center text-white relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none flex items-center justify-center rotate-12 scale-150">
-              <img src="/logo.png" alt="" className="w-64 h-64 object-contain" />
+              <img src="/logo.png" alt="" className="w-64 h-64 object-contain"  decoding="async" loading="lazy" />
             </div>
             
             <div className="relative z-10">
               <div className="flex items-center justify-center gap-4 mb-6">
                 <div className="w-14 h-14 bg-white rounded-none flex items-center justify-center shadow-lg p-2">
-                  <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain" />
+                  <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain"  decoding="async" loading="lazy" />
                 </div>
                 <div className="text-left border-l border-white/20 pl-4">
                   <h2 className="font-h1 text-2xl uppercase tracking-tighter leading-none">The Base</h2>
@@ -97,7 +97,7 @@ export default function OrderSummary() {
             {/* Order Details */}
             <div className="space-y-8 mb-12 relative overflow-hidden">
               <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] rotate-[-10deg]">
-                <img src="/logo.png" alt="" className="w-80 h-80 object-contain" />
+                <img src="/logo.png" alt="" className="w-80 h-80 object-contain"  decoding="async" loading="lazy" />
               </div>
               
               <div className="relative z-10">

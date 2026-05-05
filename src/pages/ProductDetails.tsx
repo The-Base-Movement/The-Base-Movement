@@ -168,7 +168,7 @@ export default function ProductDetails() {
           <div className="aspect-square bg-stone-100 rounded-sm overflow-hidden border border-stone-200">
             <div className="w-full h-full flex items-center justify-center relative group">
               {activeImage ? (
-                <img src={activeImage} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img src={activeImage} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"  decoding="async" loading="lazy" />
               ) : (
                 <ShoppingBag className="w-32 h-32 text-stone-300" />
               )}
@@ -191,7 +191,7 @@ export default function ProductDetails() {
                     activeImage === img.url ? "border-brand-green ring-2 ring-brand-green/20" : "border-stone-200 hover:border-stone-400"
                   )}
                 >
-                  <img src={img.url} alt={img.alt_text || product.name} className="w-full h-full object-cover" />
+                  <img src={img.url} alt={img.alt_text || product.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                 </button>
               ))}
             </div>

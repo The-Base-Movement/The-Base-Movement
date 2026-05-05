@@ -432,7 +432,7 @@ export default function AdminStore() {
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center text-xl overflow-hidden">
                             {product.image?.startsWith('http') ? (
-                              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                              <img src={product.image} alt={product.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                             ) : (
                               <span className="grayscale group-hover:grayscale-0 transition-all">{product.image}</span>
                             )}
@@ -509,7 +509,7 @@ export default function AdminStore() {
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-stone-100 rounded-xl flex items-center justify-center text-2xl border border-stone-200 overflow-hidden shrink-0">
                         {product.image?.startsWith('http') ? (
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                          <img src={product.image} alt={product.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                         ) : (
                           <span>{product.image}</span>
                         )}
@@ -1034,7 +1034,7 @@ export default function AdminStore() {
                 <div className="grid grid-cols-4 gap-2">
                   {(selectedProduct?.images || []).map((url, idx) => (
                     <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border border-stone-200 bg-stone-50 group">
-                      <img src={url} alt={`Product ${idx}`} className="w-full h-full object-cover" />
+                      <img src={url} alt={`Product ${idx}`} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       <button 
                         onClick={() => removeImage(url)}
                         className="absolute top-1 right-1 w-5 h-5 bg-stone-900/80 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"

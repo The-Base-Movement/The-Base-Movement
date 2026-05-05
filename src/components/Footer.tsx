@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="max-w-[1280px] mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="md:col-span-1 space-y-6">
           <Link to="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
-            <img alt="The Base Logo" className="h-12 w-12" src="/logo.png" />
+            <img alt="The Base Logo" className="h-12 w-12" src="/logo.png"  decoding="async" loading="lazy" />
             <div className="flex flex-col">
               <h2 className="text-stone-900 leading-none mb-0">The Base</h2>
               <span className="text-[10px] font-bold text-brand-green uppercase tracking-[0.2em] mt-1">Ghana First, Jobs for the Youth!</span>

@@ -106,11 +106,10 @@ export default function Blog() {
                 <div className="grid md:grid-cols-2 gap-0 bg-white border border-slate-200 shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
                   <div className="h-64 md:h-auto overflow-hidden bg-stone-100">
                     {featured.imageUrl ? (
-                      <img
-                        src={featured.imageUrl}
+                      <img src={featured.imageUrl}
                         alt={featured.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
+                       decoding="async" loading="lazy" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200">
                         <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest">The Base</span>

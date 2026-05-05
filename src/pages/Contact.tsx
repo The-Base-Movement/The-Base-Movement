@@ -73,11 +73,10 @@ export default function Contact() {
               {/* Headquarters Image */}
               <div className="overflow-hidden border border-slate-200 shadow-sm group bg-white">
                 <div className="aspect-[16/9] overflow-hidden">
-                  <img 
-                    src="/party-headquarters.webp" 
+                  <img src="/party-headquarters.webp" 
                     alt="The Base Party Headquarters" 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+                   decoding="async" loading="lazy" />
                 </div>
                 <div className="p-5 border-t border-slate-100">
                   <p className="text-[10px] font-meta font-bold text-[var(--brand-green)] uppercase tracking-widest">Official Headquarters</p>

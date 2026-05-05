@@ -53,11 +53,10 @@ export function ProductCard({ product, onShare }: ProductProps) {
         <div className="relative aspect-square overflow-hidden bg-stone-100">
           <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
             {product.image ? (
-              <img 
-                src={product.image} 
+              <img src={product.image} 
                 alt={product.name} 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
+               decoding="async" loading="lazy" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <ShoppingBag className="w-16 h-16 text-stone-300 group-hover:scale-110 transition-transform duration-500" />

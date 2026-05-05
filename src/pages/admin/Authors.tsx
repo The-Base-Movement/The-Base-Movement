@@ -150,7 +150,7 @@ export default function AdminAuthors() {
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full bg-stone-200 overflow-hidden shrink-0 border border-stone-300">
                           {author.imageUrl ? (
-                            <img src={author.imageUrl} alt={author.name} className="w-full h-full object-cover" />
+                            <img src={author.imageUrl} alt={author.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-stone-400 bg-stone-100">
                               <PenTool className="w-5 h-5" />

@@ -263,7 +263,7 @@ export default function MemberVerification() {
                           selectedMember?.id === member.id ? 'bg-white/10' : 'bg-stone-100'
                         )}>
                           {member.photoUrl
-                            ? <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover" />
+                            ? <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                             : <span className={selectedMember?.id === member.id ? 'text-white' : 'text-stone-400'}>
                                 {member.name.split(' ').map(n => n[0]).join('')}
                               </span>
@@ -388,7 +388,7 @@ export default function MemberVerification() {
                       title={selectedMember.photoUrl ? 'View photo' : 'No photo uploaded'}
                     >
                       {selectedMember.photoUrl
-                        ? <img src={selectedMember.photoUrl} alt={selectedMember.name} className="w-full h-full object-cover" />
+                        ? <img src={selectedMember.photoUrl} alt={selectedMember.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                         : <div className="w-full h-full flex items-center justify-center text-[9px] text-stone-500 font-bold italic">
                             No photo
                           </div>
@@ -604,11 +604,10 @@ export default function MemberVerification() {
             <X className="w-8 h-8" />
           </button>
           <div className="flex flex-col items-center gap-4" onClick={e => e.stopPropagation()}>
-            <img
-              src={selectedMember.photoUrl}
+            <img src={selectedMember.photoUrl}
               alt={selectedMember.name}
               className="max-h-[80vh] max-w-full object-contain shadow-2xl"
-            />
+             decoding="async" loading="lazy" />
             <p className="text-white/60 text-[10px] font-bold tracking-wider">
               {selectedMember.name} · {selectedMember.id}
             </p>
@@ -726,7 +725,7 @@ export default function MemberVerification() {
                     </h3>
                     <div className="aspect-[3/4] bg-stone-200 overflow-hidden shadow-inner border border-stone-300 relative group rounded-xl">
                       {viewingVaultRecord.photoUrl ? (
-                        <img src={viewingVaultRecord.photoUrl} alt="Vault Record" className="w-full h-full object-cover" />
+                        <img src={viewingVaultRecord.photoUrl} alt="Vault Record" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 gap-2">
                           <EyeOff className="w-8 h-8 opacity-20" />

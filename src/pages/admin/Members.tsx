@@ -119,7 +119,7 @@ export default function MembersList() {
             </style>
           </head>
           <body>
-            <img src="${imgData}" onload="setTimeout(() => { window.print(); }, 200);" />
+            <img src="${imgData}" onload="setTimeout(() = /> { window.print(); }, 200);" />
           </body>
         </html>
       `)
@@ -556,7 +556,7 @@ export default function MembersList() {
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-stone-100 text-stone-600 flex items-center justify-center font-bold text-xs rounded-xl shadow-sm overflow-hidden shrink-0 border border-stone-200 transition-transform group-hover:scale-105">
                           {member.avatarUrl ? (
-                            <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover" />
+                            <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                           ) : (
                             member.name.split(' ').map(n => n[0]).join('')
                           )}

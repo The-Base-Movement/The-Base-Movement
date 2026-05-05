@@ -206,7 +206,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           )}>
             <Link to="/admin/dashboard" className="flex items-center gap-4 shrink-0">
               <div className="w-10 h-10 bg-white flex items-center justify-center shadow-2xl p-1.5 shrink-0">
-                <img src="/logo.png" alt="The Base Logo" className="w-full h-full object-contain" />
+                <img src="/logo.png" alt="The Base Logo" className="w-full h-full object-contain"  decoding="async" />
               </div>
               <div className={cn(
                 "transition-all duration-300 origin-left",
@@ -387,7 +387,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   </div>
                   <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-[10px] rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all overflow-hidden">
                     {avatarUrl ? (
-                      <img src={avatarUrl} alt={user?.name || ''} className="w-full h-full object-cover" />
+                      <img src={avatarUrl} alt={user?.name || ''} className="w-full h-full object-cover"  decoding="async" />
                     ) : (
                       user?.name.split(' ').map(n => n[0]).join('') || 'HQ'
                     )}

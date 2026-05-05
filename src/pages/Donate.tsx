@@ -146,7 +146,7 @@ export default function Donate() {
           <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
             <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
               <div className="hidden md:flex items-center gap-3 shrink-0 border-r border-stone-200 pr-6">
-                <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain" />
+                <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain"  decoding="async" loading="lazy" />
                 <div className="text-left text-stone-900">
                   <p className="font-meta font-bold text-sm uppercase tracking-tighter leading-none">Support the</p>
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--brand-green)]">Movement</p>
@@ -214,7 +214,7 @@ export default function Donate() {
                 ) : campaigns.map(c => (
                   <div key={c.id} className="bg-white border border-slate-200 p-6 flex flex-col group hover:shadow-lg transition-all duration-300">
                     <div className="aspect-video bg-slate-100 mb-4 overflow-hidden relative">
-                      {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />}
+                      {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />}
                       <div className="absolute top-3 right-3">
                         <span className="bg-[var(--brand-green)] text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-lg">Active</span>
                       </div>
@@ -511,7 +511,7 @@ export default function Donate() {
                         </span>
                       </div>
                       <div className="aspect-square bg-slate-50 mb-4 overflow-hidden opacity-50">
-                        {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover" />}
+                        {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />}
                       </div>
                       <h4 className="font-bold text-charcoal-dark font-meta text-sm mb-1">{c.title}</h4>
                       <p className="text-[11px] text-slate-500 mb-4 line-clamp-2">{c.description}</p>

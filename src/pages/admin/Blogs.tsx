@@ -590,7 +590,7 @@ export default function AdminBlogs() {
         <Card className="rounded-xl border-stone-200 bg-white overflow-hidden max-w-4xl mx-auto shadow-sm">
           {viewPost.imageUrl && (
             <div className="w-full h-[400px] relative">
-              <img src={viewPost.imageUrl} alt={viewPost.title} className="w-full h-full object-cover" />
+              <img src={viewPost.imageUrl} alt={viewPost.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
             </div>
           )}
           <CardContent className="p-10 md:p-16">
@@ -704,7 +704,7 @@ export default function AdminBlogs() {
             <Card key={post.id} className="rounded-xl border-stone-200 group hover:border-stone-300 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
               <div className="aspect-video relative overflow-hidden bg-stone-100">
                 {post.imageUrl ? (
-                  <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-stone-300">
                     <FileText className="w-12 h-12" />

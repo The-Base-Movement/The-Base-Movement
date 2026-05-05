@@ -37,7 +37,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
       <div className="bg-[var(--brand-red)] p-3 sm:p-4 flex justify-between items-start">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-[8px] p-1 shadow-md">
-            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain"  decoding="async" loading="lazy" />
           </div>
           <div>
             <h4 className="text-white font-black text-[10px] sm:text-xs uppercase leading-none">The Base Movement</h4>
@@ -61,7 +61,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
               onClick={onPhotoClick}
             >
               {avatarUrl ? (
-                <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
+                <img src={avatarUrl} alt={userName} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
               ) : (
                 <div className="w-full h-full bg-brand-green flex items-center justify-center text-white text-xl sm:text-2xl font-black">
                   {initials || 'M'}
@@ -143,7 +143,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
 
         {/* Subtle Watermark Logo */}
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none z-0">
-          <img src="/logo.png" alt="" className="w-40 sm:w-64 object-contain grayscale" />
+          <img src="/logo.png" alt="" className="w-40 sm:w-64 object-contain grayscale"  decoding="async" loading="lazy" />
         </div>
       </div>
 

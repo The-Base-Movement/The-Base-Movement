@@ -259,11 +259,10 @@ export default function MediaLibrary() {
                   {filteredFiles.map((url, idx) => (
                     <div key={idx} className="group relative">
                       <div className="aspect-square rounded-xl overflow-hidden bg-stone-50 border border-stone-100 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-1">
-                        <img 
-                          src={url} 
+                        <img src={url} 
                           alt="Media asset" 
                           className="w-full h-full object-cover"
-                        />
+                         decoding="async" loading="lazy" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button 
                             size="icon" 

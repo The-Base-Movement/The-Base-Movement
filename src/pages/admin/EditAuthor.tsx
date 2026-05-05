@@ -194,7 +194,7 @@ export default function AdminEditAuthor() {
                 <div className="w-32 h-32 rounded-xl bg-stone-100 border-2 border-dashed border-stone-300 flex items-center justify-center overflow-hidden shrink-0 relative group">
                   {formData.imageUrl ? (
                     <>
-                      <img src={formData.imageUrl} alt="Profile" className="w-full h-full object-cover" />
+                      <img src={formData.imageUrl} alt="Profile" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <ImageIcon className="w-6 h-6 text-white" />
                       </div>

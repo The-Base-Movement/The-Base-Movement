@@ -139,7 +139,7 @@ export default function Administrators() {
   })
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8 animate-in fade-in duration-700">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -216,7 +216,7 @@ export default function Administrators() {
                             admin.role === 'SUPER_ADMIN' ? "bg-red-600 text-white" : "bg-stone-900 text-white"
                           )}>
                             {admin.avatarUrl ? (
-                              <img src={admin.avatarUrl} alt={admin.name} className="w-full h-full object-cover" />
+                              <img src={admin.avatarUrl} alt={admin.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                             ) : (
                               admin.name.split(' ').map(n => n[0]).join('')
                             )}
@@ -344,7 +344,7 @@ export default function Administrators() {
                       admin.role === 'SUPER_ADMIN' ? "bg-red-600 text-white" : "bg-stone-900 text-white"
                     )}>
                       {admin.avatarUrl ? (
-                        <img src={admin.avatarUrl} alt={admin.name} className="w-full h-full object-cover" />
+                        <img src={admin.avatarUrl} alt={admin.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       ) : (
                         admin.name.split(' ').map(n => n[0]).join('')
                       )}

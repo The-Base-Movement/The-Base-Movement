@@ -17,11 +17,10 @@ export function BlogPostCard({ post, baseUrl, categoryColors }: BlogPostCardProp
     <article className="bg-white border border-slate-200 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full">
       <div className="h-44 overflow-hidden bg-stone-100">
         {post.imageUrl ? (
-          <img
-            src={post.imageUrl}
+          <img src={post.imageUrl}
             alt={post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          />
+           decoding="async" loading="lazy" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200">
             <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest">The Base</span>

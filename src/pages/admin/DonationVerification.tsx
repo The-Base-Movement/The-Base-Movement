@@ -363,11 +363,10 @@ export default function FinancialAudit() {
               <ImageIcon className="w-6 h-6 text-stone-200" />
             </div>
             <div className="p-8 bg-stone-50 flex items-center justify-center min-h-[400px]">
-              <img 
-                src={selectedReceipt} 
+              <img src={selectedReceipt} 
                 alt="Transaction Receipt" 
                 className="max-h-[60vh] object-contain shadow-md rounded-xl border border-stone-200"
-              />
+               decoding="async" loading="lazy" />
             </div>
             <div className="p-6 flex justify-end bg-white border-t border-stone-100">
               <Button 

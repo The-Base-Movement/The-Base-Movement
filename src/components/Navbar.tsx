@@ -58,7 +58,7 @@ export default function Navbar() {
     <header className="bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50">
       <nav className="flex justify-between items-center max-w-[1280px] mx-auto px-8 h-20">
         <div className="flex items-center gap-4">
-          <img alt="The Base Logo" className="h-10 w-10" src="/logo.png" />
+          <img alt="The Base Logo" className="h-10 w-10" src="/logo.png"  decoding="async" />
           <Link to="/" className="text-emerald-900 dark:text-emerald-50 hover:opacity-80 transition-opacity mb-0">
             <h1 className="text-xl mb-0">The Base</h1>
           </Link>
@@ -118,7 +118,7 @@ export default function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-2 focus:outline-none hover:opacity-80 transition-opacity"
               >
-                <img src={userAvatar} alt="Profile" className="w-10 h-10 rounded-full border-2 border-[var(--brand-green)] object-cover" />
+                <img src={userAvatar} alt="Profile" className="w-10 h-10 rounded-full border-2 border-[var(--brand-green)] object-cover"  decoding="async" />
               </button>
 
               {isDropdownOpen && (

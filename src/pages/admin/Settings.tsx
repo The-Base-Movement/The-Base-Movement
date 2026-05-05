@@ -436,7 +436,7 @@ export default function AdminSettings() {
                           </div>
                         )}
                         {profileForm.avatarUrl ? (
-                          <img src={profileForm.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                          <img src={profileForm.avatarUrl} alt="Avatar" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                         ) : (
                           <span className="text-stone-400 font-bold text-sm">
                             {profileForm.fullName.split(' ').map(n => n[0]).join('') || 'HQ'}
@@ -722,11 +722,10 @@ export default function AdminSettings() {
                     {mfaStep === 'qr' && mfaEnrollData && (
                       <div className="space-y-6 flex flex-col items-center">
                         <div className="p-4 bg-stone-50 rounded-2xl border border-stone-100">
-                          <img 
-                            src={mfaEnrollData?.qr} 
+                          <img src={mfaEnrollData?.qr} 
                             alt="MFA QR Code"
                             className="w-48 h-48"
-                          />
+                           decoding="async" loading="lazy" />
 
                         </div>
                         <div className="space-y-2 text-center max-w-xs">

@@ -57,11 +57,10 @@ export default function Wishlist() {
               {wishlist.map((item: Product) => (
                 <div key={item.id} className="bg-white border border-stone-200 rounded-none overflow-hidden hover:shadow-xl transition-all duration-500 group">
                   <div className="relative aspect-square bg-stone-50 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={item.image} 
+                    <img src={item.image} 
                       alt={item.name} 
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
+                     decoding="async" loading="lazy" />
                     <button 
                       onClick={() => removeFromWishlist(item.id)}
                       className="absolute top-4 right-4 w-10 h-10 bg-white shadow-md flex items-center justify-center hover:text-brand-red transition-colors"

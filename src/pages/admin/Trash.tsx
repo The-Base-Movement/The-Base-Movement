@@ -325,7 +325,7 @@ function TrashItemCard({
           {/* Visual Preview */}
           <div className="w-32 bg-stone-100 flex items-center justify-center shrink-0 border-r border-stone-100 overflow-hidden">
             {image ? (
-              <img src={image} alt="" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />
+              <img src={image} alt="" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all"  decoding="async" loading="lazy" />
             ) : (
               <div className="text-stone-300">{icon}</div>
             )}
