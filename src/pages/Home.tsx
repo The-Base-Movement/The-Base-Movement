@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, MapPin, Globe } from 'lucide-react'
 import { adminService, type BlogPost } from '@/services/adminService'
+import { usePerformance } from '@/context/PerformanceContext'
 
 function AnimatedCounter({ target, duration = 2000 }: { target: number; duration?: number }) {
   const [count, setCount] = useState(0)
@@ -48,6 +49,7 @@ function AnimatedCounter({ target, duration = 2000 }: { target: number; duration
 export default function Home() {
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 })
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([])
+  const { lowBandwidthMode } = usePerformance()
 
   useEffect(() => {
     adminService.getBlogPosts().then(data => setLatestPosts(data.slice(0, 3))).catch(() => {})
@@ -68,17 +70,23 @@ export default function Home() {
         className="relative bg-charcoal-dark text-white pt-32 pb-32 md:pt-40 md:pb-40 overflow-hidden border-b-[8px] border-warm-gold group"
         onMouseMove={handleMouseMove}
       >
-        <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-luminosity transition-opacity duration-1000 group-hover:opacity-20" style={{ backgroundImage: "url('/hero-bg.png')" }}></div>
-        
-        {/* Color Spotlight */}
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
-          style={{ 
-            backgroundImage: "url('/hero-bg.png')",
-            WebkitMaskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
-            maskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`
-          }}
-        ></div>
+        {!lowBandwidthMode ? (
+          <>
+            <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-luminosity transition-opacity duration-1000 group-hover:opacity-20" style={{ backgroundImage: "url('/hero-bg.png')" }}></div>
+            
+            {/* Color Spotlight */}
+            <div 
+              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
+              style={{ 
+                backgroundImage: "url('/hero-bg.png')",
+                WebkitMaskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
+                maskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`
+              }}
+            ></div>
+          </>
+        ) : (
+          <div className="absolute inset-0 z-0 bg-gradient-to-br from-charcoal-dark to-slate-900 opacity-50"></div>
+        )}
 
         <div className="absolute inset-0 z-0 bg-gradient-to-t from-charcoal-dark via-charcoal-dark/60 to-transparent"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
@@ -99,7 +107,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex-1 flex justify-center md:justify-end opacity-90 relative">
-            <img src="/logo.png" alt="The Base" className="w-64 md:w-96 drop-shadow-2xl transition-all duration-700" />
+            <img src="/logo.png" alt="The Base" className="w-64 md:w-96 drop-shadow-2xl transition-all duration-700"  decoding="async" />
           </div>
         </div>
       </section>
@@ -215,11 +223,10 @@ export default function Home() {
                 <Link key={post.id} to={`/blog/${post.slug}`} className="group">
                   <div className="aspect-[16/10] overflow-hidden mb-6 border border-slate-200 bg-stone-100">
                     {post.imageUrl ? (
-                      <img
-                        src={post.imageUrl}
+                      <img src={post.imageUrl}
                         alt={post.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
+                       decoding="async" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200">
                         <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest">The Base</span>
