@@ -27,3 +27,10 @@ This document tracks the remaining tasks required to transition the platform fro
 - [x] **Consolidate Root Docs**: Sync artifacts from `brain/` to project `docs/` folder.
 - [x] **Legacy Cleanup**: Remove redundant or outdated `.md` files in subdirectories to prevent "Roadmap Drift".
 - [x] **Master Update Protocol**: Enforce all future updates to occur in the root `docs/` master files.
+
+## ⚡ Performance & Brand Alignment (Phase 16)
+- [x] **TanStack Query Caching**: Replaced manual `useEffect` fetches with `@tanstack/react-query` for robust data caching and background sync.
+- [x] **Asset Optimization**: Implemented global native lazy loading and async decoding for all platform images.
+- [x] **Low-Bandwidth Mode**: Added a user-toggleable setting to skip heavy assets and hero backgrounds for slow connections.
+- [x] **Typography Unification**: Unified the Admin panel typography with the frontend brand fonts (Public Sans & Work Sans).
+- [x] **Performance Audit**: Verified First Contentful Paint (FCP) < 1.0s and main bundle stabilization at ~575KB.

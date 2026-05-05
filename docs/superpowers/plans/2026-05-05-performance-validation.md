@@ -15,7 +15,7 @@
 **Files:**
 - Modify: `vite.config.ts`
 
-- [ ] **Step 1: Update vite.config.ts to include visualizer**
+- [x] **Step 1: Update vite.config.ts to include visualizer**
 
 ```typescript
 import { defineConfig } from 'vite'
@@ -41,11 +41,11 @@ export default defineConfig({
 })
 ```
 
-- [ ] **Step 2: Run build to generate stats**
+- [x] **Step 2: Run build to generate stats**
 Run: `npm run build`
 Expected: `stats.html` created in the project root.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 ```bash
 git add vite.config.ts
 git commit -m "test: setup bundle visualizer"
@@ -59,7 +59,7 @@ git commit -m "test: setup bundle visualizer"
 - Create: `src/components/PerformanceAudit.tsx`
 - Modify: `src/App.tsx`
 
-- [ ] **Step 1: Create PerformanceAudit.tsx**
+- [x] **Step 1: Create PerformanceAudit.tsx**
 
 ```tsx
 import { useEffect, useState } from 'react'
@@ -118,7 +118,7 @@ export default function PerformanceAudit() {
 }
 ```
 
-- [ ] **Step 2: Inject into App.tsx**
+- [x] **Step 2: Inject into App.tsx**
 
 ```tsx
 // ... imports
@@ -139,7 +139,7 @@ export default function App() {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 ```bash
 git add src/components/PerformanceAudit.tsx src/App.tsx
 git commit -m "test: add runtime performance audit component"
@@ -149,14 +149,14 @@ git commit -m "test: add runtime performance audit component"
 
 ### Task 3: Performance Validation Execution
 
-- [ ] **Step 1: Execute manual navigation**
+- [x] **Step 1: Execute manual navigation**
 Navigate through: Home -> Blog -> Dashboard -> Store.
 Observe the Performance Audit overlay.
 
-- [ ] **Step 2: Document findings**
+- [x] **Step 2: Document findings**
 Create `docs/superpowers/reports/2026-05-05-performance-audit-results.md`.
 
-- [ ] **Step 3: Commit report**
+- [x] **Step 3: Commit report**
 ```bash
 git add docs/superpowers/reports/2026-05-05-performance-audit-results.md
 git commit -m "docs: performance validation results"

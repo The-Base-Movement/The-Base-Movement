@@ -16,10 +16,10 @@
 *   Modify: `package.json`
 *   Modify: `src/main.tsx`
 
-- [ ] **Step 1: Install TanStack Query**
+- [x] **Step 1: Install TanStack Query**
     Run: `npm install @tanstack/react-query`
 
-- [ ] **Step 2: Initialize QueryClient**
+- [x] **Step 2: Initialize QueryClient**
     Modify `src/main.tsx` to include the `QueryClientProvider`.
 
 ```tsx
@@ -57,7 +57,7 @@ createRoot(document.getElementById('root')!).render(
 )
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
     ```bash
     git add package.json src/main.tsx
     git commit -m "perf: setup TanStack Query client"
@@ -70,7 +70,7 @@ createRoot(document.getElementById('root')!).render(
 **Files:**
 *   Modify: `src/context/ChaptersContext.tsx`
 
-- [ ] **Step 1: Replace manual state with useQuery**
+- [x] **Step 1: Replace manual state with useQuery**
     Modify `src/context/ChaptersContext.tsx` to use `useQuery`.
 
 ```tsx
@@ -137,7 +137,7 @@ export function useChapters() {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
     ```bash
     git add src/context/ChaptersContext.tsx
     git commit -m "perf: refactor ChaptersContext to use TanStack Query"
@@ -150,10 +150,10 @@ export function useChapters() {
 **Files:**
 *   Batch Modify: All files containing `<img>` tags.
 
-- [ ] **Step 1: Apply native lazy loading to all images**
+- [x] **Step 1: Apply native lazy loading to all images**
     Search for `<img` and add `loading="lazy" decoding="async"`.
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
     ```bash
     git commit -m "perf: apply native lazy loading to all images"
     ```
@@ -166,7 +166,7 @@ export function useChapters() {
 *   Create: `src/context/PerformanceContext.tsx`
 *   Modify: `src/App.tsx`
 
-- [ ] **Step 1: Create PerformanceContext**
+- [x] **Step 1: Create PerformanceContext**
     Create `src/context/PerformanceContext.tsx`.
 
 ```tsx
@@ -202,10 +202,10 @@ export const usePerformance = () => {
 }
 ```
 
-- [ ] **Step 2: Update App.tsx to include PerformanceProvider**
+- [x] **Step 2: Update App.tsx to include PerformanceProvider**
     Wrap the app in `PerformanceProvider`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
     ```bash
     git add src/context/PerformanceContext.tsx src/App.tsx
     git commit -m "feat: add PerformanceContext for low-bandwidth mode"
@@ -219,13 +219,13 @@ export const usePerformance = () => {
 *   Modify: `src/pages/Home.tsx`
 *   Modify: `src/pages/Dashboard.tsx`
 
-- [ ] **Step 1: Optimize Home Hero**
+- [x] **Step 1: Optimize Home Hero**
     Use `usePerformance` to swap the heavy background image for a solid brand-green color or a lightweight gradient if `lowBandwidthMode` is active.
 
-- [ ] **Step 2: Optimize Dashboard Banners**
+- [x] **Step 2: Optimize Dashboard Banners**
     Apply similar logic to `src/pages/Dashboard.tsx`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
     ```bash
     git commit -m "perf: implement conditional rendering for low-bandwidth mode"
     ```
