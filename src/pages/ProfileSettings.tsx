@@ -5,11 +5,14 @@ import jsPDF from 'jspdf'
 import MembershipCard from '../components/MembershipCard'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
+import { usePerformance } from '@/context/PerformanceContext'
+import { Switch } from '@/components/ui/switch'
 
 // Master data now fetched dynamically from Supabase
 
 
 export default function ProfileSettings() {
+  const { lowBandwidthMode, setLowBandwidthMode } = usePerformance()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     () => localStorage.getItem('userAvatar')
   )
@@ -262,7 +265,7 @@ export default function ProfileSettings() {
             </style>
           </head>
           <body>
-            <img src="${imgData}" onload="setTimeout(() => { window.print(); }, 200);" />
+            <img src="${imgData}" onload="setTimeout(() = /> { window.print(); }, 200);" />
           </body>
         </html>
       `)
@@ -624,6 +627,33 @@ export default function ProfileSettings() {
                     onChange={e => handleChange('bio', e.target.value)}
                     placeholder="A brief statement about your commitment to the Ghana First movement..."
                     className="w-full border-2 border-slate-50 bg-slate-50/50 p-6 text-sm text-charcoal-dark font-medium focus:outline-none focus:border-[var(--brand-green)] transition-all resize-none leading-relaxed placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="bg-white border border-slate-200 p-6 md:p-10 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 border-b border-slate-100 pb-6 gap-2">
+                <h3 className="font-meta font-bold text-xs sm:text-sm text-charcoal-dark uppercase tracking-wider flex items-center gap-3">
+                  <span className="w-6 h-6 bg-slate-100 flex items-center justify-center text-[14px] shrink-0">02</span>
+                  Performance Preferences
+                </h3>
+                <p className="text-[10px] text-slate-400 font-meta uppercase tracking-widest italic">App Experience</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                      Low-Bandwidth Mode
+                    </label>
+                    <p className="text-xs text-slate-500 font-body-md max-w-md">
+                      Reduces data usage by hiding heavy background images and optimizing assets. Recommended for slow connections.
+                    </p>
+                  </div>
+                  <Switch 
+                    checked={lowBandwidthMode} 
+                    onCheckedChange={setLowBandwidthMode}
                   />
                 </div>
               </div>
