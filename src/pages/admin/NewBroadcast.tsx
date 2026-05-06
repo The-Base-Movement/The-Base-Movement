@@ -341,7 +341,7 @@ export default function NewBroadcast() {
                     'bold italic forecolor | alignleft aligncenter ' +
                     'alignright alignjustify | bullist numlist outdent indent | ' +
                     'removeformat | link | help',
-                  content_style: 'body { font-family:Inter,Helvetica,Arial,sans-serif; font-size:14px; color: hsl(var(--on-surface)); background-color: transparent; } p { margin-bottom: 1em; }',
+                  content_style: 'body { font-family: "Public Sans", sans-serif; font-size:14px; color: hsl(var(--on-surface)); background-color: transparent; } p { margin-bottom: 1em; }',
                   skin: 'oxide',
                   content_css: 'default',
                   placeholder: 'Compose your administrative directive with rich formatting...',
