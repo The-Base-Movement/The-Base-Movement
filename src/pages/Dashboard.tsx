@@ -208,7 +208,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">Past 24h</span>
             </div>
-            <p className="text-[9px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and regional rollout began.</p>
+            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and regional rollout began.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -219,7 +219,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{fieldActions.length}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">In Area</span>
             </div>
-            <p className="text-[9px] text-on-surface/30 mt-4 font-medium italic">No community actions detected yet.</p>
+            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">No community actions detected yet.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -230,7 +230,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{totalPoints}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">Earned</span>
             </div>
-            <p className="text-[9px] text-on-surface/30 mt-4 font-medium italic">Participate to earn your first points.</p>
+            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">Participate to earn your first points.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -241,7 +241,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{achievements.length}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">Unlocked</span>
             </div>
-            <p className="text-[9px] text-on-surface/30 mt-4 font-medium italic">Complete actions to earn badges.</p>
+            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">Complete actions to earn badges.</p>
           </div>
         </div>
       </section>
