@@ -31,9 +31,15 @@ export default function PollsManagement() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
+  
+  const [availableRegions, setAvailableRegions] = useState<{ id: string, name: string }[]>([])
+  const [availableCountries, setAvailableCountries] = useState<{ id: string, name: string }[]>([])
+
   const [newPoll, setNewPoll] = useState({
     question: '',
+    targetBase: 'GHANA', // GHANA or DIASPORA
     region: 'National',
+    country: 'International',
     status: 'Active',
     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     options: ['', '']
@@ -42,23 +48,27 @@ export default function PollsManagement() {
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false)
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true)
     try {
-      const [pollData, statData] = await Promise.all([
+      const [pollData, statData, regionsData, countriesData] = await Promise.all([
         adminService.getPolls(),
-        adminService.getPollStats()
+        adminService.getPollStats(),
+        adminService.getGhanaRegions(),
+        adminService.getCountries()
       ])
       setPolls(pollData)
       setStats(statData)
+      setAvailableRegions(regionsData)
+      setAvailableCountries(countriesData)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [fetchData])
 
   const handlePollAction = (action: string, pollTitle: string) => {
     adminService.logAction(action, `POLLS/${pollTitle}`, 'Success')
@@ -74,8 +84,10 @@ export default function PollsManagement() {
 
     setIsSubmitting(true)
     try {
+      const targetRegion = newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country
       const success = await adminService.createPoll({
         ...newPoll,
+        region: targetRegion,
         options: newPoll.options.filter(o => o.trim())
       })
       if (success) {
@@ -83,7 +95,9 @@ export default function PollsManagement() {
         setShowCreateModal(false)
         setNewPoll({
           question: '',
+          targetBase: 'GHANA',
           region: 'National',
+          country: 'International',
           status: 'Active',
           endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           options: ['', '']
@@ -436,11 +450,11 @@ export default function PollsManagement() {
       {/* Create Poll Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-lg rounded-sm border-border/60 bg-white shadow-2xl animate-in zoom-in-95 duration-300">
+          <Card className="w-full max-w-2xl rounded-sm border-border/60 bg-white shadow-2xl animate-in zoom-in-95 duration-300">
             <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
                 <Plus className="w-4 h-4 text-destructive" />
-                New poll campaign
+                Establish Campaign
               </CardTitle>
               <Button 
                 variant="ghost" 
@@ -453,92 +467,135 @@ export default function PollsManagement() {
             </CardHeader>
             <form onSubmit={handleCreatePoll}>
               <CardContent className="p-6 space-y-6">
-                {/* Question */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80">Campaign question / topic</label>
-                  <Input 
-                    required
-                    placeholder="e.g. Should we increase regional chapter funding?" 
-                    value={newPoll.question}
-                    onChange={e => setNewPoll({...newPoll, question: e.target.value})}
-                    className="rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
-                  />
-                </div>
-
-                {/* Options */}
-                <div className="space-y-3">
-                  <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 flex justify-between">
-                    Poll Options
-                    <span className="text-muted-foreground/40">Min 2 Required</span>
-                  </label>
-                  {newPoll.options.map((opt, idx) => (
-                    <div key={idx} className="flex gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left Column: Core Details */}
+                  <div className="space-y-6">
+                    {/* Question */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Campaign question / topic</label>
                       <Input 
-                        placeholder={`Option ${idx + 1}`} 
-                        value={opt}
-                        onChange={e => {
-                          const updated = [...newPoll.options]
-                          updated[idx] = e.target.value
-                          setNewPoll({...newPoll, options: updated})
-                        }}
+                        required
+                        placeholder="e.g. Should we increase regional chapter funding?" 
+                        value={newPoll.question}
+                        onChange={e => setNewPoll({...newPoll, question: e.target.value})}
                         className="rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
                       />
-                      {newPoll.options.length > 2 && (
-                        <Button 
-                          type="button"
-                          variant="ghost" 
-                          size="icon" 
-                          className="shrink-0 text-muted-foreground/40 hover:text-red-500"
-                          onClick={() => {
-                            const updated = newPoll.options.filter((_, i) => i !== idx)
-                            setNewPoll({...newPoll, options: updated})
-                          }}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
                     </div>
-                  ))}
-                  <Button 
-                    type="button"
-                    variant="outline" 
-                    className="h-11 text-[10px] font-black uppercase tracking-[0.3em] text-stone-500 hover:text-on-surface hover:bg-stone-50 border-stone-200 rounded-sm px-8 transition-all shadow-sm active:scale-95"
-                    onClick={() => setNewPoll({...newPoll, options: [...newPoll.options, '']})}
-                  >
-                    <Plus className="w-4 h-4 mr-2" /> Add Option
-                  </Button>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Region */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80">Target region</label>
-                    <select
-                      value={newPoll.region}
-                      onChange={e => setNewPoll({...newPoll, region: e.target.value})}
-                      className="w-full h-10 px-3 text-xs border border-border/60 rounded-lg focus:ring-on-surface/20 focus:border-on-surface focus:outline-none"
-                    >
-                      <option>National</option>
-                      <option>Greater Accra</option>
-                      <option>Ashanti</option>
-                      <option>Western</option>
-                      <option>Eastern</option>
-                      <option>Central</option>
-                    </select>
+                    {/* Target Base & Location */}
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Target Audience Base</label>
+                        <select
+                          value={newPoll.targetBase}
+                          onChange={e => {
+                            const val = e.target.value
+                            setNewPoll({
+                              ...newPoll, 
+                              targetBase: val,
+                              region: val === 'GHANA' ? 'National' : 'International'
+                            })
+                          }}
+                          className="w-full h-10 px-3 text-xs border border-border/60 rounded-lg focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
+                        >
+                          <option value="GHANA">Ghana Local Base</option>
+                          <option value="DIASPORA">Diaspora Global Base</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">
+                          {newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}
+                        </label>
+                        <select
+                          value={newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country}
+                          onChange={e => {
+                            if (newPoll.targetBase === 'GHANA') {
+                              setNewPoll({...newPoll, region: e.target.value})
+                            } else {
+                              setNewPoll({...newPoll, country: e.target.value})
+                            }
+                          }}
+                          className="w-full h-10 px-3 text-xs border border-border/60 rounded-lg focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
+                        >
+                          {newPoll.targetBase === 'GHANA' ? (
+                            <>
+                              <option value="National">All Regions (National)</option>
+                              {availableRegions.map(r => (
+                                <option key={r.id} value={r.name}>{r.name}</option>
+                              ))}
+                            </>
+                          ) : (
+                            <>
+                              <option value="International">All Countries (Global)</option>
+                              {availableCountries.map(c => (
+                                <option key={c.id} value={c.name}>{c.name}</option>
+                              ))}
+                            </>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* End Date */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Expiration date</label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80 pointer-events-none" />
+                        <Input 
+                          type="date"
+                          value={newPoll.endDate}
+                          onChange={e => setNewPoll({...newPoll, endDate: e.target.value})}
+                          className="pl-9 h-10 text-xs rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  {/* End Date */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80">Expiration date</label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80 pointer-events-none" />
-                      <Input 
-                        type="date"
-                        value={newPoll.endDate}
-                        onChange={e => setNewPoll({...newPoll, endDate: e.target.value})}
-                        className="pl-9 h-10 text-xs rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
-                      />
+                  {/* Right Column: Poll Options */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 flex justify-between uppercase">
+                      Engagement Options
+                      <span className="text-muted-foreground/40 normal-case">Min 2 Required</span>
+                    </label>
+                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                      {newPoll.options.map((opt, idx) => (
+                        <div key={idx} className="flex gap-2">
+                          <Input 
+                            placeholder={`Option ${idx + 1}`} 
+                            value={opt}
+                            onChange={e => {
+                              const updated = [...newPoll.options]
+                              updated[idx] = e.target.value
+                              setNewPoll({...newPoll, options: updated})
+                            }}
+                            className="rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
+                          />
+                          {newPoll.options.length > 2 && (
+                            <Button 
+                              type="button"
+                              variant="ghost" 
+                              size="icon" 
+                              className="shrink-0 text-muted-foreground/40 hover:text-red-500"
+                              onClick={() => {
+                                const updated = newPoll.options.filter((_, i) => i !== idx)
+                                setNewPoll({...newPoll, options: updated})
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
                     </div>
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      className="w-full h-11 text-[10px] font-black uppercase tracking-[0.3em] text-stone-500 hover:text-on-surface hover:bg-stone-50 border-stone-200 rounded-sm transition-all shadow-sm active:scale-95"
+                      onClick={() => setNewPoll({...newPoll, options: [...newPoll.options, '']})}
+                    >
+                      <Plus className="w-4 h-4 mr-2" /> Add Selection
+                    </Button>
                   </div>
                 </div>
               </CardContent>

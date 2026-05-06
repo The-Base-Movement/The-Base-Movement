@@ -393,6 +393,14 @@ class AdminService {
     return pollService.getPollStats()
   }
 
+  async getGhanaRegions() {
+    return pollService.getGhanaRegions()
+  }
+
+  async getCountries() {
+    return pollService.getCountries()
+  }
+
   // --- Store Operations ---
 
   async getInventory(): Promise<InventoryItem[]> {

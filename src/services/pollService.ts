@@ -157,6 +157,33 @@ class PollService {
       nationalSentimentScore: Math.round((avgScore + 1) * 50) // Scale -1.0..1.0 to 0..100
     }
   }
+
+  async getGhanaRegions(): Promise<{ id: string, name: string }[]> {
+    const { data, error } = await supabase
+      .from('ghana_regions')
+      .select('id, name')
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch Ghana regions:', error)
+      return []
+    }
+    return data || []
+  }
+
+  async getCountries(): Promise<{ id: string, name: string }[]> {
+    const { data, error } = await supabase
+      .from('countries')
+      .select('id, name')
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch countries:', error)
+      return []
+    }
+    return data || []
+  }
 }
+
 
 export const pollService = PollService.getInstance()
