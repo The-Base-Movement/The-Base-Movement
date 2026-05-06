@@ -41,7 +41,8 @@ export function ProductCard({ product, onShare }: ProductProps) {
   }
 
   return (
-    <motion.div
+    <motion.article
+      aria-labelledby={`product-name-${product.id}`}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -126,7 +127,10 @@ export function ProductCard({ product, onShare }: ProductProps) {
         <CardContent className="p-6 flex flex-col flex-1">
           <div className="flex justify-between items-start mb-2">
             <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
-              <h5 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors line-clamp-1 lowercase first-letter:uppercase mb-0 font-bold">
+              <h5 
+                id={`product-name-${product.id}`}
+                className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors line-clamp-1 lowercase first-letter:uppercase mb-0 font-bold"
+              >
                 {product.name}
               </h5>
             </Link>
@@ -153,6 +157,6 @@ export function ProductCard({ product, onShare }: ProductProps) {
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </motion.article>
   )
 }

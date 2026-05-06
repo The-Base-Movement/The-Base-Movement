@@ -14,7 +14,10 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
     : ''
 
   return (
-    <article className="bg-white border border-slate-200 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full">
+    <article 
+      aria-labelledby={`blog-post-title-${post.id}`}
+      className="bg-white border border-slate-200 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full"
+    >
       <div className="h-44 overflow-hidden bg-stone-100 relative">
         {post.imageUrl ? (
           <img src={post.imageUrl}
@@ -44,7 +47,10 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           <span className="text-[11px] text-slate-400 font-medium tracking-widest">{formattedDate}</span>
         </div>
         <Link to={`${baseUrl}/${post.slug}`}>
-          <h3 className="text-sm font-bold text-charcoal-dark tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
+          <h3 
+            id={`blog-post-title-${post.id}`}
+            className="text-sm font-bold text-charcoal-dark tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors"
+          >
             {post.title}
           </h3>
         </Link>

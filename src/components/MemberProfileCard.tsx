@@ -9,7 +9,8 @@ interface MemberProfileCardProps {
 
 export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCardProps) {
   return (
-    <div 
+    <article 
+      aria-labelledby={`member-name-${member.id}`}
       onClick={() => setSelectedMember(member)}
       className="group relative p-[1px] transition-all duration-500 hover:scale-[1.02] cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-primary/10"
     >
@@ -24,7 +25,10 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
                 <User className="w-7 h-7 text-primary group-hover:text-white transition-colors duration-500" />
               </div>
               <div className="min-w-0">
-                <h3 className="text-charcoal-dark truncate text-base font-bold uppercase tracking-tight">
+                <h3 
+                  id={`member-name-${member.id}`}
+                  className="text-charcoal-dark truncate text-base font-bold uppercase tracking-tight"
+                >
                   {member.name}
                 </h3>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 mb-0">{member.profession}</p>
@@ -57,6 +61,6 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
           </div>
         </CardContent>
       </Card>
-    </div>
+    </article>
   )
 }
