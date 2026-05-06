@@ -123,6 +123,7 @@ export default function Blog() {
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-meta font-bold uppercase tracking-wider ${categoryColors[featured.category] ?? 'bg-stone-100 text-stone-500'}`}>
                         {featured.category}
                       </span>
+                      <span className="mx-2 text-stone-300 opacity-50">|</span>
                       <span className="text-xs text-slate-400 font-meta font-medium">
                         {featured.publishedAt ? new Date(featured.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                       </span>
@@ -139,7 +140,7 @@ export default function Blog() {
                       </div>
                       <Link
                         to={`${baseUrl}/${featured.slug}`}
-                        className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--brand-green)] tracking-widest hover:underline"
+                        className="flex items-center gap-2 text-[10px] font-bold text-[var(--brand-green)] tracking-widest hover:underline normal-case"
                       >
                         Read article
                         <ArrowRight className="w-4 h-4" />

@@ -34,6 +34,7 @@ export function BlogPostCard({ post, baseUrl, categoryColors }: BlogPostCardProp
           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${categoryColors[post.category] ?? 'bg-stone-100 text-stone-500'}`}>
             {post.category}
           </span>
+          <span className="text-stone-300 opacity-50 text-xs">|</span>
           <span className="text-[10px] text-slate-400 font-medium tracking-widest">{formattedDate}</span>
         </div>
         <Link to={`${baseUrl}/${post.slug}`}>
@@ -48,7 +49,7 @@ export function BlogPostCard({ post, baseUrl, categoryColors }: BlogPostCardProp
           </span>
           <Link
             to={`${baseUrl}/${post.slug}`}
-            className="text-[9px] font-bold text-brand-green tracking-widest hover:underline flex items-center gap-1"
+            className="text-[9px] font-bold text-brand-green tracking-widest hover:underline flex items-center gap-1 normal-case"
           >
             Read article
             <ArrowRight className="w-3 h-3" />
