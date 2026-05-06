@@ -116,6 +116,7 @@ module.exports = {
         "stack-sm": "8px"
       },
       fontFamily: {
+        "sans": ["Public Sans", "Work Sans", "ui-sans-serif", "system-ui", "sans-serif"],
         "body-md": ["Work Sans"],
         "meta": ["Public Sans"],
         "h3": ["Public Sans"],

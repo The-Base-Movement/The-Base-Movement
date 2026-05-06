@@ -301,7 +301,7 @@ export default function LeadershipHub() {
                 <CardTitle className="text-[10px] font-bold normal-case text-muted-foreground/40">Applicant vision statement</CardTitle>
               </CardHeader>
               <CardContent className="p-8 pt-0">
-                <blockquote className="border-l-2 border-accent pl-4 py-1 italic text-on-surface/80 text-sm leading-relaxed mb-6 font-serif">
+                <blockquote className="border-l-2 border-accent pl-4 py-1 italic text-on-surface/80 text-sm leading-relaxed mb-6 font-body-md">
                   "{app.vision_statement}"
                 </blockquote>
                 <div className="bg-white border border-border/40 p-4 rounded-lg">

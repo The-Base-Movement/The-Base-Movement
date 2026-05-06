@@ -213,13 +213,13 @@ export default function DashboardLayout() {
             <Button 
               variant="primary"
               onClick={() => setIsShareModalOpen(true)}
-              className="w-full h-14 uppercase tracking-[0.2em] text-tiny shadow-2xl shadow-primary/20"
+              className="w-full h-14 text-tiny font-bold tracking-tight shadow-2xl shadow-primary/20"
             >
               Invite & Share
             </Button>
             <div className="mt-8 space-y-4 pl-2">
               <Link 
-                className={`flex items-center transition-all font-black text-tiny uppercase tracking-[0.2em] ${isActive('/dashboard/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`} 
+                className={`flex items-center transition-all font-bold text-tiny tracking-tight ${isActive('/dashboard/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`} 
                 to="/dashboard/contact"
               >
                 <span className="material-symbols-outlined text-lg mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>help</span>
@@ -230,7 +230,7 @@ export default function DashboardLayout() {
             {/* Back to Landing Page */}
             <Link
               to="/"
-              className="mt-8 flex items-center gap-3 w-full h-12 px-4 rounded-sm border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-black text-tiny uppercase tracking-widest group bg-white/50"
+              className="mt-8 flex items-center gap-3 w-full h-12 px-4 rounded-sm border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-bold text-tiny tracking-tight group bg-white/50"
             >
               <span className="material-symbols-outlined text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
               Back to Site
@@ -255,14 +255,18 @@ export default function DashboardLayout() {
                 <span className="material-symbols-outlined text-[24px]">menu</span>
               </button>
               <div className="flex items-center gap-2">
-                <Link to="/dashboard" className="flex items-center gap-2">
+                <Link to="/dashboard" className="flex items-center gap-2 shrink-0">
                   <img src={settings.logo_url} alt="The Base" className="h-6 w-6 object-contain"  decoding="async" />
-                  <span className="text-primary font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
-                <div className="hidden sm:flex items-center gap-2 text-tiny text-muted-foreground/40 tracking-[0.2em] uppercase font-black">
-                  <span className="text-primary">The Base</span>
-                  <span className="text-muted-foreground/20">/</span>
-                  <span className="text-on-surface">{getPageTitle()}</span>
+                <div className="hidden sm:flex items-center gap-3 text-on-surface/40 font-meta font-bold text-[10px] tracking-tight border-l border-border/20 pl-4 ml-2">
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-none overflow-hidden flex items-center justify-center">
+                      <img src="/logo-icon.png" alt="" className="w-full h-full object-contain grayscale opacity-50" />
+                    </div>
+                    The Base
+                  </span>
+                  <span className="text-border/40 font-normal">/</span>
+                  <span className="text-primary font-bold tracking-tight">{getPageTitle()}</span>
                 </div>
               </div>
               <h1 className="text-xl font-bold tracking-tight text-on-surface m-0 hidden lg:block">
@@ -274,7 +278,7 @@ export default function DashboardLayout() {
             <div className="flex items-center gap-4">
 
               {/* Search */}
-              <div className="relative hidden md:block">
+              <div className="relative hidden lg:block">
                 <div className="relative group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface/30 group-focus-within:text-primary transition-colors" />
                     <input 
@@ -284,6 +288,9 @@ export default function DashboardLayout() {
                     />
                   </div>
               </div>
+
+              {/* Vertical Separator */}
+              <div className="h-6 w-px bg-border/20 mx-2 hidden lg:block"></div>
 
               {/* Notification Bell */}
               <button className="relative p-2.5 rounded-sm hover:bg-muted/10 transition-all group">
@@ -300,7 +307,7 @@ export default function DashboardLayout() {
               </button>
 
               {/* Divider */}
-              <div className="h-7 w-px bg-border/20 mx-1"></div>
+              <div className="h-6 w-px bg-border/20 mx-8"></div>
 
               {/* User Avatar + Name */}
               <button className="flex items-center gap-4 group">
