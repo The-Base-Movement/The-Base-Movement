@@ -542,9 +542,9 @@ export default function Dashboard() {
 
             <div className="w-full lg:w-1/2 min-w-[320px] relative z-10 bg-white/5 p-4 border border-white/10 backdrop-blur-sm rounded-sm">
               <p className="text-white/40 text-[8px] font-black uppercase tracking-[0.2em] mb-3">Strategic Referral Link</p>
-              <div className="relative mb-4">
+              <div className="relative mb-4 flex items-center border-b border-white/20 pb-1">
                 <input 
-                  className="w-full bg-white/5 border border-white/20 text-white font-medium py-2 pl-3 pr-10 rounded-none focus:ring-1 focus:ring-accent focus:outline-none placeholder:text-white/20 text-xs tracking-tight" 
+                  className="w-full bg-transparent border-none text-white font-bold py-2 pl-0 pr-10 rounded-none focus:ring-0 focus:outline-none placeholder:text-white/20 text-sm tracking-tight" 
                   readOnly 
                   type="text" 
                   value={`${window.location.origin}/join?ref=${member?.registration_number || 'PATRIOT'}`} 
@@ -553,11 +553,11 @@ export default function Dashboard() {
                   onClick={() => {
                     const refLink = `${window.location.origin}/join?ref=${member?.registration_number || 'PATRIOT'}`
                     navigator.clipboard.writeText(refLink)
-                    toast.success('Registration link copied to tactical clipboard.')
+                    toast.success('Registration link copied to clipboard.')
                   }}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 text-accent hover:text-white transition-colors bg-white/10 rounded-none border border-white/10"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5 text-white hover:text-accent transition-colors bg-transparent border-none"
                 >
-                  <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>content_copy</span>
+                  <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>content_copy</span>
                 </button>
               </div>
               <Button 
