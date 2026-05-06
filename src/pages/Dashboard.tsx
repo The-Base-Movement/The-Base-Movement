@@ -208,7 +208,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">Past 24h</span>
             </div>
-            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and regional rollout completed.</p>
+            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">Regional systems are now stable and the national rollout is underway.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
