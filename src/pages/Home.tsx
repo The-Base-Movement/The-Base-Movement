@@ -194,18 +194,22 @@ export default function Home() {
       {/* Stats Section - Stark Typography */}
       <section className="py-24 md:py-32 bg-background border-y border-border/60">
         <div className="max-w-[1280px] mx-auto px-8">
-          <div className="grid md:grid-cols-2 gap-16 md:gap-8 items-center">
+          <dl className="grid md:grid-cols-2 gap-16 md:gap-8 items-center">
             <div className="pl-8 relative">
               <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
-              <AnimatedCounter target={355482} />
-              <p className="text-sm text-on-surface/40 mt-4 tracking-[0.2em] font-black uppercase">Citizens Joined</p>
+              <dd className="m-0">
+                <AnimatedCounter target={355482} />
+              </dd>
+              <dt className="text-sm text-on-surface/40 mt-4 tracking-[0.2em] font-black uppercase">Citizens Joined</dt>
             </div>
             <div className="pl-8 relative">
               <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
-              <AnimatedCounter target={2} />
-              <p className="text-sm text-on-surface/40 mt-4 tracking-[0.2em] font-black uppercase">Global Platforms</p>
+              <dd className="m-0">
+                <AnimatedCounter target={2} />
+              </dd>
+              <dt className="text-sm text-on-surface/40 mt-4 tracking-[0.2em] font-black uppercase">Global Platforms</dt>
             </div>
-          </div>
+          </dl>
         </div>
       </section>
 

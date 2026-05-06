@@ -49,8 +49,8 @@ function SkeletonCard() {
   return (
     <Card className="rounded-sm border-border/60 shadow-none overflow-hidden bg-white">
       <CardContent className="p-5 space-y-3">
-        <div className="w-1/4 h-2 bg-muted/10 animate-pulse rounded-full" />
-        <div className="w-1/2 h-6 bg-muted/10 animate-pulse rounded-lg" />
+        <dt className="w-1/4 h-2 bg-muted/10 animate-pulse rounded-full" />
+        <dd className="m-0 w-1/2 h-6 bg-muted/10 animate-pulse rounded-lg" />
       </CardContent>
     </Card>
   )
@@ -63,16 +63,16 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
       <CardContent className="p-4 sm:p-5">
         <div className="flex justify-between items-start gap-4">
           <div className="space-y-1.5 flex-1 min-w-0">
-            <p className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/80 normal-case truncate">{title}</p>
-            <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
-              <h3 className="text-xl sm:text-2xl font-bold text-on-surface tabular-nums truncate">{value}</h3>
+            <dt className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/80 normal-case truncate">{title}</dt>
+            <dd className="m-0 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+              <span className="text-xl sm:text-2xl font-bold text-on-surface tabular-nums truncate">{value}</span>
               <span className={cn(
                 "text-[9px] sm:text-[10px] font-bold flex items-center gap-0.5 whitespace-nowrap",
                 change.startsWith('+') ? "text-primary" : "text-muted-foreground/80"
               )}>
                 {change}
               </span>
-            </div>
+            </dd>
           </div>
           <div className={cn("w-8 h-8 shrink-0 flex items-center justify-center rounded-lg bg-muted/10", color.replace('bg-', 'text-'))}>
             <Icon className="w-4 h-4" />
@@ -223,7 +223,7 @@ export default function AdminDashboard() {
           <Button 
             variant="primary" 
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-8 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
             onClick={handleExport}
             disabled={isExporting}
           >
@@ -233,7 +233,7 @@ export default function AdminDashboard() {
           <Button 
             variant="outline"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40 hover:bg-stone-100"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-8 border-border/40 hover:bg-stone-50 h-12 transition-all active:scale-95"
             onClick={handlePlatformLogs}
           >
             System logs
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {isLoading ? (
           <>
             <SkeletonCard />
@@ -258,7 +258,7 @@ export default function AdminDashboard() {
             <StatCard title="Inventory" value={globalStats[3]?.value || "0"} change={globalStats[3]?.change || "0%"} icon={ShoppingBag} color="bg-primary" />
           </>
         )}
-      </div>
+      </dl>
 
       {/* Main Analysis Section */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 items-start">
@@ -334,7 +334,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-sm font-bold text-on-surface">Regional Distribution</CardTitle>
                 <CardDescription className="text-[11px] font-medium text-muted-foreground/80 mt-1">Top performing regions by member count</CardDescription>
               </div>
-              <Button variant="ghost" className="h-7 px-2 text-[10px] font-bold text-muted-foreground/80 hover:text-on-surface">
+              <Button variant="ghost" className="h-7 px-2 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 hover:text-on-surface active:scale-95">
                 View All
               </Button>
             </CardHeader>
@@ -418,7 +418,7 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
                 <div className="p-4 border-t border-border/40 text-center">
-                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-[10px] font-bold text-muted-foreground/80 hover:text-on-surface">
+                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 hover:text-on-surface active:scale-95">
                     View full activity log
                   </Button>
                 </div>
