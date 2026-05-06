@@ -382,15 +382,15 @@ export default function Register() {
   if (step === 'choice') {
     return (
       <main className="bg-background font-body-md min-h-screen flex flex-col justify-center py-12 px-4">
-        <div className="max-w-xl w-full mx-auto">
-          <div className="text-center mb-10">
-            <img src={settings.logo_url} alt="The Base" className="h-20 w-auto mx-auto mb-6 object-contain"  decoding="async" />
-            <h1 className="text-3xl font-black text-on-surface uppercase tracking-tighter font-meta mb-2">The Base</h1>
-            <div className="w-16 h-1 bg-destructive mx-auto mb-4"></div>
-            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest font-meta">Membership Registration</h2>
+        <div className="max-w-5xl w-full mx-auto">
+          <div className="text-center mb-12">
+            <img src={settings.logo_url} alt="The Base" className="h-24 w-auto mx-auto mb-6 object-contain"  decoding="async" />
+            <h1 className="text-4xl font-black text-on-surface uppercase tracking-tighter font-meta mb-2">The Base</h1>
+            <div className="w-20 h-1.5 bg-destructive mx-auto mb-6"></div>
+            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-[0.3em] font-meta">Membership Registration Options</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Local Membership Card */}
             <div 
               onClick={() => {
@@ -398,33 +398,51 @@ export default function Register() {
                 setStep('form')
                 setFormStep(1)
               }}
-              className="group relative bg-white border border-border/60 hover:border-brand-green/40 p-8 cursor-pointer transition-all duration-500 hover:shadow-2xl hover:shadow-brand-green/10"
+              className="group relative bg-white border border-border/60 hover:border-brand-green/40 p-10 cursor-pointer transition-all duration-500 hover:shadow-2xl hover:shadow-brand-green/10 flex flex-col justify-between"
             >
               {/* Top Accent Line */}
-              <div className="absolute top-0 left-0 w-0 h-1 bg-brand-green group-hover:w-full transition-all duration-700" />
+              <div className="absolute top-0 left-0 w-0 h-1.5 bg-brand-green group-hover:w-full transition-all duration-700" />
               
-              <div className="flex flex-col gap-6">
-                <div className="w-14 h-14 bg-brand-green/5 flex items-center justify-center group-hover:bg-brand-green/10 transition-colors">
-                  <FileText className="w-7 h-7 text-brand-green" />
+              <div className="flex flex-col gap-8">
+                <div className="flex items-start justify-between">
+                  <div className="w-20 h-20 bg-brand-green/5 flex items-center justify-center group-hover:bg-brand-green/10 transition-colors">
+                    <FileText className="w-10 h-10 text-brand-green" />
+                  </div>
+                  <div className="text-[10px] font-black text-brand-green bg-brand-green/10 px-3 py-1 uppercase tracking-widest">In-Country</div>
                 </div>
                 
-                <div className="space-y-3">
-                  <h3 className="font-black text-xl text-on-surface uppercase tracking-tight font-meta leading-tight group-hover:text-brand-green transition-colors">
+                <div className="space-y-4">
+                  <h3 className="font-black text-3xl text-on-surface uppercase tracking-tight font-meta leading-none group-hover:text-brand-green transition-colors">
                     Local Membership <br/> (Ghana)
                   </h3>
-                  <p className="text-[13px] text-muted-foreground leading-relaxed font-body-md">
-                    For citizens and residents living and voting within the 16 regions of Ghana. Access local chapter benefits and voting rights.
-                  </p>
-                </div>
-                
-                <div className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-green opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                  Select Option <ArrowRight className="w-3.5 h-3.5" />
+                  <div className="space-y-4 pt-2">
+                    <p className="text-sm text-muted-foreground leading-relaxed font-body-md">
+                      Designed for citizens and residents currently living within the 16 regions of Ghana. This is the core of our grassroots mobilization.
+                    </p>
+                    <ul className="space-y-3">
+                      {[
+                        'Automatic assignment to your regional and constituency chapter',
+                        'Full voting rights on tactical and leadership directives',
+                        'Eligibility for local leadership and volunteer roles',
+                        'Access to physical field stations and community hubs'
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-3 text-xs text-on-surface/70 font-body-md">
+                          <div className="w-1.5 h-1.5 rounded-full bg-brand-green mt-1.5 shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
 
-              {/* Decorative Corner */}
-              <div className="absolute bottom-4 right-4 text-on-surface/5 group-hover:text-brand-green/20 transition-colors">
-                <ArrowRight className="w-12 h-12 rotate-[-45deg]" />
+              <div className="mt-10 pt-6 border-t border-border/40 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-brand-green">
+                  Select Membership <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </div>
+                <div className="text-on-surface/5 group-hover:text-brand-green/20 transition-colors">
+                  <ArrowRight className="w-16 h-16 rotate-[-45deg]" />
+                </div>
               </div>
             </div>
 
@@ -435,38 +453,56 @@ export default function Register() {
                 setStep('form')
                 setFormStep(1)
               }}
-              className="group relative bg-white border border-border/60 hover:border-brand-gold/40 p-8 cursor-pointer transition-all duration-500 hover:shadow-2xl hover:shadow-brand-gold/10"
+              className="group relative bg-white border border-border/60 hover:border-brand-gold/40 p-10 cursor-pointer transition-all duration-500 hover:shadow-2xl hover:shadow-brand-gold/10 flex flex-col justify-between"
             >
               {/* Top Accent Line */}
-              <div className="absolute top-0 left-0 w-0 h-1 bg-brand-gold group-hover:w-full transition-all duration-700" />
+              <div className="absolute top-0 left-0 w-0 h-1.5 bg-brand-gold group-hover:w-full transition-all duration-700" />
               
-              <div className="flex flex-col gap-6">
-                <div className="w-14 h-14 bg-brand-gold/5 flex items-center justify-center group-hover:bg-brand-gold/10 transition-colors">
-                  <User className="w-7 h-7 text-brand-gold" />
+              <div className="flex flex-col gap-8">
+                <div className="flex items-start justify-between">
+                  <div className="w-20 h-20 bg-brand-gold/5 flex items-center justify-center group-hover:bg-brand-gold/10 transition-colors">
+                    <User className="w-10 h-10 text-brand-gold" />
+                  </div>
+                  <div className="text-[10px] font-black text-brand-gold bg-brand-gold/10 px-3 py-1 uppercase tracking-widest">Global Community</div>
                 </div>
                 
-                <div className="space-y-3">
-                  <h3 className="font-black text-xl text-on-surface uppercase tracking-tight font-meta leading-tight group-hover:text-brand-gold transition-colors">
+                <div className="space-y-4">
+                  <h3 className="font-black text-3xl text-on-surface uppercase tracking-tight font-meta leading-none group-hover:text-brand-gold transition-colors">
                     Diaspora <br/> Membership
                   </h3>
-                  <p className="text-[13px] text-muted-foreground leading-relaxed font-body-md">
-                    For Ghanaians living abroad who wish to support the movement and contribute to the national agenda from afar.
-                  </p>
-                </div>
-                
-                <div className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-gold opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                  Select Option <ArrowRight className="w-3.5 h-3.5" />
+                  <div className="space-y-4 pt-2">
+                    <p className="text-sm text-muted-foreground leading-relaxed font-body-md">
+                      Tailored for Ghanaians and supporters living abroad. Leverage your global expertise and resources to transform the motherland.
+                    </p>
+                    <ul className="space-y-3">
+                      {[
+                        'Participation in global advisory and expert committees',
+                        'Special access to digital town halls and diaspora forums',
+                        'Support the movement\'s logistics and intelligence operations',
+                        'Dedicated Diaspora Member ID and recognition'
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-3 text-xs text-on-surface/70 font-body-md">
+                          <div className="w-1.5 h-1.5 rounded-full bg-brand-gold mt-1.5 shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
 
-              {/* Decorative Corner */}
-              <div className="absolute bottom-4 right-4 text-on-surface/5 group-hover:text-brand-gold/20 transition-colors">
-                <ArrowRight className="w-12 h-12 rotate-[-45deg]" />
+              <div className="mt-10 pt-6 border-t border-border/40 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-brand-gold">
+                  Select Membership <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </div>
+                <div className="text-on-surface/5 group-hover:text-brand-gold/20 transition-colors">
+                  <ArrowRight className="w-16 h-16 rotate-[-45deg]" />
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="text-center mt-12 pt-8 border-t border-border/60">
+          <div className="text-center mt-16 pt-8 border-t border-border/60">
             <p className="text-sm text-muted-foreground font-body-md">
               Already a member? <Link to="/login" className="text-primary font-bold hover:underline">Sign in securely</Link>
             </p>
