@@ -265,25 +265,26 @@ export default function AdminEditAuthor() {
           <div className="p-6 border-t border-border/10 bg-muted/5 flex justify-end gap-3">
             <Button 
               type="button" 
-              variant="default" 
+              variant="outline" 
               onClick={() => navigate('/admin/authors')}
-              className="border-border/60 hover:bg-muted/10"
+              className="border-border/40 hover:bg-stone-50 transition-all rounded-sm text-[10px] font-black uppercase tracking-widest h-12 px-8"
             >
               Cancel
             </Button>
             <Button 
               type="submit" 
+              variant="primary"
               disabled={isSaving}
-              className="bg-on-surface text-white shadow-lg shadow-black/10 px-8 font-bold tracking-wide rounded-sm"
+              className="px-10 h-12 rounded-sm shadow-lg shadow-brand-green/20 text-[10px] font-black uppercase tracking-widest"
             >
               {isSaving ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin text-accent" />
-                  Saving Profile...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Saving...
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4 mr-2 text-accent" />
+                  <Save className="w-4 h-4 mr-2" />
                   {isEditing ? 'Save Changes' : 'Create Profile'}
                 </>
               )}

@@ -399,12 +399,18 @@ export default function MembersList() {
               <div className="flex flex-col w-full md:w-auto">
                 <span className="text-[9px] font-bold text-muted-foreground/80 px-2 md:hidden mb-1">Quick Filters</span>
                 <div className="flex flex-row gap-2">
-                  <Button variant="ghost" className="flex-1 md:flex-none h-10 px-3 rounded-sm text-on-surface/80 hover:text-on-surface hover:bg-white hover:shadow-sm transition-all text-[10px] font-medium tracking-wide border border-border/40 md:border-none">
-                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-muted-foreground/40" /> Origins
+                  <Button 
+                    variant="ghost" 
+                    className="flex-1 md:flex-none h-10 px-4 rounded-sm text-[10px] font-black uppercase tracking-widest text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none"
+                  >
+                    <MapPin className="w-4 h-4 mr-2 text-muted-foreground/40" /> Origins
                   </Button>
                   
-                  <Button variant="ghost" className="flex-1 md:flex-none h-10 px-3 rounded-sm text-on-surface/80 hover:text-on-surface hover:bg-white hover:shadow-sm transition-all text-[10px] font-medium tracking-wide border border-border/40 md:border-none">
-                    <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-muted-foreground/40" /> Statuses
+                  <Button 
+                    variant="ghost" 
+                    className="flex-1 md:flex-none h-10 px-4 rounded-sm text-[10px] font-black uppercase tracking-widest text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none"
+                  >
+                    <ShieldCheck className="w-4 h-4 mr-2 text-muted-foreground/40" /> Statuses
                   </Button>
                 </div>
               </div>
@@ -412,13 +418,13 @@ export default function MembersList() {
               {(searchTerm !== '') && (
                 <Button 
                   variant="ghost" 
-                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-[11px] font-bold tracking-wide transition-all"
+                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-[10px] font-black uppercase tracking-widest transition-all"
                   onClick={() => {
                     setSearchTerm('')
                     setCurrentPage(1)
                   }}
                 >
-                  <RotateCcw className="w-3.5 h-3.5 mr-2" /> Reset filters
+                  <RotateCcw className="w-4 h-4 mr-2" /> Reset filters
                 </Button>
               )}
             </div>
@@ -669,8 +675,8 @@ export default function MembersList() {
             </div>
             <div className="flex items-center gap-3">
               <Button 
-                variant="default" 
-                className="h-9 px-4 text-[10px] font-bold rounded-sm border-border/60 disabled:opacity-30 transition-all hover:bg-white hover:shadow-sm normal-case" 
+                variant="outline" 
+                className="h-10 px-6 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50" 
                 disabled={currentPage === 1}
                 onClick={handlePrevPage}
               >
@@ -682,8 +688,8 @@ export default function MembersList() {
                 ))}
               </div>
               <Button 
-                variant="default" 
-                className="h-9 px-4 text-[10px] font-bold rounded-sm border-border/60 disabled:opacity-30 transition-all hover:bg-white hover:shadow-sm normal-case"
+                variant="outline" 
+                className="h-10 px-6 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50"
                 disabled={currentPage >= totalPages || totalPages === 0}
                 onClick={handleNextPage}
               >
@@ -741,9 +747,9 @@ export default function MembersList() {
                   Print Card
                 </Button>
                 <Button 
-                  variant="solid"
+                  variant="primary"
                   onClick={handleDownload}
-                  className="h-12 flex-1"
+                  className="h-12 flex-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-green/20"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">download</span>
                   Download PDF

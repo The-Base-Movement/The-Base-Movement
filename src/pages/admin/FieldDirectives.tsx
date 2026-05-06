@@ -77,14 +77,20 @@ export default function FieldDirectives() {
           <p className="text-muted-foreground/80 text-sm mt-1">Deploying decentralized tactical objectives across the movement.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="default" className="rounded-sm border-border/60 text-on-surface/60 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all flex items-center gap-2">
-            <BarChart className="w-3.5 h-3.5" /> Tactical analytics
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all h-10 shadow-sm"
+          >
+            <BarChart className="w-4 h-4 mr-2" /> Tactical Analytics
           </Button>
           <Button 
+            variant="primary"
+            size="lg"
             onClick={() => setIsCreating(true)}
-            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 h-10 shadow-lg shadow-brand-green/20"
           >
-            <Plus className="w-3.5 h-3.5" /> Issue new directive
+            <Plus className="w-4 h-4 mr-2" /> Issue New Directive
           </Button>
         </div>
       </div>
@@ -144,8 +150,11 @@ export default function FieldDirectives() {
             <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
               <Eye className="w-5 h-5 text-destructive" /> Situational awareness feed
             </h2>
-            <Button variant="ghost" className="h-8 text-[9px] font-bold hover:bg-muted/5 rounded-lg">
-              <Filter className="w-3.5 h-3.5 mr-1.5" /> Filter feed
+            <Button 
+              variant="outline" 
+              className="h-10 px-6 text-[10px] font-black uppercase tracking-widest hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm"
+            >
+              <Filter className="w-4 h-4 mr-2" /> Filter Feed
             </Button>
           </div>
 
@@ -194,22 +203,22 @@ export default function FieldDirectives() {
                   <p className="text-xs text-on-surface/80 leading-relaxed">"{report.report_text || 'Completed tactical directive as requested. Awaiting point verification.'}"</p>
                   
                   {report.status === 'Pending' && (
-                    <div className="pt-4 mt-auto grid grid-cols-2 gap-3">
-                      <Button 
-                        variant="default" 
-                        onClick={() => handleVerify(report.id, 'Rejected')}
-                        className="h-9 border-border/60 text-destructive hover:bg-destructive/5 rounded-lg text-[9px] font-bold normal-case shadow-sm"
-                      >
-                        <XCircle className="w-3.5 h-3.5 mr-1.5" /> Reject
-                      </Button>
-                      <Button 
-                        variant="solid" 
-                        onClick={() => handleVerify(report.id, 'Verified')}
-                        className="h-9 bg-on-surface text-white hover:bg-on-surface/90 rounded-lg text-[9px] font-bold shadow-xl"
-                      >
-                        <CheckCircle className="w-3.5 h-3.5 mr-1.5" /> Verify
-                      </Button>
-                    </div>
+                      <div className="pt-6 mt-auto grid grid-cols-2 gap-4">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => handleVerify(report.id, 'Rejected')}
+                          className="h-12 border-border/40 text-destructive hover:bg-destructive/10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all"
+                        >
+                          <XCircle className="w-4 h-4 mr-2" /> Reject Report
+                        </Button>
+                        <Button 
+                          variant="primary"
+                          onClick={() => handleVerify(report.id, 'Verified')}
+                          className="h-12 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-green/20"
+                        >
+                          <CheckCircle className="w-4 h-4 mr-2" /> Verify Action
+                        </Button>
+                      </div>
                   )}
                 </CardContent>
               </Card>
@@ -273,12 +282,19 @@ export default function FieldDirectives() {
                   </div>
                 </div>
               </div>
-              <div className="pt-4 flex gap-3">
-                <Button variant="default" onClick={() => setIsCreating(false)} className="flex-1 h-12 rounded-lg border-border/60 font-bold text-[10px] normal-case shadow-sm hover:bg-muted/5">
-                  Cancel
+              <div className="pt-6 flex gap-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsCreating(false)} 
+                  className="flex-1 h-12 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-widest hover:bg-stone-50 transition-all"
+                >
+                  Cancel Directive
                 </Button>
-                <Button variant="solid" className="flex-1 h-12 rounded-lg bg-on-surface text-white font-bold text-[10px] normal-case shadow-xl hover:scale-105 transition-transform">
-                  <Send className="w-4 h-4 mr-2" /> Deploy directive
+                <Button 
+                  variant="primary"
+                  className="flex-1 h-12 rounded-sm font-black text-[10px] uppercase tracking-widest shadow-lg shadow-brand-green/20"
+                >
+                  <Send className="w-4 h-4 mr-2" /> Deploy Protocol
                 </Button>
               </div>
             </CardContent>

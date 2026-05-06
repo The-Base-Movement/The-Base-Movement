@@ -112,8 +112,11 @@ export default function GroundGameCommand() {
                   </CardTitle>
                   <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Door-to-door outreach missions</CardDescription>
                 </div>
-                <Button className="h-8 rounded-lg text-[9px] font-bold normal-case bg-primary text-white hover:bg-primary/90 shadow-sm">
-                  <Crosshair className="w-3 h-3 mr-1" /> Deploy campaign
+                <Button 
+                  variant="primary"
+                  className="h-12 px-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                >
+                  <Crosshair className="w-4 h-4 mr-2" /> Deploy Mission
                 </Button>
               </div>
             </CardHeader>
@@ -206,8 +209,11 @@ export default function GroundGameCommand() {
                           <Users className="w-3 h-3 inline mr-1" /> {req.passengers} pax
                         </span>
                         {req.status === 'PENDING' && (
-                          <Button className="h-6 px-3 bg-on-surface hover:bg-on-surface/90 text-white rounded-lg text-[8px] font-bold normal-case shadow-sm">
-                            Dispatch
+                          <Button 
+                            variant="primary"
+                            className="h-11 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                          >
+                            Dispatch Asset
                           </Button>
                         )}
                       </div>

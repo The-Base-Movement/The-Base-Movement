@@ -561,15 +561,15 @@ export default function AdminBlogs() {
                 type="submit" 
                 disabled={isLoading}
                 variant="primary"
-                className="w-full h-14 rounded-sm text-[11px] uppercase tracking-[0.2em]"
+                className="w-full h-14 rounded-sm text-[11px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01]"
               >
                 {isLoading ? 'Processing...' : editingPost ? 'Update strategy' : 'Publish intelligence'}
               </Button>
               <Button 
                 type="button" 
-                variant="ghost" 
+                variant="outline" 
                 onClick={() => setCurrentView('list')}
-                className="w-full h-12 rounded-sm text-[10px] uppercase tracking-widest text-muted-foreground/40 hover:text-red-500 transition-colors"
+                className="w-full h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 hover:text-red-500 border-border/40 hover:bg-red-50 transition-all shadow-sm"
               >
                 Abort & Discard
               </Button>
@@ -594,9 +594,10 @@ export default function AdminBlogs() {
           </div>
           <Button 
             onClick={() => handleEditPost(viewPost)}
-            className="h-10 px-6 text-sm font-bold bg-on-surface text-white hover:bg-on-surface/90 flex items-center gap-2 rounded-lg"
+            variant="primary"
+            className="h-12 px-10 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
           >
-            <Edit2 className="w-3 h-3" /> Edit post
+            <Edit2 className="w-4 h-4 mr-2" /> Edit post
           </Button>
         </div>
         
@@ -650,7 +651,7 @@ export default function AdminBlogs() {
           onClick={() => handleEditPost()}
           variant="primary"
           size="lg"
-          className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+          className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
         >
           <Plus className="w-4 h-4 mr-2" /> Create new post
         </Button>
@@ -707,9 +708,9 @@ export default function AdminBlogs() {
             <h3 className="text-lg font-bold text-on-surface">No posts found</h3>
             <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
             <Button 
-              variant="default" 
+              variant="outline" 
               onClick={() => setSearchQuery('')}
-              className="mt-6 rounded-lg border-border/40 font-bold text-xs px-6"
+              className="mt-6 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-[0.2em] px-10 h-12 hover:bg-stone-50 transition-all shadow-sm"
             >
               Clear search
             </Button>

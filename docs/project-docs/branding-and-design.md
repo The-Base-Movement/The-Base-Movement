@@ -40,7 +40,7 @@ The visual system sits at the intersection of a **modern presidential campaign**
 
 ### 2.3 Typography
 - **Headlines (H1-H2)**: Strong, authoritative (Serif or bold Display). Feels like a **Manifesto**.
-- **Body Text**: Clean, modern Sans-serif (Inter/Roboto). Feels like a **National Briefing Document**.
+- **Body Text**: Clean, modern Sans-serif (Public Sans & Work Sans). Fonts are **Locally Hosted** for performance and technical authority.
 - **Hierarchy**: Max 4 font sizes per page. Body text min 16px.
 
 ---
@@ -75,4 +75,4 @@ The visual system sits at the intersection of a **modern presidential campaign**
 ---
 
 ## 6. Implementation Strategy (AI/Dev)
-Build components as reusable blocks. Ensure the **brand green** and **authoritative typography** are defined as CSS variables. The homepage serves as the movement's "front door," while the Agenda page acts as its "blueprint."
+Build components as reusable blocks. Ensure the **brand green** and **locally hosted authoritative typography** are defined as CSS variables. The homepage serves as the movement's "front door," while **The Plan** page acts as its "blueprint."

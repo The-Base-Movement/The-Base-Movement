@@ -101,11 +101,19 @@ export default function RallyCommand() {
           <p className="text-muted-foreground/80 text-sm mt-1">Real-time attendance telemetry and geo-fenced verification for field actions.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="default" className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2">
-            <Filter className="w-3.5 h-3.5" /> Global manifest
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 h-10"
+          >
+            <Filter className="w-4 h-4 mr-2" /> Global Manifest
           </Button>
-          <Button className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2">
-            <Plus className="w-3.5 h-3.5" /> Schedule action
+          <Button 
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 h-10"
+          >
+            <Plus className="w-4 h-4 mr-2" /> Schedule Action
           </Button>
         </div>
       </div>
@@ -251,12 +259,13 @@ export default function RallyCommand() {
                               <td className="px-6 py-4 text-right">
                                 {!entry.is_verified && (
                                   <Button 
-                                    size="sm" 
-                                    className="bg-on-surface text-white rounded-lg text-[8px] font-bold normal-case h-8 px-4 shadow-sm hover:bg-on-surface/90"
+                                    variant="primary"
+                                    size="sm"
+                                    className="rounded-sm text-[8px] font-black uppercase tracking-widest h-8 px-4"
                                     onClick={() => handleVerify(entry.id)}
                                     disabled={verifying === entry.id}
                                   >
-                                    {verifying === entry.id ? 'Verifying...' : 'Manual verify'}
+                                    {verifying === entry.id ? 'Verifying Signal...' : 'Manual Verify'}
                                   </Button>
                                 )}
                               </td>

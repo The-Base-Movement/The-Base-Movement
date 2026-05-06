@@ -136,7 +136,7 @@ export default function MediaLibrary() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 transition-all"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all shadow-sm"
             onClick={loadFiles}
           >
             Refresh Vault
@@ -154,7 +154,7 @@ export default function MediaLibrary() {
             <Button 
               variant="primary"
               size="lg"
-              className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+              className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
               asChild
               disabled={isUploading}
             >
@@ -197,19 +197,20 @@ export default function MediaLibrary() {
             <CardContent className="p-2">
               <div className="space-y-1">
                 {folders.map((folder) => (
-                  <button
+                  <Button
                     key={folder.id}
+                    variant={activeFolder === folder.id ? "primary" : "ghost"}
                     onClick={() => setActiveFolder(folder.id)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                      "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all h-14",
                       activeFolder === folder.id 
-                        ? "bg-on-surface text-white shadow-md" 
-                        : "text-on-surface/60 hover:bg-muted/5 hover:text-on-surface"
+                        ? "shadow-lg shadow-brand-green/20" 
+                        : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
                     )}
                   >
-                    <folder.icon className={cn("w-4 h-4", activeFolder === folder.id ? "text-primary" : "text-muted-foreground/40")} />
+                    <folder.icon className={cn("w-4 h-4", activeFolder === folder.id ? "text-white" : "text-muted-foreground/40")} />
                     {folder.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </CardContent>
@@ -250,7 +251,7 @@ export default function MediaLibrary() {
                   </p>
                   <Button 
                     variant="primary" 
-                    className="mt-6 rounded-sm px-8 text-[10px] uppercase tracking-widest"
+                    className="mt-6 rounded-sm px-12 h-14 text-[10px] uppercase tracking-[0.3em] font-black shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                     asChild
                   >
                     <label htmlFor="media-upload" className="cursor-pointer">
@@ -270,29 +271,29 @@ export default function MediaLibrary() {
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button 
                             size="icon" 
-                            variant="ghost" 
-                            className="h-9 w-9 rounded-sm bg-white/90 hover:bg-white text-on-surface shadow-xl"
+                            variant="outline" 
+                            className="h-10 w-10 rounded-sm bg-white/95 border-0 hover:bg-white text-on-surface shadow-2xl transition-all hover:scale-110 active:scale-95"
                             onClick={() => copyToClipboard(url)}
                           >
-                            {copiedUrl === url ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+                            {copiedUrl === url ? <Check className="w-5 h-5 text-primary" /> : <Copy className="w-5 h-5" />}
                           </Button>
                           <Button 
                             size="icon" 
-                            variant="ghost" 
-                            className="h-9 w-9 rounded-sm bg-white/90 hover:bg-white text-on-surface shadow-xl"
+                            variant="outline" 
+                            className="h-10 w-10 rounded-sm bg-white/95 border-0 hover:bg-white text-on-surface shadow-2xl transition-all hover:scale-110 active:scale-95"
                             asChild
                           >
                             <a href={url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-4 h-4" />
+                              <ExternalLink className="w-5 h-5" />
                             </a>
                           </Button>
                           <Button 
                             size="icon" 
-                            variant="ghost" 
-                            className="h-9 w-9 rounded-sm bg-white/90 hover:bg-destructive/10 text-on-surface hover:text-destructive shadow-xl"
+                            variant="outline" 
+                            className="h-10 w-10 rounded-sm bg-white/95 border-0 hover:bg-destructive/20 text-on-surface hover:text-destructive shadow-2xl transition-all hover:scale-110 active:scale-95"
                             onClick={() => setAssetToDelete(url)}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-5 h-5" />
                           </Button>
                         </div>
                       </div>

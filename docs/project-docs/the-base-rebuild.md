@@ -18,20 +18,20 @@ Core positioning:
 
 The current public site includes:
 
-- Main navigation: Home, Our Agenda, Register, Store, Donate, Login, Contact Us, Admin Login.
+- Main navigation: Home, The Plan, Register, Supplies, Donate, Login, Contact Us, Admin Login.
 - Hero messaging with movement slogan and two registration paths: **Base Ghana** and **Base Diaspora**.
 - Vision, mission, and values blocks.
 - Public social links: Facebook, Instagram, TikTok, YouTube.
 - Social proof counter showing **355,482** people joined and **2** platforms.
 - Footer links to Aims & Objectives, Chapters, Members, Donate, Impact, Join, Sign In, and Privacy Agreement.
-- An agenda page with six policy aims and detailed objectives.
+- A plan page with six policy aims and detailed objectives.
 - A registration page offering online registration and completed form upload.
 
 ## Rebuild goals
 
 1. Present the movement as credible, national, and organized.
 2. Make registration the clearest action across the site.
-3. Improve readability of long-form political agenda content.
+3. Improve readability of long-form political plan content.
 4. Separate public marketing content from member/admin functions.
 5. Make the system easy to update without editing code for every change.
 6. Design for Ghana-first audiences while still serving diaspora supporters.
@@ -41,11 +41,11 @@ The current public site includes:
 ### Public-facing pages
 
 1. Home
-2. Our Agenda
+2. The Plan
 3. Register
 4. Contact
 5. Donate
-6. Store
+6. Supplies
 7. Chapters
 8. Members
 9. Impact
@@ -55,7 +55,7 @@ The current public site includes:
 
 1. Login
 2. Admin Login
-3. Member dashboard
+3. Member overview
 4. Admin dashboard
 
 ## Information architecture
@@ -75,7 +75,7 @@ Recommended sections:
 - Two-path registration cards: Base Ghana / Base Diaspora
 - Vision, Mission, Values
 - Trust/social proof counters
-- Agenda preview (6 pillars summary)
+- Plan preview (6 pillars summary)
 - Why join / movement benefits
 - Chapters/community callout
 - Donation/support section
@@ -85,10 +85,10 @@ Recommended sections:
 Homepage CTA priority:
 
 - Primary: Register now
-- Secondary: View agenda
+- Secondary: View the plan
 - Tertiary: Contact / Donate
 
-### 2. Our Agenda
+### 2. The Plan
 
 Purpose:
 
@@ -103,7 +103,7 @@ Recommended sections:
 - Final covenant section
 - CTA to join movement
 
-The six agenda pillars currently represented are:
+The six plan pillars currently represented are:
 
 1. Quality Education for Every Ghanaian
 2. Lean, Accountable Government
@@ -176,7 +176,7 @@ Recommended elements:
 - Trust and transparency notes
 - Donation FAQ
 
-### 6. Store
+### 6. Supplies
 
 Purpose:
 
@@ -242,7 +242,7 @@ Design guidance:
 
 - Tone: serious, hopeful, organized, patriotic.
 - Visual style: clean editorial + modern campaign website.
-- Typography: bold headline serif or strong display face paired with readable sans-serif body text.
+- Typography: bold headline serif or strong display face paired with readable sans-serif body text (Public Sans & Work Sans - locally hosted for performance and technical authority).
 - Layout: structured, mobile-first, high readability, strong CTAs.
 - Color direction: Ghana-inspired but restrained; avoid loud flag-color overload. Use mostly neutrals with one primary accent and one support accent.
 - Use photography or documentary-style visuals only if high quality and authentic.
@@ -296,19 +296,19 @@ Best if:
 ### Core content types
 
 - Pages
-- Agenda pillars
-- Agenda objectives
+- Plan pillars
+- Plan objectives
 - Chapters
 - Members
 - Impact stories
 - Donations settings
-- Products/store items
+- Products/supplies items
 - Testimonials or endorsements (optional)
 - FAQs
 
 ### Example fields
 
-#### Agenda pillar
+#### Plan pillar
 
 - Title
 - Slug
@@ -354,11 +354,11 @@ Best if:
 ### Public site
 
 - Responsive navigation
-- Agenda browsing
+- Plan browsing
 - Registration path selection
 - Contact form
 - Donation flow
-- Store/catalog pages
+- Supplies/catalog pages
 - Social sharing links
 - SEO metadata per page
 
@@ -393,7 +393,7 @@ Best if:
 ## Asset list AI/designer/developer will need
 
 - Official logo files (SVG/PNG)
-- Brand colors and font direction
+- Brand colors and font direction (Public Sans & Work Sans - Locally Hosted)
 - Final approved copy for all pages
 - Registration form fields and rules
 - Donation/payment setup details
@@ -401,7 +401,7 @@ Best if:
 - Chapter data
 - Member/privacy policy text
 - Impact photos/videos
-- Store products and pricing
+- Supplies products and pricing
 - Admin roles and permissions
 
 ## Build priority roadmap
@@ -409,7 +409,7 @@ Best if:
 ### Phase 1
 
 - Home
-- Our Agenda
+- The Plan
 - Register
 - Contact
 - Privacy
@@ -424,20 +424,20 @@ Best if:
 
 ### Phase 3
 
-- Store
-- Member dashboard
+- Supplies
+- Member overview
 - Admin dashboard enhancements
 
 ## Copy/prompt block for AI builder
 
 Use this exact brief with AI coding tools:
 
-> Rebuild The Base website as a modern responsive political movement platform for Ghana and the diaspora. Preserve the current core messaging: “Ghana First, Jobs for the youth!” and the movement identity around patriotism, honesty, and discipline. Build public pages for Home, Our Agenda, Register, Contact, Donate, Store, Chapters, Members, Impact, and Privacy Agreement, plus Login and Admin Login. The homepage should include a hero, Base Ghana vs Base Diaspora registration paths, vision/mission/values, trust counters, agenda preview, chapter/community section, donation CTA, and social links. The Agenda page should include the six policy aims and their detailed objectives in a readable structured format with jump navigation. The Register flow should support online registration and upload of completed forms, with clear Ghana and Diaspora pathways. The Contact page should support name, email, phone, platform, and message fields. Build the system so admins can manage agenda content, members, chapters, impact stories, store items, donation settings, and site content. Use a trustworthy, civic, modern-African design language with mobile-first UX, strong accessibility, and clean SEO structure.
+> Rebuild The Base website as a modern responsive political movement platform for Ghana and the diaspora. Preserve the current core messaging: “Ghana First, Jobs for the youth!” and the movement identity around patriotism, honesty, and discipline. Build public pages for Home, The Plan, Register, Contact, Donate, Supplies, Chapters, Members, Impact, and Privacy Agreement, plus Login and Admin Login. The homepage should include a hero, Base Ghana vs Base Diaspora registration paths, vision/mission/values, trust counters, plan preview, chapter/community section, donation CTA, and social links. The Plan page should include the six policy aims and their detailed objectives in a readable structured format with jump navigation. The Register flow should support online registration and upload of completed forms, with clear Ghana and Diaspora pathways. The Contact page should support name, email, phone, platform, and message fields. Build the system so admins can manage plan content, members, chapters, impact stories, supplies items, donation settings, and site content. Use a trustworthy, civic, modern-African design language with mobile-first UX, strong accessibility, and clean SEO structure.
 
 ## Notes for implementation
 
 - Keep the homepage emotionally strong but not flashy.
-- The agenda page is one of the most important assets; treat it like a campaign manifesto.
+- The plan page is one of the most important assets; treat it like a campaign manifesto.
 - Make registration available from multiple page sections.
 - Separate public persuasion pages from member/admin utility pages.
 - Design the content system so campaign staff can update it without developer help.

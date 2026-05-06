@@ -97,17 +97,20 @@ export default function SentimentIntelligence() {
           </div>
           <div className="flex items-center gap-2">
             <Button 
-              className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
+              variant="primary"
+              size="lg"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
               onClick={() => toast({ title: "Analysis started", description: "Aggregating regional sentiment data..." })}
             >
-              Run analysis
+              <Activity className="w-4 h-4 mr-2" /> Run AI Analysis
             </Button>
             <Button 
-              variant="default" 
-              className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all"
+              variant="outline" 
+              size="lg"
+              className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all shadow-sm"
               onClick={() => toast({ title: "Report exported", description: "Your intelligence briefing is ready for download." })}
             >
-              Export report
+              <BarChart3 className="w-4 h-4 mr-2" /> Export Briefing
             </Button>
           </div>
         </div>

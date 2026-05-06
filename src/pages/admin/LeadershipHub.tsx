@@ -115,16 +115,18 @@ export default function LeadershipHub() {
           <p className="text-muted-foreground/80 text-sm mt-1">Managing the administrative pipeline for local leadership applications.</p>
         </div>
         <Button 
+          variant="primary"
+          size="lg"
           onClick={handleGenerateReport}
           disabled={isGenerating}
-          className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-lg shadow-on-surface/20"
+          className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
         >
           {isGenerating ? (
-            <Clock className="w-3.5 h-3.5 animate-spin" />
+            <Clock className="w-4 h-4 mr-2 animate-spin" />
           ) : (
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-4 h-4 mr-2" />
           )}
-          {isGenerating ? 'Generating...' : 'Export audit report'}
+          {isGenerating ? 'Compiling Audit...' : 'Export Audit Manifest'}
         </Button>
       </div>
 
@@ -141,8 +143,11 @@ export default function LeadershipHub() {
           />
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="default" className="h-10 px-4 text-[10px] font-bold border-border/60 normal-case rounded-lg">
-            <Filter className="w-3.5 h-3.5 mr-2" /> Filter status
+          <Button 
+            variant="outline" 
+            className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] border-border/40 hover:bg-stone-50 rounded-sm transition-all shadow-sm"
+          >
+            <Filter className="w-4 h-4 mr-2 text-muted-foreground/40" /> Filter Status
           </Button>
         </div>
       </div>
@@ -184,8 +189,12 @@ export default function LeadershipHub() {
               <CardTitle className="text-lg font-black font-meta normal-case">Active applications</CardTitle>
               <CardDescription className="text-xs">Review and approve new Chapter Leaders.</CardDescription>
             </div>
-            <Button variant="ghost" onClick={() => fetchApplications()} className="h-8 w-8 p-0 rounded-none hover:bg-border/40">
-              <Clock className="w-4 h-4 text-muted-foreground/40" />
+            <Button 
+              variant="outline" 
+              onClick={() => fetchApplications()} 
+              className="h-11 w-11 p-0 rounded-sm hover:bg-stone-50 border-border/40 text-muted-foreground/40 hover:text-on-surface transition-all shadow-sm"
+            >
+              <Clock className="w-4 h-4" />
             </Button>
           </div>
         </CardHeader>
@@ -256,16 +265,17 @@ export default function LeadershipHub() {
                       {app.status === 'Pending' ? (
                         <div className="flex items-center justify-end gap-2">
                           <Button 
-                            variant="ghost" 
-                            className="h-8 px-3 text-[9px] font-bold text-destructive hover:bg-destructive/10 rounded-lg normal-case"
+                            variant="outline" 
+                            className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.1em] text-destructive border-destructive/20 hover:bg-destructive/10 transition-all shadow-sm rounded-sm"
                           >
-                            <XCircle className="w-3.5 h-3.5 mr-1.5" /> Reject
+                            <XCircle className="w-4 h-4 mr-2" /> Reject Application
                           </Button>
                           <Button 
+                            variant="primary"
                             onClick={() => handleApprove(app.id, app.applicant_name || 'Applicant')}
-                            className="h-8 px-4 text-[9px] font-bold bg-on-surface text-white hover:bg-on-surface/90 rounded-lg normal-case"
+                            className="h-11 px-10 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-accent" /> Approve
+                            <CheckCircle2 className="w-4 h-4 mr-2 text-accent" /> Appoint Leader
                           </Button>
                         </div>
                       ) : (

@@ -131,11 +131,11 @@ export default function NewBroadcast() {
             <p className="text-muted-foreground/80 text-sm mt-1">Deploying a movement-wide communication to the field.</p>
           </div>
           <Button 
-            variant="ghost"
+            variant="outline"
             onClick={() => navigate('/admin/broadcasts')}
-            className="rounded-lg text-[10px] font-bold normal-case h-10 px-4 border border-border/40"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] h-11 px-8 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
-            <ArrowLeft className="w-3.5 h-3.5 mr-2" /> Back
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Intelligence
           </Button>
         </div>
       </div>
@@ -358,24 +358,25 @@ export default function NewBroadcast() {
           {/* Footer Actions */}
           <div className="pt-6 border-t border-border/10 flex items-center justify-end gap-4">
             <Button 
-              variant="default" 
+              variant="outline" 
               onClick={() => navigate('/admin/broadcasts')}
-              className="rounded-lg h-12 px-8 text-[10px] font-bold border-border/40 normal-case shadow-sm hover:bg-muted/10"
+              className="rounded-sm h-12 px-10 text-[10px] font-black uppercase tracking-[0.2em] border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
-              Cancel
+              Abort Transmission
             </Button>
             <Button 
+              variant="primary"
               disabled={isSending}
               onClick={handleSend}
-              className="rounded-lg h-12 px-10 text-[10px] font-bold bg-on-surface hover:bg-on-surface/90 text-white min-w-[160px] normal-case shadow-md transition-all active:scale-95"
+              className="rounded-sm h-12 px-12 text-[10px] font-black uppercase tracking-[0.3em] min-w-[200px] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
             >
               {isSending ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> Sending...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Launching...
                 </>
               ) : (
                 <>
-                  <Send className="w-3.5 h-3.5 mr-2" /> Send broadcast
+                  <Send className="w-4 h-4 mr-2" /> Send Broadcast
                 </>
               )}
             </Button>

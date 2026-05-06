@@ -207,7 +207,7 @@ export default function AdminOrders() {
             variant="outline"
             size="lg"
             onClick={handleExport}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 shadow-sm"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm h-12 active:scale-95"
           >
             <Download className="w-4 h-4 mr-2" /> Export Manifest
           </Button>
@@ -215,7 +215,7 @@ export default function AdminOrders() {
             variant="outline"
             size="lg"
             onClick={() => loadData(true)}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 shadow-sm"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm h-12 active:scale-95"
           >
             <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
             Synchronize
@@ -456,10 +456,10 @@ export default function AdminOrders() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
-                                className="h-7 w-7 p-0"
+                                className="h-8 w-8 p-0 hover:bg-muted/10 transition-all active:scale-95"
                                 title="View details"
                               >
-                                <Eye className="w-3.5 h-3.5" />
+                                <Eye className="w-4 h-4" />
                               </Button>
                               {nextStatus && (
                                 <Button
@@ -467,7 +467,7 @@ export default function AdminOrders() {
                                   size="sm"
                                   onClick={() => handleStatusAdvance(order)}
                                   disabled={updatingId === order.id}
-                                  className="h-7 px-4 text-[9px] font-black uppercase tracking-widest rounded-sm"
+                                  className="h-9 px-8 text-[9px] font-black uppercase tracking-[0.1em] rounded-sm shadow-lg shadow-brand-green/10 transition-all hover:scale-[1.01]"
                                 >
                                   {updatingId === order.id ? '...' : `→ ${nextStatus}`}
                                 </Button>
@@ -520,18 +520,19 @@ export default function AdminOrders() {
 
                         <div className="flex items-center gap-2 pt-2">
                           <Button
-                            variant="default"
-                            className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold"
+                            variant="outline"
+                            className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm hover:bg-stone-50 transition-all active:scale-95"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedOrder(order);
                             }}
                           >
-                            <Eye className="w-3.5 h-3.5 mr-2" /> Details
+                            <Eye className="w-4 h-4 mr-2" /> Details
                           </Button>
                           {nextStatus && (
                             <Button
-                              className="flex-1 h-11 bg-on-surface text-white rounded-sm text-[10px] font-bold"
+                              variant="primary"
+                              className="flex-1 h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                               disabled={updatingId === order.id}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -641,7 +642,7 @@ export default function AdminOrders() {
                   {NEXT_STATUS[selectedOrder.status] && (
                     <Button
                       variant="primary"
-                      className="w-full h-11 text-[10px] font-black uppercase tracking-widest rounded-sm"
+                      className="w-full h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                       onClick={() => handleStatusAdvance(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
@@ -651,7 +652,7 @@ export default function AdminOrders() {
                   {selectedOrder.status !== 'Cancelled' && selectedOrder.status !== 'Delivered' && (
                     <Button
                       variant="outline"
-                      className="w-full h-11 text-[10px] font-black uppercase tracking-widest text-destructive border-destructive/20 hover:bg-destructive/5 rounded-sm"
+                      className="w-full h-12 text-[10px] font-black uppercase tracking-[0.2em] text-destructive border-border/40 hover:bg-destructive/5 rounded-sm transition-all shadow-sm active:scale-95"
                       onClick={() => handleCancel(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >

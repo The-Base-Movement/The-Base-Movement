@@ -2,12 +2,12 @@
 
 This document tracks the remaining tasks required to transition the platform from using mock data and artificial delays to a fully production-ready, database-backed application using Supabase.
 
-## 🛒 Storefront & Transactions
+## 🛒 Supplies & Transactions
 - [x] **Shopping Cart Persistence**: Update `StoreProvider.tsx` to persist the `cart` state to `localStorage` (or Supabase) so it survives page refreshes.
 - [x] **Order Submission**: Update `Checkout.tsx` to insert completed transactions, shipping details, and order lines into a `store_orders` Supabase table instead of just navigating away.
 
-## 👥 Member & Admin Dashboards
-- [x] **Member Dashboard Metrics**: Remove the artificial 800ms delay in `Dashboard.tsx` and replace hardcoded metrics with real aggregations from the user's data.
+## 👥 Verified & Admin Overviews
+- [x] **Overview Metrics**: Remove the artificial 800ms delay in `Dashboard.tsx` and replace hardcoded metrics with real aggregations from the user's data.
 - [x] **Chapters Integration**: Remove the artificial 1500ms delay in `Chapters.tsx`. Ensure `adminService.ts` correctly fetches chapters without falling back to mock data.
 - [x] **Growth Trends**: Create the `membership_growth_view` in the Supabase database so that `getGrowthTrends()` can execute successfully.
 
@@ -17,8 +17,8 @@ This document tracks the remaining tasks required to transition the platform fro
 - [x] **Admin Identity Sync**: Aligned `auth.users` with `public.admins` for referential integrity.
 
 ## 📰 Content Management
-- [x] **Blog Post Types**: Hardened `BlogPost` interface and redirected imports to `@/types/admin`.
-- [x] **Blog Fetching**: Update `BlogPost.tsx` to fetch actual post content from the `blog_posts` table based on the URL slug.
+- [x] **Update Types**: Hardened `BlogPost` interface and redirected imports to `@/types/admin`.
+- [x] **Update Fetching**: Update `BlogPost.tsx` to fetch actual post content from the `blog_posts` table based on the URL slug.
 - [x] **Editorial Author Directory**: Built the `Authors.tsx` view with live data fetching, soft-delete functionality, and UI parity.
 - [x] **Author Creation/Editing**: Created `EditAuthor.tsx` with high-fidelity inputs, photo upload simulation, and strict dependency management.
 - [x] **Administrative Navigation**: Replaced hardcoded breadcrumbs with the global `<Breadcrumbs />` component across the command center.
@@ -32,5 +32,5 @@ This document tracks the remaining tasks required to transition the platform fro
 - [x] **TanStack Query Caching**: Replaced manual `useEffect` fetches with `@tanstack/react-query` for robust data caching and background sync.
 - [x] **Asset Optimization**: Implemented global native lazy loading and async decoding for all platform images.
 - [x] **Low-Bandwidth Mode**: Added a user-toggleable setting to skip heavy assets and hero backgrounds for slow connections.
-- [x] **Typography Unification**: Unified the Admin panel typography with the frontend brand fonts (Public Sans & Work Sans).
+- [x] **Typography Independence**: Transitioned from Google Fonts to **Locally Hosted** fonts (Public Sans & Work Sans) for maximum performance and technical authority.
 - [x] **Performance Audit**: Verified First Contentful Paint (FCP) < 1.0s and main bundle stabilization at ~575KB.

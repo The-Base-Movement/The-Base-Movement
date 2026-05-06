@@ -23,7 +23,7 @@ This platform is built using a modern, strictly-typed stack designed for scalabi
 - **Unified Global State**: A single source of truth for member collections (Wishlist, Cart) synchronized platform-wide.
 - **National Progress Indicators**: Branded Red-Gold-Green reading progress bars and system-wide custom scrollbars.
 - **Dynamic Impact Counters**: Real-time animated counters with branded color transitions reflecting our growing movement.
-- **Authoritative Dashboard**: A secure, high-impact member portal featuring dynamic profile management and verified status badges.
+- **Authoritative Overview**: A secure, high-impact member portal featuring dynamic profile management and verified status badges.
 - **Slug-Based Routing**: SEO-optimized, human-readable URLs for all movement products and content.
 
 ---
@@ -37,7 +37,8 @@ Our visual identity is governed by the national colors and the authoritative voi
 - **Black (#000000)**: The Black Star of Ghana - representing the strength and unity of our citizens.
 - **Green (#006B3F)**: Our long-term vision for a transformed nation.
 
-Every component - from the high-fidelity **Membership Card** to the **Our Agenda** pillars - is designed to provide clear, professional orientation for our global supporters.
+Every component - from the high-fidelity **Membership Card** to **The Plan** pillars - is designed to provide clear, professional orientation for our global supporters.
+
 
 ---
 

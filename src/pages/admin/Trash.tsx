@@ -148,54 +148,58 @@ export default function TrashPage() {
 
       {/* Tabs (Desktop Only) */}
       <div className="hidden lg:flex items-center gap-2 mb-8 bg-muted/10 p-1.5 rounded-sm w-fit border border-border/40">
-        <button
+        <Button
+          variant={activeTab === 'blogs' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('blogs')}
           className={cn(
-            "flex items-center gap-2 px-6 py-2.5 rounded-sm text-xs font-bold transition-all",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all",
             activeTab === 'blogs' 
-              ? "bg-white text-on-surface shadow-sm border border-border/40" 
+              ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
           )}
         >
-          <FileText className="w-3.5 h-3.5" />
+          <FileText className="w-4 h-4" />
           Blog Posts ({blogs.length})
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={activeTab === 'products' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('products')}
           className={cn(
-            "flex items-center gap-2 px-6 py-2.5 rounded-sm text-xs font-bold transition-all",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all",
             activeTab === 'products' 
-              ? "bg-white text-on-surface shadow-sm border border-border/40" 
+              ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
           )}
         >
-          <Package className="w-3.5 h-3.5" />
+          <Package className="w-4 h-4" />
           Products ({products.length})
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={activeTab === 'media' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('media')}
           className={cn(
-            "flex items-center gap-2 px-6 py-2.5 rounded-sm text-xs font-bold transition-all",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all",
             activeTab === 'media' 
-              ? "bg-white text-on-surface shadow-sm border border-border/40" 
+              ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
           )}
         >
-          <ImageIcon className="w-3.5 h-3.5" />
+          <ImageIcon className="w-4 h-4" />
           Media Assets ({media.length})
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={activeTab === 'authors' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('authors')}
           className={cn(
-            "flex items-center gap-2 px-6 py-2.5 rounded-sm text-xs font-bold transition-all",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all",
             activeTab === 'authors' 
-              ? "bg-white text-on-surface shadow-sm border border-border/40" 
+              ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
           )}
         >
-          <PenTool className="w-3.5 h-3.5" />
+          <PenTool className="w-4 h-4" />
           Authors ({authors.length})
-        </button>
+        </Button>
       </div>
 
       {/* Retention Notice */}

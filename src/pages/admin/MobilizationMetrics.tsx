@@ -61,16 +61,16 @@ export default function MobilizationMetrics() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40 hover:bg-stone-100"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-11 border-border/40 hover:bg-stone-50 transition-all shadow-sm"
           >
-            <Filter className="w-3.5 h-3.5 mr-2" /> Filter telemetry
+            <Filter className="w-4 h-4 mr-2" /> Filter telemetry
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
           >
-            <Download className="w-3.5 h-3.5 mr-2" /> Export intelligence
+            <Download className="w-4 h-4 mr-2" /> Export intelligence
           </Button>
         </div>
       </div>

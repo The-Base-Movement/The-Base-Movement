@@ -16,8 +16,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/neon-button'
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -121,21 +119,24 @@ export default function LogisticsIntelligence() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="default" 
+            variant="outline" 
+            size="lg"
             onClick={handleRouteOptimization}
             disabled={isOptimizing}
-            className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-50 h-10 transition-all"
           >
-            {isOptimizing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Filter className="w-3.5 h-3.5" />} 
-            Route optimization
+            {isOptimizing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Filter className="w-4 h-4 mr-2" />} 
+            Route Optimization
           </Button>
           <Button 
+            variant="primary"
+            size="lg"
             onClick={() => setShowReplenishConfirm(true)}
             disabled={isReplenishing}
-            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 h-10 transition-all shadow-lg shadow-brand-green/20"
           >
-            {isReplenishing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <PackagePlus className="w-3.5 h-3.5" />} 
-            Replenish all
+            {isReplenishing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PackagePlus className="w-4 h-4 mr-2" />} 
+            Replenish All
           </Button>
         </div>
       </div>
@@ -223,12 +224,13 @@ export default function LogisticsIntelligence() {
           {alerts.length > 0 && (
             <div className="p-4 bg-muted/30 border-t border-border/40 flex justify-end">
               <Button 
+                variant="primary"
                 onClick={handleGeneratePurchaseOrder}
                 disabled={isGeneratingPO}
-                className="bg-destructive text-white hover:bg-destructive/90 rounded-lg h-9 px-4 font-bold text-[9px] normal-case shadow-sm flex items-center gap-2"
+                className="bg-destructive text-white hover:bg-destructive/90 rounded-sm h-10 px-8 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-destructive/20 border-0"
               >
-                {isGeneratingPO ? <Loader2 className="w-3 h-3 animate-spin" /> : <FileText className="w-3 h-3" />}
-                Generate purchase order
+                {isGeneratingPO ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                Generate Purchase Order
               </Button>
             </div>
           )}
@@ -353,11 +355,12 @@ export default function LogisticsIntelligence() {
             <p className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-2">Real-time visualization of material flow across the 16 regions.</p>
           </div>
           <Button 
-            variant="default" 
+            variant="outline" 
+            size="lg"
             onClick={() => toast.success('Initializing high-fidelity enterprise visualization protocol...')}
-            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-lg h-12 px-8 font-bold text-[10px] normal-case shadow-sm transition-all"
+            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-sm h-12 px-10 font-black text-[10px] uppercase tracking-widest shadow-xl shadow-black/20 transition-all"
           >
-            <Map className="w-4 h-4 mr-2" /> Enterprise view
+            <Map className="w-4 h-4 mr-2" /> Enterprise View
           </Button>
         </div>
         <div className="h-[320px] bg-muted/30 flex items-center justify-center relative overflow-hidden group">
@@ -405,16 +408,21 @@ export default function LogisticsIntelligence() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
-            <AlertDialogCancel className="rounded-sm text-[10px] font-bold tracking-tight h-10 px-6 border-border/60">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowReplenishConfirm(false)}
+              className="rounded-sm text-[10px] font-black uppercase tracking-widest h-12 px-8 border-border/40 hover:bg-stone-50 transition-all"
+            >
               Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction 
+            </Button>
+            <Button 
+              variant="primary"
               onClick={handleReplenishAll}
               disabled={isReplenishing}
-              className="rounded-sm text-[10px] font-bold tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-10 px-8"
+              className="rounded-sm text-[10px] font-black uppercase tracking-widest h-12 px-10 shadow-lg shadow-brand-green/20"
             >
               {isReplenishing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Protocol'}
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

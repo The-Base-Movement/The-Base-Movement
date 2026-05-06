@@ -195,7 +195,7 @@ export default function MemberVerification() {
           <Button
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
             onClick={() => setShowRegForm(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" /> Establish Identity
@@ -318,35 +318,41 @@ export default function MemberVerification() {
                   Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
                 </p>
                 <div className="flex items-center gap-1">
-                  <button
+                  <Button
+                    variant="outline"
+                    size="icon"
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={safePage === 1}
-                    className="w-8 h-8 flex items-center justify-center border border-border/60 text-on-surface/80 hover:bg-on-surface hover:text-white hover:border-on-surface disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg"
+                    className="w-8 h-8 flex items-center justify-center border border-border/40 text-on-surface/80 hover:bg-stone-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-sm"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" />
-                  </button>
+                  </Button>
 
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <button
+                    <Button
                       key={page}
+                      variant={page === safePage ? "primary" : "outline"}
                       onClick={() => setCurrentPage(page)}
-                      className={`w-8 h-8 flex items-center justify-center border text-[9px] font-bold transition-all rounded-lg ${
+                      className={cn(
+                        "w-8 h-8 flex items-center justify-center text-[9px] font-black transition-all rounded-sm active:scale-95",
                         page === safePage
-                          ? 'bg-on-surface text-white border-on-surface shadow-sm'
-                          : 'border-border/60 text-on-surface/80 hover:bg-muted/30'
-                      }`}
+                          ? "shadow-sm shadow-brand-green/20"
+                          : "border-border/40 text-on-surface/80 hover:bg-stone-50"
+                      )}
                     >
                       {page}
-                    </button>
+                    </Button>
                   ))}
 
-                  <button
+                  <Button
+                    variant="outline"
+                    size="icon"
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={safePage === totalPages}
-                    className="w-8 h-8 flex items-center justify-center border border-border/60 text-on-surface/80 hover:bg-on-surface hover:text-white hover:border-on-surface disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg"
+                    className="w-8 h-8 flex items-center justify-center border border-border/40 text-on-surface/80 hover:bg-stone-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-sm"
                   >
                     <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -483,10 +489,10 @@ export default function MemberVerification() {
                     
                     {!aiResult && !aiAnalyzing && (
                       <Button
-                        variant="outline"
+                        variant="primary"
                         size="sm"
                         onClick={handleAiScan}
-                        className="w-full h-11 border border-white/10 bg-white/5 text-white hover:bg-white/10 text-[10px] font-black uppercase tracking-widest rounded-sm"
+                        className="w-full h-11 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01]"
                       >
                         <Cpu className="w-4 h-4 mr-2" /> Execute Identity Scan
                       </Button>
@@ -522,14 +528,16 @@ export default function MemberVerification() {
                   {(selectedMember.status === 'In Review' || selectedMember.status === 'Processing' || selectedMember.status === 'Flagged') && (
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <Button
+                        variant="outline"
                         onClick={() => handleVerdict(false)}
-                        className="h-11 bg-destructive text-white hover:bg-destructive/90 transition-all text-[10px] font-black uppercase tracking-widest border-0 rounded-sm"
+                        className="h-11 border-destructive/40 text-destructive hover:bg-destructive/10 transition-all text-[10px] font-black uppercase tracking-[0.2em] rounded-sm active:scale-95"
                       >
                         <XCircle className="w-4 h-4 mr-2" /> Reject Entry
                       </Button>
                       <Button
+                        variant="primary"
                         onClick={() => handleVerdict(true)}
-                        className="h-11 bg-primary text-white hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest rounded-sm"
+                        className="h-11 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01]"
                       >
                         <UserCheck className="w-4 h-4 mr-2" /> Approve Admission
                       </Button>
@@ -555,16 +563,16 @@ export default function MemberVerification() {
                 <Card className="rounded-sm border-border/40 shadow-sm bg-white">
                   <CardContent className="p-4 space-y-2">
                     <Button
-                      variant="ghost"
-                      className="w-full h-10 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-on-surface hover:bg-muted/5 rounded-sm"
+                      variant="outline"
+                      className="w-full h-11 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
                       onClick={() => setShowPhotoFull(true)}
                     >
                       <Eye className="w-4 h-4 mr-2" /> Inspect Biometric Data
                     </Button>
                     {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
                       <Button
-                        variant="ghost"
-                        className="w-full h-10 text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 hover:bg-muted/5 rounded-sm"
+                        variant="outline"
+                        className="w-full h-11 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
                         onClick={() => setViewingVaultRecord(selectedMember)}
                       >
                         <Database className="w-4 h-4 mr-2" /> Open Audit Vault

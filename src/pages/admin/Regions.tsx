@@ -61,7 +61,7 @@ export default function AdminRegions() {
           <Button 
             variant="primary" 
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
           >
             <Plus className="w-4 h-4 mr-2" /> Define New Region
           </Button>
@@ -173,18 +173,22 @@ export default function AdminRegions() {
                   </div>
                   <div className="flex items-center gap-3">
                     {/* Action buttons - stop propagation so they don't toggle expand */}
-                    <button
-                      className="p-1.5 rounded-lg text-muted-foreground/60 hover:text-on-surface hover:bg-muted/10 transition-colors"
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10 rounded-sm text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       onClick={e => { e.stopPropagation(); handleAction('REGION_EDIT', region.name) }}
                     >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      className="p-1.5 rounded text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5 transition-colors"
+                      <Edit2 className="w-5 h-5" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10 rounded-sm text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
                       onClick={e => { e.stopPropagation(); handleAction('REGION_DELETE', region.name) }}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                      <Trash2 className="w-5 h-5" />
+                    </Button>
                     {isExpanded
                       ? <ChevronDown className="w-4 h-4 text-muted-foreground/80" />
                       : <ChevronRight className="w-4 h-4 text-muted-foreground/80" />
@@ -208,9 +212,9 @@ export default function AdminRegions() {
                       </div>
                       <Button
                         variant="outline"
-                        className="h-9 px-4 text-[9px] font-black uppercase tracking-widest rounded-sm border-border/40 hover:bg-stone-100"
+                        className="h-10 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       >
-                        <Plus className="w-3 h-3 mr-1.5" /> Define Constituency
+                        <Plus className="w-4 h-4 mr-2" /> Define Constituency
                       </Button>
                     </div>
 
@@ -224,12 +228,14 @@ export default function AdminRegions() {
                           <span className="text-[10px] font-bold tracking-tight text-on-surface/80 group-hover:text-on-surface truncate">
                             {con}
                           </span>
-                          <button
-                            className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 rounded-sm opacity-0 group-hover:opacity-100 transition-all shrink-0 hover:bg-stone-50 border-stone-200 shadow-sm active:scale-95"
                             onClick={() => handleAction('CONSTITUENCY_EDIT', region.name, con)}
                           >
-                            <Edit2 className="w-2.5 h-2.5 text-muted-foreground/60 hover:text-on-surface" />
-                          </button>
+                            <Edit2 className="w-3.5 h-3.5 text-stone-500 hover:text-accent" />
+                          </Button>
                         </div>
                       ))}
                       {visibleConstituencies.length === 0 && (

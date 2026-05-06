@@ -131,7 +131,7 @@ export default function PollsManagement() {
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20"
             onClick={() => setShowCreateModal(true)}
           >
             <Plus className="w-4 h-4 mr-2" /> Establish Campaign
@@ -286,17 +286,17 @@ export default function PollsManagement() {
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center gap-1 justify-end">
                         <Button 
-                          variant="ghost" 
+                          variant="outline" 
                           size="icon" 
-                          className="text-muted-foreground/80 hover:text-destructive transition-colors"
+                          className="h-8 w-8 rounded-sm text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 transition-all shadow-sm"
                           onClick={() => handleDeletePoll(poll.id, poll.question)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
                         <Button 
-                          variant="ghost" 
+                          variant="outline" 
                           size="icon" 
-                          className="text-muted-foreground/80"
+                          className="h-8 w-8 rounded-sm text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 transition-all shadow-sm"
                           onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                         >
                           <MoreVertical className="w-4 h-4" />
@@ -369,16 +369,16 @@ export default function PollsManagement() {
 
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
-                      variant="default" 
-                      className="flex-1 h-10 rounded-sm border-border/60 text-on-surface/80 text-[10px] font-bold"
+                      variant="outline" 
+                      className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-widest hover:bg-stone-50 transition-all shadow-sm"
                       onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                     >
                       Manage Campaign
                     </Button>
                     <Button 
-                      variant="default" 
+                      variant="outline" 
                       size="icon" 
-                      className="h-10 w-10 rounded-sm border-border/60 text-muted-foreground/80 hover:text-destructive"
+                      className="h-11 w-11 rounded-sm border border-border/40 text-stone-400 hover:text-destructive hover:bg-destructive/10 transition-all shadow-sm"
                       onClick={() => handleDeletePoll(poll.id, poll.question)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -402,7 +402,7 @@ export default function PollsManagement() {
             <Button 
               variant="outline"
               size="sm"
-              className="h-9 px-6 text-[10px] font-black uppercase tracking-widest border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm"
+              className="h-10 px-8 text-[10px] font-black uppercase tracking-widest border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm transition-all shadow-lg"
               onClick={() => setIsAnalyticsModalOpen(true)}
             >
               Scan Analytics Guide
@@ -425,10 +425,10 @@ export default function PollsManagement() {
             </div>
             <Button 
               variant="ghost" 
-              className="h-8 px-0 text-[10px] font-black uppercase tracking-widest text-accent hover:bg-transparent hover:text-accent/80"
+              className="h-9 px-0 text-[10px] font-black uppercase tracking-widest text-accent hover:bg-transparent hover:text-accent/80 transition-colors group/btn"
               onClick={() => setIsFeedbackModalOpen(true)}
             >
-              Scan Feedback Vault <ChevronRight className="w-4 h-4 ml-1" />
+              Scan Feedback Vault <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover/btn:translate-x-1" />
             </Button>
           </div>
         </div>
@@ -501,8 +501,8 @@ export default function PollsManagement() {
                   ))}
                   <Button 
                     type="button"
-                    variant="ghost" 
-                    className="h-8 text-[10px] font-bold tracking-tight text-muted-foreground/80 hover:text-on-surface"
+                    variant="outline" 
+                    className="h-10 text-[10px] font-black uppercase tracking-widest text-stone-500 hover:text-on-surface hover:bg-stone-50 border-stone-200 rounded-sm px-6 transition-all shadow-sm"
                     onClick={() => setNewPoll({...newPoll, options: [...newPoll.options, '']})}
                   >
                     <Plus className="w-3 h-3 mr-2" /> Add Option
@@ -546,7 +546,7 @@ export default function PollsManagement() {
                 <Button 
                   type="button"
                   variant="outline" 
-                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-widest rounded-sm border-border/40"
+                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-widest rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm"
                   onClick={() => setShowCreateModal(false)}
                 >
                   Discard
@@ -555,7 +555,7 @@ export default function PollsManagement() {
                   type="submit"
                   variant="primary"
                   disabled={isSubmitting}
-                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-widest rounded-sm"
+                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
                 >
                   {isSubmitting ? 'Launching...' : 'Deploy Campaign'}
                 </Button>
@@ -597,7 +597,8 @@ export default function PollsManagement() {
             </CardContent>
             <div className="p-6 pt-0 border-t border-border/40 bg-muted/5 flex justify-end mt-4">
               <Button 
-                className="h-10 text-xs font-bold rounded-lg bg-on-surface text-white hover:bg-on-surface/90 w-full"
+                variant="primary"
+                className="h-12 text-[10px] font-black uppercase tracking-widest rounded-sm w-full shadow-lg shadow-brand-green/20"
                 onClick={() => setIsFeedbackModalOpen(false)}
               >
                 Close Vault
@@ -637,7 +638,8 @@ export default function PollsManagement() {
             </CardContent>
             <div className="p-6 pt-0">
               <Button 
-                className="h-10 text-xs font-bold rounded-lg bg-on-surface text-white hover:bg-on-surface/90 w-full"
+                variant="primary"
+                className="h-12 text-[10px] font-black uppercase tracking-widest rounded-sm w-full shadow-lg shadow-brand-green/20"
                 onClick={() => setIsAnalyticsModalOpen(false)}
               >
                 Got It

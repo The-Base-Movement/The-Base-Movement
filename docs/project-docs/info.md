@@ -30,4 +30,8 @@ Structure:
   vite.config.ts       Main build and dev server settings for Vite
   postcss.config.js    Config file for CSS post-processing tools
 
+Standards:
+  - Terminology: The Plan (Agenda), Supplies (Store), Updates (Blog), Verified (Member)
+  - Typography: Locally Hosted Public Sans & Work Sans (Performance-optimized)
+
 * [ ]

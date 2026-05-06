@@ -138,19 +138,19 @@ export default function FinancialAudit() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40 hover:bg-stone-100"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm"
             onClick={handleExport}
             disabled={filteredDonations.length === 0}
           >
-            <Download className="w-3.5 h-3.5 mr-2" /> Export Ledger
+            <Download className="w-4 h-4 mr-2" /> Export Ledger
           </Button>
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40 hover:bg-stone-100"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm"
             onClick={() => fetchData()} 
           >
-            <Loader2 className={cn("w-3.5 h-3.5 mr-2", isLoading && "animate-spin")} />
+            <Loader2 className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
             Synchronize Data
           </Button>
         </div>
@@ -194,16 +194,19 @@ export default function FinancialAudit() {
           <div className="bg-white border border-border/60 p-2 rounded-sm flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               {['Pending', 'Verified', 'Rejected', 'All'].map(status => (
-                <button
+                <Button
                   key={status}
+                  variant={statusFilter === status ? "primary" : "ghost"}
                   onClick={() => setStatusFilter(status as 'All' | 'Pending' | 'Verified' | 'Rejected')}
                   className={cn(
-                    "px-4 py-2 text-[10px] font-bold rounded-lg transition-all",
-                    statusFilter === status ? "bg-on-surface text-white shadow-sm" : "text-muted-foreground/80 hover:text-on-surface hover:bg-muted/5"
+                    "h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm transition-all",
+                    statusFilter === status 
+                      ? "shadow-lg shadow-brand-green/20" 
+                      : "text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 border border-transparent hover:border-stone-100"
                   )}
                 >
                   {status}
-                </button>
+                </Button>
               ))}
             </div>
             <div className="relative w-full max-w-xs">
@@ -279,10 +282,10 @@ export default function FinancialAudit() {
                           <div className="mt-4">
                             {donation.receiptUrl ? (
                               <Button 
-                                variant="ghost" 
+                                variant="outline" 
                                 size="sm" 
                                 onClick={() => setSelectedReceipt(donation.receiptUrl || null)}
-                                className="h-7 px-3 text-[10px] font-black uppercase tracking-widest text-on-surface/80 hover:text-on-surface hover:bg-border/40 rounded-sm border border-border/60 w-fit"
+                                className="h-10 px-6 text-[10px] font-black uppercase tracking-widest text-on-surface/80 hover:text-accent hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm w-fit"
                               >
                                 <Eye className="w-4 h-4 mr-2" /> Inspect Evidence
                               </Button>
@@ -304,7 +307,7 @@ export default function FinancialAudit() {
                                   variant="outline" 
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Rejected')}
                                   disabled={isVerifying === donation.id}
-                                  className="flex-1 h-9 text-[10px] font-black uppercase tracking-widest text-brand-red border-brand-red/20 hover:bg-brand-red/5 rounded-sm"
+                                  className="flex-1 h-11 text-[10px] font-black uppercase tracking-[0.1em] text-brand-red border-brand-red/20 hover:bg-brand-red/10 transition-all shadow-sm rounded-sm"
                                 >
                                   Flag for Audit
                                 </Button>
@@ -312,7 +315,7 @@ export default function FinancialAudit() {
                                   variant="primary"
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Verified')}
                                   disabled={isVerifying === donation.id}
-                                  className="flex-1 h-9 text-[10px] font-black uppercase tracking-widest rounded-sm"
+                                  className="flex-1 h-11 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                                 >
                                   Approve Record
                                 </Button>
@@ -372,9 +375,9 @@ export default function FinancialAudit() {
             </div>
             <div className="p-6 flex justify-end bg-white border-t border-border/40">
               <Button 
-                variant="solid"
+                variant="primary"
                 onClick={() => setSelectedReceipt(null)}
-                className="h-10 px-8"
+                className="h-14 px-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
               >
                 Close viewer
               </Button>

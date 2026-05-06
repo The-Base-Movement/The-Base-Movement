@@ -84,8 +84,8 @@ Stores the global network of regional and diaspora hubs. Fully synchronized with
 | `details_url` | TEXT | DONE |
 | `status` | VARCHAR(50) | DONE |
 
-## [DONE] 7. Polls Table (Opinion)
-Stores movement-wide opinion polls and response data.
+## [DONE] 7. Feedback Table
+Stores movement-wide feedback and response data.
 
 | Field Name | Type | Status |
 | :--- | :--- | :--- |

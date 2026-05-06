@@ -137,8 +137,12 @@ export default function WarRoomCommand() {
                         )}>
                           {incident.status.toLowerCase()}
                         </span>
-                        <Button variant="default" className="h-8 rounded-lg text-[9px] font-bold normal-case border-border/60">
-                          Update status
+                        <Button 
+                          variant="primary"
+                          size="sm"
+                          className="h-10 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                        >
+                          Update Status
                         </Button>
                       </div>
                     </div>
@@ -181,8 +185,11 @@ export default function WarRoomCommand() {
                       <div className="flex items-center justify-between">
                         <p className="text-[9px] font-bold text-white/40 normal-case">{nar.hashtags}</p>
                         {nar.dispatch_status === 'PENDING' && (
-                          <Button className="h-7 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-[8px] font-bold normal-case shadow-sm">
-                            <Send className="w-3 h-3 mr-1" /> Dispatch
+                          <Button 
+                            variant="primary"
+                            className="h-11 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-900/40 border-0 transition-all hover:scale-[1.02]"
+                          >
+                            <Send className="w-4 h-4 mr-2" /> Dispatch Strike
                           </Button>
                         )}
                       </div>

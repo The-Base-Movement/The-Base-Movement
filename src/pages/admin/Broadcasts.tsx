@@ -83,7 +83,7 @@ export default function Broadcasts() {
           variant="primary"
           size="lg"
           onClick={() => navigate('/admin/broadcasts/new')}
-          className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+          className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
         >
           <Plus className="w-4 h-4 mr-2" /> Deploy New Broadcast
         </Button>
@@ -214,7 +214,7 @@ export default function Broadcasts() {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded-sm border border-border/40 h-8 text-[10px] font-black uppercase tracking-widest hover:bg-stone-100"
+                          className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-10 px-6 text-[10px] font-black uppercase tracking-[0.1em] hover:bg-stone-50 shadow-sm"
                           onClick={() => fetchMetrics(broadcast.id)}
                         >
                           Refresh Telemetry
@@ -278,7 +278,7 @@ export default function Broadcasts() {
               </p>
               <Button 
                 variant="outline"
-                className="w-full text-white border-destructive/40 hover:bg-destructive/10 text-[10px] font-black uppercase tracking-[0.2em] h-12 rounded-sm"
+                className="w-full text-white border-destructive/60 hover:bg-destructive/20 text-[10px] font-black uppercase tracking-[0.2em] h-12 rounded-sm transition-all hover:scale-[1.02] shadow-lg shadow-destructive/10"
               >
                 Trigger Tactical Alert
               </Button>

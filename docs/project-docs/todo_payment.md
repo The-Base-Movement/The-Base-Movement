@@ -48,7 +48,7 @@ This document outlines the steps required to transition "The Base" donation and 
 
 ## Phase 5: Dashboard Updates
 
-- [ ] **Donation History**: Create a "Transactions" tab in the member dashboard to show Paystack reference IDs and status.
+- [ ] **Donation History**: Create a "Transactions" tab in the overview to show Paystack reference IDs and status.
 - [ ] **Auto-Verification**: Transition from manual "Pending" status to automated "Verified" for all Paystack-processed contributions.
 
 ## Security & Best Practices

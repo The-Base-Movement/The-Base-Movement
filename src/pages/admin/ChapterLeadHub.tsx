@@ -81,11 +81,19 @@ export default function ChapterLeadHub() {
           <p className="text-muted-foreground/80 text-sm mt-1">Empowering regional autonomy through tactical coordination.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="default" className="rounded-sm border-border/60 text-on-surface/60 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all flex items-center gap-2">
-            <BarChart3 className="w-3.5 h-3.5" /> Local telemetry
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 h-10 transition-all"
+          >
+            <BarChart3 className="w-4 h-4 mr-2" /> Local Telemetry
           </Button>
-          <Button className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2">
-            <Plus className="w-3.5 h-3.5" /> New field event
+          <Button 
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 h-10 transition-all shadow-lg shadow-brand-green/20"
+          >
+            <Plus className="w-4 h-4 mr-2" /> New Field Event
           </Button>
         </div>
       </div>
@@ -177,8 +185,11 @@ export default function ChapterLeadHub() {
                         +{event.attendees_expected - 3}
                       </div>
                     </div>
-                    <Button variant="ghost" className="h-8 text-[8px] font-bold normal-case hover:bg-muted/5 group-hover:text-destructive">
-                      Logistics hub <ChevronRight className="w-3 h-3 ml-1" />
+                    <Button 
+                      variant="ghost" 
+                      className="h-9 px-4 text-[9px] font-black uppercase tracking-widest hover:bg-muted/5 group-hover:text-destructive rounded-sm"
+                    >
+                      Logistics Hub <ChevronRight className="w-3.5 h-3.5 ml-2" />
                     </Button>
                   </div>
                 </CardContent>
@@ -238,8 +249,11 @@ export default function ChapterLeadHub() {
               <span className="text-[9px] font-bold normal-case text-white/40">Total allocation</span>
               <span className="text-lg font-black font-meta text-primary">GH₵{ledger.filter(l => l.transaction_type === 'Allocation').reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
             </div>
-            <Button variant="default" className="w-full h-11 border-white/10 text-white font-bold text-[9px] normal-case hover:bg-white/10 rounded-lg transition-all">
-              Request additional funds
+            <Button 
+              variant="outline" 
+              className="w-full h-12 border-white/20 text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 rounded-sm transition-all"
+            >
+              Request Additional Funds
             </Button>
           </div>
         </Card>

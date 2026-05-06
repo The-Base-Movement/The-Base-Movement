@@ -284,7 +284,7 @@ export default function AdminStore() {
               variant="primary"
               size="lg"
               onClick={() => handleOpenModal()}
-              className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
             >
               <Plus className="w-4 h-4 mr-2" /> Establish Asset
             </Button>
@@ -314,7 +314,7 @@ export default function AdminStore() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="h-9 px-6 text-[10px] font-black uppercase tracking-widest border-accent/20 text-accent hover:bg-accent/5"
+                className="h-10 px-8 text-[10px] font-black uppercase tracking-[0.1em] border-accent/40 text-accent hover:bg-accent/5 transition-all shadow-sm rounded-sm active:scale-95"
               >
                 Scan Alerts
               </Button>
@@ -483,21 +483,21 @@ export default function AdminStore() {
                       <td className="px-6 py-5 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button 
-                            variant="ghost" 
+                            variant="outline" 
                             size="icon" 
-                            className="w-8 h-8 text-on-surface/80 hover:text-on-surface bg-border/40 hover:bg-muted/10 rounded-lg transition-all"
+                            className="w-10 h-10 text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
                             onClick={() => handleOpenModal(product)}
                           >
-                            <Edit3 className="w-3.5 h-3.5" />
+                            <Edit3 className="w-5 h-5" />
                           </Button>
                           <Button 
-                            variant="ghost" 
+                            variant="outline" 
                             size="icon" 
-                            className="w-8 h-8 text-on-surface/80 hover:text-destructive bg-border/40 hover:bg-muted/10 rounded-lg transition-all"
+                            className="w-10 h-10 text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 rounded-sm transition-all shadow-sm active:scale-95"
                             disabled={isDeleting === product.id}
                             onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                           >
-                            {isDeleting === product.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            {isDeleting === product.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
                           </Button>
                         </div>
                       </td>
@@ -551,19 +551,19 @@ export default function AdminStore() {
 
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
-                      variant="default" 
-                      className="flex-1 h-11 rounded-sm border-border/60 text-on-surface/80 text-[10px] font-bold"
+                      variant="outline" 
+                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       onClick={() => handleOpenModal(product)}
                     >
-                      <Edit3 className="w-3.5 h-3.5 mr-2" /> Edit Asset
+                      <Edit3 className="w-4 h-4 mr-2" /> Edit Asset
                     </Button>
                     <Button 
-                      variant="default" 
+                      variant="outline" 
                       size="icon" 
-                      className="h-11 w-11 rounded-sm border-border/60 text-muted-foreground/80 hover:text-destructive"
+                      className="h-12 w-12 rounded-sm border-border/40 text-stone-400 hover:text-destructive hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
                       onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-5 h-5" />
                     </Button>
                   </div>
                 </div>
@@ -757,7 +757,7 @@ export default function AdminStore() {
               <Button
                 variant="outline"
                 size="lg"
-                className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40"
+                className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 disabled={auditLogs.length === 0}
                 onClick={() => {
                   try {
@@ -785,7 +785,7 @@ export default function AdminStore() {
                   }
                 }}
               >
-                <Download className="w-3.5 h-3.5 mr-2" />
+                <Download className="w-4 h-4 mr-2" />
                 Export telemetry
               </Button>
             </div>
@@ -1084,13 +1084,13 @@ export default function AdminStore() {
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-[10px] font-bold tracking-tight h-10 px-6">
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-[10px] font-black uppercase tracking-[0.1em] h-11 px-8 hover:bg-muted/10 transition-all active:scale-95">
               Cancel
             </Button>
             <Button 
               onClick={handleSave} 
               disabled={isSaving}
-              className="rounded-sm text-[10px] font-bold tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-10 px-8 min-w-[140px]"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] bg-on-surface text-white hover:bg-on-surface/90 h-11 px-10 min-w-[160px] shadow-lg transition-all hover:scale-[1.02]"
             >
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Changes'}
             </Button>

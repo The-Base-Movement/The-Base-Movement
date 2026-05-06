@@ -155,7 +155,7 @@ export default function Administrators() {
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20"
             onClick={() => setIsProvisionModalOpen(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" />
@@ -252,9 +252,9 @@ export default function Administrators() {
                       <td className="px-6 py-6 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button 
-                            variant="ghost" 
+                            variant="outline" 
                             size="icon" 
-                            className="w-8 h-8 text-muted-foreground/40 hover:text-on-surface"
+                            className="w-9 h-9 text-muted-foreground/40 hover:text-accent border-border/40 hover:bg-stone-50 rounded-sm transition-all"
                             onClick={() => {
                               setSelectedAdmin(admin)
                               setIsActivityModalOpen(true)
@@ -266,9 +266,9 @@ export default function Administrators() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button 
-                                variant="ghost" 
+                                variant="outline" 
                                 size="icon" 
-                                className="w-8 h-8 text-muted-foreground/40 hover:text-destructive"
+                                className="w-9 h-9 text-muted-foreground/40 hover:text-destructive border-border/40 hover:bg-stone-50 rounded-sm transition-all"
                               >
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>
@@ -380,7 +380,7 @@ export default function Administrators() {
                   <div className="flex items-center gap-2">
                     <Button 
                       variant="outline" 
-                      className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-widest hover:bg-stone-100"
+                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-widest hover:bg-stone-50 shadow-sm transition-all"
                       onClick={() => {
                         setSelectedAdmin(admin)
                         setIsActivityModalOpen(true)
@@ -477,14 +477,14 @@ export default function Administrators() {
           <DialogFooter className="gap-4">
             <Button 
               variant="outline" 
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40 hover:bg-stone-50 transition-all"
               onClick={() => setIsProvisionModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
               variant="primary"
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
               onClick={handleProvision}
               disabled={isSubmitting}
             >
@@ -521,14 +521,14 @@ export default function Administrators() {
           <DialogFooter className="gap-4">
             <Button 
               variant="outline" 
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40 hover:bg-stone-50 transition-all"
               onClick={() => setIsPermissionsModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
               variant="primary"
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
               onClick={handleUpdatePermissions}
             >
               Update Credentials
@@ -564,7 +564,7 @@ export default function Administrators() {
           <DialogFooter>
             <Button 
               variant="primary"
-              className="w-full h-12 text-[10px] font-black uppercase tracking-widest rounded-sm"
+              className="w-full h-12 text-[10px] font-black uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
               onClick={() => setIsActivityModalOpen(false)}
             >
               Close Vault

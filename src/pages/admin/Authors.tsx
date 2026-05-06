@@ -77,7 +77,7 @@ export default function AdminAuthors() {
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
             onClick={() => window.location.href = '/admin/authors/new'}
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -180,20 +180,20 @@ export default function AdminAuthors() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button 
-                          variant="ghost" 
+                          variant="outline" 
                           size="icon" 
-                          className="h-8 w-8 text-stone-500 hover:text-on-surface rounded-sm"
+                          className="h-10 w-10 text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => window.location.href = `/admin/authors/edit/${author.id}`}
                         >
-                          <Edit3 className="w-4 h-4" />
+                          <Edit3 className="w-5 h-5" />
                         </Button>
                         <Button 
-                          variant="ghost" 
+                          variant="outline" 
                           size="icon" 
-                          className="h-8 w-8 text-stone-400 hover:text-destructive hover:bg-destructive/10 rounded-sm"
+                          className="h-10 w-10 text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => setDeleteConfirm({ id: author.id, name: author.name })}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-5 h-5" />
                         </Button>
                       </div>
                     </td>
