@@ -25,7 +25,8 @@ import {
   ChevronDown,
   Image as ImageIcon,
   Trash2,
-  PenTool
+  PenTool,
+  Flag
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/neon-button'
@@ -146,6 +147,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         { to: '/admin/polls', icon: BarChart3, label: 'Feedback', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
         { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Analysis', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/roadmap', icon: Flag, label: 'Roadmap', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/directives', icon: Target, label: 'Directives', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/rally-command', icon: Target, label: 'Events', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/ground-game', icon: Vote, label: 'Canvassing', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },

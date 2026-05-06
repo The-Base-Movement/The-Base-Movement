@@ -927,6 +927,30 @@ class AdminService {
     return tacticalService.getMilestones()
   }
 
+  async createMilestone(milestone: Omit<Milestone, 'id' | 'created_at'>): Promise<boolean> {
+    const success = await tacticalService.createMilestone(milestone)
+    if (success) {
+      await this.logAction('MILESTONE_CREATE', `ROADMAP/${milestone.title}`, 'Success', milestone)
+    }
+    return success
+  }
+
+  async updateMilestone(id: string, milestone: Partial<Milestone>): Promise<boolean> {
+    const success = await tacticalService.updateMilestone(id, milestone)
+    if (success) {
+      await this.logAction('MILESTONE_UPDATE', `ROADMAP/${id}`, 'Success', milestone)
+    }
+    return success
+  }
+
+  async deleteMilestone(id: string, title: string): Promise<boolean> {
+    const success = await tacticalService.deleteMilestone(id)
+    if (success) {
+      await this.logAction('MILESTONE_DELETE', `ROADMAP/${title}`, 'Warning')
+    }
+    return success
+  }
+
   async getRoadmapForecast(): Promise<Milestone[]> {
     const milestones = await tacticalService.getMilestones()
     const growth = await this.getGrowthStats()

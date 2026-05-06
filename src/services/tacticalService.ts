@@ -253,6 +253,50 @@ class TacticalService {
     }
   }
 
+  async createMilestone(milestone: Omit<Milestone, 'id' | 'created_at'>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('movement_milestones')
+        .insert([milestone])
+
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('Error creating milestone:', error)
+      return false
+    }
+  }
+
+  async updateMilestone(id: string, milestone: Partial<Milestone>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('movement_milestones')
+        .update(milestone)
+        .eq('id', id)
+
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('Error updating milestone:', error)
+      return false
+    }
+  }
+
+  async deleteMilestone(id: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('movement_milestones')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('Error deleting milestone:', error)
+      return false
+    }
+  }
+
   // --- Tactical Intelligence (AI/Mock) ---
 
   async verifyMemberID(memberId: string): Promise<{ confidence: number, matches: string[], flagged: boolean }> {

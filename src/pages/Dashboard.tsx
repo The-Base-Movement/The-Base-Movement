@@ -616,6 +616,8 @@ export default function Dashboard() {
           {/* Regional Leaderboard */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden">
             <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
+              <h3 className="text-xs font-black tracking-widest text-on-surface flex items-center gap-2 m-0">
+                <span className="material-symbols-outlined text-primary text-sm">trending_up</span>
                 {member?.region || 'National'} leaderboard
               </h3>
               <span className="text-tiny font-bold text-on-surface/30 tracking-widest uppercase">Top Community Members</span>

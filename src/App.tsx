@@ -75,6 +75,7 @@ const AdminSentimentIntelligence = lazy(() => import('./pages/admin/SentimentInt
 const AdminWarRoomCommand = lazy(() => import('./pages/admin/WarRoomCommand'))
 const AdminGroundGameCommand = lazy(() => import('./pages/admin/GroundGameCommand'))
 const AdminTrash = lazy(() => import('./pages/admin/Trash'))
+const AdminRoadmap = lazy(() => import('./pages/admin/Roadmap'))
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -179,6 +180,7 @@ export default function App() {
                 <Route path="/admin/broadcasts/new" element={<AdminNewBroadcast />} />
                 <Route path="/admin/administrators" element={<AdminAdministrators />} />
                 <Route path="/admin/orders" element={<AdminOrders />} />
+                <Route path="/admin/roadmap" element={<AdminRoadmap />} />
                 <Route path="/admin/trash" element={<AdminTrash />} />
               </Route>
             </Routes>
