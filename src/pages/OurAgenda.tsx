@@ -8,7 +8,7 @@ const agendaPillars = [
     number: '01',
     title: 'Quality Education for Every Ghanaian',
     icon: GraduationCap,
-    color: 'var(--brand-green)',
+    color: 'hsl(var(--primary))',
     summary: 'Ensure universal access to quality formal and informal education that produces informed, capable, and civically responsible Ghanaian citizens at every level of society.',
     objectives: [
       {
@@ -40,7 +40,7 @@ const agendaPillars = [
     number: '02',
     title: 'Lean, Accountable Government',
     icon: Building2,
-    color: 'var(--brand-red)',
+    color: 'hsl(var(--destructive))',
     summary: 'Build a right-sized, fiscally disciplined government where public office is a service to the nation, not a path to personal enrichment, and where every cedi of public money is accounted for.',
     objectives: [
       {
@@ -67,7 +67,7 @@ const agendaPillars = [
     number: '03',
     title: 'Industrialisation, Tourism & Agro-Processing',
     icon: Factory,
-    color: 'var(--brand-gold)',
+    color: 'hsl(var(--accent))',
     summary: 'Drive economic growth and mass employment through three powerful engines: building factories and industries across all 16 regions, developing Ghana into a world-class tourism destination, and transforming raw agricultural produce into high-value processed goods that keep wealth and jobs inside Ghana.',
     objectives: [
       {
@@ -103,7 +103,7 @@ const agendaPillars = [
     number: '04',
     title: 'Quality Infrastructure From Cities to Villages',
     icon: Construction,
-    color: 'var(--brand-green)',
+    color: 'hsl(var(--primary))',
     summary: 'Deliver world-class roads, energy, water, and digital infrastructure across Ghana, with deliberate priority given to rural and village communities that have been left behind.',
     objectives: [
       {
@@ -135,7 +135,7 @@ const agendaPillars = [
     number: '05',
     title: 'Comprehensive Institutional Reform',
     icon: Landmark,
-    color: 'var(--brand-red)',
+    color: 'hsl(var(--destructive))',
     summary: 'Restructure, streamline, and strengthen all public institutions so that government serves the people efficiently, transparently, and without unnecessary duplication or waste.',
     objectives: [
       {
@@ -168,7 +168,7 @@ const agendaPillars = [
     number: '06',
     title: 'Expertise-Led Agriculture Sector',
     icon: Sprout,
-    color: 'var(--brand-gold)',
+    color: 'hsl(var(--accent))',
     summary: 'Place qualified agricultural experts, scientists, and practitioners in charge of Ghana\'s food and farming sector, driving evidence-based policy, agro-processing, and genuine food security.',
     objectives: [
       {
@@ -230,11 +230,11 @@ export default function OurAgenda() {
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
-          <h1 className="uppercase tracking-tighter mb-4">Our Agenda</h1>
+          <h1 className="uppercase tracking-tighter mb-4">The Plan</h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
-            <div className="flex-1 bg-[var(--brand-red)]"></div>
-            <div className="flex-1 bg-[var(--brand-gold)]"></div>
-            <div className="flex-1 bg-[var(--brand-green)]"></div>
+            <div className="flex-1 bg-destructive"></div>
+            <div className="flex-1 bg-accent"></div>
+            <div className="flex-1 bg-primary"></div>
           </div>
           <p className="text-slate-300 max-w-2xl mx-auto mb-0">
             The Six Aims of The Base. A detailed, actionable blueprint to build a stronger, more prosperous nation through patriotism, honesty, and discipline.
@@ -248,13 +248,13 @@ export default function OurAgenda() {
           {/* Sticky Navigation */}
           <aside className="lg:w-1/4 hidden lg:block">
             <div className="sticky top-20 space-y-4 font-meta">
-              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-6">Agenda Pillars</p>
+              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-6">Plan Pillars</p>
               <nav className="flex flex-col space-y-2">
                 {agendaPillars.map((pillar) => (
                   <a 
                     key={pillar.id}
                     href={`#${pillar.id}`}
-                    className={`block py-2 text-sm transition-all ${activeSection === pillar.id ? 'sticky-nav-active' : 'text-slate-600 hover:text-[var(--brand-green)] border-l-3 border-transparent pl-4'}`}
+                    className={`block py-2 text-sm transition-all ${activeSection === pillar.id ? 'sticky-nav-active' : 'text-slate-600 hover:text-primary border-l-3 border-transparent pl-4'}`}
                   >
                     {pillar.number}. {pillar.title}
                   </a>
@@ -267,7 +267,7 @@ export default function OurAgenda() {
                   alt="Dr. George Oti Bonsu The Base Movement Founder"
                   className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
                  decoding="async" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-green/90 via-brand-green/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 p-3">
                   <p className="text-white text-[10px] font-bold uppercase tracking-widest leading-tight mb-0">
                     Dr. George Oti Bonsu
@@ -286,13 +286,13 @@ export default function OurAgenda() {
             {/* Intro Cards */}
             <div className="grid md:grid-cols-2 gap-8 mb-16">
               <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
-                <h3 className="text-[var(--brand-green)] uppercase tracking-tight mb-4">What is an Aim?</h3>
+                <h3 className="text-primary uppercase tracking-tight mb-4">What is an Aim?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm mb-0">
                   An Aim is a broad, long-term statement of intent. It describes the desired end state or the overall direction a movement or organisation wishes to pursue. Aims are visionary in nature. They answer the question: "What kind of Ghana are we trying to build?" They are not time-bound or immediately measurable, but they provide the moral compass and purpose that guides all action.
                 </p>
               </div>
               <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
-                <h3 className="text-[var(--brand-green)] uppercase tracking-tight mb-4">What is an Objective?</h3>
+                <h3 className="text-primary uppercase tracking-tight mb-4">What is an Objective?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm mb-0">
                   An Objective is a specific, actionable, and measurable step taken in pursuit of an Aim. Objectives answer the question: "Exactly what will we do and how?" They are concrete, time-oriented, and directly deliverable. Where an Aim sets the destination, an Objective maps the route. Every objective in this document is derived from one of THE BASE's six core Aims.
                 </p>
@@ -324,7 +324,7 @@ export default function OurAgenda() {
                       <ul className="space-y-3">
                         {obj.items.map((item, i) => (
                           <li key={i} className="flex items-start gap-3 text-slate-600 text-sm leading-relaxed">
-                            <span className="w-1.5 h-1.5 mt-2 bg-warm-gold shrink-0 rounded-none"></span>
+                            <span className="w-1.5 h-1.5 mt-2 bg-accent shrink-0 rounded-none"></span>
                             <span>{item}</span>
                           </li>
                         ))}
@@ -337,21 +337,21 @@ export default function OurAgenda() {
 
             {/* Covenant CTA */}
             <div className="bg-charcoal-dark text-white p-6 md:p-12 text-center mt-24">
-              <div className="w-16 h-16 bg-[var(--brand-green)] mx-auto mb-6 flex items-center justify-center">
+              <div className="w-16 h-16 bg-primary mx-auto mb-6 flex items-center justify-center">
                 <Landmark className="w-8 h-8 text-white" />
               </div>
               <h2 className="mb-6">Our Covenant with Ghana</h2>
               <div className="max-w-2xl mx-auto space-y-4 text-slate-300 mb-8">
                 <p>These Aims define the Ghana we are building. These Objectives are the steps we will be held accountable to. Together, they form THE BASE's covenant with every Ghanaian who believes this country can, and must, do better.</p>
                 <p>We do not offer vague promises. We offer an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians and the potential of an extraordinary nation.</p>
-                <p className="text-warm-gold font-bold uppercase tracking-widest mt-4 mb-0">Ghana First. Always.</p>
+                <p className="text-accent font-bold uppercase tracking-widest mt-4 mb-0">Ghana First. Always.</p>
               </div>
               {isLoggedIn ? (
                 <Link to="/dashboard/members" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-[var(--brand-green)] text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
                   View Members <ArrowRight className="w-5 h-5" />
                 </Link>
               ) : (
-                <Link to="/register" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-[var(--brand-green)] text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
+                <Link to="/register" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-primary text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
                   Join The Movement <ArrowRight className="w-5 h-5" />
                 </Link>
               )}

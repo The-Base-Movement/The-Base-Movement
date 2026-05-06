@@ -24,7 +24,7 @@ export default function Store() {
 
   const handleShare = (product: Product) => {
     setShareData({
-      title: `Check out the ${product.name} at The Base Movement Store!`,
+      title: `Check out the ${product.name} at The Base Movement Supplies!`,
       url: window.location.origin + '/store/product/' + product.slug
     })
     setIsShareModalOpen(true)
@@ -90,7 +90,7 @@ export default function Store() {
           <div>
             <h1 className="text-stone-900 mb-2 flex items-center gap-3">
               <ShoppingBag className="w-8 h-8 text-brand-green" />
-              Official Store
+              Supplies
             </h1>
             <p className="text-muted-gray max-w-xl mb-0">
               Equip yourself with official movement gear. Every purchase directly funds our grassroots organizing and civic education programs.

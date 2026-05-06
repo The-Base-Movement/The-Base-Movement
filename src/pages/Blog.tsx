@@ -50,18 +50,18 @@ export default function Blog() {
   return (
     <div className="bg-surface-warm font-body-md min-h-screen">
       <Helmet>
-        <title>Insights & Movement News | The Base Movement</title>
+        <title>Updates | The Base Movement</title>
         <meta name="description" content="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement." />
-        <meta property="og:title" content="Insights & Movement News | The Base Movement" />
-        <meta property="og:description" content="Ideas, analysis and movement news from The Base." />
+        <meta property="og:title" content="Updates | The Base Movement" />
+        <meta property="og:description" content="Ideas, analysis and updates from The Base." />
         <meta property="og:type" content="website" />
       </Helmet>
       {/* Hero */}
       <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-[var(--brand-green)]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">The Base Insights</p>
+          <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">Updates</p>
           <h1 className="font-meta font-black text-4xl md:text-5xl uppercase tracking-tight leading-tight mb-4 max-w-2xl">
-            Ideas, Analysis &amp; Movement News
+            Updates
           </h1>
           <p className="text-slate-400 max-w-xl text-base">
             Perspectives from within the movement on governance, youth empowerment, diaspora engagement and the future of Ghana.
@@ -214,7 +214,7 @@ export default function Blog() {
           <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">Join the Conversation</p>
           <h2 className="font-meta font-black text-3xl uppercase tracking-tight mb-4">Become a Member. Shape the Narrative.</h2>
           <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">
-            Registered members get early access to analysis, policy briefs and movement updates directly from our research desk.
+            Registered members get early access to analysis, policy briefs and updates directly from our research desk.
           </p>
           <Link
             to="/register"
