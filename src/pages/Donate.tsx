@@ -149,7 +149,7 @@ export default function Donate() {
                 <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain"  decoding="async" loading="lazy" />
                 <div className="text-left text-stone-900">
                   <p className="font-meta font-bold text-sm uppercase tracking-tighter leading-none">Support the</p>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Movement</p>
+                  <p className="text-tiny font-bold uppercase tracking-[0.2em] text-primary">Movement</p>
                 </div>
               </div>
 
@@ -169,7 +169,7 @@ export default function Donate() {
                         >
                           {s.step}
                         </div>
-                        <span className={`text-[10px] font-meta font-semibold uppercase tracking-widest mt-2 text-center transition-colors ${activeStep === s.step ? 'text-primary font-bold' : 'text-stone-400'}`}>
+                        <span className={`text-tiny font-meta font-semibold uppercase tracking-widest mt-2 text-center transition-colors ${activeStep === s.step ? 'text-primary font-bold' : 'text-stone-400'}`}>
                           {s.label}
                         </span>
                       </div>
@@ -204,7 +204,7 @@ export default function Donate() {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h2 className="text-2xl font-bold text-charcoal-dark tracking-tight font-meta">Active Campaigns</h2>
-                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-1">Direct your support to specific movement priorities</p>
+                  <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest mt-1">Direct your support to specific movement priorities</p>
                 </div>
               </div>
               
@@ -218,14 +218,14 @@ export default function Donate() {
                     <div className="aspect-video bg-slate-100 mb-4 overflow-hidden relative">
                       {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />}
                       <div className="absolute top-3 right-3">
-                        <span className="bg-primary text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-lg">Active</span>
+                        <span className="bg-primary text-white text-tiny font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-lg">Active</span>
                       </div>
                     </div>
                     <h3 className="font-bold text-charcoal-dark font-meta text-lg mb-2 group-hover:text-primary transition-colors">{c.title}</h3>
                     <p className="text-xs text-slate-500 mb-6 line-clamp-2 leading-relaxed">{c.description}</p>
                     
                     <div className="mt-auto">
-                      <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                      <div className="flex justify-between text-tiny font-bold uppercase tracking-widest text-slate-400 mb-2">
                         <span>Progress</span>
                         <span className="text-primary">{Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
                       </div>
@@ -237,7 +237,7 @@ export default function Donate() {
                       </div>
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Raised</p>
+                          <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest">Raised</p>
                           <p className="text-sm font-bold text-charcoal-dark font-meta tracking-tight">GHS {c.raisedAmount.toLocaleString()}</p>
                         </div>
                         <Button 
@@ -270,20 +270,20 @@ export default function Donate() {
                 
                 <div className="space-y-8 flex-1">
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Account Holder</p>
+                    <p className="text-tiny font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Account Holder</p>
                     <p className="font-bold text-primary text-2xl tracking-tight leading-none">Paul Kofi Agyekum</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">MoMo Number</p>
+                    <p className="text-tiny font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">MoMo Number</p>
                     <p className="font-bold font-meta tracking-wider text-white text-2xl">+233 538 873 569</p>
                   </div>
                   <div className="grid grid-cols-1 gap-6 pt-8 border-t border-white/10">
                     <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Network</p>
+                      <p className="text-tiny font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Network</p>
                       <p className="text-slate-300 font-semibold font-meta uppercase text-sm">MTN Mobile Money</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Reference</p>
+                      <p className="text-tiny font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Reference</p>
                       <p className="text-accent font-bold font-meta uppercase text-sm italic border-b border-accent/30 pb-1">"THE BASE"</p>
                     </div>
                   </div>
@@ -293,7 +293,7 @@ export default function Donate() {
                   <div className="text-primary mt-0.5">
                     <span className="material-symbols-outlined text-[20px]">info</span>
                   </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed font-medium tracking-wider">
+                  <p className="text-micro text-slate-400 leading-relaxed font-medium tracking-wider">
                     Please complete the transfer first, then capture your receipt.
                   </p>
                 </div>
@@ -308,7 +308,7 @@ export default function Donate() {
 
                 <form onSubmit={handleSubmit} id="donationForm" className="space-y-6 flex-1">
                   <div className="space-y-2">
-                    <label htmlFor="fullName" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
+                    <label htmlFor="fullName" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
                       Full name <span className="text-destructive">*</span>
                     </label>
                     <input 
@@ -323,7 +323,7 @@ export default function Donate() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="phone" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
+                    <label htmlFor="phone" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
                       Phone number <span className="text-destructive">*</span>
                     </label>
                     <input 
@@ -339,7 +339,7 @@ export default function Donate() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label htmlFor="amount" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
+                      <label htmlFor="amount" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
                         Amount (GHS) <span className="text-destructive">*</span>
                       </label>
                       <input 
@@ -354,7 +354,7 @@ export default function Donate() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="country" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
+                      <label htmlFor="country" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
                         Country <span className="text-destructive">*</span>
                       </label>
                       <select id="country" required onFocus={() => setActiveStep(2)} className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none bg-slate-50/50" style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7rem top 50%', backgroundSize: '.65rem auto' }}>
@@ -367,7 +367,7 @@ export default function Donate() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="campaign" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
+                    <label htmlFor="campaign" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
                       Select Campaign <span className="text-destructive">*</span>
                     </label>
                     <select 
@@ -386,7 +386,7 @@ export default function Donate() {
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 p-6 rounded-none space-y-4">
-                    <p className="text-[10px] font-bold font-meta uppercase tracking-widest text-slate-500">Member Tracking</p>
+                    <p className="text-tiny font-bold font-meta uppercase tracking-widest text-slate-500">Member Tracking</p>
                     <input id="membership" placeholder="ID Number (Optional)" className="w-full bg-white border border-slate-200 p-4 text-sm font-meta placeholder-slate-300 focus:outline-none focus:border-primary transition-all" />
                   </div>
                 </form>
@@ -416,7 +416,7 @@ export default function Donate() {
                         }
                       </p>
                       <div className="space-y-2">
-                        <label htmlFor="membershipNumber" className="text-[10px] font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
+                        <label htmlFor="membershipNumber" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
                           Membership Number
                         </label>
                         <input 
@@ -467,7 +467,7 @@ export default function Donate() {
                         <ArrowDownToLine className="w-8 h-8 text-slate-400 group-hover:text-primary transition-colors" />
                       </div>
                       <p className="text-sm text-slate-700 font-semibold mb-1 tracking-tight font-meta">Click or drag receipt</p>
-                      <p className="text-[10px] text-slate-400 font-meta uppercase tracking-widest">JPG, PNG, or PDF</p>
+                      <p className="text-tiny text-slate-400 font-meta uppercase tracking-widest">JPG, PNG, or PDF</p>
                     </div>
 
                     <div className="bg-surface-warm p-6 border border-slate-100 rounded-none">
@@ -502,7 +502,7 @@ export default function Donate() {
                       <Check className="w-6 h-6 text-primary" />
                       Movement Victories
                     </h2>
-                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-1">Proof of what we can achieve when patriots unite</p>
+                    <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest mt-1">Proof of what we can achieve when patriots unite</p>
                   </div>
                 </div>
                 
@@ -510,7 +510,7 @@ export default function Donate() {
                   {pastCampaigns.map(c => (
                     <div key={c.id} className="bg-white border border-slate-200 p-5 flex flex-col relative grayscale hover:grayscale-0 transition-all duration-500">
                       <div className="absolute top-4 right-4 z-10">
-                        <span className="bg-black text-white text-[8px] font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-xl flex items-center gap-1">
+                        <span className="bg-black text-white text-micro font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-xl flex items-center gap-1">
                           <Check className="w-2 h-2" /> 100% Funded
                         </span>
                       </div>
@@ -518,13 +518,13 @@ export default function Donate() {
                         {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />}
                       </div>
                       <h4 className="font-bold text-charcoal-dark font-meta text-sm mb-1">{c.title}</h4>
-                      <p className="text-[11px] text-slate-500 mb-4 line-clamp-2">{c.description}</p>
+                      <p className="text-micro text-slate-500 mb-4 line-clamp-2">{c.description}</p>
                       <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between items-center">
                         <div>
-                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Total Impact</p>
+                          <p className="text-micro font-bold text-slate-400 uppercase tracking-widest">Total Impact</p>
                           <p className="text-xs font-bold text-primary">GHS {c.raisedAmount.toLocaleString()}</p>
                         </div>
-                        <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest italic">Campaign Completed</span>
+                        <span className="text-micro font-bold text-slate-300 uppercase tracking-widest italic">Campaign Completed</span>
                       </div>
                     </div>
                   ))}
@@ -540,15 +540,15 @@ export default function Donate() {
                     <Activity className="w-6 h-6 text-primary" />
                     Contribution History
                   </h2>
-                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-1">Track your personal impact on the movement</p>
+                  <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest mt-1">Track your personal impact on the movement</p>
                 </div>
                 <div className="hidden sm:flex gap-4">
                   <div className="px-4 py-2 bg-white border border-slate-200 text-center rounded-none">
-                    <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Total donated</p>
+                    <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest">Total donated</p>
                     <p className="text-sm font-bold text-charcoal-dark uppercase tracking-tight">GHS 1,250</p>
                   </div>
                   <div className="px-4 py-2 bg-primary/5 border border-primary/20 text-center rounded-none">
-                    <p className="text-[9px] font-semibold text-primary uppercase tracking-widest">Points earned</p>
+                    <p className="text-tiny font-semibold text-primary uppercase tracking-widest">Points earned</p>
                     <p className="text-sm font-bold text-primary uppercase tracking-tight">125 XP</p>
                   </div>
                 </div>
@@ -579,8 +579,8 @@ export default function Donate() {
                         <tr key={idx} className="hover:bg-slate-50/50 transition-colors group">
                           <td className="p-5">
                             <p className="text-sm font-semibold text-charcoal-dark">{item.date}</p>
-                            <p className="text-[9px] text-primary font-bold uppercase tracking-wider mt-0.5">{item.campaignTitle || 'General Fund'}</p>
-                            <p className="text-[10px] text-slate-400 font-meta font-semibold uppercase tracking-widest">{item.id}</p>
+                            <p className="text-tiny text-primary font-bold uppercase tracking-wider mt-0.5">{item.campaignTitle || 'General Fund'}</p>
+                            <p className="text-tiny text-slate-400 font-meta font-semibold uppercase tracking-widest">{item.id}</p>
                           </td>
                           <td className="p-5">
                             <p className="text-sm font-bold text-charcoal-dark">{item.amount}</p>
@@ -683,10 +683,10 @@ export default function Donate() {
                        <table className="w-full text-left border-collapse">
                          <thead>
                            <tr className="bg-slate-50 border-b border-slate-100">
-                             <th className="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Date / ID</th>
-                             <th className="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Amount</th>
-                             <th className="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Method</th>
-                             <th className="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                             <th className="p-5 text-tiny font-bold text-slate-400 uppercase tracking-[0.2em]">Date / ID</th>
+                             <th className="p-5 text-tiny font-bold text-slate-400 uppercase tracking-[0.2em]">Amount</th>
+                             <th className="p-5 text-tiny font-bold text-slate-400 uppercase tracking-[0.2em]">Method</th>
+                             <th className="p-5 text-tiny font-bold text-slate-400 uppercase tracking-[0.2em]">Status</th>
                            </tr>
                          </thead>
                          <tbody className="divide-y divide-slate-50">
@@ -694,16 +694,16 @@ export default function Donate() {
                              <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
                                <td className="p-5">
                                  <p className="text-sm font-semibold text-charcoal-dark">{item.date}</p>
-                                 <p className="text-[10px] text-slate-400 font-meta font-bold tracking-widest">{item.id}</p>
+                                 <p className="text-tiny text-slate-400 font-meta font-bold tracking-widest">{item.id}</p>
                                </td>
                                <td className="p-5">
                                  <p className="text-sm font-bold text-charcoal-dark">{item.amount}</p>
                                </td>
                                <td className="p-5">
-                                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.method}</p>
+                                 <p className="text-tiny font-bold text-slate-500 uppercase tracking-widest">{item.method}</p>
                                </td>
                                <td className="p-5">
-                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-[0.2em] rounded-none">
+                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 text-primary text-tiny font-bold uppercase tracking-[0.2em] rounded-none">
                                    {item.status}
                                  </span>
                                </td>
@@ -725,7 +725,7 @@ export default function Donate() {
                    </div>
 
                    <div className="p-6 border-t border-slate-100 flex items-center justify-between bg-slate-50 sticky bottom-0 z-10">
-                     <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                     <div className="flex items-center gap-2 text-tiny font-bold text-slate-400 uppercase tracking-widest">
                        {contributions.length} Records Found
                      </div>
                      <div className="flex gap-4">

@@ -110,7 +110,7 @@ export default function DashboardLayout() {
           <img src={settings.logo_url} alt="The Base Logo" className="h-10 w-10 object-contain"  decoding="async" />
           <div>
             <h1 className="text-xl font-black text-on-surface leading-none mb-0 tracking-tighter uppercase">The Base</h1>
-            <p className="text-[9px] text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase">Civic Movement</p>
+            <p className="text-tiny text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase">Civic Movement</p>
           </div>
         </div>
 
@@ -200,10 +200,10 @@ export default function DashboardLayout() {
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
             </div>
             <div className="px-2">
-              <p className="text-on-surface text-[10px] font-black tracking-[0.2em] leading-tight mb-1">
+              <p className="text-on-surface text-tiny font-black tracking-[0.2em] leading-tight mb-1">
                 Dr. George Oti Bonsu
               </p>
-              <p className="text-accent text-[9px] font-black tracking-widest mb-0">
+              <p className="text-accent text-tiny font-black tracking-widest mb-0">
                 Movement founder
               </p>
             </div>
@@ -213,13 +213,13 @@ export default function DashboardLayout() {
             <Button 
               variant="primary"
               onClick={() => setIsShareModalOpen(true)}
-              className="w-full h-14 uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-primary/20"
+              className="w-full h-14 uppercase tracking-[0.2em] text-tiny shadow-2xl shadow-primary/20"
             >
               Invite & Share
             </Button>
             <div className="mt-8 space-y-4 pl-2">
               <Link 
-                className={`flex items-center transition-all font-black text-[10px] uppercase tracking-[0.2em] ${isActive('/dashboard/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`} 
+                className={`flex items-center transition-all font-black text-tiny uppercase tracking-[0.2em] ${isActive('/dashboard/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`} 
                 to="/dashboard/contact"
               >
                 <span className="material-symbols-outlined text-lg mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>help</span>
@@ -230,7 +230,7 @@ export default function DashboardLayout() {
             {/* Back to Landing Page */}
             <Link
               to="/"
-              className="mt-8 flex items-center gap-3 w-full h-12 px-4 rounded-sm border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-black text-[9px] uppercase tracking-widest group bg-white/50"
+              className="mt-8 flex items-center gap-3 w-full h-12 px-4 rounded-sm border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-black text-tiny uppercase tracking-widest group bg-white/50"
             >
               <span className="material-symbols-outlined text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
               Back to Site
@@ -259,7 +259,7 @@ export default function DashboardLayout() {
                   <img src={settings.logo_url} alt="The Base" className="h-6 w-6 object-contain"  decoding="async" />
                   <span className="text-primary font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
-                <div className="hidden sm:flex items-center gap-2 text-[9px] text-muted-foreground/40 tracking-[0.2em] uppercase font-black">
+                <div className="hidden sm:flex items-center gap-2 text-tiny text-muted-foreground/40 tracking-[0.2em] uppercase font-black">
                   <span className="text-primary">The Base</span>
                   <span className="text-muted-foreground/20">/</span>
                   <span className="text-on-surface">{getPageTitle()}</span>
@@ -293,7 +293,7 @@ export default function DashboardLayout() {
                 >notifications</span>
                 {/* Unread badge */}
                 {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-destructive rounded-full ring-2 ring-white text-[8px] flex items-center justify-center text-white font-black">
+                  <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-destructive rounded-full ring-2 ring-white text-micro flex items-center justify-center text-white font-black">
                     {unreadCount}
                   </span>
                 )}
@@ -312,14 +312,14 @@ export default function DashboardLayout() {
                       className="w-full h-full object-cover"
                      decoding="async" />
                   ) : (
-                    <div className="w-full h-full bg-primary flex items-center justify-center text-white text-[10px] font-black tracking-widest">
+                    <div className="w-full h-full bg-primary flex items-center justify-center text-white text-tiny font-black tracking-widest">
                       {initials || 'M'}
                     </div>
                   )}
                 </div>
                 <div className="hidden lg:block text-left">
                   <p className="text-xs font-black text-on-surface leading-none mb-1 capitalize tracking-tight">{userName?.toLowerCase()}</p>
-                   <p className="text-[9px] text-accent font-black tracking-widest mb-0">
+                   <p className="text-tiny text-accent font-black tracking-widest mb-0">
                     {userPlatform === 'ADMIN' ? 'Chapter Lead' : (userPlatform === 'PATRIOT' ? 'Member' : 'Member')} {userRegNo && `· ${userRegNo}`}
                   </p>
                 </div>
@@ -339,7 +339,7 @@ export default function DashboardLayout() {
         {/* Dashboard Footer */}
         <footer className="mt-16 py-16 px-12 border-t border-border/10 bg-muted/5">
           <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-[10px] text-muted-foreground/40 mb-0 font-black tracking-[0.2em]">© {new Date().getFullYear()} The Base Movement. Ghana First.</p>
+            <p className="text-tiny text-muted-foreground/40 mb-0 font-black tracking-[0.2em]">© {new Date().getFullYear()} The Base Movement. Ghana First.</p>
             <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10">
               <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy Policy</Link>
               <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms of Service</Link>

@@ -77,15 +77,15 @@ export function MovementRoadmap() {
         <div className="flex items-center gap-4 ml-12 md:ml-0">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgb(var(--brand-green-rgb))' }} />
-            <span className="text-[8px] font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-green-rgb))' }}>Completed</span>
+            <span className="text-micro font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-green-rgb))' }}>Completed</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgb(var(--brand-gold-rgb))' }} />
-            <span className="text-[8px] font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-gold-rgb))' }}>Active</span>
+            <span className="text-micro font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-gold-rgb))' }}>Active</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgb(var(--brand-red-rgb))' }} />
-            <span className="text-[8px] font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-red-rgb))' }}>Future</span>
+            <span className="text-micro font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-red-rgb))' }}>Future</span>
           </div>
         </div>
       </div>
@@ -147,7 +147,7 @@ export function MovementRoadmap() {
                   )}>
                     <div className="flex items-center gap-2">
                       <span 
-                        className="px-3 py-1 text-[10px] font-bold text-white rounded-sm"
+                        className="px-3 py-1 text-tiny font-bold text-white rounded-sm"
                         style={{ 
                           backgroundColor: milestone.status === 'Completed' ? 'rgb(var(--brand-green-rgb))' : 
                                            milestone.status === 'In Progress' ? 'rgb(var(--brand-gold-rgb))' : 
@@ -156,7 +156,7 @@ export function MovementRoadmap() {
                       >
                         {milestone.status}
                       </span>
-                      <span className="text-[10px] font-bold text-on-surface/20 tracking-widest capitalize">{milestone.category}</span>
+                      <span className="text-tiny font-bold text-on-surface/20 tracking-widest capitalize">{milestone.category}</span>
                     </div>
                     <h4 className="text-lg font-black italic tracking-tighter text-on-surface group-hover:text-[var(--brand-red)] transition-colors leading-tight">
                       {milestone.title}
@@ -168,7 +168,7 @@ export function MovementRoadmap() {
                   </p>
 
                   <div className={cn(
-                    "flex flex-wrap items-center gap-4 pt-6 border-t border-stone-50 text-[10px] font-bold text-on-surface/30 uppercase tracking-[0.1em]",
+                    "flex flex-wrap items-center gap-4 pt-6 border-t border-stone-50 text-tiny font-bold text-on-surface/30 uppercase tracking-[0.1em]",
                     index % 2 === 0 ? "sm:justify-end" : "sm:justify-start"
                   )}>
                     <div className="flex items-center gap-2">

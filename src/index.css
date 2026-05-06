@@ -121,6 +121,18 @@
     --brand-green-rgb: 0, 107, 63;
     --brand-gold-rgb: 218, 165, 32;
     --brand-red-rgb: 206, 17, 38;
+
+    /* Authoritative Font Scale */
+    --fs-micro: 11px;
+    --fs-tiny: 12px;
+    --fs-xs: 13px;
+    --fs-sm: 14px;
+    --fs-base: 16px;
+    --fs-lg: 18px;
+    --fs-xl: 20px;
+    --fs-2xl: 24px;
+    --fs-3xl: 30px;
+    --fs-4xl: 36px;
   }
 }
 
@@ -218,6 +230,15 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Centralized Typographic Scale Utilities */
+  .text-micro { font-size: var(--fs-micro); }
+  .text-tiny { font-size: var(--fs-tiny); }
+  .text-referral { font-size: var(--fs-sm); }
+  .text-scale-base { font-size: var(--fs-base); }
+  .text-scale-lg { font-size: var(--fs-lg); }
+  .text-scale-xl { font-size: var(--fs-xl); }
+  .text-scale-2xl { font-size: var(--fs-2xl); }
 }
 
 /* Material Symbols configuration */

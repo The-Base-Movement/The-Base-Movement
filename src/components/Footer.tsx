@@ -37,7 +37,7 @@ export default function Footer() {
               <img alt="The Base Logo" className="h-14 w-14 object-contain" src={settings.logo_url} decoding="async" loading="lazy" />
               <div className="flex flex-col">
                 <h2 className="text-on-surface font-black text-2xl uppercase tracking-tighter leading-none mb-0">The Base</h2>
-                <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2">Ghana First, Jobs for the Youth!</span>
+                <span className="text-tiny font-black text-primary uppercase tracking-[0.3em] mt-2">Ghana First, Jobs for the Youth!</span>
               </div>
             </Link>
             <p className="text-on-surface/60 text-sm leading-relaxed font-medium max-w-sm">
@@ -62,8 +62,8 @@ export default function Footer() {
           {/* Navigation Links */}
           <div className="lg:col-span-4 grid grid-cols-2 sm:grid-cols-3 gap-8">
             <div className="space-y-6">
-              <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Foundation</h4>
-              <div className="flex flex-col space-y-4 text-[11px] font-bold uppercase tracking-widest text-on-surface/40">
+              <h4 className="text-primary font-black tracking-[0.2em] text-tiny uppercase">Foundation</h4>
+              <div className="flex flex-col space-y-4 text-micro font-bold uppercase tracking-widest text-on-surface/40">
                 <Link className="hover:text-primary transition-colors" to="/our-agenda">The plan</Link>
                 <Link className="hover:text-primary transition-colors" to="/impact">Impact</Link>
                 <Link className="hover:text-primary transition-colors" to="/chapters">Chapters</Link>
@@ -71,8 +71,8 @@ export default function Footer() {
             </div>
             
             <div className="space-y-6">
-              <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Connect</h4>
-              <div className="flex flex-col space-y-4 text-[11px] font-bold uppercase tracking-widest text-on-surface/40">
+              <h4 className="text-primary font-black tracking-[0.2em] text-tiny uppercase">Connect</h4>
+              <div className="flex flex-col space-y-4 text-micro font-bold uppercase tracking-widest text-on-surface/40">
                 <Link className="hover:text-primary transition-colors" to="/contact">Contact</Link>
                 <Link className="hover:text-primary transition-colors" to="/press">Press</Link>
                 <Link className="hover:text-primary transition-colors" to="/privacy">Privacy</Link>
@@ -80,8 +80,8 @@ export default function Footer() {
             </div>
 
             <div className="space-y-6">
-              <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Action</h4>
-              <div className="flex flex-col space-y-4 text-[11px] font-bold uppercase tracking-widest text-on-surface/40">
+              <h4 className="text-primary font-black tracking-[0.2em] text-tiny uppercase">Action</h4>
+              <div className="flex flex-col space-y-4 text-micro font-bold uppercase tracking-widest text-on-surface/40">
                 <Link className="hover:text-primary transition-colors" to="/register">Join</Link>
                 <Link className="hover:text-primary transition-colors" to="/donate">Donate</Link>
                 <Link className="hover:text-primary transition-colors" to="/store">Supplies</Link>
@@ -99,7 +99,7 @@ export default function Footer() {
               
               {subscribed ? (
                 <div className="bg-brand-green/10 border border-brand-green/20 p-4 text-center">
-                  <p className="text-brand-green text-[10px] font-black uppercase tracking-widest">Successfully Enlisted</p>
+                  <p className="text-brand-green text-tiny font-black uppercase tracking-widest">Successfully Enlisted</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="space-y-3">
@@ -126,8 +126,8 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-24 pt-10 border-t border-border/10 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-            <p className="text-[10px] text-on-surface/30 mb-0 font-black tracking-[0.2em] uppercase">© 2026 The Base Movement. Ghana First.</p>
-            <p className="text-[9px] text-on-surface/20 mb-0 font-bold uppercase tracking-[0.1em]">Engineered for progress by The Base Tech Desk</p>
+            <p className="text-tiny text-on-surface/30 mb-0 font-black tracking-[0.2em] uppercase">© 2026 The Base Movement. Ghana First.</p>
+            <p className="text-tiny text-on-surface/20 mb-0 font-bold uppercase tracking-[0.1em]">Engineered for progress by The Base Tech Desk</p>
           </div>
           {/* Continuous Movement Gradient Bar */}
           <div className="w-48 h-2 bg-gradient-to-r from-destructive via-accent to-primary rounded-full shadow-[0_0_10px_rgba(206,17,38,0.1)] overflow-hidden">
