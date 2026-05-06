@@ -289,20 +289,20 @@ export default function Register() {
 
   if (submitted) {
     return (
-      <main className="bg-surface-warm font-body-md min-h-screen py-12 px-4">
+      <main className="bg-background font-body-md min-h-screen py-12 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--brand-green)]/10 text-[var(--brand-green)] mb-6 animate-bounce">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-6 animate-bounce">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h1 className="text-3xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">Registration Complete</h1>
-            <p className="text-slate-500 font-meta uppercase tracking-widest text-xs">Welcome to the movement, patriot.</p>
+            <h1 className="text-3xl font-black text-on-surface uppercase tracking-tighter font-meta mb-2">Registration Complete</h1>
+            <p className="text-muted-foreground font-meta uppercase tracking-widest text-xs">Welcome to the movement, patriot.</p>
           </div>
 
           <div className="space-y-8">
-            <div className="bg-white border border-slate-200 p-2 shadow-2xl relative">
-              <div className="border-b border-slate-100 pb-3 mb-4 px-4 pt-2">
-                <h3 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-[0.2em]">Official Membership Card</h3>
+            <div className="bg-white border border-border/60 p-2 shadow-2xl relative">
+              <div className="border-b border-border/40 pb-3 mb-4 px-4 pt-2">
+                <h3 className="font-meta font-bold text-[10px] text-muted-foreground/80 uppercase tracking-[0.2em]">Official Membership Card</h3>
               </div>
               
               <div className="max-w-md mx-auto py-4">
@@ -321,23 +321,23 @@ export default function Register() {
                 />
               </div>
 
-              <div className="bg-slate-50 p-6 mt-4 border-t border-slate-100">
+              <div className="bg-muted/30 p-6 mt-4 border-t border-border/40">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                   <div>
-                    <h4 className="font-meta font-bold text-xs text-charcoal-dark uppercase tracking-wider mb-1">Registration Number</h4>
-                    <p className="font-meta font-black text-xl text-[var(--brand-green)] tracking-tight">{regNumber}</p>
+                    <h4 className="font-meta font-bold text-xs text-on-surface uppercase tracking-wider mb-1">Registration Number</h4>
+                    <p className="font-meta font-black text-xl text-primary tracking-tight">{regNumber}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <button 
                       onClick={() => window.print()}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-warm-gold text-charcoal-dark font-meta font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition-all shadow-md"
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-on-surface font-meta font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition-all shadow-md"
                     >
                       <span className="material-symbols-outlined text-[18px]">print</span>
                       Print Card
                     </button>
                     <button 
                       onClick={() => setSubmitted(false)}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-charcoal-dark font-meta font-black uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all shadow-sm"
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-border/60 text-on-surface font-meta font-black uppercase tracking-widest text-[10px] hover:bg-muted/30 transition-all shadow-sm"
                     >
                       <ArrowLeft className="w-4 h-4" /> Edit Info
                     </button>
@@ -347,30 +347,29 @@ export default function Register() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white border border-slate-200 p-8 shadow-sm">
-                <h4 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-widest mb-4">Membership Verification</h4>
+              <div className="bg-white border border-border/60 p-8 shadow-sm">
+                <h4 className="font-meta font-bold text-[10px] text-muted-foreground/80 uppercase tracking-widest mb-4">Membership Verification</h4>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-[var(--brand-green)] animate-pulse"></div>
-                  <p className="text-xs font-bold text-charcoal-dark font-meta uppercase tracking-tight">Status: Active & Verified</p>
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                  <p className="text-xs font-bold text-on-surface font-meta uppercase tracking-tight">Status: VERIFIED</p>
                 </div>
-                <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
-                  Your official records have been synchronized with the movement's hub. You can now access the member dashboard.
+                <p className="text-xs text-muted-foreground mt-2 font-body-md leading-relaxed">
+                  Your official records have been synchronized with the movement's hub. You can now access the platform overview.
                 </p>
-              </div>
+                </div>
 
-              <div className="bg-[var(--brand-green)] text-white p-8 flex flex-col justify-between">
+                <div className="bg-primary text-white p-8 flex flex-col justify-between">
                 <div>
                   <h4 className="font-meta font-bold text-[10px] text-white/60 uppercase tracking-widest mb-4">Next Step</h4>
-                  <p className="text-sm font-bold font-meta uppercase leading-tight mb-4">Access your leadership dashboard to join a chapter.</p>
+                  <p className="text-sm font-bold font-meta uppercase leading-tight mb-4">Access your portal to join a chapter.</p>
                 </div>
-                <button 
+                <button
                   onClick={() => navigate('/dashboard')}
                   className="w-full inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-white/10 hover:bg-white/20 p-3 text-center justify-center transition-colors cursor-pointer"
                 >
-                  Enter Dashboard <ArrowRight className="w-4 h-4" />
+                  Enter Overview <ArrowRight className="w-4 h-4" />
                 </button>
-              </div>
-            </div>
+                </div>            </div>
           </div>
         </div>
       </main>
@@ -379,13 +378,13 @@ export default function Register() {
 
   if (step === 'choice') {
     return (
-      <main className="bg-surface-warm font-body-md min-h-screen flex flex-col justify-center py-12 px-4">
+      <main className="bg-background font-body-md min-h-screen flex flex-col justify-center py-12 px-4">
         <div className="max-w-xl w-full mx-auto">
           <div className="text-center mb-10">
             <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6"  decoding="async" />
-            <h1 className="text-3xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
-            <div className="w-16 h-1 bg-[var(--brand-red)] mx-auto mb-4"></div>
-            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest font-meta">Membership Registration</h2>
+            <h1 className="text-3xl font-black text-on-surface uppercase tracking-tighter font-meta mb-2">The Base</h1>
+            <div className="w-16 h-1 bg-destructive mx-auto mb-4"></div>
+            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest font-meta">Membership Registration</h2>
           </div>
 
           <div className="space-y-6">
@@ -395,16 +394,16 @@ export default function Register() {
                 setStep('form')
                 setFormStep(1)
               }}
-              className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-[var(--brand-green)] transition-colors text-left shadow-sm"
+              className="w-full group bg-white border border-border/60 p-6 flex items-center gap-6 hover:border-primary transition-colors text-left shadow-sm"
             >
-              <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-[var(--brand-green)]/10 transition-colors">
-                <FileText className="w-8 h-8 text-[var(--brand-green)]" />
+              <div className="w-16 h-16 bg-background flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                <FileText className="w-8 h-8 text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-base mb-1">Local Membership (Ghana)</h3>
-                <p className="text-sm text-slate-500">For residents living and voting within the 16 regions of Ghana.</p>
+                <h3 className="font-bold text-on-surface font-meta uppercase tracking-tight text-base mb-1">Local Membership (Ghana)</h3>
+                <p className="text-sm text-muted-foreground">For residents living and voting within the 16 regions of Ghana.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-[var(--brand-green)] transition-colors" />
+              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-primary transition-colors" />
             </button>
 
             <button
@@ -413,22 +412,22 @@ export default function Register() {
                 setStep('form')
                 setFormStep(1)
               }}
-              className="w-full group bg-white border border-slate-200 p-6 flex items-center gap-6 hover:border-[var(--brand-gold)] transition-colors text-left shadow-sm"
+              className="w-full group bg-white border border-border/60 p-6 flex items-center gap-6 hover:border-accent transition-colors text-left shadow-sm"
             >
-              <div className="w-16 h-16 bg-surface-warm flex items-center justify-center shrink-0 group-hover:bg-[var(--brand-gold)]/10 transition-colors">
-                <User className="w-8 h-8 text-[var(--brand-gold)]" />
+              <div className="w-16 h-16 bg-background flex items-center justify-center shrink-0 group-hover:bg-accent/10 transition-colors">
+                <User className="w-8 h-8 text-accent" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-base mb-1">Diaspora Membership</h3>
-                <p className="text-sm text-slate-500">For Ghanaians living abroad who wish to support the movement.</p>
+                <h3 className="font-bold text-on-surface font-meta uppercase tracking-tight text-base mb-1">Diaspora Membership</h3>
+                <p className="text-sm text-muted-foreground">For Ghanaians living abroad who wish to support the movement.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-[var(--brand-gold)] transition-colors" />
+              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-accent transition-colors" />
             </button>
           </div>
 
-          <div className="text-center mt-12 pt-8 border-t border-slate-200">
-            <p className="text-sm text-slate-500 font-body-md">
-              Already a member? <Link to="/login" className="text-[var(--brand-green)] font-bold hover:underline">Sign in securely</Link>
+          <div className="text-center mt-12 pt-8 border-t border-border/60">
+            <p className="text-sm text-muted-foreground font-body-md">
+              Already a member? <Link to="/login" className="text-primary font-bold hover:underline">Sign in securely</Link>
             </p>
           </div>
         </div>
@@ -437,20 +436,20 @@ export default function Register() {
   }
 
   return (
-    <main className="bg-surface-warm font-body-md min-h-screen">
-      <div className="bg-white border-b border-slate-200 pt-16 pb-12 px-4 text-center">
+    <main className="bg-background font-body-md min-h-screen">
+      <div className="bg-white border-b border-border/60 pt-16 pb-12 px-4 text-center">
         <div className="max-w-6xl mx-auto">
           <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6"  decoding="async" />
-          <h1 className="text-charcoal-dark mb-2">The Base</h1>
+          <h1 className="text-on-surface mb-2">The Base</h1>
           <div className="w-24 h-1.5 mx-auto mb-4 flex">
-            <div className="flex-1 bg-[var(--brand-red)]"></div>
-            <div className="flex-1 bg-[var(--brand-gold)]"></div>
-            <div className="flex-1 bg-[var(--brand-green)]"></div>
+            <div className="flex-1 bg-destructive"></div>
+            <div className="flex-1 bg-accent"></div>
+            <div className="flex-1 bg-primary"></div>
           </div>
-          <h2 className="text-slate-500 mb-8">Official Registration Form</h2>
+          <h2 className="text-muted-foreground mb-8">Official Registration Form</h2>
           <button
             onClick={() => setStep('choice')}
-            className="inline-flex items-center gap-2 px-6 py-2 border border-slate-200 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all font-meta"
+            className="inline-flex items-center gap-2 px-6 py-2 border border-border/60 text-[10px] font-black text-muted-foreground uppercase tracking-widest hover:bg-muted/30 transition-all font-meta"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Registration Options
           </button>
@@ -460,7 +459,7 @@ export default function Register() {
       <div className="max-w-6xl mx-auto py-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-3 space-y-2 sticky top-8">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 pl-4">Registration Progress</p>
+            <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-[0.2em] mb-6 pl-4">Registration Progress</p>
             <div className="space-y-1">
               {[
                 { step: 1, label: 'Primary Details' },
@@ -468,45 +467,45 @@ export default function Register() {
                 { step: 3, label: 'Emergency contact' },
                 { step: 4, label: 'Final Verification' }
               ].map((item) => (
-                <div key={item.step} className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-[var(--brand-green)] shadow-sm' : 'border-transparent text-slate-400 opacity-60'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-[var(--brand-green)] text-white' : 'bg-slate-200 text-slate-500'}`}>
+                <div key={item.step} className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-primary shadow-sm' : 'border-transparent text-muted-foreground/80 opacity-60'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
                     {formStep > item.step ? <CheckCircle2 className="w-5 h-5" /> : item.step}
                   </div>
-                  <span className={`text-xs font-bold tracking-tight font-meta ${formStep === item.step ? 'text-charcoal-dark' : ''}`}>
+                  <span className={`text-xs font-bold tracking-tight font-meta ${formStep === item.step ? 'text-on-surface' : ''}`}>
                     {item.label}
                   </span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-12 pl-4 pt-8 border-t border-slate-200">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Need Assistance?</p>
-              <a href="mailto:info@thebasemovement.com" className="text-xs font-meta font-medium text-slate-500 hover:text-[var(--brand-green)] transition-colors">
+            <div className="mt-12 pl-4 pt-8 border-t border-border/60">
+              <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-[0.2em] mb-1">Need Assistance?</p>
+              <a href="mailto:info@thebasemovement.com" className="text-xs font-meta font-medium text-muted-foreground hover:text-primary transition-colors">
                 info@thebasemovement.com
               </a>
             </div>
           </div>
 
           <div className="lg:col-span-9">
-            <div className="bg-white border border-slate-200 p-8 md:p-12 shadow-sm">
+            <div className="bg-white border border-border/60 p-8 md:p-12 shadow-sm">
               <form onSubmit={handleSubmit}>
               {formStep === 1 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark">Step 1: Primary Details</h3>
+                    <h3 className="text-on-surface">Step 1: Primary Details</h3>
                   </div>
 
                   {/* AI Verification Scanner - Local Membership Only */}
                   {platform === 'GHANA' && (
-                    <div className="relative overflow-hidden mb-10 bg-gradient-to-br from-charcoal-dark to-slate-900 rounded-lg p-8 border border-slate-800 shadow-2xl">
-                      <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--brand-green)]/10 -mr-32 -mt-32 blur-3xl"></div>
+                    <div className="relative overflow-hidden mb-10 bg-gradient-to-br from-zinc-950 to-zinc-900 rounded-lg p-8 border border-white/10 shadow-2xl">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 -mr-32 -mt-32 blur-3xl"></div>
                       <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
-                            <Zap className="w-5 h-5 text-warm-gold" />
+                            <Zap className="w-5 h-5 text-accent" />
                             <h4 className="text-white font-meta font-bold tracking-tight text-lg">AI Identity Verification</h4>
                           </div>
-                          <p className="text-slate-400 text-sm max-w-sm mb-0">
+                          <p className="text-muted-foreground/60 text-sm max-w-sm mb-0">
                             Scan your Ghana Card or Voter ID to instantly auto-fill your profile and verify your membership.
                           </p>
                         </div>
@@ -521,7 +520,7 @@ export default function Register() {
                           />
                           <button 
                             type="button"
-                            className="relative z-10 w-full sm:w-auto bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-meta font-bold uppercase tracking-widest text-[10px] h-12 px-6 shadow-lg shadow-brand-green/20"
+                            className="relative z-10 w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-meta font-bold uppercase tracking-widest text-[10px] h-12 px-6 shadow-lg shadow-primary/20"
                           >
                             {isScanningId ? (
                               <span className="flex items-center"><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Scanning...</span>
@@ -535,8 +534,8 @@ export default function Register() {
                   )}
 
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Full Name <span className="text-slate-400 ml-1">(First & Last Name)</span>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">
+                      Full Name <span className="text-muted-foreground/80 ml-1">(First & Last Name)</span>
                     </label>
                     <input 
                       required 
@@ -544,24 +543,24 @@ export default function Register() {
                       title="Please enter both your first and last name separated by a space."
                       value={formData.fullName} 
                       onChange={(e) => handleChange('fullName', e.target.value)} 
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm" 
+                      className="w-full form-understate p-4 text-on-surface text-sm" 
                     />
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Membership Platform</label>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Membership Platform</label>
                     <div className="grid grid-cols-2 gap-4">
                       <button
                         type="button"
                         onClick={() => handlePlatformChange('GHANA')}
-                        className={`p-4 border text-sm font-bold uppercase tracking-widest font-meta transition-all ${platform === 'GHANA' ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                        className={`p-4 border text-sm font-bold uppercase tracking-widest font-meta transition-all ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground hover:border-slate-300'}`}
                       >
                         Ghana Base
                       </button>
                       <button
                         type="button"
                         onClick={() => handlePlatformChange('DIASPORA')}
-                        className={`p-4 border text-sm font-bold uppercase tracking-widest font-meta transition-all ${platform === 'DIASPORA' ? 'border-[var(--brand-gold)] bg-[var(--brand-gold)]/5 text-[var(--brand-gold)]' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}
+                        className={`p-4 border text-sm font-bold uppercase tracking-widest font-meta transition-all ${platform === 'DIASPORA' ? 'border-accent bg-accent/5 text-accent' : 'border-border/60 text-muted-foreground hover:border-slate-300'}`}
                       >
                         Diaspora Base
                       </button>
@@ -570,14 +569,14 @@ export default function Register() {
                   
                   {platform === 'GHANA' && (
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">National ID Number (Optional)</label>
-                      <input value={formData.idNumber} onChange={(e) => handleChange('idNumber', e.target.value)} placeholder="GHA-000000000-0" className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">National ID Number (Optional)</label>
+                      <input value={formData.idNumber} onChange={(e) => handleChange('idNumber', e.target.value)} placeholder="GHA-000000000-0" className="w-full form-understate p-4 text-on-surface text-sm" />
                     </div>
                   )}
                   <div className="grid md:grid-cols-2 gap-8">
                     {platform === 'DIASPORA' && (
                       <div className="space-y-3">
-                        <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Country</label>
+                        <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Country</label>
                         <select 
                           required 
                           value={formData.country} 
@@ -589,7 +588,7 @@ export default function Register() {
                               countryCode: dbCountryCodes[selectedCountry] || prev.countryCode
                             }));
                           }} 
-                          className="w-full form-understate p-4 text-charcoal-dark text-sm"
+                          className="w-full form-understate p-4 text-on-surface text-sm"
                         >
                           <option value="">Select Country</option>
                           {dbCountries.map(c => <option key={c} value={c}>{c}</option>)}
@@ -597,17 +596,17 @@ export default function Register() {
                       </div>
                     )}
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Phone</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Phone</label>
                       <div className="flex">
-                        <select value={formData.countryCode} onChange={(e) => handleChange('countryCode', e.target.value)} className="px-2 bg-surface-warm border border-slate-300 text-xs">
+                        <select value={formData.countryCode} onChange={(e) => handleChange('countryCode', e.target.value)} className="px-2 bg-muted border border-border/60 text-xs">
                           {Array.from(new Set(Object.values(dbCountryCodes))).map(code => <option key={code} value={code}>{code}</option>)}
                         </select>
-                        <input required value={formData.contactNumber} onChange={(e) => handleChange('contactNumber', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                        <input required value={formData.contactNumber} onChange={(e) => handleChange('contactNumber', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm" />
                       </div>
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Password</label>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Password</label>
                     <div className="relative">
                       <input 
                         type={showPassword ? 'text' : 'password'} 
@@ -615,18 +614,18 @@ export default function Register() {
                         minLength={8} 
                         value={formData.password} 
                         onChange={(e) => handleChange('password', e.target.value)} 
-                        className="w-full form-understate p-4 pr-12 text-charcoal-dark text-sm" 
+                        className="w-full form-understate p-4 pr-12 text-on-surface text-sm" 
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[var(--brand-green)]"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/80 hover:text-primary"
                       >
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
-                    <p className="text-[10px] text-slate-400 font-meta leading-relaxed">
-                      Avoid weak passwords like <span className="text-charcoal-dark font-bold">"password123"</span> or <span className="text-charcoal-dark font-bold">"ghana2024"</span>. Use a mix of letters, numbers, and symbols.
+                    <p className="text-[10px] text-muted-foreground/80 font-meta leading-relaxed">
+                      Avoid weak passwords like <span className="text-on-surface font-bold">"password123"</span> or <span className="text-on-surface font-bold">"ghana2024"</span>. Use a mix of letters, numbers, and symbols.
                     </p>
                   </div>
                 </div>
@@ -635,19 +634,19 @@ export default function Register() {
               {formStep === 2 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark">Step 2: Demographic Details</h3>
+                    <h3 className="text-on-surface">Step 2: Demographic Details</h3>
                   </div>
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Age Range</label>
-                      <select required value={formData.ageRange} onChange={(e) => handleChange('ageRange', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Age Range</label>
+                      <select required value={formData.ageRange} onChange={(e) => handleChange('ageRange', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                         <option value="">Select Range</option>
                         {ageRanges.map(r => <option key={r} value={r}>{r}</option>)}
                       </select>
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Gender</label>
-                      <select required value={formData.gender} onChange={(e) => handleChange('gender', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Gender</label>
+                      <select required value={formData.gender} onChange={(e) => handleChange('gender', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                       </select>
@@ -656,15 +655,15 @@ export default function Register() {
                   {platform === 'GHANA' && (
                     <div className="grid md:grid-cols-2 gap-8">
                       <div className="space-y-3">
-                        <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Region</label>
-                        <select required value={formData.region} onChange={(e) => handleChange('region', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                        <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Region</label>
+                        <select required value={formData.region} onChange={(e) => handleChange('region', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                           <option value="">Select Region</option>
                           {dbRegions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
                         </select>
                       </div>
                       <div className="space-y-3">
-                        <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Constituency</label>
-                        <select required value={formData.constituency} onChange={(e) => handleChange('constituency', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm">
+                        <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Constituency</label>
+                        <select required value={formData.constituency} onChange={(e) => handleChange('constituency', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                           <option value="">Select Constituency</option>
                           {formData.region && dbConstituencies
                             .filter(c => c.region_id === dbRegions.find(r => r.name === formData.region)?.id)
@@ -680,20 +679,20 @@ export default function Register() {
               {formStep === 3 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark">Step 3: Emergency & Profile</h3>
+                    <h3 className="text-on-surface">Step 3: Emergency & Profile</h3>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Profession</label>
-                    <input required value={formData.profession} onChange={(e) => handleChange('profession', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Profession</label>
+                    <input required value={formData.profession} onChange={(e) => handleChange('profession', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm" />
                   </div>
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Emergency Name</label>
-                      <input required value={formData.emergencyContactName} onChange={(e) => handleChange('emergencyContactName', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Emergency Name</label>
+                      <input required value={formData.emergencyContactName} onChange={(e) => handleChange('emergencyContactName', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Emergency Phone</label>
-                      <input required value={formData.emergencyNumber} onChange={(e) => handleChange('emergencyNumber', e.target.value)} className="w-full form-understate p-4 text-charcoal-dark text-sm" />
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Emergency Phone</label>
+                      <input required value={formData.emergencyNumber} onChange={(e) => handleChange('emergencyNumber', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm" />
                     </div>
                   </div>
                 </div>
@@ -702,34 +701,34 @@ export default function Register() {
               {formStep === 4 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark">Step 4: Final Verification</h3>
+                    <h3 className="text-on-surface">Step 4: Final Verification</h3>
                   </div>
                   <div className="space-y-6">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">Photo</label>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Photo</label>
                     {!photoUrl ? (
-                      <div className="border-2 border-dashed p-12 text-center bg-slate-50 relative">
+                      <div className="border-2 border-dashed p-12 text-center bg-muted/30 relative">
                         <input type="file" accept="image/*" onChange={handlePhotoUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
-                        <Upload className="mx-auto mb-4 text-slate-300" />
-                        <p className="text-[10px] font-bold uppercase text-slate-500">Upload Photo</p>
+                        <Upload className="mx-auto mb-4 text-muted-foreground/40" />
+                        <p className="text-[10px] font-bold uppercase text-muted-foreground">Upload Photo</p>
                       </div>
                     ) : (
-                      <div className="relative h-[400px] bg-charcoal-dark">
+                      <div className="relative h-[400px] bg-zinc-950/90">
                         <Cropper image={photoUrl} crop={crop} zoom={zoom} aspect={3/4} onCropChange={setCrop} onCropComplete={onCropComplete} onZoomChange={setZoom} />
                       </div>
                     )}
                   </div>
-                  <div className="flex items-start gap-4 p-6 bg-charcoal-dark text-white border-l-4 border-[var(--brand-green)]">
+                  <div className="flex items-start gap-4 p-6 bg-zinc-950/90 text-white border-l-4 border-primary">
                     <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-1" />
                     <label className="text-sm">I accept the declaration and agree to the Privacy Policy.</label>
                   </div>
                 </div>
               )}
 
-              <div className="pt-10 mt-12 border-t border-slate-200 flex justify-between gap-4">
+              <div className="pt-10 mt-12 border-t border-border/60 flex justify-between gap-4">
                 {formStep > 1 && (
-                  <button type="button" onClick={goBack} className="w-1/3 bg-slate-100 py-4 font-meta font-bold uppercase tracking-widest text-[10px]">Back</button>
+                  <button type="button" onClick={goBack} className="w-1/3 bg-muted/50 py-4 font-meta font-bold uppercase tracking-widest text-[10px]">Back</button>
                 )}
-                <button type="submit" disabled={(formStep === 4 && !agreed) || isLoading} className="flex-1 bg-[var(--brand-green)] text-white py-4 font-meta font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
+                <button type="submit" disabled={(formStep === 4 && !agreed) || isLoading} className="flex-1 bg-primary text-white py-4 font-meta font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" /> Processing...

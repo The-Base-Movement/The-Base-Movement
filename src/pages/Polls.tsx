@@ -68,26 +68,25 @@ export default function Polls() {
           <Breadcrumbs />
           <div className="mt-4">
             <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-3 mb-0">
-              <Vote className="w-8 h-8 text-[var(--brand-green)]" />
-              Opinion Polls
+              <Vote className="w-8 h-8 text-primary" />
+              Feedback
             </h1>
             <p className="text-stone-500 max-w-2xl mt-2 mb-0">
-              Your voice shapes the movement. Participate in our regular polls to help prioritize our agenda and regional interventions.
+              Your voice shapes the movement. Participate in our regular polls to help prioritize the plan and regional interventions.
             </p>
           </div>
-        </div>
-      </div>
+          </div>
+          </div>
 
-      <main className="max-w-7xl mx-auto px-8 mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
+          <main className="max-w-7xl mx-auto px-8 mt-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
           {/* Active Polls Section */}
           <div className="lg:col-span-2 space-y-8">
             <div className="flex items-center gap-2 mb-6">
-              <Clock className="w-4 h-4 text-[var(--brand-green)]" />
-              <h2 className="text-base font-bold text-stone-900 uppercase tracking-widest mb-0">Active Polls</h2>
+              <Clock className="w-4 h-4 text-primary" />
+              <h2 className="text-base font-bold text-stone-900 uppercase tracking-widest mb-0">Active Feedback</h2>
             </div>
-
             {loading ? (
               <div className="space-y-6">
                 {[1, 2].map(i => (
