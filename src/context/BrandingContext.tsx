@@ -1,25 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
 import { Helmet } from 'react-helmet-async'
-
-interface BrandingSettings {
-  logo_url: string
-  favicon_url: string
-  og_image_url: string
-  twitter_card_url: string
-  primary_email: string
-  newsletter_email: string
-  [key: string]: unknown
-}
-
-const defaultSettings: BrandingSettings = {
-  logo_url: '/logo.png',
-  favicon_url: '/favicons/favicon-32x32.png',
-  og_image_url: '/og-image.png',
-  twitter_card_url: '/og-image.png',
-  primary_email: 'info@thebasemovement.com',
-  newsletter_email: 'info@thebasemovement.com'
-}
+import { BrandingSettings, defaultSettings } from '@/types/branding'
 
 interface BrandingContextType {
   settings: BrandingSettings
@@ -28,20 +10,20 @@ interface BrandingContextType {
 
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined)
 
-export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function BrandingProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<BrandingSettings>(defaultSettings)
 
-  const refreshSettings = async () => {
+  const refreshSettings = useCallback(async () => {
     try {
       const data = await adminService.getSiteSettings()
-      setSettings({
-        ...defaultSettings,
-        ...(data as any)
-      })
+      setSettings(prev => ({
+        ...prev,
+        ...(data as Partial<BrandingSettings>)
+      }))
     } catch (err) {
       console.error('[BRANDING] Failed to fetch site settings:', err)
     }
-  }
+  }, [])
 
   useEffect(() => {
     refreshSettings()
@@ -52,7 +34,7 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
     window.addEventListener('site_settings_updated', handleBrandingUpdate)
     return () => window.removeEventListener('site_settings_updated', handleBrandingUpdate)
-  }, [])
+  }, [refreshSettings])
 
   return (
     <BrandingContext.Provider value={{ settings, refreshSettings }}>
@@ -71,10 +53,11 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   )
 }
 
-export const useBranding = () => {
+export function useBranding() {
   const context = useContext(BrandingContext)
   if (context === undefined) {
     throw new Error('useBranding must be used within a BrandingProvider')
   }
   return context
 }
+
