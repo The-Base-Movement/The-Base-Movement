@@ -390,44 +390,80 @@ export default function Register() {
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest font-meta">Membership Registration</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Button
-              variant="default"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Local Membership Card */}
+            <div 
               onClick={() => {
                 handlePlatformChange('GHANA')
                 setStep('form')
                 setFormStep(1)
               }}
-              className="w-full h-auto p-6 flex items-center gap-6 group text-left shadow-sm"
+              className="group relative bg-white border border-border/60 hover:border-brand-green/40 p-8 cursor-pointer transition-all duration-500 hover:shadow-2xl hover:shadow-brand-green/10"
             >
-              <div className="w-16 h-16 bg-brand-green/5 flex items-center justify-center shrink-0 group-hover:bg-brand-green/10 transition-colors">
-                <FileText className="w-8 h-8 text-brand-green" />
+              {/* Top Accent Line */}
+              <div className="absolute top-0 left-0 w-0 h-1 bg-brand-green group-hover:w-full transition-all duration-700" />
+              
+              <div className="flex flex-col gap-6">
+                <div className="w-14 h-14 bg-brand-green/5 flex items-center justify-center group-hover:bg-brand-green/10 transition-colors">
+                  <FileText className="w-7 h-7 text-brand-green" />
+                </div>
+                
+                <div className="space-y-3">
+                  <h3 className="font-black text-xl text-on-surface uppercase tracking-tight font-meta leading-tight group-hover:text-brand-green transition-colors">
+                    Local Membership <br/> (Ghana)
+                  </h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed font-body-md">
+                    For citizens and residents living and voting within the 16 regions of Ghana. Access local chapter benefits and voting rights.
+                  </p>
+                </div>
+                
+                <div className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-green opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                  Select Option <ArrowRight className="w-3.5 h-3.5" />
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-on-surface font-meta tracking-tight text-base mb-1">Local Membership (Ghana)</h3>
-                <p className="text-sm text-muted-foreground normal-case">For residents living and voting within the 16 regions of Ghana.</p>
-              </div>
-              <ArrowRight className="w-6 h-6 text-on-surface/20 group-hover:text-brand-green transition-colors" />
-            </Button>
 
-            <Button
-              variant="default"
+              {/* Decorative Corner */}
+              <div className="absolute bottom-4 right-4 text-on-surface/5 group-hover:text-brand-green/20 transition-colors">
+                <ArrowRight className="w-12 h-12 rotate-[-45deg]" />
+              </div>
+            </div>
+
+            {/* Diaspora Membership Card */}
+            <div 
               onClick={() => {
                 handlePlatformChange('DIASPORA')
                 setStep('form')
                 setFormStep(1)
               }}
-              className="w-full h-auto p-6 flex items-center gap-6 group text-left shadow-sm"
+              className="group relative bg-white border border-border/60 hover:border-brand-gold/40 p-8 cursor-pointer transition-all duration-500 hover:shadow-2xl hover:shadow-brand-gold/10"
             >
-              <div className="w-16 h-16 bg-brand-gold/5 flex items-center justify-center shrink-0 group-hover:bg-brand-gold/10 transition-colors">
-                <User className="w-8 h-8 text-brand-gold" />
+              {/* Top Accent Line */}
+              <div className="absolute top-0 left-0 w-0 h-1 bg-brand-gold group-hover:w-full transition-all duration-700" />
+              
+              <div className="flex flex-col gap-6">
+                <div className="w-14 h-14 bg-brand-gold/5 flex items-center justify-center group-hover:bg-brand-gold/10 transition-colors">
+                  <User className="w-7 h-7 text-brand-gold" />
+                </div>
+                
+                <div className="space-y-3">
+                  <h3 className="font-black text-xl text-on-surface uppercase tracking-tight font-meta leading-tight group-hover:text-brand-gold transition-colors">
+                    Diaspora <br/> Membership
+                  </h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed font-body-md">
+                    For Ghanaians living abroad who wish to support the movement and contribute to the national agenda from afar.
+                  </p>
+                </div>
+                
+                <div className="pt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-gold opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                  Select Option <ArrowRight className="w-3.5 h-3.5" />
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-on-surface font-meta tracking-tight text-base mb-1">Diaspora Membership</h3>
-                <p className="text-sm text-muted-foreground normal-case">For Ghanaians living abroad who wish to support the movement.</p>
+
+              {/* Decorative Corner */}
+              <div className="absolute bottom-4 right-4 text-on-surface/5 group-hover:text-brand-gold/20 transition-colors">
+                <ArrowRight className="w-12 h-12 rotate-[-45deg]" />
               </div>
-              <ArrowRight className="w-6 h-6 text-on-surface/20 group-hover:text-brand-gold transition-colors" />
-            </Button>
+            </div>
           </div>
 
           <div className="text-center mt-12 pt-8 border-t border-border/60">
