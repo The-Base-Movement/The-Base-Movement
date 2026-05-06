@@ -114,7 +114,7 @@ export default function GroundGameCommand() {
                 </div>
                 <Button 
                   variant="primary"
-                  className="h-12 px-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                  className="h-12 px-10 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   <Crosshair className="w-4 h-4 mr-2" /> Deploy Mission
                 </Button>
@@ -211,7 +211,7 @@ export default function GroundGameCommand() {
                         {req.status === 'PENDING' && (
                           <Button 
                             variant="primary"
-                            className="h-11 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                            className="h-11 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                           >
                             Dispatch Asset
                           </Button>

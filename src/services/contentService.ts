@@ -43,6 +43,7 @@ class ContentService {
       readTime: p.read_time as string,
       isFeatured: p.is_featured as boolean,
       publishedAt: p.published_at as string,
+      status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Published',
       tags: (p.tags as string[]) || [],
       seoTitle: p.seo_title as string | undefined,
       metaDescription: p.meta_description as string | undefined
@@ -83,6 +84,7 @@ class ContentService {
       readTime: data.read_time,
       isFeatured: data.is_featured,
       publishedAt: data.published_at,
+      status: (data.status as 'Draft' | 'Pending Verification' | 'Published') || 'Published',
       tags: data.tags || [],
       seoTitle: data.seo_title,
       metaDescription: data.meta_description
@@ -107,6 +109,7 @@ class ContentService {
         read_time: post.readTime,
         is_featured: post.isFeatured,
         published_at: post.publishedAt,
+        status: post.status || 'Draft',
         tags: post.tags,
         seo_title: post.seoTitle || null,
         meta_description: post.metaDescription || null
@@ -134,6 +137,7 @@ class ContentService {
     if (post.readTime) updateData.read_time = post.readTime
     if (post.isFeatured !== undefined) updateData.is_featured = post.isFeatured
     if (post.publishedAt) updateData.published_at = post.publishedAt
+    if (post.status) updateData.status = post.status
     if (post.tags) updateData.tags = post.tags
     if (post.seoTitle !== undefined) updateData.seo_title = post.seoTitle
     if (post.metaDescription !== undefined) updateData.meta_description = post.metaDescription
@@ -188,6 +192,7 @@ class ContentService {
       readTime: p.read_time,
       isFeatured: p.is_featured,
       publishedAt: p.published_at,
+      status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Published',
       deletedAt: p.deleted_at,
       tags: p.tags || []
     }))

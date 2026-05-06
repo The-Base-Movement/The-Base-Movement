@@ -119,7 +119,7 @@ export default function LeadershipHub() {
           size="lg"
           onClick={handleGenerateReport}
           disabled={isGenerating}
-          className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+          className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           {isGenerating ? (
             <Clock className="w-4 h-4 mr-2 animate-spin" />
@@ -145,7 +145,7 @@ export default function LeadershipHub() {
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] border-border/40 hover:bg-stone-50 rounded-sm transition-all shadow-sm"
+            className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.3em] border-border/40 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2 text-muted-foreground/40" /> Filter Status
           </Button>
@@ -192,7 +192,7 @@ export default function LeadershipHub() {
             <Button 
               variant="outline" 
               onClick={() => fetchApplications()} 
-              className="h-11 w-11 p-0 rounded-sm hover:bg-stone-50 border-border/40 text-muted-foreground/40 hover:text-on-surface transition-all shadow-sm"
+              className="h-11 w-11 p-0 rounded-sm hover:bg-stone-50 border-border/40 text-muted-foreground/40 hover:text-on-surface transition-all shadow-sm active:scale-95"
             >
               <Clock className="w-4 h-4" />
             </Button>
@@ -266,14 +266,14 @@ export default function LeadershipHub() {
                         <div className="flex items-center justify-end gap-2">
                           <Button 
                             variant="outline" 
-                            className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.1em] text-destructive border-destructive/20 hover:bg-destructive/10 transition-all shadow-sm rounded-sm"
+                            className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-destructive border-destructive/20 hover:bg-destructive/10 transition-all shadow-sm rounded-sm active:scale-95"
                           >
                             <XCircle className="w-4 h-4 mr-2" /> Reject Application
                           </Button>
                           <Button 
                             variant="primary"
                             onClick={() => handleApprove(app.id, app.applicant_name || 'Applicant')}
-                            className="h-11 px-10 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                            className="h-11 px-10 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                           >
                             <CheckCircle2 className="w-4 h-4 mr-2 text-accent" /> Appoint Leader
                           </Button>

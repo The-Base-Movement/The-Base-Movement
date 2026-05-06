@@ -133,7 +133,7 @@ export default function LogisticsIntelligence() {
             size="lg"
             onClick={() => setShowReplenishConfirm(true)}
             disabled={isReplenishing}
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             {isReplenishing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PackagePlus className="w-4 h-4 mr-2" />} 
             Replenish All
@@ -227,7 +227,7 @@ export default function LogisticsIntelligence() {
                 variant="primary"
                 onClick={handleGeneratePurchaseOrder}
                 disabled={isGeneratingPO}
-                className="bg-destructive text-white hover:bg-destructive/90 rounded-sm h-11 px-10 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 shadow-lg shadow-destructive/20 border-0 transition-all hover:scale-[1.02]"
+                className="bg-destructive text-white hover:bg-destructive/90 rounded-sm h-11 px-10 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 shadow-lg shadow-destructive/20 border-0 transition-all hover:scale-[1.02] active:scale-95"
               >
                 {isGeneratingPO ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                 Generate Purchase Order
@@ -419,7 +419,7 @@ export default function LogisticsIntelligence() {
               variant="primary"
               onClick={handleReplenishAll}
               disabled={isReplenishing}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] h-12 px-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] h-12 px-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               {isReplenishing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Protocol'}
             </Button>

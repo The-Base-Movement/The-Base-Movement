@@ -195,7 +195,7 @@ export default function MemberVerification() {
           <Button
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setShowRegForm(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" /> Establish Identity
@@ -492,7 +492,7 @@ export default function MemberVerification() {
                         variant="primary"
                         size="sm"
                         onClick={handleAiScan}
-                        className="w-full h-11 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01]"
+                        className="w-full h-11 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
                       >
                         <Cpu className="w-4 h-4 mr-2" /> Execute Identity Scan
                       </Button>
@@ -537,7 +537,7 @@ export default function MemberVerification() {
                       <Button
                         variant="primary"
                         onClick={() => handleVerdict(true)}
-                        className="h-11 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01]"
+                        className="h-11 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
                       >
                         <UserCheck className="w-4 h-4 mr-2" /> Approve Admission
                       </Button>

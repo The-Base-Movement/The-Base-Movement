@@ -38,10 +38,11 @@ import { Badge } from '@/components/ui/badge'
 import { Editor } from '@tinymce/tinymce-react'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
-import type { BlogPost } from '@/types/admin'
+import type { BlogPost, AdminUser } from '@/types/admin'
 import { useToast } from '@/hooks/use-toast'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { toast as sonnerToast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 const CATEGORY_PLACEHOLDERS: Record<string, string> = {
   'Movement': 'https://images.unsplash.com/photo-1540910419842-dfb322c98b3c?q=80&w=1200&auto=format&fit=crop',
@@ -58,6 +59,11 @@ const DEFAULT_PLACEHOLDER = 'https://images.unsplash.com/photo-1517245386807-bb4
 export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(adminService.getCurrentUser())
+  
+  const canPublish = currentUser?.role === 'SUPER_ADMIN' || 
+                    currentUser?.role === 'CHIEF_EDITOR' || 
+                    currentUser?.role === 'SENIOR_EDITOR'
   
   // Persist view state
   const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(() => {
@@ -74,6 +80,8 @@ export default function AdminBlogs() {
     return saved ? JSON.parse(saved) : null
   })
   const [searchQuery, setSearchQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
   const { toast } = useToast()
 
   // Persist form state so drafts aren't lost on reload
@@ -91,6 +99,7 @@ export default function AdminBlogs() {
       readTime: '5 min read',
       isFeatured: false,
       publishedAt: new Date().toISOString(),
+      status: 'Draft',
       tags: [],
       seoTitle: '',
       metaDescription: '',
@@ -100,6 +109,15 @@ export default function AdminBlogs() {
       authorBio: ''
     }
   })
+
+  // Initialize current user
+  useEffect(() => {
+    const initUser = async () => {
+      const user = await adminService.initialize()
+      setCurrentUser(user)
+    }
+    if (!currentUser) initUser()
+  }, [currentUser])
 
   // Sync state to sessionStorage
   useEffect(() => {
@@ -155,13 +173,14 @@ export default function AdminBlogs() {
         readTime: post.readTime,
         isFeatured: post.isFeatured,
         publishedAt: post.publishedAt,
+        status: post.status,
         tags: post.tags,
-        seoTitle: post.seoTitle || '',
-        metaDescription: post.metaDescription || '',
-        authorName: post.authorName || '',
-        authorRole: post.authorRole || '',
-        authorImage: post.authorImage || '',
-        authorBio: post.authorBio || ''
+        seoTitle: post.seoTitle ?? '',
+        metaDescription: post.metaDescription ?? '',
+        authorName: post.authorName ?? '',
+        authorRole: post.authorRole ?? '',
+        authorImage: post.authorImage ?? '',
+        authorBio: post.authorBio ?? ''
       })
     } else {
       setEditPost(null)
@@ -176,6 +195,7 @@ export default function AdminBlogs() {
         readTime: '5 min read',
         isFeatured: false,
         publishedAt: new Date().toISOString(),
+        status: 'Draft',
         tags: [],
         seoTitle: '',
         metaDescription: '',
@@ -211,18 +231,21 @@ export default function AdminBlogs() {
       }
 
       if (success) {
-        toast({
-          title: editingPost ? "Post Updated" : "Post Published",
-          description: `The post "${formData.title}" has been saved successfully.`,
+        const actionLabel = formData.status === 'Published' 
+          ? "Intelligence Authorized & Published" 
+          : formData.status === 'Pending Verification'
+          ? "Submitted for Strategic Verification"
+          : "Intelligence Saved as Draft"
+          
+        sonnerToast.success(actionLabel, {
+          description: `"${formData.title}" has been processed successfully.`,
         })
         setCurrentView('list')
         fetchPosts()
       }
     } catch {
-      toast({
-        title: "Error",
-        description: "Failed to save the blog post.",
-        variant: "destructive",
+      sonnerToast.error("Operational Error", {
+        description: "Failed to sync intelligence with the field database."
       })
     } finally {
       setIsLoading(false)
@@ -256,10 +279,14 @@ export default function AdminBlogs() {
     }
   }
 
-  const filteredPosts = posts.filter(post => 
-    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    post.category.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         post.category.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = categoryFilter === 'all' || post.category === categoryFilter
+    const matchesStatus = statusFilter === 'all' || post.status === statusFilter
+    
+    return matchesSearch && matchesCategory && matchesStatus
+  })
 
   if (currentView === 'edit') {
     return (
@@ -296,32 +323,34 @@ export default function AdminBlogs() {
                   <Label className="text-sm font-bold text-on-surface/80">Article title</Label>
                   <Input 
                     required
-                    value={formData.title}
+                    id="title"
+                    value={formData.title ?? ''}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    placeholder="e.g. The future of industry" 
-                    className="rounded-lg border-border/40 h-11 text-sm placeholder:text-muted-foreground/40"
+                    placeholder="Enter article title..." 
+                    className="rounded-lg border-border/40 h-11 text-sm font-medium"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-on-surface/80">Slug</Label>
+                  <Label htmlFor="slug" className="text-sm font-bold text-on-surface/80">Article URL Slug</Label>
                   <Input 
-                    value={formData.slug}
-                    onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                    placeholder="the-future-of-industry" 
-                    className="rounded-lg border-border/40 h-11 text-sm placeholder:text-muted-foreground/40"
+                    id="slug"
+                    value={formData.slug ?? ''}
+                    onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/ /g, '-')})}
+                    placeholder="article-url-slug" 
+                    className="rounded-lg border-border/40 h-11 text-sm font-medium"
                   />
-                  <p className="text-xs font-medium text-muted-foreground/40">The URL-friendly name for this post. Leave blank to auto-generate from the title.</p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-on-surface/80">Excerpt</Label>
+                  <Label htmlFor="excerpt" className="text-sm font-bold text-on-surface/80">Excerpt (Brief Summary)</Label>
                   <Textarea 
+                    id="excerpt"
                     required
-                    value={formData.excerpt}
+                    value={formData.excerpt ?? ''}
                     onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
-                    placeholder="A brief 1-2 sentence summary for article cards..." 
-                    className="rounded-lg border-border/40 min-h-[100px] text-sm leading-relaxed"
+                    placeholder="Provide a strategic summary for the movement feed..." 
+                    className="rounded-lg border-border/40 min-h-[100px] text-sm font-medium leading-relaxed"
                   />
                 </div>
               </CardContent>
@@ -336,7 +365,7 @@ export default function AdminBlogs() {
                   <div className="rounded-lg border border-border/40 overflow-hidden shadow-inner bg-muted/5">
                     <Editor
                       apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-                      value={formData.content}
+                      value={formData.content ?? ''}
                       onEditorChange={(content) => setFormData({...formData, content})}
                       init={{
                         height: 750,
@@ -380,6 +409,35 @@ export default function AdminBlogs() {
                     checked={formData.isFeatured}
                     onCheckedChange={(val) => setFormData({...formData, isFeatured: val})}
                   />
+                </div>
+
+                <div className="space-y-3 pt-6 border-t border-border/40">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-bold text-on-surface/80">Publication Status</Label>
+                    {!canPublish && (
+                      <Badge variant="outline" className="text-[9px] font-bold text-amber-600 border-amber-200 bg-amber-50 rounded-sm">
+                        Authorization Required
+                      </Badge>
+                    )}
+                  </div>
+                  <Select 
+                    value={formData.status}
+                    onValueChange={(val: 'Draft' | 'Pending Verification' | 'Published') => setFormData({...formData, status: val})}
+                  >
+                    <SelectTrigger className="rounded-lg border-border/40 h-11 text-sm font-medium">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Draft">Save as Draft</SelectItem>
+                      <SelectItem value="Pending Verification">Request Verification</SelectItem>
+                      <SelectItem value="Published" disabled={!canPublish}>Authorize & Publish</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[10px] font-medium text-muted-foreground/40 leading-tight">
+                    {canPublish 
+                      ? "Control the visibility of this intelligence across the movement's platforms."
+                      : "Submit this intelligence for review. Senior Editorial personnel will verify before deployment."}
+                  </p>
                 </div>
 
                 <div className="space-y-3 pt-6 border-t border-border/40">
@@ -430,7 +488,7 @@ export default function AdminBlogs() {
                     </div>
                   </div>
                   <Input 
-                    value={formData.imageUrl}
+                    value={formData.imageUrl ?? ''}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
                     placeholder="https://example.com/image.jpg" 
                     className="rounded-lg border-border/40 h-11 text-sm"
@@ -441,7 +499,7 @@ export default function AdminBlogs() {
                 <div className="space-y-3 pt-6 border-t border-border/40">
                   <Label className="text-sm font-bold text-on-surface/80">Est. read time</Label>
                   <Input 
-                    value={formData.readTime}
+                    value={formData.readTime ?? ''}
                     onChange={(e) => setFormData({...formData, readTime: e.target.value})}
                     placeholder="5 min read" 
                     className="rounded-lg border-border/40 h-11 text-sm"
@@ -459,7 +517,7 @@ export default function AdminBlogs() {
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-on-surface/80">Author name</Label>
                   <Input 
-                    value={formData.authorName}
+                    value={formData.authorName ?? ''}
                     onChange={(e) => setFormData({...formData, authorName: e.target.value})}
                     placeholder="e.g. John Doe" 
                     className="rounded-lg border-border/40 h-11 text-sm"
@@ -468,7 +526,7 @@ export default function AdminBlogs() {
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-on-surface/80">Author role</Label>
                   <Input 
-                    value={formData.authorRole}
+                    value={formData.authorRole ?? ''}
                     onChange={(e) => setFormData({...formData, authorRole: e.target.value})}
                     placeholder="e.g. Communications Director" 
                     className="rounded-lg border-border/40 h-11 text-sm"
@@ -502,7 +560,7 @@ export default function AdminBlogs() {
                     </div>
                   </div>
                   <Input 
-                    value={formData.authorImage}
+                    value={formData.authorImage ?? ''}
                     onChange={(e) => setFormData({...formData, authorImage: e.target.value})}
                     placeholder="https://..." 
                     className="rounded-lg border-border/40 h-11 text-sm"
@@ -511,7 +569,7 @@ export default function AdminBlogs() {
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-on-surface/80">Author bio</Label>
                   <Textarea 
-                    value={formData.authorBio}
+                    value={formData.authorBio ?? ''}
                     onChange={(e) => setFormData({...formData, authorBio: e.target.value})}
                     placeholder="Short professional bio..." 
                     className="rounded-lg border-border/40 min-h-[80px] text-sm leading-relaxed"
@@ -528,7 +586,7 @@ export default function AdminBlogs() {
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-on-surface/80">Meta title</Label>
                   <Input 
-                    value={formData.seoTitle}
+                    value={formData.seoTitle ?? ''}
                     onChange={(e) => setFormData({...formData, seoTitle: e.target.value})}
                     placeholder="Title for search engines..." 
                     className="rounded-lg border-border/40 h-11 text-sm"
@@ -547,7 +605,7 @@ export default function AdminBlogs() {
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-on-surface/80">Meta description</Label>
                   <Textarea 
-                    value={formData.metaDescription}
+                    value={formData.metaDescription ?? ''}
                     onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
                     placeholder="Brief description for search result snippets..." 
                     className="rounded-lg border-border/40 min-h-[80px] text-sm leading-relaxed"
@@ -561,15 +619,21 @@ export default function AdminBlogs() {
                 type="submit" 
                 disabled={isLoading}
                 variant="primary"
-                className="w-full h-14 rounded-sm text-[11px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01]"
+                className="w-full h-14 rounded-sm text-[11px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
               >
-                {isLoading ? 'Processing...' : editingPost ? 'Update strategy' : 'Publish intelligence'}
+                {isLoading ? 'Processing...' : (
+                  formData.status === 'Published' 
+                    ? 'Authorize & Publish' 
+                    : formData.status === 'Pending Verification'
+                    ? 'Submit for Verification'
+                    : 'Save as draft'
+                )}
               </Button>
               <Button 
                 type="button" 
                 variant="outline" 
                 onClick={() => setCurrentView('list')}
-                className="w-full h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 hover:text-red-500 border-border/40 hover:bg-red-50 transition-all shadow-sm"
+                className="w-full h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 hover:text-red-500 border-border/40 hover:bg-red-50 transition-all shadow-sm active:scale-95"
               >
                 Abort & Discard
               </Button>
@@ -595,7 +659,7 @@ export default function AdminBlogs() {
           <Button 
             onClick={() => handleEditPost(viewPost)}
             variant="primary"
-            className="h-12 px-10 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+            className="h-12 px-10 text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2 rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Edit2 className="w-4 h-4 mr-2" /> Edit post
           </Button>
@@ -651,7 +715,7 @@ export default function AdminBlogs() {
           onClick={() => handleEditPost()}
           variant="primary"
           size="lg"
-          className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+          className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus className="w-4 h-4 mr-2" /> Create new post
         </Button>
@@ -672,7 +736,19 @@ export default function AdminBlogs() {
             />
           </div>
           <div className="flex items-center gap-3 pr-2">
-            <Select defaultValue="all">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="h-10 w-[160px] bg-white border-border/40 text-sm font-semibold rounded-lg">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="Published">Published</SelectItem>
+                <SelectItem value="Pending Verification">Pending</SelectItem>
+                <SelectItem value="Draft">Drafts</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="h-10 w-[160px] bg-white border-border/40 text-sm font-semibold rounded-lg">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
@@ -682,6 +758,8 @@ export default function AdminBlogs() {
                 <SelectItem value="Youth">Youth</SelectItem>
                 <SelectItem value="Economy">Economy</SelectItem>
                 <SelectItem value="Diaspora">Diaspora</SelectItem>
+                <SelectItem value="Integrity">Integrity</SelectItem>
+                <SelectItem value="Community">Community</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -710,7 +788,7 @@ export default function AdminBlogs() {
             <Button 
               variant="outline" 
               onClick={() => setSearchQuery('')}
-              className="mt-6 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-[0.2em] px-10 h-12 hover:bg-stone-50 transition-all shadow-sm"
+              className="mt-6 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-[0.3em] px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Clear search
             </Button>
@@ -729,6 +807,16 @@ export default function AdminBlogs() {
                 <div className="absolute top-4 left-4">
                   <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-[10px] font-bold tracking-wider rounded-full border-none shadow-sm px-3">
                     {post.category}
+                  </Badge>
+                </div>
+                <div className="absolute top-4 right-12">
+                  <Badge className={cn(
+                    "backdrop-blur-sm text-[10px] font-black tracking-widest rounded-full border-none shadow-sm px-3",
+                    post.status === 'Published' ? "bg-brand-green text-white" : 
+                    post.status === 'Pending Verification' ? "bg-brand-gold text-on-surface" :
+                    "bg-amber-500/80 text-white"
+                  )}>
+                    {post.status.toUpperCase()}
                   </Badge>
                 </div>
                 {post.isFeatured && (

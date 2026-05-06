@@ -83,7 +83,7 @@ export default function Broadcasts() {
           variant="primary"
           size="lg"
           onClick={() => navigate('/admin/broadcasts/new')}
-          className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+          className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus className="w-4 h-4 mr-2" /> Deploy New Broadcast
         </Button>

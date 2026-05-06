@@ -401,7 +401,7 @@ export default function AdminSettings() {
                 variant={isActive ? "outline" : "ghost"}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all group h-12",
+                  "w-full flex items-center justify-between px-4 py-3 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] transition-all group h-12 active:scale-95",
                   isActive 
                     ? "bg-white text-stone-900 shadow-sm border-stone-200" 
                     : "text-stone-400 hover:text-stone-600 hover:bg-stone-50"
@@ -506,7 +506,7 @@ export default function AdminSettings() {
                       size="lg"
                       onClick={handleSaveProfile}
                       disabled={isSaving}
-                      className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+                      className="rounded-sm text-[10px] uppercase tracking-[0.3em] px-8 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                     >
                       {isSaving ? 'Syncing...' : 'Synchronize Profile'}
                     </Button>
@@ -575,7 +575,7 @@ export default function AdminSettings() {
                           window.dispatchEvent(new Event('admin_density_changed'))
                         }}
                         className={cn(
-                          "p-4 rounded-sm border text-[10px] font-black uppercase tracking-widest transition-all text-center h-12",
+                          "p-4 rounded-sm border text-[10px] font-black uppercase tracking-[0.3em] transition-all text-center h-12 active:scale-95",
                           mode === interfaceDensity 
                             ? "shadow-lg shadow-brand-green/20" 
                             : "border-stone-200 text-stone-400 hover:border-stone-300 bg-white"
@@ -651,7 +651,7 @@ export default function AdminSettings() {
                       size="lg"
                       onClick={handleUpdatePassword}
                       disabled={isSaving || !passwordForm.newPassword}
-                      className="w-full rounded-sm text-[10px] uppercase tracking-[0.2em] h-12 shadow-lg shadow-brand-green/20"
+                      className="w-full rounded-sm text-[10px] uppercase tracking-[0.3em] h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                     >
                       {isSaving ? 'Hardening...' : 'Harden Security Credentials'}
                     </Button>
@@ -693,7 +693,7 @@ export default function AdminSettings() {
                             <Button 
                               variant="outline" 
                               onClick={() => handleUnenrollMfa(mfaFactors[0].id)}
-                              className="h-10 px-6 text-[10px] font-black uppercase tracking-widest border-destructive/20 text-destructive hover:bg-destructive/5 rounded-sm transition-all"
+                              className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] border-destructive/20 text-destructive hover:bg-destructive/5 rounded-sm transition-all active:scale-95"
                             >
                               Disable protection
                             </Button>
@@ -702,7 +702,7 @@ export default function AdminSettings() {
                               variant="outline" 
                               size="sm"
                               onClick={handleStartMfaEnroll}
-                              className="h-9 px-6 text-[10px] font-black uppercase tracking-widest border-stone-200 rounded-sm"
+                              className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] border-stone-200 rounded-sm transition-all active:scale-95"
                             >
                               Establish MFA Protection
                             </Button>
@@ -742,7 +742,7 @@ export default function AdminSettings() {
                         <Button 
                           variant="primary"
                           onClick={() => setMfaStep('verify')}
-                          className="w-full text-white font-black uppercase tracking-widest text-[10px] h-12 rounded-sm shadow-lg shadow-brand-green/20"
+                          className="w-full text-white font-black uppercase tracking-[0.3em] text-[10px] h-12 rounded-sm shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                         >
                           I've scanned it, proceed
                         </Button>
@@ -768,7 +768,7 @@ export default function AdminSettings() {
                           variant="primary"
                           onClick={handleVerifyMfa}
                           disabled={isSaving || mfaCode.length < 6}
-                          className="w-full text-white font-black uppercase tracking-widest text-[10px] h-12 rounded-sm shadow-lg shadow-brand-green/20"
+                          className="w-full text-white font-black uppercase tracking-[0.3em] text-[10px] h-12 rounded-sm shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                         >
                           {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify and Enable MFA"}
                         </Button>
@@ -797,7 +797,7 @@ export default function AdminSettings() {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="h-10 px-6 text-[10px] font-black uppercase tracking-widest border-stone-200 rounded-sm hover:bg-stone-50"
+                  className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] border-stone-200 rounded-sm hover:bg-stone-50 transition-all active:scale-95"
                   onClick={handleExportLogs}
                 >
                   Export Audit report

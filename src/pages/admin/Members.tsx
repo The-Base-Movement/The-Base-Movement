@@ -340,7 +340,7 @@ export default function MembersList() {
             variant="primary"
             size="lg"
             onClick={handleAddMember}
-            className="rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+            className="rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" />
             Establish Identity
@@ -522,7 +522,7 @@ export default function MembersList() {
                           <Button 
                             variant="primary"
                             size="lg"
-                            className="mt-6 rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                            className="mt-6 rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                             onClick={handleAddMember}
                           >
                             <Plus className="w-4 h-4 mr-2" />
@@ -749,7 +749,7 @@ export default function MembersList() {
                 <Button 
                   variant="primary"
                   onClick={handleDownload}
-                  className="h-14 flex-1 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                  className="h-14 flex-1 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">download</span>
                   Download PDF
@@ -821,7 +821,7 @@ export default function MembersList() {
           <div className="p-6 border-t border-border/40 bg-stone-50/50 flex justify-end">
             <Button 
               onClick={() => setIsAuditModalOpen(false)}
-              className="bg-on-surface text-white text-[10px] font-bold rounded-sm h-11 px-8 shadow-md"
+              className="bg-on-surface text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-sm h-11 px-8 shadow-md transition-all active:scale-95"
             >
               Close history
             </Button>

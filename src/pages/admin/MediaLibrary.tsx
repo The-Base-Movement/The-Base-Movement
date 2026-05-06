@@ -136,7 +136,7 @@ export default function MediaLibrary() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all shadow-sm"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             onClick={loadFiles}
           >
             Refresh Vault
@@ -154,7 +154,7 @@ export default function MediaLibrary() {
             <Button 
               variant="primary"
               size="lg"
-              className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+              className="rounded-sm text-[10px] uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               asChild
               disabled={isUploading}
             >
@@ -202,7 +202,7 @@ export default function MediaLibrary() {
                     variant={activeFolder === folder.id ? "primary" : "ghost"}
                     onClick={() => setActiveFolder(folder.id)}
                     className={cn(
-                      "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all h-14",
+                      "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] transition-all h-14 active:scale-95",
                       activeFolder === folder.id 
                         ? "shadow-lg shadow-brand-green/20" 
                         : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
@@ -251,7 +251,7 @@ export default function MediaLibrary() {
                   </p>
                   <Button 
                     variant="primary" 
-                    className="mt-6 rounded-sm px-12 h-14 text-[10px] uppercase tracking-[0.3em] font-black shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                    className="mt-6 rounded-sm px-12 h-14 text-[10px] uppercase tracking-[0.3em] font-black shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                     asChild
                   >
                     <label htmlFor="media-upload" className="cursor-pointer">

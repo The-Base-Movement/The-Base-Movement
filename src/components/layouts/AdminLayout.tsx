@@ -331,17 +331,17 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-white/5">
+          <div className="p-4 bg-black/20 border-t border-white/5">
             <button 
               onClick={handleLogout}
               className={cn(
-                "w-full flex items-center gap-4 px-4 py-4 text-muted-foreground/80 hover:text-white hover:bg-red-500/10 transition-all group overflow-hidden",
+                "w-full flex items-center gap-4 px-4 py-4 text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all group overflow-hidden",
                 isSidebarOpen ? "" : "justify-center"
               )}
             >
-              <LogOut className="w-5 h-5 group-hover:text-red-500 shrink-0" />
+              <LogOut className="w-5 h-5 group-hover:text-[var(--brand-gold)] shrink-0 transition-colors" />
               <span className={cn(
-                "text-[11px] font-medium whitespace-nowrap transition-all duration-300",
+                "text-[11px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0"
               )}>
                 Sign out
@@ -399,8 +399,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-muted/30 rounded-lg transition-colors cursor-pointer group">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-[9px] font-medium text-muted-foreground/80 mt-0.5 leading-none">
+                  <div className="text-right hidden sm:block pt-3">
+                    <p className="text-[11px] font-bold text-on-surface leading-none">{user?.name}</p>
+                    <p className="text-[9px] font-medium text-muted-foreground/80 mt-1 leading-none uppercase tracking-tighter">
                       {user?.role === 'SUPER_ADMIN' 
                         ? 'System Admin' 
                         : user?.role === 'REGIONAL_DIRECTOR'
@@ -409,7 +410,6 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                             ? 'Constituency Lead'
                             : 'Staff Verifier'}
                     </p>
-
                   </div>
                   <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-[10px] rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all overflow-hidden">
                     {avatarUrl ? (

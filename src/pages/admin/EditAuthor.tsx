@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Upload, Loader2, Save, Image as ImageIcon } from 'lucide-react'
+import { Upload, Loader2, Save, Image as ImageIcon, Search, User, Check, X } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
@@ -8,8 +8,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { contentService } from '@/services/contentService'
+import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
-import type { Author } from '@/types/admin'
+import type { Author, Member } from '@/types/admin'
 
 export default function AdminEditAuthor() {
   const { id } = useParams()
@@ -27,6 +28,11 @@ export default function AdminEditAuthor() {
     bio: '',
     imageUrl: ''
   })
+
+  const [memberSearchQuery, setMemberSearchQuery] = useState('')
+  const [memberSearchResults, setMemberSearchResults] = useState<Member[]>([])
+  const [isSearchingMembers, setIsSearchingMembers] = useState(false)
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null)
 
   useEffect(() => {
     const fetchAuthor = async (authorId: string) => {
@@ -86,6 +92,49 @@ export default function AdminEditAuthor() {
     })
   }
 
+  const handleMemberSearch = async (query: string) => {
+    setMemberSearchQuery(query)
+    if (query.length < 2) {
+      setMemberSearchResults([])
+      return
+    }
+
+    setIsSearchingMembers(true)
+    try {
+      const results = await adminService.searchMembers(query)
+      setMemberSearchResults(results)
+    } catch (error) {
+      console.error('Member search error:', error)
+    } finally {
+      setIsSearchingMembers(false)
+    }
+  }
+
+  const selectMember = (member: Member) => {
+    setSelectedMember(member)
+    setFormData({
+      ...formData,
+      name: member.name,
+      slug: generateSlug(member.name),
+      imageUrl: member.avatarUrl || '',
+      role: member.profession || ''
+    })
+    setMemberSearchQuery('')
+    setMemberSearchResults([])
+    toast.success(`Personnel identified: ${member.name}. Profile pre-filled.`)
+  }
+
+  const clearMemberSelection = () => {
+    setSelectedMember(null)
+    setFormData({
+      name: '',
+      slug: '',
+      role: '',
+      bio: '',
+      imageUrl: ''
+    })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -128,7 +177,7 @@ export default function AdminEditAuthor() {
 
   return (
     <div className="max-w-4xl space-y-8 animate-in fade-in duration-500">
-      <Breadcrumbs />
+      <Breadcrumbs currentLabel={formData.name} />
       
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -146,6 +195,93 @@ export default function AdminEditAuthor() {
         <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
           <CardContent className="p-8 space-y-8">
             
+            {!isEditing && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center justify-between border-b border-border/10 pb-2">
+                  <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest">Personnel Search</h3>
+                  {selectedMember && (
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      onClick={clearMemberSelection}
+                      className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/5 text-[10px] font-bold uppercase tracking-wider"
+                    >
+                      <X className="w-3 h-3 mr-1" /> Reset selection
+                    </Button>
+                  )}
+                </div>
+
+                {!selectedMember ? (
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-muted-foreground/40" />
+                    </div>
+                    <Input
+                      type="text"
+                      placeholder="Search by name or phone number to identify movement personnel..."
+                      className="pl-10 h-12 border-border/60 focus-visible:ring-on-surface bg-muted/5 placeholder:italic"
+                      value={memberSearchQuery}
+                      onChange={(e) => handleMemberSearch(e.target.value)}
+                    />
+                    
+                    {isSearchingMembers && (
+                      <div className="absolute right-3 top-3.5">
+                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                      </div>
+                    )}
+
+                    {memberSearchResults.length > 0 && (
+                      <div className="absolute z-50 w-full mt-2 bg-white border border-border/60 rounded-sm shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="max-h-60 overflow-y-auto">
+                          {memberSearchResults.map((member) => (
+                            <button
+                              key={member.id}
+                              type="button"
+                              onClick={() => selectMember(member)}
+                              className="w-full flex items-center gap-3 p-4 hover:bg-muted/5 transition-colors text-left border-b border-border/5 last:border-0"
+                            >
+                              <div className="w-10 h-10 rounded-full bg-muted/10 border border-border/10 flex items-center justify-center shrink-0 overflow-hidden">
+                                {member.avatarUrl ? (
+                                  <img src={member.avatarUrl} alt="" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
+                                ) : (
+                                  <User className="w-5 h-5 text-muted-foreground/40" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-on-surface truncate">{member.name}</p>
+                                <p className="text-[10px] text-muted-foreground/60 truncate">{member.id} • {member.region} • {member.profession}</p>
+                              </div>
+                              <div className="text-[10px] font-black uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">Select</div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-brand-green/5 border border-brand-green/20 animate-in zoom-in-95 duration-300">
+                    <div className="w-12 h-12 rounded-full bg-brand-green/10 border border-brand-green/20 flex items-center justify-center overflow-hidden shrink-0">
+                      {selectedMember.avatarUrl ? (
+                        <img src={selectedMember.avatarUrl} alt="" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
+                      ) : (
+                        <User className="w-6 h-6 text-brand-green" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-bold text-on-surface flex items-center gap-2">
+                        {selectedMember.name}
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-[9px] uppercase font-black tracking-widest">
+                          <Check className="w-2 h-2" /> Identified
+                        </span>
+                      </p>
+                      <p className="text-[10px] text-muted-foreground/80">{selectedMember.id} • {selectedMember.phone}</p>
+                    </div>
+                    <p className="text-[10px] font-bold text-muted-foreground/40 italic">Personnel data successfully mapped.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Identity Section */}
             <div className="space-y-6">
               <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest border-b border-border/10 pb-2">Identity & Role</h3>

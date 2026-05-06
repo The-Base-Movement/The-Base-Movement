@@ -263,6 +263,39 @@ class MemberService {
     }
     return true
   }
+
+  async searchMembers(query: string): Promise<Member[]> {
+    if (!query || query.length < 2) return []
+
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .or(`full_name.ilike.%${query}%,phone_number.ilike.%${query}%`)
+      .limit(10)
+
+    if (error) {
+      console.warn('[DATABASE] Failed to search members:', error)
+      return []
+    }
+
+    return (data || []).map((u) => ({
+      id: u.registration_number,
+      name: u.full_name,
+      email: u.email,
+      phone: u.phone_number || 'N/A',
+      region: u.region || 'Region pending',
+      constituency: u.constituency || 'Constituency pending',
+      status: u.status,
+      joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
+      platform: u.platform || 'GHANA',
+      type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
+      avatarUrl: u.avatar_url || undefined,
+      gender: u.gender || 'Not specified',
+      chapter: u.chapter || 'Central',
+      country: u.country || 'Ghana',
+      profession: u.profession || 'Patriot'
+    }))
+  }
 }
 
 export const memberService = MemberService.getInstance()

@@ -88,7 +88,7 @@ export default function FieldDirectives() {
             variant="primary"
             size="lg"
             onClick={() => setIsCreating(true)}
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Issue New Directive
           </Button>
@@ -214,7 +214,7 @@ export default function FieldDirectives() {
                         <Button 
                           variant="primary"
                           onClick={() => handleVerify(report.id, 'Verified')}
-                          className="h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                          className="h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                         >
                           <CheckCircle className="w-4 h-4 mr-2" /> Verify Action
                         </Button>
@@ -292,7 +292,7 @@ export default function FieldDirectives() {
                 </Button>
                 <Button 
                   variant="primary"
-                  className="flex-1 h-12 rounded-sm font-black text-[10px] uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                  className="flex-1 h-12 rounded-sm font-black text-[10px] uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   <Send className="w-4 h-4 mr-2" /> Deploy Protocol
                 </Button>

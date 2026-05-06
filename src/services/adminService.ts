@@ -150,6 +150,10 @@ class AdminService {
     return memberService.getMembers()
   }
 
+  async searchMembers(query: string): Promise<Member[]> {
+    return memberService.searchMembers(query)
+  }
+
   async getAdministrators(): Promise<AdminUser[]> {
     return memberService.getAdministrators()
   }
@@ -734,10 +738,16 @@ class AdminService {
 
     // Normalize role string to match AdminRole type exactly
     let role: AdminRole = 'VERIFIER';
-    const dbRole = admin.role?.toLowerCase() || '';
-    if (dbRole.includes('super')) role = 'SUPER_ADMIN';
-    else if (dbRole.includes('regional')) role = 'REGIONAL_DIRECTOR';
-    else if (dbRole.includes('leader') || dbRole.includes('constituency')) role = 'CONSTITUENCY_LEAD';
+    const dbRole = admin.role?.toUpperCase() || '';
+    if (dbRole.includes('SUPER')) role = 'SUPER_ADMIN';
+    else if (dbRole.includes('CHIEF_EDITOR')) role = 'CHIEF_EDITOR';
+    else if (dbRole.includes('SENIOR_EDITOR')) role = 'SENIOR_EDITOR';
+    else if (dbRole.includes('REGIONAL')) role = 'REGIONAL_DIRECTOR';
+    else if (dbRole.includes('LEADER') || dbRole.includes('CONSTITUENCY')) role = 'CONSTITUENCY_LEAD';
+    else if (dbRole.includes('JUNIOR_EDITOR')) role = 'JUNIOR_EDITOR';
+    else if (dbRole.includes('REGIONAL_CORRESPONDENT')) role = 'REGIONAL_CORRESPONDENT';
+    else if (dbRole.includes('EDITOR')) role = 'EDITOR';
+    else if (dbRole.includes('VERIFIER')) role = 'VERIFIER';
 
 
     return {

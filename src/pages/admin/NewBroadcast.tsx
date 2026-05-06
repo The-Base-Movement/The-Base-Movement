@@ -368,7 +368,7 @@ export default function NewBroadcast() {
               variant="primary"
               disabled={isSending}
               onClick={handleSend}
-              className="rounded-sm h-12 px-12 text-[10px] font-black uppercase tracking-[0.3em] min-w-[200px] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+              className="rounded-sm h-12 px-12 text-[10px] font-black uppercase tracking-[0.3em] min-w-[200px] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               {isSending ? (
                 <>

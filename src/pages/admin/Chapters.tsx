@@ -161,7 +161,7 @@ export default function ChaptersManagement() {
             variant="outline" 
             size="lg"
             onClick={() => toast.info("Accessing audit vault...")}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all shadow-sm"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
             <History className="w-4 h-4 mr-2" /> Inspect Audit Trail
           </Button>
@@ -170,7 +170,7 @@ export default function ChaptersManagement() {
               variant="primary"
               size="lg"
               onClick={openAddModal}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
             </Button>
@@ -401,7 +401,7 @@ export default function ChaptersManagement() {
           <Button 
             variant="outline"
             onClick={openAddModal}
-            className="border-2 border-dashed border-border/60 rounded-sm p-10 flex flex-col items-center justify-center gap-6 text-muted-foreground/40 hover:border-on-surface hover:text-on-surface transition-all group bg-white h-full shadow-sm hover:shadow-md"
+            className="border-2 border-dashed border-border/60 rounded-sm p-10 flex flex-col items-center justify-center gap-6 text-muted-foreground/40 hover:border-on-surface hover:text-on-surface transition-all group bg-white h-full shadow-sm hover:shadow-md active:scale-95"
           >
             <div className="w-14 h-14 rounded-full bg-muted/5 flex items-center justify-center group-hover:bg-on-surface group-hover:text-white transition-all shadow-inner">
               <Plus className="w-7 h-7" />
@@ -422,7 +422,7 @@ export default function ChaptersManagement() {
               variant="outline"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm"
+              className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Previous
             </Button>
@@ -433,7 +433,7 @@ export default function ChaptersManagement() {
                     variant={currentPage === i + 1 ? "primary" : "outline"}
                     onClick={() => setCurrentPage(i + 1)}
                     className={cn(
-                      "min-w-[44px] h-11 text-[10px] font-black transition-all rounded-sm",
+                      "min-w-[44px] h-11 text-[10px] font-black transition-all rounded-sm active:scale-95",
                       currentPage === i + 1 
                         ? "shadow-md shadow-brand-green/20" 
                         : "text-muted-foreground/60 border-border/40 hover:bg-stone-50"
@@ -447,7 +447,7 @@ export default function ChaptersManagement() {
               variant="outline"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm"
+              className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Next
             </Button>
@@ -534,14 +534,14 @@ export default function ChaptersManagement() {
                 type="button" 
                 variant="outline" 
                 onClick={closeModal}
-                className="flex-1 h-14 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm border-border/40 hover:bg-stone-50 transition-all"
+                className="flex-1 h-14 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
                 variant="primary"
-                className="flex-1 h-14 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                className="flex-1 h-14 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               >
                 {editingChapterId ? 'Synchronize Hub' : 'Establish Chapter'}
               </Button>

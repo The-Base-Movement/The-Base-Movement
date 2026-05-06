@@ -467,7 +467,7 @@ export default function AdminOrders() {
                                   size="sm"
                                   onClick={() => handleStatusAdvance(order)}
                                   disabled={updatingId === order.id}
-                                  className="h-9 px-8 text-[9px] font-black uppercase tracking-[0.1em] rounded-sm shadow-lg shadow-brand-green/10 transition-all hover:scale-[1.01]"
+                                  className="h-9 px-8 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-brand-green/10 transition-all hover:scale-[1.01] active:scale-95"
                                 >
                                   {updatingId === order.id ? '...' : `→ ${nextStatus}`}
                                 </Button>
@@ -532,7 +532,7 @@ export default function AdminOrders() {
                           {nextStatus && (
                             <Button
                               variant="primary"
-                              className="flex-1 h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                              className="flex-1 h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                               disabled={updatingId === order.id}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -642,7 +642,7 @@ export default function AdminOrders() {
                   {NEXT_STATUS[selectedOrder.status] && (
                     <Button
                       variant="primary"
-                      className="w-full h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                      className="w-full h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                       onClick={() => handleStatusAdvance(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >

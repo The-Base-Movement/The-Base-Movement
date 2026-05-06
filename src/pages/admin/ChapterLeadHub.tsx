@@ -84,14 +84,14 @@ export default function ChapterLeadHub() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 h-10 transition-all"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 h-10 transition-all active:scale-95"
           >
             <BarChart3 className="w-4 h-4 mr-2" /> Local Telemetry
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 h-10 transition-all shadow-lg shadow-brand-green/20"
+            className="rounded-sm text-[10px] uppercase tracking-[0.3em] px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> New Field Event
           </Button>
@@ -187,7 +187,7 @@ export default function ChapterLeadHub() {
                     </div>
                     <Button 
                       variant="ghost" 
-                      className="h-9 px-4 text-[9px] font-black uppercase tracking-widest hover:bg-muted/5 group-hover:text-destructive rounded-sm"
+                      className="h-9 px-4 text-[9px] font-black uppercase tracking-widest hover:bg-muted/5 group-hover:text-destructive rounded-sm active:scale-95"
                     >
                       Logistics Hub <ChevronRight className="w-3.5 h-3.5 ml-2" />
                     </Button>
@@ -251,7 +251,7 @@ export default function ChapterLeadHub() {
             </div>
             <Button 
               variant="outline" 
-              className="w-full h-12 border-white/20 text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 rounded-sm transition-all"
+              className="w-full h-12 border-white/20 text-white font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white/10 rounded-sm transition-all active:scale-95"
             >
               Request Additional Funds
             </Button>

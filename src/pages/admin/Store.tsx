@@ -284,7 +284,7 @@ export default function AdminStore() {
               variant="primary"
               size="lg"
               onClick={() => handleOpenModal()}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               <Plus className="w-4 h-4 mr-2" /> Establish Asset
             </Button>
@@ -314,7 +314,7 @@ export default function AdminStore() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="h-10 px-8 text-[10px] font-black uppercase tracking-[0.1em] border-accent/40 text-accent hover:bg-accent/5 transition-all shadow-sm rounded-sm active:scale-95"
+                className="h-10 px-8 text-[10px] font-black uppercase tracking-[0.3em] border-accent/40 text-accent hover:bg-accent/5 transition-all shadow-sm rounded-sm active:scale-95"
               >
                 Scan Alerts
               </Button>
@@ -552,7 +552,7 @@ export default function AdminStore() {
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
                       variant="outline" 
-                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       onClick={() => handleOpenModal(product)}
                     >
                       <Edit3 className="w-4 h-4 mr-2" /> Edit Asset
@@ -1084,13 +1084,13 @@ export default function AdminStore() {
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-[10px] font-black uppercase tracking-[0.1em] h-11 px-8 hover:bg-muted/10 transition-all active:scale-95">
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] h-11 px-8 hover:bg-muted/10 transition-all active:scale-95">
               Cancel
             </Button>
             <Button 
               onClick={handleSave} 
               disabled={isSaving}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] bg-on-surface text-white hover:bg-on-surface/90 h-11 px-10 min-w-[160px] shadow-lg transition-all hover:scale-[1.02]"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] bg-on-surface text-white hover:bg-on-surface/90 h-11 px-10 min-w-[160px] shadow-lg transition-all hover:scale-[1.02] active:scale-95"
             >
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Changes'}
             </Button>
@@ -1112,12 +1112,12 @@ export default function AdminStore() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
-            <AlertDialogCancel className="rounded-sm text-[10px] font-bold tracking-tight h-10 px-6 border-border/60">
+            <AlertDialogCancel className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] h-10 px-6 border-border/60">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDelete}
-              className="rounded-sm text-[10px] font-bold tracking-tight bg-red-600 text-white hover:bg-red-700 h-10 px-8"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] bg-red-600 text-white hover:bg-red-700 h-10 px-8 active:scale-95"
             >
               Confirm Removal
             </AlertDialogAction>
