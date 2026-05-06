@@ -64,47 +64,47 @@ export default function Navbar() {
           </Link>
         </div>
         
-        <div className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-tight uppercase">
+        <div className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-tight">
           <Link 
             to="/" 
-            className={`transition-colors duration-200 ${isActive('/') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-700'}`}
+            className={`transition-colors duration-200 ${isActive('/') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
           >
             Home
           </Link>
           <Link 
             to="/blog" 
-            className={`transition-colors duration-200 ${isActive('/blog') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-700'}`}
+            className={`transition-colors duration-200 ${isActive('/blog') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
           >
-            Blog
+            Updates
           </Link>
           <Link 
             to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} 
-            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-700'}`}
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
           >
-            Our Agenda
+            The Plan
           </Link>
           <Link 
             to={isLoggedIn ? "/dashboard/store" : "/store"} 
-            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-700'}`}
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
           >
-            Store
+            Supplies
           </Link>
           <Link 
             to={isLoggedIn ? "/dashboard/donate" : "/donate"} 
-            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-700'}`}
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
           >
             Donate
           </Link>
           <Link 
             to={isLoggedIn ? "/dashboard/contact" : "/contact"} 
-            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-700'}`}
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
           >
             Contact
           </Link>
           {isLoggedIn && (
             <Link 
               to="/dashboard" 
-              className={`transition-colors duration-200 font-bold ${isActive('/dashboard') ? 'text-emerald-800 dark:text-emerald-400 border-b-2 border-emerald-800 dark:border-emerald-400 pb-1' : 'text-[var(--brand-green)] hover:text-emerald-700'}`}
+              className={`transition-colors duration-200 font-bold ${isActive('/dashboard') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-primary hover:text-emerald-700'}`}
             >
               Dashboard
             </Link>
@@ -118,17 +118,17 @@ export default function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-2 focus:outline-none hover:opacity-80 transition-opacity"
               >
-                <img src={userAvatar} alt="Profile" className="w-10 h-10 rounded-full border-2 border-[var(--brand-green)] object-cover"  decoding="async" />
+                <img src={userAvatar} alt="Profile" className="w-10 h-10 rounded-full border-2 border-primary object-cover"  decoding="async" />
               </button>
 
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 shadow-xl py-2 z-50">
                   <div className="px-4 py-2 border-b border-slate-100 mb-1">
                     <p className="text-sm font-bold text-charcoal-dark mb-0">Member Portal</p>
-                    <p className="text-xs text-slate-500 mb-0 font-bold uppercase tracking-widest">Active</p>
+                    <p className="text-xs text-slate-500 mb-0 font-bold tracking-widest">Active</p>
                   </div>
                   <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal-dark hover:bg-slate-50 font-meta transition-colors">
-                    <User className="w-4 h-4 text-[var(--brand-green)]" /> Dashboard
+                    <User className="w-4 h-4 text-primary" /> Dashboard
                   </Link>
                   <Link to="/settings" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal-dark hover:bg-slate-50 font-meta transition-colors">
                     <Settings className="w-4 h-4 text-slate-400" /> Profile Settings
@@ -136,7 +136,7 @@ export default function Navbar() {
                   <div className="border-t border-slate-100 mt-1 pt-1">
                     <button 
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-[var(--brand-red)] hover:bg-red-50 font-meta transition-colors"
+                      className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-red-50 font-meta transition-colors"
                     >
                       <LogOut className="w-4 h-4" /> Logout
                     </button>
@@ -146,10 +146,10 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link to="/login" className="px-6 py-2 border border-[var(--brand-green)] text-[var(--brand-green)] text-sm font-bold uppercase tracking-widest hover:bg-surface-warm transition-all active:scale-95">
+              <Link to="/login" className="px-5 py-2 border border-primary text-primary text-sm font-bold tracking-widest hover:bg-surface-warm transition-all active:scale-95">
                 Login
               </Link>
-              <Link to="/register" className="px-6 py-2 bg-[var(--brand-green)] text-white text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-all active:scale-95">
+              <Link to="/register" className="px-5 py-2 bg-primary text-white text-sm font-bold tracking-widest hover:opacity-90 transition-all active:scale-95">
                 Register
               </Link>
             </>
@@ -168,9 +168,9 @@ export default function Navbar() {
       {isOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 shadow-lg px-4 py-4 space-y-4 font-meta">
           <Link to="/" className={`block py-2 ${isActive('/') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Home</Link>
-          <Link to="/blog" className={`block py-2 ${isActive('/blog') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Blog</Link>
-          <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Our Agenda</Link>
-          <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Store</Link>
+          <Link to="/blog" className={`block py-2 ${isActive('/blog') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Updates</Link>
+          <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>The Plan</Link>
+          <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Supplies</Link>
           <Link to={isLoggedIn ? "/dashboard/donate" : "/donate"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Donate</Link>
           <Link to={isLoggedIn ? "/dashboard/contact" : "/contact"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Contact</Link>
           <div className="pt-4 flex flex-col gap-3 border-t border-gray-100">

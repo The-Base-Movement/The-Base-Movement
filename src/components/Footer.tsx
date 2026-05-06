@@ -9,7 +9,7 @@ export default function Footer() {
             <img alt="The Base Logo" className="h-12 w-12" src="/logo.png"  decoding="async" loading="lazy" />
             <div className="flex flex-col">
               <h2 className="text-stone-900 leading-none mb-0">The Base</h2>
-              <span className="text-[10px] font-bold text-brand-green uppercase tracking-[0.2em] mt-1">Ghana First, Jobs for the Youth!</span>
+              <span className="text-[10px] font-bold text-primary tracking-[0.2em] mt-1">Ghana First, Jobs for the Youth!</span>
             </div>
           </Link>
           <p className="text-stone-600 text-sm leading-relaxed">
@@ -50,30 +50,30 @@ export default function Footer() {
         </div>
         
         <div className="space-y-4">
-          <h4 className="text-brand-green">Movement</h4>
+          <h4 className="text-primary">Foundation</h4>
           <div className="flex flex-col space-y-2 text-sm text-stone-600">
-            <Link className="hover:text-brand-green transition-colors" to="/our-agenda">Aims & Objectives</Link>
-            <Link className="hover:text-brand-green transition-colors" to="/impact">Our Impact</Link>
-            <Link className="hover:text-brand-green transition-colors" to="/chapters">Chapters</Link>
-            <Link className="hover:text-brand-green transition-colors" to="/members">Members</Link>
+            <Link className="hover:text-primary transition-colors" to="/our-agenda">The Plan</Link>
+            <Link className="hover:text-primary transition-colors" to="/impact">Our Impact</Link>
+            <Link className="hover:text-primary transition-colors" to="/chapters">Chapters</Link>
+            <Link className="hover:text-primary transition-colors" to="/members">Members</Link>
           </div>
         </div>
         
         <div className="space-y-4">
-          <h4 className="text-brand-green">Connect</h4>
+          <h4 className="text-primary">Connect</h4>
           <div className="flex flex-col space-y-2 text-sm text-stone-600">
-            <Link className="hover:text-brand-green transition-colors" to="/contact">Contact Us</Link>
-            <Link className="hover:text-brand-green transition-colors" to="#">Press</Link>
-            <Link className="hover:text-brand-green transition-colors" to="#">Privacy Agreement</Link>
+            <Link className="hover:text-primary transition-colors" to="/contact">Contact Us</Link>
+            <Link className="hover:text-primary transition-colors" to="/press">Press</Link>
+            <Link className="hover:text-primary transition-colors" to="/privacy">Privacy Agreement</Link>
           </div>
         </div>
         
         <div className="space-y-4">
-          <h4 className="text-brand-green">Take Action</h4>
+          <h4 className="text-primary">Take Action</h4>
           <div className="flex flex-col space-y-2 text-sm text-stone-600">
-            <Link className="hover:text-brand-green transition-colors" to="/register">Join the Base</Link>
-            <Link className="hover:text-brand-green transition-colors" to="/donate">Donate</Link>
-            <Link className="hover:text-brand-green transition-colors" to="/store">Store</Link>
+            <Link className="hover:text-primary transition-colors" to="/register">Join the Base</Link>
+            <Link className="hover:text-primary transition-colors" to="/donate">Donate</Link>
+            <Link className="hover:text-primary transition-colors" to="/store">Supplies</Link>
           </div>
         </div>
       </div>
@@ -81,9 +81,9 @@ export default function Footer() {
       <div className="max-w-[1280px] mx-auto px-8 mt-16 pt-8 border-t border-stone-200 flex flex-col md:flex-row items-center justify-between gap-4">
         <p className="text-xs text-stone-500 mb-0 font-bold uppercase tracking-widest">© 2026 The Base. All rights reserved.</p>
         <div className="flex gap-1">
-          <div className="w-8 h-2 bg-[var(--brand-red)]"></div>
-          <div className="w-8 h-2 bg-[var(--brand-gold)]"></div>
-          <div className="w-8 h-2 bg-[var(--brand-green)]"></div>
+          <div className="w-8 h-2 bg-destructive"></div>
+          <div className="w-8 h-2 bg-accent"></div>
+          <div className="w-8 h-2 bg-primary"></div>
         </div>
       </div>
     </footer>
