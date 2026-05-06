@@ -109,8 +109,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: "Core",
       icon: LayoutDashboard,
       items: [
-        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-        { to: '/admin/blogs', icon: FileText, label: 'Blog Posts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
+        { to: '/admin/blogs', icon: FileText, label: 'Updates', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/media', icon: ImageIcon, label: 'Media Library', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/trash', icon: Trash2, label: 'Trash Vault', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
@@ -120,7 +120,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: "People",
       icon: Users,
       items: [
-        { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/members', icon: Users, label: 'Verified', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/authors', icon: PenTool, label: 'Authors', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
@@ -134,10 +134,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: "Operations",
       icon: Target,
       items: [
-        { to: '/admin/polls', icon: BarChart3, label: 'Polls & Surveys', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
+        { to: '/admin/polls', icon: BarChart3, label: 'Feedback', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
         { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Analysis', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/directives', icon: Target, label: 'Operations', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/directives', icon: Target, label: 'Directives', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/rally-command', icon: Target, label: 'Events', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/ground-game', icon: Vote, label: 'Canvassing', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/war-room', icon: ShieldAlert, label: 'Alerts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
@@ -148,7 +148,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       icon: DollarSign,
       items: [
         { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
-        { to: '/admin/store', icon: ShoppingBag, label: 'Store', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
+        { to: '/admin/store', icon: ShoppingBag, label: 'Supplies', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
         { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
         { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Logistics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
@@ -183,7 +183,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   }
 
   return (
-    <div className="h-screen bg-stone-50 font-meta text-stone-900 flex overflow-hidden">
+    <div className="h-screen bg-muted/30 font-meta text-on-surface flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       <div 
         className={cn(
@@ -213,7 +213,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
                 <p className="text-white font-bold text-lg leading-tight tracking-tight whitespace-nowrap">The Base</p>
-                <p className="text-stone-500 text-[10px] font-bold mt-0.5 leading-none whitespace-nowrap">Admin panel</p>
+                <p className="text-muted-foreground/80 text-[10px] font-bold mt-0.5 leading-none whitespace-nowrap">Admin panel</p>
               </div>
 
             </Link>
@@ -232,9 +232,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 isSidebarOpen ? "" : "justify-center px-0"
               )}
             >
-              <Zap className="w-4 h-4 text-stone-400 group-hover:text-white shrink-0" />
+              <Zap className="w-4 h-4 text-muted-foreground/80 group-hover:text-white shrink-0" />
               <span className={cn(
-                "text-[11px] font-medium tracking-wide transition-all duration-300 text-stone-400 group-hover:text-white",
+                "text-[11px] font-medium tracking-wide transition-all duration-300 text-muted-foreground/80 group-hover:text-white",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0 hidden"
               )}>
                 View site
@@ -250,7 +250,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   <button
                     onClick={() => toggleGroup(group.label)}
                     className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 text-stone-400 hover:text-white hover:bg-white/5 transition-colors group",
+                      "w-full flex items-center justify-between px-3 py-2 text-muted-foreground/80 hover:text-white hover:bg-white/5 transition-colors group",
                       isSidebarOpen ? "" : "justify-center"
                     )}
                   >
@@ -286,7 +286,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                             "flex items-center gap-3 px-3 py-2 ml-8 transition-all relative group/item rounded-lg mr-4",
                             isActive 
                               ? "bg-white/10 text-white" 
-                              : "text-stone-500 hover:text-stone-200 hover:bg-white/5"
+                              : "text-muted-foreground/80 hover:text-stone-200 hover:bg-white/5"
                           )}
                           onClick={() => {
                             if (window.innerWidth < 1024) setIsSidebarOpen(false)
@@ -318,7 +318,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             <button 
               onClick={handleLogout}
               className={cn(
-                "w-full flex items-center gap-4 px-4 py-4 text-stone-400 hover:text-white hover:bg-red-500/10 transition-all group overflow-hidden",
+                "w-full flex items-center gap-4 px-4 py-4 text-muted-foreground/80 hover:text-white hover:bg-red-500/10 transition-all group overflow-hidden",
                 isSidebarOpen ? "" : "justify-center"
               )}
             >
@@ -337,44 +337,44 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Top Utility Bar - Clean, Compact, Functional */}
-        <header className="h-14 bg-white border-b border-stone-200 flex items-center justify-between px-6 sticky top-0 z-30 shrink-0">
+        <header className="h-14 bg-white border-b border-border/40 flex items-center justify-between px-6 sticky top-0 z-30 shrink-0">
           <div className="flex items-center gap-4 flex-1">
             {/* Sidebar Toggle */}
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="h-9 w-9 text-stone-500 hover:bg-stone-50 hover:text-[var(--brand-green)] transition-all"
+              className="h-9 w-9 text-muted-foreground/80 hover:bg-muted/30 hover:text-[var(--brand-green)] transition-all"
             >
               <Menu className="w-4 h-4" />
             </Button>
             
             {/* Integrated Command Search */}
             <div className="max-w-md w-full relative group hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 group-focus-within:text-[var(--brand-green)] transition-colors" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80 group-focus-within:text-[var(--brand-green)] transition-colors" />
               <input 
                 type="text" 
                 placeholder="Search..."
-                className="w-full h-9 pl-9 pr-4 bg-stone-50 border-transparent focus:bg-white focus:border-stone-200 focus:ring-0 transition-all text-xs outline-none font-medium placeholder:text-stone-400 rounded-lg"
+                className="w-full h-9 pl-9 pr-4 bg-muted/30 border-transparent focus:bg-white focus:border-border/40 focus:ring-0 transition-all text-xs outline-none font-medium placeholder:text-muted-foreground/80 rounded-lg"
               />
             </div>
           </div>
 
           {/* Topbar Actions */}
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="h-9 w-9 text-stone-500 hover:bg-stone-50 hover:text-[var(--brand-green)] transition-all relative">
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground/80 hover:bg-muted/30 hover:text-[var(--brand-green)] transition-all relative">
               <Bell className="w-4 h-4" />
               <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-[var(--brand-red)] rounded-full border-2 border-white" />
             </Button>
             
-            <div className="h-4 w-px bg-stone-200 mx-1" />
+            <div className="h-4 w-px bg-border/40 mx-1" />
             
             {/* User Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-stone-50 rounded-lg transition-colors cursor-pointer group">
+                <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-muted/30 rounded-lg transition-colors cursor-pointer group">
                   <div className="text-right hidden sm:block">
-                    <p className="text-[9px] font-medium text-stone-400 mt-0.5 leading-none">
+                    <p className="text-[9px] font-medium text-muted-foreground/80 mt-0.5 leading-none">
                       {user?.role === 'SUPER_ADMIN' 
                         ? 'System Admin' 
                         : user?.role === 'REGIONAL_DIRECTOR'
@@ -398,7 +398,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-bold leading-none">{user?.name}</p>
-                    <p className="text-xs leading-none text-stone-500">{user?.email}</p>
+                    <p className="text-xs leading-none text-muted-foreground/80">{user?.email}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
