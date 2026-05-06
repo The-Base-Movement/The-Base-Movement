@@ -8,11 +8,13 @@ import MembershipCard from '../components/MembershipCard'
 import { getCroppedImg } from '@/lib/imageUtils'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { useBranding } from '@/context/BrandingContext'
 
 const ageRanges = ['16-25', '26-40', '41-60', '60+']
 // Hardcoded fallbacks removed - now fetching from Supabase
 
 export default function Register() {
+  const { settings } = useBranding()
   const [searchParams] = useSearchParams()
   const platformParam = searchParams.get('platform')
   const [step, setStep] = useState<'choice' | 'form' | 'upload'>(platformParam ? 'form' : 'choice')
@@ -382,7 +384,7 @@ export default function Register() {
       <main className="bg-background font-body-md min-h-screen flex flex-col justify-center py-12 px-4">
         <div className="max-w-xl w-full mx-auto">
           <div className="text-center mb-10">
-            <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6"  decoding="async" />
+            <img src={settings.logo_url} alt="The Base" className="h-20 w-auto mx-auto mb-6 object-contain"  decoding="async" />
             <h1 className="text-3xl font-black text-on-surface uppercase tracking-tighter font-meta mb-2">The Base</h1>
             <div className="w-16 h-1 bg-destructive mx-auto mb-4"></div>
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest font-meta">Membership Registration</h2>
@@ -442,7 +444,7 @@ export default function Register() {
     <main className="bg-background font-body-md min-h-screen">
       <div className="bg-white border-b border-border/60 pt-16 pb-12 px-4 text-center">
         <div className="max-w-6xl mx-auto">
-          <img src="/logo.png" alt="The Base" className="h-20 w-auto mx-auto mb-6"  decoding="async" />
+          <img src={settings.logo_url} alt="The Base" className="h-20 w-auto mx-auto mb-6 object-contain"  decoding="async" />
           <h1 className="text-on-surface mb-2">The Base</h1>
           <div className="w-24 h-1.5 mx-auto mb-4 flex">
             <div className="flex-1 bg-destructive"></div>

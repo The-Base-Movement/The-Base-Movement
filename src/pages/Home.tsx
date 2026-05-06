@@ -4,6 +4,7 @@ import { ArrowRight, MapPin, Globe } from 'lucide-react'
 import { adminService, type BlogPost } from '@/services/adminService'
 import { usePerformance } from '@/context/PerformanceContext'
 import { Button } from '@/components/ui/neon-button'
+import { useBranding } from '@/context/BrandingContext'
 
 function AnimatedCounter({ target, duration = 2000, className }: { target: number; duration?: number; className?: string }) {
   const [count, setCount] = useState(0)
@@ -52,6 +53,7 @@ function AnimatedCounter({ target, duration = 2000, className }: { target: numbe
 }
 
 export default function Home() {
+  const { settings } = useBranding()
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 })
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([])
   const { lowBandwidthMode } = usePerformance()
@@ -117,7 +119,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex-1 flex justify-center md:justify-end opacity-90 relative">
-            <img src="/logo.png" alt="The Base" className="w-64 md:w-96 drop-shadow-2xl transition-all duration-700"  decoding="async" />
+            <img src={settings.logo_url} alt="The Base" className="w-64 md:w-96 drop-shadow-2xl transition-all duration-700 object-contain"  decoding="async" />
           </div>
         </div>
       </section>

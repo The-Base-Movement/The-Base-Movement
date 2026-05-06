@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import { Mail, Phone, MapPin, Send } from 'lucide-react'
 import { Button } from '../components/ui/neon-button'
 import { adminService } from '../services/adminService'
+import { useBranding } from '@/context/BrandingContext'
 
 export default function Contact() {
+  const { settings } = useBranding()
   const [submitted, setSubmitted] = useState(false)
-  const [settings, setSettings] = useState<Record<string, unknown>>({})
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -14,15 +15,7 @@ export default function Contact() {
     message: ''
   })
 
-  useEffect(() => {
-    async function fetchSettings() {
-      const data = await adminService.getSiteSettings()
-      setSettings(data)
-    }
-    fetchSettings()
-  }, [])
-
-  const contactEmail = (settings.primary_email as string) || 'info@thebasemovement.com'
+  const contactEmail = settings.primary_email
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

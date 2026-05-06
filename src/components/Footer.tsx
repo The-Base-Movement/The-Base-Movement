@@ -9,8 +9,10 @@ import {
 import { Button } from './ui/neon-button'
 import { Send } from 'lucide-react'
 import { adminService } from '../services/adminService'
+import { useBranding } from '@/context/BrandingContext'
 
 export default function Footer() {
+  const { settings } = useBranding()
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
 
@@ -32,7 +34,7 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-4 space-y-8">
             <Link to="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
-              <img alt="The Base Logo" className="h-14 w-14" src="/logo.png" decoding="async" loading="lazy" />
+              <img alt="The Base Logo" className="h-14 w-14 object-contain" src={settings.logo_url} decoding="async" loading="lazy" />
               <div className="flex flex-col">
                 <h2 className="text-on-surface font-black text-2xl uppercase tracking-tighter leading-none mb-0">The Base</h2>
                 <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2">Ghana First, Jobs for the Youth!</span>

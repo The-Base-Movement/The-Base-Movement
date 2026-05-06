@@ -14,7 +14,10 @@ import {
   History,
   Search,
   Megaphone,
-  Mail
+  Mail,
+  Image as ImageIcon,
+  Upload,
+  Twitter
 } from 'lucide-react'
 
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
@@ -136,6 +139,27 @@ export default function AdminSettings() {
     }
     fetchData()
   }, [])
+
+  const handleBrandingUpload = async (key: string, file: File) => {
+    setIsSaving(true)
+    const toastId = toast.loading(`Uploading ${key} to movement vault...`)
+    try {
+      const fileName = `${key}-${Date.now()}.${file.name.split('.').pop()}`
+      const { error } = await adminService.uploadBrandingAsset(fileName, file)
+      if (error) throw error
+      
+      const publicUrl = adminService.getBrandingAssetUrl(fileName)
+      await adminService.updateSiteSetting(key, publicUrl)
+      
+      setSiteSettings(prev => ({ ...prev, [key]: publicUrl }))
+      window.dispatchEvent(new CustomEvent('site_settings_updated'))
+      toast.success(`${key} synchronized successfully`, { id: toastId })
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : `Failed to synchronize ${key}`, { id: toastId })
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   // Fetch MFA factors
   useEffect(() => {
@@ -669,6 +693,7 @@ export default function AdminSettings() {
                             const p1 = adminService.updateSiteSetting('primary_email', siteSettings.primary_email)
                             const p2 = adminService.updateSiteSetting('newsletter_email', siteSettings.newsletter_email)
                             await Promise.all([p1, p2])
+                            window.dispatchEvent(new CustomEvent('site_settings_updated'))
                             toast.success('Movement configurations synchronized', { id: toastId })
                           } catch (err: unknown) {
                             toast.error(err instanceof Error ? err.message : 'Failed to update movement telemetry', { id: toastId })
@@ -692,7 +717,67 @@ export default function AdminSettings() {
                   <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Authorized social media touchpoints and movement links.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-8">
-                  <p className="text-[10px] text-stone-400 italic font-medium">Platform social synchronization is currently managed via static asset library for design immutability.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {[
+                      { key: 'logo_url', label: 'Movement Logo', icon: ImageIcon, desc: 'Authoritative brand identifier used across the platform.' },
+                      { key: 'favicon_url', label: 'Site Favicon', icon: Globe, desc: 'Browser tab and bookmark icon (32x32 recommended).' },
+                      { key: 'og_image_url', label: 'Open Graph Image', icon: ImageIcon, desc: 'Shared visual when links are posted to social platforms.' },
+                      { key: 'twitter_card_url', label: 'Twitter Card', icon: Twitter, desc: 'Specific optimized visual for X/Twitter previews.' }
+                    ].map((asset) => (
+                      <div key={asset.key} className="space-y-4 p-6 rounded-lg border border-stone-100 bg-stone-50/30 group transition-all hover:border-brand-green/20">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded bg-stone-100 flex items-center justify-center">
+                              <asset.icon className="w-4 h-4 text-stone-400" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-stone-900">{asset.label}</p>
+                              <p className="text-[10px] text-stone-400 font-medium">{asset.desc}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {siteSettings[asset.key] ? (
+                          <div className="relative aspect-video rounded-sm overflow-hidden border border-stone-200 bg-stone-100">
+                            <img 
+                              src={siteSettings[asset.key] as string} 
+                              alt={asset.label}
+                              className="w-full h-full object-contain"
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <label className="cursor-pointer bg-white text-stone-900 px-3 py-1.5 rounded-sm text-[9px] font-bold uppercase tracking-wider flex items-center gap-2">
+                                <Upload className="w-3 h-3" />
+                                Replace Asset
+                                <input 
+                                  type="file" 
+                                  className="hidden" 
+                                  accept="image/*"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0]
+                                    if (file) handleBrandingUpload(asset.key, file)
+                                  }}
+                                />
+                              </label>
+                            </div>
+                          </div>
+                        ) : (
+                          <label className="flex flex-col items-center justify-center aspect-video rounded-sm border-2 border-dashed border-stone-200 bg-stone-50/50 cursor-pointer hover:bg-stone-100 transition-all group-hover:border-brand-green/30">
+                            <Upload className="w-5 h-5 text-stone-300 mb-2" />
+                            <p className="text-[10px] font-bold text-stone-400">UPLOAD ASSET</p>
+                            <input 
+                              type="file" 
+                              className="hidden" 
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (file) handleBrandingUpload(asset.key, file)
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>

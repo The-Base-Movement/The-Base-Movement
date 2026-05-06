@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react'
 import { authService } from '@/services/authService'
 import { toast } from 'sonner'
+import { useBranding } from '@/context/BrandingContext'
 
 export default function Login() {
+  const { settings } = useBranding()
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -44,7 +46,7 @@ export default function Login() {
         
         <div className="text-center mb-8">
           <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
-            <img src="/logo.png" alt="The Base" className="h-16 w-auto mx-auto mb-4"  decoding="async" />
+            <img src={settings.logo_url} alt="The Base" className="h-16 w-auto mx-auto mb-4 object-contain"  decoding="async" />
           </Link>
           <h1 className="text-2xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
           <p className="text-sm text-slate-500 font-meta tracking-widest uppercase">Member Sign In</p>

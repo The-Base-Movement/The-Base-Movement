@@ -2,8 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { User, Settings, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
+import { useBranding } from '@/context/BrandingContext'
 
 export default function Navbar() {
+  const { settings } = useBranding()
   const [isOpen, setIsOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -59,7 +61,7 @@ export default function Navbar() {
     <header className="bg-white border-b border-border/40 sticky top-0 z-50">
       <nav aria-label="Main Navigation" className="flex justify-between items-center max-w-[1440px] mx-auto px-8 h-20">
         <div className="flex items-center gap-4">
-          <img alt="The Base Logo" className="h-10 w-10" src="/logo.png"  decoding="async" />
+          <img alt="The Base Logo" className="h-10 w-10 object-contain" src={settings.logo_url}  decoding="async" />
           <Link to="/" className="text-on-surface hover:opacity-80 transition-opacity mb-0">
             <h1 className="text-xl font-black uppercase tracking-tighter mb-0">The Base</h1>
           </Link>

@@ -4,8 +4,10 @@ import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
+import { useBranding } from '@/context/BrandingContext'
 
 export default function DashboardLayout() {
+  const { settings } = useBranding()
   const location = useLocation()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [userName, setUserName] = useState('Member')
@@ -103,7 +105,7 @@ export default function DashboardLayout() {
       <aside aria-label="Dashboard Sidebar" className={`fixed left-0 top-0 h-full flex flex-col bg-muted/5 text-on-surface w-64 border-r border-border/40 z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         {/* Fixed Header */}
         <div className="px-6 py-8 flex items-center gap-3 bg-white z-10 shrink-0">
-          <img src="/logo.png" alt="The Base Logo" className="h-10 w-10"  decoding="async" />
+          <img src={settings.logo_url} alt="The Base Logo" className="h-10 w-10 object-contain"  decoding="async" />
           <div>
             <h1 className="text-xl font-black text-on-surface leading-none mb-0 tracking-tighter uppercase">The Base</h1>
             <p className="text-[9px] text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase">Civic Movement</p>
@@ -249,7 +251,7 @@ export default function DashboardLayout() {
               </button>
               <div className="flex items-center gap-2">
                 <Link to="/dashboard" className="flex items-center gap-2">
-                  <img src="/logo.png" alt="The Base" className="h-6 w-6"  decoding="async" />
+                  <img src={settings.logo_url} alt="The Base" className="h-6 w-6 object-contain"  decoding="async" />
                   <span className="text-primary font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
                 <div className="hidden sm:flex items-center gap-2 text-[9px] text-muted-foreground/40 tracking-[0.2em] uppercase font-black">

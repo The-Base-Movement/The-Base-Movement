@@ -500,6 +500,19 @@ class AdminService {
     return data.publicUrl
   }
 
+  async uploadBrandingAsset(fileName: string, blob: Blob): Promise<{ data: { path: string } | null, error: Error | null }> {
+    return supabase.storage
+      .from('branding')
+      .upload(fileName, blob, { upsert: true })
+  }
+
+  getBrandingAssetUrl(fileName: string): string {
+    const { data } = supabase.storage
+      .from('branding')
+      .getPublicUrl(fileName)
+    return data.publicUrl
+  }
+
   async deleteConstituency(id: string, regionName: string, conName: string): Promise<boolean> {
     const success = await logisticsService.deleteConstituency(id)
     if (success) {
