@@ -62,15 +62,15 @@ export default function DashboardLayout() {
 
   const getPageTitle = () => {
     const path = location.pathname
-    if (path === '/dashboard') return 'Dashboard'
-    if (path === '/dashboard/blog') return 'Insights'
-    if (path.startsWith('/dashboard/blog/')) return 'Insight Article'
-    if (path === '/dashboard/agenda') return 'Agenda'
+    if (path === '/dashboard') return 'Overview'
+    if (path === '/dashboard/blog') return 'Updates'
+    if (path.startsWith('/dashboard/blog/')) return 'Update Article'
+    if (path === '/dashboard/agenda') return 'The Plan'
     if (path === '/dashboard/impact') return 'Impact'
-    if (path === '/dashboard/polls') return 'Polls'
-    if (path === '/dashboard/store') return 'Store'
+    if (path === '/dashboard/polls') return 'Feedback'
+    if (path === '/dashboard/store') return 'Supplies'
     if (path === '/dashboard/donate') return 'Donations'
-    if (path === '/dashboard/members') return 'Members'
+    if (path === '/dashboard/members') return 'Verified'
     if (path === '/dashboard/chapters') return 'Chapters'
     if (path.startsWith('/dashboard/chapter/')) return 'Chapter Details'
     if (path === '/dashboard/contact') return 'Support'
@@ -106,7 +106,7 @@ export default function DashboardLayout() {
           <img src="/logo.png" alt="The Base Logo" className="h-10 w-10"  decoding="async" />
           <div>
             <h1 className="text-lg text-emerald-900 dark:text-white leading-none mb-0">The Base</h1>
-            <p className="text-[9px] text-warm-gold font-bold tracking-widest mt-1 mb-0 uppercase">Civic Movement</p>
+            <p className="text-[9px] text-accent font-bold tracking-widest mt-1 mb-0 uppercase">Civic Movement</p>
           </div>
         </div>
 
@@ -118,21 +118,21 @@ export default function DashboardLayout() {
               to="/dashboard"
             >
               <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>dashboard</span>
-              Dashboard
+              Overview
             </Link>
             <Link 
               className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/blog') || location.pathname.startsWith('/dashboard/blog/') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
               to="/dashboard/blog"
             >
               <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>article</span>
-              Insights
+              Updates
             </Link>
             <Link 
               className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/agenda') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
               to="/dashboard/agenda"
             >
               <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>event_note</span>
-              Agenda
+              The Plan
             </Link>
             <Link 
               className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/impact') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
@@ -146,14 +146,14 @@ export default function DashboardLayout() {
               to="/dashboard/polls"
             >
               <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>how_to_vote</span>
-              Polls
+              Feedback
             </Link>
             <Link 
               className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/store') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
               to="/dashboard/store"
             >
               <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>shopping_bag</span>
-              Store
+              Supplies
             </Link>
             <Link 
               className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/donate') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
@@ -167,7 +167,7 @@ export default function DashboardLayout() {
               to="/dashboard/members"
             >
               <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>groups</span>
-              Members
+              Verified
             </Link>
             <Link 
               className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/chapters') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
@@ -192,7 +192,7 @@ export default function DashboardLayout() {
               className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
              decoding="async" />
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-green/90 via-brand-green/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-3">
               <p className="text-white text-[10px] font-bold tracking-widest leading-tight mb-0 uppercase">
                 Dr. George Oti Bonsu
@@ -206,7 +206,7 @@ export default function DashboardLayout() {
           <div className="px-6 pt-2">
             <button 
               onClick={() => setIsShareModalOpen(true)}
-              className="w-full py-3 bg-[var(--brand-green)] text-white font-meta text-xs font-bold tracking-widest rounded-none hover:brightness-110 active:scale-95 transition-all shadow-md shadow-brand-green/20"
+              className="w-full py-3 bg-primary text-white font-meta text-xs font-bold tracking-widest rounded-none hover:brightness-110 active:scale-95 transition-all shadow-md shadow-primary/20"
             >
               Invite & Share
             </button>
@@ -223,9 +223,9 @@ export default function DashboardLayout() {
             {/* Back to Landing Page */}
             <Link
               to="/"
-              className="mt-6 flex items-center gap-2 w-full py-2.5 px-3 rounded-none border border-stone-200 text-stone-500 hover:border-[var(--brand-green)] hover:text-[var(--brand-green)] transition-all text-xs font-meta font-bold tracking-widest group bg-white/50"
+              className="mt-6 flex items-center gap-2 w-full py-2.5 px-3 rounded-none border border-stone-200 text-stone-500 hover:border-primary hover:text-primary transition-all text-xs font-meta font-bold tracking-widest group bg-white/50"
             >
-              <span className="material-symbols-outlined text-[16px] group-hover:text-[var(--brand-green)] transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
+              <span className="material-symbols-outlined text-[16px] group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
               Back to Site
             </Link>
           </div>
@@ -250,10 +250,10 @@ export default function DashboardLayout() {
               <div className="flex items-center gap-2">
                 <Link to="/dashboard" className="flex items-center gap-2">
                   <img src="/logo.png" alt="The Base" className="h-6 w-6"  decoding="async" />
-                  <span className="text-[var(--brand-green)] font-black text-xs tracking-tighter sm:hidden">The Base</span>
+                  <span className="text-primary font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
                 <div className="hidden sm:flex items-center gap-2 text-[10px] text-stone-400 tracking-widest uppercase font-bold">
-                  <span className="text-[var(--brand-green)]">The Base</span>
+                  <span className="text-primary">The Base</span>
                   <span className="text-stone-300">/</span>
                   <span className="text-stone-900">{getPageTitle()}</span>
                 </div>
@@ -272,19 +272,19 @@ export default function DashboardLayout() {
                 <input
                   type="text"
                   placeholder="Search…"
-                  className="pl-9 pr-4 py-1.5 text-sm bg-stone-100 border border-stone-200 rounded-none text-stone-600 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-green/30 focus:border-[var(--brand-green)]/50 transition-all w-48 focus:w-64"
+                  className="pl-9 pr-4 py-1.5 text-sm bg-stone-100 border border-stone-200 rounded-none text-stone-600 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all w-48 focus:w-64"
                 />
               </div>
 
               {/* Notification Bell */}
               <button className="relative p-2 rounded-full hover:bg-[var(--brand-light-gray)] transition-colors group">
                 <span
-                  className="material-symbols-outlined text-stone-500 group-hover:text-[var(--brand-green)] transition-colors text-[22px]"
+                  className="material-symbols-outlined text-stone-500 group-hover:text-primary transition-colors text-[22px]"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
                 >notifications</span>
                 {/* Unread badge */}
                 {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-red-500 rounded-full ring-2 ring-white text-[8px] flex items-center justify-center text-white font-black">
+                  <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-destructive rounded-full ring-2 ring-white text-[8px] flex items-center justify-center text-white font-black">
                     {unreadCount}
                   </span>
                 )}
@@ -296,26 +296,26 @@ export default function DashboardLayout() {
               {/* User Avatar + Name */}
               <button className="flex items-center gap-3 group">
                 {/* Avatar: real photo or initials fallback */}
-                <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-brand-green/20 group-hover:ring-brand-green/50 transition-all shadow-sm shrink-0">
+                <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all shadow-sm shrink-0">
                   {avatarUrl ? (
                     <img src={avatarUrl}
                       alt={userName}
                       className="w-full h-full object-cover"
                      decoding="async" />
                   ) : (
-                    <div className="w-full h-full bg-[var(--brand-green)] flex items-center justify-center text-white text-xs font-bold font-meta tracking-wider">
+                    <div className="w-full h-full bg-primary flex items-center justify-center text-white text-xs font-bold font-meta tracking-wider">
                       {initials || 'M'}
                     </div>
                   )}
                 </div>
                 <div className="hidden lg:block text-left">
                   <p className="text-sm font-bold text-on-surface leading-none mb-1">{userName}</p>
-                   <p className="text-[10px] text-warm-gold font-bold tracking-widest uppercase mb-0">
+                   <p className="text-[10px] text-accent font-bold tracking-widest uppercase mb-0">
                     {userPlatform} {userRegNo && `· ${userRegNo}`} · Verified
                   </p>
                 </div>
                 <span
-                  className="material-symbols-outlined text-stone-400 text-[18px] group-hover:text-[var(--brand-green)] transition-colors"
+                  className="material-symbols-outlined text-stone-400 text-[18px] group-hover:text-primary transition-colors"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}
                 >expand_more</span>
               </button>
