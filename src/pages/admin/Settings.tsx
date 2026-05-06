@@ -722,7 +722,11 @@ export default function AdminSettings() {
                       { key: 'logo_url', label: 'Movement Logo', icon: ImageIcon, desc: 'Authoritative brand identifier used across the platform.' },
                       { key: 'favicon_url', label: 'Site Favicon', icon: Globe, desc: 'Browser tab and bookmark icon (32x32 recommended).' },
                       { key: 'og_image_url', label: 'Open Graph Image', icon: ImageIcon, desc: 'Shared visual when links are posted to social platforms.' },
-                      { key: 'twitter_card_url', label: 'Twitter Card', icon: Twitter, desc: 'Specific optimized visual for X/Twitter previews.' }
+                      { key: 'twitter_card_url', label: 'Twitter Card', icon: Twitter, desc: 'Specific optimized visual for X/Twitter previews.' },
+                      { key: 'founder_image_url', label: 'Founder Portrait', icon: UserIcon, desc: 'Official portrait of the Movement Leader.' },
+                      { key: 'hero_bg_url', label: 'Hero Background', icon: ImageIcon, desc: 'Main landing page background visualization.' },
+                      { key: 'banner_image_url', label: 'Base Banner', icon: Megaphone, desc: 'Authoritative banner for movement messaging.' },
+                      { key: 'party_hq_image_url', label: 'HQ Visualization', icon: Building2, desc: 'Authoritative image of Movement Headquarters.' }
                     ].map((asset) => (
                       <div key={asset.key} className="space-y-4 p-6 rounded-lg border border-stone-100 bg-stone-50/30 group transition-all hover:border-brand-green/20">
                         <div className="flex items-start justify-between">

@@ -26,10 +26,11 @@ export default function MediaLibrary() {
   const [isUploading, setIsUploading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
-  const [activeFolder, setActiveFolder] = useState('blog-images')
+  const [activeFolder, setActiveFolder] = useState('branding')
   const [assetToDelete, setAssetToDelete] = useState<string | null>(null)
 
   const folders = [
+    { id: 'branding', label: 'Branding Assets', icon: ImageIcon },
     { id: 'blog-images', label: 'Blog Posts', icon: ImageIcon },
     { id: 'author-images', label: 'Authors', icon: ImageIcon },
     { id: 'product-images', label: 'Product Images', icon: ImageIcon },
