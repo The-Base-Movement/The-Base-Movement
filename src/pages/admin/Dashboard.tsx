@@ -221,20 +221,22 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="default" 
-            className="h-10 px-6"
+            variant="primary" 
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
             onClick={handleExport}
             disabled={isExporting}
           >
-            {isExporting ? 'Exporting...' : 'Export data'}
+            {isExporting ? 'Exporting telemetry...' : 'Export regional data'}
           </Button>
 
           <Button 
-            variant="solid"
-            className="h-10 px-6"
+            variant="outline"
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40 hover:bg-stone-100"
             onClick={handlePlatformLogs}
           >
-            View logs
+            System logs
           </Button>
         </div>
       </div>

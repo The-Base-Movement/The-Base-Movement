@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Target, Users, Heart, TrendingUp, ArrowUpRight, MapPin, Activity, Calendar, X } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
+import { Button } from '../components/ui/neon-button'
 
 const impactStats = [
   { icon: Heart, label: 'Donations Received', value: 'GHS 128,450', color: 'var(--brand-red)', trend: '+GHS 4,280 today' },
@@ -239,27 +239,31 @@ export default function Impact() {
               {/* Filter Tabs & Calendar */}
               <div className="flex flex-col gap-3 mb-8">
                 <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3">
-                  <div className="flex-1 flex gap-1 bg-slate-50 p-1 rounded-none">
-                  {(['day', 'week', 'month', 'year'] as const).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => {
-                        setActiveFilter(t);
-                        setShowDatePicker(false);
-                      }}
-                      className={`flex-1 py-2 text-sm font-bold tracking-widest rounded-none transition-all uppercase ${activeFilter === t ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                    >
-                      {t}
-                    </button>
-                  ))}
+                  <div className="flex-1 flex gap-1 bg-slate-50 p-1">
+                    {(['day', 'week', 'month', 'year'] as const).map((t) => (
+                      <Button
+                        key={t}
+                        variant={activeFilter === t ? "primary" : "ghost"}
+                        size="sm"
+                        onClick={() => {
+                          setActiveFilter(t);
+                          setShowDatePicker(false);
+                        }}
+                        className={`flex-1 py-2 ${activeFilter === t ? 'shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      >
+                        {t}
+                      </Button>
+                    ))}
                   </div>
-                  <button 
+                  <Button 
+                    variant={showDatePicker || activeFilter === 'custom' ? "primary" : "ghost"}
+                    size="sm"
                     onClick={() => setShowDatePicker(!showDatePicker)}
-                    className={`flex items-center justify-center w-10 h-10 border rounded-none transition-all group shrink-0 ${showDatePicker || activeFilter === 'custom' ? 'bg-[var(--brand-green)] border-[var(--brand-green)] text-white shadow-lg shadow-brand-green/20' : 'border-slate-100 text-slate-500 hover:bg-slate-50 hover:border-slate-200'}`}
+                    className={`w-10 h-10 border shrink-0 ${showDatePicker || activeFilter === 'custom' ? 'shadow-lg shadow-brand-green/20' : 'border-slate-100 text-slate-500 hover:bg-slate-50 hover:border-slate-200'}`}
                     title="Custom Range"
                   >
-                    <Calendar className={`w-4 h-4 ${showDatePicker || activeFilter === 'custom' ? 'text-white' : 'text-slate-400 group-hover:text-[var(--brand-green)]'}`} />
-                  </button>
+                    <Calendar className={`w-4 h-4 ${showDatePicker || activeFilter === 'custom' ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
+                  </Button>
                 </div>
 
                 {/* Date Picker Dropdown (Conditional) */}

@@ -136,21 +136,22 @@ export default function FinancialAudit() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="default" 
-            className="h-10 px-6 text-[10px] font-bold normal-case border-border/60 bg-white text-on-surface/80 shadow-sm rounded-sm hover:bg-muted/5"
+            variant="outline" 
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40 hover:bg-stone-100"
             onClick={handleExport}
             disabled={filteredDonations.length === 0}
           >
-            <Download className="w-3.5 h-3.5 mr-2" />
-            Export ledger
+            <Download className="w-3.5 h-3.5 mr-2" /> Export Ledger
           </Button>
           <Button 
-            variant="default" 
+            variant="outline" 
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40 hover:bg-stone-100"
             onClick={() => fetchData()} 
-            className="h-10 px-6 text-[10px] font-bold normal-case border-border/60 bg-white text-on-surface/80 shadow-sm rounded-sm hover:bg-muted/5"
           >
             <Loader2 className={cn("w-3.5 h-3.5 mr-2", isLoading && "animate-spin")} />
-            Sync ledger
+            Synchronize Data
           </Button>
         </div>
       </div>
@@ -281,9 +282,9 @@ export default function FinancialAudit() {
                                 variant="ghost" 
                                 size="sm" 
                                 onClick={() => setSelectedReceipt(donation.receiptUrl || null)}
-                                className="h-7 px-3 text-[9px] font-bold text-on-surface/80 hover:text-on-surface hover:bg-border/40 rounded-lg border border-border/60 w-fit"
+                                className="h-7 px-3 text-[10px] font-black uppercase tracking-widest text-on-surface/80 hover:text-on-surface hover:bg-border/40 rounded-sm border border-border/60 w-fit"
                               >
-                                <Eye className="w-3 h-3 mr-1.5" /> View receipt
+                                <Eye className="w-4 h-4 mr-2" /> Inspect Evidence
                               </Button>
                             ) : (
                               <span className="text-[9px] font-bold text-muted-foreground/60 flex items-center gap-1">
@@ -300,20 +301,20 @@ export default function FinancialAudit() {
                               <p className="text-[10px] font-bold text-muted-foreground/60">Audit action required</p>
                               <div className="flex items-center gap-2">
                                 <Button 
-                                  variant="default" 
+                                  variant="outline" 
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Rejected')}
                                   disabled={isVerifying === donation.id}
-                                  className="flex-1 h-9 text-brand-red border-brand-red/20 hover:bg-brand-red/5"
+                                  className="flex-1 h-9 text-[10px] font-black uppercase tracking-widest text-brand-red border-brand-red/20 hover:bg-brand-red/5 rounded-sm"
                                 >
-                                  Flag
+                                  Flag for Audit
                                 </Button>
                                 <Button 
-                                  variant="solid"
+                                  variant="primary"
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Verified')}
                                   disabled={isVerifying === donation.id}
-                                  className="flex-1 h-9"
+                                  className="flex-1 h-9 text-[10px] font-black uppercase tracking-widest rounded-sm"
                                 >
-                                  Approve
+                                  Approve Record
                                 </Button>
                               </div>
                             </div>

@@ -58,11 +58,19 @@ export default function MobilizationMetrics() {
           <p className="text-muted-foreground/80 text-sm mt-1">Performance tracking and impact analytics for regional chapters.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="default" className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10">
-            <Filter className="w-3.5 h-3.5 mr-2" /> Filter data
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40 hover:bg-stone-100"
+          >
+            <Filter className="w-3.5 h-3.5 mr-2" /> Filter telemetry
           </Button>
-          <Button className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10">
-            <Download className="w-3.5 h-3.5 mr-2" /> Export report
+          <Button 
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+          >
+            <Download className="w-3.5 h-3.5 mr-2" /> Export intelligence
           </Button>
         </div>
       </div>

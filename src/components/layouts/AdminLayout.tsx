@@ -58,6 +58,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const navigate = useNavigate()
   const [user, setUser] = useState<AdminUser | null>(adminService.getCurrentUser())
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     const applyDensity = () => {
@@ -86,18 +87,24 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
   useEffect(() => {
     const init = async () => {
-      // Import here dynamically or just use global import, but we'll use window.localStorage directly
-      // Wait, we need authService. Let's import it at the top.
       const currentUser = await adminService.initialize()
       if (!currentUser) {
         navigate('/admin-login')
       } else {
         setUser(currentUser)
         
-        // Attempt to resolve avatar URL using auth metadata or localStorage fallback
+        // Attempt to resolve avatar URL
         const authUser = JSON.parse(localStorage.getItem('sb-yymncrshblmzeuomomnz-auth-token') || '{}')?.user
         const fallbackAvatar = authUser?.user_metadata?.avatar_url || localStorage.getItem('userAvatar')
         setAvatarUrl(currentUser.avatarUrl || fallbackAvatar || null)
+
+        // Fetch unread notifications
+        try {
+          const notes = await adminService.getNotifications()
+          setUnreadCount(notes.filter(n => !n.is_read).length)
+        } catch (err) {
+          console.error("Failed to fetch admin notifications:", err)
+        }
       }
     }
     init()
@@ -195,7 +202,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 flex flex-col bg-[var(--brand-black)] text-white transition-all duration-300 ease-in-out lg:relative lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 flex flex-col bg-[hsl(var(--brand-green))] text-white transition-all duration-300 ease-in-out lg:relative lg:translate-x-0",
         isSidebarOpen ? "translate-x-0 w-72" : "-translate-x-full lg:w-20 lg:translate-x-0"
       )}>
         <div className="h-full flex flex-col">
@@ -212,8 +219,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 "transition-all duration-300 origin-left",
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
-                <p className="text-white font-bold text-lg leading-tight tracking-tight whitespace-nowrap">The Base</p>
-                <p className="text-muted-foreground/80 text-[10px] font-bold mt-0.5 leading-none whitespace-nowrap">Admin panel</p>
+                <p className="text-white font-black text-xl leading-none mb-0 tracking-tighter uppercase">The Base</p>
+                <p className="text-[var(--brand-green)] text-[10px] font-black tracking-[0.2em] mt-1.5 leading-none uppercase">Admin Panel</p>
               </div>
 
             </Link>
@@ -221,23 +228,23 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
 
           {/* Navigation */}
-          <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto overflow-x-hidden">
+          <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto scrollbar-hide">
             {/* View Site External Link */}
             <a 
               href="/" 
               target="_blank" 
               rel="noopener noreferrer"
               className={cn(
-                "flex items-center gap-3 px-3 py-2 mb-6 mx-2 transition-all relative group bg-white/5 hover:bg-white/10 rounded-lg border border-white/10",
+                "flex items-center gap-3 px-4 py-3 mb-8 mx-2 transition-all relative group bg-black/10 hover:bg-black/20 rounded-lg border border-white/10",
                 isSidebarOpen ? "" : "justify-center px-0"
               )}
             >
-              <Zap className="w-4 h-4 text-muted-foreground/80 group-hover:text-white shrink-0" />
+              <Zap className="w-4 h-4 text-[var(--brand-gold)] group-hover:scale-110 transition-transform shrink-0" />
               <span className={cn(
-                "text-[11px] font-medium tracking-wide transition-all duration-300 text-muted-foreground/80 group-hover:text-white",
+                "text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 text-stone-100 group-hover:text-white",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0 hidden"
               )}>
-                View site
+                View live site
               </span>
             </a>
 
@@ -250,7 +257,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   <button
                     onClick={() => toggleGroup(group.label)}
                     className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 text-muted-foreground/80 hover:text-white hover:bg-white/5 transition-colors group",
+                      "w-full flex items-center justify-between px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 transition-colors group",
                       isSidebarOpen ? "" : "justify-center"
                     )}
                   >
@@ -273,9 +280,14 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
                   {/* Group Items */}
                   <div className={cn(
-                    "overflow-hidden transition-all duration-300",
-                    isOpen && isSidebarOpen ? "max-h-[500px] opacity-100 mt-1" : "max-h-0 opacity-0"
+                    "overflow-hidden transition-all duration-300 relative",
+                    isOpen && isSidebarOpen ? "max-h-[500px] opacity-100 mt-1 pb-2" : "max-h-0 opacity-0"
                   )}>
+                    {/* Vertical Tree Line */}
+                    {isSidebarOpen && (
+                      <div className="absolute left-[21px] top-0 bottom-4 w-px bg-white/20" />
+                    )}
+
                     {group.items.map((item) => {
                       const isActive = location.pathname === item.to
                       return (
@@ -283,25 +295,30 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2 ml-8 transition-all relative group/item rounded-lg mr-4",
+                            "flex items-center gap-3 px-3 py-2.5 ml-8 transition-all relative group/item rounded-lg mr-4 mb-0.5",
                             isActive 
-                              ? "bg-white/10 text-white" 
-                              : "text-muted-foreground/80 hover:text-stone-200 hover:bg-white/5"
+                              ? "bg-white/20 text-white" 
+                              : "text-white/70 hover:text-white hover:bg-white/10"
                           )}
                           onClick={() => {
                             if (window.innerWidth < 1024) setIsSidebarOpen(false)
                           }}
                         >
+                          {/* Horizontal Tree Branch */}
+                          {isSidebarOpen && (
+                            <div className="absolute left-[-16px] top-1/2 -translate-y-1/2 w-4 h-px bg-white/20" />
+                          )}
+
                           <span className={cn(
-                            "text-xs font-medium tracking-wide whitespace-nowrap transition-all duration-300",
+                            "text-[11px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300",
                             isSidebarOpen ? "opacity-100" : "opacity-0"
                           )}>
                             {item.label}
                           </span>
                           {isActive && (
                             <>
-                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-6 bg-[var(--brand-red)] shadow-[0_0_10px_rgba(206,17,38,0.8)]" />
-                              <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-red)]/5 to-transparent pointer-events-none" />
+                              <div className="absolute left-[-42px] top-1/2 -translate-y-1/2 w-[4px] h-7 bg-[var(--brand-gold)] shadow-[0_0_20px_rgba(218,165,32,1)] z-10 rounded-r-full" />
+                              <div className="absolute inset-0 bg-white/5 pointer-events-none rounded-lg" />
                             </>
                           )}
                         </Link>
@@ -362,9 +379,18 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
           {/* Topbar Actions */}
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground/80 hover:bg-muted/30 hover:text-[var(--brand-green)] transition-all relative">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-[var(--brand-red)] rounded-full border-2 border-white" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground/80 hover:bg-stone-100 hover:text-[var(--brand-green)] transition-all relative group">
+              <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              {unreadCount > 0 && (
+                <>
+                  {/* Pulse effect */}
+                  <span className="absolute top-2 right-2 w-4 h-4 bg-[var(--brand-red)] rounded-full animate-ping opacity-75" />
+                  {/* Luminous Numeric Badge */}
+                  <span className="absolute top-2 right-2 min-w-[16px] h-4 px-1 bg-[var(--brand-red)] rounded-full border-2 border-white shadow-[0_0_8px_rgba(206,17,38,0.6)] flex items-center justify-center text-[8px] font-black text-white">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                </>
+              )}
             </Button>
             
             <div className="h-4 w-px bg-border/40 mx-1" />

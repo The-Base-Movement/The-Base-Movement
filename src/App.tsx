@@ -35,6 +35,8 @@ const Privacy = lazy(() => import('./pages/Privacy'))
 const Terms = lazy(() => import('./pages/Terms'))
 const Wishlist = lazy(() => import('./pages/Wishlist'))
 const VerifyID = lazy(() => import('./pages/VerifyID'))
+const Press = lazy(() => import('./pages/Press'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 // Dashboard secondary pages
 const ProfileSettings = lazy(() => import('./pages/ProfileSettings'))
@@ -112,8 +114,10 @@ export default function App() {
               <Route path="/chapters" element={<Navigate to="/dashboard/chapters" replace />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/press" element={<Press />} />
               <Route path="/verify/:id" element={<VerifyID />} />
               <Route path="/admin-login" element={<AdminLogin />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
 
             {/* ── Dashboard routes (Sidebar + Topbar) ── */}

@@ -204,20 +204,21 @@ export default function AdminOrders() {
         </div>
         <div className="flex items-center gap-3">
           <Button
-            variant="default"
+            variant="outline"
+            size="lg"
             onClick={handleExport}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 shadow-sm"
           >
-            <Download className="w-3.5 h-3.5" />
-            Export orders
+            <Download className="w-4 h-4 mr-2" /> Export Manifest
           </Button>
           <Button
-            variant="default"
+            variant="outline"
+            size="lg"
             onClick={() => loadData(true)}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 shadow-sm"
           >
-            <RefreshCw className={cn('w-3.5 h-3.5', refreshing && 'animate-spin')} />
-            Sync
+            <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
+            Synchronize
           </Button>
         </div>
       </div>
@@ -462,10 +463,11 @@ export default function AdminOrders() {
                               </Button>
                               {nextStatus && (
                                 <Button
+                                  variant="primary"
                                   size="sm"
                                   onClick={() => handleStatusAdvance(order)}
                                   disabled={updatingId === order.id}
-                                  className="h-7 px-3 text-[9px] font-bold normal-case bg-on-surface text-white hover:bg-on-surface/90 rounded-sm"
+                                  className="h-7 px-4 text-[9px] font-black uppercase tracking-widest rounded-sm"
                                 >
                                   {updatingId === order.id ? '...' : `→ ${nextStatus}`}
                                 </Button>
@@ -638,21 +640,22 @@ export default function AdminOrders() {
                 <div className="pt-4 space-y-2">
                   {NEXT_STATUS[selectedOrder.status] && (
                     <Button
-                      className="w-full h-10 bg-on-surface text-white hover:bg-on-surface/90 text-[10px] font-bold normal-case rounded-sm"
+                      variant="primary"
+                      className="w-full h-11 text-[10px] font-black uppercase tracking-widest rounded-sm"
                       onClick={() => handleStatusAdvance(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
-                      {updatingId === selectedOrder.id ? 'Updating...' : `Advance to ${NEXT_STATUS[selectedOrder.status]}`}
+                      {updatingId === selectedOrder.id ? 'Synchronizing...' : `Advance to ${NEXT_STATUS[selectedOrder.status]}`}
                     </Button>
                   )}
                   {selectedOrder.status !== 'Cancelled' && selectedOrder.status !== 'Delivered' && (
                     <Button
-                      variant="default"
-                      className="w-full h-10 border-destructive/20 text-destructive hover:bg-destructive/5 text-[10px] font-bold normal-case rounded-sm"
+                      variant="outline"
+                      className="w-full h-11 text-[10px] font-black uppercase tracking-widest text-destructive border-destructive/20 hover:bg-destructive/5 rounded-sm"
                       onClick={() => handleCancel(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
-                      Cancel order
+                      Terminate Order
                     </Button>
                   )}
                 </div>

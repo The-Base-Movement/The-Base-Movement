@@ -129,10 +129,12 @@ export default function PollsManagement() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
             onClick={() => setShowCreateModal(true)}
           >
-            <Plus className="w-3.5 h-3.5 mr-2" /> Create poll
+            <Plus className="w-4 h-4 mr-2" /> Establish Campaign
           </Button>
         </div>
       </div>
@@ -398,10 +400,12 @@ export default function PollsManagement() {
               Use regional-specific polls to gather more precise data. Our research shows chapters with localized campaigns see 40% higher member participation.
             </p>
             <Button 
-              variant="default" className="h-10 text-[10px] font-bold tracking-tight border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-lg"
+              variant="outline"
+              size="sm"
+              className="h-9 px-6 text-[10px] font-black uppercase tracking-widest border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm"
               onClick={() => setIsAnalyticsModalOpen(true)}
             >
-              View analytics guide
+              Scan Analytics Guide
             </Button>
           </div>
           <BarChart3 className="absolute -bottom-4 -right-4 w-32 h-32 text-white/5 rotate-12" />
@@ -421,10 +425,10 @@ export default function PollsManagement() {
             </div>
             <Button 
               variant="ghost" 
-              className="h-8 px-0 text-[10px] font-bold tracking-tight text-accent hover:bg-transparent hover:text-accent/80"
+              className="h-8 px-0 text-[10px] font-black uppercase tracking-widest text-accent hover:bg-transparent hover:text-accent/80"
               onClick={() => setIsFeedbackModalOpen(true)}
             >
-              View all feedback <ChevronRight className="w-3.5 h-3.5 ml-1" />
+              Scan Feedback Vault <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
         </div>
@@ -538,19 +542,20 @@ export default function PollsManagement() {
                   </div>
                 </div>
               </CardContent>
-              <div className="p-6 pt-0 flex gap-3">
+              <div className="p-6 pt-0 flex gap-4">
                 <Button 
                   type="button"
-                  variant="default" 
-                  className="flex-1 h-11 text-xs font-bold rounded-lg border-border/60"
+                  variant="outline" 
+                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-widest rounded-sm border-border/40"
                   onClick={() => setShowCreateModal(false)}
                 >
                   Discard
                 </Button>
                 <Button 
                   type="submit"
+                  variant="primary"
                   disabled={isSubmitting}
-                  className="flex-1 h-11 text-xs font-bold rounded-lg bg-on-surface text-white hover:bg-on-surface/90"
+                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-widest rounded-sm"
                 >
                   {isSubmitting ? 'Launching...' : 'Deploy Campaign'}
                 </Button>

@@ -501,12 +501,13 @@ export default function AdminSettings() {
 
                   <div className="pt-6 flex justify-end border-t border-stone-100">
                     <Button 
+                      variant="primary"
+                      size="lg"
                       onClick={handleSaveProfile}
                       disabled={isSaving}
-                      className="h-9 px-6 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-all shadow-sm normal-case"
+                      className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
                     >
-                      {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />}
-                      Update profile
+                      {isSaving ? 'Syncing...' : 'Synchronize Profile'}
                     </Button>
                   </div>
                 </div>
@@ -644,12 +645,13 @@ export default function AdminSettings() {
                       </div>
                     </div>
                     <Button 
+                      variant="primary"
+                      size="lg"
                       onClick={handleUpdatePassword}
                       disabled={isSaving || !passwordForm.newPassword}
-                      className="w-full h-10 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-all shadow-md normal-case"
+                      className="w-full rounded-sm text-[10px] uppercase tracking-[0.2em]"
                     >
-                      {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />}
-                      Update security credentials
+                      {isSaving ? 'Hardenining...' : 'Harden Security Credentials'}
                     </Button>
                   </div>
                 </CardContent>
@@ -695,11 +697,12 @@ export default function AdminSettings() {
                             </Button>
                           ) : (
                             <Button 
-                              variant="default" 
+                              variant="outline" 
+                              size="sm"
                               onClick={handleStartMfaEnroll}
-                              className="h-8 px-4 text-[10px] font-bold border-stone-200 rounded-lg transition-all"
+                              className="h-9 px-6 text-[10px] font-black uppercase tracking-widest border-stone-200 rounded-sm"
                             >
-                              Configure MFA
+                              Establish MFA Protection
                             </Button>
                           )}
                         </div>
@@ -788,11 +791,12 @@ export default function AdminSettings() {
                   <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Full traceability of administrative decisions and system modifications.</CardDescription>
                 </div>
                 <Button 
-                  variant="default" 
-                  className="h-8 px-3 text-[10px] font-bold border-stone-200 hover:bg-stone-50 rounded-lg"
+                  variant="outline" 
+                  size="sm"
+                  className="h-9 px-6 text-[10px] font-black uppercase tracking-widest border-stone-200 rounded-sm"
                   onClick={handleExportLogs}
                 >
-                  Export log
+                  Export Audit report
                 </Button>
               </CardHeader>
               <CardContent className="p-0">

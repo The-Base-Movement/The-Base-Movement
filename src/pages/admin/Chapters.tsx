@@ -158,18 +158,21 @@ export default function ChaptersManagement() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="default" 
+            variant="outline" 
+            size="lg"
             onClick={() => toast.info("Accessing audit vault...")}
-            className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-on-surface hover:text-white shadow-none h-10 transition-all flex items-center gap-2"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 transition-all"
           >
-            <History className="w-3.5 h-3.5" /> View audit trail
+            <History className="w-4 h-4 mr-2" /> Inspect Audit Trail
           </Button>
           {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
             <Button 
+              variant="primary"
+              size="lg"
               onClick={openAddModal}
-              className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+              className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
             >
-              <Plus className="w-3.5 h-3.5" /> Establish new chapter
+              <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
             </Button>
           )}
         </div>
@@ -370,20 +373,21 @@ export default function ChaptersManagement() {
                 <div className="grid grid-cols-2 gap-2 mt-4">
                   {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                     <Button 
-                      variant="default" 
+                      variant="outline" 
+                      size="sm"
                       onClick={() => openEditModal(chapter)}
-                      className="h-9 px-0 text-[8px] font-bold border-border/40 hover:bg-on-surface hover:text-white transition-all rounded-lg normal-case"
+                      className="h-9 px-0 text-[10px] font-black uppercase tracking-widest border-border/40 hover:bg-stone-100 transition-all rounded-sm"
                     >
-                      Manage hub
+                      Configure Hub
                     </Button>
                   )}
                   {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                     <Button 
                       variant="ghost" 
                       onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
-                      className="h-9 px-0 text-[8px] font-bold text-muted-foreground/40 hover:text-destructive transition-colors normal-case"
+                      className="h-9 px-0 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-destructive transition-colors rounded-sm"
                     >
-                      Delete chapter <ChevronRight className="w-3 h-3 ml-1" />
+                      Decommission <ChevronRight className="w-3 h-3 ml-1" />
                     </Button>
                   )}
                 </div>
@@ -523,20 +527,21 @@ export default function ChaptersManagement() {
               />
             </div>
 
-            <DialogFooter className="pt-4">
+            <DialogFooter className="pt-4 gap-4">
               <Button 
                 type="button" 
-                variant="default" 
+                variant="outline" 
                 onClick={closeModal}
-                className="text-[10px] font-bold rounded-lg shadow-sm normal-case"
+                className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
-                className="bg-on-surface text-white hover:bg-on-surface/90 font-bold text-[10px] rounded-lg px-8 shadow-md normal-case"
+                variant="primary"
+                className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm"
               >
-                {editingChapterId ? 'Update hub' : 'Create chapter'}
+                {editingChapterId ? 'Synchronize Hub' : 'Establish Chapter'}
               </Button>
             </DialogFooter>
           </form>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom'
-import { Calendar, Clock, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send } from 'lucide-react'
+import { Calendar, Clock, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send, Search, ArrowRight } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Button } from '@/components/ui/neon-button'
 import { CommentSection } from '@/components/CommentSection'
@@ -88,12 +88,17 @@ export default function BlogPost() {
           <title>Insight Not Found | The Base Movement</title>
           <meta name="robots" content="noindex" />
         </Helmet>
-        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
-          <p className="text-sm font-bold text-stone-500 uppercase tracking-widest text-center">
-            Insight not found or has been moved to the vault.
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-6">
+          <div className="w-16 h-16 bg-stone-100 flex items-center justify-center mb-8 rotate-3">
+            <Search className="w-8 h-8 text-stone-300" />
+          </div>
+          <h2 className="font-meta font-black text-2xl tracking-tight text-charcoal-dark mb-4 uppercase">Insight Not Found</h2>
+          <p className="text-sm font-medium text-stone-500 max-w-xs mx-auto mb-10 leading-relaxed">
+            The coordinate you requested does not exist or has been archived within the movement's vault.
           </p>
-          <Button onClick={() => navigate(baseUrl)} variant="solid" className="h-11 px-8 rounded-none uppercase text-[10px] font-bold tracking-widest">
-            Return to Blog
+          <Button onClick={() => navigate(baseUrl)} variant="primary" size="lg" className="h-14 px-10">
+            Return to Insights
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
       </>

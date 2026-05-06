@@ -60,7 +60,9 @@ import type {
   SentimentStat,
   Broadcast,
   Notification,
-  AdminUser
+  AdminUser,
+  PressRelease,
+  MediaKitAsset
 } from '@/types/admin'
 
 // Re-export all types so consumers can import from either location
@@ -76,7 +78,7 @@ export type {
   MovementPulse, GrowthTrend, PendingVerification, ActivityLog,
   PollStats, Order, OrderStats, OrderItem, BlogPost, ResourceRequest,
   LogisticsAuditEntry, AuditLogEntry, AdminRole, AdminPermission,
-  SentimentStat, Broadcast, Notification, AdminUser
+  SentimentStat, Broadcast, Notification, AdminUser, PressRelease, MediaKitAsset
 } from '@/types/admin'
 
 
@@ -593,6 +595,24 @@ class AdminService {
       await this.logAction('BLOG_DELETE', `BLOGS/${slug}`, 'Warning')
     }
     return success
+  }
+
+  // --- Press Operations ---
+
+  async getPressReleases(): Promise<PressRelease[]> {
+    return contentService.getPressReleases()
+  }
+
+  async createPressRelease(release: Omit<PressRelease, 'id' | 'createdAt' | 'updatedAt'>): Promise<boolean> {
+    const success = await contentService.createPressRelease(release)
+    if (success) {
+      await this.logAction('PRESS_CREATE', `PRESS/${release.slug}`, 'Success')
+    }
+    return success
+  }
+
+  async getMediaKitAssets(): Promise<MediaKitAsset[]> {
+    return contentService.getMediaKitAssets()
   }
 
   async getChapterApplications(): Promise<ChapterApplication[]> {

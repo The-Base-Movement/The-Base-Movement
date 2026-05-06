@@ -80,10 +80,12 @@ export default function Broadcasts() {
           <p className="text-muted-foreground/80 text-sm mt-1">Direct HQ-to-field mobilization and broadcast history.</p>
         </div>
         <Button 
+          variant="primary"
+          size="lg"
           onClick={() => navigate('/admin/broadcasts/new')}
-          className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+          className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
         >
-          <Plus className="w-3.5 h-3.5" /> New broadcast
+          <Plus className="w-4 h-4 mr-2" /> Deploy New Broadcast
         </Button>
       </div>
 
@@ -210,12 +212,12 @@ export default function Broadcasts() {
                           </div>
                         </div>
                         <Button 
-                          variant="ghost" 
+                          variant="outline" 
                           size="sm" 
-                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded-lg border border-border/60 h-8 normal-case"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity rounded-sm border border-border/40 h-8 text-[10px] font-black uppercase tracking-widest hover:bg-stone-100"
                           onClick={() => fetchMetrics(broadcast.id)}
                         >
-                          Refresh stats
+                          Refresh Telemetry
                         </Button>
                       </div>
                     </div>
@@ -274,8 +276,11 @@ export default function Broadcasts() {
               <p className="text-xs text-white/60 leading-relaxed mb-6 font-medium">
                 Urgent mobilization triggers immediate notifications to all connected field assets. Use only for critical broadcasts.
               </p>
-              <Button className="w-full bg-destructive hover:bg-destructive/90 text-white rounded-lg font-bold text-[10px] h-10 border-none shadow-lg">
-                Emergency alert
+              <Button 
+                variant="outline"
+                className="w-full text-white border-destructive/40 hover:bg-destructive/10 text-[10px] font-black uppercase tracking-[0.2em] h-12 rounded-sm"
+              >
+                Trigger Tactical Alert
               </Button>
             </CardContent>
             <Megaphone className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5 rotate-12" />

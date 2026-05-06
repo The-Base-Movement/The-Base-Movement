@@ -58,8 +58,12 @@ export default function AdminRegions() {
           <p className="text-muted-foreground/80 text-sm mt-1">Manage administrative regions and regional jurisdictions.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="solid" className="h-10 px-6">
-            <Plus className="w-3.5 h-3.5 mr-2" /> Add region
+          <Button 
+            variant="primary" 
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+          >
+            <Plus className="w-4 h-4 mr-2" /> Define New Region
           </Button>
         </div>
       </div>
@@ -203,10 +207,10 @@ export default function AdminRegions() {
                         />
                       </div>
                       <Button
-                        variant="default"
-                        className="h-9 px-4 text-[9px] font-bold tracking-wider rounded-lg border-border/40"
+                        variant="outline"
+                        className="h-9 px-4 text-[9px] font-black uppercase tracking-widest rounded-sm border-border/40 hover:bg-stone-100"
                       >
-                        <Plus className="w-3 h-3 mr-1.5" /> Add constituency
+                        <Plus className="w-3 h-3 mr-1.5" /> Define Constituency
                       </Button>
                     </div>
 

@@ -193,10 +193,12 @@ export default function MemberVerification() {
             </div>
           )}
           <Button
-            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
             onClick={() => setShowRegForm(true)}
           >
-            <UserPlus className="w-3.5 h-3.5" /> Register new member
+            <UserPlus className="w-4 h-4 mr-2" /> Establish Identity
           </Button>
         </div>
       </div>
@@ -481,11 +483,12 @@ export default function MemberVerification() {
                     
                     {!aiResult && !aiAnalyzing && (
                       <Button
-                        variant="ghost"
+                        variant="outline"
+                        size="sm"
                         onClick={handleAiScan}
-                        className="w-full h-11 border border-white/10 bg-white/5 text-white hover:bg-white/10 text-[9px] font-bold tracking-wider rounded-sm"
+                        className="w-full h-11 border border-white/10 bg-white/5 text-white hover:bg-white/10 text-[10px] font-black uppercase tracking-widest rounded-sm"
                       >
-                        <Cpu className="w-4 h-4 mr-2" /> Verify identity
+                        <Cpu className="w-4 h-4 mr-2" /> Execute Identity Scan
                       </Button>
                     )}
 
@@ -520,15 +523,15 @@ export default function MemberVerification() {
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <Button
                         onClick={() => handleVerdict(false)}
-                        className="h-11 bg-destructive text-white hover:bg-destructive/90 transition-all text-[9px] font-bold tracking-wider border-0 rounded-sm"
+                        className="h-11 bg-destructive text-white hover:bg-destructive/90 transition-all text-[10px] font-black uppercase tracking-widest border-0 rounded-sm"
                       >
-                        <XCircle className="w-3.5 h-3.5 mr-1.5" /> Reject
+                        <XCircle className="w-4 h-4 mr-2" /> Reject Entry
                       </Button>
                       <Button
                         onClick={() => handleVerdict(true)}
-                        className="h-11 bg-primary text-white hover:bg-primary/90 transition-all text-[9px] font-bold tracking-wider rounded-sm"
+                        className="h-11 bg-primary text-white hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest rounded-sm"
                       >
-                        <UserCheck className="w-3.5 h-3.5 mr-1.5" /> Approve
+                        <UserCheck className="w-4 h-4 mr-2" /> Approve Admission
                       </Button>
                     </div>
                   )}
@@ -553,18 +556,18 @@ export default function MemberVerification() {
                   <CardContent className="p-4 space-y-2">
                     <Button
                       variant="ghost"
-                      className="w-full h-10 text-[10px] font-bold tracking-wider text-muted-foreground/40 hover:text-on-surface hover:bg-muted/5 rounded-lg"
+                      className="w-full h-10 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-on-surface hover:bg-muted/5 rounded-sm"
                       onClick={() => setShowPhotoFull(true)}
                     >
-                      <Eye className="w-4 h-4 mr-2" /> View full photo
+                      <Eye className="w-4 h-4 mr-2" /> Inspect Biometric Data
                     </Button>
                     {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
                       <Button
                         variant="ghost"
-                        className="w-full h-10 text-[10px] font-bold tracking-wider text-muted-foreground/80 hover:bg-muted/5 rounded-lg"
+                        className="w-full h-10 text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 hover:bg-muted/5 rounded-sm"
                         onClick={() => setViewingVaultRecord(selectedMember)}
                       >
-                        <Database className="w-4 h-4 mr-2" /> View audit record
+                        <Database className="w-4 h-4 mr-2" /> Open Audit Vault
                       </Button>
                     )}
                   </CardContent>

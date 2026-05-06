@@ -281,11 +281,12 @@ export default function AdminStore() {
           </div>
           {activeTab === 'inventory' && (
             <Button 
-              variant="solid"
+              variant="primary"
+              size="lg"
               onClick={() => handleOpenModal()}
-              className="h-10 px-6 flex items-center gap-2"
+              className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
             >
-              <Plus className="w-3.5 h-3.5" /> Add item
+              <Plus className="w-4 h-4 mr-2" /> Establish Asset
             </Button>
           )}
         </div>
@@ -310,8 +311,12 @@ export default function AdminStore() {
                   <p className="text-xs text-on-surface/60">Some items require replenishment soon.</p>
                 </div>
               </div>
-              <Button variant="default" size="sm" className="h-8 text-accent border-accent/20 hover:bg-accent/5">
-                View alerts
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-9 px-6 text-[10px] font-black uppercase tracking-widest border-accent/20 text-accent hover:bg-accent/5"
+              >
+                Scan Alerts
               </Button>
             </div>
           )}
@@ -750,8 +755,9 @@ export default function AdminStore() {
                 Audit log
               </CardTitle>
               <Button
-                variant="default"
-                className="h-10 px-6"
+                variant="outline"
+                size="lg"
+                className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40"
                 disabled={auditLogs.length === 0}
                 onClick={() => {
                   try {
@@ -780,7 +786,7 @@ export default function AdminStore() {
                 }}
               >
                 <Download className="w-3.5 h-3.5 mr-2" />
-                Export log
+                Export telemetry
               </Button>
             </div>
           </CardHeader>

@@ -350,20 +350,20 @@ function TrashItemCard({
             <div className="flex items-center gap-2 mt-4">
               <Button 
                 onClick={onRestore}
-                variant="default" 
+                variant="outline" 
                 size="sm" 
-                className="flex-1 h-8 rounded-lg text-[10px] font-bold border-border/60 hover:bg-muted/10 gap-1.5 normal-case"
+                className="flex-1 h-9 rounded-sm border-border/40 text-[10px] font-black uppercase tracking-widest hover:bg-stone-100 gap-2"
               >
-                <RotateCcw className="w-3 h-3" />
-                Restore
+                <RotateCcw className="w-3.5 h-3.5" />
+                Restore Item
               </Button>
               <Button 
                 onClick={onDelete}
-                variant="default" 
-                size="sm" 
-                className="h-8 w-8 p-0 rounded-lg border-border/60 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
+                variant="ghost" 
+                size="icon" 
+                className="h-9 w-9 rounded-sm border border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
               >
-                <Trash2 className="w-3 h-3" />
+                <Trash2 className="w-3.5 h-3.5" />
               </Button>
             </div>
           </div>

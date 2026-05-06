@@ -327,21 +327,23 @@ export default function MembersList() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="default" 
-            className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all"
+            variant="outline" 
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40"
             onClick={handleExport}
             disabled={isExporting || members.length === 0}
           >
-            <Download className="w-3.5 h-3.5 mr-2 text-muted-foreground/80" />
-            {isExporting ? 'Generating...' : 'Export directory'}
+            <Download className="w-3.5 h-3.5 mr-2" />
+            {isExporting ? 'Processing Records...' : 'Export intelligence'}
           </Button>
           <Button 
-            variant="solid"
+            variant="primary"
+            size="lg"
             onClick={handleAddMember}
-            className="h-10 px-6"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
           >
-            <Plus className="w-3.5 h-3.5 mr-2" />
-            Add member
+            <Plus className="w-4 h-4 mr-2" />
+            Establish Identity
           </Button>
         </div>
       </div>
@@ -437,19 +439,19 @@ export default function MembersList() {
                 <Button 
                   variant="ghost" 
                   onClick={handleBulkVerify}
-                  className="h-8 px-3 text-[10px] font-bold text-white hover:bg-white/10 tracking-wide"
+                  className="h-9 px-4 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10"
                 >
-                  <UserCheck className="w-3.5 h-3.5 mr-2" /> Verify
+                  <UserCheck className="w-4 h-4 mr-2 text-primary" /> Verify
                 </Button>
-                <Button variant="ghost" className="h-8 px-3 text-[10px] font-bold text-white hover:bg-white/10 tracking-wide">
-                  <Globe2 className="w-3.5 h-3.5 mr-2" /> Assign chapter
+                <Button variant="ghost" className="h-9 px-4 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10">
+                  <Globe2 className="w-4 h-4 mr-2 text-primary" /> Assign
                 </Button>
                 <Button 
                   variant="ghost" 
                   onClick={handleBulkDelete}
-                  className="h-8 px-3 text-[10px] font-bold text-destructive hover:bg-red-500/10 tracking-wide"
+                  className="h-9 px-4 text-[10px] font-black uppercase tracking-widest text-red-400 hover:bg-red-500/10"
                 >
-                  <Trash2 className="w-3.5 h-3.5 mr-2" /> Remove
+                  <Trash2 className="w-4 h-4 mr-2" /> Purge
                 </Button>
               </div>
             </div>
@@ -512,11 +514,13 @@ export default function MembersList() {
                           <h3 className="text-xl font-black text-on-surface tracking-tight normal-case">No members yet</h3>
                           <p className="text-muted-foreground/80 text-sm mt-1 font-medium">Create your first member record to get started.</p>
                           <Button 
-                            className="mt-6 h-11 px-6 rounded-sm bg-on-surface text-white text-[11px] font-bold hover:bg-on-surface/90 shadow-lg shadow-border/20 normal-case"
+                            variant="primary"
+                            size="lg"
+                            className="mt-6 rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
                             onClick={handleAddMember}
                           >
                             <Plus className="w-4 h-4 mr-2" />
-                            Add your first member
+                            Establish First Identity
                           </Button>
                         </div>
                       ) : (
@@ -529,14 +533,14 @@ export default function MembersList() {
                             We couldn't find any members matching "{searchTerm}". Try adjusting your filters or search terms.
                           </p>
                           <Button 
-                            variant="default"
+                            variant="outline"
                             onClick={() => {
                               setSearchTerm('')
                               setCurrentPage(1)
                             }}
-                            className="mt-6 h-10 px-6 rounded-sm border-border/60 text-on-surface/80 text-[11px] font-bold tracking-widest hover:bg-muted/30"
+                            className="mt-6 h-10 px-8 rounded-sm text-[10px] uppercase tracking-widest font-black border-border/40"
                           >
-                            <RotateCcw className="w-3.5 h-3.5 mr-2" /> Clear all filters
+                            <RotateCcw className="w-4 h-4 mr-2" /> Clear Filters
                           </Button>
                         </div>
                       )}

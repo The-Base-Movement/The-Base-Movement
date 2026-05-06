@@ -581,6 +581,33 @@ export interface BlogPost {
   deletedAt?: string | null
 }
 
+export interface PressRelease {
+  id: string
+  title: string
+  slug: string
+  category: string
+  excerpt?: string
+  content: string
+  publishedAt: string
+  createdAt: string
+  updatedAt: string
+  deletedAt?: string | null
+  authorId?: string
+  imageUrl?: string
+  isOfficial: boolean
+}
+
+export interface MediaKitAsset {
+  id: string
+  title: string
+  description?: string
+  fileUrl: string
+  fileType: 'LOGO' | 'GUIDELINE' | 'PHOTO'
+  createdAt: string
+  updatedAt: string
+  isActive: boolean
+}
+
 export interface Order {
   id: string
   user_id: string

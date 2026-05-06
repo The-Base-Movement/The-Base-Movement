@@ -133,11 +133,12 @@ export default function MediaLibrary() {
         
         <div className="flex items-center gap-3">
           <Button 
-            variant="default" 
-            className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all"
+            variant="outline" 
+            size="lg"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 transition-all"
             onClick={loadFiles}
           >
-            Refresh library
+            Refresh Vault
           </Button>
 
           <div className="relative">
@@ -150,17 +151,19 @@ export default function MediaLibrary() {
               disabled={isUploading}
             />
             <Button 
-              className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+              variant="primary"
+              size="lg"
+              className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
               asChild
               disabled={isUploading}
             >
               <label htmlFor="media-upload" className="cursor-pointer">
                 {isUploading ? (
-                  <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
-                  <Upload className="w-3.5 h-3.5" />
+                  <Upload className="w-4 h-4 mr-2" />
                 )}
-                {isUploading ? 'Uploading...' : 'Upload asset'}
+                {isUploading ? 'Ingesting...' : 'Ingest Asset'}
               </label>
             </Button>
           </div>
@@ -245,12 +248,12 @@ export default function MediaLibrary() {
                       : `Your ${activeFolder.replace('-', ' ')} folder is currently empty.`}
                   </p>
                   <Button 
-                    variant="default" 
-                    className="mt-4 rounded-lg px-6"
+                    variant="primary" 
+                    className="mt-6 rounded-sm px-8 text-[10px] uppercase tracking-widest"
                     asChild
                   >
                     <label htmlFor="media-upload" className="cursor-pointer">
-                      Upload your first file
+                      Initialize Repository
                     </label>
                   </Button>
                 </div>
@@ -266,16 +269,16 @@ export default function MediaLibrary() {
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button 
                             size="icon" 
-                            variant="default" 
-                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-white text-on-surface shadow-xl"
+                            variant="ghost" 
+                            className="h-9 w-9 rounded-sm bg-white/90 hover:bg-white text-on-surface shadow-xl"
                             onClick={() => copyToClipboard(url)}
                           >
                             {copiedUrl === url ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
                           </Button>
                           <Button 
                             size="icon" 
-                            variant="default" 
-                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-white text-on-surface shadow-xl"
+                            variant="ghost" 
+                            className="h-9 w-9 rounded-sm bg-white/90 hover:bg-white text-on-surface shadow-xl"
                             asChild
                           >
                             <a href={url} target="_blank" rel="noopener noreferrer">
@@ -284,8 +287,8 @@ export default function MediaLibrary() {
                           </Button>
                           <Button 
                             size="icon" 
-                            variant="default" 
-                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-destructive/10 text-on-surface hover:text-destructive shadow-xl"
+                            variant="ghost" 
+                            className="h-9 w-9 rounded-sm bg-white/90 hover:bg-destructive/10 text-on-surface hover:text-destructive shadow-xl"
                             onClick={() => setAssetToDelete(url)}
                           >
                             <Trash2 className="w-4 h-4" />

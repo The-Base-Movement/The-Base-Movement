@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import type { BlogPost, MediaAsset, Author } from '@/types/admin'
+import type { BlogPost, MediaAsset, Author, PressRelease, MediaKitAsset } from '@/types/admin'
 import { adminService } from '@/services/adminService'
 import mediaManifest from '@/data/media-manifest.json'
 
@@ -580,6 +580,84 @@ class ContentService {
     await adminService.logAction('Delete Author', 'AUTHORS', 'Success', { id, adminId })
     
     return true
+  }
+
+  // --- Press Release Operations ---
+
+  async getPressReleases(): Promise<PressRelease[]> {
+    const { data, error } = await supabase
+      .from('press_releases')
+      .select('*')
+      .is('deleted_at', null)
+      .order('published_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch press releases:', error)
+      return []
+    }
+
+    return (data || []).map((p: Record<string, unknown>) => ({
+      id: p.id as string,
+      title: p.title as string,
+      slug: p.slug as string,
+      category: p.category as string,
+      excerpt: p.excerpt as string | undefined,
+      content: p.content as string,
+      publishedAt: p.published_at as string,
+      createdAt: p.created_at as string,
+      updatedAt: p.updated_at as string,
+      authorId: p.author_id as string | undefined,
+      imageUrl: p.image_url as string | undefined,
+      isOfficial: p.is_official as boolean
+    }))
+  }
+
+  async createPressRelease(release: Omit<PressRelease, 'id' | 'createdAt' | 'updatedAt'>): Promise<boolean> {
+    const { error } = await supabase
+      .from('press_releases')
+      .insert({
+        title: release.title,
+        slug: release.slug,
+        category: release.category,
+        excerpt: release.excerpt,
+        content: release.content,
+        published_at: release.publishedAt,
+        author_id: release.authorId,
+        image_url: release.imageUrl,
+        is_official: release.isOfficial
+      })
+
+    if (error) {
+      console.error('[DATABASE] Press release creation failed:', error)
+      return false
+    }
+    return true
+  }
+
+  // --- Media Kit Operations ---
+
+  async getMediaKitAssets(): Promise<MediaKitAsset[]> {
+    const { data, error } = await supabase
+      .from('media_kit')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch media kit assets:', error)
+      return []
+    }
+
+    return (data || []).map((a: Record<string, unknown>) => ({
+      id: a.id as string,
+      title: a.title as string,
+      description: a.description as string | undefined,
+      fileUrl: a.file_url as string,
+      fileType: a.file_type as 'LOGO' | 'GUIDELINE' | 'PHOTO',
+      createdAt: a.created_at as string,
+      updatedAt: a.updated_at as string,
+      isActive: a.is_active as boolean
+    }))
   }
 }
 

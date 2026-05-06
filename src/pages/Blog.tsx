@@ -6,17 +6,6 @@ import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
 import { Helmet } from 'react-helmet-async'
 
-const categoryColors: Record<string, string> = {
-  Movement: 'bg-brand-green/10 text-brand-green',
-  Youth: 'bg-blue-50 text-blue-700',
-  Diaspora: 'bg-purple-50 text-purple-700',
-  Integrity: 'bg-amber-50 text-amber-700',
-  Economy: 'bg-orange-50 text-orange-700',
-  Community: 'bg-emerald-50 text-emerald-700',
-  'Digital Strategy': 'bg-sky-50 text-sky-700',
-  Policy: 'bg-indigo-50 text-indigo-700',
-}
-
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
@@ -59,7 +48,7 @@ export default function Blog() {
       {/* Hero */}
       <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-[var(--brand-green)]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="font-meta text-warm-gold uppercase tracking-[0.2em] text-[10px] mb-3">THE BASE INSIGHTS</p>
+          <p className="font-meta text-warm-gold uppercase tracking-[0.2em] text-[12px] mb-3">THE BASE INSIGHTS</p>
           <h1 className="font-meta font-black text-4xl md:text-5xl tracking-tight leading-tight mb-4 max-w-2xl">
             Ideas, analysis & movement news
           </h1>
@@ -74,17 +63,15 @@ export default function Blog() {
         {/* Category Filter */}
         <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
           {categories.map(cat => (
-            <button
+            <Button
               key={cat}
+              variant={activeCategory === cat ? "primary" : "ghost"}
+              size="sm"
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
-                activeCategory === cat
-                  ? 'bg-brand-green text-white shadow-md'
-                  : 'bg-white border border-slate-200 text-slate-500 hover:border-brand-green hover:text-brand-green'
-              }`}
+              className={activeCategory === cat ? "shadow-md" : "text-slate-500 hover:border-brand-green hover:text-brand-green"}
             >
               {cat}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -120,7 +107,13 @@ export default function Blog() {
                   </div>
                   <div className="p-10 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-meta font-bold uppercase tracking-wider ${categoryColors[featured.category] ?? 'bg-stone-100 text-stone-500'}`}>
+                      <span className={`px-2.5 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${
+                        featured.category === 'Impact' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' :
+                        featured.category === 'Diaspora' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                        featured.category === 'Digital Strategy' ? 'bg-sky-50 text-sky-700 border-sky-100' :
+                        featured.category === 'Events' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                        'bg-stone-50 text-stone-500 border-stone-100'
+                      }`}>
                         {featured.category}
                       </span>
                       <span className="mx-2 text-stone-300 opacity-50">|</span>
@@ -138,10 +131,10 @@ export default function Blog() {
                       <div className="text-[10px] font-medium text-stone-400 tracking-widest">
                         {featured.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : featured.authorName} <span className="mx-2 opacity-50">|</span> {featured.readTime}
                       </div>
-                      <Button asChild variant="link" className="p-0 h-auto text-brand-green tracking-widest font-bold normal-case hover:no-underline">
+                      <Button asChild variant="link" className="p-0 h-auto text-brand-green">
                         <Link to={`${baseUrl}/${featured.slug}`} className="flex items-center gap-2">
                           Read article
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                         </Link>
                       </Button>
                     </div>
@@ -162,7 +155,6 @@ export default function Blog() {
                           key={post.id}
                           post={post}
                           baseUrl={baseUrl}
-                          categoryColors={categoryColors}
                         />
                       ))}
                     </div>
@@ -197,9 +189,9 @@ export default function Blog() {
                         <input
                           type="email"
                           placeholder="Email Address"
-                          className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors"
+                          className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm"
                         />
-                        <Button className="w-full bg-brand-green hover:bg-brand-green/90 text-white text-[10px] font-bold tracking-widest h-12">
+                        <Button variant="primary" className="w-full h-12">
                           Subscribe
                         </Button>
                       </div>
@@ -213,7 +205,7 @@ export default function Blog() {
 
         {/* CTA */}
         <section className="mt-20 py-16 px-12 bg-charcoal-dark text-white text-center border-l-4 border-brand-green">
-          <p className="font-meta text-warm-gold uppercase tracking-[0.2em] text-[10px] mb-3">Join the conversation</p>
+          <p className="font-meta text-warm-gold uppercase tracking-[0.2em] text-[12px] mb-3">Join the conversation</p>
           <h2 className="font-meta font-black text-3xl tracking-tight mb-4">Become a member. Shape the narrative.</h2>
           <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">
             Registered members get early access to analysis, policy briefs and updates directly from our research desk.
@@ -221,7 +213,7 @@ export default function Blog() {
           <Button asChild variant="gold" size="lg" className="h-14 px-10">
             <Link to="/register">
               Join The Base
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </section>

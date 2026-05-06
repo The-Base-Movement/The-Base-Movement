@@ -75,11 +75,13 @@ export default function AdminAuthors() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            className="bg-[var(--brand-red)] hover:bg-red-700 text-white shadow-lg shadow-red-500/20 px-6 font-bold tracking-wide"
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
             onClick={() => window.location.href = '/admin/authors/new'}
           >
-            <Plus className="w-5 h-5 mr-2" />
-            New Author
+            <Plus className="w-4 h-4 mr-2" />
+            Provision Author
           </Button>
         </div>
       </div>
@@ -179,16 +181,16 @@ export default function AdminAuthors() {
                       <div className="flex items-center justify-end gap-2">
                         <Button 
                           variant="ghost" 
-                          size="sm" 
-                          className="text-stone-500 hover:text-stone-900"
+                          size="icon" 
+                          className="h-8 w-8 text-stone-500 hover:text-on-surface rounded-sm"
                           onClick={() => window.location.href = `/admin/authors/edit/${author.id}`}
                         >
                           <Edit3 className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="ghost" 
-                          size="sm" 
-                          className="text-stone-400 hover:text-red-600 hover:bg-red-50"
+                          size="icon" 
+                          className="h-8 w-8 text-stone-400 hover:text-destructive hover:bg-destructive/10 rounded-sm"
                           onClick={() => setDeleteConfirm({ id: author.id, name: author.name })}
                         >
                           <Trash2 className="w-4 h-4" />

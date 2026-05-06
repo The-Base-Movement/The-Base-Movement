@@ -11,7 +11,8 @@ export const buttonVariants = cva(
                 accent: "bg-brand-gold text-white hover:bg-brand-gold/90 border-brand-gold shadow-[0_0_15px_rgba(234,179,8,0.3)] font-bold uppercase tracking-widest",
                 gold: "bg-brand-gold hover:bg-brand-gold/90 text-charcoal-dark border-transparent font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(234,179,8,0.3)]",
                 ghost: "border-transparent bg-transparent hover:border-slate-200 hover:bg-slate-50 text-slate-500 font-bold uppercase tracking-widest",
-                link: "border-transparent bg-transparent hover:underline p-0 h-auto font-bold uppercase tracking-widest",
+                outline: "bg-transparent border-border/40 hover:bg-stone-100 text-on-surface/80 font-bold uppercase tracking-widest",
+                link: "border-transparent bg-transparent p-0 h-auto font-bold uppercase tracking-widest",
             },
             size: {
                 default: "px-7 py-2.5 text-[12px]",

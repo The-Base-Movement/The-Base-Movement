@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ShoppingBag, Search, Heart } from 'lucide-react'
+import { Button } from '../components/ui/neon-button'
 import { ProductCard } from '@/components/ProductCard'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
@@ -98,30 +99,28 @@ export default function Store() {
           </div>
           
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <Link 
-              to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/wishlist' : '/store/wishlist'}
-              className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
-            >
-              <Heart className="w-4 h-4 text-stone-500 group-hover:text-brand-red transition-all" />
-              <span className="font-meta text-[10px] font-bold uppercase tracking-widest text-stone-600 group-hover:text-brand-red">Wishlist</span>
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-brand-red text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
-            <Link 
-              to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}
-              className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
-            >
-              <ShoppingBag className="w-4 h-4 text-stone-500 group-hover:text-brand-green transition-all" />
-              <span className="font-meta text-[10px] font-bold uppercase tracking-widest text-stone-600 group-hover:text-brand-green">Bag</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-brand-green text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            <Button asChild variant="ghost" className="relative group border-stone-200 hover:border-brand-red">
+              <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/wishlist' : '/store/wishlist'}>
+                <Heart className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-red transition-all" />
+                Wishlist
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-brand-red text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" className="relative group border-stone-200 hover:border-brand-green">
+              <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}>
+                <ShoppingBag className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-green transition-all" />
+                Bag
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-brand-green text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </Button>
           </div>
         </div>
 
@@ -151,20 +150,18 @@ export default function Store() {
             {/* Desktop Buttons */}
             <div className="hidden sm:flex flex-wrap gap-2">
               {categories.map(category => (
-                <button
+                <Button
                   key={category}
+                  variant={activeCategory === category ? "primary" : "ghost"}
+                  size="sm"
                   onClick={() => {
                     setActiveCategory(category)
                     setCurrentPage(1)
                   }}
-                  className={`px-6 py-2 text-[10px] font-bold uppercase tracking-widest transition-all rounded-sm ${
-                    activeCategory === category
-                      ? 'bg-brand-green text-white shadow-md'
-                      : 'bg-stone-50 text-stone-500 hover:bg-stone-100'
-                  }`}
+                  className={activeCategory === category ? "shadow-md" : "text-stone-500 hover:bg-stone-100"}
                 >
                   {category}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -206,39 +203,41 @@ export default function Store() {
       {/* Pagination UI */}
       {totalPages > 1 && (
         <div className="mt-16 flex items-center justify-center gap-2">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="flex items-center gap-2 px-4 py-2 border border-stone-200 text-xs font-meta font-bold uppercase tracking-widest text-stone-500 hover:border-brand-green hover:text-brand-green disabled:opacity-30 disabled:hover:border-stone-200 disabled:hover:text-stone-500 transition-all rounded-sm"
+            className="flex items-center gap-2"
           >
             <span className="material-symbols-outlined text-[16px]">chevron_left</span>
             Prev
-          </button>
+          </Button>
           
           <div className="flex items-center gap-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <button
+              <Button
                 key={page}
+                variant={currentPage === page ? "primary" : "ghost"}
+                size="sm"
                 onClick={() => setCurrentPage(page)}
-                className={`w-10 h-10 flex items-center justify-center text-xs font-meta font-bold border transition-all rounded-sm ${
-                  currentPage === page
-                    ? 'bg-brand-green border-brand-green text-white shadow-md'
-                    : 'bg-white border-stone-200 text-stone-500 hover:border-brand-green hover:text-brand-green'
-                }`}
+                className={`w-10 h-10 ${currentPage === page ? "shadow-md" : "text-stone-500 hover:text-brand-green"}`}
               >
                 {page}
-              </button>
+              </Button>
             ))}
           </div>
 
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
-            className="flex items-center gap-2 px-4 py-2 border border-stone-200 text-xs font-meta font-bold uppercase tracking-widest text-stone-500 hover:border-brand-green hover:text-brand-green disabled:opacity-30 disabled:hover:border-stone-200 disabled:hover:text-stone-500 transition-all rounded-sm"
+            className="flex items-center gap-2"
           >
             Next
             <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          </button>
+          </Button>
         </div>
       )}
 

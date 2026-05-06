@@ -72,7 +72,12 @@ export function ProductCard({ product, onShare }: ProductProps) {
               </span>
             )}
             {product.category && (
-              <span className="bg-white text-stone-800 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-sm border border-stone-100">
+              <span className={`text-[11px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-lg border backdrop-blur-sm transition-all duration-300 ${
+                product.category === 'Apparel' ? 'bg-brand-green/20 text-brand-green border-brand-green/30' :
+                product.category === 'Accessories' ? 'bg-brand-gold/20 text-[#92400e] border-brand-gold/40' :
+                product.category === 'Limited Edition' ? 'bg-brand-red/20 text-brand-red border-brand-red/30' :
+                'bg-white/90 text-stone-800 border-stone-200'
+              }`}>
                 {product.category}
               </span>
             )}
@@ -109,7 +114,8 @@ export function ProductCard({ product, onShare }: ProductProps) {
             <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/60 to-transparent z-10">
               <Button 
                 onClick={handleQuickAdd}
-                className="w-full h-10 bg-white text-stone-900 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[var(--brand-green)] hover:text-white transition-all rounded-none border-none shadow-xl"
+                variant="solid"
+                className="w-full h-10 bg-white text-stone-900 hover:bg-white/90"
               >
                 <Plus className="w-3.5 h-3.5 mr-2" /> Quick Add
               </Button>
@@ -139,13 +145,11 @@ export function ProductCard({ product, onShare }: ProductProps) {
               {product.price}
             </span>
             
-            <Link 
-              to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}
-              className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-green)] flex items-center gap-2 transition-all group/link"
-            >
-              View Gear
-              <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
-            </Link>
+            <Button asChild variant="link" className="text-stone-400 hover:text-brand-green p-0 h-auto">
+              <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
+                View Gear <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>

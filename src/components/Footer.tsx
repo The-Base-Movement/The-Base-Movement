@@ -9,7 +9,7 @@ export default function Footer() {
             <img alt="The Base Logo" className="h-12 w-12" src="/logo.png"  decoding="async" loading="lazy" />
             <div className="flex flex-col">
               <h2 className="text-on-surface font-black uppercase tracking-tighter leading-none mb-0">The Base</h2>
-              <span className="text-[10px] font-black text-primary tracking-[0.2em] mt-2">Ghana First, Jobs for the Youth!</span>
+              <span className="text-[12px] font-black text-primary tracking-[0.2em] mt-2">Ghana First, Jobs for the Youth!</span>
             </div>
           </Link>
           <p className="text-on-surface/60 text-sm leading-relaxed font-medium">
@@ -50,7 +50,7 @@ export default function Footer() {
         </div>
         
         <div className="space-y-6">
-          <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Foundation</h4>
+          <h4 className="text-primary font-black tracking-[0.2em] text-[12px] uppercase">Foundation</h4>
           <div className="flex flex-col space-y-3 text-xs font-black tracking-widest text-on-surface/40">
             <Link className="hover:text-primary transition-colors" to="/our-agenda">The plan</Link>
             <Link className="hover:text-primary transition-colors" to="/impact">Our impact</Link>
@@ -60,7 +60,7 @@ export default function Footer() {
         </div>
         
         <div className="space-y-6">
-          <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Connect</h4>
+          <h4 className="text-primary font-black tracking-[0.2em] text-[12px] uppercase">Connect</h4>
           <div className="flex flex-col space-y-3 text-xs font-black tracking-widest text-on-surface/40">
             <Link className="hover:text-primary transition-colors" to="/contact">Contact us</Link>
             <Link className="hover:text-primary transition-colors" to="/press">Press</Link>
@@ -69,7 +69,7 @@ export default function Footer() {
         </div>
         
         <div className="space-y-6">
-          <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Action</h4>
+          <h4 className="text-primary font-black tracking-[0.2em] text-[12px] uppercase">Action</h4>
           <div className="flex flex-col space-y-3 text-xs font-black tracking-widest text-on-surface/40">
             <Link className="hover:text-primary transition-colors" to="/register">Join base</Link>
             <Link className="hover:text-primary transition-colors" to="/donate">Donate</Link>
@@ -79,7 +79,7 @@ export default function Footer() {
       </div>
       
       <div className="max-w-[1440px] mx-auto px-8 mt-20 pt-10 border-t border-border/10 flex flex-col md:flex-row items-center justify-between gap-6">
-        <p className="text-[10px] text-on-surface/20 mb-0 font-black tracking-[0.2em]">© 2026 The Base Movement. Ghana First.</p>
+        <p className="text-[12px] text-on-surface/20 mb-0 font-black tracking-[0.2em]">© 2026 The Base Movement. Ghana First.</p>
         <div className="flex gap-1.5">
           <div className="w-10 h-1.5 bg-destructive"></div>
           <div className="w-10 h-1.5 bg-accent"></div>

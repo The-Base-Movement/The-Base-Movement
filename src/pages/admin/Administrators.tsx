@@ -153,11 +153,13 @@ export default function Administrators() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm"
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
             onClick={() => setIsProvisionModalOpen(true)}
           >
-            <UserPlus className="w-3.5 h-3.5 mr-2" />
-            Provision administrator
+            <UserPlus className="w-4 h-4 mr-2" />
+            Provision Credentials
           </Button>
         </div>
       </div>
@@ -377,14 +379,14 @@ export default function Administrators() {
 
                   <div className="flex items-center gap-2">
                     <Button 
-                      variant="default" 
-                      className="flex-1 h-10 rounded-sm border-border/60 text-on-surface/60 text-[10px] font-bold hover:bg-muted/5"
+                      variant="outline" 
+                      className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-widest hover:bg-stone-100"
                       onClick={() => {
                         setSelectedAdmin(admin)
                         setIsActivityModalOpen(true)
                       }}
                     >
-                      <Zap className="w-3.5 h-3.5 mr-2" /> Activity
+                      <Zap className="w-4 h-4 mr-2 text-accent" /> Inspect Logs
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -472,16 +474,17 @@ export default function Administrators() {
               </select>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-4">
             <Button 
-              variant="default" 
-              className="rounded-lg h-10 text-xs font-bold border-border/60"
+              variant="outline" 
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40"
               onClick={() => setIsProvisionModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
-              className="rounded-lg h-10 text-xs font-bold bg-on-surface text-white hover:bg-on-surface/90"
+              variant="primary"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm"
               onClick={handleProvision}
               disabled={isSubmitting}
             >
@@ -515,16 +518,17 @@ export default function Administrators() {
               ))}
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-4">
             <Button 
-              variant="default" 
-              className="rounded-lg h-10 text-xs font-bold border-border/60"
+              variant="outline" 
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40"
               onClick={() => setIsPermissionsModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
-              className="rounded-lg h-10 text-xs font-bold bg-on-surface text-white hover:bg-on-surface/90"
+              variant="primary"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm"
               onClick={handleUpdatePermissions}
             >
               Update Credentials
@@ -559,7 +563,8 @@ export default function Administrators() {
           </div>
           <DialogFooter>
             <Button 
-              className="rounded-lg h-10 text-xs font-bold bg-on-surface text-white hover:bg-on-surface/90 w-full"
+              variant="primary"
+              className="w-full h-12 text-[10px] font-black uppercase tracking-widest rounded-sm"
               onClick={() => setIsActivityModalOpen(false)}
             >
               Close Vault

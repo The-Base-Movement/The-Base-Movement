@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Mail, Phone, MapPin, Send } from 'lucide-react'
+import { Button } from '../components/ui/neon-button'
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
@@ -163,12 +164,13 @@ export default function Contact() {
                     ></textarea>
                   </div>
 
-                  <button
+                  <Button
                     type="submit"
-                    className="w-full bg-[var(--brand-green)] hover:opacity-90 text-white font-meta font-black uppercase tracking-[0.2em] py-5 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-brand-green/10"
+                    variant="primary"
+                    className="w-full py-8 flex items-center justify-center gap-2"
                   >
                     <Send className="w-5 h-5" /> Send Message
-                  </button>
+                  </Button>
                 </form>
               )}
             </div>

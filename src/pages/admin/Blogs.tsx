@@ -43,6 +43,18 @@ import { useToast } from '@/hooks/use-toast'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { toast as sonnerToast } from 'sonner'
 
+const CATEGORY_PLACEHOLDERS: Record<string, string> = {
+  'Movement': 'https://images.unsplash.com/photo-1540910419842-dfb322c98b3c?q=80&w=1200&auto=format&fit=crop',
+  'Youth': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200&auto=format&fit=crop',
+  'Economy': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop',
+  'Diaspora': 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?q=80&w=1200&auto=format&fit=crop',
+  'Integrity': 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1200&auto=format&fit=crop',
+  'Community': 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop',
+  'Impact': 'https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?q=80&w=1200&auto=format&fit=crop'
+}
+
+const DEFAULT_PLACEHOLDER = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1200&auto=format&fit=crop'
+
 export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -548,17 +560,18 @@ export default function AdminBlogs() {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full h-12 rounded-lg bg-on-surface text-white hover:bg-on-surface/90 text-sm font-bold transition-all shadow-md active:scale-[0.98] normal-case"
+                variant="primary"
+                className="w-full h-14 rounded-sm text-[11px] uppercase tracking-[0.2em]"
               >
-                {isLoading ? 'Saving...' : editingPost ? 'Update post' : 'Publish post'}
+                {isLoading ? 'Processing...' : editingPost ? 'Update strategy' : 'Publish intelligence'}
               </Button>
               <Button 
                 type="button" 
                 variant="ghost" 
                 onClick={() => setCurrentView('list')}
-                className="w-full h-11 rounded-lg text-xs font-bold text-muted-foreground/40 hover:text-on-surface/60 hover:bg-muted/10 transition-colors normal-case"
+                className="w-full h-12 rounded-sm text-[10px] uppercase tracking-widest text-muted-foreground/40 hover:text-red-500 transition-colors"
               >
-                Discard changes
+                Abort & Discard
               </Button>
             </div>
             
@@ -635,9 +648,11 @@ export default function AdminBlogs() {
         </div>
         <Button 
           onClick={() => handleEditPost()}
-          className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
+          variant="primary"
+          size="lg"
+          className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
         >
-          <Plus className="w-3.5 h-3.5 mr-2" /> Create new post
+          <Plus className="w-4 h-4 mr-2" /> Create new post
         </Button>
       </div>
 
@@ -703,13 +718,13 @@ export default function AdminBlogs() {
           filteredPosts.map((post) => (
             <Card key={post.id} className="rounded-sm border-border/40 group hover:border-border/60 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
               <div className="aspect-video relative overflow-hidden bg-muted/5">
-                {post.imageUrl ? (
-                  <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/40">
-                    <FileText className="w-12 h-12" />
-                  </div>
-                )}
+                <img 
+                  src={post.imageUrl || CATEGORY_PLACEHOLDERS[post.category] || DEFAULT_PLACEHOLDER} 
+                  alt={post.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  
+                  decoding="async" 
+                  loading="lazy" 
+                />
                 <div className="absolute top-4 left-4">
                   <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-[10px] font-bold tracking-wider rounded-full border-none shadow-sm px-3">
                     {post.category}

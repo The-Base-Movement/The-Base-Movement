@@ -9,7 +9,9 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> { 
     neon?: boolean 
     asChild?: boolean
+    variant?: "link" | "default" | "solid" | "primary" | "accent" | "gold" | "ghost" | "outline" | null | undefined
 }
+
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className, neon = true, size, variant, asChild = false, children, ...props }, ref) => {
