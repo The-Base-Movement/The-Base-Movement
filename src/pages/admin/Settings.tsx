@@ -17,7 +17,8 @@ import {
   Mail,
   Image as ImageIcon,
   Upload,
-  Twitter
+  Twitter,
+  Building2
 } from 'lucide-react'
 
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
