@@ -58,6 +58,22 @@ const DEFAULT_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
   ],
   'VERIFIER': [
     { action: 'VERIFY_MEMBER', resource: 'MEMBERS' }
+  ],
+  'CHIEF_EDITOR': [
+    { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+    { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' }
+  ],
+  'SENIOR_EDITOR': [
+    { action: 'MANAGE_BLOGS', resource: 'BLOGS' }
+  ],
+  'EDITOR': [
+    { action: 'MANAGE_BLOGS', resource: 'BLOGS' }
+  ],
+  'JUNIOR_EDITOR': [
+    { action: 'MANAGE_BLOGS', resource: 'BLOGS' }
+  ],
+  'REGIONAL_CORRESPONDENT': [
+    { action: 'MANAGE_BLOGS', resource: 'BLOGS' }
   ]
 }
 
@@ -155,7 +171,7 @@ export default function Administrators() {
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20"
+            className="rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setIsProvisionModalOpen(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" />
@@ -254,7 +270,7 @@ export default function Administrators() {
                           <Button 
                             variant="outline" 
                             size="icon" 
-                            className="w-9 h-9 text-muted-foreground/40 hover:text-accent border-border/40 hover:bg-stone-50 rounded-sm transition-all"
+                            className="w-9 h-9 text-muted-foreground/40 hover:text-accent border-border/40 hover:bg-stone-50 rounded-sm transition-all active:scale-95"
                             onClick={() => {
                               setSelectedAdmin(admin)
                               setIsActivityModalOpen(true)
@@ -268,7 +284,7 @@ export default function Administrators() {
                               <Button 
                                 variant="outline" 
                                 size="icon" 
-                                className="w-9 h-9 text-muted-foreground/40 hover:text-destructive border-border/40 hover:bg-stone-50 rounded-sm transition-all"
+                                className="w-9 h-9 text-muted-foreground/40 hover:text-destructive border-border/40 hover:bg-stone-50 rounded-sm transition-all active:scale-95"
                               >
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>
@@ -380,7 +396,7 @@ export default function Administrators() {
                   <div className="flex items-center gap-2">
                     <Button 
                       variant="outline" 
-                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-widest hover:bg-stone-50 shadow-sm transition-all"
+                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-stone-50 shadow-sm transition-all active:scale-95"
                       onClick={() => {
                         setSelectedAdmin(admin)
                         setIsActivityModalOpen(true)
@@ -471,20 +487,25 @@ export default function Administrators() {
                 <option value="CONSTITUENCY_LEAD">Constituency Lead</option>
                 <option value="REGIONAL_DIRECTOR">Regional Director</option>
                 <option value="SUPER_ADMIN">Super Admin</option>
+                <option value="CHIEF_EDITOR">Chief Editor</option>
+                <option value="SENIOR_EDITOR">Senior Editor</option>
+                <option value="EDITOR">Editor</option>
+                <option value="JUNIOR_EDITOR">Junior Editor</option>
+                <option value="REGIONAL_CORRESPONDENT">Regional Correspondent</option>
               </select>
             </div>
           </div>
           <DialogFooter className="gap-4">
             <Button 
               variant="outline" 
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40 hover:bg-stone-50 transition-all"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               onClick={() => setIsProvisionModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
               variant="primary"
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={handleProvision}
               disabled={isSubmitting}
             >
@@ -521,14 +542,14 @@ export default function Administrators() {
           <DialogFooter className="gap-4">
             <Button 
               variant="outline" 
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40 hover:bg-stone-50 transition-all"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               onClick={() => setIsPermissionsModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
               variant="primary"
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
+              className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={handleUpdatePermissions}
             >
               Update Credentials
@@ -564,7 +585,7 @@ export default function Administrators() {
           <DialogFooter>
             <Button 
               variant="primary"
-              className="w-full h-12 text-[10px] font-black uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
+              className="w-full h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={() => setIsActivityModalOpen(false)}
             >
               Close Vault
