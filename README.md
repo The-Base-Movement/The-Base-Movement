@@ -1,10 +1,10 @@
-# The Base Movement — Ghana First
+# The Base Movement - Ghana First
 
 ![The Base Banner](docs/the-base-banner-1.png)
 
 ## 🇬🇭 Mission: Ghana First, Jobs for the Youth!
 
-**The Base** is a high-fidelity, authoritative global political movement dedicated to the transformation of Ghana through patriotism, honesty, and discipline. This platform serves as the digital headquarters for our members worldwide—both in **Base Ghana** and **Base Diaspora**.
+**The Base** is a high-fidelity, authoritative global political movement dedicated to the transformation of Ghana through patriotism, honesty, and discipline. This platform serves as the digital headquarters for our members worldwide - both in **Base Ghana** and **Base Diaspora**.
 
 ---
 
@@ -34,10 +34,10 @@ Our visual identity is governed by the national colors and the authoritative voi
 
 - **Red (#CE1126)**: Our immediate call to action and actionable agenda.
 - **Gold (#DAA520)**: Our guiding values of Patriotism, Honesty, and Discipline.
-- **Black (#000000)**: The Black Star of Ghana—representing the strength and unity of our citizens.
+- **Black (#000000)**: The Black Star of Ghana - representing the strength and unity of our citizens.
 - **Green (#006B3F)**: Our long-term vision for a transformed nation.
 
-Every component—from the high-fidelity **Membership Card** to the **Our Agenda** pillars—is designed to provide clear, professional orientation for our global supporters.
+Every component - from the high-fidelity **Membership Card** to the **Our Agenda** pillars - is designed to provide clear, professional orientation for our global supporters.
 
 ---
 

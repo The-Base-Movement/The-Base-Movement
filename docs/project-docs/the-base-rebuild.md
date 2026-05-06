@@ -108,7 +108,7 @@ The six agenda pillars currently represented are:
 1. Quality Education for Every Ghanaian
 2. Lean, Accountable Government
 3. Industrialisation, Tourism & Agro-Processing
-4. Quality Infrastructure — From Cities to Villages
+4. Quality Infrastructure - From Cities to Villages
 5. Comprehensive Institutional Reform
 6. Expertise-Led Agriculture Sector
 
@@ -236,7 +236,7 @@ Purpose:
 
 ## Design direction for AI build
 
-Use a **trustworthy, civic, modern-African** visual language — not a generic SaaS template.
+Use a **trustworthy, civic, modern-African** visual language - not a generic SaaS template.
 
 Design guidance:
 

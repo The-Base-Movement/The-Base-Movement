@@ -416,7 +416,7 @@ export default function PollsManagement() {
               </div>
               <div>
                 <p className="text-sm text-on-surface/80 italic leading-relaxed">"The new regional chapter meetings have significantly improved communication between constituency leads..."</p>
-                <p className="text-[10px] font-bold text-muted-foreground/80 mt-2">— Member feedback from Ashanti Region</p>
+                <p className="text-[10px] font-bold text-muted-foreground/80 mt-2">- Member feedback from Ashanti Region</p>
               </div>
             </div>
             <Button 
@@ -586,7 +586,7 @@ export default function PollsManagement() {
               ].map((fb, idx) => (
                 <div key={idx} className="p-4 bg-muted/10 border border-border/40 rounded-sm space-y-2">
                   <p className="text-sm text-on-surface/80 italic leading-relaxed">"{fb.text}"</p>
-                  <p className="text-[10px] font-bold text-muted-foreground/80">— {fb.author} from {fb.region} Region</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/80">- {fb.author} from {fb.region} Region</p>
                 </div>
               ))}
             </CardContent>

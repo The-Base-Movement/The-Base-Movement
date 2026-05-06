@@ -616,7 +616,7 @@ export default function Dashboard() {
         )}
         <div className="absolute inset-0 bg-gradient-to-l from-primary/90 via-primary/40 to-transparent flex flex-col justify-end items-end p-12 text-right">
           <h2 className="text-white mb-2">Together, we build the Ghana we deserve.</h2>
-          <p className="text-white max-w-2xl mb-0">Ghana First is more than a slogan—it's a commitment to our shared prosperity and civic responsibility.</p>
+          <p className="text-white max-w-2xl mb-0">Ghana First is more than a slogan - it's a commitment to our shared prosperity and civic responsibility.</p>
         </div>
       </section>
 

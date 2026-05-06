@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 export const buttonVariants = cva(
-    "relative group border text-foreground mx-auto text-center rounded-sm transition-all duration-200 overflow-hidden inline-flex items-center justify-center gap-2",
+    "relative group border text-foreground text-center rounded-sm transition-all duration-200 overflow-hidden inline-flex items-center justify-center gap-2 whitespace-nowrap",
     {
         variants: {
             variant: {
@@ -14,9 +14,9 @@ export const buttonVariants = cva(
                 link: "border-transparent bg-transparent hover:underline p-0 h-auto font-bold uppercase tracking-widest",
             },
             size: {
-                default: "px-7 py-2.5 text-[10px]",
-                sm: "px-4 py-1.5 text-[9px]",
-                lg: "px-10 py-3.5 text-[11px]",
+                default: "px-7 py-2.5 text-[12px]",
+                sm: "px-4 py-1.5 text-[10px]",
+                lg: "px-10 py-3.5 text-[14px]",
                 icon: "h-9 w-9 p-0",
             },
         },

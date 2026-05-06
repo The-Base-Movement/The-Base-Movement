@@ -168,7 +168,7 @@ export default function AdminRegions() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    {/* Action buttons — stop propagation so they don't toggle expand */}
+                    {/* Action buttons - stop propagation so they don't toggle expand */}
                     <button
                       className="p-1.5 rounded-lg text-muted-foreground/60 hover:text-on-surface hover:bg-muted/10 transition-colors"
                       onClick={e => { e.stopPropagation(); handleAction('REGION_EDIT', region.name) }}

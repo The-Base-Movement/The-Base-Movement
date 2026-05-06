@@ -1,4 +1,4 @@
-# The Base — Branding & Design Guidelines
+# The Base - Branding & Design Guidelines
 
 This document serves as the single source of truth for **The Base** brand identity, visual language, and user experience system. It combines the core brand philosophy with technical design rules to ensure consistency across all platforms.
 

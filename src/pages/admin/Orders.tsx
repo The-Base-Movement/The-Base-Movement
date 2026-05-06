@@ -432,7 +432,7 @@ export default function AdminOrders() {
                             <p className="text-[9px] text-muted-foreground/60 normal-case">{order.email}</p>
                           </td>
                           <td className="px-5 py-4 text-[10px] text-on-surface/80 normal-case">
-                            {order.region_or_state || '—'}
+                            {order.region_or_state || '-'}
                           </td>
                           <td className="px-5 py-4 font-black text-on-surface">
                             GHS {Number(order.total_amount).toFixed(2)}

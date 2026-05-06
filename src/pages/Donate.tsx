@@ -240,15 +240,16 @@ export default function Donate() {
                           <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Raised</p>
                           <p className="text-sm font-bold text-charcoal-dark font-meta tracking-tight">GHS {c.raisedAmount.toLocaleString()}</p>
                         </div>
-                        <button 
+                        <Button 
+                          variant="link"
                           onClick={() => {
                             setFormData(prev => ({ ...prev, campaignId: c.id }))
                             document.getElementById('donor-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                           }}
-                          className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all"
+                          className="text-primary p-0 h-auto"
                         >
                           Support <ArrowDownToLine className="w-3 h-3 rotate-[-90deg]" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -483,7 +484,7 @@ export default function Donate() {
                       type="submit"
                       form="donationForm"
                       variant="primary"
-                      className="w-full py-8 flex items-center justify-center gap-4"
+                      className="w-full py-8 flex items-center justify-center gap-2 whitespace-nowrap"
                     >
                       <Heart className="w-6 h-6" /> Confirm Donation
                     </Button>
@@ -597,9 +598,9 @@ export default function Donate() {
                             </span>
                           </td>
                           <td className="p-5 text-right">
-                            <button className="p-2 text-slate-400 hover:text-primary hover:bg-white border border-transparent hover:border-slate-200 rounded-none transition-all">
+                            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-primary">
                               <ArrowDownToLine className="w-4 h-4" />
-                            </button>
+                            </Button>
                           </td>
                         </tr>
                         ))
@@ -667,12 +668,14 @@ export default function Donate() {
                        <Activity className="w-5 h-5 text-primary" />
                        <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg">Full Contribution History</h3>
                      </div>
-                     <button 
+                     <Button 
+                       variant="ghost"
+                       size="icon"
                        onClick={() => setIsHistoryModalOpen(false)}
-                       className="p-2 text-slate-400 hover:text-primary hover:bg-slate-50 transition-all rounded-none"
+                       className="text-slate-400 hover:text-primary"
                      >
                        <X className="w-6 h-6" />
-                     </button>
+                     </Button>
                    </div>
 
                    <div className="flex-1 overflow-y-auto p-0">

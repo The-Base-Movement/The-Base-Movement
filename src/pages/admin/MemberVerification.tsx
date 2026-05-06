@@ -89,7 +89,7 @@ export default function MemberVerification() {
       id: data.registrationNumber,
       name: data.fullName,
       region: data.region || data.country,
-      constituency: data.constituency || data.chapter || '—',
+      constituency: data.constituency || data.chapter || '-',
       platform: data.platform,
       country: data.country,
       phone: `${data.countryCode} ${data.contactNumber}`,
@@ -413,7 +413,7 @@ export default function MemberVerification() {
                       <div key={label} className="space-y-0.5">
                         <p className="text-[8px] font-bold text-on-surface/60 tracking-wider">{label}</p>
                         <p className="text-[10px] font-bold tracking-tight text-white leading-tight">
-                          {value || '—'}
+                          {value || '-'}
                         </p>
                       </div>
                     ))}
@@ -422,7 +422,7 @@ export default function MemberVerification() {
                   {/* Contact */}
                   <div className="border-t border-white/10 pt-4 space-y-1">
                     <p className="text-[8px] font-bold text-on-surface/60 tracking-wider">Phone</p>
-                    <p className="text-[10px] font-bold text-white">{selectedMember.phone || '—'}</p>
+                    <p className="text-[10px] font-bold text-white">{selectedMember.phone || '-'}</p>
                   </div>
 
                   {/* Emergency contact */}
@@ -435,11 +435,11 @@ export default function MemberVerification() {
                       ].map(({ label, value }) => (
                         <div key={label} className="space-y-0.5">
                           <p className="text-[8px] font-bold text-muted-foreground/40 tracking-wider">{label}</p>
-                          <p className="text-[10px] font-bold tracking-tight text-white">{value || '—'}</p>
+                          <p className="text-[10px] font-bold tracking-tight text-white">{value || '-'}</p>
                         </div>
                       ))}
                     </div>
-                    <p className="text-[10px] font-bold text-white mt-1">{selectedMember.emergencyPhone || '—'}</p>
+                    <p className="text-[10px] font-bold text-white mt-1">{selectedMember.emergencyPhone || '-'}</p>
                   </div>
 
                   {/* Verification checklist */}
@@ -678,7 +678,7 @@ export default function MemberVerification() {
                       ].map(f => (
                         <div key={f.label}>
                           <p className="text-[8px] font-bold text-on-surface/60 tracking-wider">{f.label}</p>
-                          <p className="text-[11px] font-bold tracking-tight text-on-surface">{f.value || '—'}</p>
+                          <p className="text-[11px] font-bold tracking-tight text-on-surface">{f.value || '-'}</p>
                         </div>
                       ))}
                     </div>

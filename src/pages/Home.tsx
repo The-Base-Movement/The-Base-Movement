@@ -102,7 +102,7 @@ export default function Home() {
             <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl mb-10 leading-relaxed font-body-md mx-auto md:mx-0">
               A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry and innovation.
             </p>
-            <div className="flex flex-col sm:flex-row items-center gap-6 justify-center md:justify-start">
+            <div className="flex flex-col sm:flex-row items-center gap-3 justify-center md:justify-start">
               <Button asChild variant="gold" size="lg" className="shadow-2xl shadow-brand-gold/20 w-full sm:w-auto">
                 <Link to="/register">
                   Register Now <ArrowRight className="w-5 h-5 ml-2" />
@@ -284,18 +284,18 @@ export default function Home() {
                   Join 355,482 people building Ghana’s future.
                 </h2>
                 <p className="text-lg md:text-xl text-muted-foreground/80 mb-12 leading-relaxed font-body-md max-w-2xl mx-auto">
-                  From Ghana to the diaspora, The Base is more than a platform—it's a collective engine for national industrialization and economic dignity.
+                  From Ghana to the diaspora, The Base is more than a platform - it's a collective engine for national industrialization and economic dignity.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row items-center gap-5 justify-center mb-12">
+                <div className="flex flex-col sm:flex-row items-center gap-3 justify-center mb-12">
                   <Button asChild variant="gold" size="lg" className="w-full sm:w-auto">
                     <Link to="/register" className="flex items-center justify-center gap-3">
                       Join The Base <ArrowRight className="w-5 h-5" />
                     </Link>
                   </Button>
                   <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
-                    <Link to="/our-agenda">
-                      See the Plan
+                    <Link to="/our-agenda" className="flex items-center justify-center gap-3">
+                      See the Plan <ArrowRight className="w-5 h-5" />
                     </Link>
                   </Button>
                 </div>

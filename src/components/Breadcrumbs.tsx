@@ -37,7 +37,7 @@ const SKIP_SEGMENTS = new Set(['dashboard', 'admin'])
 
 function getLabel(value: string, post?: string): string {
   if (LABEL_OVERRIDES[value]) return LABEL_OVERRIDES[value]
-  // UUID or numeric — use the post title if available, otherwise 'Details'
+  // UUID or numeric - use the post title if available, otherwise 'Details'
   if (/^[0-9a-f-]{8,}$/i.test(value) || !isNaN(Number(value))) return post || 'Details'
   return value.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
 }
