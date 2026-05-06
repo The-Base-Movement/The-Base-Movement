@@ -190,18 +190,20 @@ export default function DashboardLayout() {
           </div>
 
           {/* Leader Portrait */}
-          <div className="mx-4 my-8 overflow-hidden rounded-none relative group shrink-0 shadow-lg border border-border/10">
-            <img src={settings.founder_image_url || "/founder.jpg"}
-              alt="Dr. George Oti Bonsu The Base Movement Founder"
-              className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
-             decoding="async" />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-3">
-              <p className="text-white text-[10px] font-bold tracking-widest leading-tight mb-0">
+          <div className="mx-4 my-8 flex flex-col gap-4">
+            <div className="overflow-hidden rounded-none relative group shrink-0 shadow-lg border border-border/10">
+              <img src={settings.founder_image_url || "/founder.jpg"}
+                alt="Dr. George Oti Bonsu The Base Movement Founder"
+                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+               decoding="async" />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
+            </div>
+            <div className="px-2">
+              <p className="text-on-surface text-[10px] font-black tracking-[0.2em] leading-tight mb-1 uppercase">
                 Dr. George Oti Bonsu
               </p>
-              <p className="text-white/70 text-[9px] font-bold tracking-wider mt-0.5 mb-0">
+              <p className="text-accent text-[9px] font-black tracking-widest uppercase mb-0">
                 Movement Founder
               </p>
             </div>

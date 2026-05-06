@@ -185,7 +185,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full px-4 sm:px-12 py-8 sm:py-12">
+    <div className="w-full px-4 sm:px-12 py-6 sm:py-8">
       <WelcomeModal 
         isOpen={isWelcomeModalOpen}
         onClose={() => setIsWelcomeModalOpen(false)}
@@ -260,9 +260,9 @@ export default function Dashboard() {
                 <span className="text-[8px] font-black uppercase tracking-[0.2em] text-primary">Signal Active: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}</span>
               </div>
             )}
-            <div className="flex items-center gap-2">
-              <span className="flex h-2 w-2 rounded-full bg-destructive animate-ping"></span>
-              <span className="text-[10px] font-black uppercase tracking-widest text-destructive">Live National Signal</span>
+            <div className="flex items-center gap-2 px-3 py-1 bg-destructive/10 border border-destructive/20 rounded-full">
+              <span className="flex h-1.5 w-1.5 rounded-full bg-destructive animate-pulse"></span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-destructive">Live National Signal</span>
             </div>
           </div>
         </div>
@@ -279,10 +279,19 @@ export default function Dashboard() {
                 <p className="text-xs font-medium text-on-surface/40 max-w-sm mx-auto">
                   No upcoming events in your area yet. We'll notify you as soon as new community outreach or rallies are scheduled.
                 </p>
-                <div className="mt-8 flex justify-center gap-4">
-                  <div className="h-1 w-12 bg-[var(--brand-green)] opacity-20" />
-                  <div className="h-1 w-12 bg-[var(--brand-gold)] opacity-20" />
-                  <div className="h-1 w-12 bg-[var(--brand-red)] opacity-20" />
+                <div className="mt-8 flex flex-col items-center gap-6">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-10 px-8 text-[10px] font-black uppercase tracking-widest border-primary/20 text-primary hover:bg-primary hover:text-white transition-all rounded-none"
+                  >
+                    Find Local Chapters
+                  </Button>
+                  <div className="flex justify-center gap-4">
+                    <div className="h-1 w-12 bg-[var(--brand-green)] opacity-20" />
+                    <div className="h-1 w-12 bg-[var(--brand-gold)] opacity-20" />
+                    <div className="h-1 w-12 bg-[var(--brand-red)] opacity-20" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -361,7 +370,7 @@ export default function Dashboard() {
           {/* Section 2: Movement Directives */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden flex flex-col">
             <div className="bg-on-surface/5 border-b border-border/10 p-4 flex items-center justify-between">
-              <h3 className="text-xs font-black italic tracking-tighter text-primary flex items-center gap-2 m-0">
+              <h3 className="text-xs font-black tracking-widest text-primary flex items-center gap-2 m-0">
                 <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>campaign</span>
                 Movement Directives
               </h3>
@@ -517,7 +526,7 @@ export default function Dashboard() {
 
         {/* Section 3: Referral/Invite (Full Width Banner) */}
         <section className="lg:col-span-12">
-          <div className="bg-primary-container p-8 md:p-12 border-none relative overflow-hidden group rounded-sm shadow-xl flex flex-col lg:flex-row lg:items-center gap-10">
+          <div className="bg-primary-container p-6 md:p-8 border-none relative overflow-hidden group rounded-sm shadow-xl flex flex-col lg:flex-row lg:items-center gap-10">
             {/* Decorative Background */}
             <div className="absolute inset-0 opacity-10 pointer-events-none">
               <div className="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
@@ -525,7 +534,7 @@ export default function Dashboard() {
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-colors duration-700" />
             
             <div className="flex-1 relative z-10">
-              <h2 className="text-white mb-4 text-2xl font-black italic tracking-tighter">Invite others to join The Base</h2>
+              <h2 className="text-white mb-4 text-2xl font-black tracking-tighter">Invite others to join The Base</h2>
               <p className="text-white/70 text-sm font-medium leading-relaxed max-w-2xl mb-0">
                 Our strength grows when more people take part in the movement. Share your unique registration link with fellow Ghanaians and help build a more resilient and representative civic voice for the nation.
               </p>
@@ -570,7 +579,7 @@ export default function Dashboard() {
           {/* Achievements Gallery */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden">
             <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
-              <h3 className="text-xs font-black italic tracking-tighter text-on-surface flex items-center gap-2 m-0">
+              <h3 className="text-xs font-black tracking-widest text-on-surface flex items-center gap-2 m-0">
                 <Trophy className="w-4 h-4 text-accent" />
                 Movement Achievements
               </h3>

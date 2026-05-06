@@ -64,7 +64,7 @@ export function MovementRoadmap() {
     <div className="space-y-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-2xl font-black italic tracking-tighter text-on-surface flex items-center gap-3 m-0">
+          <h2 className="text-2xl font-black tracking-tighter text-on-surface flex items-center gap-3 m-0">
             <span className="p-2 bg-[var(--brand-red)]/10 rounded-none">
               <Flag className="w-6 h-6 text-[var(--brand-red)]" />
             </span>
