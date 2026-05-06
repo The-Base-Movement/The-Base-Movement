@@ -31,10 +31,10 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   chapter
 }) => {
   return (
-    <div className="relative aspect-[1.6/1] w-full overflow-hidden bg-white flex flex-col font-meta shadow-2xl border-l-[3px] border-r-[3px] border-l-brand-green border-r-brand-green border-t-[3px] border-t-[var(--brand-red)] border-b-[3px] border-b-warm-gold rounded-[8px]">
+    <div className="relative aspect-[1.6/1] w-full overflow-hidden bg-white flex flex-col font-meta shadow-2xl border-l-[3px] border-r-[3px] border-primary border-t-destructive border-b-accent rounded-[8px]">
       
       {/* Card Header (Red Section) */}
-      <div className="bg-[var(--brand-red)] p-3 sm:p-4 flex justify-between items-start">
+      <div className="bg-destructive p-3 sm:p-4 flex justify-between items-start">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-[8px] p-1 shadow-md">
             <img src="/logo.png" alt="Logo" className="w-full h-full object-contain"  decoding="async" loading="lazy" />
@@ -54,16 +54,16 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
       {/* Card Body */}
       <div className="flex-1 p-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4 relative overflow-hidden">
         {/* Photo Frame with Gradient Border - Center-aligned */}
-        <div className="w-24 h-28 sm:w-34 sm:h-42 p-[1.5px] shrink-0 bg-gradient-to-b from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] shadow-lg relative z-10 rounded-[4px]">
-          <div className="w-full h-full p-1 bg-slate-50 rounded-[3px]">
+        <div className="w-24 h-28 sm:w-34 sm:h-42 p-[1.5px] shrink-0 bg-gradient-to-b from-destructive via-accent to-primary shadow-lg relative z-10 rounded-[4px]">
+          <div className="w-full h-full p-1 bg-muted/30 rounded-[3px]">
             <div 
-              className={`w-full h-full bg-slate-200 overflow-hidden relative group rounded-[2px] ${onPhotoClick ? 'cursor-pointer' : ''}`}
+              className={`w-full h-full bg-muted overflow-hidden relative group rounded-[2px] ${onPhotoClick ? 'cursor-pointer' : ''}`}
               onClick={onPhotoClick}
             >
               {avatarUrl ? (
                 <img src={avatarUrl} alt={userName} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
               ) : (
-                <div className="w-full h-full bg-brand-green flex items-center justify-center text-white text-xl sm:text-2xl font-black">
+                <div className="w-full h-full bg-primary flex items-center justify-center text-white text-xl sm:text-2xl font-black">
                   {initials || 'M'}
                 </div>
               )}
@@ -79,57 +79,57 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         {/* Member Details - Center-aligned with photo */}
         <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0 pr-8">
           <div>
-            <h5 className="text-[var(--brand-black)] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-normal whitespace-nowrap overflow-visible pb-[2px]">{userName || 'Member Name'}</h5>
-            <div className="h-0.5 w-6 sm:w-12 bg-brand-green mt-0.5"></div>
+            <h5 className="text-[hsl(var(--foreground))] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-normal whitespace-nowrap overflow-visible pb-[2px]">{userName || 'Member Name'}</h5>
+            <div className="h-0.5 w-6 sm:w-12 bg-primary mt-0.5"></div>
           </div>
 
-          <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-charcoal-dark">
+          <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-on-surface">
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Reg. No.</span>
-              <span className="text-[7px] sm:text-[10px] font-black text-brand-green uppercase tracking-wider whitespace-nowrap overflow-visible pb-[1px]">{userRegNo || 'DI-XXXXXX'}</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Reg. No.</span>
+              <span className="text-[7px] sm:text-[10px] font-black text-primary uppercase tracking-wider whitespace-nowrap overflow-visible pb-[1px]">{userRegNo || 'DI-XXXXXX'}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Gender</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Gender</span>
               <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{gender || 'Not Specified'}</span>
             </div>
             
             {(!country || country === 'Ghana') ? (
               <>
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Region</span>
+                  <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Region</span>
                   <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{region || 'Not Specified'}</span>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Const.</span>
+                  <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Const.</span>
                   <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{constituency || 'Not Specified'}</span>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-2 sm:gap-4">
-                <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Country</span>
+                <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Country</span>
                 <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{country || 'Not Specified'}</span>
               </div>
             )}
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Chapter</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Chapter</span>
               <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{chapter || 'Not Specified'}</span>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Joined</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Joined</span>
               <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{joinedDate || '30 Apr 2026'}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase w-12 sm:w-20 shrink-0">Status</span>
-              <span className="text-[7px] sm:text-[9px] font-black text-brand-green uppercase whitespace-nowrap overflow-visible pb-[1px]">{status || 'Active'}</span>
+              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Status</span>
+              <span className="text-[7px] sm:text-[9px] font-black text-primary uppercase whitespace-nowrap overflow-visible pb-[1px]">{status || 'Verified'}</span>
             </div>
           </div>
         </div>
 
         {/* QR Code - Perfectly centered vertically */}
         <div className="absolute top-1/2 -translate-y-1/2 right-2 sm:right-6 flex flex-col items-center scale-[0.65] sm:scale-[1.0] origin-right z-20">
-          <div className="bg-white border border-slate-200 p-1 shadow-sm">
+          <div className="bg-white border border-border/60 p-1 shadow-sm">
             <QRCodeSVG 
               value={`${typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/${userRegNo || 'DI-XXXXXX'}`}
               size={80}
@@ -138,7 +138,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
               className="w-12 h-12 sm:w-20 sm:h-20"
             />
           </div>
-          <span className="text-[6px] sm:text-[8px] text-slate-400 uppercase mt-1 font-black tracking-widest">Verify ID</span>
+          <span className="text-[6px] sm:text-[8px] text-muted-foreground/80 uppercase mt-1 font-black tracking-widest">Verify ID</span>
         </div>
 
         {/* Subtle Watermark Logo */}
@@ -148,8 +148,8 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
       </div>
 
       {/* Card Footer */}
-      <div className="bg-slate-50 border-t border-slate-100 px-3 sm:px-6 py-1 sm:py-1.5 flex items-center justify-center">
-        <p className="text-[5px] sm:text-[7px] text-slate-400 font-bold uppercase tracking-widest truncate leading-none m-0">
+      <div className="bg-muted/30 border-t border-border/40 px-3 sm:px-6 py-1 sm:py-1.5 flex items-center justify-center">
+        <p className="text-[5px] sm:text-[7px] text-muted-foreground/80 font-bold uppercase tracking-widest truncate leading-none m-0">
           {typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/{userRegNo || 'DI-XXXXXX'}
         </p>
       </div>

@@ -23,6 +23,7 @@ interface Member {
   country: string
   profession: string
   avatar: string | null
+  status: string
 }
 
 const diasporaCountries = [
@@ -314,13 +315,18 @@ export default function Members() {
                 <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
               </div>
               <div className="relative z-10 flex flex-col items-center">
-                <div className="w-24 h-24 rounded-none bg-[var(--brand-green)]/10 border-4 border-[var(--brand-green)]/20 flex items-center justify-center mb-4 shadow-xl">
-                  <User className="w-12 h-12 text-[var(--brand-green)]" />
+                <div className="w-24 h-24 rounded-none bg-primary/10 border-4 border-primary/20 flex items-center justify-center mb-4 shadow-xl">
+                  <User className="w-12 h-12 text-primary" />
                 </div>
                 <DialogTitle className="text-white mb-1">{selectedMember?.name}</DialogTitle>
-                <span className="text-[10px] font-bold text-[var(--brand-green)] uppercase tracking-[0.2em]">{selectedMember?.profession}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">{selectedMember?.profession}</span>
+                  <span className="text-[10px] font-black bg-primary/20 text-primary px-2 py-0.5 rounded-none tracking-widest">
+                    {selectedMember?.status === 'Active' || selectedMember?.status === 'Approved' || !selectedMember?.status ? 'VERIFIED' : 'PENDING'}
+                  </span>
+                </div>
               </div>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-warm-gold"></div>
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-accent"></div>
             </div>
           </DialogHeader>
 
@@ -330,14 +336,14 @@ export default function Members() {
               <div className="space-y-1">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Platform</p>
                 <div className="flex items-center gap-2">
-                  <Globe className="w-3 h-3 text-[var(--brand-green)]" />
+                  <Globe className="w-3 h-3 text-primary" />
                   <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">{selectedMember?.platform}</p>
                 </div>
               </div>
               <div className="space-y-1">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0">Joined Date</p>
                 <div className="flex items-center gap-2">
-                  <Users className="w-3 h-3 text-warm-gold" />
+                  <Users className="w-3 h-3 text-accent" />
                   <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">Oct 2024</p>
                 </div>
               </div>
@@ -347,7 +353,7 @@ export default function Members() {
               <div className="space-y-1">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Location</p>
                 <div className="flex items-center gap-2 bg-slate-50 p-3 rounded-none border border-slate-100">
-                  <MapPin className="w-4 h-4 text-[var(--brand-green)]" />
+                  <MapPin className="w-4 h-4 text-primary" />
                   <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">
                     {selectedMember?.platform === 'GHANA' 
                       ? `${selectedMember?.constituency}, ${selectedMember?.region} Region` 
@@ -365,7 +371,7 @@ export default function Members() {
             </div>
 
             <div className="pt-6 border-t border-slate-100 flex gap-4">
-              <button className="flex-1 py-4 bg-[var(--brand-green)] text-white text-[10px] font-bold tracking-widest rounded-none shadow-lg shadow-brand-green/20 hover:opacity-90 transition-all">
+              <button className="flex-1 py-4 bg-primary text-white text-[10px] font-bold tracking-widest rounded-none shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
                 Send Message
               </button>
               <button 

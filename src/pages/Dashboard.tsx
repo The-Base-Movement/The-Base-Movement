@@ -30,6 +30,7 @@ interface MemberData {
   constituency: string
   chapter: string
   profession: string
+  status?: string
 }
 
 export default function Dashboard() {
@@ -79,7 +80,8 @@ export default function Dashboard() {
             region: liveMember.region,
             constituency: liveMember.constituency,
             chapter: liveMember.chapter || 'Central Chapter',
-            profession: 'Member'
+            profession: 'Member',
+            status: liveMember.status
           })
 
           // Fetch achievements and localized leaderboard in the same scope
@@ -173,7 +175,7 @@ export default function Dashboard() {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-off-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-[var(--brand-green)] border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
           <p className="font-meta text-stone-500 uppercase tracking-widest text-xs animate-pulse">Synchronizing Live Data...</p>
         </div>
       </div>
@@ -194,30 +196,30 @@ export default function Dashboard() {
       {/* Section 1: Growth Stats (Bento Grid Style) */}
       <section className="mb-12">
         <h2 className="text-on-surface mb-6 flex items-center">
-          <span className="material-symbols-outlined mr-2 text-[var(--brand-green)]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>trending_up</span>
+          <span className="material-symbols-outlined mr-2 text-primary" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>trending_up</span>
           Movement Growth
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
-            <span className="material-symbols-outlined text-[var(--brand-green)] mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>bolt</span>
-            <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 1 hour</p>
-            <h1 className="text-[var(--brand-green)] leading-none mb-0">
+          <div className="bg-surface-warm border-t-[3px] border-t-accent p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
+            <span className="material-symbols-outlined text-primary mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>bolt</span>
+            <p className="text-accent text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 1 hour</p>
+            <h1 className="text-primary leading-none mb-0">
               {stats?.joined_last_hour?.toLocaleString() || '0'}
             </h1>
             <p className="text-muted-gray mt-2 mb-0">Active citizens joining the cause</p>
           </div>
-          <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
-            <span className="material-symbols-outlined text-[var(--brand-green)] mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>history</span>
-            <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 24 hours</p>
-            <h1 className="text-[var(--brand-green)] leading-none mb-0">
+          <div className="bg-surface-warm border-t-[3px] border-t-accent p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
+            <span className="material-symbols-outlined text-primary mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>history</span>
+            <p className="text-accent text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 24 hours</p>
+            <h1 className="text-primary leading-none mb-0">
               {stats?.joined_last_24h?.toLocaleString() || '0'}
             </h1>
             <p className="text-muted-gray mt-2 mb-0">Spanning all 16 regions of Ghana</p>
           </div>
-          <div className="bg-surface-warm border-t-[3px] border-t-warm-gold p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
-            <span className="material-symbols-outlined text-[var(--brand-green)] mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>calendar_month</span>
-            <p className="text-warm-gold text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 7 days</p>
-            <h1 className="text-[var(--brand-green)] leading-none mb-0">
+          <div className="bg-surface-warm border-t-[3px] border-t-accent p-6 sm:p-8 flex flex-col items-start rounded-sm shadow-sm transition-all hover:shadow-md">
+            <span className="material-symbols-outlined text-primary mb-4" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>calendar_month</span>
+            <p className="text-accent text-xs sm:text-base mb-1 font-bold uppercase tracking-widest">Joined in last 7 days</p>
+            <h1 className="text-primary leading-none mb-0">
               {stats?.joined_last_7d?.toLocaleString() || '0'}
             </h1>
             <p className="text-muted-gray mt-2 mb-0">Growing collective impact nationwide</p>
@@ -229,19 +231,19 @@ export default function Dashboard() {
       <section className="mb-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-on-surface flex items-center m-0">
-            <span className="material-symbols-outlined mr-2 text-[var(--brand-red)]" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>stadium</span>
+            <span className="material-symbols-outlined mr-2 text-destructive" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>stadium</span>
             Active Field Mobilization
           </h2>
           <div className="flex items-center gap-4">
             {userLocation && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-100 animate-in fade-in slide-in-from-right-4 duration-500">
-                <ShieldCheck className="w-3 h-3 text-[var(--brand-green)]" />
-                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-[var(--brand-green)]">Signal Active: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}</span>
+              <div className="flex items-center gap-2 px-3 py-1 bg-primary/5 border border-primary/10 animate-in fade-in slide-in-from-right-4 duration-500">
+                <ShieldCheck className="w-3 h-3 text-primary" />
+                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-primary">Signal Active: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}</span>
               </div>
             )}
             <div className="flex items-center gap-2">
-              <span className="flex h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
-              <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Live National Signal</span>
+              <span className="flex h-2 w-2 rounded-full bg-destructive animate-ping"></span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-destructive">Live National Signal</span>
             </div>
           </div>
         </div>
@@ -259,13 +261,13 @@ export default function Dashboard() {
                 <div className="w-full md:w-32 bg-stone-900 flex flex-col items-center justify-center p-6 text-white border-b md:border-b-0 md:border-r border-white/5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-stone-500 mb-1">{format(new Date(action.start_time), 'MMM')}</span>
                   <span className="text-3xl font-black italic tracking-tighter">{format(new Date(action.start_time), 'dd')}</span>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--brand-red)] mt-2">{format(new Date(action.start_time), 'HH:mm')}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-destructive mt-2">{format(new Date(action.start_time), 'HH:mm')}</span>
                 </div>
                 <div className="flex-1 p-6 relative">
                   <div className="flex items-center gap-2 mb-3">
                     <span className={cn(
                       "text-[8px] font-black uppercase tracking-widest px-2 py-0.5",
-                      action.status === 'Live' ? "bg-red-100 text-red-600" : "bg-stone-100 text-stone-500"
+                      action.status === 'Live' ? "bg-destructive/10 text-destructive" : "bg-stone-100 text-stone-500"
                     )}>
                       {action.status}
                     </span>
@@ -308,7 +310,7 @@ export default function Dashboard() {
         <section className="lg:col-span-7">
           <div className="bg-white border border-stone-200 rounded-sm shadow-sm overflow-hidden mb-8">
             <div className="bg-stone-50 border-b border-stone-100 p-4 flex items-center justify-between">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[var(--brand-green)] flex items-center gap-2 m-0">
+              <h3 className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2 m-0">
                 <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>campaign</span>
                 Movement Directives
               </h3>
@@ -322,11 +324,11 @@ export default function Dashboard() {
                 </div>
               ) : (
                 notifications.map((note) => (
-                  <div key={note.id} className={`p-6 transition-all border-l-4 ${note.is_read ? 'border-transparent' : 'border-[var(--brand-green)] bg-emerald-50/20'}`}>
+                  <div key={note.id} className={`p-6 transition-all border-l-4 ${note.is_read ? 'border-transparent' : 'border-primary bg-emerald-50/20'}`}>
                     <div className="flex items-start justify-between gap-4 mb-2">
                       <div className="flex items-center gap-2">
                         {note.type === 'Alert' && (
-                          <span className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-black uppercase tracking-widest rounded-none">Urgent</span>
+                          <span className="px-2 py-0.5 bg-destructive text-white text-[8px] font-black uppercase tracking-widest rounded-none">Urgent</span>
                         )}
                         <h4 className={`text-sm font-black uppercase tracking-tight m-0 ${note.is_read ? 'text-stone-600' : 'text-stone-900'}`}>
                           {note.title}
@@ -345,7 +347,7 @@ export default function Dashboard() {
                             setNotifications(prev => prev.map(n => n.id === note.id ? { ...n, is_read: true } : n))
                           }
                         }}
-                        className="text-[9px] font-black uppercase tracking-widest text-[var(--brand-green)] hover:underline"
+                        className="text-[9px] font-black uppercase tracking-widest text-primary hover:underline"
                       >
                         Acknowledge Directive
                       </button>
@@ -356,51 +358,60 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-surface-warm border-t-[3px] border-t-warm-gold overflow-hidden rounded-sm shadow-sm">
+          <div className="bg-surface-warm border-t-[3px] border-t-accent overflow-hidden rounded-sm shadow-sm">
             <div className="p-6 sm:p-8">
-              <h3 className="mb-6 sm:mb-8 border-b border-divider-gold pb-4 text-on-surface">Member Identity Details</h3>
+              <h3 className="mb-6 sm:mb-8 border-b border-accent/20 pb-4 text-on-surface">Member Identity Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 sm:gap-y-8 gap-x-12">
                 <div className="min-w-0">
-                  <p className="text-[10px] text-warm-gold uppercase tracking-widest mb-1 font-bold">Full Name</p>
+                  <p className="text-[10px] text-accent uppercase tracking-widest mb-1 font-bold">Full Name</p>
                   <p className="text-lg font-bold text-on-surface truncate mb-0">{member?.full_name || 'Not Available'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] text-warm-gold uppercase tracking-widest mb-1 font-bold">Registration Number</p>
+                  <p className="text-[10px] text-accent uppercase tracking-widest mb-1 font-bold">Registration Number</p>
                   <p className="text-lg font-bold text-on-surface break-all sm:break-normal mb-0">{member?.registration_number || 'N/A'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Platform</p>
-                  <span className="inline-block px-3 py-1 bg-[var(--brand-green)] text-white text-[10px] font-bold tracking-tighter rounded-full">
+                  <p className="font-meta text-[10px] sm:text-xs text-accent uppercase tracking-widest mb-1">Platform</p>
+                  <span className="inline-block px-3 py-1 bg-primary text-white text-[10px] font-bold tracking-tighter rounded-full">
                     {member?.platform || 'GHANA'}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Phone Number</p>
+                  <p className="font-meta text-[10px] sm:text-xs text-accent uppercase tracking-widest mb-1">Verification Status</p>
+                  <span className={cn(
+                    "inline-block px-3 py-1 text-white text-[10px] font-bold tracking-tighter rounded-full",
+                    (member?.status === 'Active' || member?.status === 'Approved') ? "bg-emerald-600" : "bg-amber-600"
+                  )}>
+                    {(member?.status === 'Active' || member?.status === 'Approved') ? 'VERIFIED' : 'PENDING'}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-meta text-[10px] sm:text-xs text-accent uppercase tracking-widest mb-1">Phone Number</p>
                   <p className="text-base sm:text-lg font-bold text-on-surface">{member?.phone_number || 'Not Provided'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Age Range</p>
+                  <p className="font-meta text-[10px] sm:text-xs text-accent uppercase tracking-widest mb-1">Age Range</p>
                   <p className="text-base sm:text-lg font-bold text-on-surface">{member?.age_range || 'Not Set'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Gender</p>
+                  <p className="font-meta text-[10px] sm:text-xs text-accent uppercase tracking-widest mb-1">Gender</p>
                   <p className="text-base sm:text-lg font-bold text-on-surface">{member?.gender || 'Not Set'}</p>
                 </div>
                 {member?.region && (
                   <div className="min-w-0">
-                    <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Region</p>
+                    <p className="font-meta text-[10px] sm:text-xs text-accent uppercase tracking-widest mb-1">Region</p>
                     <p className="text-base sm:text-lg font-bold text-on-surface truncate">{member.region}</p>
                   </div>
                 )}
                 {member?.chapter && (
                   <div className="min-w-0">
-                    <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Assigned Chapter</p>
+                    <p className="font-meta text-[10px] sm:text-xs text-accent uppercase tracking-widest mb-1">Assigned Chapter</p>
                     <p className="text-base sm:text-lg font-bold text-on-surface truncate">{member.chapter}</p>
                   </div>
                 )}
                 {member?.profession && (
                   <div className="min-w-0">
-                    <p className="font-meta text-[10px] sm:text-xs text-warm-gold uppercase tracking-widest mb-1">Profession</p>
+                    <p className="font-meta text-[10px] sm:text-xs text-accent uppercase tracking-widest mb-1">Profession</p>
                     <p className="text-base sm:text-lg font-bold text-on-surface truncate">{member.profession}</p>
                   </div>
                 )}
@@ -414,18 +425,18 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-xs font-black uppercase tracking-widest text-stone-900 m-0 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[var(--brand-green)]" />
+                <TrendingUp className="w-4 h-4 text-primary" />
                 Mobilization Impact
               </h3>
               <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">Total points earned through direct action.</p>
             </div>
-            <span className="text-2xl font-black italic tracking-tighter text-[var(--brand-green)]">{totalPoints.toLocaleString()}</span>
+            <span className="text-2xl font-black italic tracking-tighter text-primary">{totalPoints.toLocaleString()}</span>
           </div>
           
           <div className="space-y-4">
             <div className="h-4 bg-stone-100 rounded-none overflow-hidden relative border border-stone-200">
               <div 
-                className="h-full bg-[var(--brand-green)] transition-all duration-1000 ease-out relative"
+                className="h-full bg-primary transition-all duration-1000 ease-out relative"
                 style={{ width: `${Math.min((totalPoints / 1000) * 100, 100)}%` }}
               >
                 <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.1)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.1)_50%,rgba(255,255,255,0.1)_75%,transparent_75%,transparent)] bg-[length:20px_20px] animate-[progress-stripe_2s_linear_infinite]" />
@@ -475,8 +486,8 @@ export default function Dashboard() {
           </div>
 
           {/* Informational Slice */}
-          <div className="p-6 border border-divider-gold flex items-center gap-4 bg-surface-container-low rounded-sm">
-            <span className="material-symbols-outlined text-warm-gold text-3xl" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>verified_user</span>
+          <div className="p-6 border border-accent/20 flex items-center gap-4 bg-surface-container-low rounded-sm">
+            <span className="material-symbols-outlined text-accent text-3xl" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>verified_user</span>
             <div>
               <p className="font-bold text-on-surface text-sm">Verified Civic Member</p>
               <p className="text-xs text-muted-gray">Your profile is authenticated for official voting and policy polls.</p>
@@ -492,7 +503,7 @@ export default function Dashboard() {
           <div className="bg-white border border-stone-200 rounded-sm shadow-sm overflow-hidden">
             <div className="bg-stone-50 border-b border-stone-100 p-6 flex items-center justify-between">
               <h3 className="text-xs font-black uppercase tracking-widest text-stone-900 flex items-center gap-2 m-0">
-                <Trophy className="w-4 h-4 text-warm-gold" />
+                <Trophy className="w-4 h-4 text-accent" />
                 Movement Achievements
               </h3>
               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{achievements.length} Badges Earned</span>
@@ -501,8 +512,8 @@ export default function Dashboard() {
               {/* Earned Badges */}
               {achievements.map((achievement) => (
                 <div key={achievement.id} className="flex flex-col items-center text-center group">
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 border-2 border-warm-gold/50 bg-[radial-gradient(circle_at_center,_rgba(184,134,11,0.1)_0%,transparent_100%)] shadow-sm group-hover:scale-110 transition-transform">
-                    <Award className="w-8 h-8 text-warm-gold" />
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 border-2 border-accent/50 bg-[radial-gradient(circle_at_center,_rgba(184,134,11,0.1)_0%,transparent_100%)] shadow-sm group-hover:scale-110 transition-transform">
+                    <Award className="w-8 h-8 text-accent" />
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-tight text-stone-900 m-0">{achievement.name}</p>
                   <p className="text-[8px] text-stone-400 font-bold uppercase mt-1 leading-tight">{achievement.description}</p>
@@ -529,7 +540,7 @@ export default function Dashboard() {
           <div className="bg-white border border-stone-200 rounded-sm shadow-sm overflow-hidden">
             <div className="bg-stone-50 border-b border-stone-100 p-6 flex items-center justify-between">
               <h3 className="text-xs font-black uppercase tracking-widest text-stone-900 flex items-center gap-2 m-0">
-                <TrendingUp className="w-4 h-4 text-[var(--brand-green)]" />
+                <TrendingUp className="w-4 h-4 text-primary" />
                 {member?.region || 'National'} Leaderboard
               </h3>
               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Top 5 Mobilizers</span>
@@ -539,7 +550,7 @@ export default function Dashboard() {
                 <div key={entry.name} className="p-4 flex items-center justify-between hover:bg-stone-50/50 transition-colors">
                   <div className="flex items-center gap-4">
                     <span className={`w-6 h-6 rounded-none flex items-center justify-center text-[10px] font-black ${
-                      entry.rank === 1 ? 'bg-warm-gold text-white' : 
+                      entry.rank === 1 ? 'bg-accent text-white' : 
                       entry.rank === 2 ? 'bg-stone-300 text-stone-600' : 
                       entry.rank === 3 ? 'bg-amber-600/30 text-amber-900' : 'bg-stone-100 text-stone-400'
                     }`}>
@@ -551,7 +562,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs font-black text-[var(--brand-green)] m-0">{entry.points.toLocaleString()}</p>
+                    <p className="text-xs font-black text-primary m-0">{entry.points.toLocaleString()}</p>
                     <p className="text-[8px] text-stone-300 font-black uppercase tracking-widest">Points</p>
                   </div>
                 </div>
@@ -564,27 +575,27 @@ export default function Dashboard() {
       {/* Section 5: Quick Actions (Functional Grid) */}
       <section className="mt-12">
         <h3 className="text-on-surface mb-6 flex items-center gap-2">
-          <div className="h-1 w-8 bg-[var(--brand-green)]" /> Quick Actions
+          <div className="h-1 w-8 bg-primary" /> Quick Actions
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-          <Link className="bg-white border-t-[3px] border-t-warm-gold p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/settings">
-            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform">badge</span>
+          <Link className="bg-white border-t-[3px] border-t-accent p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/settings">
+            <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">badge</span>
             <p className="font-meta text-[10px] font-black uppercase tracking-widest text-on-surface">Member Card</p>
           </Link>
-          <Link className="bg-white border-t-[3px] border-t-warm-gold p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/store">
-            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform">storefront</span>
+          <Link className="bg-white border-t-[3px] border-t-accent p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/store">
+            <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">storefront</span>
             <p className="font-meta text-[10px] font-black uppercase tracking-widest text-on-surface">Official Store</p>
           </Link>
-          <Link className="bg-white border-t-[3px] border-t-warm-gold p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/polls">
-            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform">how_to_vote</span>
+          <Link className="bg-white border-t-[3px] border-t-accent p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/polls">
+            <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">how_to_vote</span>
             <p className="font-meta text-[10px] font-black uppercase tracking-widest text-on-surface">Opinion Polls</p>
           </Link>
-          <Link className="bg-white border-t-[3px] border-t-[var(--brand-red)] p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/feedback">
-            <span className="material-symbols-outlined text-[var(--brand-red)] mb-3 text-3xl group-hover:scale-110 transition-transform">record_voice_over</span>
+          <Link className="bg-white border-t-[3px] border-t-destructive p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/feedback">
+            <span className="material-symbols-outlined text-destructive mb-3 text-3xl group-hover:scale-110 transition-transform">record_voice_over</span>
             <p className="font-meta text-[10px] font-black uppercase tracking-widest text-on-surface">Feedback Hub</p>
           </Link>
-          <Link className="bg-white border-t-[3px] border-t-[var(--brand-green)] p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/canvass">
-            <span className="material-symbols-outlined text-[var(--brand-green)] mb-3 text-3xl group-hover:scale-110 transition-transform">content_paste_go</span>
+          <Link className="bg-white border-t-[3px] border-t-primary p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/canvass">
+            <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">content_paste_go</span>
             <p className="font-meta text-[10px] font-black uppercase tracking-widest text-on-surface">Canvass</p>
           </Link>
         </div>
