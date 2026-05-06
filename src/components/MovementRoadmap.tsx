@@ -71,7 +71,7 @@ export function MovementRoadmap() {
             National Strategic <span className="text-[var(--brand-green)]">Roadmap</span>
           </h2>
           <p className="text-xs font-bold text-on-surface/40 mt-3 ml-12">
-            The architected path to building the Ghana we deserve.
+            The path to building the Ghana we deserve.
           </p>
         </div>
         <div className="flex items-center gap-4 ml-12 md:ml-0">
@@ -146,11 +146,14 @@ export function MovementRoadmap() {
                     index % 2 === 0 ? "sm:items-end" : "sm:items-start"
                   )}>
                     <div className="flex items-center gap-2">
-                      <span className={cn(
-                        "px-3 py-1 text-[8px] font-black uppercase tracking-[0.2em]",
-                        milestone.status === 'Completed' ? "bg-[var(--brand-green)] text-white" : 
-                        milestone.status === 'In Progress' ? "bg-[var(--brand-gold)] text-white" : "bg-stone-800 text-white"
-                      )}>
+                      <span 
+                        className="px-3 py-1 text-[8px] font-black uppercase tracking-[0.2em] text-white"
+                        style={{ 
+                          backgroundColor: milestone.status === 'Completed' ? 'rgb(var(--brand-green-rgb))' : 
+                                           milestone.status === 'In Progress' ? 'rgb(var(--brand-gold-rgb))' : 
+                                           'rgb(28, 25, 23)' 
+                        }}
+                      >
                         {milestone.status}
                       </span>
                       <span className="text-[9px] font-black text-on-surface/20 uppercase tracking-widest">{milestone.category}</span>

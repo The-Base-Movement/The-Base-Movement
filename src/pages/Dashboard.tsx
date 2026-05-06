@@ -208,7 +208,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">Past 24h</span>
             </div>
-            <p className="text-[9px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and regional rollout initiated.</p>
+            <p className="text-[9px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and regional rollout began.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -361,7 +361,7 @@ export default function Dashboard() {
           {/* Section 2: Movement Directives */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden flex flex-col">
             <div className="bg-on-surface/5 border-b border-border/10 p-4 flex items-center justify-between">
-              <h3 className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2 m-0">
+              <h3 className="text-xs font-black italic tracking-tighter text-primary flex items-center gap-2 m-0">
                 <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>campaign</span>
                 Movement Directives
               </h3>
@@ -426,7 +426,7 @@ export default function Dashboard() {
                 <div className="min-w-0">
                   <p className="text-[10px] text-accent uppercase tracking-[0.2em] mb-2 font-black">Platform Status</p>
                   <span className="inline-block px-4 py-1.5 bg-primary text-white text-[10px] font-bold tracking-widest rounded-none shadow-lg shadow-primary/20">
-                    {member?.platform === 'ADMIN' ? 'Chapter Lead' : (member?.platform || 'Member')}
+                    {member?.platform === 'ADMIN' ? 'Chapter Lead' : (member?.platform === 'PATRIOT' ? 'Member' : (member?.platform || 'Member'))}
                   </span>
                 </div>
                 <div className="min-w-0">
@@ -527,12 +527,12 @@ export default function Dashboard() {
             <div className="flex-1 relative z-10">
               <h2 className="text-white mb-4 text-2xl font-black italic tracking-tighter">Invite others to join The Base</h2>
               <p className="text-white/70 text-sm font-medium leading-relaxed max-w-2xl mb-0">
-                Our collective strength is architected through shared participation. Share your unique registration link with fellow Ghanaians and help build a more resilient and representative civic voice for the nation.
+                Our strength grows when more people take part in the movement. Share your unique registration link with fellow Ghanaians and help build a more resilient and representative civic voice for the nation.
               </p>
             </div>
 
             <div className="w-full lg:w-1/2 min-w-[320px] relative z-10 bg-white/5 p-4 border border-white/10 backdrop-blur-sm rounded-sm">
-              <p className="text-white/40 text-[8px] font-black uppercase tracking-[0.2em] mb-3">Your Strategic Referral Link</p>
+              <p className="text-white/40 text-[8px] font-black uppercase tracking-[0.2em] mb-3">Strategic Referral Link</p>
               <div className="relative mb-4">
                 <input 
                   className="w-full bg-white/5 border border-white/20 text-white font-medium py-2 pl-3 pr-10 rounded-none focus:ring-1 focus:ring-accent focus:outline-none placeholder:text-white/20 text-xs tracking-tight" 
@@ -649,27 +649,27 @@ export default function Dashboard() {
           <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/settings">
             <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
             <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">badge</span>
-            <p className="font-meta text-[10px] font-bold uppercase tracking-widest text-on-surface">Member ID</p>
+            <p className="font-meta text-[10px] font-bold text-on-surface">Member ID</p>
           </Link>
           <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/store">
             <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
             <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">storefront</span>
-            <p className="font-meta text-[10px] font-bold uppercase tracking-widest text-on-surface">Official Store</p>
+            <p className="font-meta text-[10px] font-bold text-on-surface">Official Store</p>
           </Link>
           <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/polls">
             <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
             <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">how_to_vote</span>
-            <p className="font-meta text-[10px] font-bold uppercase tracking-widest text-on-surface">Opinion Polls</p>
+            <p className="font-meta text-[10px] font-bold text-on-surface">Opinion Polls</p>
           </Link>
           <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/feedback">
             <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
             <span className="material-symbols-outlined text-destructive mb-3 text-3xl group-hover:scale-110 transition-transform">record_voice_over</span>
-            <p className="font-meta text-[10px] font-bold uppercase tracking-widest text-on-surface">Feedback Hub</p>
+            <p className="font-meta text-[10px] font-bold text-on-surface">Feedback Hub</p>
           </Link>
           <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/canvass">
             <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
             <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">diversity_3</span>
-            <p className="font-meta text-[10px] font-bold uppercase tracking-widest text-on-surface">Outreach</p>
+            <p className="font-meta text-[10px] font-bold text-on-surface">Outreach</p>
           </Link>
         </div>
       </section>

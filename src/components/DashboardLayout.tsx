@@ -316,9 +316,9 @@ export default function DashboardLayout() {
                   )}
                 </div>
                 <div className="hidden lg:block text-left">
-                  <p className="text-xs font-black text-on-surface leading-none mb-1 uppercase tracking-tighter">{userName}</p>
-                   <p className="text-[9px] text-accent font-black tracking-widest uppercase mb-0">
-                    {userPlatform} {userRegNo && `· ${userRegNo}`}
+                  <p className="text-xs font-black text-on-surface leading-none mb-1 capitalize tracking-tight">{userName?.toLowerCase()}</p>
+                   <p className="text-[9px] text-accent font-black tracking-widest mb-0">
+                    {userPlatform === 'ADMIN' ? 'Chapter Lead' : (userPlatform === 'PATRIOT' ? 'Member' : 'Member')} {userRegNo && `· ${userRegNo}`}
                   </p>
                 </div>
                 <span
@@ -339,9 +339,9 @@ export default function DashboardLayout() {
           <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
             <p className="text-[10px] text-muted-foreground/40 mb-0 uppercase font-black tracking-[0.2em]">© 2024 The Base Movement. Ghana First.</p>
             <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10">
-              <Link className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy</Link>
-              <Link className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms</Link>
-              <Link className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/contact">Support</Link>
+              <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy Policy</Link>
+              <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms of Service</Link>
+              <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/contact">Support Portal</Link>
             </div>
           </div>
         </footer>
