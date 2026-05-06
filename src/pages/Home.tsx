@@ -80,13 +80,13 @@ export default function Home() {
       >
         {!lowBandwidthMode ? (
           <>
-            <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-luminosity transition-opacity duration-1000 group-hover:opacity-20" style={{ backgroundImage: "url('/hero-bg.png')" }}></div>
+            <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-luminosity transition-opacity duration-1000 group-hover:opacity-20" style={{ backgroundImage: `url('${settings.hero_bg_url || "/hero-bg.png"}')` }}></div>
             
             {/* Color Spotlight */}
             <div 
               className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
               style={{ 
-                backgroundImage: "url('/hero-bg.png')",
+                backgroundImage: `url('${settings.hero_bg_url || "/hero-bg.png"}')`,
                 WebkitMaskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
                 maskImage: `radial-gradient(circle 350px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`
               }}

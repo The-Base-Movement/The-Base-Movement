@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Search } from 'lucide-react'
 import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
+import { Button } from './ui/neon-button'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
 import { useBranding } from '@/hooks/useBranding'
@@ -188,30 +190,31 @@ export default function DashboardLayout() {
           </div>
 
           {/* Leader Portrait */}
-          <div className="mx-4 my-8 overflow-hidden rounded-none relative group shrink-0 shadow-lg">
-            <img src="/founder.jpg"
+          <div className="mx-4 my-8 overflow-hidden rounded-none relative group shrink-0 shadow-lg border border-border/10">
+            <img src={settings.founder_image_url || "/founder.jpg"}
               alt="Dr. George Oti Bonsu The Base Movement Founder"
               className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
              decoding="async" />
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-3">
-              <p className="text-white text-[10px] font-bold tracking-widest leading-tight mb-0 uppercase">
+              <p className="text-white text-[10px] font-bold tracking-widest leading-tight mb-0">
                 Dr. George Oti Bonsu
               </p>
-              <p className="text-white/70 text-[9px] font-bold tracking-wider mt-0.5 mb-0 uppercase">
+              <p className="text-white/70 text-[9px] font-bold tracking-wider mt-0.5 mb-0">
                 Movement Founder
               </p>
             </div>
           </div>
 
           <div className="px-6 pt-2">
-            <button 
+            <Button 
+              variant="primary"
               onClick={() => setIsShareModalOpen(true)}
-              className="w-full h-14 bg-primary text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-sm hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-primary/20"
+              className="w-full h-14 uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-primary/20"
             >
               Invite & Share
-            </button>
+            </Button>
             <div className="mt-8 space-y-4 pl-2">
               <Link 
                 className={`flex items-center transition-all font-black text-[10px] uppercase tracking-[0.2em] ${isActive('/dashboard/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`} 
@@ -260,6 +263,9 @@ export default function DashboardLayout() {
                   <span className="text-on-surface">{getPageTitle()}</span>
                 </div>
               </div>
+              <h1 className="text-xl font-bold tracking-tight text-on-surface m-0 hidden lg:block">
+                {location.pathname.includes('settings') ? 'Member Settings' : 'Dashboard Overview'}
+              </h1>
           </div>
 
           {/* Right: Actions + Avatar */}
@@ -267,15 +273,14 @@ export default function DashboardLayout() {
 
               {/* Search */}
               <div className="relative hidden md:block">
-                <span
-                  className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface/30 text-[18px]"
-                  style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}
-                >search</span>
-                <input
-                  type="text"
-                  placeholder="Search Command..."
-                  className="pl-9 pr-4 py-2 text-[10px] font-black uppercase tracking-widest bg-muted/5 border border-border/40 rounded-sm text-on-surface placeholder-on-surface/20 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all w-48 focus:w-64"
-                />
+                <div className="relative group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface/30 group-focus-within:text-primary transition-colors" />
+                    <input 
+                      type="text" 
+                      placeholder="Search updates..." 
+                      className="w-full sm:w-64 pl-10 pr-4 py-2 bg-on-surface/5 border border-transparent focus:border-primary/20 focus:bg-white rounded-none text-xs font-medium transition-all outline-none"
+                    />
+                  </div>
               </div>
 
               {/* Notification Bell */}

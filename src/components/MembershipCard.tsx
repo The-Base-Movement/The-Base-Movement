@@ -1,5 +1,5 @@
-import React from 'react'
 import { QRCodeSVG } from 'qrcode.react'
+import { useBranding } from '@/hooks/useBranding'
 
 interface MembershipCardProps {
   userName?: string
@@ -30,6 +30,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   constituency,
   chapter
 }) => {
+  const { settings } = useBranding()
   return (
     <div className="relative aspect-[1.6/1] w-full overflow-hidden bg-white flex flex-col font-meta shadow-2xl border-l-[3px] border-r-[3px] border-primary border-t-destructive border-b-accent rounded-[8px]">
       
@@ -37,7 +38,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
       <div className="bg-destructive p-3 sm:p-4 flex justify-between items-start">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-[8px] p-1 shadow-md">
-            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain"  decoding="async" loading="lazy" />
+            <img src={settings.logo_url} alt="Logo" className="w-full h-full object-contain"  decoding="async" loading="lazy" />
           </div>
           <div>
             <h4 className="text-white font-black text-[10px] sm:text-xs uppercase leading-none">The Base Movement</h4>
@@ -77,52 +78,52 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         </div>
 
         {/* Member Details - Center-aligned with photo */}
-        <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0 pr-8">
+        <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0 pr-20 sm:pr-24">
           <div>
-            <h5 className="text-[hsl(var(--foreground))] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-normal whitespace-nowrap overflow-visible pb-[2px]">{userName || 'Member Name'}</h5>
+            <h5 className="text-[hsl(var(--foreground))] font-bold text-[10px] sm:text-xl uppercase tracking-tight leading-normal truncate pb-[2px]" title={userName || 'Member Name'}>{userName || 'Member Name'}</h5>
             <div className="h-0.5 w-6 sm:w-12 bg-primary mt-0.5"></div>
           </div>
 
           <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-on-surface">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Reg. No.</span>
-              <span className="text-[7px] sm:text-[10px] font-black text-primary uppercase tracking-wider whitespace-nowrap overflow-visible pb-[1px]">{userRegNo || 'DI-XXXXXX'}</span>
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <span className="text-[7px] sm:text-[9px] font-black text-muted-foreground uppercase w-12 sm:w-16 shrink-0">Reg. No.</span>
+              <span className="text-[8px] sm:text-[11px] font-black text-primary uppercase tracking-wider whitespace-nowrap overflow-hidden truncate pb-[1px]">{userRegNo || 'DI-XXXXXX'}</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Gender</span>
-              <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{gender || 'Not Specified'}</span>
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <span className="text-[7px] sm:text-[9px] font-black text-muted-foreground uppercase w-12 sm:w-16 shrink-0">Gender</span>
+              <span className="text-[8px] sm:text-[10px] font-bold uppercase whitespace-nowrap overflow-hidden truncate pb-[1px]">{gender || 'Not Specified'}</span>
             </div>
             
             {(!country || country === 'Ghana') ? (
               <>
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Region</span>
-                  <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{region || 'Not Specified'}</span>
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <span className="text-[7px] sm:text-[9px] font-black text-muted-foreground uppercase w-12 sm:w-16 shrink-0">Region</span>
+                  <span className="text-[8px] sm:text-[10px] font-bold uppercase whitespace-nowrap overflow-hidden truncate pb-[1px]">{region || 'Not Specified'}</span>
                 </div>
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Const.</span>
-                  <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{constituency || 'Not Specified'}</span>
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <span className="text-[7px] sm:text-[9px] font-black text-muted-foreground uppercase w-12 sm:w-16 shrink-0">Const.</span>
+                  <span className="text-[8px] sm:text-[10px] font-bold uppercase whitespace-nowrap overflow-hidden truncate pb-[1px]">{constituency || 'Not Specified'}</span>
                 </div>
               </>
             ) : (
-              <div className="flex items-center gap-2 sm:gap-4">
-                <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Country</span>
-                <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{country || 'Not Specified'}</span>
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <span className="text-[7px] sm:text-[9px] font-black text-muted-foreground uppercase w-12 sm:w-16 shrink-0">Country</span>
+                <span className="text-[8px] sm:text-[10px] font-bold uppercase whitespace-nowrap overflow-hidden truncate pb-[1px]">{country || 'Not Specified'}</span>
               </div>
             )}
 
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Chapter</span>
-              <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{chapter || 'Not Specified'}</span>
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <span className="text-[7px] sm:text-[9px] font-black text-muted-foreground uppercase w-12 sm:w-16 shrink-0">Chapter</span>
+              <span className="text-[8px] sm:text-[10px] font-bold uppercase whitespace-nowrap overflow-hidden truncate pb-[1px]">{chapter || 'Not Specified'}</span>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Joined</span>
-              <span className="text-[7px] sm:text-[9px] font-bold uppercase whitespace-nowrap overflow-visible pb-[1px]">{joinedDate || '30 Apr 2026'}</span>
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <span className="text-[7px] sm:text-[9px] font-black text-muted-foreground uppercase w-12 sm:w-16 shrink-0">Joined</span>
+              <span className="text-[8px] sm:text-[10px] font-bold uppercase whitespace-nowrap overflow-hidden truncate pb-[1px]">{joinedDate || '30 Apr 2026'}</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span className="text-[6px] sm:text-[8px] font-black text-muted-foreground/80 uppercase w-12 sm:w-20 shrink-0">Status</span>
-              <span className="text-[7px] sm:text-[9px] font-black text-primary uppercase whitespace-nowrap overflow-visible pb-[1px]">{status || 'Verified'}</span>
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <span className="text-[7px] sm:text-[9px] font-black text-muted-foreground uppercase w-12 sm:w-16 shrink-0">Status</span>
+              <span className="text-[8px] sm:text-[10px] font-black text-primary uppercase whitespace-nowrap overflow-hidden truncate pb-[1px]">{status || 'Verified'}</span>
             </div>
           </div>
         </div>
@@ -143,7 +144,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
 
         {/* Subtle Watermark Logo */}
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none z-0">
-          <img src="/logo.png" alt="" className="w-40 sm:w-64 object-contain grayscale"  decoding="async" loading="lazy" />
+          <img src={settings.logo_url} alt="" className="w-40 sm:w-64 object-contain grayscale"  decoding="async" loading="lazy" />
         </div>
       </div>
 

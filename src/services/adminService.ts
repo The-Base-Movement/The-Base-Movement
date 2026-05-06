@@ -937,13 +937,21 @@ class AdminService {
     return milestones.map(m => {
       if (m.status !== 'Completed' && m.target_members && m.target_members > totalMembers) {
         const remaining = m.target_members - totalMembers
-        const daysToTarget = Math.ceil(remaining / avgDailyGrowth)
+        // Ensure a more realistic minimum growth floor for forecasting
+        const realisticGrowth = Math.max(5, avgDailyGrowth)
+        const daysToTarget = Math.ceil(remaining / realisticGrowth)
+        
+        // Cap the forecast at a reasonable horizon (e.g., 2 years) to avoid extreme dates
+        const maxDays = 365 * 2
+        const actualDays = Math.min(daysToTarget, maxDays)
+        
         const forecast = new Date()
-        forecast.setDate(forecast.getDate() + daysToTarget)
+        forecast.setDate(forecast.getDate() + actualDays)
         return { ...m, forecasted_date: forecast.toISOString().split('T')[0] }
       }
       return m
     })
+
   }
 
   async verifyMemberID(memberId: string): Promise<{ confidence: number, matches: string[], flagged: boolean }> {

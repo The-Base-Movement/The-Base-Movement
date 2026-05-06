@@ -19,7 +19,8 @@ import {
   Upload,
   Twitter,
   Building2,
-  Palette
+  Palette,
+  FileText
 } from 'lucide-react'
 
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
@@ -728,7 +729,9 @@ export default function AdminSettings() {
                             const p3 = adminService.updateSiteSetting('primary_color', siteSettings.primary_color)
                             const p4 = adminService.updateSiteSetting('accent_color', siteSettings.accent_color)
                             const p5 = adminService.updateSiteSetting('destructive_color', siteSettings.destructive_color)
-                            await Promise.all([p1, p2, p3, p4, p5])
+                            const p6 = adminService.updateSiteSetting('registration_form_ghana_url', siteSettings.registration_form_ghana_url)
+                            const p7 = adminService.updateSiteSetting('registration_form_diaspora_url', siteSettings.registration_form_diaspora_url)
+                            await Promise.all([p1, p2, p3, p4, p5, p6, p7])
                             window.dispatchEvent(new CustomEvent('site_settings_updated'))
                             toast.success('Movement configurations synchronized', { id: toastId })
                           } catch (err: unknown) {
@@ -742,6 +745,116 @@ export default function AdminSettings() {
                       >
                         {isSaving ? 'Synchronizing...' : 'Commit Configurations'}
                       </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
+                <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
+                  <CardTitle className="text-sm font-bold text-stone-900">Official Documentation</CardTitle>
+                  <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Manage the movement's authoritative documents and registration forms.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="max-w-2xl space-y-12">
+                    {/* Ghana Form */}
+                    <div className="p-6 rounded-lg border border-stone-100 bg-stone-50/30 group transition-all hover:border-brand-green/20">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded bg-brand-green/10 flex items-center justify-center">
+                            <FileText className="w-5 h-5 text-brand-green" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-stone-900">Ghana Membership Form (PDF)</p>
+                            <p className="text-[10px] text-stone-400 font-medium">Linked to "Download Form" for Ghana-based platform users.</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1 bg-white border border-stone-200 rounded-sm px-4 h-10 flex items-center overflow-hidden">
+                          <p className="text-[10px] font-mono text-stone-500 truncate">
+                            {siteSettings.registration_form_ghana_url as string || 'No form uploaded'}
+                          </p>
+                        </div>
+                        <label className="cursor-pointer bg-brand-green text-white px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-brand-green/90 transition-all active:scale-95 shadow-lg shadow-brand-green/10">
+                          <Upload className="w-3.5 h-3.5" />
+                          Upload
+                          <input 
+                            type="file" 
+                            className="hidden" 
+                            accept=".pdf"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (file) handleBrandingUpload('registration_form_ghana_url', file)
+                            }}
+                          />
+                        </label>
+                      </div>
+                      
+                      {!!siteSettings.registration_form_ghana_url && (
+                        <div className="mt-4 flex justify-end">
+                          <a 
+                            href={siteSettings.registration_form_ghana_url as string} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-[10px] font-bold text-brand-green hover:underline flex items-center gap-1.5"
+                          >
+                            <Globe className="w-3 h-3" />
+                            Verify Live Link
+                          </a>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Diaspora Form */}
+                    <div className="p-6 rounded-lg border border-stone-100 bg-stone-50/30 group transition-all hover:border-blue-600/20">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded bg-blue-50 flex items-center justify-center">
+                            <Globe className="w-5 h-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-stone-900">Diaspora Membership Form (PDF)</p>
+                            <p className="text-[10px] text-stone-400 font-medium">Linked to "Download Form" for Diaspora platform users.</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1 bg-white border border-stone-200 rounded-sm px-4 h-10 flex items-center overflow-hidden">
+                          <p className="text-[10px] font-mono text-stone-500 truncate">
+                            {siteSettings.registration_form_diaspora_url as string || 'No form uploaded'}
+                          </p>
+                        </div>
+                        <label className="cursor-pointer bg-blue-600 text-white px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
+                          <Upload className="w-3.5 h-3.5" />
+                          Upload
+                          <input 
+                            type="file" 
+                            className="hidden" 
+                            accept=".pdf"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (file) handleBrandingUpload('registration_form_diaspora_url', file)
+                            }}
+                          />
+                        </label>
+                      </div>
+                      
+                      {!!siteSettings.registration_form_diaspora_url && (
+                        <div className="mt-4 flex justify-end">
+                          <a 
+                            href={siteSettings.registration_form_diaspora_url as string} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-[10px] font-bold text-blue-600 hover:underline flex items-center gap-1.5"
+                          >
+                            <Globe className="w-3 h-3" />
+                            Verify Live Link
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>

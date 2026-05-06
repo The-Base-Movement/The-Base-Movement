@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
-import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, CheckCircle2, Loader2, Zap } from 'lucide-react'
+import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, CheckCircle2, Loader2, Zap, Download } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
@@ -160,6 +160,7 @@ export default function Register() {
     fullName: '',
     countryCode: '+233',
     country: 'Ghana',
+    children_count: 0,
     contactNumber: '',
     ageRange: '',
     gender: 'Male',
@@ -268,7 +269,8 @@ export default function Register() {
             emergency_name: formData.emergencyContactName,
             emergency_relationship: formData.emergencyRelationship,
             emergency_phone: formData.emergencyNumber,
-            avatar_url: finalAvatarUrl
+            avatar_url: finalAvatarUrl,
+            children_count: formData.children_count
           })
 
         if (dbError) throw dbError
@@ -432,6 +434,16 @@ export default function Register() {
                         </li>
                       ))}
                     </ul>
+                    <div className="pt-4">
+                      <Link 
+                        to="/register/preview?platform=GHANA" 
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-green/60 hover:text-brand-green hover:underline transition-all"
+                      >
+                        <Download className="w-3 h-3" />
+                        Download Paper Form (Ghana)
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -487,6 +499,16 @@ export default function Register() {
                         </li>
                       ))}
                     </ul>
+                    <div className="pt-4">
+                      <Link 
+                        to="/register/preview?platform=DIASPORA" 
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-gold/60 hover:text-brand-gold hover:underline transition-all"
+                      >
+                        <Download className="w-3 h-3" />
+                        Download Paper Form (Diaspora)
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -729,7 +751,21 @@ export default function Register() {
                       <select required value={formData.gender} onChange={(e) => handleChange('gender', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
+                        <option value="Other">Other</option>
                       </select>
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Number of Children</label>
+                      <input 
+                        type="number" 
+                        min="0" 
+                        value={formData.children_count} 
+                        onChange={(e) => handleChange('children_count', e.target.value)} 
+                        className="w-full form-understate p-4 text-on-surface text-sm" 
+                        placeholder="0"
+                      />
                     </div>
                   </div>
                   {platform === 'GHANA' && (

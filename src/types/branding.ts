@@ -10,6 +10,8 @@ export interface BrandingSettings {
   primary_color: string
   accent_color: string
   destructive_color: string
+  registration_form_ghana_url: string
+  registration_form_diaspora_url: string
   primary_email: string
   newsletter_email: string
   [key: string]: unknown
@@ -27,6 +29,8 @@ export const defaultSettings: BrandingSettings = {
   primary_color: '156 100% 21%',
   accent_color: '45 80% 45%',
   destructive_color: '0 85% 44%',
+  registration_form_ghana_url: '/docs/registration-form-ghana.pdf',
+  registration_form_diaspora_url: '/docs/registration-form-diaspora.pdf',
   primary_email: 'info@thebasemovement.com',
   newsletter_email: 'info@thebasemovement.com'
 }

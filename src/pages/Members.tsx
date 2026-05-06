@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Globe, Search, MapPin, Users, User, ArrowUpDown, Filter, X } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/neon-button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MemberProfileCard } from '@/components/MemberProfileCard'
 import {
@@ -365,15 +366,19 @@ export default function Members() {
             </div>
 
             <div className="pt-6 border-t border-slate-100 flex gap-4">
-              <button className="flex-1 py-4 bg-primary text-white text-[10px] font-bold tracking-widest rounded-none shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
+              <Button 
+                variant="primary"
+                className="flex-1 py-6 text-[10px] shadow-lg shadow-primary/20"
+              >
                 Send Message
-              </button>
-              <button 
+              </Button>
+              <Button 
+                variant="ghost"
                 onClick={() => setSelectedMember(null)}
-                className="flex-1 py-4 bg-slate-50 text-slate-400 text-[10px] font-bold tracking-widest rounded-none hover:bg-slate-100 transition-all"
+                className="flex-1 py-6 text-[10px]"
               >
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </DialogContent>

@@ -37,6 +37,7 @@ const Terms = lazy(() => import('./pages/Terms'))
 const Wishlist = lazy(() => import('./pages/Wishlist'))
 const VerifyID = lazy(() => import('./pages/VerifyID'))
 const Press = lazy(() => import('./pages/Press'))
+const RegistrationFormPreview = lazy(() => import('./pages/RegistrationFormPreview'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 // Dashboard secondary pages
@@ -95,6 +96,7 @@ export default function App() {
               <Route path="/dashboard/checkout" element={<Navigate to="/dashboard/store/checkout" replace />} />
               <Route path="/members" element={<Navigate to="/dashboard/members" replace />} />
               <Route path="/polls" element={<Navigate to="/dashboard/polls" replace />} />
+              <Route path="/register/preview" element={<RegistrationFormPreview />} />
 
               {/* ── Public routes (Navbar + Footer) ── */}
               <Route element={<PublicLayout />}>

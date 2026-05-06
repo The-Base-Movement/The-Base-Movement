@@ -38,6 +38,16 @@
     --brand-green: 156 100% 21%;
     --brand-gold: 45 80% 45%;
     --brand-red: 0 85% 44%;
+
+    /* Full HSL colors for direct CSS usage */
+    --brand-green-full: hsl(156 100% 21%);
+    --brand-gold-full: hsl(45 80% 45%);
+    --brand-red-full: hsl(0 85% 44%);
+
+    /* RGB components for transparency/shadows */
+    --brand-green-rgb: 0, 107, 63;
+    --brand-gold-rgb: 218, 165, 32;
+    --brand-red-rgb: 206, 17, 38;
   }
 }
 

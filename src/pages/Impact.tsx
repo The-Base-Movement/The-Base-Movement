@@ -287,15 +287,16 @@ export default function Impact() {
                         />
                       </div>
                     </div>
-                    <button 
+                    <Button 
+                      variant="primary"
                       onClick={() => {
                         setActiveFilter('custom');
                         setShowDatePicker(false);
                       }}
-                      className="w-full mt-4 py-2 bg-[var(--brand-green)] text-white text-[9px] font-semibold tracking-widest rounded-none hover:brightness-110 transition-all"
+                      className="w-full mt-4 text-[9px] h-10"
                     >
                       Apply Filter
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>

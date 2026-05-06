@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { GraduationCap, Building2, Factory, Construction, Landmark, Sprout, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
+import { useBranding } from '@/hooks/useBranding'
 
 const agendaPillars = [
   {
@@ -199,6 +200,7 @@ const agendaPillars = [
 ]
 
 export default function OurAgenda() {
+  const { settings } = useBranding()
   const [activeSection, setActiveSection] = useState('education')
   const [isLoggedIn] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -263,7 +265,7 @@ export default function OurAgenda() {
               </nav>
 
               <div className="mt-8 overflow-hidden rounded-sm relative group">
-                <img src="/branding/founder-image.jpg"
+                <img src={settings.founder_image_url || "/branding/founder-image.jpg"}
                   alt="Dr. George Oti Bonsu The Base Movement Founder"
                   className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
                  decoding="async" loading="lazy" />
