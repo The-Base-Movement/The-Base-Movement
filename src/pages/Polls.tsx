@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Vote, ArrowRight, Clock, Lock } from 'lucide-react'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
@@ -190,12 +190,13 @@ export default function Polls() {
 
                     <div className="flex items-center justify-between mt-4">
                       <p className="text-[11px] font-bold text-stone-400 mb-0 uppercase tracking-widest">{poll.totalVotes.toLocaleString()} responses</p>
-                      <button 
+                      <Button 
+                        variant="link"
                         onClick={() => toggleResults(poll.id)}
-                        className="text-xs font-bold text-[var(--brand-green)] flex items-center gap-1 group-hover:translate-x-1 transition-transform uppercase tracking-widest"
+                        className="text-brand-green p-0 h-auto"
                       >
-                        {showResults[poll.id] ? 'Hide Results' : 'Final Results'} <ArrowRight className="w-3 h-3" />
-                      </button>
+                        {showResults[poll.id] ? 'Hide Results' : 'Final Results'} <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </Button>
                     </div>
                   </div>
                 ))}

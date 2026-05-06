@@ -19,7 +19,7 @@ import {
   CardTitle, 
   CardDescription 
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { ChapterApplication } from '@/services/adminService'
 import { useToast } from '@/hooks/use-toast'
@@ -117,7 +117,7 @@ export default function LeadershipHub() {
         <Button 
           onClick={handleGenerateReport}
           disabled={isGenerating}
-          className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-lg shadow-on-surface/20"
+          className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-lg shadow-on-surface/20"
         >
           {isGenerating ? (
             <Clock className="w-3.5 h-3.5 animate-spin" />
@@ -141,7 +141,7 @@ export default function LeadershipHub() {
           />
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-10 px-4 text-[10px] font-bold border-border/60 normal-case rounded-lg">
+          <Button variant="default" className="h-10 px-4 text-[10px] font-bold border-border/60 normal-case rounded-lg">
             <Filter className="w-3.5 h-3.5 mr-2" /> Filter status
           </Button>
         </div>
@@ -149,14 +149,14 @@ export default function LeadershipHub() {
 
       {/* Stats Summary */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-        <Card className="rounded-xl border-border/60 shadow-sm relative overflow-hidden">
+        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />
           <CardContent className="p-6">
             <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Growth rate</p>
             <h3 className="text-3xl font-black font-meta text-on-surface mt-1">+12%</h3>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm relative overflow-hidden">
+        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
           <CardContent className="p-6">
             <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Pending requests</p>
@@ -165,7 +165,7 @@ export default function LeadershipHub() {
             </h3>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm relative overflow-hidden col-span-2 md:col-span-1">
+        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden col-span-2 md:col-span-1">
           <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
           <CardContent className="p-6">
             <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">New leaders appointed</p>
@@ -286,7 +286,7 @@ export default function LeadershipHub() {
       {filteredApps.some(a => a.status === 'Pending') && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {filteredApps.filter(a => a.status === 'Pending').slice(0, 2).map(app => (
-            <Card key={`detail-${app.id}`} className="rounded-xl border-border/60 shadow-sm bg-muted/30 overflow-hidden">
+            <Card key={`detail-${app.id}`} className="rounded-sm border-border/60 shadow-sm bg-muted/30 overflow-hidden">
               <CardHeader className="p-8 pb-4">
                 <CardTitle className="text-[10px] font-bold normal-case text-muted-foreground/40">Applicant vision statement</CardTitle>
               </CardHeader>

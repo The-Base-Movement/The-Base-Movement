@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
 import { Helmet } from 'react-helmet-async'
 
 const categoryColors: Record<string, string> = {
-  Movement: 'bg-[var(--brand-green)]/10 text-[var(--brand-green)]',
+  Movement: 'bg-brand-green/10 text-brand-green',
   Youth: 'bg-blue-50 text-blue-700',
   Diaspora: 'bg-purple-50 text-purple-700',
   Integrity: 'bg-amber-50 text-amber-700',
@@ -79,8 +79,8 @@ export default function Blog() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
                 activeCategory === cat
-                  ? 'bg-[var(--brand-green)] text-white shadow-md'
-                  : 'bg-white border border-slate-200 text-slate-500 hover:border-[var(--brand-green)] hover:text-[var(--brand-green)]'
+                  ? 'bg-brand-green text-white shadow-md'
+                  : 'bg-white border border-slate-200 text-slate-500 hover:border-brand-green hover:text-brand-green'
               }`}
             >
               {cat}
@@ -90,7 +90,7 @@ export default function Blog() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <Loader2 className="w-8 h-8 text-[var(--brand-green)] animate-spin" />
+            <Loader2 className="w-8 h-8 text-brand-green animate-spin" />
             <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Loading Insights...</p>
           </div>
         ) : posts.length === 0 ? (
@@ -129,7 +129,7 @@ export default function Blog() {
                       </span>
                     </div>
                     <Link to={`${baseUrl}/${featured.slug}`}>
-                      <h2 className="text-xl md:text-2xl font-bold text-charcoal-dark tracking-tight leading-tight mb-4 hover:text-[var(--brand-green)] transition-colors">
+                      <h2 className="text-xl md:text-2xl font-bold text-charcoal-dark tracking-tight leading-tight mb-4 hover:text-brand-green transition-colors">
                         {featured.title}
                       </h2>
                     </Link>
@@ -138,13 +138,12 @@ export default function Blog() {
                       <div className="text-[10px] font-medium text-stone-400 tracking-widest">
                         {featured.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : featured.authorName} <span className="mx-2 opacity-50">|</span> {featured.readTime}
                       </div>
-                      <Link
-                        to={`${baseUrl}/${featured.slug}`}
-                        className="flex items-center gap-2 text-[10px] font-bold text-[var(--brand-green)] tracking-widest hover:underline normal-case"
-                      >
-                        Read article
-                        <ArrowRight className="w-4 h-4" />
-                      </Link>
+                      <Button asChild variant="link" className="p-0 h-auto text-brand-green tracking-widest font-bold normal-case hover:no-underline">
+                        <Link to={`${baseUrl}/${featured.slug}`} className="flex items-center gap-2">
+                          Read article
+                          <ArrowRight className="w-4 h-4" />
+                        </Link>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -178,10 +177,10 @@ export default function Blog() {
                           <button
                             key={cat}
                             onClick={() => setActiveCategory(cat)}
-                            className="w-full flex items-center justify-between p-3 text-xs font-bold tracking-widest text-slate-600 hover:bg-slate-50 hover:text-[var(--brand-green)] transition-all group"
+                            className="w-full flex items-center justify-between p-3 text-xs font-bold tracking-widest text-slate-600 hover:bg-slate-50 hover:text-brand-green transition-all group"
                           >
                             {cat}
-                            <span className="text-[10px] text-slate-300 font-meta group-hover:text-[var(--brand-green)] transition-colors">
+                            <span className="text-[10px] text-slate-300 font-meta group-hover:text-brand-green transition-colors">
                               {posts.filter(p => p.category === cat).length} Posts
                             </span>
                           </button>
@@ -198,9 +197,9 @@ export default function Blog() {
                         <input
                           type="email"
                           placeholder="Email Address"
-                          className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-[var(--brand-green)] transition-colors"
+                          className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors"
                         />
-                        <Button className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white text-[10px] font-bold tracking-widest h-12">
+                        <Button className="w-full bg-brand-green hover:bg-brand-green/90 text-white text-[10px] font-bold tracking-widest h-12">
                           Subscribe
                         </Button>
                       </div>
@@ -213,19 +212,18 @@ export default function Blog() {
         )}
 
         {/* CTA */}
-        <section className="mt-20 py-16 px-12 bg-charcoal-dark text-white text-center border-l-4 border-[var(--brand-green)]">
+        <section className="mt-20 py-16 px-12 bg-charcoal-dark text-white text-center border-l-4 border-brand-green">
           <p className="font-meta text-warm-gold uppercase tracking-[0.2em] text-[10px] mb-3">Join the conversation</p>
           <h2 className="font-meta font-black text-3xl tracking-tight mb-4">Become a member. Shape the narrative.</h2>
           <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">
             Registered members get early access to analysis, policy briefs and updates directly from our research desk.
           </p>
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 bg-[var(--brand-green)] text-white font-meta font-bold tracking-widest px-8 py-4 hover:opacity-90 transition-all active:scale-95"
-          >
-            Join The Base
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <Button asChild variant="gold" size="lg" className="h-14 px-10">
+            <Link to="/register">
+              Join The Base
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
+          </Button>
         </section>
       </div>
     </div>

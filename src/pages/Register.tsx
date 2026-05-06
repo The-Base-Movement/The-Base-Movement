@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { ArrowRight, ArrowLeft, FileText, Upload, User, Eye, EyeOff, CheckCircle2, Loader2, Zap } from 'lucide-react'
+import { Button } from '@/components/ui/neon-button'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import MembershipCard from '../components/MembershipCard'
@@ -387,42 +388,44 @@ export default function Register() {
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest font-meta">Membership Registration</h2>
           </div>
 
-          <div className="space-y-6">
-            <button
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Button
+              variant="default"
               onClick={() => {
                 handlePlatformChange('GHANA')
                 setStep('form')
                 setFormStep(1)
               }}
-              className="w-full group bg-white border border-border/60 p-6 flex items-center gap-6 hover:border-primary transition-colors text-left shadow-sm"
+              className="w-full h-auto p-6 flex items-center gap-6 group text-left shadow-sm"
             >
-              <div className="w-16 h-16 bg-background flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
-                <FileText className="w-8 h-8 text-primary" />
+              <div className="w-16 h-16 bg-brand-green/5 flex items-center justify-center shrink-0 group-hover:bg-brand-green/10 transition-colors">
+                <FileText className="w-8 h-8 text-brand-green" />
               </div>
               <div className="flex-1">
                 <h3 className="font-bold text-on-surface font-meta tracking-tight text-base mb-1">Local Membership (Ghana)</h3>
-                <p className="text-sm text-muted-foreground">For residents living and voting within the 16 regions of Ghana.</p>
+                <p className="text-sm text-muted-foreground normal-case">For residents living and voting within the 16 regions of Ghana.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-on-surface/20 group-hover:text-primary transition-colors" />
-            </button>
+              <ArrowRight className="w-6 h-6 text-on-surface/20 group-hover:text-brand-green transition-colors" />
+            </Button>
 
-            <button
+            <Button
+              variant="default"
               onClick={() => {
                 handlePlatformChange('DIASPORA')
                 setStep('form')
                 setFormStep(1)
               }}
-              className="w-full group bg-white border border-border/60 p-6 flex items-center gap-6 hover:border-accent transition-colors text-left shadow-sm"
+              className="w-full h-auto p-6 flex items-center gap-6 group text-left shadow-sm"
             >
-              <div className="w-16 h-16 bg-background flex items-center justify-center shrink-0 group-hover:bg-accent/10 transition-colors">
-                <User className="w-8 h-8 text-accent" />
+              <div className="w-16 h-16 bg-brand-gold/5 flex items-center justify-center shrink-0 group-hover:bg-brand-gold/10 transition-colors">
+                <User className="w-8 h-8 text-brand-gold" />
               </div>
               <div className="flex-1">
                 <h3 className="font-bold text-on-surface font-meta tracking-tight text-base mb-1">Diaspora Membership</h3>
-                <p className="text-sm text-muted-foreground">For Ghanaians living abroad who wish to support the movement.</p>
+                <p className="text-sm text-muted-foreground normal-case">For Ghanaians living abroad who wish to support the movement.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-on-surface/20 group-hover:text-accent transition-colors" />
-            </button>
+              <ArrowRight className="w-6 h-6 text-on-surface/20 group-hover:text-brand-gold transition-colors" />
+            </Button>
           </div>
 
           <div className="text-center mt-12 pt-8 border-t border-border/60">
@@ -497,7 +500,7 @@ export default function Register() {
 
                   {/* AI Verification Scanner - Local Membership Only */}
                   {platform === 'GHANA' && (
-                    <div className="relative overflow-hidden mb-10 bg-on-surface rounded-2xl p-8 border border-white/5 shadow-2xl">
+                    <div className="relative overflow-hidden mb-10 bg-on-surface rounded-sm p-8 border border-white/5 shadow-2xl">
                       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 -mr-32 -mt-32 blur-3xl"></div>
                       <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
                         <div>
@@ -518,16 +521,18 @@ export default function Register() {
                             disabled={isScanningId}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                           />
-                          <button 
+                          <Button 
                             type="button"
-                            className="relative z-10 w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-meta font-bold uppercase tracking-widest text-[10px] h-12 px-6 shadow-lg shadow-primary/20"
+                            variant="solid"
+                            disabled={isScanningId}
+                            className="relative z-10 w-full sm:w-auto shadow-lg shadow-primary/20"
                           >
                             {isScanningId ? (
                               <span className="flex items-center"><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Scanning...</span>
                             ) : (
                               <span className="flex items-center"><Eye className="w-4 h-4 mr-2" /> Scan National ID</span>
                             )}
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -616,13 +621,14 @@ export default function Register() {
                         onChange={(e) => handleChange('password', e.target.value)} 
                         className="w-full form-understate p-4 pr-12 text-on-surface text-sm" 
                       />
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/80 hover:text-primary"
                       >
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
+                      </Button>
                     </div>
                     <p className="text-[10px] text-muted-foreground/80 font-meta leading-relaxed">
                       Avoid weak passwords like <span className="text-on-surface font-bold">"password123"</span> or <span className="text-on-surface font-bold">"ghana2024"</span>. Use a mix of letters, numbers, and symbols.
@@ -726,17 +732,25 @@ export default function Register() {
 
               <div className="pt-10 mt-12 border-t border-border/60 flex justify-between gap-4">
                 {formStep > 1 && (
-                  <button type="button" onClick={goBack} className="w-1/3 bg-muted/50 py-4 font-meta font-bold uppercase tracking-widest text-[10px]">Back</button>
+                  <Button type="button" variant="default" onClick={goBack} className="w-1/3 py-6">Back</Button>
                 )}
-                <button type="submit" disabled={(formStep === 4 && !agreed) || isLoading} className="flex-1 bg-primary text-white py-4 font-meta font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2">
+                <Button 
+                  type="submit" 
+                  variant="solid"
+                  disabled={(formStep === 4 && !agreed) || isLoading} 
+                  className="flex-1 py-6"
+                >
                   {isLoading ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Processing...
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...
                     </>
                   ) : (
-                    formStep < 4 ? 'Next Step' : 'Submit Registration'
+                    <>
+                      {formStep < 4 ? 'Next Step' : 'Submit Registration'}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </>
                   )}
-                </button>
+                </Button>
               </div>
               </form>
             </div>

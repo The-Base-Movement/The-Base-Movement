@@ -11,7 +11,7 @@ import {
   Zap
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { RapidResponseDirective, CrisisIncident, MediaCounterNarrative } from '@/types/admin'
 import { cn } from '@/lib/utils'
@@ -81,7 +81,7 @@ export default function WarRoomCommand() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="rounded-xl border-border/40 shadow-sm bg-background">
+        <Card className="rounded-sm border-border/40 shadow-sm bg-background">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-1">Operational readiness</p>
@@ -96,7 +96,7 @@ export default function WarRoomCommand() {
         
         {/* 🚨 Active Crisis Incidents */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="rounded-xl border-border/40 shadow-sm bg-white overflow-hidden">
+          <Card className="rounded-sm border-border/40 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/10">
               <div className="flex items-center justify-between">
                 <div>
@@ -137,7 +137,7 @@ export default function WarRoomCommand() {
                         )}>
                           {incident.status.toLowerCase()}
                         </span>
-                        <Button variant="outline" className="h-8 rounded-lg text-[9px] font-bold normal-case border-border/60">
+                        <Button variant="default" className="h-8 rounded-lg text-[9px] font-bold normal-case border-border/60">
                           Update status
                         </Button>
                       </div>
@@ -149,7 +149,7 @@ export default function WarRoomCommand() {
           </Card>
 
           {/* 📱 Media Counter-Narratives */}
-          <Card className="rounded-xl border-on-surface shadow-sm bg-on-surface text-white overflow-hidden relative">
+          <Card className="rounded-sm border-on-surface shadow-sm bg-on-surface text-white overflow-hidden relative">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
             <CardHeader className="p-6 border-b border-white/10 relative z-10">
               <div className="flex items-center justify-between">
@@ -196,7 +196,7 @@ export default function WarRoomCommand() {
 
         {/* ⚡ Rapid Response Directives (Sidebar) */}
         <div className="lg:col-span-1">
-          <Card className="rounded-xl border-border/40 shadow-sm bg-white overflow-hidden h-full">
+          <Card className="rounded-sm border-border/40 shadow-sm bg-white overflow-hidden h-full">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/10">
               <div className="flex items-center justify-between">
                 <div>

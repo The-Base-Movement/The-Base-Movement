@@ -21,7 +21,7 @@ import { authService } from '@/services/authService'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { 
@@ -419,7 +419,7 @@ export default function AdminSettings() {
         {/* Settings Content Area */}
         <div className="flex-1 min-w-0">
           {activeTab === 'profile' && (
-            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+            <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
               <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
                 <CardTitle className="text-sm font-bold text-stone-900">Profile</CardTitle>
                 <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Manage your public and internal administrative identity.</CardDescription>
@@ -515,7 +515,7 @@ export default function AdminSettings() {
           )}
 
           {activeTab === 'roles' && (
-            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+            <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
               <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
                 <CardTitle className="text-sm font-bold text-stone-900">Administrative Roles</CardTitle>
                 <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Summary of active permission tiers across the movement infrastructure.</CardDescription>
@@ -552,7 +552,7 @@ export default function AdminSettings() {
           )}
 
           {activeTab === 'system' && (
-            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+            <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
               <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
                 <CardTitle className="text-sm font-bold text-stone-900">Preferences</CardTitle>
                 <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Configure your personal interface and notification behavior.</CardDescription>
@@ -572,7 +572,7 @@ export default function AdminSettings() {
                           window.dispatchEvent(new Event('admin_density_changed'))
                         }}
                         className={cn(
-                          "p-4 rounded-xl border text-[10px] font-bold transition-all text-center",
+                          "p-4 rounded-sm border text-[10px] font-bold transition-all text-center",
                           mode === interfaceDensity 
                             ? "border-stone-900 bg-stone-900 text-white shadow-md" 
                             : "border-stone-200 text-stone-400 hover:border-stone-300 bg-white"
@@ -595,7 +595,7 @@ export default function AdminSettings() {
                       { id: 'sec', label: 'Security Login Alerts', desc: 'Notify on new device recognition' },
                       { id: 'audit', label: 'Critical Audit Events', desc: 'Alert on system modification' }
                     ].map((item) => (
-                      <div key={item.id} className="flex items-center justify-between p-4 rounded-xl border border-stone-100 bg-stone-50/50">
+                      <div key={item.id} className="flex items-center justify-between p-4 rounded-sm border border-stone-100 bg-stone-50/50">
                         <div>
                           <p className="text-xs font-bold text-stone-900">{item.label}</p>
                           <p className="text-[10px] text-stone-400 font-medium">{item.desc}</p>
@@ -614,7 +614,7 @@ export default function AdminSettings() {
           {activeTab === 'security' && (
             <div className="space-y-8">
               {/* Password Card */}
-              <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+              <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
                 <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
                   <CardTitle className="text-sm font-bold text-stone-900">Security Credentials</CardTitle>
                   <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Rotate your password regularly to maintain account integrity.</CardDescription>
@@ -656,11 +656,11 @@ export default function AdminSettings() {
               </Card>
 
               {/* MFA Card */}
-              <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+              <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
                 <CardContent className="p-8">
                    <div className="flex items-start gap-6">
                      <div className={cn(
-                       "w-12 h-12 rounded-xl flex items-center justify-center border transition-all",
+                       "w-12 h-12 rounded-sm flex items-center justify-center border transition-all",
                        mfaFactors.length > 0 ? "bg-emerald-50 border-emerald-100" : "bg-stone-50 border-stone-100"
                      )}>
                        <Smartphone className={cn(
@@ -687,7 +687,7 @@ export default function AdminSettings() {
                         <div className="flex gap-3 mt-4">
                           {mfaFactors.length > 0 ? (
                             <Button 
-                              variant="outline" 
+                              variant="default" 
                               onClick={() => handleUnenrollMfa(mfaFactors[0].id)}
                               className="h-8 px-4 text-[10px] font-bold border-red-100 text-red-600 hover:bg-red-50 rounded-lg transition-all"
                             >
@@ -695,7 +695,7 @@ export default function AdminSettings() {
                             </Button>
                           ) : (
                             <Button 
-                              variant="outline" 
+                              variant="default" 
                               onClick={handleStartMfaEnroll}
                               className="h-8 px-4 text-[10px] font-bold border-stone-200 rounded-lg transition-all"
                             >
@@ -721,7 +721,7 @@ export default function AdminSettings() {
                   <div className="py-6 space-y-6">
                     {mfaStep === 'qr' && mfaEnrollData && (
                       <div className="space-y-6 flex flex-col items-center">
-                        <div className="p-4 bg-stone-50 rounded-2xl border border-stone-100">
+                        <div className="p-4 bg-stone-50 rounded-sm border border-stone-100">
                           <img src={mfaEnrollData?.qr} 
                             alt="MFA QR Code"
                             className="w-48 h-48"
@@ -736,7 +736,7 @@ export default function AdminSettings() {
                         </div>
                         <Button 
                           onClick={() => setMfaStep('verify')}
-                          className="w-full bg-stone-900 text-white font-bold text-xs h-10 rounded-xl"
+                          className="w-full bg-stone-900 text-white font-bold text-xs h-10 rounded-sm"
                         >
                           I've scanned it, proceed
                         </Button>
@@ -751,7 +751,7 @@ export default function AdminSettings() {
                             value={mfaCode}
                             onChange={(e) => setMfaCode(e.target.value)}
                             placeholder="000 000"
-                            className="h-12 text-center text-lg font-bold tracking-[0.5em] border-stone-200 rounded-xl"
+                            className="h-12 text-center text-lg font-bold tracking-[0.5em] border-stone-200 rounded-sm"
                             maxLength={6}
                           />
                           <p className="text-[10px] text-stone-400 font-medium text-center">
@@ -761,7 +761,7 @@ export default function AdminSettings() {
                         <Button 
                           onClick={handleVerifyMfa}
                           disabled={isSaving || mfaCode.length < 6}
-                          className="w-full bg-[var(--brand-green)] text-white font-bold text-xs h-10 rounded-xl"
+                          className="w-full bg-[var(--brand-green)] text-white font-bold text-xs h-10 rounded-sm"
                         >
                           {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify and Enable MFA"}
                         </Button>
@@ -781,14 +781,14 @@ export default function AdminSettings() {
           )}
 
           {activeTab === 'audit' && (
-            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+            <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
               <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20 flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-sm font-bold text-stone-900">Audit Log</CardTitle>
                   <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Full traceability of administrative decisions and system modifications.</CardDescription>
                 </div>
                 <Button 
-                  variant="outline" 
+                  variant="default" 
                   className="h-8 px-3 text-[10px] font-bold border-stone-200 hover:bg-stone-50 rounded-lg"
                   onClick={handleExportLogs}
                 >

@@ -16,7 +16,7 @@ import {
   CardTitle,
   CardDescription 
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { cn } from '@/lib/utils'
 import { 
   XAxis, 
@@ -64,7 +64,7 @@ export function SystemHealthDashboard() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Real-time Latency Monitor */}
-      <Card className="rounded-3xl border-border/40 shadow-sm overflow-hidden bg-white">
+      <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
         <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
@@ -135,10 +135,10 @@ export function SystemHealthDashboard() {
       {/* Infrastructure Nodes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {services.map((service) => (
-          <Card key={service.name} className="rounded-2xl border-border/40 shadow-sm group hover:border-on-surface transition-all overflow-hidden">
+          <Card key={service.name} className="rounded-sm border-border/40 shadow-sm group hover:border-on-surface transition-all overflow-hidden">
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <div className={cn("w-10 h-10 flex items-center justify-center bg-muted/10 rounded-xl", service.color)}>
+                <div className={cn("w-10 h-10 flex items-center justify-center bg-muted/10 rounded-sm", service.color)}>
                   <service.icon className="w-5 h-5" />
                 </div>
                 <div className="text-right">
@@ -163,7 +163,7 @@ export function SystemHealthDashboard() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* Hardware & Compute Telemetry */}
-        <Card className="rounded-3xl border-border/40 shadow-sm overflow-hidden bg-white">
+        <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
           <CardHeader className="p-8 border-b border-border/10">
             <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 flex items-center gap-2">
               <Cpu className="w-4 h-4" /> Compute Resource Utilization
@@ -193,7 +193,7 @@ export function SystemHealthDashboard() {
         </Card>
 
         {/* Global Traffic Distribution */}
-        <Card className="rounded-3xl border-border/40 shadow-sm overflow-hidden bg-white">
+        <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
           <CardHeader className="p-8 border-b border-border/10">
             <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 flex items-center gap-2">
               <BarChart3 className="w-4 h-4" /> Global Throughput Analysis
@@ -230,11 +230,11 @@ export function SystemHealthDashboard() {
       </div>
 
       {/* Infrastructure Incidents */}
-      <Card className="rounded-3xl border-border/40 shadow-sm bg-on-surface text-white overflow-hidden relative">
+      <Card className="rounded-sm border-border/40 shadow-sm bg-on-surface text-white overflow-hidden relative">
         <div className="absolute top-0 right-0 w-64 h-64 bg-destructive opacity-10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
         <CardContent className="p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
           <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-white/5 border border-white/10 flex items-center justify-center rounded-2xl rotate-3">
+            <div className="w-16 h-16 bg-white/5 border border-white/10 flex items-center justify-center rounded-sm rotate-3">
               <ShieldCheck className="w-8 h-8 text-primary" />
             </div>
             <div>
@@ -242,7 +242,7 @@ export function SystemHealthDashboard() {
               <p className="text-white/40 text-xs mt-1">No infrastructure incidents detected in the last 72 hours. All systems optimal.</p>
             </div>
           </div>
-          <Button variant="outline" className="h-12 border-white/20 text-white hover:bg-white hover:text-on-surface transition-all rounded-xl text-[10px] font-black uppercase tracking-widest px-8">
+          <Button variant="default" className="h-12 border-white/20 text-white hover:bg-white hover:text-on-surface transition-all rounded-sm text-[10px] font-black uppercase tracking-widest px-8">
             Access Security Logs
           </Button>
         </CardContent>

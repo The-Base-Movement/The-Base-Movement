@@ -12,7 +12,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { FieldAction, RallyAttendance } from '@/types/admin'
 import { cn } from '@/lib/utils'
@@ -101,10 +101,10 @@ export default function RallyCommand() {
           <p className="text-muted-foreground/80 text-sm mt-1">Real-time attendance telemetry and geo-fenced verification for field actions.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="rounded-xl border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2">
+          <Button variant="default" className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2">
             <Filter className="w-3.5 h-3.5" /> Global manifest
           </Button>
-          <Button className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2">
+          <Button className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2">
             <Plus className="w-3.5 h-3.5" /> Schedule action
           </Button>
         </div>
@@ -113,7 +113,7 @@ export default function RallyCommand() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* 🗺️ Action List & Activation States */}
         <div className="lg:col-span-1 space-y-6">
-          <Card className="rounded-xl border-border/40 shadow-sm bg-white overflow-hidden">
+          <Card className="rounded-sm border-border/40 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/10">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-xs font-bold normal-case font-meta">Field actions</CardTitle>
@@ -160,7 +160,7 @@ export default function RallyCommand() {
             <>
               {/* Live Telemetry Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="rounded-xl border-border/40 shadow-sm bg-white p-6">
+                <Card className="rounded-sm border-border/40 shadow-sm bg-white p-6">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[10px] font-bold normal-case text-muted-foreground/80">Verified strength</span>
                     <Users className="w-4 h-4 text-muted-foreground/80" />
@@ -168,7 +168,7 @@ export default function RallyCommand() {
                   <p className="text-3xl font-black tracking-tighter text-on-surface">{attendance.filter(a => a.is_verified).length}</p>
                   <p className="text-[9px] font-bold text-muted-foreground/80 normal-case mt-1">Confirmed field personnel</p>
                 </Card>
-                <Card className="rounded-xl border-border/40 shadow-sm bg-white p-6">
+                <Card className="rounded-sm border-border/40 shadow-sm bg-white p-6">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[10px] font-bold normal-case text-muted-foreground/80">Check-in velocity</span>
                     <Clock className="w-4 h-4 text-muted-foreground/80" />
@@ -176,7 +176,7 @@ export default function RallyCommand() {
                   <p className="text-3xl font-black tracking-tighter text-on-surface">{attendance.length}</p>
                   <p className="text-[9px] font-bold text-muted-foreground/80 normal-case mt-1">Total signals received</p>
                 </Card>
-                <Card className="rounded-xl border-border/40 shadow-sm bg-white p-6">
+                <Card className="rounded-sm border-border/40 shadow-sm bg-white p-6">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[10px] font-bold normal-case text-muted-foreground/80">Target achievement</span>
                     <Navigation className="w-4 h-4 text-muted-foreground/80" />
@@ -189,7 +189,7 @@ export default function RallyCommand() {
               </div>
 
               {/* Attendance Manifest Table */}
-               <Card className="rounded-xl border-border/40 shadow-sm bg-white overflow-hidden">
+               <Card className="rounded-sm border-border/40 shadow-sm bg-white overflow-hidden">
                 <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-xs font-bold normal-case font-meta">Attendance manifest</CardTitle>
@@ -270,7 +270,7 @@ export default function RallyCommand() {
               </Card>
 
               {/* Location Verification Map Placeholder */}
-              <Card className="rounded-xl border-border/40 shadow-sm bg-background overflow-hidden">
+              <Card className="rounded-sm border-border/40 shadow-sm bg-background overflow-hidden">
                 <div className="bg-on-surface px-6 py-4 flex items-center justify-between border-b border-white/5">
                   <div className="flex items-center gap-3">
                     <MapPin className="w-4 h-4 text-destructive" />
@@ -294,7 +294,7 @@ export default function RallyCommand() {
               </Card>
             </>
           ) : (
-            <div className="h-[600px] flex items-center justify-center border-2 border-dashed border-border/40 rounded-xl bg-muted/5">
+            <div className="h-[600px] flex items-center justify-center border-2 border-dashed border-border/40 rounded-sm bg-muted/5">
               <div className="text-center">
                 <AlertCircle className="w-12 h-12 text-muted-foreground/20 mx-auto mb-4" />
                 <p className="text-[10px] font-bold normal-case text-muted-foreground/80">Select a field action to view tactical telemetry</p>

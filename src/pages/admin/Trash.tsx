@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { 
   Trash2, 
   RotateCcw, 
@@ -137,7 +137,7 @@ export default function TrashPage() {
         <select
           value={activeTab}
           onChange={(e) => setActiveTab(e.target.value as TrashTab)}
-          className="w-full h-12 bg-white border border-border/40 rounded-xl px-4 text-sm font-bold focus:border-on-surface outline-none shadow-sm"
+          className="w-full h-12 bg-white border border-border/40 rounded-sm px-4 text-sm font-bold focus:border-on-surface outline-none shadow-sm"
         >
           <option value="blogs">Blog Posts ({blogs.length})</option>
           <option value="products">Inventory Items ({products.length})</option>
@@ -147,11 +147,11 @@ export default function TrashPage() {
       </div>
 
       {/* Tabs (Desktop Only) */}
-      <div className="hidden lg:flex items-center gap-2 mb-8 bg-muted/10 p-1.5 rounded-2xl w-fit border border-border/40">
+      <div className="hidden lg:flex items-center gap-2 mb-8 bg-muted/10 p-1.5 rounded-sm w-fit border border-border/40">
         <button
           onClick={() => setActiveTab('blogs')}
           className={cn(
-            "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
+            "flex items-center gap-2 px-6 py-2.5 rounded-sm text-xs font-bold transition-all",
             activeTab === 'blogs' 
               ? "bg-white text-on-surface shadow-sm border border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -163,7 +163,7 @@ export default function TrashPage() {
         <button
           onClick={() => setActiveTab('products')}
           className={cn(
-            "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
+            "flex items-center gap-2 px-6 py-2.5 rounded-sm text-xs font-bold transition-all",
             activeTab === 'products' 
               ? "bg-white text-on-surface shadow-sm border border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -175,7 +175,7 @@ export default function TrashPage() {
         <button
           onClick={() => setActiveTab('media')}
           className={cn(
-            "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
+            "flex items-center gap-2 px-6 py-2.5 rounded-sm text-xs font-bold transition-all",
             activeTab === 'media' 
               ? "bg-white text-on-surface shadow-sm border border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -187,7 +187,7 @@ export default function TrashPage() {
         <button
           onClick={() => setActiveTab('authors')}
           className={cn(
-            "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
+            "flex items-center gap-2 px-6 py-2.5 rounded-sm text-xs font-bold transition-all",
             activeTab === 'authors' 
               ? "bg-white text-on-surface shadow-sm border border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -199,8 +199,8 @@ export default function TrashPage() {
       </div>
 
       {/* Retention Notice */}
-      <div className="mb-8 p-4 bg-accent/5 border border-accent/20 rounded-2xl flex items-start gap-4">
-        <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+      <div className="mb-8 p-4 bg-accent/5 border border-accent/20 rounded-sm flex items-start gap-4">
+        <div className="w-10 h-10 rounded-sm bg-accent/10 flex items-center justify-center shrink-0">
           <Clock className="w-5 h-5 text-accent" />
         </div>
         <div>
@@ -222,8 +222,8 @@ export default function TrashPage() {
             (activeTab === 'products' && products.length === 0) || 
             (activeTab === 'media' && media.length === 0) ||
             (activeTab === 'authors' && authors.length === 0) ? (
-          <div className="bg-white border border-border/40 rounded-3xl p-12 text-center">
-            <div className="w-20 h-20 rounded-3xl bg-muted/10 flex items-center justify-center mx-auto mb-4">
+          <div className="bg-white border border-border/40 rounded-sm p-12 text-center">
+            <div className="w-20 h-20 rounded-sm bg-muted/10 flex items-center justify-center mx-auto mb-4">
               <Trash className="w-10 h-10 text-muted-foreground/20" />
             </div>
             <h3 className="text-xl font-bold text-on-surface">Trash is empty</h3>
@@ -319,7 +319,7 @@ function TrashItemCard({
   image?: string;
 }) {
   return (
-    <Card className="rounded-2xl border-border/40 shadow-sm overflow-hidden bg-white hover:shadow-md transition-all group">
+    <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white hover:shadow-md transition-all group">
       <CardContent className="p-0">
         <div className="flex h-32">
           {/* Visual Preview */}
@@ -350,7 +350,7 @@ function TrashItemCard({
             <div className="flex items-center gap-2 mt-4">
               <Button 
                 onClick={onRestore}
-                variant="outline" 
+                variant="default" 
                 size="sm" 
                 className="flex-1 h-8 rounded-lg text-[10px] font-bold border-border/60 hover:bg-muted/10 gap-1.5 normal-case"
               >
@@ -359,7 +359,7 @@ function TrashItemCard({
               </Button>
               <Button 
                 onClick={onDelete}
-                variant="outline" 
+                variant="default" 
                 size="sm" 
                 className="h-8 w-8 p-0 rounded-lg border-border/60 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
               >

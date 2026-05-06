@@ -12,7 +12,7 @@ import {
   Trash2,
   Calendar
 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { 
   Card, 
@@ -129,7 +129,7 @@ export default function PollsManagement() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
+            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
             onClick={() => setShowCreateModal(true)}
           >
             <Plus className="w-3.5 h-3.5 mr-2" /> Create poll
@@ -139,7 +139,7 @@ export default function PollsManagement() {
 
       {/* Engagement Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
               <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Total engagements</p>
@@ -150,7 +150,7 @@ export default function PollsManagement() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
             <p className="text-[10px] font-bold tracking-tight text-muted-foreground/80 mb-2">National sentiment</p>
             <div className="flex items-end gap-3">
@@ -160,7 +160,7 @@ export default function PollsManagement() {
             <p className="text-[10px] text-muted-foreground/80 font-bold tracking-tight mt-2">Live engagement analysis</p>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
               <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Avg response time</p>
@@ -169,7 +169,7 @@ export default function PollsManagement() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
               <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Feedback rate</p>
@@ -181,7 +181,7 @@ export default function PollsManagement() {
       </div>
 
       {/* Main Content: Polls Management */}
-      <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+      <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
         <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-destructive" />
@@ -338,7 +338,7 @@ export default function PollsManagement() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-muted/10 rounded-xl border border-border/40 space-y-3">
+                  <div className="p-4 bg-muted/10 rounded-sm border border-border/40 space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Responses</span>
                       <span className="text-sm font-bold text-on-surface">{poll.totalVotes.toLocaleString()}</span>
@@ -367,16 +367,16 @@ export default function PollsManagement() {
 
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
-                      variant="outline" 
-                      className="flex-1 h-10 rounded-xl border-border/60 text-on-surface/80 text-[10px] font-bold"
+                      variant="default" 
+                      className="flex-1 h-10 rounded-sm border-border/60 text-on-surface/80 text-[10px] font-bold"
                       onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                     >
                       Manage Campaign
                     </Button>
                     <Button 
-                      variant="outline" 
+                      variant="default" 
                       size="icon" 
-                      className="h-10 w-10 rounded-xl border-border/60 text-muted-foreground/80 hover:text-destructive"
+                      className="h-10 w-10 rounded-sm border-border/60 text-muted-foreground/80 hover:text-destructive"
                       onClick={() => handleDeletePoll(poll.id, poll.question)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -391,14 +391,14 @@ export default function PollsManagement() {
 
       {/* Quick Tips Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="p-8 bg-on-surface text-white relative overflow-hidden rounded-xl shadow-xl border border-white/5">
+        <div className="p-8 bg-on-surface text-white relative overflow-hidden rounded-sm shadow-xl border border-white/5">
           <div className="relative z-10 space-y-4">
             <h4 className="text-lg font-bold tracking-tight">Maximize engagement</h4>
             <p className="text-sm text-muted-foreground/80 leading-relaxed max-w-sm">
               Use regional-specific polls to gather more precise data. Our research shows chapters with localized campaigns see 40% higher member participation.
             </p>
             <Button 
-              variant="outline" className="h-10 text-[10px] font-bold tracking-tight border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-lg"
+              variant="default" className="h-10 text-[10px] font-bold tracking-tight border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-lg"
               onClick={() => setIsAnalyticsModalOpen(true)}
             >
               View analytics guide
@@ -407,7 +407,7 @@ export default function PollsManagement() {
           <BarChart3 className="absolute -bottom-4 -right-4 w-32 h-32 text-white/5 rotate-12" />
         </div>
 
-        <div className="p-8 border border-border/60 bg-white space-y-4 rounded-xl shadow-sm">
+        <div className="p-8 border border-border/60 bg-white space-y-4 rounded-sm shadow-sm">
           <h4 className="text-lg font-bold tracking-tight text-on-surface">Recent feedback highlights</h4>
           <div className="space-y-4">
             <div className="flex items-start gap-4">
@@ -432,7 +432,7 @@ export default function PollsManagement() {
       {/* Create Poll Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-lg rounded-xl border-border/60 bg-white shadow-2xl animate-in zoom-in-95 duration-300">
+          <Card className="w-full max-w-lg rounded-sm border-border/60 bg-white shadow-2xl animate-in zoom-in-95 duration-300">
             <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
                 <Plus className="w-4 h-4 text-destructive" />
@@ -541,7 +541,7 @@ export default function PollsManagement() {
               <div className="p-6 pt-0 flex gap-3">
                 <Button 
                   type="button"
-                  variant="outline" 
+                  variant="default" 
                   className="flex-1 h-11 text-xs font-bold rounded-lg border-border/60"
                   onClick={() => setShowCreateModal(false)}
                 >
@@ -563,7 +563,7 @@ export default function PollsManagement() {
       {/* Feedback Vault Modal */}
       {isFeedbackModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-2xl rounded-xl border-border/60 bg-white shadow-2xl overflow-hidden">
+          <Card className="w-full max-w-2xl rounded-sm border-border/60 bg-white shadow-2xl overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
                 <MessageSquare className="w-4 h-4 text-destructive" />
@@ -584,7 +584,7 @@ export default function PollsManagement() {
                 { author: 'Greater Accra Lead', region: 'Greater Accra', text: 'Requesting more mobilization materials for the upcoming town hall sessions.' },
                 { author: 'Western Member', region: 'Western', text: 'The digital strategy polls are a great way to stay engaged with the leadership.' }
               ].map((fb, idx) => (
-                <div key={idx} className="p-4 bg-muted/10 border border-border/40 rounded-xl space-y-2">
+                <div key={idx} className="p-4 bg-muted/10 border border-border/40 rounded-sm space-y-2">
                   <p className="text-sm text-on-surface/80 italic leading-relaxed">"{fb.text}"</p>
                   <p className="text-[10px] font-bold text-muted-foreground/80">— {fb.author} from {fb.region} Region</p>
                 </div>
@@ -605,7 +605,7 @@ export default function PollsManagement() {
       {/* Analytics Guide Modal */}
       {isAnalyticsModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-lg rounded-xl border-border/60 bg-white shadow-2xl overflow-hidden">
+          <Card className="w-full max-w-lg rounded-sm border-border/60 bg-white shadow-2xl overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-destructive" />

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ShieldCheck, AlertTriangle, User, MapPin, Calendar, CheckCircle2, XCircle, Activity } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
 interface VerifiedMember {

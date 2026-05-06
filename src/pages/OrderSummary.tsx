@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Printer, Share2, ShoppingBag, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderItem } from '@/types/admin'
 
@@ -152,10 +152,10 @@ export default function OrderSummary() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="outline" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all duration-300">
+                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all duration-300">
                   <Printer className="w-4 h-4 mr-2" /> Print Invoice
                 </Button>
-                <Button variant="outline" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all duration-300">
+                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all duration-300">
                   <Share2 className="w-4 h-4 mr-2" /> Share Support
                 </Button>
               </div>

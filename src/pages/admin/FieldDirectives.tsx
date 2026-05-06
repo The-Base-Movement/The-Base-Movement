@@ -16,7 +16,7 @@ import {
   BarChart
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { FieldDirective, FieldReport } from '@/services/adminService'
 import { cn } from '@/lib/utils'
@@ -77,12 +77,12 @@ export default function FieldDirectives() {
           <p className="text-muted-foreground/80 text-sm mt-1">Deploying decentralized tactical objectives across the movement.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="rounded-xl border-border/60 text-on-surface/60 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all flex items-center gap-2">
+          <Button variant="default" className="rounded-sm border-border/60 text-on-surface/60 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all flex items-center gap-2">
             <BarChart className="w-3.5 h-3.5" /> Tactical analytics
           </Button>
           <Button 
             onClick={() => setIsCreating(true)}
-            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
           >
             <Plus className="w-3.5 h-3.5" /> Issue new directive
           </Button>
@@ -98,7 +98,7 @@ export default function FieldDirectives() {
           
           <div className="space-y-4">
             {directives.length > 0 ? directives.map((directive) => (
-              <Card key={directive.id} className="rounded-xl border-border/60 shadow-sm hover:border-on-surface transition-colors group">
+              <Card key={directive.id} className="rounded-sm border-border/60 shadow-sm hover:border-on-surface transition-colors group">
                 <CardHeader className="p-6 pb-2">
                   <div className="flex justify-between items-start mb-2">
                     <span className={cn(
@@ -130,7 +130,7 @@ export default function FieldDirectives() {
                 </CardContent>
               </Card>
             )) : (
-              <div className="border-2 border-dashed border-border/40 p-12 text-center text-muted-foreground/20 rounded-xl">
+              <div className="border-2 border-dashed border-border/40 p-12 text-center text-muted-foreground/20 rounded-sm">
                 <Target className="w-12 h-12 mx-auto mb-4 opacity-10" />
                 <p className="text-[10px] font-bold normal-case">No active directives.</p>
               </div>
@@ -151,7 +151,7 @@ export default function FieldDirectives() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {reports.length > 0 ? reports.map((report) => (
-              <Card key={report.id} className="rounded-xl border-border/60 shadow-sm overflow-hidden flex flex-col">
+              <Card key={report.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden flex flex-col">
                 <div className="aspect-video bg-muted/10 relative group overflow-hidden">
                   {report.media_url ? (
                     <img src={report.media_url} alt="Field verification" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"  decoding="async" loading="lazy" />
@@ -196,14 +196,14 @@ export default function FieldDirectives() {
                   {report.status === 'Pending' && (
                     <div className="pt-4 mt-auto grid grid-cols-2 gap-3">
                       <Button 
-                        variant="outline" 
+                        variant="default" 
                         onClick={() => handleVerify(report.id, 'Rejected')}
                         className="h-9 border-border/60 text-destructive hover:bg-destructive/5 rounded-lg text-[9px] font-bold normal-case shadow-sm"
                       >
                         <XCircle className="w-3.5 h-3.5 mr-1.5" /> Reject
                       </Button>
                       <Button 
-                        variant="primary" 
+                        variant="solid" 
                         onClick={() => handleVerify(report.id, 'Verified')}
                         className="h-9 bg-on-surface text-white hover:bg-on-surface/90 rounded-lg text-[9px] font-bold shadow-xl"
                       >
@@ -214,7 +214,7 @@ export default function FieldDirectives() {
                 </CardContent>
               </Card>
             )) : (
-              <div className="col-span-2 border-2 border-dashed border-border/40 p-12 flex flex-col items-center justify-center text-muted-foreground/20 rounded-xl">
+              <div className="col-span-2 border-2 border-dashed border-border/40 p-12 flex flex-col items-center justify-center text-muted-foreground/20 rounded-sm">
                 <AlertTriangle className="w-12 h-12 mb-4 opacity-10" />
                 <p className="text-[10px] font-bold normal-case">Situational feed currently quiet.</p>
               </div>
@@ -226,7 +226,7 @@ export default function FieldDirectives() {
       {/* 📝 New Directive Modal */}
       {isCreating && (
          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-xl rounded-xl border-border/60 shadow-2xl animate-in zoom-in-95 duration-300">
+          <Card className="w-full max-w-xl rounded-sm border-border/60 shadow-2xl animate-in zoom-in-95 duration-300">
             <CardHeader className="p-8 border-b border-border/10 bg-muted/5">
               <div className="flex justify-between items-start">
                 <div>
@@ -274,10 +274,10 @@ export default function FieldDirectives() {
                 </div>
               </div>
               <div className="pt-4 flex gap-3">
-                <Button variant="outline" onClick={() => setIsCreating(false)} className="flex-1 h-12 rounded-lg border-border/60 font-bold text-[10px] normal-case shadow-sm hover:bg-muted/5">
+                <Button variant="default" onClick={() => setIsCreating(false)} className="flex-1 h-12 rounded-lg border-border/60 font-bold text-[10px] normal-case shadow-sm hover:bg-muted/5">
                   Cancel
                 </Button>
-                <Button variant="primary" className="flex-1 h-12 rounded-lg bg-on-surface text-white font-bold text-[10px] normal-case shadow-xl hover:scale-105 transition-transform">
+                <Button variant="solid" className="flex-1 h-12 rounded-lg bg-on-surface text-white font-bold text-[10px] normal-case shadow-xl hover:scale-105 transition-transform">
                   <Send className="w-4 h-4 mr-2" /> Deploy directive
                 </Button>
               </div>

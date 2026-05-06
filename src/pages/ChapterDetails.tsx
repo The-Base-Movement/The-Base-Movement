@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { MapPin, Users, Globe, ShieldCheck, Calendar, Share2, Mail, Phone, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useState } from 'react'
 import { ShareModal } from '@/components/ShareModal'
@@ -21,7 +21,7 @@ export default function ChapterDetails() {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-stone-900 mb-4">Chapter Not Found</h2>
           <Link to="/dashboard/chapters">
-            <Button variant="outline" className="rounded-none">Back to Chapters</Button>
+            <Button variant="default" className="rounded-none">Back to Chapters</Button>
           </Link>
         </div>
       </div>
@@ -65,7 +65,7 @@ export default function ChapterDetails() {
             
             <div className="flex gap-3">
               <Button 
-                variant="outline" 
+                variant="default" 
                 className="border-stone-200 text-stone-600 rounded-none h-12 px-6"
                 onClick={() => setIsShareModalOpen(true)}
               >

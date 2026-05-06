@@ -214,7 +214,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
 
           {/* Form Content Area */}
           <div className="lg:col-span-8">
-            <form onSubmit={handleSubmit} className="bg-white border border-border/40 p-10 shadow-sm rounded-3xl">
+            <form onSubmit={handleSubmit} className="bg-white border border-border/40 p-10 shadow-sm rounded-sm">
               {/* STEP 1: Primary Details */}
               {formStep === 1 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -233,7 +233,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       required
                       value={formData.fullName}
                       onChange={(e) => handleChange('fullName', e.target.value)}
-                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                     />
                   </div>
 
@@ -242,11 +242,11 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       Select Platform <span className="text-destructive">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
-                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-xl font-black uppercase tracking-widest text-[10px] ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
+                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-sm font-black uppercase tracking-widest text-[10px] ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                         <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
                         Base Ghana
                       </label>
-                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-xl font-black uppercase tracking-widest text-[10px] ${platform === 'DIASPORA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
+                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-sm font-black uppercase tracking-widest text-[10px] ${platform === 'DIASPORA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                         <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
                         Base Diaspora
                       </label>
@@ -264,7 +264,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           required
                           value={formData.country} 
                           onChange={(e) => handleChange('country', e.target.value)}
-                          className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                          className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                           style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
                         >
                           {diasporaCountries.map((country) => (
@@ -282,7 +282,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         <select
                           value={formData.countryCode}
                           onChange={(e) => handleChange('countryCode', e.target.value)}
-                          className="flex items-center px-4 bg-muted/5 border border-border/60 rounded-xl font-black text-on-surface text-[10px] appearance-none focus:outline-none"
+                          className="flex items-center px-4 bg-muted/5 border border-border/60 rounded-sm font-black text-on-surface text-[10px] appearance-none focus:outline-none"
                         >
                           {Array.from(new Set(Object.values(countryCodes))).sort().map((code) => (
                             <option key={code} value={code}>{code}</option>
@@ -295,7 +295,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           required
                           value={formData.contactNumber}
                           onChange={(e) => handleChange('contactNumber', e.target.value)}
-                          className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                          className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -314,7 +314,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         minLength={6}
                         value={formData.password}
                         onChange={(e) => handleChange('password', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                       />
                       <button
                         type="button"
@@ -343,7 +343,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {ageRanges.map(range => (
-                          <label key={range} className={`cursor-pointer border p-3 text-center transition-all rounded-xl font-black uppercase tracking-widest text-[9px] ${formData.ageRange === range ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
+                          <label key={range} className={`cursor-pointer border p-3 text-center transition-all rounded-sm font-black uppercase tracking-widest text-[9px] ${formData.ageRange === range ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                             <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} className="hidden" />
                             {range}
                           </label>
@@ -357,7 +357,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {['Male', 'Female'].map(g => (
-                          <label key={g} className={`cursor-pointer border p-3 text-center transition-all rounded-xl font-black uppercase tracking-widest text-[9px] ${formData.gender === g ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
+                          <label key={g} className={`cursor-pointer border p-3 text-center transition-all rounded-sm font-black uppercase tracking-widest text-[9px] ${formData.gender === g ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                             <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} className="hidden" />
                             {g}
                           </label>
@@ -376,7 +376,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       required
                       value={formData.residentialAddress}
                       onChange={(e) => handleChange('residentialAddress', e.target.value)}
-                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                     />
                   </div>
 
@@ -392,7 +392,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             required
                             value={formData.region} 
                             onChange={(e) => handleChange('region', e.target.value)}
-                            className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                            className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                             style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
                           >
                             <option value="">Select Region</option>
@@ -411,7 +411,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             disabled={!formData.region}
                             value={formData.constituency} 
                             onChange={(e) => handleChange('constituency', e.target.value)}
-                            className="w-full p-4 text-on-surface text-sm appearance-none disabled:opacity-50 bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                            className="w-full p-4 text-on-surface text-sm appearance-none disabled:opacity-50 bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                             style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
                           >
                             <option value="">Select Constituency</option>
@@ -432,7 +432,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           required
                           value={formData.chapter}
                           onChange={(e) => handleChange('chapter', e.target.value)}
-                          className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                          className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                         />
                       </div>
                     )}
@@ -458,7 +458,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       required
                       value={formData.emergencyContactName}
                       onChange={(e) => handleChange('emergencyContactName', e.target.value)}
-                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                     />
                   </div>
 
@@ -473,7 +473,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         required
                         value={formData.emergencyRelationship}
                         onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                       />
                     </div>
                     <div className="space-y-3">
@@ -487,7 +487,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         required
                         value={formData.emergencyNumber}
                         onChange={(e) => handleChange('emergencyNumber', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -503,7 +503,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         required
                         value={formData.profession}
                         onChange={(e) => handleChange('profession', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                       />
                     </div>
                     <div className="space-y-3">
@@ -515,7 +515,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         required
                         value={formData.educationLevel} 
                         onChange={(e) => handleChange('educationLevel', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
                         style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
                       >
                         <option value="">Select Level</option>
@@ -542,21 +542,21 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     </label>
                     
                     {!photoUrl ? (
-                      <div className="border-2 border-dashed border-border/40 p-16 text-center bg-muted/5 relative group transition-all hover:border-primary rounded-3xl overflow-hidden">
+                      <div className="border-2 border-dashed border-border/40 p-16 text-center bg-muted/5 relative group transition-all hover:border-primary rounded-sm overflow-hidden">
                         <input
                           type="file"
                           accept="image/*"
                           onChange={handlePhotoUpload}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                         />
-                        <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all">
+                        <div className="w-20 h-20 bg-primary/10 rounded-sm flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all">
                           <Upload className="w-10 h-10 text-primary transition-colors" />
                         </div>
                         <p className="font-black text-on-surface/60 uppercase tracking-[0.2em] text-[10px]">Click to upload passport photo</p>
                       </div>
                     ) : (
-                      <div className="relative bg-muted/5 p-6 border border-border/40 rounded-3xl overflow-hidden">
-                        <div className="relative h-[400px] w-full bg-on-surface rounded-2xl overflow-hidden shadow-2xl">
+                      <div className="relative bg-muted/5 p-6 border border-border/40 rounded-sm overflow-hidden">
+                        <div className="relative h-[400px] w-full bg-on-surface rounded-sm overflow-hidden shadow-2xl">
                           <Cropper
                             image={photoUrl}
                             crop={crop}
@@ -581,7 +581,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           <button
                             type="button"
                             onClick={() => setPhotoUrl(null)}
-                            className="shrink-0 w-12 h-12 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all flex items-center justify-center shadow-lg shadow-destructive/10"
+                            className="shrink-0 w-12 h-12 rounded-sm bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all flex items-center justify-center shadow-lg shadow-destructive/10"
                             title="Remove photo"
                           >
                             <X className="w-6 h-6" />
@@ -593,7 +593,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   </div>
 
                   {/* Oath */}
-                  <div className="bg-on-surface text-white p-10 mt-10 border-l-8 border-primary rounded-3xl relative overflow-hidden">
+                  <div className="bg-on-surface text-white p-10 mt-10 border-l-8 border-primary rounded-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
                     <h5 className="text-accent mb-4 font-black uppercase tracking-widest text-xs">The Base Declaration</h5>
                     <p className="text-white/60 mb-8 leading-relaxed text-sm font-medium">
@@ -622,7 +622,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   <button
                     type="button"
                     onClick={goBack}
-                    className="w-1/3 h-16 bg-muted/10 hover:bg-muted/20 text-on-surface font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                    className="w-1/3 h-16 bg-muted/10 hover:bg-muted/20 text-on-surface font-black uppercase tracking-[0.2em] text-[10px] rounded-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
                   >
                     <ArrowLeft className="w-5 h-5" /> Back
                   </button>
@@ -633,7 +633,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                 <button
                   type="submit"
                   disabled={(formStep === 4 && !agreed) || isSubmitting}
-                  className={`h-16 font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl flex items-center justify-center gap-4 transition-all flex-1 shadow-2xl active:scale-[0.98] ${((formStep === 4 && !agreed) || isSubmitting) ? 'bg-muted/20 text-muted-foreground/40 cursor-not-allowed' : 'bg-primary text-white hover:shadow-primary/40'}`}
+                  className={`h-16 font-black uppercase tracking-[0.2em] text-[10px] rounded-sm flex items-center justify-center gap-4 transition-all flex-1 shadow-2xl active:scale-[0.98] ${((formStep === 4 && !agreed) || isSubmitting) ? 'bg-muted/20 text-muted-foreground/40 cursor-not-allowed' : 'bg-primary text-white hover:shadow-primary/40'}`}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center gap-3">

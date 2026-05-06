@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { logisticsService } from '@/services/logisticsService'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { 
   Card, 
@@ -250,7 +250,7 @@ export default function AdminStore() {
           <p className="text-muted-foreground/80 text-sm mt-1">Movement inventory, merchandising, and regional distribution.</p>
         </div>
         <div className="flex items-center gap-4">
-        <div className="flex bg-muted/10 p-1 rounded-xl">
+        <div className="flex bg-muted/10 p-1 rounded-sm">
             <button 
               onClick={() => setActiveTab('inventory')}
               className={cn(
@@ -281,8 +281,9 @@ export default function AdminStore() {
           </div>
           {activeTab === 'inventory' && (
             <Button 
+              variant="solid"
               onClick={() => handleOpenModal()}
-              className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-none h-10 transition-all flex items-center gap-2"
+              className="h-10 px-6 flex items-center gap-2"
             >
               <Plus className="w-3.5 h-3.5" /> Add item
             </Button>
@@ -309,7 +310,7 @@ export default function AdminStore() {
                   <p className="text-xs text-on-surface/60">Some items require replenishment soon.</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold border-accent/20 text-accent hover:bg-accent/10 rounded-xl">
+              <Button variant="default" size="sm" className="h-8 text-accent border-accent/20 hover:bg-accent/5">
                 View alerts
               </Button>
             </div>
@@ -317,7 +318,7 @@ export default function AdminStore() {
 
           {/* Store Performance Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Total stock value</p>
             <h3 className="text-xl md:text-2xl font-bold text-on-surface">
@@ -328,7 +329,7 @@ export default function AdminStore() {
             </span>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Active requests</p>
             <h3 className="text-xl md:text-2xl font-bold text-on-surface">{requests.filter(r => r.status === 'Pending').length}</h3>
@@ -340,7 +341,7 @@ export default function AdminStore() {
             </span>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Stock items</p>
             <h3 className="text-xl md:text-2xl font-bold text-on-surface">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
@@ -348,7 +349,7 @@ export default function AdminStore() {
           </CardContent>
         </Card>
         <Card className={cn(
-          "rounded-xl border-border/60 shadow-sm",
+          "rounded-sm border-border/60 shadow-sm",
           lowStockItems.length > 0 ? "bg-red-50/10 border-red-100" : ""
         )}>
           <CardContent className="p-6 flex flex-col gap-1">
@@ -371,7 +372,7 @@ export default function AdminStore() {
       </div>
 
       {activeTab === 'inventory' ? (
-        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
@@ -379,7 +380,7 @@ export default function AdminStore() {
                 Inventory
               </CardTitle>
               
-              <div className="flex items-center bg-muted/10 p-1 rounded-xl overflow-x-auto no-scrollbar">
+              <div className="flex items-center bg-muted/10 p-1 rounded-sm overflow-x-auto no-scrollbar">
                 {categories.map(cat => (
                   <button
                     key={cat}
@@ -400,7 +401,7 @@ export default function AdminStore() {
                   placeholder="Search products..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-9 text-xs rounded-xl border-border/60"
+                  className="pl-9 h-9 text-xs rounded-sm border-border/60"
                 />
               </div>
             </div>
@@ -507,7 +508,7 @@ export default function AdminStore() {
                 <div key={product.id} className="p-6 space-y-6">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-muted/10 rounded-xl flex items-center justify-center text-2xl border border-border/60 overflow-hidden shrink-0">
+                      <div className="w-12 h-12 bg-muted/10 rounded-sm flex items-center justify-center text-2xl border border-border/60 overflow-hidden shrink-0">
                         {product.image?.startsWith('http') ? (
                           <img src={product.image} alt={product.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                         ) : (
@@ -530,11 +531,11 @@ export default function AdminStore() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-muted/10 rounded-xl border border-border/40">
+                    <div className="p-4 bg-muted/10 rounded-sm border border-border/40">
                       <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-1">Price</p>
                       <p className="text-sm font-black text-on-surface">{product.price}</p>
                     </div>
-                    <div className="p-4 bg-muted/10 rounded-xl border border-border/40">
+                    <div className="p-4 bg-muted/10 rounded-sm border border-border/40">
                       <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-1">Stock</p>
                       <p className={cn(
                         "text-sm font-black",
@@ -545,16 +546,16 @@ export default function AdminStore() {
 
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
-                      variant="outline" 
-                      className="flex-1 h-11 rounded-xl border-border/60 text-on-surface/80 text-[10px] font-bold"
+                      variant="default" 
+                      className="flex-1 h-11 rounded-sm border-border/60 text-on-surface/80 text-[10px] font-bold"
                       onClick={() => handleOpenModal(product)}
                     >
                       <Edit3 className="w-3.5 h-3.5 mr-2" /> Edit Asset
                     </Button>
                     <Button 
-                      variant="outline" 
+                      variant="default" 
                       size="icon" 
-                      className="h-11 w-11 rounded-xl border-border/60 text-muted-foreground/80 hover:text-destructive"
+                      className="h-11 w-11 rounded-sm border-border/60 text-muted-foreground/80 hover:text-destructive"
                       onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -585,7 +586,7 @@ export default function AdminStore() {
           </CardFooter>
         </Card>
       ) : activeTab === 'requests' ? (
-        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
             <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
               <Truck className="w-4 h-4 text-primary" />
@@ -654,7 +655,7 @@ export default function AdminStore() {
                           <SelectTrigger className="w-32 h-8 text-[10px] font-bold tracking-tight rounded-lg border-border/60">
                             <SelectValue placeholder="Update Status" />
                           </SelectTrigger>
-                          <SelectContent className="rounded-xl">
+                          <SelectContent className="rounded-sm">
                             <SelectItem value="Approved">Approve</SelectItem>
                             <SelectItem value="Dispatched">Dispatch</SelectItem>
                             <SelectItem value="Delivered">Deliver</SelectItem>
@@ -687,7 +688,7 @@ export default function AdminStore() {
 
                   <div className="space-y-3">
                     <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest">Requested Items</p>
-                    <div className="p-4 bg-muted/10 rounded-xl border border-border/40 space-y-2">
+                    <div className="p-4 bg-muted/10 rounded-sm border border-border/40 space-y-2">
                       {req.items.map(item => (
                         <div key={item.id} className="flex justify-between items-center">
                           <span className="text-[11px] font-bold text-on-surface">{item.productName}</span>
@@ -715,10 +716,10 @@ export default function AdminStore() {
 
                   <div className="pt-2">
                     <Select onValueChange={(v: ResourceRequest['status']) => handleStatusUpdate(req.id, v)}>
-                      <SelectTrigger className="w-full h-11 text-xs font-bold tracking-tight rounded-xl border-border/60">
+                      <SelectTrigger className="w-full h-11 text-xs font-bold tracking-tight rounded-sm border-border/60">
                         <SelectValue placeholder="Update Request Status" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl">
+                      <SelectContent className="rounded-sm">
                         <SelectItem value="Approved">Approve</SelectItem>
                         <SelectItem value="Dispatched">Dispatch</SelectItem>
                         <SelectItem value="Delivered">Deliver</SelectItem>
@@ -741,7 +742,7 @@ export default function AdminStore() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
           <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
@@ -749,8 +750,8 @@ export default function AdminStore() {
                 Audit log
               </CardTitle>
               <Button
-                variant="outline"
-                className="h-10 px-6 text-[10px] font-bold normal-case border-border/60 bg-white text-on-surface/80 shadow-sm rounded-xl hover:bg-muted/10"
+                variant="default"
+                className="h-10 px-6"
                 disabled={auditLogs.length === 0}
                 onClick={() => {
                   try {
@@ -907,7 +908,7 @@ export default function AdminStore() {
         const processingPct = Math.round((processing / total) * 100)
         const rejectedPct = Math.round((rejected / total) * 100)
         return (
-          <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -972,7 +973,7 @@ export default function AdminStore() {
 
       {/* Add/Edit Product Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-xl border-border/60">
+        <DialogContent className="sm:max-w-[500px] rounded-sm border-border/60">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold tracking-tight">
               {selectedProduct?.id ? 'Edit inventory item' : 'New movement gear'}
@@ -1077,13 +1078,13 @@ export default function AdminStore() {
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-xl text-[10px] font-bold tracking-tight h-10 px-6">
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-[10px] font-bold tracking-tight h-10 px-6">
               Cancel
             </Button>
             <Button 
               onClick={handleSave} 
               disabled={isSaving}
-              className="rounded-xl text-[10px] font-bold tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-10 px-8 min-w-[140px]"
+              className="rounded-sm text-[10px] font-bold tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-10 px-8 min-w-[140px]"
             >
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Changes'}
             </Button>
@@ -1092,7 +1093,7 @@ export default function AdminStore() {
       </Dialog>
       {/* Delete Confirmation Modal */}
       <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
-        <AlertDialogContent className="rounded-2xl border-border/60">
+        <AlertDialogContent className="rounded-sm border-border/60">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-bold tracking-tight flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
@@ -1105,12 +1106,12 @@ export default function AdminStore() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
-            <AlertDialogCancel className="rounded-xl text-[10px] font-bold tracking-tight h-10 px-6 border-border/60">
+            <AlertDialogCancel className="rounded-sm text-[10px] font-bold tracking-tight h-10 px-6 border-border/60">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDelete}
-              className="rounded-xl text-[10px] font-bold tracking-tight bg-red-600 text-white hover:bg-red-700 h-10 px-8"
+              className="rounded-sm text-[10px] font-bold tracking-tight bg-red-600 text-white hover:bg-red-700 h-10 px-8"
             >
               Confirm Removal
             </AlertDialogAction>

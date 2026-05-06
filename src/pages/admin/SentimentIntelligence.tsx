@@ -9,7 +9,7 @@ import {
   Zap
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { MemberFeedback, SentimentTelemetry, ImpactProjection } from '@/types/admin'
 import { cn } from '@/lib/utils'
@@ -83,7 +83,7 @@ export default function SentimentIntelligence() {
           <p className="text-muted-foreground/80 text-sm mt-1">AI-powered member sentiment tracking across all regions.</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-4 px-4 py-2 bg-white border border-border/40 rounded-xl shadow-sm">
+          <div className="hidden md:flex items-center gap-4 px-4 py-2 bg-white border border-border/40 rounded-sm shadow-sm">
             <div className="text-right">
               <span className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-wider block">Average sentiment</span>
               <span className={cn(
@@ -97,14 +97,14 @@ export default function SentimentIntelligence() {
           </div>
           <div className="flex items-center gap-2">
             <Button 
-              className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
+              className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
               onClick={() => toast({ title: "Analysis started", description: "Aggregating regional sentiment data..." })}
             >
               Run analysis
             </Button>
             <Button 
-              variant="outline" 
-              className="rounded-xl border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all"
+              variant="default" 
+              className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all"
               onClick={() => toast({ title: "Report exported", description: "Your intelligence briefing is ready for download." })}
             >
               Export report
@@ -115,7 +115,7 @@ export default function SentimentIntelligence() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <Card className="rounded-xl border-border shadow-sm bg-card overflow-hidden">
+          <Card className="rounded-sm border-border shadow-sm bg-card overflow-hidden">
             <CardHeader className="p-6 border-b border-border bg-muted/20">
               <div className="flex items-center justify-between">
                 <div>
@@ -168,7 +168,7 @@ export default function SentimentIntelligence() {
           </Card>
 
           {/* Regional Heatmap Telemetry */}
-          <Card className="rounded-xl border-border/60 shadow-sm bg-on-surface text-white overflow-hidden relative">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden relative">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
             <CardHeader className="p-6 border-b border-white/10 relative z-10">
               <div className="flex items-center justify-between">
@@ -209,7 +209,7 @@ export default function SentimentIntelligence() {
 
         {/* 💬 Live Feedback Stream */}
         <div className="lg:col-span-1">
-          <Card className="rounded-xl border-border/60 shadow-sm bg-white overflow-hidden h-full">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden h-full">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
               <div className="flex items-center justify-between">
                 <div>

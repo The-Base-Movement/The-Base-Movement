@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { MapPin, Search, Plus, Filter, Building2, Send } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ChapterCard } from '@/components/ChapterCard'
 import { useChapters } from '@/context/ChaptersContext'
@@ -183,7 +183,7 @@ export default function Chapters() {
                 className="w-full h-11 pl-11 pr-4 bg-stone-100 border-none rounded-none text-sm focus:ring-1 focus:ring-brand-green transition-all"
               />
             </div>
-            <Button variant="outline" className="h-11 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none">
+            <Button variant="default" className="h-11 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none">
               <Filter className="w-4 h-4 mr-2" /> Filter
             </Button>
           </div>
@@ -281,7 +281,7 @@ export default function Chapters() {
               <DialogFooter className="pt-4">
                 <Button 
                   type="button" 
-                  variant="outline" 
+                  variant="default" 
                   onClick={() => setIsRequestModalOpen(false)}
                   className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold uppercase tracking-widest rounded-none"
                 >

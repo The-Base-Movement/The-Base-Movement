@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { X, MapPin, Globe, Check, ChevronDown, Building2 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 
 interface WelcomeModalProps {
   isOpen: boolean;

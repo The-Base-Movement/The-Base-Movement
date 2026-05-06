@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ClipboardList, MapPin, User, FileText, CheckCircle2, ChevronRight, AlertCircle } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
 import { toast } from 'sonner'

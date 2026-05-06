@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Phone, Globe, Check, ArrowDownToLine, Activity, X } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { DonationRecord, DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
@@ -191,9 +191,11 @@ export default function Donate() {
             <p className="text-slate-600 mb-8 font-body-md leading-relaxed">
               Your donation has been recorded and will be verified shortly. Your support is what makes this movement possible.
             </p>
-            <Link to="/" className="inline-flex items-center justify-center px-8 py-4 bg-primary hover:opacity-90 transition-opacity text-white font-meta font-semibold tracking-wider rounded-none">
-              Back to Home
-            </Link>
+            <Button asChild variant="primary" size="lg">
+              <Link to="/">
+                Back to Home
+              </Link>
+            </Button>
           </div>
         ) : (
           <div className="relative">
@@ -477,13 +479,14 @@ export default function Donate() {
                       </p>
                     </div>
 
-                    <button
+                    <Button
                       type="submit"
                       form="donationForm"
-                      className="w-full bg-primary hover:opacity-95 text-white font-meta font-semibold tracking-widest py-6 transition-all active:scale-[0.98] flex items-center justify-center gap-4 shadow-xl shadow-primary/10 rounded-none"
+                      variant="primary"
+                      className="w-full py-8 flex items-center justify-center gap-4"
                     >
                       <Heart className="w-6 h-6" /> Confirm Donation
-                    </button>
+                    </Button>
                 </div>
               </div>
 
@@ -635,7 +638,7 @@ export default function Donate() {
                           <p className="text-sm font-semibold text-slate-600">{item.method}</p>
                         </div>
                       </div>
-                      <Button variant="outline" className="w-full h-10 border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-widest rounded-none">
+                      <Button variant="default" className="w-full h-10 border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-widest rounded-none">
                         <ArrowDownToLine className="w-4 h-4 mr-2" /> View Receipt
                       </Button>
                     </div>

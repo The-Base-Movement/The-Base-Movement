@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/neon-button'
 import type { BlogPost } from '@/types/admin'
 
 interface BlogPostCardProps {
@@ -47,13 +48,12 @@ export function BlogPostCard({ post, baseUrl, categoryColors }: BlogPostCardProp
           <span className="text-[10px] font-medium text-stone-400 tracking-widest">
             {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName} <span className="mx-1 opacity-50">|</span> {post.readTime}
           </span>
-          <Link
-            to={`${baseUrl}/${post.slug}`}
-            className="text-[9px] font-bold text-brand-green tracking-widest hover:underline flex items-center gap-1 normal-case"
-          >
-            Read article
-            <ArrowRight className="w-3 h-3" />
-          </Link>
+          <Button asChild variant="link" className="p-0 h-auto text-[9px] font-bold text-brand-green tracking-widest hover:no-underline normal-case">
+            <Link to={`${baseUrl}/${post.slug}`} className="flex items-center gap-1">
+              Read article
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </Button>
         </div>
       </div>
     </article>

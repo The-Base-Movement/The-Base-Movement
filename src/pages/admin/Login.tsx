@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
@@ -36,10 +36,10 @@ export default function AdminLogin() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
-        <Card className="border-border/40 shadow-2xl rounded-3xl overflow-hidden bg-white/80 backdrop-blur-xl">
+        <Card className="border-border/40 shadow-2xl rounded-sm overflow-hidden bg-white/80 backdrop-blur-xl">
           <CardContent className="p-10">
             <div className="text-center mb-10">
-              <div className="w-16 h-16 bg-destructive/10 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-3">
+              <div className="w-16 h-16 bg-destructive/10 rounded-sm flex items-center justify-center mx-auto mb-4 rotate-3">
                 <Shield className="w-8 h-8 text-destructive" />
               </div>
               <h1 className="text-2xl font-black text-on-surface mb-2 font-meta tracking-tight">Admin login</h1>
@@ -55,7 +55,7 @@ export default function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@thebase.org"
-                  className="h-12 bg-muted/5 border-border/60 focus-visible:ring-on-surface rounded-xl"
+                  className="h-12 bg-muted/5 border-border/60 focus-visible:ring-on-surface rounded-sm"
                   required
                 />
               </div>
@@ -69,7 +69,7 @@ export default function AdminLogin() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="h-12 bg-muted/5 border-border/60 focus-visible:ring-on-surface rounded-xl pr-12"
+                    className="h-12 bg-muted/5 border-border/60 focus-visible:ring-on-surface rounded-sm pr-12"
                     required
                   />
                   <button
@@ -84,8 +84,9 @@ export default function AdminLogin() {
 
               <Button
                 type="submit"
+                variant="solid"
                 disabled={isLoading}
-                className="w-full h-14 bg-on-surface hover:bg-on-surface/90 text-white font-bold text-sm tracking-wide rounded-2xl shadow-xl shadow-on-surface/20 group transition-all"
+                className="w-full h-14"
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
@@ -110,7 +111,7 @@ export default function AdminLogin() {
 
               <Button
                 type="button"
-                variant="outline"
+                variant="default"
                 onClick={async () => {
                   try {
                     await authService.signInWithGoogle()
@@ -118,7 +119,7 @@ export default function AdminLogin() {
                     toast.error(error instanceof Error ? error.message : 'Google login failed')
                   }
                 }}
-                className="w-full h-12 border-border/60 hover:bg-muted/5 text-on-surface/80 font-bold text-[10px] tracking-wider rounded-xl flex items-center justify-center gap-3 uppercase transition-all"
+                className="w-full h-12 flex items-center justify-center gap-3"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path

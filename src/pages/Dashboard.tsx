@@ -10,7 +10,7 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { usePerformance } from '@/context/PerformanceContext'
 
 interface GrowthStats {
@@ -608,7 +608,7 @@ export default function Dashboard() {
 
       {/* Movement Visual Anchor */}
       <section className={cn(
-        "mt-16 overflow-hidden rounded-xl h-[300px] relative",
+        "mt-16 overflow-hidden rounded-sm h-[300px] relative",
         lowBandwidthMode && "bg-primary"
       )}>
         {!lowBandwidthMode && (

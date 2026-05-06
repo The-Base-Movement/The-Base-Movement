@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { User, Settings, LogOut } from 'lucide-react'
+import { Button } from '@/components/ui/neon-button'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -122,7 +123,7 @@ export default function Navbar() {
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-3 w-64 bg-white border border-border/40 shadow-2xl rounded-2xl py-3 z-50">
+                <div className="absolute right-0 mt-3 w-64 bg-white border border-border/40 shadow-2xl rounded-sm py-3 z-50">
                   <div className="px-5 py-3 border-b border-border/10 mb-2">
                     <p className="text-xs font-black text-on-surface tracking-tighter mb-0 leading-none">Member portal</p>
                     <p className="text-[9px] text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase leading-none">Active patriot</p>
@@ -146,12 +147,16 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link to="/login" className="px-6 h-11 flex items-center justify-center border border-primary text-primary text-[10px] font-black tracking-widest hover:bg-primary/5 transition-all active:scale-95 rounded-xl">
-                Login
-              </Link>
-              <Link to="/register" className="px-6 h-11 flex items-center justify-center bg-primary text-white text-[10px] font-black tracking-widest hover:brightness-110 transition-all active:scale-95 rounded-xl shadow-lg shadow-primary/20">
-                Register
-              </Link>
+              <Button asChild variant="ghost" size="sm" className="hover:text-primary">
+                <Link to="/login">
+                  Login
+                </Link>
+              </Button>
+              <Button asChild variant="gold" size="sm">
+                <Link to="/register">
+                  Register
+                </Link>
+              </Button>
             </>
           )}
         </div>
@@ -167,24 +172,28 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-border/10 shadow-2xl px-6 py-8 space-y-2">
-          <Link to="/" className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive('/') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Home</Link>
-          <Link to="/blog" className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive('/blog') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Updates</Link>
-          <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>The Plan</Link>
-          <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Supplies</Link>
-          <Link to={isLoggedIn ? "/dashboard/donate" : "/donate"} className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Donate</Link>
-          <Link to={isLoggedIn ? "/dashboard/contact" : "/contact"} className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Contact</Link>
+          <Link to="/" className={`block py-2.5 px-4 rounded-sm text-[10px] font-black tracking-widest ${isActive('/') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Home</Link>
+          <Link to="/blog" className={`block py-2.5 px-4 rounded-sm text-[10px] font-black tracking-widest ${isActive('/blog') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Updates</Link>
+          <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-2.5 px-4 rounded-sm text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>The Plan</Link>
+          <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-2.5 px-4 rounded-sm text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Supplies</Link>
+          <Link to={isLoggedIn ? "/dashboard/donate" : "/donate"} className={`block py-2.5 px-4 rounded-sm text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Donate</Link>
+          <Link to={isLoggedIn ? "/dashboard/contact" : "/contact"} className={`block py-2.5 px-4 rounded-sm text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Contact</Link>
           
           <div className="pt-8 flex flex-col gap-3 border-t border-border/10 mt-4">
             {isLoggedIn ? (
               <>
-                <Link to="/dashboard" className="flex items-center gap-3 py-4 px-4 bg-primary/5 text-primary rounded-xl text-[10px] font-black tracking-widest"><User className="w-4 h-4"/> Dashboard</Link>
-                <Link to="/settings" className="flex items-center gap-3 py-4 px-4 text-on-surface/60 rounded-xl text-[10px] font-black tracking-widest"><Settings className="w-4 h-4"/> Settings</Link>
-                <button onClick={handleLogout} className="flex items-center gap-3 py-4 px-4 text-destructive rounded-xl text-[10px] font-black tracking-widest text-left"><LogOut className="w-4 h-4"/> Logout</button>
+                <Link to="/dashboard" className="flex items-center gap-3 py-3 px-4 bg-primary/5 text-primary rounded-sm text-[10px] font-black tracking-widest"><User className="w-4 h-4"/> Dashboard</Link>
+                <Link to="/settings" className="flex items-center gap-3 py-3 px-4 text-on-surface/60 rounded-sm text-[10px] font-black tracking-widest"><Settings className="w-4 h-4"/> Settings</Link>
+                <button onClick={handleLogout} className="flex items-center gap-3 py-3 px-4 text-destructive rounded-sm text-[10px] font-black tracking-widest text-left"><LogOut className="w-4 h-4"/> Logout</button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-center px-6 py-4 border border-primary text-primary rounded-xl text-[10px] font-black tracking-widest transition-all active:scale-95">Login</Link>
-                <Link to="/register" className="text-center px-6 py-4 bg-primary text-white rounded-xl text-[10px] font-black tracking-widest transition-all active:scale-95 shadow-lg shadow-primary/20">Register</Link>
+                <Button asChild variant="ghost" className="w-full">
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button asChild variant="gold" className="w-full">
+                  <Link to="/register">Register</Link>
+                </Button>
               </>
             )}
           </div>

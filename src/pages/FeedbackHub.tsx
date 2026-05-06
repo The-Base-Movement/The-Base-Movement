@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { MessageSquare, Send, Brain, Target } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'

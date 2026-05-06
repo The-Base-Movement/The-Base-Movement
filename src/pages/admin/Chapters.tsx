@@ -1,5 +1,5 @@
 import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, Globe, History } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { 
   Card, 
@@ -158,16 +158,16 @@ export default function ChaptersManagement() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             onClick={() => toast.info("Accessing audit vault...")}
-            className="rounded-xl border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-on-surface hover:text-white shadow-none h-10 transition-all flex items-center gap-2"
+            className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-on-surface hover:text-white shadow-none h-10 transition-all flex items-center gap-2"
           >
             <History className="w-3.5 h-3.5" /> View audit trail
           </Button>
           {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
             <Button 
               onClick={openAddModal}
-              className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+              className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
             >
               <Plus className="w-3.5 h-3.5" /> Establish new chapter
             </Button>
@@ -177,7 +177,7 @@ export default function ChaptersManagement() {
 
       {/* Chapters Overview Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <Card className="rounded-xl border-border/60 shadow-sm bg-on-surface text-white">
+        <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-white/10 flex items-center justify-center rounded-lg">
               <Shield className="w-6 h-6 text-white" />
@@ -188,7 +188,7 @@ export default function ChaptersManagement() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm bg-white">
+        <Card className="rounded-sm border-border/60 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-border/40 flex items-center justify-center rounded-lg">
               <Users className="w-6 h-6 text-on-surface" />
@@ -201,7 +201,7 @@ export default function ChaptersManagement() {
         </Card>
         {regionalStats.slice(0, 3).map((stat, idx) => (
           <Card key={stat.region} className={cn(
-            "rounded-xl border-border/60 shadow-sm overflow-hidden relative group cursor-pointer",
+            "rounded-sm border-border/60 shadow-sm overflow-hidden relative group cursor-pointer",
             idx === 2 ? "col-span-2 md:col-span-1" : ""
           )}>
             <CardContent className="p-6 flex items-center gap-4 relative z-10">
@@ -308,13 +308,13 @@ export default function ChaptersManagement() {
             value={search}
             onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
             placeholder="Search chapters by name, region or country..." 
-            className="pl-10 h-11 rounded-xl border-border/60 shadow-sm"
+            className="pl-10 h-11 rounded-sm border-border/60 shadow-sm"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending'); setCurrentPage(1); }}
-          className="h-11 px-4 text-[10px] font-bold rounded-xl border border-border/60 bg-white focus:outline-none focus:border-on-surface shadow-sm normal-case"
+          className="h-11 px-4 text-[10px] font-bold rounded-sm border border-border/60 bg-white focus:outline-none focus:border-on-surface shadow-sm normal-case"
         >
           <option value="All">All statuses</option>
           <option value="Active">Active</option>
@@ -325,7 +325,7 @@ export default function ChaptersManagement() {
       {/* Chapters Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {currentChapters.map((chapter) => (
-          <Card key={chapter.id} className="rounded-xl border-border/60 shadow-sm hover:shadow-md transition-all group overflow-hidden bg-white">
+          <Card key={chapter.id} className="rounded-sm border-border/60 shadow-sm hover:shadow-md transition-all group overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-border/10 bg-muted/30">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
@@ -370,7 +370,7 @@ export default function ChaptersManagement() {
                 <div className="grid grid-cols-2 gap-2 mt-4">
                   {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                     <Button 
-                      variant="outline" 
+                      variant="default" 
                       onClick={() => openEditModal(chapter)}
                       className="h-9 px-0 text-[8px] font-bold border-border/40 hover:bg-on-surface hover:text-white transition-all rounded-lg normal-case"
                     >
@@ -396,7 +396,7 @@ export default function ChaptersManagement() {
         {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
           <button 
             onClick={openAddModal}
-            className="border-2 border-dashed border-border/60 rounded-xl p-8 flex flex-col items-center justify-center gap-4 text-muted-foreground/40 hover:border-on-surface hover:text-on-surface transition-all group bg-white"
+            className="border-2 border-dashed border-border/60 rounded-sm p-8 flex flex-col items-center justify-center gap-4 text-muted-foreground/40 hover:border-on-surface hover:text-on-surface transition-all group bg-white"
           >
             <div className="w-12 h-12 rounded-full bg-muted/5 flex items-center justify-center group-hover:bg-on-surface group-hover:text-white transition-all">
               <Plus className="w-6 h-6" />
@@ -414,7 +414,7 @@ export default function ChaptersManagement() {
           </span>
           <div className="flex items-center justify-center gap-2 w-full md:w-auto">
             <Button
-              variant="outline"
+              variant="default"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               className="h-8 px-4 text-[10px] font-bold rounded-lg border-border/60 normal-case"
@@ -438,7 +438,7 @@ export default function ChaptersManagement() {
               ))}
             </div>
             <Button
-              variant="outline"
+              variant="default"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               className="h-8 px-4 text-[10px] font-bold rounded-lg border-border/60 normal-case"
@@ -473,7 +473,7 @@ export default function ChaptersManagement() {
                   placeholder="e.g. Adabraka hub"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="h-12 bg-muted/5 border-border/60 rounded-xl focus:ring-0 focus:border-on-surface font-medium text-sm shadow-sm"
+                  className="h-12 bg-muted/5 border-border/60 rounded-sm focus:ring-0 focus:border-on-surface font-medium text-sm shadow-sm"
                 />
               </div>
               <div className="space-y-1.5">
@@ -483,7 +483,7 @@ export default function ChaptersManagement() {
                   placeholder="e.g. Accra"
                   value={formData.city_or_region}
                   onChange={(e) => setFormData({...formData, city_or_region: e.target.value})}
-                  className="h-12 bg-muted/5 border-border/60 rounded-xl focus:ring-0 focus:border-on-surface font-medium text-sm shadow-sm"
+                  className="h-12 bg-muted/5 border-border/60 rounded-sm focus:ring-0 focus:border-on-surface font-medium text-sm shadow-sm"
                 />
               </div>
             </div>
@@ -496,7 +496,7 @@ export default function ChaptersManagement() {
                   placeholder="e.g. Ghana"
                   value={formData.country}
                   onChange={(e) => setFormData({...formData, country: e.target.value})}
-                  className="h-12 bg-muted/5 border-border/60 rounded-xl focus:ring-0 focus:border-on-surface font-medium text-sm shadow-sm"
+                  className="h-12 bg-muted/5 border-border/60 rounded-sm focus:ring-0 focus:border-on-surface font-medium text-sm shadow-sm"
                 />
               </div>
               <div className="space-y-1.5">
@@ -504,7 +504,7 @@ export default function ChaptersManagement() {
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full h-12 bg-muted/5 border border-border/60 rounded-xl focus:ring-0 focus:border-on-surface px-4 text-sm font-medium shadow-sm outline-none"
+                  className="w-full h-12 bg-muted/5 border border-border/60 rounded-sm focus:ring-0 focus:border-on-surface px-4 text-sm font-medium shadow-sm outline-none"
                 >
                   <option value="Pending">Pending</option>
                   <option value="Active">Active</option>
@@ -519,14 +519,14 @@ export default function ChaptersManagement() {
                 placeholder="Describe the chapter's focus area..."
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="min-h-[100px] bg-muted/5 border-border/60 rounded-xl focus:ring-0 focus:border-on-surface font-medium text-sm p-4 shadow-sm"
+                className="min-h-[100px] bg-muted/5 border-border/60 rounded-sm focus:ring-0 focus:border-on-surface font-medium text-sm p-4 shadow-sm"
               />
             </div>
 
             <DialogFooter className="pt-4">
               <Button 
                 type="button" 
-                variant="outline" 
+                variant="default" 
                 onClick={closeModal}
                 className="text-[10px] font-bold rounded-lg shadow-sm normal-case"
               >

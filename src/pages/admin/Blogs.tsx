@@ -16,7 +16,7 @@ import {
   Card, 
   CardContent, 
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -275,7 +275,7 @@ export default function AdminBlogs() {
           
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-8">
-            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+            <Card className="rounded-sm border-border/40 bg-white shadow-sm overflow-hidden">
               <div className="p-4 border-b border-border/40 bg-muted/5">
                 <h3 className="font-bold text-on-surface text-xs normal-case">Post details</h3>
               </div>
@@ -315,7 +315,7 @@ export default function AdminBlogs() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+            <Card className="rounded-sm border-border/40 bg-white shadow-sm overflow-hidden">
               <div className="p-4 border-b border-border/40 bg-muted/5">
                 <h3 className="font-bold text-on-surface text-xs normal-case">Content</h3>
               </div>
@@ -354,7 +354,7 @@ export default function AdminBlogs() {
           {/* Right Sidebar Column */}
           <div className="space-y-8 sticky top-6">
             
-            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+            <Card className="rounded-sm border-border/40 bg-white shadow-sm overflow-hidden">
               <div className="p-4 border-b border-border/40 bg-muted/5">
                 <h3 className="font-bold text-on-surface text-sm normal-case">Publishing</h3>
               </div>
@@ -439,7 +439,7 @@ export default function AdminBlogs() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+            <Card className="rounded-sm border-border/40 bg-white shadow-sm overflow-hidden">
               <div className="p-4 border-b border-border/40 bg-muted/5">
                 <h3 className="font-bold text-on-surface text-sm normal-case">Author information</h3>
               </div>
@@ -508,7 +508,7 @@ export default function AdminBlogs() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+            <Card className="rounded-sm border-border/40 bg-white shadow-sm overflow-hidden">
               <div className="p-4 border-b border-border/40 bg-muted/5">
                 <h3 className="font-bold text-on-surface text-sm normal-case">SEO settings</h3>
               </div>
@@ -587,7 +587,7 @@ export default function AdminBlogs() {
           </Button>
         </div>
         
-        <Card className="rounded-xl border-border/40 bg-white overflow-hidden max-w-4xl mx-auto shadow-sm">
+        <Card className="rounded-sm border-border/40 bg-white overflow-hidden max-w-4xl mx-auto shadow-sm">
           {viewPost.imageUrl && (
             <div className="w-full h-[400px] relative">
               <img src={viewPost.imageUrl} alt={viewPost.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
@@ -635,7 +635,7 @@ export default function AdminBlogs() {
         </div>
         <Button 
           onClick={() => handleEditPost()}
-          className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
+          className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
         >
           <Plus className="w-3.5 h-3.5 mr-2" /> Create new post
         </Button>
@@ -643,7 +643,7 @@ export default function AdminBlogs() {
 
 
       {/* Control Bar */}
-      <Card className="rounded-xl border-border/40 bg-white p-2 shadow-sm mb-10">
+      <Card className="rounded-sm border-border/40 bg-white p-2 shadow-sm mb-10">
         <div className="flex flex-wrap items-center gap-8 px-2 py-1">
           <div className="flex-1 min-w-[240px] relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
@@ -676,7 +676,7 @@ export default function AdminBlogs() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {isLoading ? (
           Array(6).fill(0).map((_, i) => (
-            <Card key={i} className="rounded-xl border-border/40 animate-pulse bg-white">
+            <Card key={i} className="rounded-sm border-border/40 animate-pulse bg-white">
               <div className="h-48 bg-muted/5" />
               <CardContent className="p-6 space-y-4">
                 <div className="h-4 bg-muted/5 w-3/4 rounded" />
@@ -685,14 +685,14 @@ export default function AdminBlogs() {
             </Card>
           ))
         ) : filteredPosts.length === 0 ? (
-          <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-border/40 rounded-2xl">
+          <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-border/40 rounded-sm">
             <div className="w-16 h-16 bg-muted/5 rounded-full flex items-center justify-center mx-auto mb-4">
               <FileText className="w-8 h-8 text-muted-foreground/20" />
             </div>
             <h3 className="text-lg font-bold text-on-surface">No posts found</h3>
             <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
             <Button 
-              variant="outline" 
+              variant="default" 
               onClick={() => setSearchQuery('')}
               className="mt-6 rounded-lg border-border/40 font-bold text-xs px-6"
             >
@@ -701,7 +701,7 @@ export default function AdminBlogs() {
           </div>
         ) : (
           filteredPosts.map((post) => (
-            <Card key={post.id} className="rounded-xl border-border/40 group hover:border-border/60 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
+            <Card key={post.id} className="rounded-sm border-border/40 group hover:border-border/60 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
               <div className="aspect-video relative overflow-hidden bg-muted/5">
                 {post.imageUrl ? (
                   <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />
@@ -734,7 +734,7 @@ export default function AdminBlogs() {
                         <MoreVertical className="w-4 h-4 text-muted-foreground/40" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-xl border-border/40 shadow-xl p-2 w-48">
+                    <DropdownMenuContent align="end" className="rounded-sm border-border/40 shadow-xl p-2 w-48">
                       <DropdownMenuItem onClick={() => handleEditPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
                         <Edit2 className="w-4 h-4 text-muted-foreground/40" /> Edit post
                       </DropdownMenuItem>

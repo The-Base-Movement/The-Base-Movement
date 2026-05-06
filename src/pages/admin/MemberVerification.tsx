@@ -22,7 +22,7 @@ import {
   Cpu,
   Fingerprint,
 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import {
   Card,
@@ -182,7 +182,7 @@ export default function MemberVerification() {
         </div>
         <div className="flex items-center gap-4">
           {pendingCount > 0 && (
-            <div className="hidden md:flex px-4 py-2 bg-accent/5 border border-accent/20 items-center gap-2 rounded-xl shadow-sm">
+            <div className="hidden md:flex px-4 py-2 bg-accent/5 border border-accent/20 items-center gap-2 rounded-sm shadow-sm">
               <AlertCircle className="w-4 h-4 text-accent" />
               <div className="text-right">
                 <span className="text-[9px] font-bold text-accent uppercase tracking-wider block">Pending</span>
@@ -193,7 +193,7 @@ export default function MemberVerification() {
             </div>
           )}
           <Button
-            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
             onClick={() => setShowRegForm(true)}
           >
             <UserPlus className="w-3.5 h-3.5" /> Register new member
@@ -206,7 +206,7 @@ export default function MemberVerification() {
 
         {/* ── Left: Pending List ──────────────────────────────────────────── */}
         <div className="xl:col-span-2 space-y-6">
-          <Card className="rounded-xl border-border/40 shadow-sm overflow-hidden bg-white">
+          <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
@@ -357,7 +357,7 @@ export default function MemberVerification() {
             <div className="space-y-4 sticky top-8">
 
               {/* Identity Card */}
-              <Card className="rounded-xl border-on-surface bg-on-surface text-white shadow-2xl overflow-hidden relative">
+              <Card className="rounded-sm border-on-surface bg-on-surface text-white shadow-2xl overflow-hidden relative">
                 <div className="absolute top-0 right-0 p-4 opacity-5">
                   <ShieldCheck className="w-32 h-32 rotate-12" />
                 </div>
@@ -483,14 +483,14 @@ export default function MemberVerification() {
                       <Button
                         variant="ghost"
                         onClick={handleAiScan}
-                        className="w-full h-11 border border-white/10 bg-white/5 text-white hover:bg-white/10 text-[9px] font-bold tracking-wider rounded-xl"
+                        className="w-full h-11 border border-white/10 bg-white/5 text-white hover:bg-white/10 text-[9px] font-bold tracking-wider rounded-sm"
                       >
                         <Cpu className="w-4 h-4 mr-2" /> Verify identity
                       </Button>
                     )}
 
                     {aiAnalyzing && (
-                      <div className="p-4 bg-white/5 border border-white/10 flex flex-col items-center gap-3 animate-pulse rounded-xl">
+                      <div className="p-4 bg-white/5 border border-white/10 flex flex-col items-center gap-3 animate-pulse rounded-sm">
                         <Fingerprint className="w-6 h-6 text-accent animate-bounce" />
                         <p className="text-[9px] font-bold text-muted-foreground/40 tracking-wider">Analyzing identity...</p>
                       </div>
@@ -498,7 +498,7 @@ export default function MemberVerification() {
 
                     {aiResult && (
                       <div className={cn(
-                        "p-4 border rounded-xl",
+                        "p-4 border rounded-sm",
                         aiResult.flagged ? "bg-destructive/10 border-destructive/20" : "bg-primary/10 border-primary/20"
                       )}>
                         <div className="flex flex-wrap gap-2">
@@ -520,13 +520,13 @@ export default function MemberVerification() {
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <Button
                         onClick={() => handleVerdict(false)}
-                        className="h-11 bg-destructive text-white hover:bg-destructive/90 transition-all text-[9px] font-bold tracking-wider border-0 rounded-xl"
+                        className="h-11 bg-destructive text-white hover:bg-destructive/90 transition-all text-[9px] font-bold tracking-wider border-0 rounded-sm"
                       >
                         <XCircle className="w-3.5 h-3.5 mr-1.5" /> Reject
                       </Button>
                       <Button
                         onClick={() => handleVerdict(true)}
-                        className="h-11 bg-primary text-white hover:bg-primary/90 transition-all text-[9px] font-bold tracking-wider rounded-xl"
+                        className="h-11 bg-primary text-white hover:bg-primary/90 transition-all text-[9px] font-bold tracking-wider rounded-sm"
                       >
                         <UserCheck className="w-3.5 h-3.5 mr-1.5" /> Approve
                       </Button>
@@ -534,13 +534,13 @@ export default function MemberVerification() {
                   )}
 
                   {selectedMember.status === 'Approved' && (
-                    <div className="flex items-center gap-2 p-3 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-wider rounded-xl">
+                    <div className="flex items-center gap-2 p-3 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-wider rounded-sm">
                       <CheckCircle2 className="w-4 h-4" /> Member approved
                     </div>
                   )}
 
                   {selectedMember.status === 'Rejected' && (
-                    <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold tracking-wider rounded-xl">
+                    <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold tracking-wider rounded-sm">
                       <XCircle className="w-4 h-4" /> Registration rejected
                     </div>
                   )}
@@ -549,7 +549,7 @@ export default function MemberVerification() {
 
               {/* View photo button (if available) */}
               {selectedMember.photoUrl && (
-                <Card className="rounded-xl border-border/40 shadow-sm bg-white">
+                <Card className="rounded-sm border-border/40 shadow-sm bg-white">
                   <CardContent className="p-4 space-y-2">
                     <Button
                       variant="ghost"
@@ -572,7 +572,7 @@ export default function MemberVerification() {
               )}
             </div>
           ) : (
-            <div className="h-[400px] border-2 border-dashed border-border/40 rounded-xl flex flex-col items-center justify-center text-muted-foreground/40 gap-4 bg-white/50">
+            <div className="h-[400px] border-2 border-dashed border-border/40 rounded-sm flex flex-col items-center justify-center text-muted-foreground/40 gap-4 bg-white/50">
               <ShieldCheck className="w-12 h-12 opacity-20" />
               <p className="text-[10px] font-bold tracking-wider">Select a file to review</p>
             </div>
@@ -624,7 +624,7 @@ export default function MemberVerification() {
       {/* ── Audit Vault Modal ────────────────────────────────────────────────── */}
       {viewingVaultRecord && (
         <div className="fixed inset-0 z-[120] bg-on-surface/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <Card className="max-w-4xl w-full rounded-xl border-0 shadow-2xl overflow-hidden bg-muted/10">
+          <Card className="max-w-4xl w-full rounded-sm border-0 shadow-2xl overflow-hidden bg-muted/10">
             <CardHeader className="bg-on-surface text-white p-8 border-b border-white/10 relative">
               <div className="absolute top-0 right-0 p-6 opacity-10">
                 <Lock className="w-24 h-24 rotate-12" />
@@ -723,7 +723,7 @@ export default function MemberVerification() {
                     <h3 className="text-[10px] font-bold tracking-wider text-muted-foreground/40 border-b border-border/40 pb-2 mb-4">
                       Captured credentials
                     </h3>
-                    <div className="aspect-[3/4] bg-muted/30 overflow-hidden shadow-inner border border-border/60 relative group rounded-xl">
+                    <div className="aspect-[3/4] bg-muted/30 overflow-hidden shadow-inner border border-border/60 relative group rounded-sm">
                       {viewingVaultRecord.photoUrl ? (
                         <img src={viewingVaultRecord.photoUrl} alt="Vault Record" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       ) : (
@@ -738,7 +738,7 @@ export default function MemberVerification() {
                     </div>
                   </section>
                   
-                  <div className="p-6 bg-muted/30 border border-border/40 rounded-xl">
+                  <div className="p-6 bg-muted/30 border border-border/40 rounded-sm">
                     <p className="text-[9px] font-bold tracking-wider text-on-surface/60 mb-2 italic">Legal disclaimer</p>
                     <p className="text-[10px] text-on-surface/40 leading-relaxed font-medium italic">
                       This record is persistently stored in the movement's secure audit vault. Metadata cannot be altered after verification completion.

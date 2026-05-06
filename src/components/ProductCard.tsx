@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { ShoppingBag, ArrowRight, Star, Heart, Share2, Plus } from 'lucide-react'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'

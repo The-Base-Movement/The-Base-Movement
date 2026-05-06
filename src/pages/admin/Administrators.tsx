@@ -9,7 +9,7 @@ import {
   Zap
 } from 'lucide-react'
 import { adminService, type AdminUser } from '@/services/adminService'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { 
   Card, 
   CardContent
@@ -153,7 +153,7 @@ export default function Administrators() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm"
+            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm"
             onClick={() => setIsProvisionModalOpen(true)}
           >
             <UserPlus className="w-3.5 h-3.5 mr-2" />
@@ -163,7 +163,7 @@ export default function Administrators() {
       </div>
 
       {/* Search Card */}
-      <Card className="rounded-xl border-border/60 shadow-sm">
+      <Card className="rounded-sm border-border/60 shadow-sm">
         <CardContent className="p-6">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
@@ -178,7 +178,7 @@ export default function Administrators() {
       </Card>
 
       {/* Admins Table (Desktop) */}
-      <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden hidden md:block">
+      <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -271,7 +271,7 @@ export default function Administrators() {
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48 rounded-xl border-border/60">
+                            <DropdownMenuContent align="end" className="w-48 rounded-sm border-border/60">
                               <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/40">Admin Actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem 
@@ -316,7 +316,7 @@ export default function Administrators() {
       <div className="grid grid-cols-1 gap-4 md:hidden">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="rounded-xl border-border/60 shadow-sm animate-pulse">
+            <Card key={i} className="rounded-sm border-border/60 shadow-sm animate-pulse">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-muted/5 rounded-lg" />
@@ -335,12 +335,12 @@ export default function Administrators() {
           </div>
         ) : (
           filteredAdmins.map((admin) => (
-            <Card key={admin.id} className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+            <Card key={admin.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-4">
                     <div className={cn(
-                      "w-12 h-12 flex items-center justify-center font-bold text-sm shadow-md overflow-hidden rounded-xl",
+                      "w-12 h-12 flex items-center justify-center font-bold text-sm shadow-md overflow-hidden rounded-sm",
                       admin.role === 'SUPER_ADMIN' ? "bg-destructive text-white" : "bg-on-surface text-white"
                     )}>
                       {admin.avatarUrl ? (
@@ -370,15 +370,15 @@ export default function Administrators() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-xl border border-border/10">
+                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
                     <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Region</span>
                     <span className="text-[10px] font-bold text-on-surface uppercase">{admin.region || 'National HQ'}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Button 
-                      variant="outline" 
-                      className="flex-1 h-10 rounded-xl border-border/60 text-on-surface/60 text-[10px] font-bold hover:bg-muted/5"
+                      variant="default" 
+                      className="flex-1 h-10 rounded-sm border-border/60 text-on-surface/60 text-[10px] font-bold hover:bg-muted/5"
                       onClick={() => {
                         setSelectedAdmin(admin)
                         setIsActivityModalOpen(true)
@@ -389,13 +389,13 @@ export default function Administrators() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button 
-                          variant="outline" 
-                          className="h-10 px-4 rounded-xl border-border/60 text-muted-foreground/40 hover:text-destructive"
+                          variant="default" 
+                          className="h-10 px-4 rounded-sm border-border/60 text-muted-foreground/40 hover:text-destructive"
                         >
                           <MoreHorizontal className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 rounded-xl border-border/60">
+                      <DropdownMenuContent align="end" className="w-48 rounded-sm border-border/60">
                         <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/40">Admin Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
@@ -425,7 +425,7 @@ export default function Administrators() {
       </div>
 
       {/* Security Advisory */}
-      <div className="bg-muted/5 border border-border/60 p-8 text-on-surface/60 relative overflow-hidden rounded-xl shadow-sm">
+      <div className="bg-muted/5 border border-border/60 p-8 text-on-surface/60 relative overflow-hidden rounded-sm shadow-sm">
         <div className="flex items-center gap-6 relative z-10">
           <div className="w-12 h-12 bg-muted/5 flex items-center justify-center shrink-0 rounded-lg">
             <ShieldCheck className="w-6 h-6 text-muted-foreground/40" />
@@ -441,7 +441,7 @@ export default function Administrators() {
 
       {/* Provision Modal */}
       <Dialog open={isProvisionModalOpen} onOpenChange={setIsProvisionModalOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-xl border-border/60">
+        <DialogContent className="sm:max-w-[425px] rounded-sm border-border/60">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold tracking-tight">Provision administrator</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground/80">
@@ -474,7 +474,7 @@ export default function Administrators() {
           </div>
           <DialogFooter>
             <Button 
-              variant="outline" 
+              variant="default" 
               className="rounded-lg h-10 text-xs font-bold border-border/60"
               onClick={() => setIsProvisionModalOpen(false)}
             >
@@ -493,7 +493,7 @@ export default function Administrators() {
 
       {/* Edit Permissions Modal */}
       <Dialog open={isPermissionsModalOpen} onOpenChange={setIsPermissionsModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-xl border-border/60">
+        <DialogContent className="sm:max-w-[500px] rounded-sm border-border/60">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold tracking-tight">Access control / Permissions</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground/80">
@@ -517,7 +517,7 @@ export default function Administrators() {
           </div>
           <DialogFooter>
             <Button 
-              variant="outline" 
+              variant="default" 
               className="rounded-lg h-10 text-xs font-bold border-border/60"
               onClick={() => setIsPermissionsModalOpen(false)}
             >
@@ -535,7 +535,7 @@ export default function Administrators() {
 
       {/* Activity Logs Modal */}
       <Dialog open={isActivityModalOpen} onOpenChange={setIsActivityModalOpen}>
-        <DialogContent className="sm:max-w-[600px] rounded-xl border-border/60">
+        <DialogContent className="sm:max-w-[600px] rounded-sm border-border/60">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold tracking-tight">Audit vault / Activity logs</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground/80">
@@ -548,7 +548,7 @@ export default function Administrators() {
               { action: 'Chapter modified', target: 'Ashanti Central', time: '2 hours ago' },
               { action: 'Poll launched', target: 'National Sentiment 2026', time: 'Yesterday' }
             ].map((log, i) => (
-              <div key={i} className="flex items-center justify-between p-4 bg-muted/5 border border-border/10 rounded-xl">
+              <div key={i} className="flex items-center justify-between p-4 bg-muted/5 border border-border/10 rounded-sm">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold text-on-surface tracking-tight">{log.action}</span>
                   <span className="text-[9px] font-bold text-muted-foreground/40 mt-0.5">{log.target}</span>

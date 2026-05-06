@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom'
 import { Calendar, Clock, Share2, Facebook, Mail, Bookmark, ChevronRight, Linkedin, Send } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { CommentSection } from '@/components/CommentSection'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import { Loader2 } from 'lucide-react'
@@ -92,7 +92,7 @@ export default function BlogPost() {
           <p className="text-sm font-bold text-stone-500 uppercase tracking-widest text-center">
             Insight not found or has been moved to the vault.
           </p>
-          <Button onClick={() => navigate(baseUrl)} variant="primary" className="h-11 px-8 rounded-none uppercase text-[10px] font-bold tracking-widest">
+          <Button onClick={() => navigate(baseUrl)} variant="solid" className="h-11 px-8 rounded-none uppercase text-[10px] font-bold tracking-widest">
             Return to Blog
           </Button>
         </div>
@@ -122,12 +122,12 @@ export default function BlogPost() {
           <div className="flex items-center gap-3">
              <Button 
               onClick={() => handleShare()}
-              variant="outline" 
+              variant="default" 
               className="h-10 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-[10px] font-bold uppercase tracking-widest"
              >
               <Share2 className="w-4 h-4 mr-2" /> Share
             </Button>
-            <Button variant="outline" className="h-10 w-10 p-0 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none">
+            <Button variant="default" className="h-10 w-10 p-0 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none">
               <Bookmark className="w-4 h-4" />
             </Button>
           </div>
@@ -220,7 +220,7 @@ export default function BlogPost() {
                       <Button 
                         key={i} 
                         onClick={() => handleShare(key)}
-                        variant="outline" 
+                        variant="default" 
                         style={{ color: brandColor, borderColor: `${brandColor}20` }}
                         className="h-12 w-full p-0 border hover:bg-stone-50 rounded-none transition-all duration-300 hover:scale-105"
                       >

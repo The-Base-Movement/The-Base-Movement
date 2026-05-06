@@ -24,7 +24,7 @@ import {
   UserCheck
 } from 'lucide-react'
 import { adminService, type AuditLogEntry, type Member } from '@/services/adminService'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { 
   Card, 
@@ -327,8 +327,8 @@ export default function MembersList() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
-            className="rounded-xl border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all"
+            variant="default" 
+            className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all"
             onClick={handleExport}
             disabled={isExporting || members.length === 0}
           >
@@ -336,8 +336,9 @@ export default function MembersList() {
             {isExporting ? 'Generating...' : 'Export directory'}
           </Button>
           <Button 
-            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
+            variant="solid"
             onClick={handleAddMember}
+            className="h-10 px-6"
           >
             <Plus className="w-3.5 h-3.5 mr-2" />
             Add member
@@ -353,9 +354,9 @@ export default function MembersList() {
           { label: 'Pending verification', value: stats.pending, icon: Clock, color: 'text-accent', bg: 'bg-accent/10' },
           { label: 'Regions represented', value: stats.regions, icon: Globe2, color: 'text-primary', bg: 'bg-primary/5' },
         ].map((stat, i) => (
-          <Card key={i} className="rounded-2xl border-border/40 shadow-sm overflow-hidden group hover:border-border/60 transition-all bg-white/80 backdrop-blur-sm min-h-[100px]">
+          <Card key={i} className="rounded-sm border-border/40 shadow-sm overflow-hidden group hover:border-border/60 transition-all bg-white/80 backdrop-blur-sm min-h-[100px]">
             <CardContent className="p-5 h-full flex items-center gap-4">
-              <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", stat.bg)}>
+              <div className={cn("w-12 h-12 rounded-sm flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", stat.bg)}>
                 <stat.icon className={cn("w-6 h-6", stat.color)} />
               </div>
               <div className="flex-1">
@@ -374,14 +375,14 @@ export default function MembersList() {
       </div>
 
       {/* Combined Filter Bar */}
-      <Card className="rounded-2xl border-border/40 shadow-sm overflow-hidden bg-white">
+      <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
         <CardContent className="p-2 md:p-3">
           <div className="flex flex-col md:flex-row gap-2 items-center">
             <div className="relative flex-1 w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/80" />
               <Input 
                 placeholder="Search by name, ID, phone, profession, region..." 
-                className="pl-12 h-12 rounded-xl border-none bg-muted/10 focus:bg-white focus:ring-2 focus:ring-on-surface/20 transition-all text-sm font-medium"
+                className="pl-12 h-12 rounded-sm border-none bg-muted/10 focus:bg-white focus:ring-2 focus:ring-on-surface/20 transition-all text-sm font-medium"
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value)
@@ -390,17 +391,17 @@ export default function MembersList() {
               />
             </div>
             
-            <div className="flex items-center gap-2 w-full md:w-auto p-1 bg-muted/10 md:bg-transparent rounded-xl md:rounded-none">
+            <div className="flex items-center gap-2 w-full md:w-auto p-1 bg-muted/10 md:bg-transparent rounded-sm md:rounded-none">
               <div className="h-8 w-px bg-border/40 mx-2 hidden md:block" />
               
               <div className="flex flex-col w-full md:w-auto">
                 <span className="text-[9px] font-bold text-muted-foreground/80 px-2 md:hidden mb-1">Quick Filters</span>
                 <div className="flex flex-row gap-2">
-                  <Button variant="ghost" className="flex-1 md:flex-none h-10 px-3 rounded-xl text-on-surface/80 hover:text-on-surface hover:bg-white hover:shadow-sm transition-all text-[10px] font-medium tracking-wide border border-border/40 md:border-none">
+                  <Button variant="ghost" className="flex-1 md:flex-none h-10 px-3 rounded-sm text-on-surface/80 hover:text-on-surface hover:bg-white hover:shadow-sm transition-all text-[10px] font-medium tracking-wide border border-border/40 md:border-none">
                     <MapPin className="w-3.5 h-3.5 mr-1.5 text-muted-foreground/40" /> Origins
                   </Button>
                   
-                  <Button variant="ghost" className="flex-1 md:flex-none h-10 px-3 rounded-xl text-on-surface/80 hover:text-on-surface hover:bg-white hover:shadow-sm transition-all text-[10px] font-medium tracking-wide border border-border/40 md:border-none">
+                  <Button variant="ghost" className="flex-1 md:flex-none h-10 px-3 rounded-sm text-on-surface/80 hover:text-on-surface hover:bg-white hover:shadow-sm transition-all text-[10px] font-medium tracking-wide border border-border/40 md:border-none">
                     <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-muted-foreground/40" /> Statuses
                   </Button>
                 </div>
@@ -409,7 +410,7 @@ export default function MembersList() {
               {(searchTerm !== '') && (
                 <Button 
                   variant="ghost" 
-                  className="h-10 px-4 rounded-xl text-destructive hover:bg-destructive/10 text-[11px] font-bold tracking-wide transition-all"
+                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-[11px] font-bold tracking-wide transition-all"
                   onClick={() => {
                     setSearchTerm('')
                     setCurrentPage(1)
@@ -424,7 +425,7 @@ export default function MembersList() {
       </Card>
 
       {/* Members Table */}
-      <Card className="rounded-2xl border-border/40 shadow-sm overflow-hidden bg-white">
+      <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
         {selectedIds.size > 0 && (
           <div className="px-6 py-3 bg-on-surface text-white flex items-center justify-between animate-in slide-in-from-top-2 duration-300">
             <div className="flex items-center gap-4">
@@ -505,13 +506,13 @@ export default function MembersList() {
                     <td colSpan={6} className="px-6 py-20">
                       {members.length === 0 ? (
                         <div className="flex flex-col items-center text-center max-w-sm mx-auto">
-                          <div className="w-16 h-16 rounded-3xl bg-muted/30 flex items-center justify-center mb-6">
+                          <div className="w-16 h-16 rounded-sm bg-muted/30 flex items-center justify-center mb-6">
                             <Users className="w-8 h-8 text-muted-foreground/40" />
                           </div>
                           <h3 className="text-xl font-black text-on-surface tracking-tight normal-case">No members yet</h3>
                           <p className="text-muted-foreground/80 text-sm mt-1 font-medium">Create your first member record to get started.</p>
                           <Button 
-                            className="mt-6 h-11 px-6 rounded-xl bg-on-surface text-white text-[11px] font-bold hover:bg-on-surface/90 shadow-lg shadow-border/20 normal-case"
+                            className="mt-6 h-11 px-6 rounded-sm bg-on-surface text-white text-[11px] font-bold hover:bg-on-surface/90 shadow-lg shadow-border/20 normal-case"
                             onClick={handleAddMember}
                           >
                             <Plus className="w-4 h-4 mr-2" />
@@ -520,7 +521,7 @@ export default function MembersList() {
                         </div>
                       ) : (
                         <div className="flex flex-col items-center text-center max-w-sm mx-auto">
-                          <div className="w-16 h-16 rounded-3xl bg-accent/10 flex items-center justify-center mb-6">
+                          <div className="w-16 h-16 rounded-sm bg-accent/10 flex items-center justify-center mb-6">
                             <AlertCircle className="w-8 h-8 text-accent" />
                           </div>
                           <h3 className="text-sm font-bold text-on-surface tracking-tight">No results found</h3>
@@ -528,12 +529,12 @@ export default function MembersList() {
                             We couldn't find any members matching "{searchTerm}". Try adjusting your filters or search terms.
                           </p>
                           <Button 
-                            variant="outline"
+                            variant="default"
                             onClick={() => {
                               setSearchTerm('')
                               setCurrentPage(1)
                             }}
-                            className="mt-6 h-10 px-6 rounded-xl border-border/60 text-on-surface/80 text-[11px] font-bold tracking-widest hover:bg-muted/30"
+                            className="mt-6 h-10 px-6 rounded-sm border-border/60 text-on-surface/80 text-[11px] font-bold tracking-widest hover:bg-muted/30"
                           >
                             <RotateCcw className="w-3.5 h-3.5 mr-2" /> Clear all filters
                           </Button>
@@ -554,7 +555,7 @@ export default function MembersList() {
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-muted/30 text-on-surface/80 flex items-center justify-center font-bold text-xs rounded-xl shadow-sm overflow-hidden shrink-0 border border-border/60 transition-transform group-hover:scale-105">
+                        <div className="w-10 h-10 bg-muted/30 text-on-surface/80 flex items-center justify-center font-bold text-xs rounded-sm shadow-sm overflow-hidden shrink-0 border border-border/60 transition-transform group-hover:scale-105">
                           {member.avatarUrl ? (
                             <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                           ) : (
@@ -664,8 +665,8 @@ export default function MembersList() {
             </div>
             <div className="flex items-center gap-3">
               <Button 
-                variant="outline" 
-                className="h-9 px-4 text-[10px] font-bold rounded-xl border-border/60 disabled:opacity-30 transition-all hover:bg-white hover:shadow-sm normal-case" 
+                variant="default" 
+                className="h-9 px-4 text-[10px] font-bold rounded-sm border-border/60 disabled:opacity-30 transition-all hover:bg-white hover:shadow-sm normal-case" 
                 disabled={currentPage === 1}
                 onClick={handlePrevPage}
               >
@@ -677,8 +678,8 @@ export default function MembersList() {
                 ))}
               </div>
               <Button 
-                variant="outline" 
-                className="h-9 px-4 text-[10px] font-bold rounded-xl border-border/60 disabled:opacity-30 transition-all hover:bg-white hover:shadow-sm normal-case"
+                variant="default" 
+                className="h-9 px-4 text-[10px] font-bold rounded-sm border-border/60 disabled:opacity-30 transition-all hover:bg-white hover:shadow-sm normal-case"
                 disabled={currentPage >= totalPages || totalPages === 0}
                 onClick={handleNextPage}
               >
@@ -719,7 +720,7 @@ export default function MembersList() {
                 avatarUrl={selectedMember.avatarUrl}
               />
               <Button 
-                variant="outline"
+                variant="default"
                 size="icon"
                 className="absolute -top-12 right-0 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border-white/20 text-white"
                 onClick={() => setSelectedMember(null)}
@@ -736,8 +737,9 @@ export default function MembersList() {
                   Print Card
                 </Button>
                 <Button 
+                  variant="solid"
                   onClick={handleDownload}
-                  className="h-12 bg-on-surface hover:bg-on-surface/90 text-white font-meta font-black uppercase tracking-widest text-[10px] shadow-lg rounded-none"
+                  className="h-12 flex-1"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">download</span>
                   Download PDF
@@ -809,7 +811,7 @@ export default function MembersList() {
           <div className="p-6 border-t border-border/40 bg-stone-50/50 flex justify-end">
             <Button 
               onClick={() => setIsAuditModalOpen(false)}
-              className="bg-on-surface text-white text-[10px] font-bold rounded-xl h-11 px-8 shadow-md"
+              className="bg-on-surface text-white text-[10px] font-bold rounded-sm h-11 px-8 shadow-md"
             >
               Close history
             </Button>

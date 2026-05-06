@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { User, Star, ThumbsUp } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 
 interface Review {
   id: string

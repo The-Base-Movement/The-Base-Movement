@@ -13,7 +13,7 @@ import {
   Search
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { FieldEvent, MobilizationLedger } from '@/services/adminService'
 import { cn } from '@/lib/utils'
@@ -81,10 +81,10 @@ export default function ChapterLeadHub() {
           <p className="text-muted-foreground/80 text-sm mt-1">Empowering regional autonomy through tactical coordination.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="rounded-xl border-border/60 text-on-surface/60 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all flex items-center gap-2">
+          <Button variant="default" className="rounded-sm border-border/60 text-on-surface/60 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all flex items-center gap-2">
             <BarChart3 className="w-3.5 h-3.5" /> Local telemetry
           </Button>
-          <Button className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2">
+          <Button className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2">
             <Plus className="w-3.5 h-3.5" /> New field event
           </Button>
         </div>
@@ -98,7 +98,7 @@ export default function ChapterLeadHub() {
           { label: 'Operations budget', value: `GH₵${stats.availableBudget.toLocaleString()}`, icon: DollarSign, color: 'text-accent', bg: 'bg-accent/5' },
           { label: 'Planned events', value: stats.totalEvents.toString(), icon: Calendar, color: 'text-on-surface/60', bg: 'bg-muted/5' },
         ].map((stat, i) => (
-          <Card key={i} className="rounded-xl border-border/60 shadow-sm group hover:border-on-surface transition-colors overflow-hidden">
+          <Card key={i} className="rounded-sm border-border/60 shadow-sm group hover:border-on-surface transition-colors overflow-hidden">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div>
@@ -131,7 +131,7 @@ export default function ChapterLeadHub() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {events.length > 0 ? events.map((event) => (
-              <Card key={event.id} className="rounded-xl border-border/60 shadow-sm overflow-hidden group hover:shadow-md transition-all">
+              <Card key={event.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden group hover:shadow-md transition-all">
                 <div className="h-1.5 w-full bg-muted/5 relative overflow-hidden">
                   <div className={cn(
                     "h-full transition-all duration-1000",
@@ -184,7 +184,7 @@ export default function ChapterLeadHub() {
                 </CardContent>
               </Card>
             )) : (
-              <div className="col-span-2 border-2 border-dashed border-border/60 rounded-xl p-12 flex flex-col items-center justify-center text-muted-foreground/40 bg-muted/5">
+              <div className="col-span-2 border-2 border-dashed border-border/60 rounded-sm p-12 flex flex-col items-center justify-center text-muted-foreground/40 bg-muted/5">
                 <Calendar className="w-12 h-12 mb-4 opacity-20" />
                 <p className="text-[10px] font-bold normal-case">No field operations scheduled.</p>
               </div>
@@ -193,7 +193,7 @@ export default function ChapterLeadHub() {
         </div>
 
         {/* 💳 Mobilization Ledger */}
-        <Card className="rounded-xl border-border/60 shadow-sm bg-on-surface text-white overflow-hidden flex flex-col h-full relative">
+        <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden flex flex-col h-full relative">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
           <CardHeader className="p-8 border-b border-white/5 bg-white/5 relative z-10">
             <div className="flex items-center justify-between mb-2">
@@ -238,7 +238,7 @@ export default function ChapterLeadHub() {
               <span className="text-[9px] font-bold normal-case text-white/40">Total allocation</span>
               <span className="text-lg font-black font-meta text-primary">GH₵{ledger.filter(l => l.transaction_type === 'Allocation').reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
             </div>
-            <Button variant="outline" className="w-full h-11 border-white/10 text-white font-bold text-[9px] normal-case hover:bg-white/10 rounded-lg transition-all">
+            <Button variant="default" className="w-full h-11 border-white/10 text-white font-bold text-[9px] normal-case hover:bg-white/10 rounded-lg transition-all">
               Request additional funds
             </Button>
           </div>

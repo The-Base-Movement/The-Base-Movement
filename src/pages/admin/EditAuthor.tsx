@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Upload, Loader2, Save, Image as ImageIcon } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -143,7 +143,7 @@ export default function AdminEditAuthor() {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
           <CardContent className="p-8 space-y-8">
             
             {/* Identity Section */}
@@ -191,7 +191,7 @@ export default function AdminEditAuthor() {
               <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest border-b border-border/10 pb-2">Profile Media</h3>
               
               <div className="flex flex-col sm:flex-row items-start gap-6">
-                <div className="w-32 h-32 rounded-xl bg-muted/10 border-2 border-dashed border-border/40 flex items-center justify-center overflow-hidden shrink-0 relative group">
+                <div className="w-32 h-32 rounded-sm bg-muted/10 border-2 border-dashed border-border/40 flex items-center justify-center overflow-hidden shrink-0 relative group">
                   {formData.imageUrl ? (
                     <>
                       <img src={formData.imageUrl} alt="Profile" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
@@ -265,7 +265,7 @@ export default function AdminEditAuthor() {
           <div className="p-6 border-t border-border/10 bg-muted/5 flex justify-end gap-3">
             <Button 
               type="button" 
-              variant="outline" 
+              variant="default" 
               onClick={() => navigate('/admin/authors')}
               className="border-border/60 hover:bg-muted/10"
             >
@@ -274,7 +274,7 @@ export default function AdminEditAuthor() {
             <Button 
               type="submit" 
               disabled={isSaving}
-              className="bg-on-surface text-white shadow-lg shadow-black/10 px-8 font-bold tracking-wide rounded-xl"
+              className="bg-on-surface text-white shadow-lg shadow-black/10 px-8 font-bold tracking-wide rounded-sm"
             >
               {isSaving ? (
                 <>

@@ -50,7 +50,7 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
   }
 
   return (
-    <div className="relative w-full aspect-[3/4] bg-muted/10 flex items-center justify-center p-8 overflow-hidden group rounded-3xl border border-border/40">
+    <div className="relative w-full aspect-[3/4] bg-muted/10 flex items-center justify-center p-8 overflow-hidden group rounded-sm border border-border/40">
       {/* Map Background Glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_hsl(var(--accent))_0%,_transparent_70%)] opacity-5 pointer-events-none" />
       
@@ -85,7 +85,7 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
                     onClick={() => onRegionClick?.(path.name)}
                   />
                 </TooltipTrigger>
-                <TooltipContent className="rounded-2xl border-border/10 bg-on-surface text-white p-5 shadow-2xl backdrop-blur-xl">
+                <TooltipContent className="rounded-sm border-border/10 bg-on-surface text-white p-5 shadow-2xl backdrop-blur-xl">
                   <div className="space-y-3">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive">{path.name} Region</p>
                     <div className="flex justify-between gap-8 items-end">
@@ -119,7 +119,7 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
       </TooltipProvider>
 
       {/* Map Legend */}
-      <div className="absolute bottom-6 left-6 space-y-3 bg-white/80 backdrop-blur-md p-5 border border-border/10 shadow-xl rounded-2xl">
+      <div className="absolute bottom-6 left-6 space-y-3 bg-white/80 backdrop-blur-md p-5 border border-border/10 shadow-xl rounded-sm">
         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface/40 mb-2">Expansion Density</p>
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">

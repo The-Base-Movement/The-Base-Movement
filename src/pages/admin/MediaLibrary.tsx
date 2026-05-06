@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { 
   Upload, 
@@ -133,8 +133,8 @@ export default function MediaLibrary() {
         
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
-            className="rounded-xl border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all"
+            variant="default" 
+            className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all"
             onClick={loadFiles}
           >
             Refresh library
@@ -150,7 +150,7 @@ export default function MediaLibrary() {
               disabled={isUploading}
             />
             <Button 
-              className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+              className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
               asChild
               disabled={isUploading}
             >
@@ -174,7 +174,7 @@ export default function MediaLibrary() {
           <select
             value={activeFolder}
             onChange={(e) => setActiveFolder(e.target.value)}
-            className="w-full h-12 bg-white border border-border/60 rounded-xl px-4 text-sm font-bold focus:border-on-surface outline-none shadow-sm"
+            className="w-full h-12 bg-white border border-border/60 rounded-sm px-4 text-sm font-bold focus:border-on-surface outline-none shadow-sm"
           >
             {folders.map((folder) => (
               <option key={folder.id} value={folder.id}>
@@ -186,7 +186,7 @@ export default function MediaLibrary() {
 
         {/* Sidebar - Folders (Desktop Only) */}
         <div className="hidden lg:block space-y-6">
-          <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-border/10 bg-muted/5">
               <h3 className="font-bold text-on-surface text-xs normal-case">Asset categories</h3>
             </div>
@@ -219,14 +219,14 @@ export default function MediaLibrary() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-on-surface transition-colors" />
               <Input 
                 placeholder="Search your assets..." 
-                className="pl-12 h-12 rounded-xl border-border/60 focus:ring-0 focus:border-on-surface transition-all bg-white shadow-sm"
+                className="pl-12 h-12 rounded-sm border-border/60 focus:ring-0 focus:border-on-surface transition-all bg-white shadow-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
 
-          <Card className="rounded-2xl border-border/60 shadow-sm min-h-[500px] overflow-hidden bg-white">
+          <Card className="rounded-sm border-border/60 shadow-sm min-h-[500px] overflow-hidden bg-white">
             <CardContent className="p-8">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-[400px] space-y-4">
@@ -235,7 +235,7 @@ export default function MediaLibrary() {
                 </div>
               ) : filteredFiles.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-[400px] space-y-4 text-center">
-                  <div className="w-16 h-16 rounded-3xl bg-muted/5 flex items-center justify-center mb-2">
+                  <div className="w-16 h-16 rounded-sm bg-muted/5 flex items-center justify-center mb-2">
                     <ImageIcon className="w-8 h-8 text-muted-foreground/20" />
                   </div>
                   <h3 className="font-bold text-on-surface text-lg">No assets found</h3>
@@ -245,7 +245,7 @@ export default function MediaLibrary() {
                       : `Your ${activeFolder.replace('-', ' ')} folder is currently empty.`}
                   </p>
                   <Button 
-                    variant="outline" 
+                    variant="default" 
                     className="mt-4 rounded-lg px-6"
                     asChild
                   >
@@ -258,7 +258,7 @@ export default function MediaLibrary() {
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                   {filteredFiles.map((url, idx) => (
                     <div key={idx} className="group relative">
-                      <div className="aspect-square rounded-xl overflow-hidden bg-muted/5 border border-border/10 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-1">
+                      <div className="aspect-square rounded-sm overflow-hidden bg-muted/5 border border-border/10 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-1">
                         <img src={url} 
                           alt="Media asset" 
                           className="w-full h-full object-cover"
@@ -266,7 +266,7 @@ export default function MediaLibrary() {
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button 
                             size="icon" 
-                            variant="secondary" 
+                            variant="default" 
                             className="h-9 w-9 rounded-lg bg-white/90 hover:bg-white text-on-surface shadow-xl"
                             onClick={() => copyToClipboard(url)}
                           >
@@ -274,7 +274,7 @@ export default function MediaLibrary() {
                           </Button>
                           <Button 
                             size="icon" 
-                            variant="secondary" 
+                            variant="default" 
                             className="h-9 w-9 rounded-lg bg-white/90 hover:bg-white text-on-surface shadow-xl"
                             asChild
                           >
@@ -284,7 +284,7 @@ export default function MediaLibrary() {
                           </Button>
                           <Button 
                             size="icon" 
-                            variant="secondary" 
+                            variant="default" 
                             className="h-9 w-9 rounded-lg bg-white/90 hover:bg-destructive/10 text-on-surface hover:text-destructive shadow-xl"
                             onClick={() => setAssetToDelete(url)}
                           >
@@ -308,10 +308,10 @@ export default function MediaLibrary() {
           </Card>
 
           {/* Storage Usage Section (Moved to Bottom) */}
-          <Card className="rounded-2xl border-border/60 shadow-sm bg-on-surface text-white overflow-hidden p-8">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
               <div className="flex items-center gap-6">
-                <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 rounded-sm bg-primary/20 flex items-center justify-center shrink-0">
                   <Filter className="w-7 h-7 text-primary" />
                 </div>
                 <div>

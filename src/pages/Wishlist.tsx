@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Heart, ArrowLeft, Trash2, ShoppingCart } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 import { useStore } from '@/hooks/useStore'
@@ -87,7 +87,7 @@ export default function Wishlist() {
                         <ShoppingCart className="w-3.5 h-3.5" />
                         Add to Cart
                       </Button>
-                      <Button asChild variant="outline" className="flex-1 border-stone-200 hover:border-brand-green hover:text-brand-green text-[10px] font-bold uppercase tracking-widest rounded-none h-11">
+                      <Button asChild variant="default" className="flex-1 border-stone-200 hover:border-brand-green hover:text-brand-green text-[10px] font-bold uppercase tracking-widest rounded-none h-11">
                         <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${item.slug}` : `/store/product/${item.slug}`}>Details</Link>
                       </Button>
                     </div>

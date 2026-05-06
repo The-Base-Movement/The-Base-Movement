@@ -18,7 +18,7 @@ import {
   Card, 
   CardContent
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/services/adminService'
 import { useToast } from '@/hooks/use-toast'
@@ -136,8 +136,8 @@ export default function FinancialAudit() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
-            className="h-10 px-6 text-[10px] font-bold normal-case border-border/60 bg-white text-on-surface/80 shadow-sm rounded-xl hover:bg-muted/5"
+            variant="default" 
+            className="h-10 px-6 text-[10px] font-bold normal-case border-border/60 bg-white text-on-surface/80 shadow-sm rounded-sm hover:bg-muted/5"
             onClick={handleExport}
             disabled={filteredDonations.length === 0}
           >
@@ -145,9 +145,9 @@ export default function FinancialAudit() {
             Export ledger
           </Button>
           <Button 
-            variant="outline" 
+            variant="default" 
             onClick={() => fetchData()} 
-            className="h-10 px-6 text-[10px] font-bold normal-case border-border/60 bg-white text-on-surface/80 shadow-sm rounded-xl hover:bg-muted/5"
+            className="h-10 px-6 text-[10px] font-bold normal-case border-border/60 bg-white text-on-surface/80 shadow-sm rounded-sm hover:bg-muted/5"
           >
             <Loader2 className={cn("w-3.5 h-3.5 mr-2", isLoading && "animate-spin")} />
             Sync ledger
@@ -157,28 +157,28 @@ export default function FinancialAudit() {
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">Total Contributions</p>
             <h3 className="text-xl md:text-2xl font-bold text-on-surface">{stats.totalContributions.toLocaleString()}</h3>
             <span className="text-[10px] font-bold text-muted-foreground/60 mt-1">All-time recorded volume</span>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">Pending Review</p>
             <h3 className="text-xl md:text-2xl font-bold text-accent">{stats.pendingCount.toLocaleString()}</h3>
             <span className="text-[10px] font-bold text-accent/70 mt-1">Awaiting administrative clearance</span>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm col-span-2 md:col-span-1">
+        <Card className="rounded-sm border-border/60 shadow-sm col-span-2 md:col-span-1">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">Approved Amount</p>
             <h3 className="text-2xl font-bold text-primary">GH₵ {stats.approvedAmount.toLocaleString()}</h3>
             <span className="text-[10px] font-bold text-primary/70 mt-1">Total cleared funds</span>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/60 shadow-sm col-span-2 md:col-span-1">
+        <Card className="rounded-sm border-border/60 shadow-sm col-span-2 md:col-span-1">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">Flagged Transactions</p>
             <h3 className="text-2xl font-bold text-destructive">{stats.flaggedCount.toLocaleString()}</h3>
@@ -190,7 +190,7 @@ export default function FinancialAudit() {
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         <div className="w-full flex-1 space-y-6">
           {/* Intelligence & Filtering */}
-          <div className="bg-white border border-border/60 p-2 rounded-xl flex flex-wrap items-center justify-between gap-4">
+          <div className="bg-white border border-border/60 p-2 rounded-sm flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               {['Pending', 'Verified', 'Rejected', 'All'].map(status => (
                 <button
@@ -221,10 +221,10 @@ export default function FinancialAudit() {
           <div className="space-y-4">
             {isLoading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="h-32 bg-muted/5 rounded-xl animate-pulse border border-border/40" />
+                <div key={i} className="h-32 bg-muted/5 rounded-sm animate-pulse border border-border/40" />
               ))
             ) : filteredDonations.length === 0 ? (
-              <Card className="rounded-xl border-border/60 p-20 text-center bg-muted/30 shadow-none">
+              <Card className="rounded-sm border-border/60 p-20 text-center bg-muted/30 shadow-none">
                 <ShieldCheck className="w-12 h-12 text-border/60 mx-auto mb-4" />
                 <p className="text-muted-foreground/80 text-sm font-bold">
                   {statusFilter === 'Pending' 
@@ -235,7 +235,7 @@ export default function FinancialAudit() {
             ) : (
               <div className="grid gap-4">
                 {filteredDonations.map((donation) => (
-                  <Card key={donation.id} className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+                  <Card key={donation.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
                     <CardContent className="p-0">
                       <div className="flex flex-col lg:flex-row items-stretch">
                         
@@ -300,17 +300,18 @@ export default function FinancialAudit() {
                               <p className="text-[10px] font-bold text-muted-foreground/60">Audit action required</p>
                               <div className="flex items-center gap-2">
                                 <Button 
-                                  variant="outline" 
+                                  variant="default" 
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Rejected')}
                                   disabled={isVerifying === donation.id}
-                                  className="flex-1 h-9 text-[10px] font-bold border-destructive/20 text-destructive hover:bg-destructive/10 hover:border-destructive/30 rounded-xl"
+                                  className="flex-1 h-9 text-brand-red border-brand-red/20 hover:bg-brand-red/5"
                                 >
                                   Flag
                                 </Button>
                                 <Button 
+                                  variant="solid"
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Verified')}
                                   disabled={isVerifying === donation.id}
-                                  className="flex-1 h-9 text-[10px] font-bold bg-on-surface text-white hover:bg-on-surface/90 rounded-xl"
+                                  className="flex-1 h-9"
                                 >
                                   Approve
                                 </Button>
@@ -344,7 +345,7 @@ export default function FinancialAudit() {
       {/* Receipt Viewer Modal */}
        {selectedReceipt && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/90 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="max-w-2xl w-full bg-white relative overflow-hidden rounded-2xl shadow-2xl">
+          <div className="max-w-2xl w-full bg-white relative overflow-hidden rounded-sm shadow-2xl">
             <div className="absolute top-4 right-4 z-10">
               <Button 
                 variant="ghost" 
@@ -365,13 +366,14 @@ export default function FinancialAudit() {
             <div className="p-8 bg-muted/5 flex items-center justify-center min-h-[400px]">
               <img src={selectedReceipt} 
                 alt="Transaction Receipt" 
-                className="max-h-[60vh] object-contain shadow-md rounded-xl border border-border/60"
+                className="max-h-[60vh] object-contain shadow-md rounded-sm border border-border/60"
                decoding="async" loading="lazy" />
             </div>
             <div className="p-6 flex justify-end bg-white border-t border-border/40">
               <Button 
+                variant="solid"
                 onClick={() => setSelectedReceipt(null)}
-                className="h-10 px-8 text-[10px] font-bold bg-on-surface text-white hover:bg-on-surface/90 rounded-xl"
+                className="h-10 px-8"
               >
                 Close viewer
               </Button>

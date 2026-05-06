@@ -206,7 +206,7 @@ export default function DashboardLayout() {
           <div className="px-6 pt-2">
             <button 
               onClick={() => setIsShareModalOpen(true)}
-              className="w-full h-14 bg-primary text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-primary/20"
+              className="w-full h-14 bg-primary text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-sm hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-primary/20"
             >
               Invite & Share
             </button>
@@ -223,7 +223,7 @@ export default function DashboardLayout() {
             {/* Back to Landing Page */}
             <Link
               to="/"
-              className="mt-8 flex items-center gap-3 w-full h-12 px-4 rounded-2xl border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-black text-[9px] uppercase tracking-widest group bg-white/50"
+              className="mt-8 flex items-center gap-3 w-full h-12 px-4 rounded-sm border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-black text-[9px] uppercase tracking-widest group bg-white/50"
             >
               <span className="material-symbols-outlined text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
               Back to Site
@@ -243,7 +243,7 @@ export default function DashboardLayout() {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden p-2 -ml-2 rounded-xl hover:bg-muted/10 text-on-surface/60"
+                className="md:hidden p-2 -ml-2 rounded-sm hover:bg-muted/10 text-on-surface/60"
               >
                 <span className="material-symbols-outlined text-[24px]">menu</span>
               </button>
@@ -272,12 +272,12 @@ export default function DashboardLayout() {
                 <input
                   type="text"
                   placeholder="Search Command..."
-                  className="pl-9 pr-4 py-2 text-[10px] font-black uppercase tracking-widest bg-muted/5 border border-border/40 rounded-xl text-on-surface placeholder-on-surface/20 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all w-48 focus:w-64"
+                  className="pl-9 pr-4 py-2 text-[10px] font-black uppercase tracking-widest bg-muted/5 border border-border/40 rounded-sm text-on-surface placeholder-on-surface/20 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all w-48 focus:w-64"
                 />
               </div>
 
               {/* Notification Bell */}
-              <button className="relative p-2.5 rounded-xl hover:bg-muted/10 transition-all group">
+              <button className="relative p-2.5 rounded-sm hover:bg-muted/10 transition-all group">
                 <span
                   className="material-symbols-outlined text-on-surface/40 group-hover:text-primary transition-colors text-[22px]"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
@@ -296,7 +296,7 @@ export default function DashboardLayout() {
               {/* User Avatar + Name */}
               <button className="flex items-center gap-4 group">
                 {/* Avatar: real photo or initials fallback */}
-                <div className="w-10 h-10 rounded-2xl overflow-hidden ring-4 ring-primary/5 group-hover:ring-primary/20 transition-all shadow-2xl shrink-0">
+                <div className="w-10 h-10 rounded-sm overflow-hidden ring-4 ring-primary/5 group-hover:ring-primary/20 transition-all shadow-2xl shrink-0">
                   {avatarUrl ? (
                     <img src={avatarUrl}
                       alt={userName}

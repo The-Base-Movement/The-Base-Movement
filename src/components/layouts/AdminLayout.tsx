@@ -28,7 +28,7 @@ import {
   PenTool
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'

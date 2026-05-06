@@ -13,7 +13,7 @@ import {
   Loader2
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -121,10 +121,10 @@ export default function LogisticsIntelligence() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             onClick={handleRouteOptimization}
             disabled={isOptimizing}
-            className="rounded-xl border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/30 shadow-sm h-10 transition-all flex items-center gap-2"
           >
             {isOptimizing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Filter className="w-3.5 h-3.5" />} 
             Route optimization
@@ -132,7 +132,7 @@ export default function LogisticsIntelligence() {
           <Button 
             onClick={() => setShowReplenishConfirm(true)}
             disabled={isReplenishing}
-            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
           >
             {isReplenishing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <PackagePlus className="w-3.5 h-3.5" />} 
             Replenish all
@@ -173,7 +173,7 @@ export default function LogisticsIntelligence() {
               className: 'col-span-2 md:col-span-1'
             },
           ].map((stat, i) => (
-            <Card key={i} className={cn("rounded-xl border-border/60 shadow-sm bg-white p-6 hover:border-on-surface/40 transition-colors", stat.className)}>
+            <Card key={i} className={cn("rounded-sm border-border/60 shadow-sm bg-white p-6 hover:border-on-surface/40 transition-colors", stat.className)}>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[10px] font-bold normal-case text-muted-foreground/80">{stat.label}</span>
                 <stat.icon className={cn("w-5 h-5", stat.color)} />
@@ -189,7 +189,7 @@ export default function LogisticsIntelligence() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* 🚨 Inventory Intelligence (Urgent) */}
-        <Card className="lg:col-span-1 rounded-xl border-border/60 shadow-sm bg-white overflow-hidden">
+        <Card className="lg:col-span-1 rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
           <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
             <div className="flex items-center justify-between">
               <CardTitle className="text-xs font-bold normal-case font-meta">Inventory alerts</CardTitle>
@@ -235,7 +235,7 @@ export default function LogisticsIntelligence() {
         </Card>
 
         {/* 🚛 Regional Dispatch Velocity */}
-        <Card className="lg:col-span-2 rounded-xl border-border/60 shadow-sm bg-white overflow-hidden">
+        <Card className="lg:col-span-2 rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
           <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xs font-bold normal-case font-meta">Regional dispatch performance</CardTitle>
@@ -346,14 +346,14 @@ export default function LogisticsIntelligence() {
       </div>
 
       {/* 📍 Supply Chain Map (Placeholder for high-fidelity visualization) */}
-      <Card className="rounded-xl border-border/60 shadow-sm bg-white overflow-hidden p-0">
+      <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden p-0">
         <div className="bg-on-surface p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
             <h3 className="text-white text-xl font-black normal-case font-meta leading-tight">National supply chain map</h3>
             <p className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-2">Real-time visualization of material flow across the 16 regions.</p>
           </div>
           <Button 
-            variant="outline" 
+            variant="default" 
             onClick={() => toast.success('Initializing high-fidelity enterprise visualization protocol...')}
             className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-lg h-12 px-8 font-bold text-[10px] normal-case shadow-sm transition-all"
           >
@@ -372,7 +372,7 @@ export default function LogisticsIntelligence() {
           </div>
 
           <div className="relative text-center z-10 px-8">
-            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-border/40 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+            <div className="w-16 h-16 bg-white rounded-sm shadow-sm border border-border/40 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
               <Map className="w-8 h-8 text-border/60" />
             </div>
             <h4 className="text-on-surface text-[11px] font-black mb-2">Syncing regional data</h4>
@@ -392,7 +392,7 @@ export default function LogisticsIntelligence() {
 
       {/* 🔐 Replenish All Confirmation */}
       <AlertDialog open={showReplenishConfirm} onOpenChange={setShowReplenishConfirm}>
-        <AlertDialogContent className="rounded-2xl border-border/60">
+        <AlertDialogContent className="rounded-sm border-border/60">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-bold tracking-tight flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-muted/30 flex items-center justify-center text-on-surface">
@@ -405,13 +405,13 @@ export default function LogisticsIntelligence() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
-            <AlertDialogCancel className="rounded-xl text-[10px] font-bold tracking-tight h-10 px-6 border-border/60">
+            <AlertDialogCancel className="rounded-sm text-[10px] font-bold tracking-tight h-10 px-6 border-border/60">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleReplenishAll}
               disabled={isReplenishing}
-              className="rounded-xl text-[10px] font-bold tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-10 px-8"
+              className="rounded-sm text-[10px] font-bold tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-10 px-8"
             >
               {isReplenishing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Protocol'}
             </AlertDialogAction>

@@ -31,7 +31,7 @@ export function PulseReport() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-2xl">
+        <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-sm">
           <div className="flex items-center justify-between mb-4">
             <TrendingUp className="w-4 h-4 text-muted-foreground/40 group-hover:text-destructive" />
             <span className="text-[10px] font-black text-primary uppercase tracking-widest">+{pulse.nationalGrowth}%</span>
@@ -40,7 +40,7 @@ export function PulseReport() {
           <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">National Growth Wave</div>
         </div>
 
-        <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-2xl">
+        <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-sm">
           <div className="flex items-center justify-between mb-4">
             <Users className="w-4 h-4 text-muted-foreground/40 group-hover:text-destructive" />
             <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">Live</span>
@@ -49,7 +49,7 @@ export function PulseReport() {
           <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Active Chapters</div>
         </div>
 
-        <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-2xl">
+        <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-sm">
           <div className="flex items-center justify-between mb-4">
             <MapIcon className="w-4 h-4 text-muted-foreground/40 group-hover:text-destructive" />
             <span className="text-[10px] font-black text-accent uppercase tracking-widest">Peak</span>
@@ -58,7 +58,7 @@ export function PulseReport() {
           <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Top Performing Region</div>
         </div>
 
-        <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-2xl">
+        <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-sm">
           <div className="flex items-center justify-between mb-4">
             <ShieldCheck className="w-4 h-4 text-muted-foreground/40 group-hover:text-destructive" />
             <span className="text-[10px] font-black text-primary uppercase tracking-widest">{pulse.logisticsHealth}%</span>
@@ -68,7 +68,7 @@ export function PulseReport() {
         </div>
       </div>
 
-      <div className="bg-white border border-border/40 shadow-sm overflow-hidden rounded-3xl">
+      <div className="bg-white border border-border/40 shadow-sm overflow-hidden rounded-sm">
         <div className="p-4 bg-muted/5 border-b border-border/10 flex items-center justify-between">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface/60">Regional Activation Matrix</span>
           <span className="text-[10px] font-bold text-muted-foreground/40 uppercase">Fidelity: High</span>

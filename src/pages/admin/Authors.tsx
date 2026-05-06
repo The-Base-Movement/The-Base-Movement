@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Plus, Search, PenTool, Edit3, Trash2, Shield, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
@@ -85,7 +85,7 @@ export default function AdminAuthors() {
       </div>
 
       {/* Main Content */}
-      <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+      <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
         <div className="p-6 border-b border-stone-100 bg-stone-50/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             <div className="relative w-full sm:w-80">

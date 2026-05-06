@@ -11,7 +11,7 @@ import {
   Activity
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { VoterRegistration, CanvassingCampaign, CanvasserLog, GOTVTransportRequest } from '@/types/admin'
 import { cn } from '@/lib/utils'
@@ -78,7 +78,7 @@ export default function GroundGameCommand() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-1">Registered voters</p>
@@ -88,7 +88,7 @@ export default function GroundGameCommand() {
           </CardContent>
         </Card>
         
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-1">Campaign outreach</p>
@@ -103,7 +103,7 @@ export default function GroundGameCommand() {
         
         {/* 📋 Active Canvassing Campaigns */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="rounded-xl border-border/60 shadow-sm bg-background overflow-hidden">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-background overflow-hidden">
             <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
               <div className="flex items-center justify-between">
                 <div>
@@ -159,7 +159,7 @@ export default function GroundGameCommand() {
 
         {/* 🚗 GOTV Transport Logistics (Sidebar) */}
         <div className="lg:col-span-1 space-y-6">
-          <Card className="rounded-xl border-border/60 shadow-sm bg-background overflow-hidden h-full">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-background overflow-hidden h-full">
             <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
               <div className="flex items-center justify-between">
                 <div>
@@ -219,7 +219,7 @@ export default function GroundGameCommand() {
           </Card>
 
           {/* 📡 Live Field Activity */}
-          <Card className="rounded-xl border-border/60 shadow-sm bg-on-surface text-white overflow-hidden relative">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden relative">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
             <CardHeader className="p-6 border-b border-white/10 relative z-10">
               <div className="flex items-center justify-between">

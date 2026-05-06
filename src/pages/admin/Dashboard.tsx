@@ -16,7 +16,7 @@ import {
   CardTitle,
   CardDescription 
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import { logisticsService } from '@/services/logisticsService'
@@ -47,7 +47,7 @@ interface StatCardProps {
 // Operational Skeleton Component
 function SkeletonCard() {
   return (
-    <Card className="rounded-xl border-border/60 shadow-none overflow-hidden bg-white">
+    <Card className="rounded-sm border-border/60 shadow-none overflow-hidden bg-white">
       <CardContent className="p-5 space-y-3">
         <div className="w-1/4 h-2 bg-muted/10 animate-pulse rounded-full" />
         <div className="w-1/2 h-6 bg-muted/10 animate-pulse rounded-lg" />
@@ -59,7 +59,7 @@ function SkeletonCard() {
 // Operational Stat Card Component
 function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
   return (
-    <Card className="rounded-xl border-border/40 shadow-sm transition-all overflow-hidden bg-white hover:border-border/60">
+    <Card className="rounded-sm border-border/40 shadow-sm transition-all overflow-hidden bg-white hover:border-border/60">
       <CardContent className="p-4 sm:p-5">
         <div className="flex justify-between items-start gap-4">
           <div className="space-y-1.5 flex-1 min-w-0">
@@ -221,8 +221,8 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
-            className="rounded-xl border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all"
+            variant="default" 
+            className="h-10 px-6"
             onClick={handleExport}
             disabled={isExporting}
           >
@@ -230,7 +230,8 @@ export default function AdminDashboard() {
           </Button>
 
           <Button 
-            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
+            variant="solid"
+            className="h-10 px-6"
             onClick={handlePlatformLogs}
           >
             View logs
@@ -262,7 +263,7 @@ export default function AdminDashboard() {
         <div className="xl:col-span-2 space-y-10">
           
           {/* Membership Growth Trend */}
-          <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/5">
               <div>
                 <CardTitle className="text-sm font-bold text-on-surface flex items-center gap-2">
@@ -325,7 +326,7 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Regional Performance - Filtered Table */}
-          <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/5 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-sm font-bold text-on-surface">Regional Distribution</CardTitle>
@@ -381,7 +382,7 @@ export default function AdminDashboard() {
           {/* System Activity & Logistics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* System Activity Table */}
-            <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+            <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
               <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
                 <CardTitle className="text-sm font-bold text-on-surface">System Activity</CardTitle>
               </CardHeader>
@@ -423,7 +424,7 @@ export default function AdminDashboard() {
             </Card>
 
             {/* Logistics Performance */}
-            <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+            <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
               <CardHeader className="p-6 border-b border-border/40 bg-muted/5 flex flex-row items-center justify-between">
                 <CardTitle className="text-sm font-bold text-on-surface">Logistics Performance</CardTitle>
                 <ShoppingBag className="w-4 h-4 text-muted-foreground/40" />
@@ -460,7 +461,7 @@ export default function AdminDashboard() {
         {/* Operational Health (Right Sidebar) */}
         <div className="space-y-10">
           {/* Health & Status Consolidated */}
-          <Card className="rounded-xl border-border/60 shadow-sm bg-white overflow-hidden">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
               <CardTitle className="text-[11px] font-bold tracking-wider text-muted-foreground/80">Operations health</CardTitle>
             </CardHeader>
@@ -508,7 +509,7 @@ export default function AdminDashboard() {
               <div className="h-px bg-border/40" />
 
               {/* Quick Status Bar */}
-              <div className="bg-on-surface rounded-xl p-6 text-white relative overflow-hidden group shadow-lg">
+              <div className="bg-on-surface rounded-sm p-6 text-white relative overflow-hidden group shadow-lg">
                 <Globe className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-6">
@@ -525,7 +526,7 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Regional Traffic Summary */}
-          <Card className="rounded-xl border-border/60 shadow-sm bg-white overflow-hidden">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
               <CardTitle className="text-[11px] font-bold tracking-wider text-muted-foreground/80">Regional traffic</CardTitle>
             </CardHeader>

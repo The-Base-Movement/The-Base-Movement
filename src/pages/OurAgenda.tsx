@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { GraduationCap, Building2, Factory, Construction, Landmark, Sprout, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/neon-button'
 
 const agendaPillars = [
   {
@@ -347,13 +348,17 @@ export default function OurAgenda() {
                 <p className="text-accent font-bold uppercase tracking-widest mt-4 mb-0">Ghana First. Always.</p>
               </div>
               {isLoggedIn ? (
-                <Link to="/dashboard/members" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-[var(--brand-green)] text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
-                  View Members <ArrowRight className="w-5 h-5" />
-                </Link>
+                <Button asChild variant="primary" size="lg">
+                  <Link to="/dashboard/members">
+                    View Members <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </Button>
               ) : (
-                <Link to="/register" className="inline-flex items-center gap-2 px-6 sm:px-8 py-4 bg-primary text-white font-meta font-bold uppercase tracking-wide hover:opacity-90 transition-all active:scale-95 text-sm sm:text-base">
-                  Join The Movement <ArrowRight className="w-5 h-5" />
-                </Link>
+                <Button asChild variant="primary" size="lg">
+                  <Link to="/register">
+                    Join The Movement <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </Button>
               )}
             </div>
 

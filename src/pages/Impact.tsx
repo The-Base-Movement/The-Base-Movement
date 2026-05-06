@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Target, Users, Heart, TrendingUp, ArrowUpRight, MapPin, Activity, Calendar, X } from 'lucide-react'
+import { Button } from '@/components/ui/neon-button'
 
 const impactStats = [
   { icon: Heart, label: 'Donations Received', value: 'GHS 128,450', color: 'var(--brand-red)', trend: '+GHS 4,280 today' },
@@ -326,15 +327,14 @@ export default function Impact() {
                   ))
                 )}
               </div>
-              <button 
+              <Button 
+                variant="ghost"
                 onClick={() => setShowFullActivity(true)}
-                className="mt-auto pt-10 w-full group"
+                className="mt-auto w-full py-8 bg-slate-50 border-transparent hover:bg-brand-green/5 hover:text-brand-green group"
               >
-                <div className="py-4 bg-slate-50 text-slate-500 font-meta font-bold text-xs tracking-wide rounded-none border border-transparent group-hover:border-[var(--brand-green)]/20 group-hover:bg-[var(--brand-green)]/5 group-hover:text-[var(--brand-green)] transition-all flex items-center justify-center gap-2">
-                  View Full Activity Log
-                  <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </div>
-              </button>
+                View Full Activity Log
+                <ArrowUpRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Button>
             </section>
           </div>
 

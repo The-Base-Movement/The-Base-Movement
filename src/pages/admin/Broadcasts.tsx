@@ -10,7 +10,7 @@ import {
   Search,
   Shield
 } from 'lucide-react'
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/neon-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -81,7 +81,7 @@ export default function Broadcasts() {
         </div>
         <Button 
           onClick={() => navigate('/admin/broadcasts/new')}
-          className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
+          className="rounded-sm bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
         >
           <Plus className="w-3.5 h-3.5" /> New broadcast
         </Button>
@@ -89,44 +89,44 @@ export default function Broadcasts() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden relative group hover:border-accent transition-colors">
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-accent transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <Megaphone className="w-4 h-4 text-muted-foreground/40" />
-              <Badge variant="outline" className="text-[10px] font-bold normal-case">Total</Badge>
+              <Badge variant="default" className="text-[10px] font-bold normal-case">Total</Badge>
             </div>
             <div className="text-3xl font-bold text-on-surface">{broadcasts.length}</div>
             <div className="text-[10px] text-muted-foreground/80 font-bold normal-case mt-1">Total broadcasts</div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden relative group hover:border-destructive transition-colors">
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-destructive transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <AlertOctagon className="w-4 h-4 text-destructive" />
-              <Badge variant="outline" className="text-[10px] font-bold normal-case border-destructive/20 text-destructive">Urgent</Badge>
+              <Badge variant="default" className="text-[10px] font-bold normal-case border-destructive/20 text-destructive">Urgent</Badge>
             </div>
             <div className="text-3xl font-bold text-destructive">{broadcasts.filter(b => b.priority === 'Urgent').length}</div>
             <div className="text-[10px] text-muted-foreground/80 font-bold normal-case mt-1">Critical alerts</div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden relative group hover:border-primary transition-colors">
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-primary transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <Users className="w-4 h-4 text-muted-foreground/40" />
-              <Badge variant="outline" className="text-[10px] font-bold normal-case">Reach</Badge>
+              <Badge variant="default" className="text-[10px] font-bold normal-case">Reach</Badge>
             </div>
             <div className="text-3xl font-bold text-on-surface">100%</div>
             <div className="text-[10px] text-muted-foreground/80 font-bold normal-case mt-1">Field saturation</div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden relative group hover:border-on-surface transition-colors">
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-on-surface transition-colors">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <Clock className="w-4 h-4 text-muted-foreground/40" />
-              <Badge variant="outline" className="text-[10px] font-bold normal-case">Uptime</Badge>
+              <Badge variant="default" className="text-[10px] font-bold normal-case">Uptime</Badge>
             </div>
             <div className="text-3xl font-bold text-on-surface">24/7</div>
             <div className="text-[10px] text-muted-foreground/80 font-bold normal-case mt-1">Direct connection</div>
@@ -138,7 +138,7 @@ export default function Broadcasts() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Previous Broadcasts */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="rounded-xl border-border/60 shadow-xl overflow-hidden">
+          <Card className="rounded-sm border-border/60 shadow-xl overflow-hidden">
             <CardHeader className="border-b border-border/10 bg-muted/5 p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <CardTitle className="text-lg font-bold tracking-tight flex items-center gap-2">
@@ -176,7 +176,7 @@ export default function Broadcasts() {
                             <Badge className={cn("text-[8px] font-bold normal-case rounded-full px-2", getPriorityColor(broadcast.priority))}>
                               {broadcast.priority}
                             </Badge>
-                            <Badge variant="outline" className="text-[8px] font-bold normal-case text-muted-foreground/40 rounded-full border-border/60">
+                            <Badge variant="default" className="text-[8px] font-bold normal-case text-muted-foreground/40 rounded-full border-border/60">
                               {broadcast.target_type === 'ALL' ? 'National' : broadcast.target_value}
                             </Badge>
                           </div>
@@ -228,7 +228,7 @@ export default function Broadcasts() {
 
         {/* Sidebar: Mobilization Templates */}
         <div className="space-y-6">
-          <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
             <CardHeader className="border-b border-border/10 bg-muted/5">
               <CardTitle className="text-sm font-bold normal-case">Mobilization presets</CardTitle>
             </CardHeader>
@@ -267,7 +267,7 @@ export default function Broadcasts() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-xl bg-on-surface text-white border-none shadow-xl overflow-hidden relative">
+          <Card className="rounded-sm bg-on-surface text-white border-none shadow-xl overflow-hidden relative">
             <CardContent className="p-6 relative z-10">
               <AlertOctagon className="w-8 h-8 text-destructive mb-4" />
               <h4 className="text-lg font-bold tracking-tight mb-2">Protocol red</h4>

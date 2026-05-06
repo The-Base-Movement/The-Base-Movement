@@ -9,7 +9,7 @@ import {
   Mail,
   Smartphone
 } from 'lucide-react'
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/neon-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { 
@@ -140,7 +140,7 @@ export default function NewBroadcast() {
         </div>
       </div>
 
-      <Card className="rounded-xl border-border/40 shadow-xl overflow-hidden bg-background group border-none md:border-solid">
+      <Card className="rounded-sm border-border/40 shadow-xl overflow-hidden bg-background group border-none md:border-solid">
         <CardHeader className="p-8 bg-on-surface text-white border-b border-white/5 relative">
           <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50" />
           <div className="flex items-center gap-3">
@@ -324,7 +324,7 @@ export default function NewBroadcast() {
               </div>
             </div>
             
-            <div className="rounded-xl overflow-hidden border border-border/40 shadow-sm bg-muted/5">
+            <div className="rounded-sm overflow-hidden border border-border/40 shadow-sm bg-muted/5">
               <Editor
                 apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
                 onInit={(_, editor) => (editorRef.current = editor)}
@@ -358,7 +358,7 @@ export default function NewBroadcast() {
           {/* Footer Actions */}
           <div className="pt-6 border-t border-border/10 flex items-center justify-end gap-4">
             <Button 
-              variant="outline" 
+              variant="default" 
               onClick={() => navigate('/admin/broadcasts')}
               className="rounded-lg h-12 px-8 text-[10px] font-bold border-border/40 normal-case shadow-sm hover:bg-muted/10"
             >
@@ -384,7 +384,7 @@ export default function NewBroadcast() {
       </Card>
 
       {/* Preview Info */}
-      <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/5 border border-border/40 text-muted-foreground/80">
+      <div className="flex items-center gap-4 p-4 rounded-sm bg-muted/5 border border-border/40 text-muted-foreground/80">
         <div className="w-10 h-10 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
           {getChannelIcon(newBroadcast.channel)}
         </div>

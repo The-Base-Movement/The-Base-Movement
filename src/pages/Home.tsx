@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, MapPin, Globe } from 'lucide-react'
 import { adminService, type BlogPost } from '@/services/adminService'
 import { usePerformance } from '@/context/PerformanceContext'
+import { Button } from '@/components/ui/neon-button'
 
 function AnimatedCounter({ target, duration = 2000, className }: { target: number; duration?: number; className?: string }) {
   const [count, setCount] = useState(0)
@@ -102,12 +103,16 @@ export default function Home() {
               A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry and innovation.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-6 justify-center md:justify-start">
-              <Link to="/register" className="bg-destructive hover:brightness-110 text-white font-black uppercase tracking-widest text-[10px] px-10 py-5 flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-2xl shadow-destructive/20 w-full sm:w-auto">
-                Register Now <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link to="/our-agenda" className="border-2 border-white/20 text-white hover:bg-white hover:text-on-surface font-black uppercase tracking-widest text-[10px] px-10 py-5 transition-all w-full sm:w-auto text-center">
-                Read the Plan
-              </Link>
+              <Button asChild variant="gold" size="lg" className="shadow-2xl shadow-brand-gold/20 w-full sm:w-auto">
+                <Link to="/register">
+                  Register Now <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
+              <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
+                <Link to="/our-agenda">
+                  Read the Plan
+                </Link>
+              </Button>
             </div>
           </div>
           <div className="flex-1 flex justify-center md:justify-end opacity-90 relative">
@@ -127,9 +132,11 @@ export default function Home() {
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
                 For Ghanaians living in Ghana. Join our grassroots movement and make your voice heard in the development of our great nation.
               </p>
-              <Link to="/register?platform=GHANA" className="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary font-meta font-bold px-5 py-2.5 hover:bg-primary hover:text-white transition-all">
-                Register for Base Ghana <ArrowRight className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <Button asChild variant="primary" className="w-full sm:w-auto">
+                <Link to="/register?platform=GHANA">
+                  Register for Base Ghana <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
             </div>
             
             <div className="border-t-[4px] border-accent pt-8 group">
@@ -139,9 +146,11 @@ export default function Home() {
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
                 For Ghanaians and friends of Ghana living abroad. Stay connected and contribute to Ghana's progress from anywhere in the world.
               </p>
-              <Link to="/register?platform=DIASPORA" className="inline-flex items-center justify-center gap-2 border-2 border-accent text-accent font-meta font-bold px-5 py-2.5 hover:bg-accent hover:text-white transition-all">
-                Register for Base Diaspora <ArrowRight className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <Button asChild variant="gold" className="w-full sm:w-auto">
+                <Link to="/register?platform=DIASPORA">
+                  Register for Diaspora <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -200,13 +209,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Latest Insights Section */}
-      <section className="py-24 bg-white">
+      {/* Latest Updates Section */}
+      <section className="pt-24 pb-48 bg-white">
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
               <span className="text-primary font-black tracking-[0.2em] text-[10px] mb-3 block">UPDATES</span>
-              <h2 className="text-3xl md:text-h2 font-meta font-black text-on-surface tracking-tight uppercase">Latest insights</h2>
+              <h2 className="text-3xl md:text-h2 font-meta font-black text-on-surface tracking-tight uppercase">Latest updates</h2>
             </div>
             <Link to="/blog" className="hidden md:flex items-center gap-2 text-primary font-meta font-bold tracking-widest text-xs hover:underline">
               View all news <ArrowRight className="w-4 h-4" />
@@ -238,7 +247,7 @@ export default function Home() {
                     )}
                   </div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[10px] font-meta font-bold text-[primary] uppercase tracking-widest">{post.category}</span>
+                    <span className="text-[10px] font-meta font-bold text-primary uppercase tracking-widest">{post.category}</span>
                     <span className="text-[10px] text-muted-foreground/60 font-meta">
                       {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                     </span>
@@ -251,9 +260,11 @@ export default function Home() {
             )}
           </div>
 
-          <Link to="/blog" className="md:hidden flex items-center justify-center gap-2 mt-10 text-[primary] font-meta font-bold tracking-widest text-xs border border-[primary] py-4">
-            View all news <ArrowRight className="w-4 h-4" />
-          </Link>
+          <Button asChild variant="primary" className="md:hidden flex w-full h-12 mt-10">
+            <Link to="/blog" className="flex items-center justify-center gap-2">
+              View all news <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
         </div>
       </section>
 
@@ -262,7 +273,7 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto">
           <div className="relative z-20 bg-on-surface rounded-[2rem] overflow-hidden shadow-[0_48px_96px_-16px_rgba(0,0,0,0.5)] -mt-20">
             {/* Subtle Texture/Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[primary]/20 to-transparent opacity-50 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-50 pointer-events-none" />
             <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] pointer-events-none" />
             
             <div className="relative z-10 p-12 md:p-24 flex flex-col items-center text-center">
@@ -277,12 +288,16 @@ export default function Home() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row items-center gap-5 justify-center mb-12">
-                  <Link to="/register" className="bg-accent hover:brightness-110 text-on-surface font-black uppercase tracking-widest text-[10px] px-10 py-5 transition-all hover:scale-105 shadow-2xl shadow-accent/20 flex items-center justify-center gap-3 w-full sm:w-auto">
-                    Join The Base <ArrowRight className="w-5 h-5" />
-                  </Link>
-                  <Link to="/our-agenda" className="text-muted-foreground hover:text-white border-2 border-white/10 hover:border-white/40 font-meta font-bold px-10 py-5 text-lg transition-all w-full sm:w-auto text-center">
-                    See the Plan
-                  </Link>
+                  <Button asChild variant="gold" size="lg" className="w-full sm:w-auto">
+                    <Link to="/register" className="flex items-center justify-center gap-3">
+                      Join The Base <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </Button>
+                  <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
+                    <Link to="/our-agenda">
+                      See the Plan
+                    </Link>
+                  </Button>
                 </div>
                 
                 {/* Trust Row - Pill Badges */}

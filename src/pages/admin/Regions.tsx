@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { MapPin, ChevronRight, ChevronDown, Plus, Search, Edit2, Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -58,7 +58,7 @@ export default function AdminRegions() {
           <p className="text-muted-foreground/80 text-sm mt-1">Manage administrative regions and regional jurisdictions.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all">
+          <Button variant="solid" className="h-10 px-6">
             <Plus className="w-3.5 h-3.5 mr-2" /> Add region
           </Button>
         </div>
@@ -66,7 +66,7 @@ export default function AdminRegions() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="rounded-xl border-border/40 shadow-sm bg-on-surface text-white">
+        <Card className="rounded-sm border-border/40 shadow-sm bg-on-surface text-white">
           <CardContent className="p-5 flex items-center gap-4">
             <div className="w-10 h-10 bg-white/10 flex items-center justify-center shrink-0 rounded-lg">
               <MapPin className="w-5 h-5" />
@@ -78,7 +78,7 @@ export default function AdminRegions() {
           </CardContent>
         </Card>
         
-        <Card className="rounded-xl border-border/40 shadow-sm">
+        <Card className="rounded-sm border-border/40 shadow-sm">
           <CardContent className="p-5 flex items-center gap-4">
             <div className="w-10 h-10 bg-destructive/10 flex items-center justify-center shrink-0 rounded-lg">
               <MapPin className="w-5 h-5 text-destructive" />
@@ -89,7 +89,7 @@ export default function AdminRegions() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-border/40 shadow-sm col-span-2 md:col-span-2">
+        <Card className="rounded-sm border-border/40 shadow-sm col-span-2 md:col-span-2">
           <CardContent className="p-5 flex items-center gap-4">
             <div className="w-10 h-10 bg-primary/10 flex items-center justify-center shrink-0 rounded-lg">
               <MapPin className="w-5 h-5 text-primary" />
@@ -111,7 +111,7 @@ export default function AdminRegions() {
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           placeholder="Search regions or constituencies..."
-          className="pl-10 h-11 rounded-xl border-border/40 shadow-sm"
+          className="pl-10 h-11 rounded-sm border-border/40 shadow-sm"
         />
       </div>
 
@@ -133,7 +133,7 @@ export default function AdminRegions() {
             </Card>
           ))
         ) : filteredRegions.length === 0 ? (
-          <div className="py-20 text-center text-muted-foreground/80 text-sm font-bold tracking-wider border border-dashed border-border/40 rounded-xl bg-muted/5">
+          <div className="py-20 text-center text-muted-foreground/80 text-sm font-bold tracking-wider border border-dashed border-border/40 rounded-sm bg-muted/5">
             No matching geographical data found.
           </div>
         ) : (
@@ -145,7 +145,7 @@ export default function AdminRegions() {
             )
 
             return (
-              <Card key={region.id} className="rounded-xl border-border/40 shadow-sm overflow-hidden bg-white">
+              <Card key={region.id} className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
                 {/* Region Header Row */}
                 <button
                   className="w-full flex items-center justify-between px-6 py-4 hover:bg-muted/10 transition-colors group"
@@ -203,7 +203,7 @@ export default function AdminRegions() {
                         />
                       </div>
                       <Button
-                        variant="outline"
+                        variant="default"
                         className="h-9 px-4 text-[9px] font-bold tracking-wider rounded-lg border-border/40"
                       >
                         <Plus className="w-3 h-3 mr-1.5" /> Add constituency

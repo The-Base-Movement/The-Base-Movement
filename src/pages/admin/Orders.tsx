@@ -12,7 +12,7 @@ import {
   Download
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/neon-button'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
@@ -204,17 +204,17 @@ export default function AdminOrders() {
         </div>
         <div className="flex items-center gap-3">
           <Button
-            variant="outline"
+            variant="default"
             onClick={handleExport}
-            className="rounded-xl border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2"
           >
             <Download className="w-3.5 h-3.5" />
             Export orders
           </Button>
           <Button
-            variant="outline"
+            variant="default"
             onClick={() => loadData(true)}
-            className="rounded-xl border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2"
           >
             <RefreshCw className={cn('w-3.5 h-3.5', refreshing && 'animate-spin')} />
             Sync
@@ -225,11 +225,11 @@ export default function AdminOrders() {
       {/* Stats */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
         {loading ? Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="rounded-xl border-border/40 animate-pulse">
+          <Card key={i} className="rounded-sm border-border/40 animate-pulse">
             <CardContent className="p-6 h-24" />
           </Card>
         )) : statCards.map(s => (
-          <Card key={s.label} className="rounded-xl border-border/40 shadow-sm">
+          <Card key={s.label} className="rounded-sm border-border/40 shadow-sm">
             <CardContent className="p-6">
               <p className="text-[10px] font-bold normal-case text-muted-foreground/80 mb-2">{s.label}</p>
               <p className={cn('text-4xl font-black font-meta tracking-tighter', s.color)}>{s.value}</p>
@@ -242,7 +242,7 @@ export default function AdminOrders() {
       <div className={cn('grid gap-8', selectedOrder ? 'xl:grid-cols-3' : 'xl:grid-cols-1')}>
         {/* Orders Table */}
         <div className={selectedOrder ? 'xl:col-span-2' : ''}>
-          <Card className="rounded-xl border-border/40 shadow-sm overflow-hidden">
+          <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between gap-4">
               <CardTitle className="text-xs font-bold normal-case text-muted-foreground/80 flex items-center gap-2">
                 <Package className="w-4 h-4" /> Order feed
@@ -256,7 +256,7 @@ export default function AdminOrders() {
                     placeholder="Search orders..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="pl-9 pr-4 h-9 md:h-8 text-[10px] bg-muted/5 border border-border/40 focus:outline-none focus:border-muted-foreground/40 w-full normal-case rounded-xl md:rounded-lg"
+                    className="pl-9 pr-4 h-9 md:h-8 text-[10px] bg-muted/5 border border-border/40 focus:outline-none focus:border-muted-foreground/40 w-full normal-case rounded-sm md:rounded-lg"
                   />
                 </div>
 
@@ -307,11 +307,11 @@ export default function AdminOrders() {
                 <div className="md:hidden">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-9 px-3 border-border/40 rounded-xl bg-muted/5">
+                      <Button variant="default" size="sm" className="h-9 px-3 border-border/40 rounded-sm bg-muted/5">
                         <Filter className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 rounded-2xl p-2 shadow-xl border-border/40" align="end">
+                    <DropdownMenuContent className="w-56 rounded-sm p-2 shadow-xl border-border/40" align="end">
                       <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-2 py-1.5">
                         Refine Feed
                       </DropdownMenuLabel>
@@ -323,7 +323,7 @@ export default function AdminOrders() {
                           <Package className="w-3.5 h-3.5 mr-2 text-muted-foreground/80" />
                           Fulfillment status
                         </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent className="rounded-xl border-border/40 shadow-lg">
+                        <DropdownMenuSubContent className="rounded-sm border-border/40 shadow-lg">
                           <DropdownMenuRadioGroup value={statusFilter} onValueChange={(v) => setStatusFilter(v as Order['status'] | 'ALL')}>
                             <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Statuses</DropdownMenuRadioItem>
                             {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
@@ -339,7 +339,7 @@ export default function AdminOrders() {
                           <Clock className="w-3.5 h-3.5 mr-2 text-muted-foreground/80" />
                           Temporal range
                         </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent className="rounded-xl border-border/40 shadow-lg">
+                        <DropdownMenuSubContent className="rounded-sm border-border/40 shadow-lg">
                           <DropdownMenuRadioGroup value={dateFilter} onValueChange={(v) => setDateFilter(v as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}>
                             <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Time</DropdownMenuRadioItem>
                             <DropdownMenuRadioItem value="TODAY" className="text-[11px] font-bold">Today</DropdownMenuRadioItem>
@@ -355,7 +355,7 @@ export default function AdminOrders() {
                           <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground/80" />
                           Movement region
                         </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent className="rounded-xl border-border/40 shadow-lg">
+                        <DropdownMenuSubContent className="rounded-sm border-border/40 shadow-lg">
                           <DropdownMenuRadioGroup value={regionFilter} onValueChange={setRegionFilter}>
                             <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Regions</DropdownMenuRadioItem>
                             {regions.map(r => (
@@ -465,7 +465,7 @@ export default function AdminOrders() {
                                   size="sm"
                                   onClick={() => handleStatusAdvance(order)}
                                   disabled={updatingId === order.id}
-                                  className="h-7 px-3 text-[9px] font-bold normal-case bg-on-surface text-white hover:bg-on-surface/90 rounded-xl"
+                                  className="h-7 px-3 text-[9px] font-bold normal-case bg-on-surface text-white hover:bg-on-surface/90 rounded-sm"
                                 >
                                   {updatingId === order.id ? '...' : `→ ${nextStatus}`}
                                 </Button>
@@ -506,11 +506,11 @@ export default function AdminOrders() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="p-4 bg-white border border-border/40 rounded-2xl shadow-sm">
+                          <div className="p-4 bg-white border border-border/40 rounded-sm shadow-sm">
                             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Value</p>
                             <p className="text-sm font-black text-on-surface">GHS {Number(order.total_amount).toFixed(2)}</p>
                           </div>
-                          <div className="p-4 bg-white border border-border/40 rounded-2xl shadow-sm">
+                          <div className="p-4 bg-white border border-border/40 rounded-sm shadow-sm">
                             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Payment</p>
                             <p className="text-sm font-black text-on-surface capitalize">{order.payment_method}</p>
                           </div>
@@ -518,8 +518,8 @@ export default function AdminOrders() {
 
                         <div className="flex items-center gap-2 pt-2">
                           <Button
-                            variant="outline"
-                            className="flex-1 h-11 rounded-xl border-border/40 text-on-surface/80 text-[10px] font-bold"
+                            variant="default"
+                            className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedOrder(order);
@@ -529,7 +529,7 @@ export default function AdminOrders() {
                           </Button>
                           {nextStatus && (
                             <Button
-                              className="flex-1 h-11 bg-on-surface text-white rounded-xl text-[10px] font-bold"
+                              className="flex-1 h-11 bg-on-surface text-white rounded-sm text-[10px] font-bold"
                               disabled={updatingId === order.id}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -555,7 +555,7 @@ export default function AdminOrders() {
           const cfg = STATUS_CONFIG[selectedOrder.status]
           const StatusIcon = cfg.icon
           return (
-            <Card className="rounded-xl border-border/40 shadow-sm xl:col-span-1 h-fit sticky top-6 bg-white overflow-hidden">
+            <Card className="rounded-sm border-border/40 shadow-sm xl:col-span-1 h-fit sticky top-6 bg-white overflow-hidden">
               <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between">
                 <CardTitle className="text-xs font-bold normal-case text-muted-foreground/60">
                   Order detail
@@ -638,7 +638,7 @@ export default function AdminOrders() {
                 <div className="pt-4 space-y-2">
                   {NEXT_STATUS[selectedOrder.status] && (
                     <Button
-                      className="w-full h-10 bg-on-surface text-white hover:bg-on-surface/90 text-[10px] font-bold normal-case rounded-xl"
+                      className="w-full h-10 bg-on-surface text-white hover:bg-on-surface/90 text-[10px] font-bold normal-case rounded-sm"
                       onClick={() => handleStatusAdvance(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
@@ -647,8 +647,8 @@ export default function AdminOrders() {
                   )}
                   {selectedOrder.status !== 'Cancelled' && selectedOrder.status !== 'Delivered' && (
                     <Button
-                      variant="outline"
-                      className="w-full h-10 border-destructive/20 text-destructive hover:bg-destructive/5 text-[10px] font-bold normal-case rounded-xl"
+                      variant="default"
+                      className="w-full h-10 border-destructive/20 text-destructive hover:bg-destructive/5 text-[10px] font-bold normal-case rounded-sm"
                       onClick={() => handleCancel(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
