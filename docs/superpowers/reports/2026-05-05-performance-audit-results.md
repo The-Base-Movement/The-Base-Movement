@@ -23,8 +23,8 @@ Using the `PerformanceAudit` runtime component, the following metrics were captu
 - **FCP (First Contentful Paint)**: ~0.8s (Broadband).
 - **LCP (Largest Contentful Paint)**: ~1.4s (Broadband).
 - **Image Efficiency**: 
-    - **Dashboard**: 12 Lazy / 2 Eager (Logo/Profile).
-    - **Blog**: 18 Lazy / 1 Eager (Hero).
+    - **Overview**: 12 Lazy / 2 Eager (Logo/Profile).
+    - **Updates**: 18 Lazy / 1 Eager (Hero).
     - **Home**: 5 Lazy / 2 Eager (Hero/Nav).
 - **Optimization Proof**: 
     - Over 80% of images are successfully lazy-loaded on initial page load.

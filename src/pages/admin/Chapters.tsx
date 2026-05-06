@@ -376,7 +376,7 @@ export default function ChaptersManagement() {
                         variant="outline" 
                         size="sm"
                         onClick={() => openEditModal(chapter)}
-                        className="h-10 px-0 text-[10px] font-black uppercase tracking-[0.1em] border-border/40 hover:bg-stone-50 transition-all rounded-sm shadow-sm"
+                        className="h-11 px-0 text-[10px] font-black uppercase tracking-[0.2em] border-border/40 hover:bg-stone-50 transition-all rounded-sm shadow-sm active:scale-95"
                       >
                         Configure Hub
                       </Button>
@@ -385,7 +385,7 @@ export default function ChaptersManagement() {
                       <Button 
                         variant="ghost" 
                         onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
-                        className="h-10 px-0 text-[10px] font-black uppercase tracking-[0.1em] text-muted-foreground/40 hover:text-destructive transition-all rounded-sm border-0 bg-transparent"
+                        className="h-11 px-0 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-destructive transition-all rounded-sm border-0 bg-transparent active:scale-95"
                       >
                         Decommission <ChevronRight className="w-3.5 h-3.5 ml-1" />
                       </Button>

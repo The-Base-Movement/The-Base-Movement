@@ -104,14 +104,14 @@ export default function RallyCommand() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 h-10"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2" /> Global Manifest
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 h-10"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
           >
             <Plus className="w-4 h-4 mr-2" /> Schedule Action
           </Button>
@@ -261,7 +261,7 @@ export default function RallyCommand() {
                                   <Button 
                                     variant="primary"
                                     size="sm"
-                                    className="rounded-sm text-[8px] font-black uppercase tracking-widest h-8 px-4"
+                                    className="rounded-sm text-[10px] font-black uppercase tracking-[0.1em] h-9 px-6 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                                     onClick={() => handleVerify(entry.id)}
                                     disabled={verifying === entry.id}
                                   >

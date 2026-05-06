@@ -123,7 +123,7 @@ export default function LogisticsIntelligence() {
             size="lg"
             onClick={handleRouteOptimization}
             disabled={isOptimizing}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-50 h-10 transition-all"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-black uppercase tracking-[0.2em] hover:bg-stone-50 h-12 transition-all active:scale-95"
           >
             {isOptimizing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Filter className="w-4 h-4 mr-2" />} 
             Route Optimization
@@ -133,7 +133,7 @@ export default function LogisticsIntelligence() {
             size="lg"
             onClick={() => setShowReplenishConfirm(true)}
             disabled={isReplenishing}
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 h-10 transition-all shadow-lg shadow-brand-green/20"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
           >
             {isReplenishing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PackagePlus className="w-4 h-4 mr-2" />} 
             Replenish All
@@ -227,7 +227,7 @@ export default function LogisticsIntelligence() {
                 variant="primary"
                 onClick={handleGeneratePurchaseOrder}
                 disabled={isGeneratingPO}
-                className="bg-destructive text-white hover:bg-destructive/90 rounded-sm h-10 px-8 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-destructive/20 border-0"
+                className="bg-destructive text-white hover:bg-destructive/90 rounded-sm h-11 px-10 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 shadow-lg shadow-destructive/20 border-0 transition-all hover:scale-[1.02]"
               >
                 {isGeneratingPO ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                 Generate Purchase Order
@@ -358,7 +358,7 @@ export default function LogisticsIntelligence() {
             variant="outline" 
             size="lg"
             onClick={() => toast.success('Initializing high-fidelity enterprise visualization protocol...')}
-            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-sm h-12 px-10 font-black text-[10px] uppercase tracking-widest shadow-xl shadow-black/20 transition-all"
+            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-sm h-12 px-10 font-black text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-black/20 transition-all active:scale-95"
           >
             <Map className="w-4 h-4 mr-2" /> Enterprise View
           </Button>
@@ -411,7 +411,7 @@ export default function LogisticsIntelligence() {
             <Button 
               variant="outline" 
               onClick={() => setShowReplenishConfirm(false)}
-              className="rounded-sm text-[10px] font-black uppercase tracking-widest h-12 px-8 border-border/40 hover:bg-stone-50 transition-all"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] h-12 px-8 border-border/40 hover:bg-stone-50 transition-all active:scale-95"
             >
               Cancel
             </Button>
@@ -419,7 +419,7 @@ export default function LogisticsIntelligence() {
               variant="primary"
               onClick={handleReplenishAll}
               disabled={isReplenishing}
-              className="rounded-sm text-[10px] font-black uppercase tracking-widest h-12 px-10 shadow-lg shadow-brand-green/20"
+              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] h-12 px-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
             >
               {isReplenishing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Protocol'}
             </Button>

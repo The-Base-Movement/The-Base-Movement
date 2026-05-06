@@ -7,11 +7,11 @@ This document outlines the architectural plan and implementation status for "The
 - [x] **Universal Branding Sync**: Integration of official `/logo.png` for 100% theme parity with the frontend.
 - [x] **Directory Reorganization**: Centralized all admin pages in `src/pages/admin/` for clean architecture.
 - [x] **Module Scaffolding**: 
-    - [x] `Dashboard`: Real-time impact and activity overview.
-    - [x] `Members`: High-fidelity directory with status tracking.
+    - [x] `Overview`: Real-time impact and activity overview.
+    - [x] `Verified`: High-fidelity directory with status tracking.
     - [x] `Chapters`: Regional network and hierarchy management.
-    - [x] `Polls`: Engagement hub and campaign dashboard.
-    - [x] `Store`: Inventory tracking and fulfillment analytics.
+    - [x] `Feedback`: Engagement hub and campaign dashboard.
+    - [x] `Supplies`: Inventory tracking and fulfillment analytics.
     - [x] `Settings`: RBAC (Role-Based Access Control) and system preferences.
 
 ## Phase 2: Functional Depth & Integration [COMPLETED]
@@ -21,7 +21,7 @@ This document outlines the architectural plan and implementation status for "The
 - [x] **Premium UI Overhaul**: Redesigned glassmorphism topbar and refined dashboard aesthetics.
 - [x] **Regional Hierarchy Control**: Chapter lead appointment system and member growth visualization.
 - [x] **RBAC Enforcement**: Tiered permission system and route protection logic integrated into AdminLayout.
-- [x] **Engagement Hub Overhaul**: High-fidelity Polls management with strict brand color hierarchy (Red > Gold > Black > Green).
+- [x] **Engagement Hub Overhaul**: High-fidelity Feedback management with strict brand color hierarchy (Red > Gold > Black > Green).
 - [x] **Regional Inventory Hub**: Brand-synchronized merch management with automated stock alerts (Priority: Red > Gold).
 - [x] **Advanced Member Management**:
     - [x] Direct communication tools (MessageSquare integration).
@@ -35,7 +35,7 @@ This document outlines the architectural plan and implementation status for "The
 - [x] **Regional Impact Intelligence**: Implementation of Red-Gold-Green performance hierarchy for chapter distribution.
 - [x] **Geospatial Visualization**: High-fidelity interactive map showing movement density across all regions.
 - [x] **Command Center Optimization**: Unified high-density grid layout for real-time operational monitoring.
-- [x] **Sentiment Analysis**: Qualitative feedback processing and sentiment telemetry from movement polls.
+- [x] **Sentiment Analysis**: Qualitative feedback processing and sentiment telemetry from movement feedback.
 - [x] **System Health & Audit**: Advanced 100% type-safe logging for all administrative actions and operational capacity monitoring.
 
 ## Phase 4: Operational Hardening & Polish [COMPLETED]

@@ -329,18 +329,18 @@ export default function MembersList() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 border-border/40"
+            className="rounded-sm text-[10px] uppercase font-black tracking-[0.2em] px-10 border-border/40 h-12 shadow-sm transition-all active:scale-95"
             onClick={handleExport}
             disabled={isExporting || members.length === 0}
           >
-            <Download className="w-3.5 h-3.5 mr-2" />
+            <Download className="w-4 h-4 mr-2" />
             {isExporting ? 'Processing Records...' : 'Export intelligence'}
           </Button>
           <Button 
             variant="primary"
             size="lg"
             onClick={handleAddMember}
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+            className="rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
           >
             <Plus className="w-4 h-4 mr-2" />
             Establish Identity
@@ -401,14 +401,14 @@ export default function MembersList() {
                 <div className="flex flex-row gap-2">
                   <Button 
                     variant="ghost" 
-                    className="flex-1 md:flex-none h-10 px-4 rounded-sm text-[10px] font-black uppercase tracking-widest text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none"
+                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
                   >
                     <MapPin className="w-4 h-4 mr-2 text-muted-foreground/40" /> Origins
                   </Button>
                   
                   <Button 
                     variant="ghost" 
-                    className="flex-1 md:flex-none h-10 px-4 rounded-sm text-[10px] font-black uppercase tracking-widest text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none"
+                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
                   >
                     <ShieldCheck className="w-4 h-4 mr-2 text-muted-foreground/40" /> Statuses
                   </Button>
@@ -418,7 +418,7 @@ export default function MembersList() {
               {(searchTerm !== '') && (
                 <Button 
                   variant="ghost" 
-                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-[10px] font-black uppercase tracking-widest transition-all"
+                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95"
                   onClick={() => {
                     setSearchTerm('')
                     setCurrentPage(1)
@@ -445,7 +445,7 @@ export default function MembersList() {
                 <Button 
                   variant="ghost" 
                   onClick={handleBulkVerify}
-                  className="h-9 px-4 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10"
+                  className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-white hover:bg-white/10 active:scale-95"
                 >
                   <UserCheck className="w-4 h-4 mr-2 text-primary" /> Verify
                 </Button>
@@ -455,7 +455,7 @@ export default function MembersList() {
                 <Button 
                   variant="ghost" 
                   onClick={handleBulkDelete}
-                  className="h-9 px-4 text-[10px] font-black uppercase tracking-widest text-red-400 hover:bg-red-500/10"
+                  className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-red-400 hover:bg-red-500/10 active:scale-95"
                 >
                   <Trash2 className="w-4 h-4 mr-2" /> Purge
                 </Button>
@@ -522,7 +522,7 @@ export default function MembersList() {
                           <Button 
                             variant="primary"
                             size="lg"
-                            className="mt-6 rounded-sm text-[10px] uppercase tracking-[0.2em] px-8"
+                            className="mt-6 rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                             onClick={handleAddMember}
                           >
                             <Plus className="w-4 h-4 mr-2" />
@@ -544,7 +544,7 @@ export default function MembersList() {
                               setSearchTerm('')
                               setCurrentPage(1)
                             }}
-                            className="mt-6 h-10 px-8 rounded-sm text-[10px] uppercase tracking-widest font-black border-border/40"
+                            className="mt-6 h-11 px-10 rounded-sm text-[10px] uppercase tracking-[0.2em] font-black border-border/40 transition-all active:scale-95"
                           >
                             <RotateCcw className="w-4 h-4 mr-2" /> Clear Filters
                           </Button>
@@ -616,40 +616,40 @@ export default function MembersList() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="w-8 h-8 text-muted-foreground/80 hover:text-on-surface hover:bg-white hover:shadow-sm transition-all"
+                          className="w-10 h-10 text-muted-foreground/80 hover:text-on-surface hover:bg-stone-50 hover:shadow-sm transition-all active:scale-95"
                           title="Audit History"
                           onClick={() => handleViewAudit(member)}
                         >
-                          <History className="w-3.5 h-3.5" />
+                          <History className="w-5 h-5" />
                         </Button>
                         {member.status === 'Pending' && adminService.can('VERIFY_MEMBER', 'MEMBERS') && (
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="w-8 h-8 text-accent hover:text-primary hover:bg-primary/10 transition-all"
+                            className="w-10 h-10 text-accent hover:text-primary hover:bg-primary/10 transition-all active:scale-95"
                             title="Quick Verify"
                             onClick={() => handleVerify(member.id, member.name)}
                           >
-                            <UserCheck className="w-3.5 h-3.5" />
+                            <UserCheck className="w-5 h-5" />
                           </Button>
                         )}
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="w-8 h-8 text-muted-foreground/80 hover:text-on-surface hover:bg-white hover:shadow-sm transition-all"
+                          className="w-10 h-10 text-muted-foreground/80 hover:text-on-surface hover:bg-stone-50 hover:shadow-sm transition-all active:scale-95"
                           title="View Digital Identity"
                           onClick={() => setSelectedMember(member)}
                         >
-                          <CheckCircle className="w-3.5 h-3.5" />
+                          <CheckCircle className="w-5 h-5" />
                         </Button>
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="w-8 h-8 text-muted-foreground/80 hover:text-destructive hover:bg-destructive/10 transition-all"
+                          className="w-10 h-10 text-muted-foreground/80 hover:text-destructive hover:bg-destructive/10 transition-all active:scale-95"
                           title="Administrative Controls"
                           onClick={() => toast({ title: "ADMIN CONTROLS", description: `Opening secure vault for ${member.name}...` })}
                         >
-                          <MoreHorizontal className="w-3.5 h-3.5" />
+                          <MoreHorizontal className="w-5 h-5" />
                         </Button>
                       </div>
                     </td>
@@ -676,7 +676,7 @@ export default function MembersList() {
             <div className="flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="h-10 px-6 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50" 
+                className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95" 
                 disabled={currentPage === 1}
                 onClick={handlePrevPage}
               >
@@ -689,7 +689,7 @@ export default function MembersList() {
               </div>
               <Button 
                 variant="outline" 
-                className="h-10 px-6 text-[10px] font-black uppercase tracking-widest rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50"
+                className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95"
                 disabled={currentPage >= totalPages || totalPages === 0}
                 onClick={handleNextPage}
               >
@@ -741,7 +741,7 @@ export default function MembersList() {
               <div className="grid grid-cols-2 gap-4">
                 <Button 
                   onClick={handlePrint}
-                  className="h-12 bg-white hover:bg-muted/30 border border-border/60 text-on-surface font-meta font-black uppercase tracking-widest text-[10px] shadow-lg rounded-none"
+                  className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-black uppercase tracking-[0.3em] text-[10px] shadow-lg rounded-none transition-all active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">print</span>
                   Print Card
@@ -749,7 +749,7 @@ export default function MembersList() {
                 <Button 
                   variant="primary"
                   onClick={handleDownload}
-                  className="h-12 flex-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-green/20"
+                  className="h-14 flex-1 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">download</span>
                   Download PDF

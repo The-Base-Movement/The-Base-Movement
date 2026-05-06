@@ -3,7 +3,7 @@
 Welcome to the operational core of The Base movement. This manual provides the protocols and guidance required to navigate the high-fidelity administrative suite and maintain absolute movement integrity.
 
 ## 1. Command Center Protocols
-The **Dashboard** serves as the primary intelligence hub for national leadership.
+The **Overview** serves as the primary intelligence hub for national leadership.
 
 ### Growth Intelligence
 - **Monitoring**: Real-time member expansion is tracked via the `Growth Intelligence` area chart. 

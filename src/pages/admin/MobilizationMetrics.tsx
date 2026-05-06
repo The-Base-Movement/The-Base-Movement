@@ -61,7 +61,7 @@ export default function MobilizationMetrics() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-11 border-border/40 hover:bg-stone-50 transition-all shadow-sm"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2" /> Filter telemetry
           </Button>

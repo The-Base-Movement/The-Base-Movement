@@ -21,13 +21,13 @@ Stores the core membership data for both Local (Ghana) and Diaspora members.
 | `joined_at` | TIMESTAMP | Creation date | DONE |
 | `status` | VARCHAR(50) | Account status | DONE |
 
-## [DONE] 2. Blog Posts Table (Insights)
+## [DONE] 2. Updates Table (Insights)
 Stores the movement's policy briefs, news, and analysis.
 
 | Field Name | Type | Status |
 | :--- | :--- | :--- |
 | `id` | UUID | DONE |
-| `title` | VARCHAR(255) | DONE |
+| `title" | VARCHAR(255) | DONE |
 | `slug` | VARCHAR(255) | DONE |
 | `excerpt` | TEXT | DONE |
 | `content` | TEXT | DONE |
@@ -37,7 +37,7 @@ Stores the movement's policy briefs, news, and analysis.
 | `tags` | TEXT[] | DONE |
 
 ## [DONE] 3. Comments Table (Discussion)
-Stores community interaction on blog posts.
+Stores community interaction on updates.
 
 | Field Name | Type | Status |
 | :--- | :--- | :--- |
@@ -47,8 +47,8 @@ Stores community interaction on blog posts.
 | `content` | TEXT | DONE |
 | `created_at` | TIMESTAMP | DONE |
 
-## [DONE] 4. Store Inventory (Movement Gear)
-Stores items available in the official store. (Mapped from `Products` in initial design).
+## [DONE] 4. Supplies Inventory (Movement Gear)
+Stores items available in the official supplies hub. (Mapped from `Products` in initial design).
 
 | Field Name | Type | Status |
 | :--- | :--- | :--- |

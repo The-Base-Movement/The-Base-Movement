@@ -214,7 +214,7 @@ export default function Broadcasts() {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-10 px-6 text-[10px] font-black uppercase tracking-[0.1em] hover:bg-stone-50 shadow-sm"
+                          className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-stone-50 shadow-sm active:scale-95"
                           onClick={() => fetchMetrics(broadcast.id)}
                         >
                           Refresh Telemetry
@@ -278,7 +278,7 @@ export default function Broadcasts() {
               </p>
               <Button 
                 variant="outline"
-                className="w-full text-white border-destructive/60 hover:bg-destructive/20 text-[10px] font-black uppercase tracking-[0.2em] h-12 rounded-sm transition-all hover:scale-[1.02] shadow-lg shadow-destructive/10"
+                className="w-full text-white border-destructive/60 hover:bg-destructive/20 text-[10px] font-black uppercase tracking-[0.3em] h-12 rounded-sm transition-all hover:scale-[1.02] shadow-lg shadow-destructive/10 active:scale-95"
               >
                 Trigger Tactical Alert
               </Button>

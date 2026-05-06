@@ -131,7 +131,7 @@ export default function PollsManagement() {
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-10 h-12 shadow-lg shadow-brand-green/20"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
             onClick={() => setShowCreateModal(true)}
           >
             <Plus className="w-4 h-4 mr-2" /> Establish Campaign
@@ -288,18 +288,18 @@ export default function PollsManagement() {
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="h-8 w-8 rounded-sm text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 transition-all shadow-sm"
+                          className="h-9 w-9 rounded-sm text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
                           onClick={() => handleDeletePoll(poll.id, poll.question)}
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="h-8 w-8 rounded-sm text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 transition-all shadow-sm"
+                          className="h-9 w-9 rounded-sm text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                           onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                         >
-                          <MoreVertical className="w-4 h-4" />
+                          <MoreVertical className="w-5 h-5" />
                         </Button>
                       </div>
                     </td>
@@ -370,7 +370,7 @@ export default function PollsManagement() {
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
                       variant="outline" 
-                      className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-widest hover:bg-stone-50 transition-all shadow-sm"
+                      className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                     >
                       Manage Campaign
@@ -378,10 +378,10 @@ export default function PollsManagement() {
                     <Button 
                       variant="outline" 
                       size="icon" 
-                      className="h-11 w-11 rounded-sm border border-border/40 text-stone-400 hover:text-destructive hover:bg-destructive/10 transition-all shadow-sm"
+                      className="h-11 w-11 rounded-sm border border-border/40 text-stone-400 hover:text-destructive hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
                       onClick={() => handleDeletePoll(poll.id, poll.question)}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-5 h-5" />
                     </Button>
                   </div>
                 </div>
@@ -402,7 +402,7 @@ export default function PollsManagement() {
             <Button 
               variant="outline"
               size="sm"
-              className="h-10 px-8 text-[10px] font-black uppercase tracking-widest border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm transition-all shadow-lg"
+              className="h-11 px-10 text-[10px] font-black uppercase tracking-[0.3em] border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm transition-all shadow-lg active:scale-95"
               onClick={() => setIsAnalyticsModalOpen(true)}
             >
               Scan Analytics Guide
@@ -425,7 +425,7 @@ export default function PollsManagement() {
             </div>
             <Button 
               variant="ghost" 
-              className="h-9 px-0 text-[10px] font-black uppercase tracking-widest text-accent hover:bg-transparent hover:text-accent/80 transition-colors group/btn"
+              className="h-9 px-0 text-[10px] font-black uppercase tracking-[0.2em] text-accent hover:bg-transparent hover:text-accent/80 transition-colors group/btn active:scale-95"
               onClick={() => setIsFeedbackModalOpen(true)}
             >
               Scan Feedback Vault <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover/btn:translate-x-1" />
@@ -502,10 +502,10 @@ export default function PollsManagement() {
                   <Button 
                     type="button"
                     variant="outline" 
-                    className="h-10 text-[10px] font-black uppercase tracking-widest text-stone-500 hover:text-on-surface hover:bg-stone-50 border-stone-200 rounded-sm px-6 transition-all shadow-sm"
+                    className="h-11 text-[10px] font-black uppercase tracking-[0.2em] text-stone-500 hover:text-on-surface hover:bg-stone-50 border-stone-200 rounded-sm px-8 transition-all shadow-sm active:scale-95"
                     onClick={() => setNewPoll({...newPoll, options: [...newPoll.options, '']})}
                   >
-                    <Plus className="w-3 h-3 mr-2" /> Add Option
+                    <Plus className="w-4 h-4 mr-2" /> Add Option
                   </Button>
                 </div>
 
@@ -546,7 +546,7 @@ export default function PollsManagement() {
                 <Button 
                   type="button"
                   variant="outline" 
-                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-widest rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm"
+                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-[0.3em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                   onClick={() => setShowCreateModal(false)}
                 >
                   Discard
@@ -555,7 +555,7 @@ export default function PollsManagement() {
                   type="submit"
                   variant="primary"
                   disabled={isSubmitting}
-                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
+                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                 >
                   {isSubmitting ? 'Launching...' : 'Deploy Campaign'}
                 </Button>
@@ -598,7 +598,7 @@ export default function PollsManagement() {
             <div className="p-6 pt-0 border-t border-border/40 bg-muted/5 flex justify-end mt-4">
               <Button 
                 variant="primary"
-                className="h-12 text-[10px] font-black uppercase tracking-widest rounded-sm w-full shadow-lg shadow-brand-green/20"
+                className="h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm w-full shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                 onClick={() => setIsFeedbackModalOpen(false)}
               >
                 Close Vault
@@ -639,7 +639,7 @@ export default function PollsManagement() {
             <div className="p-6 pt-0">
               <Button 
                 variant="primary"
-                className="h-12 text-[10px] font-black uppercase tracking-widest rounded-sm w-full shadow-lg shadow-brand-green/20"
+                className="h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm w-full shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                 onClick={() => setIsAnalyticsModalOpen(false)}
               >
                 Got It

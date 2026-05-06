@@ -140,7 +140,7 @@ export default function WarRoomCommand() {
                         <Button 
                           variant="primary"
                           size="sm"
-                          className="h-10 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+                          className="h-11 px-10 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                         >
                           Update Status
                         </Button>
@@ -187,7 +187,7 @@ export default function WarRoomCommand() {
                         {nar.dispatch_status === 'PENDING' && (
                           <Button 
                             variant="primary"
-                            className="h-11 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-900/40 border-0 transition-all hover:scale-[1.02]"
+                            className="h-12 px-10 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-900/40 border-0 transition-all hover:scale-[1.02]"
                           >
                             <Send className="w-4 h-4 mr-2" /> Dispatch Strike
                           </Button>

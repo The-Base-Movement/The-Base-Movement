@@ -152,7 +152,7 @@ export default function TrashPage() {
           variant={activeTab === 'blogs' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('blogs')}
           className={cn(
-            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
             activeTab === 'blogs' 
               ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -165,7 +165,7 @@ export default function TrashPage() {
           variant={activeTab === 'products' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('products')}
           className={cn(
-            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
             activeTab === 'products' 
               ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -178,7 +178,7 @@ export default function TrashPage() {
           variant={activeTab === 'media' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('media')}
           className={cn(
-            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
             activeTab === 'media' 
               ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -191,7 +191,7 @@ export default function TrashPage() {
           variant={activeTab === 'authors' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('authors')}
           className={cn(
-            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
             activeTab === 'authors' 
               ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -356,18 +356,18 @@ function TrashItemCard({
                 onClick={onRestore}
                 variant="outline" 
                 size="sm" 
-                className="flex-1 h-9 rounded-sm border-border/40 text-[10px] font-black uppercase tracking-widest hover:bg-stone-100 gap-2"
+                className="flex-1 h-10 rounded-sm border-border/40 text-[10px] font-black uppercase tracking-[0.1em] hover:bg-stone-50 gap-2 transition-all active:scale-95"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-4 h-4" />
                 Restore Item
               </Button>
               <Button 
                 onClick={onDelete}
                 variant="ghost" 
                 size="icon" 
-                className="h-9 w-9 rounded-sm border border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
+                className="h-10 w-10 rounded-sm border border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all active:scale-95"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-4 h-4" />
               </Button>
             </div>
           </div>

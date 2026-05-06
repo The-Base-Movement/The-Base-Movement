@@ -80,7 +80,7 @@ export default function FieldDirectives() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all h-10 shadow-sm"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
           >
             <BarChart className="w-4 h-4 mr-2" /> Tactical Analytics
           </Button>
@@ -88,7 +88,7 @@ export default function FieldDirectives() {
             variant="primary"
             size="lg"
             onClick={() => setIsCreating(true)}
-            className="rounded-sm text-[10px] uppercase tracking-[0.2em] px-8 h-10 shadow-lg shadow-brand-green/20"
+            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
           >
             <Plus className="w-4 h-4 mr-2" /> Issue New Directive
           </Button>
@@ -152,7 +152,7 @@ export default function FieldDirectives() {
             </h2>
             <Button 
               variant="outline" 
-              className="h-10 px-6 text-[10px] font-black uppercase tracking-widest hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm"
+              className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
             >
               <Filter className="w-4 h-4 mr-2" /> Filter Feed
             </Button>
@@ -207,14 +207,14 @@ export default function FieldDirectives() {
                         <Button 
                           variant="outline" 
                           onClick={() => handleVerify(report.id, 'Rejected')}
-                          className="h-12 border-border/40 text-destructive hover:bg-destructive/10 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all"
+                          className="h-12 border-border/40 text-destructive hover:bg-destructive/10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95"
                         >
                           <XCircle className="w-4 h-4 mr-2" /> Reject Report
                         </Button>
                         <Button 
                           variant="primary"
                           onClick={() => handleVerify(report.id, 'Verified')}
-                          className="h-12 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-green/20"
+                          className="h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                         >
                           <CheckCircle className="w-4 h-4 mr-2" /> Verify Action
                         </Button>
@@ -286,13 +286,13 @@ export default function FieldDirectives() {
                 <Button 
                   variant="outline" 
                   onClick={() => setIsCreating(false)} 
-                  className="flex-1 h-12 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-widest hover:bg-stone-50 transition-all"
+                  className="flex-1 h-12 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-stone-50 transition-all active:scale-95"
                 >
                   Cancel Directive
                 </Button>
                 <Button 
                   variant="primary"
-                  className="flex-1 h-12 rounded-sm font-black text-[10px] uppercase tracking-widest shadow-lg shadow-brand-green/20"
+                  className="flex-1 h-12 rounded-sm font-black text-[10px] uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
                 >
                   <Send className="w-4 h-4 mr-2" /> Deploy Protocol
                 </Button>
