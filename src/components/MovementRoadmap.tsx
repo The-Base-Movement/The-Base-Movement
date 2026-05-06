@@ -27,7 +27,7 @@ export function MovementRoadmap() {
           {
             id: '2',
             title: 'Phase 2: Regional Chapter Offices',
-            description: 'Establishing physical community centers and mobilization offices across the sixteen regions.',
+            description: 'Establishing physical community centers and outreach offices across the sixteen regions.',
             target_date: '2026-06-15',
             status: 'In Progress',
             category: 'Mobilization',

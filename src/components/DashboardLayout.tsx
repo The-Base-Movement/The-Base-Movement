@@ -339,7 +339,7 @@ export default function DashboardLayout() {
         {/* Dashboard Footer */}
         <footer className="mt-16 py-16 px-12 border-t border-border/10 bg-muted/5">
           <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-[10px] text-muted-foreground/40 mb-0 uppercase font-black tracking-[0.2em]">© 2024 The Base Movement. Ghana First.</p>
+            <p className="text-[10px] text-muted-foreground/40 mb-0 font-black tracking-[0.2em]">© {new Date().getFullYear()} The Base Movement. Ghana First.</p>
             <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10">
               <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy Policy</Link>
               <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms of Service</Link>

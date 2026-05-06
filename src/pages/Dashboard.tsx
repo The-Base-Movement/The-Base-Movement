@@ -208,7 +208,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">Past 24h</span>
             </div>
-            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and regional rollout began.</p>
+            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and regional rollout completed.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -223,7 +223,7 @@ export default function Dashboard() {
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-on-surface/40 uppercase tracking-widest">Mobilization Points</span>
+              <span className="text-[10px] font-bold text-on-surface/40 uppercase tracking-widest">Impact Points</span>
               <Trophy className="w-4 h-4 text-[var(--brand-gold)] opacity-40" />
             </div>
             <div className="flex items-baseline gap-2">
@@ -251,7 +251,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-on-surface flex items-center m-0">
             <span className="material-symbols-outlined mr-2 text-destructive" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>stadium</span>
-            Active Field Mobilization
+            Active Community Engagement
           </h2>
           <div className="flex items-center gap-4">
             {userLocation && (
@@ -262,7 +262,7 @@ export default function Dashboard() {
             )}
             <div className="flex items-center gap-2 px-3 py-1 bg-destructive/10 border border-destructive/20 rounded-full">
               <span className="flex h-1.5 w-1.5 rounded-full bg-destructive animate-pulse"></span>
-              <span className="text-[9px] font-black uppercase tracking-widest text-destructive">Live National Signal</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-destructive">National Activity</span>
             </div>
           </div>
         </div>
@@ -499,7 +499,7 @@ export default function Dashboard() {
             <div>
               <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface m-0 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-primary" />
-                Mobilization Impact
+                Movement Impact
               </h3>
               <p className="text-[11px] font-black text-on-surface/20 tracking-widest mt-1">Total points earned through direct action.</p>
             </div>
@@ -541,7 +541,7 @@ export default function Dashboard() {
             </div>
 
             <div className="w-full lg:w-1/2 min-w-[320px] relative z-10 bg-white/5 p-4 border border-white/10 backdrop-blur-sm rounded-sm">
-              <p className="text-white/40 text-[8px] font-black uppercase tracking-[0.2em] mb-3">Strategic Referral Link</p>
+              <p className="text-white/40 text-[8px] font-black uppercase tracking-[0.2em] mb-3">Your Referral Link</p>
               <div className="relative mb-4 flex items-center border-b border-white/20 pb-1">
                 <input 
                   className="w-full bg-transparent border-none text-white font-bold py-2 pl-0 pr-10 rounded-none focus:ring-0 focus:outline-none placeholder:text-white/20 text-sm tracking-tight" 
