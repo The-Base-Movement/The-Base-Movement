@@ -60,6 +60,21 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
         
         {/* Twitter */}
         <meta name="twitter:image" content={settings.twitter_card_url || settings.og_image_url} />
+
+        {/* Dynamic Theme Colors */}
+        <style>
+          {`
+            :root {
+              --primary: ${settings.primary_color};
+              --brand-green: ${settings.primary_color};
+              --ring: ${settings.primary_color};
+              --accent: ${settings.accent_color};
+              --brand-gold: ${settings.accent_color};
+              --destructive: ${settings.destructive_color};
+              --brand-red: ${settings.destructive_color};
+            }
+          `}
+        </style>
       </Helmet>
       {children}
     </BrandingContext.Provider>

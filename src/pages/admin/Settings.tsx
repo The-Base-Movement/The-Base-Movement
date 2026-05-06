@@ -18,7 +18,8 @@ import {
   Image as ImageIcon,
   Upload,
   Twitter,
-  Building2
+  Building2,
+  Palette
 } from 'lucide-react'
 
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
@@ -683,6 +684,37 @@ export default function AdminSettings() {
                       </div>
                     </div>
 
+                    <div className="space-y-6 pt-6 border-t border-stone-100">
+                      <h3 className="text-xs font-bold text-stone-900 uppercase tracking-widest flex items-center gap-2">
+                        <Palette className="w-4 h-4 text-primary" />
+                        Movement Palette Control
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                          { key: 'primary_color', label: 'Primary Brand (Green)', desc: 'HSL value for the dominant identity color.' },
+                          { key: 'accent_color', label: 'Accent Highlight (Gold)', desc: 'HSL value for secondary emphasis.' },
+                          { key: 'destructive_color', label: 'Destructive/Alert (Red)', desc: 'HSL value for high-urgency elements.' }
+                        ].map((color) => (
+                          <div key={color.key} className="space-y-2">
+                            <Label className="text-[10px] font-bold text-stone-500 normal-case">{color.label}</Label>
+                            <div className="flex gap-3">
+                              <div 
+                                className="w-11 h-11 rounded-lg border border-stone-200 shrink-0" 
+                                style={{ backgroundColor: `hsl(${siteSettings[color.key]})` }}
+                              />
+                              <Input 
+                                value={(siteSettings[color.key] as string) || ''} 
+                                onChange={(e) => setSiteSettings({ ...siteSettings, [color.key]: e.target.value })}
+                                className="h-11 rounded-lg border-stone-200 text-xs font-medium font-mono"
+                                placeholder="0 0% 0%"
+                              />
+                            </div>
+                            <p className="text-[9px] text-stone-400 italic leading-tight">{color.desc}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="pt-6 flex justify-end border-t border-stone-100">
                       <Button 
                         variant="primary"
@@ -693,7 +725,10 @@ export default function AdminSettings() {
                           try {
                             const p1 = adminService.updateSiteSetting('primary_email', siteSettings.primary_email)
                             const p2 = adminService.updateSiteSetting('newsletter_email', siteSettings.newsletter_email)
-                            await Promise.all([p1, p2])
+                            const p3 = adminService.updateSiteSetting('primary_color', siteSettings.primary_color)
+                            const p4 = adminService.updateSiteSetting('accent_color', siteSettings.accent_color)
+                            const p5 = adminService.updateSiteSetting('destructive_color', siteSettings.destructive_color)
+                            await Promise.all([p1, p2, p3, p4, p5])
                             window.dispatchEvent(new CustomEvent('site_settings_updated'))
                             toast.success('Movement configurations synchronized', { id: toastId })
                           } catch (err: unknown) {
