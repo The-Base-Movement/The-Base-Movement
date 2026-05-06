@@ -34,7 +34,7 @@ export function BlogPostCard({ post, baseUrl, categoryColors }: BlogPostCardProp
           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${categoryColors[post.category] ?? 'bg-stone-100 text-stone-500'}`}>
             {post.category}
           </span>
-          <span className="text-[10px] text-slate-400 font-bold tracking-widest uppercase">{formattedDate}</span>
+          <span className="text-[10px] text-slate-400 font-medium tracking-widest">{formattedDate}</span>
         </div>
         <Link to={`${baseUrl}/${post.slug}`}>
           <h3 className="text-sm font-bold text-charcoal-dark tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors">
@@ -43,12 +43,12 @@ export function BlogPostCard({ post, baseUrl, categoryColors }: BlogPostCardProp
         </Link>
         <p className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>
         <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
-          <span className="text-[10px] font-bold text-stone-400 tracking-widest">
-            {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName} · {post.readTime}
+          <span className="text-[10px] font-medium text-stone-400 tracking-widest">
+            {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName} <span className="mx-1 opacity-50">|</span> {post.readTime}
           </span>
           <Link
             to={`${baseUrl}/${post.slug}`}
-            className="text-[9px] font-bold text-brand-green tracking-widest hover:underline flex items-center gap-1 uppercase"
+            className="text-[9px] font-bold text-brand-green tracking-widest hover:underline flex items-center gap-1"
           >
             Read article
             <ArrowRight className="w-3 h-3" />

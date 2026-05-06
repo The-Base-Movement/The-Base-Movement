@@ -72,12 +72,12 @@ export default function Blog() {
       <div className="max-w-[1280px] mx-auto px-8 py-16">
 
         {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 mb-12">
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
+              className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
                 activeCategory === cat
                   ? 'bg-[var(--brand-green)] text-white shadow-md'
                   : 'bg-white border border-slate-200 text-slate-500 hover:border-[var(--brand-green)] hover:text-[var(--brand-green)]'
@@ -123,7 +123,7 @@ export default function Blog() {
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-meta font-bold uppercase tracking-wider ${categoryColors[featured.category] ?? 'bg-stone-100 text-stone-500'}`}>
                         {featured.category}
                       </span>
-                      <span className="text-xs text-slate-400 font-meta">
+                      <span className="text-xs text-slate-400 font-meta font-medium">
                         {featured.publishedAt ? new Date(featured.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                       </span>
                     </div>
@@ -134,14 +134,14 @@ export default function Blog() {
                     </Link>
                     <p className="text-slate-500 text-sm leading-relaxed mb-6">{featured.excerpt}</p>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="text-[10px] font-bold text-stone-400 tracking-widest">
-                        {featured.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : featured.authorName} · {featured.readTime}
+                      <div className="text-[10px] font-medium text-stone-400 tracking-widest">
+                        {featured.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : featured.authorName} <span className="mx-2 opacity-50">|</span> {featured.readTime}
                       </div>
                       <Link
                         to={`${baseUrl}/${featured.slug}`}
                         className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--brand-green)] tracking-widest hover:underline"
                       >
-                        Read Article
+                        Read article
                         <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>

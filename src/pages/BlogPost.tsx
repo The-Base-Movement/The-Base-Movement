@@ -140,7 +140,7 @@ export default function BlogPost() {
               <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-[10px] font-bold uppercase tracking-widest">
                 {post.category}
               </span>
-              <div className="flex items-center gap-4 text-stone-400 text-[10px] font-bold tracking-widest uppercase">
+              <div className="flex items-center gap-4 text-stone-400 text-[10px] font-medium tracking-widest uppercase">
                 <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A'}</span>
                 <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {post.readTime}</span>
               </div>
@@ -188,12 +188,12 @@ export default function BlogPost() {
                       <p className="text-sm font-bold text-stone-900 leading-none mb-0">
                         {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName}
                       </p>
-                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0">
+                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0 font-medium">
                         {post.authorName?.toUpperCase() === 'ADMIN' ? 'Movement Research' : post.authorRole}
                       </p>
                     </div>
                   </div>
-                  <p className="text-xs text-stone-500 leading-relaxed pt-2 mb-0">
+                  <p className="text-xs text-stone-500 leading-relaxed pt-2 mb-0 font-medium">
                     {post.authorBio}
                   </p>
                 </div>
