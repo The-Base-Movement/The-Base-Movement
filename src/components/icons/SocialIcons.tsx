@@ -11,7 +11,7 @@ interface IconProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 
 export const FacebookIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) => (
   <img 
-    src="/docs/social-icons/facebook.svg" 
+    src="/social-icons/facebook.svg" 
     alt="Facebook" 
     width={size} 
     height={size} 
@@ -22,7 +22,7 @@ export const FacebookIcon: React.FC<IconProps> = ({ size = 24, className, ...pro
 
 export const InstagramIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) => (
   <img 
-    src="/docs/social-icons/instagram.svg" 
+    src="/social-icons/instagram.svg" 
     alt="Instagram" 
     width={size} 
     height={size} 
@@ -33,7 +33,7 @@ export const InstagramIcon: React.FC<IconProps> = ({ size = 24, className, ...pr
 
 export const XIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) => (
   <img 
-    src="/docs/social-icons/x.svg" 
+    src="/social-icons/x.svg" 
     alt="X" 
     width={size} 
     height={size} 
@@ -44,7 +44,7 @@ export const XIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) =
 
 export const TikTokIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) => (
   <img 
-    src="/docs/social-icons/tiktok.svg" 
+    src="/social-icons/tiktok.svg" 
     alt="TikTok" 
     width={size} 
     height={size} 
@@ -55,7 +55,7 @@ export const TikTokIcon: React.FC<IconProps> = ({ size = 24, className, ...props
 
 export const YouTubeIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) => (
   <img 
-    src="/docs/social-icons/youtube.svg" 
+    src="/social-icons/youtube.svg" 
     alt="YouTube" 
     width={size} 
     height={size} 
@@ -66,7 +66,7 @@ export const YouTubeIcon: React.FC<IconProps> = ({ size = 24, className, ...prop
 
 export const WhatsAppIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) => (
   <img 
-    src="/docs/social-icons/whatsapp.svg" 
+    src="/social-icons/whatsapp.svg" 
     alt="WhatsApp" 
     width={size} 
     height={size} 
@@ -77,7 +77,7 @@ export const WhatsAppIcon: React.FC<IconProps> = ({ size = 24, className, ...pro
 
 export const LinkedInIcon: React.FC<IconProps> = ({ size = 24, className, ...props }) => (
   <img 
-    src="/docs/social-icons/linkedin.svg" 
+    src="/social-icons/linkedin.svg" 
     alt="LinkedIn" 
     width={size} 
     height={size} 
