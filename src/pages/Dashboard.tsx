@@ -487,7 +487,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="font-black tracking-tighter text-on-surface text-sm mb-0.5 leading-none">Verified civic member</p>
-                <p className="text-[9px] font-bold text-on-surface/30 mb-0 leading-none">Authenticated for official voting and policy contribution.</p>
+                <p className="text-[11px] font-bold text-on-surface/30 mb-0 leading-none">Authenticated for official voting and policy contribution.</p>
               </div>
             </div>
           </div>
@@ -501,7 +501,7 @@ export default function Dashboard() {
                 <TrendingUp className="w-4 h-4 text-primary" />
                 Mobilization Impact
               </h3>
-              <p className="text-[9px] font-black text-on-surface/20 tracking-widest mt-1">Total points earned through direct action.</p>
+              <p className="text-[11px] font-black text-on-surface/20 tracking-widest mt-1">Total points earned through direct action.</p>
             </div>
             <span className="text-2xl font-black italic tracking-tighter text-primary">{totalPoints.toLocaleString()}</span>
           </div>
@@ -516,8 +516,8 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[9px] font-black text-on-surface/20 tracking-widest">Next milestone: Chapter Leader</span>
-              <span className="text-[9px] font-black text-on-surface/40 tracking-widest">
+              <span className="text-[11px] font-black text-on-surface/20 tracking-widest">Next milestone: Chapter Leader</span>
+              <span className="text-[11px] font-black text-on-surface/40 tracking-widest">
                 {1000 - totalPoints > 0 ? `${1000 - totalPoints} points remaining` : 'Elite Achievement Unlocked'}
               </span>
             </div>
