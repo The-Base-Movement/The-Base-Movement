@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   BarChart3, 
   Plus, 
@@ -33,7 +33,7 @@ export default function PollsManagement() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   
   const [availableRegions, setAvailableRegions] = useState<{ id: string, name: string }[]>([])
-  const [availableCountries, setAvailableCountries] = useState<{ id: string, name: string }[]>([])
+  const [availableCountries, setAvailableCountries] = useState<{ name: string, dialing_code: string, is_diaspora: boolean }[]>([])
 
   const [newPoll, setNewPoll] = useState({
     question: '',
@@ -529,7 +529,7 @@ export default function PollsManagement() {
                             <>
                               <option value="International">All Countries (Global)</option>
                               {availableCountries.map(c => (
-                                <option key={c.id} value={c.name}>{c.name}</option>
+                                <option key={c.name} value={c.name}>{c.name}</option>
                               ))}
                             </>
                           )}
