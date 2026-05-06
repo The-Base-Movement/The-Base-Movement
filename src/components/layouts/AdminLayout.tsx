@@ -32,7 +32,7 @@ import { Button } from '@/components/ui/neon-button'
 import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'
-import { useBranding } from '@/context/BrandingContext'
+import { useBranding } from '@/hooks/useBranding'
 import {
   DropdownMenu,
   DropdownMenuContent,

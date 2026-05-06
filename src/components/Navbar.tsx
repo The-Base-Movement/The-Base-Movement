@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { User, Settings, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
-import { useBranding } from '@/context/BrandingContext'
+import { useBranding } from '@/hooks/useBranding'
 
 export default function Navbar() {
   const { settings } = useBranding()

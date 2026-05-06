@@ -1,14 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { adminService } from '@/services/adminService'
 import { Helmet } from 'react-helmet-async'
-import { BrandingSettings, defaultSettings } from '@/types/branding'
-
-interface BrandingContextType {
-  settings: BrandingSettings
-  refreshSettings: () => Promise<void>
-}
-
-const BrandingContext = createContext<BrandingContextType | undefined>(undefined)
+import { defaultSettings, type BrandingSettings } from '@/types/branding'
+import { BrandingContext } from '@/hooks/useBranding'
 
 export function BrandingProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<BrandingSettings>(defaultSettings)
@@ -26,15 +20,34 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    refreshSettings()
+    let isMounted = true
+
+    async function initializeBranding() {
+      try {
+        const data = await adminService.getSiteSettings()
+        if (isMounted) {
+          setSettings(prev => ({
+            ...prev,
+            ...(data as Partial<BrandingSettings>)
+          }))
+        }
+      } catch (err) {
+        console.error('[BRANDING] Failed to fetch site settings:', err)
+      }
+    }
+
+    initializeBranding()
     
     // Listen for branding updates (custom event from AdminSettings)
     const handleBrandingUpdate = () => {
-      refreshSettings()
+      initializeBranding()
     }
     window.addEventListener('site_settings_updated', handleBrandingUpdate)
-    return () => window.removeEventListener('site_settings_updated', handleBrandingUpdate)
-  }, [refreshSettings])
+    return () => {
+      isMounted = false
+      window.removeEventListener('site_settings_updated', handleBrandingUpdate)
+    }
+  }, [])
 
   return (
     <BrandingContext.Provider value={{ settings, refreshSettings }}>
@@ -53,11 +66,4 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function useBranding() {
-  const context = useContext(BrandingContext)
-  if (context === undefined) {
-    throw new Error('useBranding must be used within a BrandingProvider')
-  }
-  return context
-}
 

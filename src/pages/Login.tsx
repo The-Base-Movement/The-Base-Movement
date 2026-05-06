@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react'
 import { authService } from '@/services/authService'
 import { toast } from 'sonner'
-import { useBranding } from '@/context/BrandingContext'
+import { useBranding } from '@/hooks/useBranding'
 
 export default function Login() {
   const { settings } = useBranding()

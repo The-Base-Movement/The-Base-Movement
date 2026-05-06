@@ -4,7 +4,7 @@ import { ArrowRight, MapPin, Globe } from 'lucide-react'
 import { adminService, type BlogPost } from '@/services/adminService'
 import { usePerformance } from '@/context/PerformanceContext'
 import { Button } from '@/components/ui/neon-button'
-import { useBranding } from '@/context/BrandingContext'
+import { useBranding } from '@/hooks/useBranding'
 
 function AnimatedCounter({ target, duration = 2000, className }: { target: number; duration?: number; className?: string }) {
   const [count, setCount] = useState(0)

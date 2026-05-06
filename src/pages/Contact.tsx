@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Mail, Phone, MapPin, Send } from 'lucide-react'
 import { Button } from '../components/ui/neon-button'
 import { adminService } from '../services/adminService'
-import { useBranding } from '@/context/BrandingContext'
+import { useBranding } from '@/hooks/useBranding'
 
 export default function Contact() {
   const { settings } = useBranding()

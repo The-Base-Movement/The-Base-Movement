@@ -9,7 +9,7 @@ import {
 import { Button } from './ui/neon-button'
 import { Send } from 'lucide-react'
 import { adminService } from '../services/adminService'
-import { useBranding } from '@/context/BrandingContext'
+import { useBranding } from '@/hooks/useBranding'
 
 export default function Footer() {
   const { settings } = useBranding()

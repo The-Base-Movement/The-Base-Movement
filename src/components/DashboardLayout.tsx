@@ -4,7 +4,7 @@ import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
-import { useBranding } from '@/context/BrandingContext'
+import { useBranding } from '@/hooks/useBranding'
 
 export default function DashboardLayout() {
   const { settings } = useBranding()

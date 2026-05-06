@@ -8,7 +8,7 @@ import MembershipCard from '../components/MembershipCard'
 import { getCroppedImg } from '@/lib/imageUtils'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
-import { useBranding } from '@/context/BrandingContext'
+import { useBranding } from '@/hooks/useBranding'
 
 const ageRanges = ['16-25', '26-40', '41-60', '60+']
 // Hardcoded fallbacks removed - now fetching from Supabase
