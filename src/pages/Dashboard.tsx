@@ -208,7 +208,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">Past 24h</span>
             </div>
-            <p className="text-[9px] text-on-surface/30 mt-4 font-medium italic">Movement data updated and stabilized.</p>
+            <p className="text-[9px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and regional rollout initiated.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -365,7 +365,7 @@ export default function Dashboard() {
                 <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>campaign</span>
                 Movement Directives
               </h3>
-              <span className="text-[9px] font-bold text-on-surface/30 tracking-widest uppercase">{notifications.length} active updates</span>
+              <span className="text-[9px] font-bold text-on-surface/30 tracking-widest uppercase">{notifications.length} Active Updates</span>
             </div>
             <div className="divide-y divide-border/10 max-h-[400px] overflow-y-auto flex-1">
               {notifications.length === 0 ? (
@@ -413,20 +413,20 @@ export default function Dashboard() {
           <div className="bg-surface-warm border-t-[4px] border-t-transparent relative overflow-hidden rounded-sm shadow-sm flex flex-col">
             <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
             <div className="p-6 sm:p-8 flex-1">
-              <h3 className="mb-6 sm:mb-8 border-b border-accent/20 pb-4 text-on-surface uppercase tracking-widest font-black text-sm">Identity Details</h3>
+              <h3 className="mb-6 sm:mb-8 border-b border-accent/20 pb-4 text-on-surface tracking-tighter italic font-black text-xl">Identity Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 sm:gap-y-10 gap-x-12">
                 <div className="min-w-0">
                   <p className="text-[10px] text-accent uppercase tracking-[0.2em] mb-2 font-black">Full Name</p>
-                  <p className="text-lg font-bold text-on-surface truncate mb-0">{member?.full_name || 'Not Available'}</p>
+                  <p className="text-lg font-bold text-on-surface truncate mb-0 capitalize">{member?.full_name?.toLowerCase() || 'Not Available'}</p>
                 </div>
                 <div className="min-w-0">
                   <p className="text-[10px] text-accent uppercase tracking-[0.2em] mb-2 font-black">Registration Number</p>
                   <p className="text-lg font-bold text-on-surface break-all sm:break-normal mb-0">{member?.registration_number || 'N/A'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] text-accent uppercase tracking-[0.2em] mb-2 font-black">Platform</p>
-                  <span className="inline-block px-4 py-1.5 bg-primary text-white text-[10px] font-black tracking-widest rounded-none shadow-lg shadow-primary/20">
-                    {member?.platform || 'GHANA'}
+                  <p className="text-[10px] text-accent uppercase tracking-[0.2em] mb-2 font-black">Platform Status</p>
+                  <span className="inline-block px-4 py-1.5 bg-primary text-white text-[10px] font-bold tracking-widest rounded-none shadow-lg shadow-primary/20">
+                    {member?.platform === 'ADMIN' ? 'Chapter Lead' : (member?.platform || 'Member')}
                   </span>
                 </div>
                 <div className="min-w-0">
@@ -570,11 +570,11 @@ export default function Dashboard() {
           {/* Achievements Gallery */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden">
             <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface flex items-center gap-2 m-0">
+              <h3 className="text-xs font-black italic tracking-tighter text-on-surface flex items-center gap-2 m-0">
                 <Trophy className="w-4 h-4 text-accent" />
                 Movement Achievements
               </h3>
-              <span className="text-[9px] font-black text-on-surface/20 tracking-widest">{achievements.length} badges earned</span>
+              <span className="text-[9px] font-bold text-on-surface/30 tracking-widest uppercase">{achievements.length} Badges Earned</span>
             </div>
             <div className="p-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
               {/* Earned Badges */}

@@ -941,8 +941,8 @@ class AdminService {
         const realisticGrowth = Math.max(5, avgDailyGrowth)
         const daysToTarget = Math.ceil(remaining / realisticGrowth)
         
-        // Cap the forecast at a reasonable horizon (e.g., 2 years) to avoid extreme dates
-        const maxDays = 365 * 2
+        // Cap the forecast at a reasonable horizon (e.g., 1 year) to avoid extreme dates
+        const maxDays = 365
         const actualDays = Math.min(daysToTarget, maxDays)
         
         const forecast = new Date()

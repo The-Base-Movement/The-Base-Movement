@@ -17,8 +17,8 @@ export function MovementRoadmap() {
         setMilestones([
           {
             id: '1',
-            title: 'Phase 1: National Registration Launch',
-            description: 'Initialization of the member database and official portal rollout for all 16 regions.',
+            title: 'Phase 1: National Portal Rollout',
+            description: 'Initialization of the member database and official portal activation for all sixteen regions.',
             target_date: '2026-04-30',
             status: 'Completed',
             category: 'Infrastructure',
@@ -26,8 +26,8 @@ export function MovementRoadmap() {
           },
           {
             id: '2',
-            title: 'Phase 2: Regional HQ Establishment',
-            description: 'Setting up physical mobilization offices across the 16 regions of Ghana.',
+            title: 'Phase 2: Regional Chapter Offices',
+            description: 'Establishing physical community centers and mobilization offices across the sixteen regions.',
             target_date: '2026-06-15',
             status: 'In Progress',
             category: 'Mobilization',
@@ -35,8 +35,8 @@ export function MovementRoadmap() {
           },
           {
             id: '3',
-            title: 'Phase 3: National Economic Summit',
-            description: 'A gathering of intellectual and grassroots leaders to finalize the economic blueprint.',
+            title: 'Phase 3: National Policy Summit',
+            description: 'A collaborative gathering of grassroots leaders to finalize our economic and civic blueprints.',
             target_date: '2026-08-20',
             status: 'Upcoming',
             category: 'Policy',
@@ -44,8 +44,8 @@ export function MovementRoadmap() {
           },
           {
             id: '4',
-            title: 'Phase 4: Field Force Expansion',
-            description: 'Training and deploying 100,000 certified mobilizers for community outreach.',
+            title: 'Phase 4: Community Outreach Expansion',
+            description: 'Onboarding and supporting 100,000 certified community organizers for local engagement.',
             target_date: '2026-10-10',
             status: 'Upcoming',
             category: 'Mobilization',
