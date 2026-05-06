@@ -250,7 +250,7 @@ export default function OurAgenda() {
           <aside className="lg:w-1/4 hidden lg:block">
             <div className="sticky top-20 space-y-4 font-meta">
               <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-6">Plan Pillars</p>
-              <nav className="flex flex-col space-y-2">
+              <nav aria-label="Agenda Pillars" className="flex flex-col space-y-2">
                 {agendaPillars.map((pillar) => (
                   <a 
                     key={pillar.id}
@@ -285,7 +285,8 @@ export default function OurAgenda() {
           <div className="lg:w-3/4 space-y-16">
             
             {/* Intro Cards */}
-            <div className="grid md:grid-cols-2 gap-8 mb-16">
+            <section aria-labelledby="agenda-intro-heading" className="grid md:grid-cols-2 gap-8 mb-16">
+              <h2 id="agenda-intro-heading" className="sr-only">Agenda Definitions</h2>
               <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
                 <h3 className="text-primary uppercase tracking-tight mb-4">What is an Aim?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm mb-0">
@@ -298,11 +299,17 @@ export default function OurAgenda() {
                   An Objective is a specific, actionable, and measurable step taken in pursuit of an Aim. Objectives answer the question: "Exactly what will we do and how?" They are concrete, time-oriented, and directly deliverable. Where an Aim sets the destination, an Objective maps the route. Every objective in this document is derived from one of THE BASE's six core Aims.
                 </p>
               </div>
-            </div>
+            </section>
 
             {/* Pillar Content */}
             {agendaPillars.map((pillar) => (
-              <section key={pillar.id} id={pillar.id} className="pillar-card bg-white border border-slate-200 rounded-none p-8 md:p-12 shadow-sm border-l-4 scroll-mt-24" style={{ borderLeftColor: pillar.color }}>
+              <section 
+                key={pillar.id} 
+                id={pillar.id} 
+                aria-labelledby={`pillar-heading-${pillar.id}`}
+                className="pillar-card bg-white border border-slate-200 rounded-none p-8 md:p-12 shadow-sm border-l-4 scroll-mt-24" 
+                style={{ borderLeftColor: pillar.color }}
+              >
                 <div className="space-y-6 mb-8">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 shrink-0 flex items-center justify-center bg-surface-warm" style={{ color: pillar.color }}>
@@ -310,7 +317,7 @@ export default function OurAgenda() {
                     </div>
                     <p className="text-[10px] font-bold tracking-widest uppercase mb-0" style={{ color: pillar.color }}>Aim {pillar.number}</p>
                   </div>
-                  <h2 className="mb-0">{pillar.title}</h2>
+                  <h2 id={`pillar-heading-${pillar.id}`} className="mb-0">{pillar.title}</h2>
                 </div>
                 
                 <p className="text-slate-700 leading-relaxed font-medium mb-10 pb-10 border-b border-slate-100">
@@ -337,11 +344,11 @@ export default function OurAgenda() {
             ))}
 
             {/* Covenant CTA */}
-            <div className="bg-charcoal-dark text-white p-6 md:p-12 text-center mt-24">
+            <section aria-labelledby="covenant-heading" className="bg-charcoal-dark text-white p-6 md:p-12 text-center mt-24">
               <div className="w-16 h-16 bg-primary mx-auto mb-6 flex items-center justify-center">
                 <Landmark className="w-8 h-8 text-white" />
               </div>
-              <h2 className="mb-6">Our Covenant with Ghana</h2>
+              <h2 id="covenant-heading" className="mb-6">Our Covenant with Ghana</h2>
               <div className="max-w-2xl mx-auto space-y-4 text-slate-300 mb-8">
                 <p>These Aims define the Ghana we are building. These Objectives are the steps we will be held accountable to. Together, they form THE BASE's covenant with every Ghanaian who believes this country can, and must, do better.</p>
                 <p>We do not offer vague promises. We offer an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians and the potential of an extraordinary nation.</p>
@@ -360,7 +367,7 @@ export default function OurAgenda() {
                   </Link>
                 </Button>
               )}
-            </div>
+            </section>
 
           </div>
         </div>

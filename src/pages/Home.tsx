@@ -72,6 +72,7 @@ export default function Home() {
     <main className="bg-background font-body-md">
       {/* Hero Section */}
       <section 
+        aria-labelledby="hero-heading"
         className="relative bg-on-surface text-white pt-32 pb-32 md:pt-40 md:pb-40 overflow-hidden border-b-[8px] border-accent group"
         onMouseMove={handleMouseMove}
       >
@@ -96,7 +97,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0 bg-gradient-to-t from-on-surface via-on-surface/60 to-transparent"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-5xl md:text-h1 font-meta font-black mb-6 leading-[1.1] tracking-tighter uppercase">
+            <h1 id="hero-heading" className="text-5xl md:text-h1 font-meta font-black mb-6 leading-[1.1] tracking-tighter uppercase">
               Ghana First,<br />Jobs for the youth!
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl mb-10 leading-relaxed font-body-md mx-auto md:mx-0">
@@ -122,8 +123,9 @@ export default function Home() {
       </section>
 
       {/* Ghana vs Diaspora - Stark architectural blocks */}
-      <section className="py-24 bg-white">
+      <section aria-labelledby="platforms-heading" className="py-24 bg-white">
         <div className="max-w-[1280px] mx-auto px-8">
+          <h2 id="platforms-heading" className="sr-only">Our Platforms</h2>
           <div className="grid md:grid-cols-2 gap-12 md:gap-24">
             <div className="border-t-[4px] border-primary pt-8 group">
               <h3 className="text-h3 font-meta font-black text-on-surface mb-4 flex items-center gap-3 tracking-tight">
@@ -157,10 +159,10 @@ export default function Home() {
       </section>
 
       {/* Vision, Mission, Values - Editorial Grid */}
-      <section className="py-24 bg-on-surface text-white border-t border-white/5">
+      <section aria-labelledby="foundation-heading" className="py-24 bg-on-surface text-white border-t border-white/5">
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="mb-16">
-            <h2 className="text-4xl md:text-5xl font-meta font-black leading-tight mb-6 uppercase tracking-tighter">
+            <h2 id="foundation-heading" className="text-4xl md:text-5xl font-meta font-black leading-tight mb-6 uppercase tracking-tighter">
               Our Foundation
             </h2>
           </div>
@@ -192,8 +194,9 @@ export default function Home() {
       </section>
 
       {/* Stats Section - Stark Typography */}
-      <section className="py-24 md:py-32 bg-background border-y border-border/60">
+      <section aria-labelledby="stats-heading" className="py-24 md:py-32 bg-background border-y border-border/60">
         <div className="max-w-[1280px] mx-auto px-8">
+          <h2 id="stats-heading" className="sr-only">Movement Statistics</h2>
           <dl className="grid md:grid-cols-2 gap-16 md:gap-8 items-center">
             <div className="pl-8 relative">
               <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
@@ -214,12 +217,12 @@ export default function Home() {
       </section>
 
       {/* Latest Updates Section */}
-      <section className="pt-24 pb-48 bg-white">
+      <section aria-labelledby="updates-heading" className="pt-24 pb-48 bg-white">
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
               <span className="text-primary font-black tracking-[0.2em] text-[10px] mb-3 block">UPDATES</span>
-              <h2 className="text-3xl md:text-h2 font-meta font-black text-on-surface tracking-tight uppercase">Latest updates</h2>
+              <h2 id="updates-heading" className="text-3xl md:text-h2 font-meta font-black text-on-surface tracking-tight uppercase">Latest updates</h2>
             </div>
             <Link to="/blog" className="hidden md:flex items-center gap-2 text-primary font-meta font-bold tracking-widest text-xs hover:underline">
               View all news <ArrowRight className="w-4 h-4" />
@@ -273,7 +276,7 @@ export default function Home() {
       </section>
 
       {/* Decisive CTA Section */}
-      <section className="relative px-8 pb-32 bg-white">
+      <section aria-labelledby="cta-heading" className="relative px-8 pb-32 bg-white">
         <div className="max-w-[1280px] mx-auto">
           <div className="relative z-20 bg-on-surface rounded-[2rem] overflow-hidden shadow-[0_48px_96px_-16px_rgba(0,0,0,0.5)] -mt-20">
             {/* Subtle Texture/Gradient Overlay */}
@@ -284,7 +287,7 @@ export default function Home() {
               {/* Content Column */}
               <div className="max-w-4xl">
                 <span className="text-accent font-meta font-bold tracking-[0.4em] text-xs mb-6 block uppercase">Ready to build Ghana?</span>
-                <h2 className="text-4xl md:text-6xl font-meta font-black text-white mb-8 leading-[1.1] tracking-tighter">
+                <h2 id="cta-heading" className="text-4xl md:text-6xl font-meta font-black text-white mb-8 leading-[1.1] tracking-tighter">
                   Join 355,482 people building Ghana’s future.
                 </h2>
                 <p className="text-lg md:text-xl text-muted-foreground/80 mb-12 leading-relaxed font-body-md max-w-2xl mx-auto">
