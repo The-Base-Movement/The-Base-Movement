@@ -57,7 +57,7 @@ export default function Navbar() {
 
   return (
     <header className="bg-white border-b border-border/40 sticky top-0 z-50">
-      <nav className="flex justify-between items-center max-w-[1440px] mx-auto px-8 h-20">
+      <nav aria-label="Main Navigation" className="flex justify-between items-center max-w-[1440px] mx-auto px-8 h-20">
         <div className="flex items-center gap-4">
           <img alt="The Base Logo" className="h-10 w-10" src="/logo.png"  decoding="async" />
           <Link to="/" className="text-on-surface hover:opacity-80 transition-opacity mb-0">

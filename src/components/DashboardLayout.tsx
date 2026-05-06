@@ -100,7 +100,7 @@ export default function DashboardLayout() {
       />
 
       {/* Navigation Shell (SideNavBar) */}
-      <nav className={`fixed left-0 top-0 h-full flex flex-col bg-muted/5 text-on-surface w-64 border-r border-border/40 z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+      <aside aria-label="Dashboard Sidebar" className={`fixed left-0 top-0 h-full flex flex-col bg-muted/5 text-on-surface w-64 border-r border-border/40 z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         {/* Fixed Header */}
         <div className="px-6 py-8 flex items-center gap-3 bg-white z-10 shrink-0">
           <img src="/logo.png" alt="The Base Logo" className="h-10 w-10"  decoding="async" />
@@ -230,7 +230,7 @@ export default function DashboardLayout() {
             </Link>
           </div>
         </div>
-      </nav>
+      </aside>
 
       {/* Main Content Canvas */}
       <main className="md:ml-64 min-h-screen bg-muted/10 flex flex-col pt-16">

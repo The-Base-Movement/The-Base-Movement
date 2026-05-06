@@ -56,7 +56,7 @@ export function Breadcrumbs({ currentLabel }: BreadcrumbsProps = {}) {
   const root = getRootContext(location.pathname)
 
   return (
-    <nav className="flex items-center gap-2 mb-8 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-stone-200/50 w-fit">
+    <nav aria-label="Breadcrumb" className="flex items-center gap-2 mb-8 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-stone-200/50 w-fit">
       <Link
         to={root.to}
         className="text-stone-400 hover:text-[var(--brand-green)] transition-colors flex items-center gap-1.5"
@@ -67,8 +67,12 @@ export function Breadcrumbs({ currentLabel }: BreadcrumbsProps = {}) {
 
       {pathnames.map((value, index) => {
         if (SKIP_SEGMENTS.has(value)) return null
-
+        
         const last = index === pathnames.length - 1
+        
+        // Skip action segments if they are not the last segment (e.g. skip 'edit' in /admin/authors/edit/1)
+        if (!last && ['edit', 'new'].includes(value)) return null
+
         const to = `/${pathnames.slice(0, index + 1).join('/')}`
         const label = last && currentLabel ? currentLabel : getLabel(value)
 
