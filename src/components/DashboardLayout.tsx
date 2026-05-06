@@ -200,11 +200,11 @@ export default function DashboardLayout() {
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
             </div>
             <div className="px-2">
-              <p className="text-on-surface text-[10px] font-black tracking-[0.2em] leading-tight mb-1 uppercase">
+              <p className="text-on-surface text-[10px] font-black tracking-[0.2em] leading-tight mb-1">
                 Dr. George Oti Bonsu
               </p>
-              <p className="text-accent text-[9px] font-black tracking-widest uppercase mb-0">
-                Movement Founder
+              <p className="text-accent text-[9px] font-black tracking-widest mb-0">
+                Movement founder
               </p>
             </div>
           </div>

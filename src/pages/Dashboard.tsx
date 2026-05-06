@@ -208,7 +208,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-black tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
               <span className="text-[10px] font-bold text-on-surface/20 uppercase">Past 24h</span>
             </div>
-            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">Regional systems are now stable and the national rollout is underway.</p>
+            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and the regional rollout is now underway.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -497,9 +497,9 @@ export default function Dashboard() {
         <div className="bg-white border border-border/40 rounded-sm shadow-sm p-6 sm:p-8 col-span-1 lg:col-span-12 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface m-0 flex items-center gap-2">
+              <h3 className="text-[10px] font-bold tracking-widest text-on-surface m-0 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-primary" />
-                Movement Impact
+                Movement impact
               </h3>
               <p className="text-[11px] font-black text-on-surface/20 tracking-widest mt-1">Total points earned through direct action.</p>
             </div>
@@ -541,7 +541,7 @@ export default function Dashboard() {
             </div>
 
             <div className="w-full lg:w-1/2 min-w-[320px] relative z-10 bg-white/5 p-4 border border-white/10 backdrop-blur-sm rounded-sm">
-              <p className="text-white/40 text-[8px] font-black uppercase tracking-[0.2em] mb-3">Your Referral Link</p>
+              <p className="text-white/40 text-[8px] font-black tracking-[0.2em] mb-3">Your referral link</p>
               <div className="relative mb-4 flex items-center border-b border-white/20 pb-1">
                 <input 
                   className="w-full bg-transparent border-none text-white font-bold py-2 pl-0 pr-10 rounded-none focus:ring-0 focus:outline-none placeholder:text-white/20 text-sm tracking-tight" 
@@ -581,7 +581,7 @@ export default function Dashboard() {
             <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
               <h3 className="text-xs font-black tracking-widest text-on-surface flex items-center gap-2 m-0">
                 <Trophy className="w-4 h-4 text-accent" />
-                Movement Achievements
+                Movement achievements
               </h3>
               <span className="text-[9px] font-bold text-on-surface/30 tracking-widest uppercase">{achievements.length} Badges Earned</span>
             </div>
@@ -616,9 +616,7 @@ export default function Dashboard() {
           {/* Regional Leaderboard */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden">
             <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
-              <h3 className="text-xs font-black uppercase tracking-widest text-on-surface flex items-center gap-2 m-0">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                {member?.region || 'National'} Leaderboard
+                {member?.region || 'National'} leaderboard
               </h3>
               <span className="text-[9px] font-bold text-on-surface/30 tracking-widest uppercase">Top Community Members</span>
             </div>
