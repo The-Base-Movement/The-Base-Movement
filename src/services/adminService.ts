@@ -1119,6 +1119,68 @@ class AdminService {
   async getGOTVTransportRequests(): Promise<GOTVTransportRequest[]> {
     return intelligenceService.getGOTVTransportRequests()
   }
+
+  // --- Phase 15: Public Engagement & Communication (Standardization) ---
+
+  async subscribeToNewsletter(email: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .upsert({ email, status: 'Active' }, { onConflict: 'email' })
+      
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Newsletter subscription failed:', error)
+      return false
+    }
+  }
+
+  async submitContactForm(submission: { name: string, email: string, subject?: string, message: string, metadata?: unknown }): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([submission])
+      
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Contact submission failed:', error)
+      return false
+    }
+  }
+
+  async getSiteSettings(): Promise<Record<string, unknown>> {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('key, value')
+      
+      if (error) throw error
+      
+      return (data || []).reduce((acc, curr) => ({
+        ...acc,
+        [curr.key]: curr.value
+      }), {})
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch site settings:', error)
+      return {}
+    }
+  }
+
+  async updateSiteSetting(key: string, value: unknown): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' })
+      
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to update site setting:', error)
+      return false
+    }
+  }
 }
 
 export const adminService = AdminService.getInstance()

@@ -12,7 +12,9 @@ import {
   ChevronRight,
   Smartphone,
   History,
-  Search
+  Search,
+  Megaphone,
+  Mail
 } from 'lucide-react'
 
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
@@ -66,6 +68,7 @@ export default function AdminSettings() {
     { id: 'profile', label: 'My Profile', icon: UserIcon },
     { id: 'roles', label: 'Admin Roles', icon: Shield },
     { id: 'system', label: 'Preferences', icon: Globe },
+    { id: 'movement', label: 'Movement Info', icon: Megaphone },
     { id: 'security', label: 'Security', icon: Lock },
     { id: 'audit', label: 'Audit Log', icon: History },
   ]
@@ -85,6 +88,7 @@ export default function AdminSettings() {
   const [interfaceDensity, setInterfaceDensity] = useState<InterfaceDensity>(
     (localStorage.getItem('admin_interface_density') as InterfaceDensity) || 'Comfortable'
   )
+  const [siteSettings, setSiteSettings] = useState<Record<string, unknown>>({})
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -122,6 +126,9 @@ export default function AdminSettings() {
       try {
         const logs = await adminService.getSystemAuditLogs()
         setAuditLogs(logs)
+        
+        const settings = await adminService.getSiteSettings()
+        setSiteSettings(settings)
       } catch (err) {
         console.error('[SETTINGS] Failed to synchronize audit telemetry:', err)
         toast.error('Failed to synchronize administrative audit logs')
@@ -612,6 +619,83 @@ export default function AdminSettings() {
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {activeTab === 'movement' && (
+            <div className="space-y-8">
+              <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
+                <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
+                  <CardTitle className="text-sm font-bold text-stone-900">Authoritative Communications</CardTitle>
+                  <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Configure the movement's primary contact points and newsletter dispatch parameters.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="max-w-2xl space-y-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-bold text-stone-500 normal-case">Primary contact email</Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
+                          <Input 
+                            value={(siteSettings.primary_email as string) || ''} 
+                            onChange={(e) => setSiteSettings({ ...siteSettings, primary_email: e.target.value })}
+                            className="pl-10 h-11 rounded-lg border-stone-200 text-xs font-medium" 
+                          />
+                        </div>
+                        <p className="text-[9px] text-stone-400 italic">Used for contact forms and general inquiries.</p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-bold text-stone-500 normal-case">Newsletter dispatch email</Label>
+                        <div className="relative">
+                          <Megaphone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
+                          <Input 
+                            value={(siteSettings.newsletter_email as string) || ''} 
+                            onChange={(e) => setSiteSettings({ ...siteSettings, newsletter_email: e.target.value })}
+                            className="pl-10 h-11 rounded-lg border-stone-200 text-xs font-medium" 
+                          />
+                        </div>
+                        <p className="text-[9px] text-stone-400 italic">Authoritative sender for all movement broadcasts.</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-6 flex justify-end border-t border-stone-100">
+                      <Button 
+                        variant="primary"
+                        size="lg"
+                        onClick={async () => {
+                          setIsSaving(true)
+                          const toastId = toast.loading('Syncing movement configurations...')
+                          try {
+                            const p1 = adminService.updateSiteSetting('primary_email', siteSettings.primary_email)
+                            const p2 = adminService.updateSiteSetting('newsletter_email', siteSettings.newsletter_email)
+                            await Promise.all([p1, p2])
+                            toast.success('Movement configurations synchronized', { id: toastId })
+                          } catch (err: unknown) {
+                            toast.error(err instanceof Error ? err.message : 'Failed to update movement telemetry', { id: toastId })
+                          } finally {
+                            setIsSaving(false)
+                          }
+                        }}
+                        disabled={isSaving}
+                        className="rounded-sm text-[10px] uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+                      >
+                        {isSaving ? 'Synchronizing...' : 'Commit Configurations'}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
+                <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
+                  <CardTitle className="text-sm font-bold text-stone-900">Brand Assets & Social</CardTitle>
+                  <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Authorized social media touchpoints and movement links.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <p className="text-[10px] text-stone-400 italic font-medium">Platform social synchronization is currently managed via static asset library for design immutability.</p>
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {activeTab === 'security' && (
