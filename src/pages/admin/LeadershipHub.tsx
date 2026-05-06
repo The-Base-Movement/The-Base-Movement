@@ -108,16 +108,16 @@ export default function LeadershipHub() {
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-            <ShieldCheck className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <ShieldCheck className="w-8 h-8 text-on-surface" />
             Leadership hub
           </h1>
-          <p className="text-stone-500 text-sm mt-1">Managing the administrative pipeline for local leadership applications.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Managing the administrative pipeline for local leadership applications.</p>
         </div>
         <Button 
           onClick={handleGenerateReport}
           disabled={isGenerating}
-          className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all flex items-center gap-2"
+          className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-lg shadow-on-surface/20"
         >
           {isGenerating ? (
             <Clock className="w-3.5 h-3.5 animate-spin" />
@@ -129,19 +129,19 @@ export default function LeadershipHub() {
       </div>
 
       {/* Intelligence & Filtering */}
-      <div className="bg-white border border-stone-200 p-4 flex flex-wrap items-center gap-4">
+      <div className="bg-white border border-border/60 p-4 flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-[240px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
           <input 
             type="text" 
             placeholder="Search applications..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-10 pr-4 bg-stone-50 border-none text-[11px] font-bold placeholder:text-stone-400 focus:ring-1 focus:ring-[var(--brand-gold)] transition-all normal-case rounded-lg"
+            className="w-full h-10 pl-10 pr-4 bg-muted/5 border-none text-[11px] font-bold placeholder:text-muted-foreground/40 focus:ring-1 focus:ring-border/40 rounded-lg"
           />
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-10 px-4 text-[10px] font-bold border-stone-200 normal-case rounded-lg">
+          <Button variant="outline" className="h-10 px-4 text-[10px] font-bold border-border/60 normal-case rounded-lg">
             <Filter className="w-3.5 h-3.5 mr-2" /> Filter status
           </Button>
         </div>
@@ -149,27 +149,27 @@ export default function LeadershipHub() {
 
       {/* Stats Summary */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-        <Card className="rounded-xl border-stone-200 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-[var(--brand-red)]" />
+        <Card className="rounded-xl border-border/60 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />
           <CardContent className="p-6">
-            <p className="text-[10px] font-bold text-stone-400 normal-case">Growth rate</p>
-            <h3 className="text-3xl font-black font-meta text-[var(--brand-black)] mt-1">+12%</h3>
+            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Growth rate</p>
+            <h3 className="text-3xl font-black font-meta text-on-surface mt-1">+12%</h3>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-stone-200 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-[var(--brand-gold)]" />
+        <Card className="rounded-xl border-border/60 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
           <CardContent className="p-6">
-            <p className="text-[10px] font-bold text-stone-400 normal-case">Pending requests</p>
-            <h3 className="text-3xl font-black font-meta text-[var(--brand-black)] mt-1">
+            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Pending requests</p>
+            <h3 className="text-3xl font-black font-meta text-on-surface mt-1">
               {applications.filter(a => a.status === 'Pending').length}
             </h3>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-stone-200 shadow-sm relative overflow-hidden col-span-2 md:col-span-1">
-          <div className="absolute top-0 left-0 w-1 h-full bg-[var(--brand-green)]" />
+        <Card className="rounded-xl border-border/60 shadow-sm relative overflow-hidden col-span-2 md:col-span-1">
+          <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
           <CardContent className="p-6">
-            <p className="text-[10px] font-bold text-stone-400 normal-case">New leaders appointed</p>
-            <h3 className="text-3xl font-black font-meta text-[var(--brand-black)] mt-1">
+            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">New leaders appointed</p>
+            <h3 className="text-3xl font-black font-meta text-on-surface mt-1">
               {applications.filter(a => a.status === 'Approved').length}
             </h3>
           </CardContent>
@@ -177,15 +177,15 @@ export default function LeadershipHub() {
       </div>
 
       {/* Applications Table */}
-      <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
-        <CardHeader className="p-8 border-b border-stone-100">
+      <Card className="rounded-none border-border/60 shadow-sm overflow-hidden bg-white">
+        <CardHeader className="p-8 border-b border-border/40">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg font-black font-meta normal-case">Active applications</CardTitle>
               <CardDescription className="text-xs">Review and approve new Chapter Leaders.</CardDescription>
             </div>
-            <Button variant="ghost" onClick={() => fetchApplications()} className="h-8 w-8 p-0 rounded-none hover:bg-stone-100">
-              <Clock className="w-4 h-4 text-stone-400" />
+            <Button variant="ghost" onClick={() => fetchApplications()} className="h-8 w-8 p-0 rounded-none hover:bg-border/40">
+              <Clock className="w-4 h-4 text-muted-foreground/40" />
             </Button>
           </div>
         </CardHeader>
@@ -193,61 +193,61 @@ export default function LeadershipHub() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-stone-50/50 border-b border-stone-100">
-                  <th className="p-6 text-[9px] font-bold text-stone-400 normal-case">Applicant</th>
-                  <th className="p-6 text-[9px] font-bold text-stone-400 normal-case">Proposed chapter</th>
-                  <th className="p-6 text-[9px] font-bold text-stone-400 normal-case">Geography</th>
-                  <th className="p-6 text-[9px] font-bold text-stone-400 normal-case">Status</th>
-                  <th className="p-6 text-[9px] font-bold text-stone-400 text-right normal-case">Actions</th>
+                <tr className="bg-muted/30 border-b border-border/40">
+                  <th className="p-6 text-[9px] font-bold text-muted-foreground/40 normal-case">Applicant</th>
+                  <th className="p-6 text-[9px] font-bold text-muted-foreground/40 normal-case">Proposed chapter</th>
+                  <th className="p-6 text-[9px] font-bold text-muted-foreground/40 normal-case">Geography</th>
+                  <th className="p-6 text-[9px] font-bold text-muted-foreground/40 normal-case">Status</th>
+                  <th className="p-6 text-[9px] font-bold text-on-surface normal-case">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-50">
+              <tbody className="divide-y divide-border/10">
                 {isLoading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={5} className="p-6"><div className="h-12 bg-stone-50 w-full" /></td>
+                      <td colSpan={5} className="p-6"><div className="h-12 bg-muted/5 w-full" /></td>
                     </tr>
                   ))
                 ) : filteredApps.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-20 text-center">
-                      <FileText className="w-12 h-12 text-stone-100 mx-auto mb-4" />
-                      <p className="text-stone-400 text-[10px] font-bold normal-case">No leadership applications found</p>
+                      <FileText className="w-12 h-12 text-border/40 mx-auto mb-4" />
+                      <p className="text-muted-foreground/40 text-[10px] font-bold normal-case">No leadership applications found</p>
                     </td>
                   </tr>
                 ) : filteredApps.map((app) => (
-                  <tr key={app.id} className="hover:bg-stone-50/50 transition-colors group">
+                  <tr key={app.id} className="hover:bg-muted/30 transition-colors group">
                     <td className="p-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-stone-100 flex items-center justify-center font-black text-[10px] normal-case rounded-lg">
+                        <div className="w-10 h-10 bg-border/40 flex items-center justify-center font-black text-[10px] normal-case rounded-lg">
                           {app.applicant_name?.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div>
-                          <p className="text-[11px] font-black text-stone-900 normal-case">{app.applicant_name}</p>
-                          <p className="text-[9px] text-stone-400 font-bold normal-case mt-0.5">Patriot ID: {app.applicant_id.substring(0, 8)}</p>
+                          <p className="text-[11px] font-black text-on-surface normal-case">{app.applicant_name}</p>
+                          <p className="text-[9px] text-muted-foreground/40 font-bold normal-case mt-0.5">Patriot ID: {app.applicant_id.substring(0, 8)}</p>
                         </div>
                       </div>
                     </td>
                     <td className="p-6">
                       <div className="flex items-center gap-2">
-                        <UserCheck className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
-                        <span className="text-[10px] font-bold text-stone-900 normal-case">{app.proposed_chapter_name}</span>
+                        <UserCheck className="w-3.5 h-3.5 text-accent" />
+                        <span className="text-[10px] font-bold text-on-surface normal-case">{app.proposed_chapter_name}</span>
                       </div>
                     </td>
                     <td className="p-6">
                       <div className="space-y-1">
                         <div className="flex items-center gap-1.5">
-                          <MapPin className="w-3 h-3 text-stone-400" />
-                          <span className="text-[10px] font-bold text-stone-600 normal-case">{app.region}</span>
+                          <MapPin className="w-3 h-3 text-muted-foreground/40" />
+                          <span className="text-[10px] font-bold text-on-surface/80 normal-case">{app.region}</span>
                         </div>
-                        <p className="text-[9px] text-stone-400 font-bold normal-case ml-4">{app.constituency}</p>
+                        <p className="text-[9px] text-muted-foreground/40 font-bold normal-case ml-4">{app.constituency}</p>
                       </div>
                     </td>
                     <td className="p-6">
                       <span className={cn("px-2 py-0.5 text-[8px] font-bold normal-case border rounded-full", 
-                        app.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                        app.status === 'Pending' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
-                        'bg-rose-50 text-rose-600 border-rose-100'
+                        app.status === 'Approved' ? 'bg-primary/10 text-primary border-primary/20' : 
+                        app.status === 'Pending' ? 'bg-accent/10 text-accent border-accent/20' : 
+                        'bg-destructive/10 text-destructive border-destructive/20'
                       )}>
                         {app.status}
                       </span>
@@ -257,19 +257,19 @@ export default function LeadershipHub() {
                         <div className="flex items-center justify-end gap-2">
                           <Button 
                             variant="ghost" 
-                            className="h-8 px-3 text-[9px] font-bold text-rose-500 hover:bg-rose-50 rounded-lg normal-case"
+                            className="h-8 px-3 text-[9px] font-bold text-destructive hover:bg-destructive/10 rounded-lg normal-case"
                           >
                             <XCircle className="w-3.5 h-3.5 mr-1.5" /> Reject
                           </Button>
                           <Button 
                             onClick={() => handleApprove(app.id, app.applicant_name || 'Applicant')}
-                            className="h-8 px-4 text-[9px] font-bold bg-[var(--brand-black)] text-white hover:bg-stone-800 rounded-lg normal-case"
+                            className="h-8 px-4 text-[9px] font-bold bg-on-surface text-white hover:bg-on-surface/90 rounded-lg normal-case"
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-[var(--brand-gold)]" /> Approve
+                            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-accent" /> Approve
                           </Button>
                         </div>
                       ) : (
-                        <Button variant="ghost" className="h-8 text-stone-400 text-[9px] font-bold normal-case pointer-events-none rounded-lg">
+                        <Button variant="ghost" className="h-8 text-muted-foreground/40 text-[9px] font-bold normal-case pointer-events-none rounded-lg">
                           Processed <ChevronRight className="w-3 h-3 ml-1" />
                         </Button>
                       )}
@@ -286,17 +286,17 @@ export default function LeadershipHub() {
       {filteredApps.some(a => a.status === 'Pending') && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {filteredApps.filter(a => a.status === 'Pending').slice(0, 2).map(app => (
-            <Card key={`detail-${app.id}`} className="rounded-xl border-stone-200 shadow-sm bg-stone-50/30 overflow-hidden">
+            <Card key={`detail-${app.id}`} className="rounded-xl border-border/60 shadow-sm bg-muted/30 overflow-hidden">
               <CardHeader className="p-8 pb-4">
-                <CardTitle className="text-[10px] font-bold normal-case text-stone-400">Applicant vision statement</CardTitle>
+                <CardTitle className="text-[10px] font-bold normal-case text-muted-foreground/40">Applicant vision statement</CardTitle>
               </CardHeader>
               <CardContent className="p-8 pt-0">
-                <blockquote className="border-l-2 border-[var(--brand-gold)] pl-4 py-1 italic text-stone-600 text-sm leading-relaxed mb-6 font-serif">
+                <blockquote className="border-l-2 border-accent pl-4 py-1 italic text-on-surface/80 text-sm leading-relaxed mb-6 font-serif">
                   "{app.vision_statement}"
                 </blockquote>
-                <div className="bg-white border border-stone-100 p-4 rounded-lg">
-                  <p className="text-[9px] font-bold normal-case text-stone-400 mb-2">Experience summary</p>
-                  <p className="text-xs text-stone-500 leading-relaxed">{app.experience_summary}</p>
+                <div className="bg-white border border-border/40 p-4 rounded-lg">
+                  <p className="text-[9px] font-bold normal-case text-muted-foreground/40 mb-2">Experience summary</p>
+                  <p className="text-xs text-muted-foreground/80 leading-relaxed">{app.experience_summary}</p>
                 </div>
               </CardContent>
             </Card>

@@ -140,8 +140,8 @@ export default function BlogPost() {
               <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-[10px] font-bold uppercase tracking-widest">
                 {post.category}
               </span>
-              <div className="flex items-center gap-4 text-stone-400 text-[10px] font-bold uppercase tracking-widest">
-                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'N/A'}</span>
+              <div className="flex items-center gap-4 text-stone-400 text-[10px] font-bold tracking-widest uppercase">
+                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A'}</span>
                 <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {post.readTime}</span>
               </div>
             </div>
@@ -157,10 +157,18 @@ export default function BlogPost() {
 
           {/* Featured Image */}
           <div className="relative aspect-[21/9] overflow-hidden border border-stone-200">
-            <img src={post.imageUrl || '/hero-bg.png'} 
-              alt={post.title} 
-              className="w-full h-full object-cover"
-             decoding="async" loading="lazy" />
+            {post.imageUrl ? (
+              <img src={post.imageUrl} 
+                alt={post.title} 
+                className="w-full h-full object-cover"
+                decoding="async" loading="lazy" />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
+                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
+                <img src="/logo.png" alt="The Base" className="w-32 h-32 opacity-20 mb-6 grayscale" />
+                <span className="text-xs font-black text-white/20 uppercase tracking-[0.4em]">The Base Editorial</span>
+              </div>
+            )}
             <div className="absolute inset-0 bg-charcoal-dark/10"></div>
           </div>
 
@@ -177,8 +185,12 @@ export default function BlogPost() {
                       className="w-12 h-12 bg-charcoal-dark rounded-none object-cover"
                      decoding="async" loading="lazy" />
                     <div>
-                      <p className="text-sm font-bold text-stone-900 leading-none mb-0">{post.authorName}</p>
-                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0">{post.authorRole}</p>
+                      <p className="text-sm font-bold text-stone-900 leading-none mb-0">
+                        {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName}
+                      </p>
+                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0">
+                        {post.authorName?.toUpperCase() === 'ADMIN' ? 'Movement Research' : post.authorRole}
+                      </p>
                     </div>
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed pt-2 mb-0">
@@ -225,7 +237,7 @@ export default function BlogPost() {
                       <Link 
                         to={`/blog?category=${cat.toLowerCase()}`} 
                         key={cat} 
-                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-[10px] font-bold uppercase tracking-widest text-stone-600 hover:text-[var(--brand-green)] transition-all"
+                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-[10px] font-bold tracking-widest text-stone-600 hover:text-[var(--brand-green)] transition-all"
                       >
                         {cat}
                         <ChevronRight className="w-3 h-3 text-stone-300" />
@@ -250,7 +262,7 @@ export default function BlogPost() {
               {/* Tags & Footer */}
               <div className="mt-16 pt-8 border-t border-stone-100 flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1.5 bg-stone-100 text-stone-500 text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors">
+                  <span key={tag} className="px-3 py-1.5 bg-stone-100 text-stone-500 text-[10px] font-bold tracking-widest hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors">
                     #{tag}
                   </span>
                 ))}
@@ -267,8 +279,8 @@ export default function BlogPost() {
                     <p className="text-stone-400 mb-0">Join "The Base" movement and be a part of Ghana's industrial revolution.</p>
                   </div>
                   <Link to="/register">
-                    <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-widest text-xs h-14 px-10 rounded-none uppercase">
-                      Register as a Member
+                    <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-widest text-xs h-14 px-10 rounded-none">
+                      Register as a member
                     </Button>
                   </Link>
                 </div>
@@ -287,7 +299,14 @@ export default function BlogPost() {
                     <Link to={`${baseUrl}/${related.slug}`} key={related.id} className="block group">
                       <article className="group cursor-pointer">
                         <div className="aspect-[16/10] overflow-hidden border border-stone-200 mb-4 relative">
-                          <img src={related.imageUrl || '/hero-bg.png'} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />
+                          {related.imageUrl ? (
+                            <img src={related.imageUrl} alt={related.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />
+                          ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
+                              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
+                              <img src="/logo.png" alt="The Base" className="w-8 h-8 opacity-20 mb-2 grayscale" />
+                            </div>
+                          )}
                           <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                         </div>
                         <span className="text-[9px] font-bold text-[var(--brand-green)] uppercase tracking-widest mb-0">{related.category}</span>

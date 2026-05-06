@@ -47,10 +47,10 @@ interface StatCardProps {
 // Operational Skeleton Component
 function SkeletonCard() {
   return (
-    <Card className="rounded-xl border-stone-200 shadow-none overflow-hidden bg-white">
+    <Card className="rounded-xl border-border/60 shadow-none overflow-hidden bg-white">
       <CardContent className="p-5 space-y-3">
-        <div className="w-1/4 h-2 bg-stone-100 animate-pulse rounded-full" />
-        <div className="w-1/2 h-6 bg-stone-50 animate-pulse rounded-lg" />
+        <div className="w-1/4 h-2 bg-muted/10 animate-pulse rounded-full" />
+        <div className="w-1/2 h-6 bg-muted/10 animate-pulse rounded-lg" />
       </CardContent>
     </Card>
   )
@@ -59,22 +59,22 @@ function SkeletonCard() {
 // Operational Stat Card Component
 function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
   return (
-    <Card className="rounded-xl border-stone-200 shadow-sm transition-all overflow-hidden bg-white hover:border-stone-300">
+    <Card className="rounded-xl border-border/40 shadow-sm transition-all overflow-hidden bg-white hover:border-border/60">
       <CardContent className="p-4 sm:p-5">
         <div className="flex justify-between items-start gap-4">
           <div className="space-y-1.5 flex-1 min-w-0">
-            <p className="text-[10px] sm:text-[11px] font-bold text-stone-500 normal-case truncate">{title}</p>
+            <p className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/80 normal-case truncate">{title}</p>
             <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
-              <h3 className="text-xl sm:text-2xl font-bold text-stone-900 tabular-nums truncate">{value}</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-on-surface tabular-nums truncate">{value}</h3>
               <span className={cn(
                 "text-[9px] sm:text-[10px] font-bold flex items-center gap-0.5 whitespace-nowrap",
-                change.startsWith('+') ? "text-emerald-600" : "text-stone-400"
+                change.startsWith('+') ? "text-primary" : "text-muted-foreground/80"
               )}>
                 {change}
               </span>
             </div>
           </div>
-          <div className={cn("w-8 h-8 shrink-0 flex items-center justify-center rounded-lg bg-stone-50", color.replace('bg-', 'text-'))}>
+          <div className={cn("w-8 h-8 shrink-0 flex items-center justify-center rounded-lg bg-muted/10", color.replace('bg-', 'text-'))}>
             <Icon className="w-4 h-4" />
           </div>
         </div>
@@ -207,22 +207,22 @@ export default function AdminDashboard() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-            <Activity className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <Activity className="w-8 h-8 text-on-surface" />
             Operational dashboard
           </h1>
           <div className="flex items-center gap-4 mt-1">
-            <p className="text-stone-400 text-xs flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+            <p className="text-muted-foreground/80 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-primary rounded-full" />
               16 regions active
             </p>
-            <p className="text-stone-400 text-xs font-medium">Telemetry updated 2m ago</p>
+            <p className="text-muted-foreground/80 text-xs font-medium">Telemetry updated 2m ago</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all"
+            className="rounded-xl border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all"
             onClick={handleExport}
             disabled={isExporting}
           >
@@ -230,7 +230,7 @@ export default function AdminDashboard() {
           </Button>
 
           <Button 
-            className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all"
+            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
             onClick={handlePlatformLogs}
           >
             View logs
@@ -249,10 +249,10 @@ export default function AdminDashboard() {
           </>
         ) : (
           <>
-            <StatCard title="Members" value={globalStats[0]?.value || "0"} change={globalStats[0]?.change || "0%"} icon={Users} color="bg-[var(--brand-red)]" />
-            <StatCard title="Chapters" value={globalStats[1]?.value || "0"} change={globalStats[1]?.change || "0%"} icon={MapPin} color="bg-[var(--brand-gold)]" />
-            <StatCard title="Trash Vault" value={trashCount.toString()} change="30d retention" icon={Trash2} color="bg-stone-500" />
-            <StatCard title="Inventory" value={globalStats[3]?.value || "0"} change={globalStats[3]?.change || "0%"} icon={ShoppingBag} color="bg-emerald-600" />
+            <StatCard title="Members" value={globalStats[0]?.value || "0"} change={globalStats[0]?.change || "0%"} icon={Users} color="bg-destructive" />
+            <StatCard title="Chapters" value={globalStats[1]?.value || "0"} change={globalStats[1]?.change || "0%"} icon={MapPin} color="bg-accent" />
+            <StatCard title="Trash Vault" value={trashCount.toString()} change="30d retention" icon={Trash2} color="bg-on-surface" />
+            <StatCard title="Inventory" value={globalStats[3]?.value || "0"} change={globalStats[3]?.change || "0%"} icon={ShoppingBag} color="bg-primary" />
           </>
         )}
       </div>
@@ -262,16 +262,16 @@ export default function AdminDashboard() {
         <div className="xl:col-span-2 space-y-10">
           
           {/* Membership Growth Trend */}
-          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
-            <CardHeader className="p-6 border-b border-stone-100 flex flex-row items-center justify-between bg-stone-50/20">
+          <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+            <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/5">
               <div>
-                <CardTitle className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                <CardTitle className="text-sm font-bold text-on-surface flex items-center gap-2">
                   Membership Growth
                 </CardTitle>
-                <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Rolling 30-day expansion trend</CardDescription>
+                <CardDescription className="text-[11px] font-medium text-muted-foreground/80 mt-1">Rolling 30-day expansion trend</CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <select className="h-7 px-2 bg-white border border-stone-200 text-[10px] font-bold text-stone-600 rounded-lg outline-none">
+                <select className="h-7 px-2 bg-white border border-border/60 text-[10px] font-bold text-on-surface/80 rounded-lg outline-none">
                   <option>Last 30 Days</option>
                   <option>Last 90 Days</option>
                 </select>
@@ -282,22 +282,22 @@ export default function AdminDashboard() {
                 <AreaChart data={growthData}>
                   <defs>
                     <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ce1126" stopOpacity={0.08}/>
-                      <stop offset="95%" stopColor="#ce1126" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.08}/>
+                      <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#f5f5f4" />
+                  <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="hsl(var(--border) / 0.4)" />
                   <XAxis 
                     dataKey="date" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fontWeight: 500, fill: '#a8a29e' }}
+                    tick={{ fontSize: 10, fontWeight: 500, fill: 'hsl(var(--on-surface) / 0.4)' }}
                     dy={12}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fontWeight: 500, fill: '#a8a29e' }}
+                    tick={{ fontSize: 10, fontWeight: 500, fill: 'hsl(var(--on-surface) / 0.4)' }}
                   />
                   <Tooltip 
                     contentStyle={{ 
@@ -313,7 +313,7 @@ export default function AdminDashboard() {
                   <Area 
                     type="monotone" 
                     dataKey="count" 
-                    stroke="#ce1126" 
+                    stroke="hsl(var(--destructive))" 
                     strokeWidth={2}
                     fillOpacity={1} 
                     fill="url(#colorGrowth)" 
@@ -325,41 +325,41 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Regional Performance - Filtered Table */}
-          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
-            <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/20 flex flex-row items-center justify-between">
+          <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+            <CardHeader className="p-6 border-b border-border/40 bg-muted/5 flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-bold text-stone-900">Regional Distribution</CardTitle>
-                <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Top performing regions by member count</CardDescription>
+                <CardTitle className="text-sm font-bold text-on-surface">Regional Distribution</CardTitle>
+                <CardDescription className="text-[11px] font-medium text-muted-foreground/80 mt-1">Top performing regions by member count</CardDescription>
               </div>
-              <Button variant="ghost" className="h-7 px-2 text-[10px] font-bold text-stone-400 hover:text-stone-900">
+              <Button variant="ghost" className="h-7 px-2 text-[10px] font-bold text-muted-foreground/80 hover:text-on-surface">
                 View All
               </Button>
             </CardHeader>
             <CardContent className="p-0">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-stone-50/50 border-b border-stone-100">
-                    <th className="p-4 pl-6 text-[10px] font-bold tracking-wider text-stone-400">Region</th>
-                    <th className="p-4 text-[10px] font-bold tracking-wider text-stone-400">Members</th>
-                    <th className="p-4 text-[10px] font-bold tracking-wider text-stone-400">Chapters</th>
-                    <th className="p-4 pr-6 text-right text-[10px] font-bold tracking-wider text-stone-400">Status</th>
+                  <tr className="bg-muted/30 border-b border-border/40">
+                    <th className="p-4 pl-6 text-[10px] font-bold tracking-wider text-muted-foreground/80">Region</th>
+                    <th className="p-4 text-[10px] font-bold tracking-wider text-muted-foreground/80">Members</th>
+                    <th className="p-4 text-[10px] font-bold tracking-wider text-muted-foreground/80">Chapters</th>
+                    <th className="p-4 pr-6 text-right text-[10px] font-bold tracking-wider text-muted-foreground/80">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-stone-50">
+                <tbody className="divide-y divide-border/40">
                   {regionalStats.filter(r => r.memberCount > 0).length > 0 ? (
                     regionalStats.filter(r => r.memberCount > 0).slice(0, 5).map((region) => (
-                      <tr key={region.region} className="hover:bg-stone-50 transition-colors">
+                      <tr key={region.region} className="hover:bg-muted/5 transition-colors">
                         <td className="p-4 pl-6">
                           <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: region.color }} />
-                            <span className="text-xs font-semibold text-stone-900">{region.region}</span>
+                            <span className="text-xs font-semibold text-on-surface">{region.region}</span>
                           </div>
                         </td>
-                        <td className="p-4 text-xs font-medium text-stone-600 tabular-nums">{region.memberCount.toLocaleString()}</td>
-                        <td className="p-4 text-xs font-medium text-stone-600 tabular-nums">{region.chapters}</td>
+                        <td className="p-4 text-xs font-medium text-on-surface/80 tabular-nums">{region.memberCount.toLocaleString()}</td>
+                        <td className="p-4 text-xs font-medium text-on-surface/80 tabular-nums">{region.chapters}</td>
                         <td className="p-4 pr-6 text-right">
                           <span className={cn("px-2 py-0.5 text-[9px] font-bold rounded-full", 
-                            region.performance === 'High' ? "bg-emerald-50 text-emerald-600" : "bg-stone-100 text-stone-500"
+                            region.performance === 'High' ? "bg-primary/10 text-primary" : "bg-border/40 text-muted-foreground/80"
                           )}>
                             {region.performance}
                           </span>
@@ -368,7 +368,7 @@ export default function AdminDashboard() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="p-12 text-center text-stone-400 text-xs font-medium italic">
+                      <td colSpan={4} className="p-12 text-center text-muted-foreground/80 text-xs font-medium italic">
                         No regional data available for current filters.
                       </td>
                     </tr>
@@ -381,41 +381,41 @@ export default function AdminDashboard() {
           {/* System Activity & Logistics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* System Activity Table */}
-            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
-              <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/20">
-                <CardTitle className="text-sm font-bold text-stone-900">System Activity</CardTitle>
+            <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+              <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
+                <CardTitle className="text-sm font-bold text-on-surface">System Activity</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <table className="w-full text-left">
-                  <tbody className="divide-y divide-stone-50">
+                  <tbody className="divide-y divide-border/40">
                     {auditLogs.length > 0 ? (
                       auditLogs.slice(0, 6).map((log) => (
-                        <tr key={log.id} className="text-[11px] hover:bg-stone-50 transition-colors">
-                          <td className="p-4 pl-6 text-stone-400 font-medium whitespace-nowrap">
+                        <tr key={log.id} className="text-[11px] hover:bg-muted/5 transition-colors">
+                          <td className="p-4 pl-6 text-muted-foreground/80 font-medium whitespace-nowrap">
                             {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </td>
                           <td className="p-4">
-                            <span className="font-bold text-stone-900">{log.adminName.split(' ')[0]}</span>
-                            <span className="text-stone-500 ml-1.5">{log.action.toLowerCase()}</span>
+                            <span className="font-bold text-on-surface">{log.adminName.split(' ')[0]}</span>
+                            <span className="text-muted-foreground/80 ml-1.5">{log.action.toLowerCase()}</span>
                           </td>
                           <td className="p-4 pr-6 text-right">
                             <div className={cn("w-1.5 h-1.5 rounded-full inline-block", 
-                              log.status === 'Success' ? "bg-emerald-500" : "bg-amber-500"
+                              log.status === 'Success' ? "bg-primary" : "bg-accent"
                             )} />
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td className="p-12 text-center text-stone-400 text-xs font-medium italic">
+                        <td className="p-12 text-center text-muted-foreground/80 text-xs font-medium italic">
                           No recent system activity.
                         </td>
                       </tr>
                     )}
                   </tbody>
                 </table>
-                <div className="p-4 border-t border-stone-50 text-center">
-                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-[10px] font-bold text-stone-400 hover:text-stone-900">
+                <div className="p-4 border-t border-border/40 text-center">
+                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-[10px] font-bold text-muted-foreground/80 hover:text-on-surface">
                     View full activity log
                   </Button>
                 </div>
@@ -423,33 +423,33 @@ export default function AdminDashboard() {
             </Card>
 
             {/* Logistics Performance */}
-            <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
-              <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/20 flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-bold text-stone-900">Logistics Performance</CardTitle>
-                <ShoppingBag className="w-4 h-4 text-stone-300" />
+            <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
+              <CardHeader className="p-6 border-b border-border/40 bg-muted/5 flex flex-row items-center justify-between">
+                <CardTitle className="text-sm font-bold text-on-surface">Logistics Performance</CardTitle>
+                <ShoppingBag className="w-4 h-4 text-muted-foreground/40" />
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 {logisticsData.length > 0 ? (
                   logisticsData.slice(0, 3).map((item) => (
                     <div key={item.region} className="space-y-2">
                       <div className="flex justify-between items-end">
-                        <p className="text-[10px] font-bold text-stone-500 tracking-wide">{item.region}</p>
-                        <p className="text-xs font-bold text-stone-900 tabular-nums">{item.avgDispatchToDeliveryDays}d <span className="text-[10px] font-medium text-stone-400 ml-1">avg</span></p>
+                        <p className="text-[10px] font-bold text-muted-foreground/80 tracking-wide">{item.region}</p>
+                        <p className="text-xs font-bold text-on-surface tabular-nums">{item.avgDispatchToDeliveryDays}d <span className="text-[10px] font-medium text-muted-foreground/80 ml-1">avg</span></p>
                       </div>
-                      <div className="h-1 w-full bg-stone-50 rounded-full overflow-hidden">
-                        <div className="h-full bg-stone-900 rounded-full" style={{ width: `${Math.min(100, (3 / item.avgDispatchToDeliveryDays) * 100)}%` }} />
+                      <div className="h-1 w-full bg-muted/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-on-surface rounded-full" style={{ width: `${Math.min(100, (3 / item.avgDispatchToDeliveryDays) * 100)}%` }} />
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="py-8 text-center text-stone-400 text-xs font-medium italic">
+                  <div className="py-8 text-center text-muted-foreground/80 text-xs font-medium italic">
                     Logistics data unavailable.
                   </div>
                 )}
                 <div className="pt-4">
-                   <div className="bg-stone-50 rounded-lg p-4 flex justify-between items-center border border-stone-100/50">
-                      <p className="text-[10px] font-bold text-stone-500 tracking-wider">Overall velocity</p>
-                     <p className="text-sm font-bold text-stone-900 tracking-tight">3.2 Days</p>
+                   <div className="bg-muted/10 rounded-lg p-4 flex justify-between items-center border border-border/40">
+                      <p className="text-[10px] font-bold text-muted-foreground/80 tracking-wider">Overall velocity</p>
+                     <p className="text-sm font-bold text-on-surface tracking-tight">3.2 Days</p>
                    </div>
                 </div>
               </CardContent>
@@ -460,59 +460,59 @@ export default function AdminDashboard() {
         {/* Operational Health (Right Sidebar) */}
         <div className="space-y-10">
           {/* Health & Status Consolidated */}
-          <Card className="rounded-xl border-stone-200 shadow-sm bg-white overflow-hidden">
-            <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/20">
-              <CardTitle className="text-[11px] font-bold tracking-wider text-stone-500">Operations health</CardTitle>
+          <Card className="rounded-xl border-border/60 shadow-sm bg-white overflow-hidden">
+            <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
+              <CardTitle className="text-[11px] font-bold tracking-wider text-muted-foreground/80">Operations health</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-8">
               {/* System Health */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-stone-600">Infrastructure</span>
-                  <span className="text-emerald-600 font-bold">Optimal</span>
+                  <span className="font-medium text-on-surface/80">Infrastructure</span>
+                  <span className="text-primary font-bold">Optimal</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-stone-600">Database Engine</span>
-                  <span className="text-emerald-600 font-bold">Stable</span>
+                  <span className="font-medium text-on-surface/80">Database Engine</span>
+                  <span className="text-primary font-bold">Stable</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-stone-600">Regional Sync</span>
-                  <span className="text-emerald-600 font-bold">Active</span>
+                  <span className="font-medium text-on-surface/80">Regional Sync</span>
+                  <span className="text-primary font-bold">Active</span>
                 </div>
               </div>
 
-              <div className="h-px bg-stone-100" />
+              <div className="h-px bg-border/40" />
 
               {/* Engagement Pulse (Simplified) */}
               <div className="space-y-6">
-                <p className="text-[10px] font-bold text-stone-400 tracking-wider">Sentiment pulse</p>
+                <p className="text-[10px] font-bold text-muted-foreground/80 tracking-wider">Sentiment pulse</p>
                 {sentimentStats.length > 0 && sentimentStats.some(s => s.score > 0) ? (
                   sentimentStats.slice(0, 3).map((stat) => (
                     <div key={stat.topic} className="space-y-2">
                       <div className="flex justify-between items-end">
-                        <p className="text-[11px] font-bold text-stone-900">{stat.topic}</p>
+                        <p className="text-[11px] font-bold text-on-surface">{stat.topic}</p>
                         <span className="text-xs font-bold tabular-nums">{stat.score}%</span>
                       </div>
-                      <div className="h-1 w-full bg-stone-50 rounded-full overflow-hidden">
-                        <div className="h-full bg-stone-900 opacity-20 rounded-full" style={{ width: `${stat.score}%` }} />
+                      <div className="h-1 w-full bg-muted/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-on-surface opacity-20 rounded-full" style={{ width: `${stat.score}%` }} />
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="text-center text-stone-400 text-[10px] font-medium italic py-4">
+                  <div className="text-center text-muted-foreground/80 text-[10px] font-medium italic py-4">
                     No recent sentiment data.
                   </div>
                 )}
               </div>
 
-              <div className="h-px bg-stone-100" />
+              <div className="h-px bg-border/40" />
 
               {/* Quick Status Bar */}
-              <div className="bg-stone-900 rounded-xl p-6 text-white relative overflow-hidden group shadow-lg">
+              <div className="bg-on-surface rounded-xl p-6 text-white relative overflow-hidden group shadow-lg">
                 <Globe className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-6">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
                     <span className="text-[10px] font-bold tracking-wider text-white/40">Core system</span>
                   </div>
                   <div className="flex items-baseline gap-2">
@@ -525,31 +525,31 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Regional Traffic Summary */}
-          <Card className="rounded-xl border-stone-200 shadow-sm bg-white overflow-hidden">
-            <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/20">
-              <CardTitle className="text-[11px] font-bold tracking-wider text-stone-500">Regional traffic</CardTitle>
+          <Card className="rounded-xl border-border/60 shadow-sm bg-white overflow-hidden">
+            <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
+              <CardTitle className="text-[11px] font-bold tracking-wider text-muted-foreground/80">Regional traffic</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                    <div className="flex items-center gap-4">
-                     <div className="w-9 h-9 rounded-lg bg-stone-50 flex items-center justify-center text-[10px] font-bold text-stone-900 border border-stone-100">GA</div>
+                     <div className="w-9 h-9 rounded-lg bg-muted/10 flex items-center justify-center text-[10px] font-bold text-on-surface border border-border/40">GA</div>
                      <div>
-                       <p className="text-xs font-bold text-stone-900">Greater Accra</p>
-                       <p className="text-[10px] text-stone-400 font-medium">Peak flow detected</p>
+                       <p className="text-xs font-bold text-on-surface">Greater Accra</p>
+                       <p className="text-[10px] text-muted-foreground/80 font-medium">Peak flow detected</p>
                      </div>
                    </div>
-                   <Activity className="w-4 h-4 text-[var(--brand-red)]" />
+                   <Activity className="w-4 h-4 text-destructive" />
                 </div>
                 <div className="flex items-center justify-between">
                    <div className="flex items-center gap-4">
-                     <div className="w-9 h-9 rounded-lg bg-stone-50 flex items-center justify-center text-[10px] font-bold text-stone-900 border border-stone-100">AS</div>
+                     <div className="w-9 h-9 rounded-lg bg-muted/10 flex items-center justify-center text-[10px] font-bold text-on-surface border border-border/40">AS</div>
                      <div>
-                       <p className="text-xs font-bold text-stone-900">Ashanti</p>
-                       <p className="text-[10px] text-stone-400 font-medium">Normal operations</p>
+                       <p className="text-xs font-bold text-on-surface">Ashanti</p>
+                       <p className="text-[10px] text-muted-foreground/80 font-medium">Normal operations</p>
                      </div>
-                   </div>
-                   <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                     </div>
+                   <div className="w-1.5 h-1.5 bg-primary rounded-full" />
                 </div>
               </div>
             </CardContent>

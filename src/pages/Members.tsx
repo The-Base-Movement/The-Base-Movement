@@ -13,18 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { adminService } from '@/services/adminService'
 import { LoadingScreen } from '@/components/LoadingScreen'
-
-interface Member {
-  id: string
-  name: string
-  platform: 'GHANA' | 'DIASPORA'
-  region: string | null
-  constituency: string | null
-  country: string
-  profession: string
-  avatar: string | null
-  status: string
-}
+import type { Member } from '@/types/admin'
 
 const diasporaCountries = [
   'United Kingdom', 'United States', 'Canada', 'Germany', 'France', 'Australia', 'South Africa', 'United Arab Emirates', 'Netherlands', 'Italy'
@@ -62,12 +51,17 @@ export default function Members() {
         const mappedMembers: Member[] = fetchedMembers.map(m => ({
           id: m.id || Math.random().toString(),
           name: m.name || 'Unnamed Patriot',
+          email: m.email || '',
+          phone: m.phone || '',
           platform: m.type === 'Standard' ? 'GHANA' : 'DIASPORA',
-          region: m.region,
-          constituency: m.constituency,
+          region: m.region || '',
+          constituency: m.constituency || '',
           country: m.country || 'Ghana',
           profession: m.profession || 'Patriot',
-          avatar: m.avatarUrl || null
+          avatarUrl: m.avatarUrl || undefined,
+          status: m.status || 'Pending',
+          joined: m.joined || new Date().toISOString(),
+          type: m.type || 'Standard'
         }))
 
         // Map regions and constituencies

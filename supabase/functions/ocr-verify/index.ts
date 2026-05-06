@@ -90,9 +90,10 @@ Deno.serve(async (req: Request) => {
       status: 200,
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('OCR Processing Failure:', error);
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
+    return new Response(JSON.stringify({ success: false, error: message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     });

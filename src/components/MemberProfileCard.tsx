@@ -1,17 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { User, MapPin, Globe } from 'lucide-react'
-
-interface Member {
-  id: string
-  name: string
-  platform: 'GHANA' | 'DIASPORA'
-  region: string | null
-  constituency: string | null
-  country: string
-  profession: string
-  avatar: string | null
-  status?: string
-}
+import type { Member } from '@/types/admin'
 
 interface MemberProfileCardProps {
   member: Member

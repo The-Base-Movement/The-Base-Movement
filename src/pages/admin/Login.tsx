@@ -36,45 +36,46 @@ export default function AdminLogin() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
-        <Card className="border border-gray-200">
-          <CardContent className="p-8">
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-[var(--brand-red)]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Shield className="w-6 h-6 text-[var(--brand-red)]" />
+        <Card className="border-border/40 shadow-2xl rounded-3xl overflow-hidden bg-white/80 backdrop-blur-xl">
+          <CardContent className="p-10">
+            <div className="text-center mb-10">
+              <div className="w-16 h-16 bg-destructive/10 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-3">
+                <Shield className="w-8 h-8 text-destructive" />
               </div>
-              <h1 className="text-xl font-bold text-[var(--brand-black)] mb-1">Admin Login</h1>
-              <p className="text-sm text-gray-500">Authorized personnel only</p>
+              <h1 className="text-2xl font-black text-on-surface mb-2 font-meta tracking-tight">Admin login</h1>
+              <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-[0.2em]">Authorized personnel only</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleLogin}>
-              <div>
-                <Label htmlFor="admin-email" className="text-sm font-medium">Email</Label>
+              <div className="space-y-2">
+                <Label htmlFor="admin-email" className="text-xs font-bold text-on-surface/80 uppercase tracking-wider">Email</Label>
                 <Input
                   id="admin-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@thebase.org"
-                  className="mt-1"
+                  className="h-12 bg-muted/5 border-border/60 focus-visible:ring-on-surface rounded-xl"
                   required
                 />
               </div>
 
-              <div>
-                <Label htmlFor="admin-password" className="text-sm font-medium">Password</Label>
-                <div className="relative mt-1">
+              <div className="space-y-2">
+                <Label htmlFor="admin-password" className="text-xs font-bold text-on-surface/80 uppercase tracking-wider">Password</Label>
+                <div className="relative">
                   <Input
                     id="admin-password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Your password"
+                    placeholder="••••••••"
+                    className="h-12 bg-muted/5 border-border/60 focus-visible:ring-on-surface rounded-xl pr-12"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-on-surface transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -84,21 +85,26 @@ export default function AdminLogin() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[var(--brand-black)] hover:bg-[#333] text-white font-semibold py-3"
+                className="w-full h-14 bg-on-surface hover:bg-on-surface/90 text-white font-bold text-sm tracking-wide rounded-2xl shadow-xl shadow-on-surface/20 group transition-all"
               >
-                {isLoading ? "Authenticating..." : (
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    <span>Authenticating...</span>
+                  </div>
+                ) : (
                   <>
-                    <ArrowRight className="w-4 h-4 mr-2" /> Sign In
+                    Sign in to Command <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </Button>
 
-              <div className="relative my-6">
+              <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-gray-100"></span>
+                  <span className="w-full border-t border-border/40"></span>
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-400 font-medium">Or authorized via</span>
+                <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-bold">
+                  <span className="bg-white px-4 text-muted-foreground/40">Or authorized via</span>
                 </div>
               </div>
 
@@ -112,7 +118,7 @@ export default function AdminLogin() {
                     toast.error(error instanceof Error ? error.message : 'Google login failed')
                   }
                 }}
-                className="w-full border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-3 flex items-center justify-center gap-2"
+                className="w-full h-12 border-border/60 hover:bg-muted/5 text-on-surface/80 font-bold text-[10px] tracking-wider rounded-xl flex items-center justify-center gap-3 uppercase transition-all"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path
@@ -136,8 +142,8 @@ export default function AdminLogin() {
               </Button>
             </form>
 
-            <div className="text-center mt-4 pt-4 border-t">
-              <Link to="/login" className="text-sm text-gray-500 hover:text-[#006B3C] hover:underline">
+            <div className="text-center mt-6 pt-6 border-t border-border/40">
+              <Link to="/login" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 hover:text-primary transition-colors">
                 Member login instead?
               </Link>
             </div>

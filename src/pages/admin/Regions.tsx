@@ -51,14 +51,14 @@ export default function AdminRegions() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-            <MapPin className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <MapPin className="w-8 h-8 text-on-surface" />
             Regions & constituencies
           </h1>
-          <p className="text-stone-500 text-sm mt-1">Manage administrative regions and regional jurisdictions.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Manage administrative regions and regional jurisdictions.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all">
+          <Button className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all">
             <Plus className="w-3.5 h-3.5 mr-2" /> Add region
           </Button>
         </div>
@@ -66,7 +66,7 @@ export default function AdminRegions() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="rounded-xl border-stone-200 shadow-sm bg-stone-900 text-white">
+        <Card className="rounded-xl border-border/40 shadow-sm bg-on-surface text-white">
           <CardContent className="p-5 flex items-center gap-4">
             <div className="w-10 h-10 bg-white/10 flex items-center justify-center shrink-0 rounded-lg">
               <MapPin className="w-5 h-5" />
@@ -77,25 +77,26 @@ export default function AdminRegions() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-stone-200 shadow-sm">
+        
+        <Card className="rounded-xl border-border/40 shadow-sm">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 bg-stone-100 flex items-center justify-center shrink-0 rounded-lg">
-              <MapPin className="w-5 h-5 text-red-600" />
+            <div className="w-10 h-10 bg-destructive/10 flex items-center justify-center shrink-0 rounded-lg">
+              <MapPin className="w-5 h-5 text-destructive" />
             </div>
             <div>
-              <p className="text-[9px] font-bold normal-case text-stone-400">Constituencies</p>
-              <p className="text-2xl font-bold tracking-tight text-stone-900">{totalConstituencies}</p>
+              <p className="text-[9px] font-bold normal-case text-muted-foreground/80">Constituencies</p>
+              <p className="text-2xl font-bold tracking-tight text-on-surface">{totalConstituencies}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-xl border-stone-200 shadow-sm col-span-2 md:col-span-2">
+        <Card className="rounded-xl border-border/40 shadow-sm col-span-2 md:col-span-2">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 bg-emerald-50 flex items-center justify-center shrink-0 rounded-lg">
-              <MapPin className="w-5 h-5 text-emerald-600" />
+            <div className="w-10 h-10 bg-primary/10 flex items-center justify-center shrink-0 rounded-lg">
+              <MapPin className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-[9px] font-bold normal-case text-stone-400">Avg. per region</p>
-              <p className="text-2xl font-bold tracking-tight text-stone-900">
+              <p className="text-[9px] font-bold normal-case text-muted-foreground/80">Avg. per region</p>
+              <p className="text-2xl font-bold tracking-tight text-on-surface">
                 {Math.round(totalConstituencies / 16)}
               </p>
             </div>
@@ -105,12 +106,12 @@ export default function AdminRegions() {
 
       {/* Global Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/80" />
         <Input
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           placeholder="Search regions or constituencies..."
-          className="pl-10 h-11 rounded-xl border-stone-200 shadow-sm"
+          className="pl-10 h-11 rounded-xl border-border/40 shadow-sm"
         />
       </div>
 
@@ -118,21 +119,21 @@ export default function AdminRegions() {
       <div className="space-y-3">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="rounded-none border-stone-100 shadow-none animate-pulse">
+            <Card key={i} className="rounded-none border-border/40 shadow-none animate-pulse">
               <div className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 bg-stone-100" />
+                  <div className="w-8 h-8 bg-muted/10" />
                   <div className="space-y-2">
-                    <div className="h-4 bg-stone-100 w-24" />
-                    <div className="h-2 bg-stone-50 w-16" />
+                    <div className="h-4 bg-muted/10 w-24" />
+                    <div className="h-2 bg-muted/5 w-16" />
                   </div>
                 </div>
-                <div className="h-6 w-6 bg-stone-50" />
+                <div className="h-6 w-6 bg-muted/5" />
               </div>
             </Card>
           ))
         ) : filteredRegions.length === 0 ? (
-          <div className="py-20 text-center text-stone-400 text-sm font-bold tracking-wider border border-dashed border-stone-200 rounded-xl bg-white/50">
+          <div className="py-20 text-center text-muted-foreground/80 text-sm font-bold tracking-wider border border-dashed border-border/40 rounded-xl bg-muted/5">
             No matching geographical data found.
           </div>
         ) : (
@@ -144,24 +145,24 @@ export default function AdminRegions() {
             )
 
             return (
-              <Card key={region.id} className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+              <Card key={region.id} className="rounded-xl border-border/40 shadow-sm overflow-hidden bg-white">
                 {/* Region Header Row */}
                 <button
-                  className="w-full flex items-center justify-between px-6 py-4 hover:bg-stone-50 transition-colors group"
+                  className="w-full flex items-center justify-between px-6 py-4 hover:bg-muted/10 transition-colors group"
                   onClick={() => toggleRegion(region.id)}
                 >
                   <div className="flex items-center gap-4">
                     <div className={cn(
                       "w-8 h-8 flex items-center justify-center transition-colors rounded-lg",
-                      isExpanded ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-500 group-hover:bg-stone-200"
+                      isExpanded ? "bg-on-surface text-white" : "bg-muted/10 text-muted-foreground/80 group-hover:bg-muted/20"
                     )}>
                       <MapPin className="w-4 h-4" />
                     </div>
                     <div className="text-left">
-                      <p className="text-sm font-bold tracking-tight text-stone-900">
+                      <p className="text-sm font-bold tracking-tight text-on-surface">
                         {region.name}
                       </p>
-                      <p className="text-[10px] text-stone-400 font-bold tracking-wider">
+                      <p className="text-[10px] text-muted-foreground/80 font-bold tracking-wider">
                         {region.constituencies.length} constituencies
                       </p>
                     </div>
@@ -169,41 +170,41 @@ export default function AdminRegions() {
                   <div className="flex items-center gap-3">
                     {/* Action buttons — stop propagation so they don't toggle expand */}
                     <button
-                      className="p-1.5 rounded-lg text-stone-300 hover:text-stone-900 hover:bg-stone-100 transition-colors"
+                      className="p-1.5 rounded-lg text-muted-foreground/60 hover:text-on-surface hover:bg-muted/10 transition-colors"
                       onClick={e => { e.stopPropagation(); handleAction('REGION_EDIT', region.name) }}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      className="p-1.5 rounded text-stone-300 hover:text-[var(--brand-red)] hover:bg-red-50 transition-colors"
+                      className="p-1.5 rounded text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5 transition-colors"
                       onClick={e => { e.stopPropagation(); handleAction('REGION_DELETE', region.name) }}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                     {isExpanded
-                      ? <ChevronDown className="w-4 h-4 text-stone-400" />
-                      : <ChevronRight className="w-4 h-4 text-stone-400" />
+                      ? <ChevronDown className="w-4 h-4 text-muted-foreground/80" />
+                      : <ChevronRight className="w-4 h-4 text-muted-foreground/80" />
                     }
                   </div>
                 </button>
 
                 {/* Expanded: Constituency Grid */}
                 {isExpanded && (
-                  <div className="border-t border-stone-100 bg-stone-50/50 px-6 py-5 space-y-4">
+                  <div className="border-t border-border/40 bg-muted/5 px-6 py-5 space-y-4">
                     {/* Constituency search */}
                     <div className="flex items-center gap-3">
                       <div className="relative flex-1 max-w-xs">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80" />
                         <Input
                           value={cSearch}
                           onChange={e => setConstituencySearch(prev => ({ ...prev, [region.id]: e.target.value }))}
                           placeholder="Filter constituencies..."
-                          className="pl-9 h-9 rounded-lg border-stone-200 text-xs shadow-sm"
+                          className="pl-9 h-9 rounded-lg border-border/40 text-xs shadow-sm"
                         />
                       </div>
                       <Button
                         variant="outline"
-                        className="h-9 px-4 text-[9px] font-bold tracking-wider rounded-lg border-stone-200"
+                        className="h-9 px-4 text-[9px] font-bold tracking-wider rounded-lg border-border/40"
                       >
                         <Plus className="w-3 h-3 mr-1.5" /> Add constituency
                       </Button>
@@ -214,21 +215,21 @@ export default function AdminRegions() {
                       {visibleConstituencies.map(con => (
                         <div
                           key={con}
-                          className="group flex items-center justify-between gap-1 px-3 py-2 bg-white border border-stone-200 hover:border-stone-400 transition-colors rounded-lg"
+                          className="group flex items-center justify-between gap-1 px-3 py-2 bg-white border border-border/40 hover:border-on-surface/40 transition-colors rounded-lg"
                         >
-                          <span className="text-[10px] font-bold tracking-tight text-stone-600 group-hover:text-stone-900 truncate">
+                          <span className="text-[10px] font-bold tracking-tight text-on-surface/80 group-hover:text-on-surface truncate">
                             {con}
                           </span>
                           <button
                             className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                             onClick={() => handleAction('CONSTITUENCY_EDIT', region.name, con)}
                           >
-                            <Edit2 className="w-2.5 h-2.5 text-stone-400 hover:text-[var(--brand-black)]" />
+                            <Edit2 className="w-2.5 h-2.5 text-muted-foreground/60 hover:text-on-surface" />
                           </button>
                         </div>
                       ))}
                       {visibleConstituencies.length === 0 && (
-                        <p className="col-span-full text-center text-[10px] text-stone-400 font-bold tracking-wider py-4">
+                        <p className="col-span-full text-center text-[10px] text-muted-foreground/60 font-bold tracking-wider py-4">
                           No match found.
                         </p>
                       )}

@@ -39,28 +39,28 @@ export function DeleteConfirmationModal({
           {/* Header/Warning Strip */}
           <div className={cn(
             "h-2 w-full",
-            isPermanent ? "bg-red-600" : "bg-amber-500"
+            isPermanent ? "bg-destructive" : "bg-accent"
           )} />
           
           <div className="p-8">
             <div className="flex items-start gap-4 mb-6">
               <div className={cn(
                 "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0",
-                isPermanent ? "bg-red-50" : "bg-amber-50"
+                isPermanent ? "bg-destructive/10" : "bg-accent/10"
               )}>
                 {isPermanent ? (
-                  <Trash2 className="w-6 h-6 text-red-600" />
+                  <Trash2 className="w-6 h-6 text-destructive" />
                 ) : (
-                  <AlertTriangle className="w-6 h-6 text-amber-600" />
+                  <AlertTriangle className="w-6 h-6 text-accent" />
                 )}
               </div>
               
               <div className="space-y-1">
                 <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-stone-900 tracking-tight leading-tight">
+                  <DialogTitle className="text-xl font-black text-on-surface uppercase tracking-tighter">
                     {title}
                   </DialogTitle>
-                  <DialogDescription className="text-stone-500 text-sm font-medium leading-relaxed pt-1">
+                  <DialogDescription className="text-muted-foreground/60 text-sm font-medium leading-relaxed pt-1">
                     {description}
                   </DialogDescription>
                 </DialogHeader>
@@ -68,9 +68,9 @@ export function DeleteConfirmationModal({
             </div>
 
             {/* Item Preview Card */}
-            <div className="bg-stone-50 rounded-xl p-4 border border-stone-100 mb-8">
-              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Target Item</p>
-              <p className="text-sm font-bold text-stone-900 truncate">{itemName}</p>
+            <div className="bg-muted/5 rounded-2xl p-5 border border-border/40 mb-8">
+              <p className="text-[10px] font-black text-on-surface/40 uppercase tracking-[0.2em] mb-2">Target Item</p>
+              <p className="text-sm font-black text-on-surface truncate">{itemName}</p>
             </div>
 
             <DialogFooter className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -79,7 +79,7 @@ export function DeleteConfirmationModal({
                 variant="ghost"
                 onClick={onClose}
                 disabled={isLoading}
-                className="flex-1 h-12 rounded-xl text-stone-500 font-bold text-xs hover:bg-stone-100 hover:text-stone-900 transition-all normal-case"
+                className="flex-1 h-14 rounded-2xl text-on-surface/60 font-black uppercase tracking-widest text-[10px] hover:bg-muted/5 hover:text-on-surface transition-all"
               >
                 Cancel
               </Button>
@@ -88,10 +88,10 @@ export function DeleteConfirmationModal({
                 onClick={onConfirm}
                 disabled={isLoading}
                 className={cn(
-                  "flex-1 h-12 rounded-xl text-white font-bold text-xs shadow-md transition-all active:scale-[0.98] normal-case gap-2",
+                  "flex-1 h-14 rounded-2xl text-white font-black uppercase tracking-widest text-[10px] shadow-2xl transition-all active:scale-[0.98] gap-3",
                   isPermanent 
-                    ? "bg-red-600 hover:bg-red-700 shadow-red-200" 
-                    : "bg-stone-900 hover:bg-stone-800 shadow-stone-200"
+                    ? "bg-destructive hover:bg-destructive/90 shadow-destructive/20" 
+                    : "bg-on-surface hover:bg-on-surface/90 shadow-on-surface/20"
                 )}
               >
                 {isLoading ? (

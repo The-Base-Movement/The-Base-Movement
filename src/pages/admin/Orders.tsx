@@ -32,11 +32,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 const STATUS_CONFIG: Record<Order['status'], { label: string; color: string; bg: string; icon: typeof Package }> = {
-  Pending:    { label: 'Pending',    color: 'text-amber-600',   bg: 'bg-amber-50 border-amber-200',    icon: Clock },
-  Processing: { label: 'Processing', color: 'text-blue-600',    bg: 'bg-blue-50 border-blue-200',      icon: Package },
-  Dispatched: { label: 'Dispatched', color: 'text-violet-600',  bg: 'bg-violet-50 border-violet-200',  icon: Truck },
-  Delivered:  { label: 'Delivered',  color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200',icon: CheckCircle2 },
-  Cancelled:  { label: 'Cancelled',  color: 'text-red-600',     bg: 'bg-red-50 border-red-200',        icon: XCircle },
+  Pending:    { label: 'Pending',    color: 'text-accent',      bg: 'bg-accent/10 border-accent/20',       icon: Clock },
+  Processing: { label: 'Processing', color: 'text-blue-600',    bg: 'bg-blue-50 border-blue-200',          icon: Package },
+  Dispatched: { label: 'Dispatched', color: 'text-violet-600',  bg: 'bg-violet-50 border-violet-200',      icon: Truck },
+  Delivered:  { label: 'Delivered',  color: 'text-primary',     bg: 'bg-primary/10 border-primary/20',     icon: CheckCircle2 },
+  Cancelled:  { label: 'Cancelled',  color: 'text-destructive', bg: 'bg-destructive/10 border-destructive/20', icon: XCircle },
 }
 
 const NEXT_STATUS: Partial<Record<Order['status'], Order['status']>> = {
@@ -168,25 +168,25 @@ export default function AdminOrders() {
     { 
       label: 'Total Orders',   
       value: stats.totalOrders,      
-      color: 'text-stone-900', 
+      color: 'text-on-surface', 
       sub: `GHS ${stats.totalRevenue.toFixed(2)} total revenue` 
     },
     { 
       label: 'Avg Delivery',   
       value: `${(stats.avgDeliveryDays || 0).toFixed(1)}d`, 
-      color: (stats.avgDeliveryDays ?? 0) === 0 ? 'text-stone-400' : (stats.avgDeliveryDays ?? 0) <= 3 ? 'text-emerald-600' : (stats.avgDeliveryDays ?? 0) <= 5 ? 'text-amber-500' : 'text-red-500', 
+      color: (stats.avgDeliveryDays ?? 0) === 0 ? 'text-muted-foreground/40' : (stats.avgDeliveryDays ?? 0) <= 3 ? 'text-primary' : (stats.avgDeliveryDays ?? 0) <= 5 ? 'text-accent' : 'text-destructive', 
       sub: 'Dispatch to Delivery Latency' 
     },
     { 
       label: 'In Transit',     
       value: stats.dispatchedOrders, 
-      color: stats.dispatchedOrders === 0 ? 'text-stone-400' : 'text-violet-600',  
+      color: stats.dispatchedOrders === 0 ? 'text-muted-foreground/40' : 'text-violet-600',  
       sub: 'Dispatched to customers' 
     },
     { 
       label: 'Delivered',      
       value: stats.deliveredOrders,  
-      color: stats.deliveredOrders === 0 ? 'text-stone-400' : 'text-emerald-600', 
+      color: stats.deliveredOrders === 0 ? 'text-muted-foreground/40' : 'text-primary', 
       sub: `GHS ${stats.revenueToday.toFixed(2)} today` 
     },
   ] : []
@@ -196,17 +196,17 @@ export default function AdminOrders() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-            <Package className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <Package className="w-8 h-8 text-on-surface" />
             Order management
           </h1>
-          <p className="text-stone-500 text-sm mt-1">Live merchandise dispatch and fulfillment intelligence.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Live merchandise dispatch and fulfillment intelligence.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
             onClick={handleExport}
-            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-xl border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2"
           >
             <Download className="w-3.5 h-3.5" />
             Export orders
@@ -214,7 +214,7 @@ export default function AdminOrders() {
           <Button
             variant="outline"
             onClick={() => loadData(true)}
-            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-xl border-border/40 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/10 shadow-sm h-10 transition-all flex items-center gap-2"
           >
             <RefreshCw className={cn('w-3.5 h-3.5', refreshing && 'animate-spin')} />
             Sync
@@ -225,15 +225,15 @@ export default function AdminOrders() {
       {/* Stats */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
         {loading ? Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="rounded-xl border-stone-200 animate-pulse">
+          <Card key={i} className="rounded-xl border-border/40 animate-pulse">
             <CardContent className="p-6 h-24" />
           </Card>
         )) : statCards.map(s => (
-          <Card key={s.label} className="rounded-xl border-stone-200 shadow-sm">
+          <Card key={s.label} className="rounded-xl border-border/40 shadow-sm">
             <CardContent className="p-6">
-              <p className="text-[10px] font-bold normal-case text-stone-400 mb-2">{s.label}</p>
+              <p className="text-[10px] font-bold normal-case text-muted-foreground/80 mb-2">{s.label}</p>
               <p className={cn('text-4xl font-black font-meta tracking-tighter', s.color)}>{s.value}</p>
-              <p className="text-[9px] text-stone-400 normal-case mt-2">{s.sub}</p>
+              <p className="text-[9px] text-muted-foreground/60 normal-case mt-2">{s.sub}</p>
             </CardContent>
           </Card>
         ))}
@@ -242,32 +242,32 @@ export default function AdminOrders() {
       <div className={cn('grid gap-8', selectedOrder ? 'xl:grid-cols-3' : 'xl:grid-cols-1')}>
         {/* Orders Table */}
         <div className={selectedOrder ? 'xl:col-span-2' : ''}>
-          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
-            <CardHeader className="p-6 border-b border-stone-100 flex flex-row items-center justify-between gap-4">
-              <CardTitle className="text-xs font-bold normal-case text-stone-400 flex items-center gap-2">
+          <Card className="rounded-xl border-border/40 shadow-sm overflow-hidden">
+            <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between gap-4">
+              <CardTitle className="text-xs font-bold normal-case text-muted-foreground/80 flex items-center gap-2">
                 <Package className="w-4 h-4" /> Order feed
               </CardTitle>
               <div className="flex items-center gap-3">
                 {/* Search - Always Visible but scaled */}
                 <div className="relative w-full md:w-48">
-                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/80" />
                   <input
                     type="text"
                     placeholder="Search orders..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="pl-9 pr-4 h-9 md:h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 w-full normal-case rounded-xl md:rounded-lg"
+                    className="pl-9 pr-4 h-9 md:h-8 text-[10px] bg-muted/5 border border-border/40 focus:outline-none focus:border-muted-foreground/40 w-full normal-case rounded-xl md:rounded-lg"
                   />
                 </div>
 
                 {/* Desktop Filters */}
                 <div className="hidden md:flex items-center gap-3">
                   <div className="relative">
-                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/80" />
                     <select
                       value={statusFilter}
                       onChange={e => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
-                      className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
+                      className="pl-9 pr-4 h-8 text-[10px] bg-muted/5 border border-border/40 focus:outline-none focus:border-muted-foreground/40 appearance-none normal-case rounded-lg"
                     >
                       <option value="ALL">All Statuses</option>
                       {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
@@ -276,11 +276,11 @@ export default function AdminOrders() {
                     </select>
                   </div>
                   <div className="relative">
-                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/80" />
                     <select
                       value={dateFilter}
                       onChange={e => setDateFilter(e.target.value as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}
-                      className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
+                      className="pl-9 pr-4 h-8 text-[10px] bg-muted/5 border border-border/40 focus:outline-none focus:border-muted-foreground/40 appearance-none normal-case rounded-lg"
                     >
                       <option value="ALL">All Time</option>
                       <option value="TODAY">Today</option>
@@ -289,11 +289,11 @@ export default function AdminOrders() {
                     </select>
                   </div>
                   <div className="relative">
-                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/80" />
                     <select
                       value={regionFilter}
                       onChange={e => setRegionFilter(e.target.value)}
-                      className="pl-9 pr-4 h-8 text-[10px] bg-stone-50 border border-stone-200 focus:outline-none focus:border-stone-400 appearance-none normal-case rounded-lg"
+                      className="pl-9 pr-4 h-8 text-[10px] bg-muted/5 border border-border/40 focus:outline-none focus:border-muted-foreground/40 appearance-none normal-case rounded-lg"
                     >
                       <option value="ALL">All Regions</option>
                       {regions.map(r => (
@@ -307,23 +307,23 @@ export default function AdminOrders() {
                 <div className="md:hidden">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-9 px-3 border-stone-200 rounded-xl bg-stone-50">
+                      <Button variant="outline" size="sm" className="h-9 px-3 border-border/40 rounded-xl bg-muted/5">
                         <Filter className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 rounded-2xl p-2 shadow-xl border-stone-100" align="end">
-                      <DropdownMenuLabel className="text-[10px] font-bold text-stone-400 uppercase tracking-widest px-2 py-1.5">
+                    <DropdownMenuContent className="w-56 rounded-2xl p-2 shadow-xl border-border/40" align="end">
+                      <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest px-2 py-1.5">
                         Refine Feed
                       </DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-stone-50" />
+                      <DropdownMenuSeparator className="bg-muted/5" />
                       
                       {/* Status Submenu */}
                       <DropdownMenuSub>
-                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-stone-600 rounded-lg">
-                          <Package className="w-3.5 h-3.5 mr-2 text-stone-400" />
+                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-on-surface/80 rounded-lg">
+                          <Package className="w-3.5 h-3.5 mr-2 text-muted-foreground/80" />
                           Fulfillment status
                         </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent className="rounded-xl border-stone-100 shadow-lg">
+                        <DropdownMenuSubContent className="rounded-xl border-border/40 shadow-lg">
                           <DropdownMenuRadioGroup value={statusFilter} onValueChange={(v) => setStatusFilter(v as Order['status'] | 'ALL')}>
                             <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Statuses</DropdownMenuRadioItem>
                             {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
@@ -335,11 +335,11 @@ export default function AdminOrders() {
 
                       {/* Date Submenu */}
                       <DropdownMenuSub>
-                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-stone-600 rounded-lg">
-                          <Clock className="w-3.5 h-3.5 mr-2 text-stone-400" />
+                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-on-surface/80 rounded-lg">
+                          <Clock className="w-3.5 h-3.5 mr-2 text-muted-foreground/80" />
                           Temporal range
                         </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent className="rounded-xl border-stone-100 shadow-lg">
+                        <DropdownMenuSubContent className="rounded-xl border-border/40 shadow-lg">
                           <DropdownMenuRadioGroup value={dateFilter} onValueChange={(v) => setDateFilter(v as 'ALL' | 'TODAY' | 'WEEK' | 'MONTH')}>
                             <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Time</DropdownMenuRadioItem>
                             <DropdownMenuRadioItem value="TODAY" className="text-[11px] font-bold">Today</DropdownMenuRadioItem>
@@ -351,11 +351,11 @@ export default function AdminOrders() {
 
                       {/* Region Submenu */}
                       <DropdownMenuSub>
-                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-stone-600 rounded-lg">
-                          <Filter className="w-3.5 h-3.5 mr-2 text-stone-400" />
+                        <DropdownMenuSubTrigger className="text-[11px] font-bold text-on-surface/80 rounded-lg">
+                          <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground/80" />
                           Movement region
                         </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent className="rounded-xl border-stone-100 shadow-lg">
+                        <DropdownMenuSubContent className="rounded-xl border-border/40 shadow-lg">
                           <DropdownMenuRadioGroup value={regionFilter} onValueChange={setRegionFilter}>
                             <DropdownMenuRadioItem value="ALL" className="text-[11px] font-bold">All Regions</DropdownMenuRadioItem>
                             {regions.map(r => (
@@ -368,14 +368,14 @@ export default function AdminOrders() {
                       {/* Reset Action */}
                       {(statusFilter !== 'ALL' || dateFilter !== 'ALL' || regionFilter !== 'ALL') && (
                         <>
-                          <DropdownMenuSeparator className="bg-stone-50" />
+                          <DropdownMenuSeparator className="bg-muted/5" />
                           <DropdownMenuItem 
                             onClick={() => {
                               setStatusFilter('ALL')
                               setDateFilter('ALL')
                               setRegionFilter('ALL')
                             }}
-                            className="text-[11px] font-bold text-red-600 focus:text-red-600 focus:bg-red-50 rounded-lg"
+                            className="text-[11px] font-bold text-destructive focus:text-destructive focus:bg-destructive/5 rounded-lg"
                           >
                             <RefreshCw className="w-3.5 h-3.5 mr-2" />
                             Reset filters
@@ -390,23 +390,23 @@ export default function AdminOrders() {
             <div className="overflow-x-auto">
               {loading ? (
                 <div className="p-16 text-center">
-                  <RefreshCw className="w-6 h-6 animate-spin text-stone-400 mx-auto mb-3" />
-                  <p className="text-[10px] font-bold normal-case text-stone-400">Loading orders...</p>
+                  <RefreshCw className="w-6 h-6 animate-spin text-muted-foreground/40 mx-auto mb-3" />
+                  <p className="text-[10px] font-bold normal-case text-muted-foreground/80">Loading orders...</p>
                 </div>
               ) : filtered.length === 0 ? (
                 <div className="p-16 text-center">
-                  <Package className="w-8 h-8 text-stone-200 mx-auto mb-3" />
-                  <p className="text-[10px] font-bold normal-case text-stone-400">No orders found</p>
-                  <p className="text-[9px] text-stone-300 normal-case mt-1">Orders will appear here once customers complete purchases</p>
+                  <Package className="w-8 h-8 text-muted-foreground/20 mx-auto mb-3" />
+                  <p className="text-[10px] font-bold normal-case text-muted-foreground/80">No orders found</p>
+                  <p className="text-[9px] text-muted-foreground/40 normal-case mt-1">Orders will appear here once customers complete purchases</p>
                 </div>
               ) : (
                 <>
                 {/* Desktop Table */}
                 <table className="w-full text-xs hidden md:table">
                   <thead>
-                    <tr className="border-b border-stone-100 bg-stone-50">
+                    <tr className="border-b border-border/40 bg-muted/10">
                       {['Order ID', 'Customer', 'Region', 'Amount', 'Payment', 'Status', 'Date', 'Actions'].map(h => (
-                        <th key={h} className="px-5 py-3 text-left text-[9px] font-bold normal-case text-stone-400">{h}</th>
+                        <th key={h} className="px-5 py-3 text-left text-[9px] font-bold normal-case text-muted-foreground/80">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -419,25 +419,25 @@ export default function AdminOrders() {
                         <tr 
                           key={order.id} 
                           className={cn(
-                            'border-b border-stone-50 hover:bg-stone-50/80 transition-colors cursor-pointer',
-                            selectedOrder?.id === order.id && 'bg-stone-50 border-l-2 border-l-[var(--brand-black)]'
+                            'border-b border-muted/5 hover:bg-muted/5 transition-colors cursor-pointer',
+                            selectedOrder?.id === order.id && 'bg-muted/5 border-l-2 border-l-on-surface'
                           )}
                           onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
                         >
-                          <td className="px-5 py-4 font-mono text-[10px] text-stone-500">
+                          <td className="px-5 py-4 font-mono text-[10px] text-muted-foreground/80">
                             #{order.id.slice(0, 8).toUpperCase()}
                           </td>
                           <td className="px-5 py-4">
-                            <p className="font-bold text-stone-900">{order.full_name}</p>
-                            <p className="text-[9px] text-stone-400 normal-case">{order.email}</p>
+                            <p className="font-bold text-on-surface">{order.full_name}</p>
+                            <p className="text-[9px] text-muted-foreground/60 normal-case">{order.email}</p>
                           </td>
-                          <td className="px-5 py-4 text-[10px] text-stone-600 normal-case">
+                          <td className="px-5 py-4 text-[10px] text-on-surface/80 normal-case">
                             {order.region_or_state || '—'}
                           </td>
-                          <td className="px-5 py-4 font-black text-stone-900">
+                          <td className="px-5 py-4 font-black text-on-surface">
                             GHS {Number(order.total_amount).toFixed(2)}
                           </td>
-                          <td className="px-5 py-4 normal-case text-[10px] text-stone-500">
+                          <td className="px-5 py-4 normal-case text-[10px] text-muted-foreground/80">
                             {order.payment_method === 'momo' ? 'MoMo' : 'Card'}
                           </td>
                           <td className="px-5 py-4">
@@ -446,7 +446,7 @@ export default function AdminOrders() {
                               {cfg.label}
                             </span>
                           </td>
-                          <td className="px-5 py-4 text-[10px] text-stone-400">
+                          <td className="px-5 py-4 text-[10px] text-muted-foreground/60">
                             {new Date(order.created_at).toLocaleDateString()}
                           </td>
                           <td className="px-5 py-4">
@@ -465,7 +465,7 @@ export default function AdminOrders() {
                                   size="sm"
                                   onClick={() => handleStatusAdvance(order)}
                                   disabled={updatingId === order.id}
-                                  className="h-7 px-3 text-[9px] font-bold normal-case bg-stone-900 text-white hover:bg-stone-700 rounded-xl"
+                                  className="h-7 px-3 text-[9px] font-bold normal-case bg-on-surface text-white hover:bg-on-surface/90 rounded-xl"
                                 >
                                   {updatingId === order.id ? '...' : `→ ${nextStatus}`}
                                 </Button>
@@ -479,7 +479,7 @@ export default function AdminOrders() {
                 </table>
 
                 {/* Mobile Order Cards */}
-                <div className="md:hidden divide-y divide-stone-100">
+                <div className="md:hidden divide-y divide-border/40">
                   {filtered.map(order => {
                     const cfg = STATUS_CONFIG[order.status]
                     const StatusIcon = cfg.icon
@@ -489,15 +489,15 @@ export default function AdminOrders() {
                         key={order.id} 
                         className={cn(
                           "p-6 space-y-6 transition-colors",
-                          selectedOrder?.id === order.id ? "bg-stone-50" : "bg-white"
+                          selectedOrder?.id === order.id ? "bg-muted/10" : "bg-white"
                         )}
                         onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
                       >
                         <div className="flex justify-between items-start">
                           <div className="space-y-1">
-                            <p className="text-[10px] font-mono font-bold text-stone-400 tracking-widest uppercase">#{order.id.slice(0, 8)}</p>
-                            <h4 className="text-sm font-black text-stone-900">{order.full_name}</h4>
-                            <p className="text-[10px] font-bold text-stone-400">{order.region_or_state || 'Unknown Region'}</p>
+                            <p className="text-[10px] font-mono font-bold text-muted-foreground/60 tracking-widest uppercase">#{order.id.slice(0, 8)}</p>
+                            <h4 className="text-sm font-black text-on-surface">{order.full_name}</h4>
+                            <p className="text-[10px] font-bold text-muted-foreground/60">{order.region_or_state || 'Unknown Region'}</p>
                           </div>
                           <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-bold normal-case border rounded-full', cfg.bg, cfg.color)}>
                             <StatusIcon className="w-2.5 h-2.5" />
@@ -506,20 +506,20 @@ export default function AdminOrders() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="p-4 bg-white border border-stone-200 rounded-2xl shadow-sm">
-                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Value</p>
-                            <p className="text-sm font-black text-stone-900">GHS {Number(order.total_amount).toFixed(2)}</p>
+                          <div className="p-4 bg-white border border-border/40 rounded-2xl shadow-sm">
+                            <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Value</p>
+                            <p className="text-sm font-black text-on-surface">GHS {Number(order.total_amount).toFixed(2)}</p>
                           </div>
-                          <div className="p-4 bg-white border border-stone-200 rounded-2xl shadow-sm">
-                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Payment</p>
-                            <p className="text-sm font-black text-stone-900 capitalize">{order.payment_method}</p>
+                          <div className="p-4 bg-white border border-border/40 rounded-2xl shadow-sm">
+                            <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Payment</p>
+                            <p className="text-sm font-black text-on-surface capitalize">{order.payment_method}</p>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 pt-2">
                           <Button
                             variant="outline"
-                            className="flex-1 h-11 rounded-xl border-stone-200 text-stone-600 text-[10px] font-bold"
+                            className="flex-1 h-11 rounded-xl border-border/40 text-on-surface/80 text-[10px] font-bold"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedOrder(order);
@@ -529,7 +529,7 @@ export default function AdminOrders() {
                           </Button>
                           {nextStatus && (
                             <Button
-                              className="flex-1 h-11 bg-stone-900 text-white rounded-xl text-[10px] font-bold"
+                              className="flex-1 h-11 bg-on-surface text-white rounded-xl text-[10px] font-bold"
                               disabled={updatingId === order.id}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -555,22 +555,22 @@ export default function AdminOrders() {
           const cfg = STATUS_CONFIG[selectedOrder.status]
           const StatusIcon = cfg.icon
           return (
-            <Card className="rounded-xl border-stone-200 shadow-sm xl:col-span-1 h-fit sticky top-6 bg-white overflow-hidden">
-              <CardHeader className="p-6 border-b border-stone-100 flex flex-row items-center justify-between">
-                <CardTitle className="text-xs font-bold normal-case text-stone-400">
+            <Card className="rounded-xl border-border/40 shadow-sm xl:col-span-1 h-fit sticky top-6 bg-white overflow-hidden">
+              <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-bold normal-case text-muted-foreground/60">
                   Order detail
                 </CardTitle>
                 <button 
                   onClick={() => setSelectedOrder(null)}
-                  className="text-stone-400 hover:text-stone-900 text-lg leading-none font-bold"
+                  className="text-muted-foreground/60 hover:text-on-surface text-lg leading-none font-bold"
                 >×</button>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 {/* ID & Status */}
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[9px] font-bold normal-case text-stone-400 mb-1">Order ID</p>
-                    <p className="font-mono text-xs font-bold text-stone-700">#{selectedOrder.id.toUpperCase()}</p>
+                    <p className="text-[9px] font-bold normal-case text-muted-foreground/60 mb-1">Order ID</p>
+                    <p className="font-mono text-xs font-bold text-on-surface/80">#{selectedOrder.id.toUpperCase()}</p>
                   </div>
                   <span className={cn('inline-flex items-center gap-1.5 px-2.5 py-1 text-[9px] font-bold normal-case border rounded-full', cfg.bg, cfg.color)}>
                     <StatusIcon className="w-3 h-3" />
@@ -579,37 +579,37 @@ export default function AdminOrders() {
                 </div>
 
                 {/* Customer */}
-                <div className="space-y-3 pt-4 border-t border-stone-50">
-                  <p className="text-[9px] font-bold normal-case text-stone-400">Customer</p>
+                <div className="space-y-3 pt-4 border-t border-muted/5">
+                  <p className="text-[9px] font-bold normal-case text-muted-foreground/60">Customer</p>
                   <div className="space-y-1">
-                    <p className="font-bold text-sm text-stone-900">{selectedOrder.full_name}</p>
-                    <p className="text-[10px] text-stone-500">{selectedOrder.email}</p>
-                    <p className="text-[10px] text-stone-500">{selectedOrder.phone}</p>
+                    <p className="font-bold text-sm text-on-surface">{selectedOrder.full_name}</p>
+                    <p className="text-[10px] text-muted-foreground/80">{selectedOrder.email}</p>
+                    <p className="text-[10px] text-muted-foreground/80">{selectedOrder.phone}</p>
                   </div>
                 </div>
 
                 {/* Shipping */}
-                <div className="space-y-3 pt-4 border-t border-stone-50">
-                  <p className="text-[9px] font-bold normal-case text-stone-400">Shipping address</p>
+                <div className="space-y-3 pt-4 border-t border-muted/5">
+                  <p className="text-[9px] font-bold normal-case text-muted-foreground/60">Shipping address</p>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-stone-600">{selectedOrder.shipping_address}</p>
-                    <p className="text-[10px] text-stone-600">{selectedOrder.city}, {selectedOrder.region_or_state}</p>
-                    <p className="text-[10px] font-bold text-stone-900">{selectedOrder.country}</p>
+                    <p className="text-[10px] text-on-surface/80">{selectedOrder.shipping_address}</p>
+                    <p className="text-[10px] text-on-surface/80">{selectedOrder.city}, {selectedOrder.region_or_state}</p>
+                    <p className="text-[10px] font-bold text-on-surface">{selectedOrder.country}</p>
                   </div>
                 </div>
 
                 {/* Items */}
                 {selectedOrder.items && selectedOrder.items.length > 0 && (
-                  <div className="space-y-3 pt-4 border-t border-stone-50">
-                    <p className="text-[9px] font-bold normal-case text-stone-400">Line items</p>
+                  <div className="space-y-3 pt-4 border-t border-muted/5">
+                    <p className="text-[9px] font-bold normal-case text-muted-foreground/60">Line items</p>
                     <div className="space-y-2">
                       {selectedOrder.items.map(item => (
-                        <div key={item.id} className="flex justify-between items-center py-2 border-b border-stone-50">
+                        <div key={item.id} className="flex justify-between items-center py-2 border-b border-muted/5">
                           <div>
-                            <p className="text-[10px] font-bold text-stone-700">Qty: {item.quantity}</p>
-                            <p className="text-[9px] text-stone-400 font-mono">{item.product_id.slice(0, 8)}</p>
+                            <p className="text-[10px] font-bold text-on-surface/80">Qty: {item.quantity}</p>
+                            <p className="text-[9px] text-muted-foreground/40 font-mono">{item.product_id.slice(0, 8)}</p>
                           </div>
-                          <p className="text-[10px] font-black text-stone-900">
+                          <p className="text-[10px] font-black text-on-surface">
                             GHS {(item.price_at_purchase * item.quantity).toFixed(2)}
                           </p>
                         </div>
@@ -619,18 +619,18 @@ export default function AdminOrders() {
                 )}
 
                 {/* Totals */}
-                <div className="space-y-2 pt-4 border-t border-stone-100">
-                  <div className="flex justify-between text-[10px] text-stone-500 normal-case">
+                <div className="space-y-2 pt-4 border-t border-border/40">
+                  <div className="flex justify-between text-[10px] text-muted-foreground/60 normal-case">
                     <span>Subtotal</span>
                     <span>GHS {Number(selectedOrder.subtotal).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-[10px] text-stone-500 normal-case">
+                  <div className="flex justify-between text-[10px] text-muted-foreground/60 normal-case">
                     <span>Shipping</span>
                     <span>GHS {Number(selectedOrder.shipping_fee).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between pt-2 border-t border-stone-200">
-                    <span className="text-xs font-bold normal-case text-stone-900">Total</span>
-                    <span className="text-sm font-black text-[var(--brand-black)]">GHS {Number(selectedOrder.total_amount).toFixed(2)}</span>
+                  <div className="flex justify-between pt-2 border-t border-border/60">
+                    <span className="text-xs font-bold normal-case text-on-surface">Total</span>
+                    <span className="text-sm font-black text-on-surface">GHS {Number(selectedOrder.total_amount).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -638,7 +638,7 @@ export default function AdminOrders() {
                 <div className="pt-4 space-y-2">
                   {NEXT_STATUS[selectedOrder.status] && (
                     <Button
-                      className="w-full h-10 bg-stone-900 text-white hover:bg-stone-700 text-[10px] font-bold normal-case rounded-xl"
+                      className="w-full h-10 bg-on-surface text-white hover:bg-on-surface/90 text-[10px] font-bold normal-case rounded-xl"
                       onClick={() => handleStatusAdvance(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
@@ -648,7 +648,7 @@ export default function AdminOrders() {
                   {selectedOrder.status !== 'Cancelled' && selectedOrder.status !== 'Delivered' && (
                     <Button
                       variant="outline"
-                      className="w-full h-10 border-red-200 text-red-600 hover:bg-red-50 text-[10px] font-bold normal-case rounded-xl"
+                      className="w-full h-10 border-destructive/20 text-destructive hover:bg-destructive/5 text-[10px] font-bold normal-case rounded-xl"
                       onClick={() => handleCancel(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >

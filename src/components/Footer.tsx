@@ -2,17 +2,17 @@ import { Link } from 'react-router-dom'
 
 export default function Footer() {
   return (
-    <footer className="bg-stone-50 text-stone-900 py-16 font-body-md border-t border-stone-200">
-      <div className="max-w-[1280px] mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer className="bg-muted/5 text-on-surface py-20 font-body-md border-t border-border/10">
+      <div className="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-16">
         <div className="md:col-span-1 space-y-6">
           <Link to="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
             <img alt="The Base Logo" className="h-12 w-12" src="/logo.png"  decoding="async" loading="lazy" />
             <div className="flex flex-col">
-              <h2 className="text-stone-900 leading-none mb-0">The Base</h2>
-              <span className="text-[10px] font-bold text-primary tracking-[0.2em] mt-1">Ghana First, Jobs for the Youth!</span>
+              <h2 className="text-on-surface font-black uppercase tracking-tighter leading-none mb-0">The Base</h2>
+              <span className="text-[10px] font-black text-primary tracking-[0.2em] mt-2">Ghana First, Jobs for the Youth!</span>
             </div>
           </Link>
-          <p className="text-stone-600 text-sm leading-relaxed">
+          <p className="text-on-surface/60 text-sm leading-relaxed font-medium">
             A global political movement connecting Ghanaians and friends of Ghana worldwide. Building community, driving progress.
           </p>
           <div className="flex items-center gap-5 pt-4">
@@ -49,41 +49,41 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="space-y-4">
-          <h4 className="text-primary">Foundation</h4>
-          <div className="flex flex-col space-y-2 text-sm text-stone-600">
-            <Link className="hover:text-primary transition-colors" to="/our-agenda">The Plan</Link>
-            <Link className="hover:text-primary transition-colors" to="/impact">Our Impact</Link>
+        <div className="space-y-6">
+          <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Foundation</h4>
+          <div className="flex flex-col space-y-3 text-xs font-black tracking-widest text-on-surface/40">
+            <Link className="hover:text-primary transition-colors" to="/our-agenda">The plan</Link>
+            <Link className="hover:text-primary transition-colors" to="/impact">Our impact</Link>
             <Link className="hover:text-primary transition-colors" to="/chapters">Chapters</Link>
             <Link className="hover:text-primary transition-colors" to="/members">Members</Link>
           </div>
         </div>
         
-        <div className="space-y-4">
-          <h4 className="text-primary">Connect</h4>
-          <div className="flex flex-col space-y-2 text-sm text-stone-600">
-            <Link className="hover:text-primary transition-colors" to="/contact">Contact Us</Link>
+        <div className="space-y-6">
+          <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Connect</h4>
+          <div className="flex flex-col space-y-3 text-xs font-black tracking-widest text-on-surface/40">
+            <Link className="hover:text-primary transition-colors" to="/contact">Contact us</Link>
             <Link className="hover:text-primary transition-colors" to="/press">Press</Link>
-            <Link className="hover:text-primary transition-colors" to="/privacy">Privacy Agreement</Link>
+            <Link className="hover:text-primary transition-colors" to="/privacy">Privacy</Link>
           </div>
         </div>
         
-        <div className="space-y-4">
-          <h4 className="text-primary">Take Action</h4>
-          <div className="flex flex-col space-y-2 text-sm text-stone-600">
-            <Link className="hover:text-primary transition-colors" to="/register">Join the Base</Link>
+        <div className="space-y-6">
+          <h4 className="text-primary font-black tracking-[0.2em] text-[10px] uppercase">Action</h4>
+          <div className="flex flex-col space-y-3 text-xs font-black tracking-widest text-on-surface/40">
+            <Link className="hover:text-primary transition-colors" to="/register">Join base</Link>
             <Link className="hover:text-primary transition-colors" to="/donate">Donate</Link>
             <Link className="hover:text-primary transition-colors" to="/store">Supplies</Link>
           </div>
         </div>
       </div>
       
-      <div className="max-w-[1280px] mx-auto px-8 mt-16 pt-8 border-t border-stone-200 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-stone-500 mb-0 font-bold uppercase tracking-widest">© 2026 The Base. All rights reserved.</p>
-        <div className="flex gap-1">
-          <div className="w-8 h-2 bg-destructive"></div>
-          <div className="w-8 h-2 bg-accent"></div>
-          <div className="w-8 h-2 bg-primary"></div>
+      <div className="max-w-[1440px] mx-auto px-8 mt-20 pt-10 border-t border-border/10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <p className="text-[10px] text-on-surface/20 mb-0 font-black tracking-[0.2em]">© 2026 The Base Movement. Ghana First.</p>
+        <div className="flex gap-1.5">
+          <div className="w-10 h-1.5 bg-destructive"></div>
+          <div className="w-10 h-1.5 bg-accent"></div>
+          <div className="w-10 h-1.5 bg-primary"></div>
         </div>
       </div>
     </footer>

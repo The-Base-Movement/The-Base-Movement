@@ -4,15 +4,6 @@
 
 @layer base {
   :root {
-    /* Core Brand Colors */
-    --brand-green: #006B3F;
-    --brand-gold: #DAA520;
-    --brand-red: #CE1126;
-    --brand-yellow: #FDB913; /* Alternative gold/yellow */
-    --brand-black: #1A1A1A;
-    --brand-light-gray: #F1F5EE;
-    --brand-white: #FFFFFF;
-    
     --background: 40 20% 97%;
     --foreground: 220 15% 15%;
     --card: 0 0% 100%;
@@ -20,20 +11,29 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 15%;
     
-    /* Mapping shadcn variables to brand colors where possible */
-    --primary: 150 80% 22%; /* Approx #006B3F */
+    /* Semantic Roles */
+    --on-surface: 220 15% 15%;
+    --on-surface-muted: 220 10% 40%;
+    
+    /* Mapping shadcn variables to brand colors with hierarchy */
+    --primary: 156 100% 21%; /* #006B3F - High intensity brand green */
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 90% 45%; /* Approx #DAA520 */
-    --secondary-foreground: 0 0% 100%;
-    --muted: 40 10% 93%;
-    --muted-foreground: 220 10% 45%;
-    --accent: 45 90% 45%;
+    
+    --secondary: 150 20% 96%; /* Pale green tint for soft backgrounds */
+    --secondary-foreground: 150 80% 15%;
+    
+    --muted: 40 10% 94%; /* Warm light gray for inactive/backgrounds */
+    --muted-foreground: 220 10% 40%;
+    
+    --accent: 45 80% 45%; /* #DAA520 - Gold for controlled emphasis */
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 72% 45%; /* Approx #CE1126 */
+    
+    --destructive: 0 85% 44%; /* #CE1126 - Brand red for urgency */
     --destructive-foreground: 0 0% 100%;
+    
     --border: 40 10% 88%;
     --input: 40 10% 88%;
-    --ring: 150 80% 22%;
+    --ring: 156 100% 21%;
     --radius: 0.5rem;
   }
 }
@@ -149,15 +149,15 @@
 }
 .form-understate:focus {
   outline: none;
-  border-color: var(--brand-green);
+  border-color: hsl(var(--primary));
   box-shadow: inset 0 0 0 2px rgba(0, 107, 63, 0.1);
 }
 
 /* Navigation Utilities */
 .sticky-nav-active {
-  border-left: 3px solid var(--brand-green);
+  border-left: 3px solid hsl(var(--primary));
   padding-left: 1rem;
-  color: var(--brand-green);
+  color: hsl(var(--primary));
   font-weight: 700;
 }
 
@@ -166,7 +166,7 @@
   transition: all 0.3s ease;
 }
 .pillar-card:hover {
-  border-left: 4px solid var(--brand-gold);
+  border-left: 4px solid hsl(var(--accent));
 }
 
 .civic-card-shadow {
@@ -181,7 +181,7 @@
   background: #f1f5ee;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to right, var(--brand-red), var(--brand-gold), var(--brand-green));
+  background: linear-gradient(to right, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)));
   border-radius: 4px;
 }
 
@@ -195,7 +195,7 @@
 }
 
 .sidebar-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(to right, var(--brand-red), var(--brand-yellow), var(--brand-green));
+  background: linear-gradient(to right, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)));
   border-radius: 10px;
 }
 
@@ -220,15 +220,15 @@
   }
 
   .tactical-gradient-red {
-    background: linear-gradient(135deg, #CE1126 0%, #8b0000 100%);
+    background: linear-gradient(135deg, hsl(var(--destructive)) 0%, #8b0000 100%);
   }
 
   .tactical-gradient-green {
-    background: linear-gradient(135deg, #006B3F 0%, #004d2e 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, #004d2e 100%);
   }
 
   .tactical-gradient-gold {
-    background: linear-gradient(135deg, #DAA520 0%, #b8860b 100%);
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, #b8860b 100%);
   }
 
   .hover-lift {
@@ -236,6 +236,6 @@
   }
 
   .stat-card-tactical {
-    @apply bg-white border-l-4 border-[var(--brand-green)] p-6 shadow-sm hover:shadow-md transition-all;
+    @apply bg-white border-l-4 border-primary p-6 shadow-sm hover:shadow-md transition-all;
   }
 }

@@ -121,7 +121,7 @@ export default function AdminEditAuthor() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--brand-red)]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -133,93 +133,93 @@ export default function AdminEditAuthor() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900 font-meta">
+          <h1 className="text-3xl font-bold tracking-tight text-on-surface font-meta">
               {isEditing ? 'Edit Editorial Profile' : 'New Editorial Profile'}
             </h1>
-            <p className="text-stone-500 text-sm">
+            <p className="text-muted-foreground/80 text-sm">
               Configure credentials and biographical information for the movement's content creators.
             </p>
           </div>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
+        <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden bg-white">
           <CardContent className="p-8 space-y-8">
             
             {/* Identity Section */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest border-b border-stone-100 pb-2">Identity & Role</h3>
+              <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest border-b border-border/10 pb-2">Identity & Role</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-sm font-bold text-stone-700">Full Name</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Full Name</Label>
                   <Input 
                     placeholder="e.g. Kwame Patriot"
                     value={formData.name || ''}
                     onChange={handleNameChange}
-                    className="border-stone-200 focus-visible:ring-[var(--brand-red)]"
+                    className="border-border/60 focus-visible:ring-on-surface"
                     required
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="text-sm font-bold text-stone-700">Unique Slug</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Unique Slug</Label>
                   <Input 
                     placeholder="kwame-patriot"
                     value={formData.slug || ''}
                     onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                    className="border-stone-200 focus-visible:ring-[var(--brand-red)] bg-stone-50"
+                    className="border-border/60 focus-visible:ring-on-surface bg-muted/5"
                     required
                   />
-                  <p className="text-[10px] text-stone-500">Used for URL generation. Must be unique.</p>
+                  <p className="text-[10px] text-muted-foreground/80">Used for URL generation. Must be unique.</p>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-bold text-stone-700">Official Title / Role</Label>
+                <Label className="text-sm font-bold text-on-surface/80">Official Title / Role</Label>
                 <Input 
                   placeholder="e.g. Senior Regional Coordinator"
                   value={formData.role || ''}
                   onChange={(e) => setFormData({...formData, role: e.target.value})}
-                  className="border-stone-200 focus-visible:ring-[var(--brand-red)]"
+                  className="border-border/60 focus-visible:ring-on-surface"
                 />
               </div>
             </div>
 
             {/* Profile Media */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest border-b border-stone-100 pb-2">Profile Media</h3>
+              <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest border-b border-border/10 pb-2">Profile Media</h3>
               
               <div className="flex flex-col sm:flex-row items-start gap-6">
-                <div className="w-32 h-32 rounded-xl bg-stone-100 border-2 border-dashed border-stone-300 flex items-center justify-center overflow-hidden shrink-0 relative group">
+                <div className="w-32 h-32 rounded-xl bg-muted/10 border-2 border-dashed border-border/40 flex items-center justify-center overflow-hidden shrink-0 relative group">
                   {formData.imageUrl ? (
                     <>
                       <img src={formData.imageUrl} alt="Profile" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute inset-0 bg-on-surface/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <ImageIcon className="w-6 h-6 text-white" />
                       </div>
                     </>
                   ) : (
-                    <div className="text-center text-stone-400 p-4">
+                    <div className="text-center text-muted-foreground/40 p-4">
                       <ImageIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
                       <span className="text-[10px] uppercase tracking-wider font-bold">No Image</span>
                     </div>
                   )}
                   {isUploading && (
                     <div className="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-sm">
-                      <Loader2 className="w-6 h-6 animate-spin text-[var(--brand-red)]" />
+                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
                     </div>
                   )}
                 </div>
                 
                 <div className="space-y-4 flex-1 w-full">
                   <div className="space-y-2">
-                    <Label className="text-sm font-bold text-stone-700">Image URL</Label>
+                    <Label className="text-sm font-bold text-on-surface/80">Image URL</Label>
                     <Input 
                       placeholder="https://..."
                       value={formData.imageUrl || ''}
                       onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                      className="border-stone-200 focus-visible:ring-[var(--brand-red)]"
+                      className="border-border/60 focus-visible:ring-on-surface"
                     />
                   </div>
                   <div className="flex items-center gap-4">
@@ -234,13 +234,13 @@ export default function AdminEditAuthor() {
                       />
                       <label 
                         htmlFor="author-image-upload" 
-                        className="flex items-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-sm font-medium transition-colors cursor-pointer border border-stone-200"
+                        className="flex items-center gap-2 px-4 py-2 bg-muted/10 hover:bg-muted/20 text-on-surface/80 rounded-lg text-sm font-medium transition-colors cursor-pointer border border-border/60"
                       >
                         <Upload className="w-4 h-4" />
                         {isUploading ? 'Uploading...' : 'Upload Image'}
                       </label>
                     </div>
-                    <p className="text-xs text-stone-500">Recommended: Square ratio, at least 400x400px.</p>
+                    <p className="text-xs text-muted-foreground/80">Recommended: Square ratio, at least 400x400px.</p>
                   </div>
                 </div>
               </div>
@@ -248,42 +248,42 @@ export default function AdminEditAuthor() {
 
             {/* Biographical Data */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest border-b border-stone-100 pb-2">Biographical Information</h3>
+              <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest border-b border-border/10 pb-2">Biographical Information</h3>
               
               <div className="space-y-2">
-                <Label className="text-sm font-bold text-stone-700">Professional Biography</Label>
+                <Label className="text-sm font-bold text-on-surface/80">Professional Biography</Label>
                 <Textarea 
                   placeholder="Provide a comprehensive biography detailing the author's contributions to the movement..."
                   value={formData.bio || ''}
                   onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                  className="min-h-[150px] border-stone-200 focus-visible:ring-[var(--brand-red)] resize-y"
+                  className="min-h-[150px] border-border/60 focus-visible:ring-on-surface resize-y"
                 />
               </div>
             </div>
 
           </CardContent>
-          <div className="p-6 border-t border-stone-100 bg-stone-50 flex justify-end gap-3">
+          <div className="p-6 border-t border-border/10 bg-muted/5 flex justify-end gap-3">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => navigate('/admin/authors')}
-              className="border-stone-200 hover:bg-stone-100"
+              className="border-border/60 hover:bg-muted/10"
             >
               Cancel
             </Button>
             <Button 
               type="submit" 
               disabled={isSaving}
-              className="bg-[var(--brand-red)] hover:bg-red-700 text-white shadow-lg shadow-red-500/20 px-8 font-bold tracking-wide"
+              className="bg-on-surface text-white shadow-lg shadow-black/10 px-8 font-bold tracking-wide rounded-xl"
             >
               {isSaving ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin text-accent" />
                   Saving Profile...
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4 mr-2" />
+                  <Save className="w-4 h-4 mr-2 text-accent" />
                   {isEditing ? 'Save Changes' : 'Create Profile'}
                 </>
               )}

@@ -124,30 +124,30 @@ export default function NewBroadcast() {
         
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-              <Megaphone className="w-8 h-8 text-stone-900" />
+            <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+              <Megaphone className="w-8 h-8 text-on-surface" />
               Send new broadcast
             </h1>
-            <p className="text-stone-500 text-sm mt-1">Deploying a movement-wide communication to the field.</p>
+            <p className="text-muted-foreground/80 text-sm mt-1">Deploying a movement-wide communication to the field.</p>
           </div>
           <Button 
             variant="ghost"
             onClick={() => navigate('/admin/broadcasts')}
-            className="rounded-lg text-[10px] font-bold normal-case h-10 px-4 border border-stone-200"
+            className="rounded-lg text-[10px] font-bold normal-case h-10 px-4 border border-border/40"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-2" /> Back
           </Button>
         </div>
       </div>
 
-      <Card className="rounded-xl border-stone-200 shadow-xl overflow-hidden bg-white group border-none md:border-solid">
-        <CardHeader className="p-8 bg-stone-900 text-white border-b border-stone-800 relative">
-          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-stone-700 to-transparent opacity-50" />
+      <Card className="rounded-xl border-border/40 shadow-xl overflow-hidden bg-background group border-none md:border-solid">
+        <CardHeader className="p-8 bg-on-surface text-white border-b border-white/5 relative">
+          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50" />
           <div className="flex items-center gap-3">
-            <Shield className="w-5 h-5 text-[var(--brand-red)]" />
+            <Shield className="w-5 h-5 text-destructive" />
             <div>
               <CardTitle className="text-lg font-bold tracking-tight">Deployment configuration</CardTitle>
-              <p className="text-xs text-stone-400 font-medium mt-0.5">Define your target audience and broadcast priority.</p>
+              <p className="text-xs text-white/40 font-medium mt-0.5">Define your target audience and broadcast priority.</p>
             </div>
           </div>
         </CardHeader>
@@ -155,10 +155,10 @@ export default function NewBroadcast() {
         <CardContent className="p-8 space-y-8">
           {/* Title */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold normal-case text-stone-400">Broadcast title</label>
+            <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Broadcast title</label>
             <Input 
               placeholder="e.g. National registration wave" 
-              className="rounded-lg border-stone-200 h-12 text-sm font-bold placeholder:font-normal shadow-sm bg-stone-50/30 focus:bg-white transition-colors"
+              className="rounded-lg border-border/40 h-12 text-sm font-bold placeholder:font-normal shadow-sm bg-muted/5 focus:bg-background transition-colors"
               value={newBroadcast.title}
               onChange={(e) => setNewBroadcast({...newBroadcast, title: e.target.value})}
             />
@@ -167,15 +167,15 @@ export default function NewBroadcast() {
           {/* Channel, Target & Priority Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold normal-case text-stone-400">Delivery channel</label>
+              <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Delivery channel</label>
               <Select 
                 value={newBroadcast.channel}
                 onValueChange={(v: 'SMS' | 'Email' | 'Push' | 'In-app') => setNewBroadcast({...newBroadcast, channel: v})}
               >
-                <SelectTrigger className="rounded-lg border-stone-200 h-12 text-[10px] font-bold normal-case shadow-sm bg-stone-50/30">
+                <SelectTrigger className="rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
                   <SelectValue placeholder="Select channel" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border-stone-200">
+                <SelectContent className="rounded-lg border-border/40">
                   <SelectItem value="In-app" className="text-[10px] font-bold normal-case">
                     <div className="flex items-center gap-2">
                       <MessageSquare className="w-3.5 h-3.5" /> In-app message
@@ -201,7 +201,7 @@ export default function NewBroadcast() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold normal-case text-stone-400">Target segment</label>
+              <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Target segment</label>
               <Select 
                 value={newBroadcast.target_type}
                 onValueChange={(v: 'ALL' | 'REGION' | 'CONSTITUENCY') => {
@@ -212,10 +212,10 @@ export default function NewBroadcast() {
                   })
                 }}
               >
-                <SelectTrigger className="rounded-lg border-stone-200 h-12 text-[10px] font-bold normal-case shadow-sm bg-stone-50/30">
+                <SelectTrigger className="rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
                   <SelectValue placeholder="Select target" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border-stone-200">
+                <SelectContent className="rounded-lg border-border/40">
                   <SelectItem value="ALL" className="text-[10px] font-bold normal-case">National (all)</SelectItem>
                   <SelectItem value="REGION" className="text-[10px] font-bold normal-case">Regional</SelectItem>
                   <SelectItem value="CONSTITUENCY" className="text-[10px] font-bold normal-case">Constituency</SelectItem>
@@ -224,21 +224,21 @@ export default function NewBroadcast() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold normal-case text-stone-400">Priority level</label>
+              <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Priority level</label>
               <Select 
                 value={newBroadcast.priority}
                 onValueChange={(v: 'Normal' | 'High' | 'Urgent') => setNewBroadcast({...newBroadcast, priority: v})}
               >
                 <SelectTrigger className={cn(
-                  "rounded-lg border-stone-200 h-12 text-[10px] font-bold normal-case shadow-sm bg-stone-50/30",
-                  newBroadcast.priority === 'Urgent' ? "text-red-600 border-red-200 bg-red-50/30" : ""
+                  "rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5",
+                  newBroadcast.priority === 'Urgent' ? "text-destructive border-destructive/20 bg-destructive/5" : ""
                 )}>
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border-stone-200">
+                <SelectContent className="rounded-lg border-border/40">
                   <SelectItem value="Normal" className="text-[10px] font-bold normal-case">Normal</SelectItem>
                   <SelectItem value="High" className="text-[10px] font-bold normal-case text-orange-600">High priority</SelectItem>
-                  <SelectItem value="Urgent" className="text-[10px] font-bold normal-case text-red-600">Urgent (Level Red)</SelectItem>
+                  <SelectItem value="Urgent" className="text-[10px] font-bold normal-case text-destructive">Urgent (Level Red)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -248,7 +248,7 @@ export default function NewBroadcast() {
           {newBroadcast.target_type !== 'ALL' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-top-2">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold normal-case text-stone-400">Select region</label>
+                <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Select region</label>
                 <Select 
                   value={fullRegions.find(r => r.name === newBroadcast.target_value)?.name || ""}
                   onValueChange={(v) => {
@@ -259,10 +259,10 @@ export default function NewBroadcast() {
                     }
                   }}
                 >
-                  <SelectTrigger className="rounded-lg border-stone-200 h-12 text-[10px] font-bold normal-case shadow-sm bg-stone-50/30">
+                  <SelectTrigger className="rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
                     <SelectValue placeholder="Select region" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-lg border-stone-200">
+                  <SelectContent className="rounded-lg border-border/40">
                     {(fullRegions || []).map((r: Region) => (
                       <SelectItem key={`region-${r.id}`} value={r.name} className="text-[10px] font-bold normal-case">{r.name}</SelectItem>
                     ))}
@@ -272,7 +272,7 @@ export default function NewBroadcast() {
 
               {newBroadcast.target_type === 'CONSTITUENCY' && (
                 <div className="space-y-2 animate-in slide-in-from-top-2">
-                  <label className="text-[10px] font-bold normal-case text-stone-400">Select constituency</label>
+                  <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Select constituency</label>
                   <Select 
                     disabled={!selectedRegionId}
                     onValueChange={(v) => {
@@ -291,11 +291,11 @@ export default function NewBroadcast() {
                       }
                     }}
                   >
-                    <SelectTrigger className="rounded-lg border-stone-200 h-12 text-[10px] font-bold normal-case shadow-sm bg-stone-50/30">
+                    <SelectTrigger className="rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
                       <SelectValue placeholder={!selectedRegionId ? "Select region first" : "Select constituency"} />
                     </SelectTrigger>
-                    <SelectContent className="rounded-lg border-stone-200">
-                      <SelectItem value="ALL_IN_REGION" className="text-[10px] font-bold normal-case italic text-stone-400">All in Region</SelectItem>
+                    <SelectContent className="rounded-lg border-border/40">
+                      <SelectItem value="ALL_IN_REGION" className="text-[10px] font-bold normal-case italic text-muted-foreground/40">All in Region</SelectItem>
                       {(allConstituencies || [])
                         .filter(c => c.region_id === selectedRegionId)
                         .map((c, idx) => (
@@ -312,19 +312,19 @@ export default function NewBroadcast() {
           {/* Content with TinyMCE */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] font-bold normal-case text-stone-400">Broadcast message (Rich Content)</label>
+              <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Broadcast message (Rich Content)</label>
               <div className="flex items-center gap-2">
                 <span className={cn(
                   "text-[10px] font-bold",
-                  newBroadcast.content.length > MAX_CHARACTERS * 0.9 ? "text-red-500" : "text-stone-300"
+                  newBroadcast.content.length > MAX_CHARACTERS * 0.9 ? "text-destructive" : "text-muted-foreground/40"
                 )}>
                   {newBroadcast.content.length} / {MAX_CHARACTERS}
                 </span>
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               </div>
             </div>
             
-            <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm bg-stone-50/30">
+            <div className="rounded-xl overflow-hidden border border-border/40 shadow-sm bg-muted/5">
               <Editor
                 apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
                 onInit={(_, editor) => (editorRef.current = editor)}
@@ -341,7 +341,7 @@ export default function NewBroadcast() {
                     'bold italic forecolor | alignleft aligncenter ' +
                     'alignright alignjustify | bullist numlist outdent indent | ' +
                     'removeformat | link | help',
-                  content_style: 'body { font-family:Inter,Helvetica,Arial,sans-serif; font-size:14px; color: #1c1917; background-color: transparent; } p { margin-bottom: 1em; }',
+                  content_style: 'body { font-family:Inter,Helvetica,Arial,sans-serif; font-size:14px; color: hsl(var(--on-surface)); background-color: transparent; } p { margin-bottom: 1em; }',
                   skin: 'oxide',
                   content_css: 'default',
                   placeholder: 'Compose your administrative directive with rich formatting...',
@@ -356,18 +356,18 @@ export default function NewBroadcast() {
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-6 border-t border-stone-100 flex items-center justify-end gap-4">
+          <div className="pt-6 border-t border-border/10 flex items-center justify-end gap-4">
             <Button 
               variant="outline" 
               onClick={() => navigate('/admin/broadcasts')}
-              className="rounded-lg h-12 px-8 text-[10px] font-bold border-stone-200 normal-case shadow-sm hover:bg-stone-50"
+              className="rounded-lg h-12 px-8 text-[10px] font-bold border-border/40 normal-case shadow-sm hover:bg-muted/10"
             >
               Cancel
             </Button>
             <Button 
               disabled={isSending}
               onClick={handleSend}
-              className="rounded-lg h-12 px-10 text-[10px] font-bold bg-stone-900 hover:bg-stone-800 text-white min-w-[160px] normal-case shadow-md transition-all active:scale-95"
+              className="rounded-lg h-12 px-10 text-[10px] font-bold bg-on-surface hover:bg-on-surface/90 text-white min-w-[160px] normal-case shadow-md transition-all active:scale-95"
             >
               {isSending ? (
                 <>
@@ -384,12 +384,12 @@ export default function NewBroadcast() {
       </Card>
 
       {/* Preview Info */}
-      <div className="flex items-center gap-4 p-4 rounded-xl bg-stone-50 border border-stone-200 text-stone-500">
-        <div className="w-10 h-10 rounded-lg bg-white border border-stone-200 flex items-center justify-center shrink-0">
+      <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/5 border border-border/40 text-muted-foreground/80">
+        <div className="w-10 h-10 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
           {getChannelIcon(newBroadcast.channel)}
         </div>
         <div>
-          <p className="text-[10px] font-bold normal-case text-stone-900">Broadcast preview</p>
+          <p className="text-[10px] font-bold normal-case text-on-surface">Broadcast preview</p>
           <p className="text-[10px] leading-relaxed">
             Sending to {newBroadcast.target_type === 'ALL' ? 'all movement members' : `targeted ${newBroadcast.target_type.toLowerCase()} segments`} via {newBroadcast.channel}. 
             Estimated delivery to ~42,500 members. Rich content is supported on {newBroadcast.channel === 'SMS' ? 'Smartphone links' : 'this channel'}.

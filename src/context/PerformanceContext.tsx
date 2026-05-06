@@ -23,6 +23,7 @@ export function PerformanceProvider({ children }: { children: ReactNode }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const usePerformance = () => {
   const ctx = useContext(PerformanceContext)
   if (!ctx) throw new Error('usePerformance must be used inside <PerformanceProvider>')

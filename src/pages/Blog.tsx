@@ -59,9 +59,9 @@ export default function Blog() {
       {/* Hero */}
       <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-[var(--brand-green)]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">Updates</p>
-          <h1 className="font-meta font-black text-4xl md:text-5xl uppercase tracking-tight leading-tight mb-4 max-w-2xl">
-            Updates
+          <p className="font-meta text-warm-gold uppercase tracking-[0.2em] text-[10px] mb-3">THE BASE INSIGHTS</p>
+          <h1 className="font-meta font-black text-4xl md:text-5xl tracking-tight leading-tight mb-4 max-w-2xl">
+            Ideas, analysis & movement news
           </h1>
           <p className="text-slate-400 max-w-xl text-base">
             Perspectives from within the movement on governance, youth empowerment, diaspora engagement and the future of Ghana.
@@ -111,8 +111,10 @@ export default function Blog() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                        decoding="async" loading="lazy" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200">
-                        <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest">The Base</span>
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
+                        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
+                        <img src="/logo.png" alt="The Base" className="w-16 h-16 opacity-20 mb-4 grayscale" />
+                        <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">The Base Editorial</span>
                       </div>
                     )}
                   </div>
@@ -126,18 +128,18 @@ export default function Blog() {
                       </span>
                     </div>
                     <Link to={`${baseUrl}/${featured.slug}`}>
-                      <h2 className="text-xl font-bold text-charcoal-dark uppercase tracking-tight leading-tight mb-4 hover:text-[var(--brand-green)] transition-colors">
+                      <h2 className="text-xl md:text-2xl font-bold text-charcoal-dark tracking-tight leading-tight mb-4 hover:text-[var(--brand-green)] transition-colors">
                         {featured.title}
                       </h2>
                     </Link>
                     <p className="text-slate-500 text-sm leading-relaxed mb-6">{featured.excerpt}</p>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                        {featured.authorName} · {featured.readTime}
+                      <div className="text-[10px] font-bold text-stone-400 tracking-widest">
+                        {featured.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : featured.authorName} · {featured.readTime}
                       </div>
                       <Link
                         to={`${baseUrl}/${featured.slug}`}
-                        className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--brand-green)] uppercase tracking-widest hover:underline"
+                        className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--brand-green)] tracking-widest hover:underline"
                       >
                         Read Article
                         <ArrowRight className="w-4 h-4" />
@@ -153,7 +155,7 @@ export default function Blog() {
               <section>
                 <div className="flex flex-col lg:flex-row gap-12">
                   <div className="lg:w-2/3">
-                    <h2 className="text-stone-900 uppercase tracking-widest mb-6">Latest Articles</h2>
+                    <h2 className="text-stone-900 font-black tracking-tight mb-6">Latest articles</h2>
                     <div className="grid sm:grid-cols-2 gap-8">
                       {rest.map((post) => (
                         <BlogPostCard
@@ -169,13 +171,13 @@ export default function Blog() {
                   {/* Sidebar */}
                   <aside className="lg:w-1/3 space-y-12">
                     <div>
-                      <h2 className="text-stone-900 uppercase tracking-widest mb-6">Categories</h2>
+                      <h2 className="text-stone-900 font-black tracking-tight mb-6">Categories</h2>
                       <div className="bg-white border border-slate-200 p-8 space-y-2">
                         {categories.filter(c => c !== 'All').map((cat) => (
                           <button
                             key={cat}
                             onClick={() => setActiveCategory(cat)}
-                            className="w-full flex items-center justify-between p-3 text-xs font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:text-[var(--brand-green)] transition-all group"
+                            className="w-full flex items-center justify-between p-3 text-xs font-bold tracking-widest text-slate-600 hover:bg-slate-50 hover:text-[var(--brand-green)] transition-all group"
                           >
                             {cat}
                             <span className="text-[10px] text-slate-300 font-meta group-hover:text-[var(--brand-green)] transition-colors">
@@ -187,7 +189,7 @@ export default function Blog() {
                     </div>
 
                     <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
-                      <h4 className="font-meta font-black text-lg uppercase tracking-tight mb-4">The Base Weekly</h4>
+                      <h4 className="font-meta font-black text-lg tracking-tight mb-4">The Base Weekly</h4>
                       <p className="text-xs text-slate-400 leading-relaxed mb-6">
                         Get the movement's authoritative policy briefs and news delivered directly to your inbox every week.
                       </p>
@@ -197,7 +199,7 @@ export default function Blog() {
                           placeholder="Email Address"
                           className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-[var(--brand-green)] transition-colors"
                         />
-                        <Button className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white text-[10px] font-bold uppercase tracking-widest h-12">
+                        <Button className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white text-[10px] font-bold tracking-widest h-12">
                           Subscribe
                         </Button>
                       </div>
@@ -211,14 +213,14 @@ export default function Blog() {
 
         {/* CTA */}
         <section className="mt-20 py-16 px-12 bg-charcoal-dark text-white text-center border-l-4 border-[var(--brand-green)]">
-          <p className="font-meta text-warm-gold uppercase tracking-widest text-sm mb-3">Join the Conversation</p>
-          <h2 className="font-meta font-black text-3xl uppercase tracking-tight mb-4">Become a Member. Shape the Narrative.</h2>
+          <p className="font-meta text-warm-gold uppercase tracking-[0.2em] text-[10px] mb-3">Join the conversation</p>
+          <h2 className="font-meta font-black text-3xl tracking-tight mb-4">Become a member. Shape the narrative.</h2>
           <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">
             Registered members get early access to analysis, policy briefs and updates directly from our research desk.
           </p>
           <Link
             to="/register"
-            className="inline-flex items-center gap-2 bg-[var(--brand-green)] text-white font-meta font-bold uppercase tracking-widest px-8 py-4 hover:opacity-90 transition-all active:scale-95"
+            className="inline-flex items-center gap-2 bg-[var(--brand-green)] text-white font-meta font-bold tracking-widest px-8 py-4 hover:opacity-90 transition-all active:scale-95"
           >
             Join The Base
             <ArrowRight className="w-5 h-5" />

@@ -253,20 +253,20 @@ export default function AdminBlogs() {
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-stone-500 normal-case">
-            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-stone-900 text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
+          <div className="flex items-center gap-2 text-on-surface/40 normal-case">
+            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-on-surface text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
               Blog posts
             </Button>
-            <span className="text-sm text-stone-400">/</span>
-            <span className="text-sm font-semibold text-stone-900 normal-case">{editingPost ? 'Edit post' : 'Create new post'}</span>
+            <span className="text-sm text-on-surface/20">/</span>
+            <span className="text-sm font-semibold text-on-surface normal-case">{editingPost ? 'Edit post' : 'Create new post'}</span>
           </div>
         </div>
 
         <div>
-          <h2 className="text-3xl font-bold text-stone-900 tracking-tight normal-case">
+          <h2 className="text-3xl font-bold text-on-surface tracking-tight normal-case">
             {editingPost ? 'Edit post' : 'Create new post'}
           </h2>
-          <p className="text-stone-500 text-sm mt-1 font-medium">
+          <p className="text-muted-foreground/80 text-sm mt-1 font-medium">
             Fill in the details below to configure and publish your post.
           </p>
         </div>
@@ -275,53 +275,53 @@ export default function AdminBlogs() {
           
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-8">
-            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="p-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-stone-900 text-xs normal-case">Post details</h3>
+            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-border/40 bg-muted/5">
+                <h3 className="font-bold text-on-surface text-xs normal-case">Post details</h3>
               </div>
               <CardContent className="p-8 space-y-8">
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Article title</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Article title</Label>
                   <Input 
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                     placeholder="e.g. The future of industry" 
-                    className="rounded-lg border-stone-200 h-11 text-sm placeholder:text-stone-400"
+                    className="rounded-lg border-border/40 h-11 text-sm placeholder:text-muted-foreground/40"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Slug</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Slug</Label>
                   <Input 
                     value={formData.slug}
                     onChange={(e) => setFormData({...formData, slug: e.target.value})}
                     placeholder="the-future-of-industry" 
-                    className="rounded-lg border-stone-200 h-11 text-sm placeholder:text-stone-400"
+                    className="rounded-lg border-border/40 h-11 text-sm placeholder:text-muted-foreground/40"
                   />
-                  <p className="text-xs font-medium text-stone-500">The URL-friendly name for this post. Leave blank to auto-generate from the title.</p>
+                  <p className="text-xs font-medium text-muted-foreground/40">The URL-friendly name for this post. Leave blank to auto-generate from the title.</p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Excerpt</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Excerpt</Label>
                   <Textarea 
                     required
                     value={formData.excerpt}
                     onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
                     placeholder="A brief 1-2 sentence summary for article cards..." 
-                    className="rounded-lg border-stone-200 min-h-[100px] text-sm leading-relaxed"
+                    className="rounded-lg border-border/40 min-h-[100px] text-sm leading-relaxed"
                   />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="p-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-stone-900 text-xs normal-case">Content</h3>
+            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-border/40 bg-muted/5">
+                <h3 className="font-bold text-on-surface text-xs normal-case">Content</h3>
               </div>
               <CardContent className="p-0 border-0">
                 <div className="p-8">
-                  <div className="rounded-lg border border-stone-200 overflow-hidden shadow-inner bg-stone-50/30">
+                  <div className="rounded-lg border border-border/40 overflow-hidden shadow-inner bg-muted/5">
                     <Editor
                       apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
                       value={formData.content}
@@ -354,15 +354,15 @@ export default function AdminBlogs() {
           {/* Right Sidebar Column */}
           <div className="space-y-8 sticky top-6">
             
-            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="p-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-stone-900 text-sm normal-case">Publishing</h3>
+            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-border/40 bg-muted/5">
+                <h3 className="font-bold text-on-surface text-sm normal-case">Publishing</h3>
               </div>
               <CardContent className="p-6 space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1 pr-4">
-                    <Label className="text-sm font-bold text-stone-800">Featured post</Label>
-                    <p className="text-xs font-medium text-stone-500 leading-tight">Pin this post to the top of the insights feed.</p>
+                    <Label className="text-sm font-bold text-on-surface/80">Featured post</Label>
+                    <p className="text-xs font-medium text-muted-foreground/40 leading-tight">Pin this post to the top of the insights feed.</p>
                   </div>
                   <Switch 
                     checked={formData.isFeatured}
@@ -370,13 +370,13 @@ export default function AdminBlogs() {
                   />
                 </div>
 
-                <div className="space-y-3 pt-6 border-t border-stone-100">
-                  <Label className="text-sm font-bold text-stone-800">Category</Label>
+                <div className="space-y-3 pt-6 border-t border-border/40">
+                  <Label className="text-sm font-bold text-on-surface/80">Category</Label>
                   <Select 
                     value={formData.category}
                     onValueChange={(val) => setFormData({...formData, category: val})}
                   >
-                    <SelectTrigger className="rounded-lg border-stone-200 h-11 text-sm font-medium">
+                    <SelectTrigger className="rounded-lg border-border/40 h-11 text-sm font-medium">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -390,9 +390,9 @@ export default function AdminBlogs() {
                   </Select>
                 </div>
 
-                <div className="space-y-3 pt-6 border-t border-stone-100">
+                <div className="space-y-3 pt-6 border-t border-border/40">
                   <div className="flex items-center justify-between">
-                    <Label className="text-sm font-bold text-stone-800">Featured image URL</Label>
+                    <Label className="text-sm font-bold text-on-surface/80">Featured image URL</Label>
                     <div className="relative">
                       <input 
                         type="file" 
@@ -410,7 +410,7 @@ export default function AdminBlogs() {
                       />
                       <Label 
                         htmlFor="blog-image-upload" 
-                        className="text-[10px] font-bold text-[var(--brand-green)] hover:text-emerald-700 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
+                        className="text-[10px] font-bold text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
                       >
                         <Upload className="w-3 h-3" />
                         Upload image
@@ -421,50 +421,50 @@ export default function AdminBlogs() {
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
                     placeholder="https://example.com/image.jpg" 
-                    className="rounded-lg border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-border/40 h-11 text-sm"
                   />
-                  <p className="text-xs font-medium text-stone-500">Provide a direct URL or upload a file.</p>
+                  <p className="text-xs font-medium text-muted-foreground/40">Provide a direct URL or upload a file.</p>
                 </div>
 
-                <div className="space-y-3 pt-6 border-t border-stone-100">
-                  <Label className="text-sm font-bold text-stone-800">Est. read time</Label>
+                <div className="space-y-3 pt-6 border-t border-border/40">
+                  <Label className="text-sm font-bold text-on-surface/80">Est. read time</Label>
                   <Input 
                     value={formData.readTime}
                     onChange={(e) => setFormData({...formData, readTime: e.target.value})}
                     placeholder="5 min read" 
-                    className="rounded-lg border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-border/40 h-11 text-sm"
                   />
-                  <p className="text-xs font-medium text-stone-500">Suggested format: "5 min read"</p>
+                  <p className="text-xs font-medium text-muted-foreground/40">Suggested format: "5 min read"</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="p-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-stone-900 text-sm normal-case">Author information</h3>
+            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-border/40 bg-muted/5">
+                <h3 className="font-bold text-on-surface text-sm normal-case">Author information</h3>
               </div>
               <CardContent className="p-8 space-y-6">
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Author name</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Author name</Label>
                   <Input 
                     value={formData.authorName}
                     onChange={(e) => setFormData({...formData, authorName: e.target.value})}
                     placeholder="e.g. John Doe" 
-                    className="rounded-lg border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-border/40 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Author role</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Author role</Label>
                   <Input 
                     value={formData.authorRole}
                     onChange={(e) => setFormData({...formData, authorRole: e.target.value})}
                     placeholder="e.g. Communications Director" 
-                    className="rounded-lg border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-border/40 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label className="text-sm font-bold text-stone-800">Author image URL</Label>
+                    <Label className="text-sm font-bold text-on-surface/80">Author image URL</Label>
                     <div className="relative">
                       <input 
                         type="file" 
@@ -482,7 +482,7 @@ export default function AdminBlogs() {
                       />
                       <Label 
                         htmlFor="author-image-upload" 
-                        className="text-[10px] font-bold text-[var(--brand-green)] hover:text-emerald-700 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
+                        className="text-[10px] font-bold text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
                       >
                         <Upload className="w-3 h-3" />
                         Upload photo
@@ -493,52 +493,52 @@ export default function AdminBlogs() {
                     value={formData.authorImage}
                     onChange={(e) => setFormData({...formData, authorImage: e.target.value})}
                     placeholder="https://..." 
-                    className="rounded-lg border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-border/40 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Author bio</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Author bio</Label>
                   <Textarea 
                     value={formData.authorBio}
                     onChange={(e) => setFormData({...formData, authorBio: e.target.value})}
                     placeholder="Short professional bio..." 
-                    className="rounded-lg border-stone-200 min-h-[80px] text-sm leading-relaxed"
+                    className="rounded-lg border-border/40 min-h-[80px] text-sm leading-relaxed"
                   />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-stone-200 bg-white shadow-sm overflow-hidden">
-              <div className="p-4 border-b border-stone-100 bg-stone-50">
-                <h3 className="font-bold text-stone-900 text-sm normal-case">SEO settings</h3>
+            <Card className="rounded-xl border-border/40 bg-white shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-border/40 bg-muted/5">
+                <h3 className="font-bold text-on-surface text-sm normal-case">SEO settings</h3>
               </div>
               <CardContent className="p-6 space-y-6">
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Meta title</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Meta title</Label>
                   <Input 
                     value={formData.seoTitle}
                     onChange={(e) => setFormData({...formData, seoTitle: e.target.value})}
                     placeholder="Title for search engines..." 
-                    className="rounded-lg border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-border/40 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Keywords</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Keywords</Label>
                   <Input 
                     value={formData.tags.join(', ')}
                     onChange={(e) => setFormData({...formData, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)})}
                     placeholder="ghana, industry, jobs" 
-                    className="rounded-lg border-stone-200 h-11 text-sm"
+                    className="rounded-lg border-border/40 h-11 text-sm"
                   />
-                  <p className="text-xs font-medium text-stone-500">Comma separated tags.</p>
+                  <p className="text-xs font-medium text-muted-foreground/40">Comma separated tags.</p>
                 </div>
                 <div className="space-y-3">
-                  <Label className="text-sm font-bold text-stone-800">Meta description</Label>
+                  <Label className="text-sm font-bold text-on-surface/80">Meta description</Label>
                   <Textarea 
                     value={formData.metaDescription}
                     onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
                     placeholder="Brief description for search result snippets..." 
-                    className="rounded-lg border-stone-200 min-h-[80px] text-sm leading-relaxed"
+                    className="rounded-lg border-border/40 min-h-[80px] text-sm leading-relaxed"
                   />
                 </div>
               </CardContent>
@@ -548,7 +548,7 @@ export default function AdminBlogs() {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full h-12 rounded-lg bg-stone-900 text-white hover:bg-stone-800 text-sm font-bold transition-all shadow-md active:scale-[0.98] normal-case"
+                className="w-full h-12 rounded-lg bg-on-surface text-white hover:bg-on-surface/90 text-sm font-bold transition-all shadow-md active:scale-[0.98] normal-case"
               >
                 {isLoading ? 'Saving...' : editingPost ? 'Update post' : 'Publish post'}
               </Button>
@@ -556,7 +556,7 @@ export default function AdminBlogs() {
                 type="button" 
                 variant="ghost" 
                 onClick={() => setCurrentView('list')}
-                className="w-full h-11 rounded-lg text-xs font-bold text-stone-400 hover:text-stone-600 hover:bg-stone-50 transition-colors normal-case"
+                className="w-full h-11 rounded-lg text-xs font-bold text-muted-foreground/40 hover:text-on-surface/60 hover:bg-muted/10 transition-colors normal-case"
               >
                 Discard changes
               </Button>
@@ -572,22 +572,22 @@ export default function AdminBlogs() {
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-stone-500 normal-case">
-            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-stone-900 text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
+          <div className="flex items-center gap-2 text-muted-foreground/40 normal-case">
+            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-on-surface text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
               Blog posts
             </Button>
-            <span className="text-sm text-stone-400">/</span>
-            <span className="text-sm font-semibold text-stone-900 normal-case">View post</span>
+            <span className="text-sm text-muted-foreground/20">/</span>
+            <span className="text-sm font-semibold text-on-surface normal-case">View post</span>
           </div>
           <Button 
             onClick={() => handleEditPost(viewPost)}
-            className="h-10 px-6 text-sm font-bold bg-stone-900 text-white hover:bg-stone-800 flex items-center gap-2 rounded-lg"
+            className="h-10 px-6 text-sm font-bold bg-on-surface text-white hover:bg-on-surface/90 flex items-center gap-2 rounded-lg"
           >
             <Edit2 className="w-3 h-3" /> Edit post
           </Button>
         </div>
         
-        <Card className="rounded-xl border-stone-200 bg-white overflow-hidden max-w-4xl mx-auto shadow-sm">
+        <Card className="rounded-xl border-border/40 bg-white overflow-hidden max-w-4xl mx-auto shadow-sm">
           {viewPost.imageUrl && (
             <div className="w-full h-[400px] relative">
               <img src={viewPost.imageUrl} alt={viewPost.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
@@ -595,25 +595,25 @@ export default function AdminBlogs() {
           )}
           <CardContent className="p-10 md:p-16">
             <div className="flex items-center gap-4 mb-6">
-              <Badge variant="secondary" className="bg-stone-100 text-stone-600 border-none px-3 py-1 text-xs font-semibold rounded-full">
+              <Badge variant="secondary" className="bg-muted/5 text-on-surface/60 border-none px-3 py-1 text-xs font-semibold rounded-full">
                 {viewPost.category}
               </Badge>
-              <div className="flex items-center gap-1.5 text-stone-400">
+              <div className="flex items-center gap-1.5 text-muted-foreground/40">
                 <Calendar className="w-4 h-4" />
                 <span className="text-xs font-medium">{new Date(viewPost.publishedAt).toLocaleDateString()}</span>
               </div>
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-bold text-[var(--brand-black)] tracking-tight leading-tight mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-on-surface tracking-tight leading-tight mb-6">
               {viewPost.title}
             </h1>
             
-            <div className="text-lg text-stone-500 font-medium leading-relaxed mb-10 border-l-4 border-stone-200 pl-6 italic">
+            <div className="text-lg text-muted-foreground/40 font-medium leading-relaxed mb-10 border-l-4 border-border/40 pl-6 italic">
               {viewPost.excerpt}
             </div>
 
             <div 
-              className="prose prose-stone max-w-none prose-p:text-stone-600 prose-p:leading-relaxed prose-headings:text-[var(--brand-black)] prose-headings:font-bold"
+              className="prose prose-on-surface max-w-none prose-p:text-on-surface/60 prose-p:leading-relaxed prose-headings:text-on-surface prose-headings:font-bold"
               dangerouslySetInnerHTML={{ __html: viewPost.content }}
             />
           </CardContent>
@@ -627,15 +627,15 @@ export default function AdminBlogs() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-            <FileText className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <FileText className="w-8 h-8 text-on-surface" />
             Blog posts
           </h1>
-          <p className="text-stone-500 text-sm mt-1">Draft and publish strategic articles for the movement feed.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Draft and publish strategic articles for the movement feed.</p>
         </div>
         <Button 
           onClick={() => handleEditPost()}
-          className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all"
+          className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all"
         >
           <Plus className="w-3.5 h-3.5 mr-2" /> Create new post
         </Button>
@@ -643,21 +643,21 @@ export default function AdminBlogs() {
 
 
       {/* Control Bar */}
-      <Card className="rounded-xl border-stone-200 bg-white p-2 shadow-sm mb-10">
+      <Card className="rounded-xl border-border/40 bg-white p-2 shadow-sm mb-10">
         <div className="flex flex-wrap items-center gap-8 px-2 py-1">
           <div className="flex-1 min-w-[240px] relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
             <input 
               type="text" 
               placeholder="Search posts by title or category..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-stone-50 border-none rounded-lg text-sm font-medium focus:ring-1 focus:ring-stone-200 transition-all placeholder:text-stone-400"
+              className="w-full h-10 pl-10 pr-4 bg-muted/5 border-none rounded-lg text-sm font-medium focus:ring-1 focus:ring-border/40 transition-all placeholder:text-muted-foreground/40"
             />
           </div>
           <div className="flex items-center gap-3 pr-2">
             <Select defaultValue="all">
-              <SelectTrigger className="h-10 w-[160px] bg-white border-stone-200 text-sm font-semibold rounded-lg">
+              <SelectTrigger className="h-10 w-[160px] bg-white border-border/40 text-sm font-semibold rounded-lg">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
@@ -676,48 +676,48 @@ export default function AdminBlogs() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {isLoading ? (
           Array(6).fill(0).map((_, i) => (
-            <Card key={i} className="rounded-xl border-stone-200 animate-pulse bg-white">
-              <div className="h-48 bg-stone-100" />
+            <Card key={i} className="rounded-xl border-border/40 animate-pulse bg-white">
+              <div className="h-48 bg-muted/5" />
               <CardContent className="p-6 space-y-4">
-                <div className="h-4 bg-stone-100 w-3/4 rounded" />
-                <div className="h-4 bg-stone-100 w-1/2 rounded" />
+                <div className="h-4 bg-muted/5 w-3/4 rounded" />
+                <div className="h-4 bg-muted/5 w-1/2 rounded" />
               </CardContent>
             </Card>
           ))
         ) : filteredPosts.length === 0 ? (
-          <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-stone-100 rounded-2xl">
-            <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-stone-200" />
+          <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-border/40 rounded-2xl">
+            <div className="w-16 h-16 bg-muted/5 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-8 h-8 text-muted-foreground/20" />
             </div>
-            <h3 className="text-lg font-bold text-stone-900">No posts found</h3>
-            <p className="text-sm text-stone-500 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
+            <h3 className="text-lg font-bold text-on-surface">No posts found</h3>
+            <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
             <Button 
               variant="outline" 
               onClick={() => setSearchQuery('')}
-              className="mt-6 rounded-lg border-stone-200 font-bold text-xs px-6"
+              className="mt-6 rounded-lg border-border/40 font-bold text-xs px-6"
             >
               Clear search
             </Button>
           </div>
         ) : (
           filteredPosts.map((post) => (
-            <Card key={post.id} className="rounded-xl border-stone-200 group hover:border-stone-300 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
-              <div className="aspect-video relative overflow-hidden bg-stone-100">
+            <Card key={post.id} className="rounded-xl border-border/40 group hover:border-border/60 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
+              <div className="aspect-video relative overflow-hidden bg-muted/5">
                 {post.imageUrl ? (
                   <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-stone-300">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/40">
                     <FileText className="w-12 h-12" />
                   </div>
                 )}
                 <div className="absolute top-4 left-4">
-                  <Badge className="bg-white/90 backdrop-blur-sm text-stone-800 text-[10px] font-bold tracking-wider rounded-full border-none shadow-sm px-3">
+                  <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-[10px] font-bold tracking-wider rounded-full border-none shadow-sm px-3">
                     {post.category}
                   </Badge>
                 </div>
                 {post.isFeatured && (
                   <div className="absolute top-4 right-4">
-                    <div className="w-7 h-7 bg-[var(--brand-green)] rounded-full flex items-center justify-center text-white shadow-lg">
+                    <div className="w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg">
                       <Star className="w-3.5 h-3.5 fill-white" />
                     </div>
                   </div>
@@ -725,40 +725,40 @@ export default function AdminBlogs() {
               </div>
               <CardContent className="p-6 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-3 gap-2">
-                  <h3 className="text-lg font-bold text-stone-900 leading-tight group-hover:text-[var(--brand-green)] transition-colors line-clamp-2">
+                  <h3 className="text-lg font-bold text-on-surface leading-tight group-hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </h3>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0 shrink-0 hover:bg-stone-100 rounded-full">
-                        <MoreVertical className="w-4 h-4 text-stone-400" />
+                      <Button variant="ghost" className="h-8 w-8 p-0 shrink-0 hover:bg-muted/5 rounded-full">
+                        <MoreVertical className="w-4 h-4 text-muted-foreground/40" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-xl border-stone-200 shadow-xl p-2 w-48">
+                    <DropdownMenuContent align="end" className="rounded-xl border-border/40 shadow-xl p-2 w-48">
                       <DropdownMenuItem onClick={() => handleEditPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
-                        <Edit2 className="w-4 h-4 text-stone-400" /> Edit post
+                        <Edit2 className="w-4 h-4 text-muted-foreground/40" /> Edit post
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleViewPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
-                        <Eye className="w-4 h-4 text-stone-400" /> View post
+                        <Eye className="w-4 h-4 text-muted-foreground/40" /> View post
                       </DropdownMenuItem>
-                      <div className="h-px bg-stone-100 my-1" />
-                      <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5 text-red-600 focus:text-red-600 focus:bg-red-50">
+                      <div className="h-px bg-border/40 my-1" />
+                      <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5 text-destructive focus:text-destructive focus:bg-destructive/10">
                         <Trash2 className="w-4 h-4" /> Delete post
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <p className="text-stone-500 text-sm line-clamp-2 mb-6 font-medium leading-relaxed flex-1">
+                <p className="text-muted-foreground/40 text-sm line-clamp-2 mb-6 font-medium leading-relaxed flex-1">
                   {post.excerpt}
                 </p>
-                <div className="flex items-center justify-between pt-5 border-t border-stone-100 mt-auto">
+                <div className="flex items-center justify-between pt-5 border-t border-border/40 mt-auto">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 text-stone-400">
+                    <div className="flex items-center gap-1.5 text-muted-foreground/40">
                       <Calendar className="w-3.5 h-3.5" />
                       <span className="text-[11px] font-semibold">{new Date(post.publishedAt).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-stone-400">
+                  <div className="flex items-center gap-1.5 text-muted-foreground/40">
                     <Clock className="w-3.5 h-3.5" />
                     <span className="text-[11px] font-semibold">{post.readTime}</span>
                   </div>

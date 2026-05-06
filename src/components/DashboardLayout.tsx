@@ -100,13 +100,13 @@ export default function DashboardLayout() {
       />
 
       {/* Navigation Shell (SideNavBar) */}
-      <nav className={`fixed left-0 top-0 h-full flex flex-col bg-stone-100 dark:bg-zinc-950 text-emerald-700 dark:text-emerald-400 w-64 border-r border-stone-200 dark:border-zinc-800 z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+      <nav className={`fixed left-0 top-0 h-full flex flex-col bg-muted/5 text-on-surface w-64 border-r border-border/40 z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         {/* Fixed Header */}
-        <div className="px-6 py-8 flex items-center gap-3 bg-stone-100 dark:bg-zinc-950 z-10 shrink-0">
+        <div className="px-6 py-8 flex items-center gap-3 bg-white z-10 shrink-0">
           <img src="/logo.png" alt="The Base Logo" className="h-10 w-10"  decoding="async" />
           <div>
-            <h1 className="text-lg text-emerald-900 dark:text-white leading-none mb-0">The Base</h1>
-            <p className="text-[9px] text-accent font-bold tracking-widest mt-1 mb-0 uppercase">Civic Movement</p>
+            <h1 className="text-xl font-black text-on-surface leading-none mb-0 tracking-tighter uppercase">The Base</h1>
+            <p className="text-[9px] text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase">Civic Movement</p>
           </div>
         </div>
 
@@ -206,16 +206,16 @@ export default function DashboardLayout() {
           <div className="px-6 pt-2">
             <button 
               onClick={() => setIsShareModalOpen(true)}
-              className="w-full py-3 bg-primary text-white font-meta text-xs font-bold tracking-widest rounded-none hover:brightness-110 active:scale-95 transition-all shadow-md shadow-primary/20"
+              className="w-full h-14 bg-primary text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-primary/20"
             >
               Invite & Share
             </button>
-            <div className="mt-6 space-y-4">
+            <div className="mt-8 space-y-4 pl-2">
               <Link 
-                className={`flex items-center transition-colors text-sm font-semibold tracking-wider font-meta ${isActive('/dashboard/contact') ? 'text-emerald-700' : 'text-stone-500 hover:text-emerald-700'}`} 
+                className={`flex items-center transition-all font-black text-[10px] uppercase tracking-[0.2em] ${isActive('/dashboard/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`} 
                 to="/dashboard/contact"
               >
-                <span className="material-symbols-outlined text-sm mr-2" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>help</span>
+                <span className="material-symbols-outlined text-lg mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>help</span>
                 Support
               </Link>
             </div>
@@ -223,9 +223,9 @@ export default function DashboardLayout() {
             {/* Back to Landing Page */}
             <Link
               to="/"
-              className="mt-6 flex items-center gap-2 w-full py-2.5 px-3 rounded-none border border-stone-200 text-stone-500 hover:border-primary hover:text-primary transition-all text-xs font-meta font-bold tracking-widest group bg-white/50"
+              className="mt-8 flex items-center gap-3 w-full h-12 px-4 rounded-2xl border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-black text-[9px] uppercase tracking-widest group bg-white/50"
             >
-              <span className="material-symbols-outlined text-[16px] group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
+              <span className="material-symbols-outlined text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
               Back to Site
             </Link>
           </div>
@@ -233,17 +233,17 @@ export default function DashboardLayout() {
       </nav>
 
       {/* Main Content Canvas */}
-      <main className="md:ml-64 min-h-screen bg-off-white flex flex-col pt-16">
+      <main className="md:ml-64 min-h-screen bg-muted/10 flex flex-col pt-16">
 
         {/* ── Topbar ── fixed, clears the sidebar */}
-        <div className="fixed top-0 left-0 md:left-64 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <div className="fixed top-0 left-0 md:left-64 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-border/40 shadow-sm">
           <div className="flex items-center justify-between px-6 md:px-10 h-16">
 
             {/* Left: Hamburger (Mobile) + Breadcrumb */}
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden p-2 -ml-2 rounded-lg hover:bg-[var(--brand-light-gray)] text-stone-600"
+                className="md:hidden p-2 -ml-2 rounded-xl hover:bg-muted/10 text-on-surface/60"
               >
                 <span className="material-symbols-outlined text-[24px]">menu</span>
               </button>
@@ -252,10 +252,10 @@ export default function DashboardLayout() {
                   <img src="/logo.png" alt="The Base" className="h-6 w-6"  decoding="async" />
                   <span className="text-primary font-black text-xs tracking-tighter sm:hidden">The Base</span>
                 </Link>
-                <div className="hidden sm:flex items-center gap-2 text-[10px] text-stone-400 tracking-widest uppercase font-bold">
+                <div className="hidden sm:flex items-center gap-2 text-[9px] text-muted-foreground/40 tracking-[0.2em] uppercase font-black">
                   <span className="text-primary">The Base</span>
-                  <span className="text-stone-300">/</span>
-                  <span className="text-stone-900">{getPageTitle()}</span>
+                  <span className="text-muted-foreground/20">/</span>
+                  <span className="text-on-surface">{getPageTitle()}</span>
                 </div>
               </div>
           </div>
@@ -266,20 +266,20 @@ export default function DashboardLayout() {
               {/* Search */}
               <div className="relative hidden md:block">
                 <span
-                  className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-[18px]"
+                  className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface/30 text-[18px]"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}
                 >search</span>
                 <input
                   type="text"
-                  placeholder="Search…"
-                  className="pl-9 pr-4 py-1.5 text-sm bg-stone-100 border border-stone-200 rounded-none text-stone-600 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all w-48 focus:w-64"
+                  placeholder="Search Command..."
+                  className="pl-9 pr-4 py-2 text-[10px] font-black uppercase tracking-widest bg-muted/5 border border-border/40 rounded-xl text-on-surface placeholder-on-surface/20 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all w-48 focus:w-64"
                 />
               </div>
 
               {/* Notification Bell */}
-              <button className="relative p-2 rounded-full hover:bg-[var(--brand-light-gray)] transition-colors group">
+              <button className="relative p-2.5 rounded-xl hover:bg-muted/10 transition-all group">
                 <span
-                  className="material-symbols-outlined text-stone-500 group-hover:text-primary transition-colors text-[22px]"
+                  className="material-symbols-outlined text-on-surface/40 group-hover:text-primary transition-colors text-[22px]"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
                 >notifications</span>
                 {/* Unread badge */}
@@ -291,31 +291,31 @@ export default function DashboardLayout() {
               </button>
 
               {/* Divider */}
-              <div className="h-7 w-px bg-stone-200"></div>
+              <div className="h-7 w-px bg-border/20 mx-1"></div>
 
               {/* User Avatar + Name */}
-              <button className="flex items-center gap-3 group">
+              <button className="flex items-center gap-4 group">
                 {/* Avatar: real photo or initials fallback */}
-                <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all shadow-sm shrink-0">
+                <div className="w-10 h-10 rounded-2xl overflow-hidden ring-4 ring-primary/5 group-hover:ring-primary/20 transition-all shadow-2xl shrink-0">
                   {avatarUrl ? (
                     <img src={avatarUrl}
                       alt={userName}
                       className="w-full h-full object-cover"
                      decoding="async" />
                   ) : (
-                    <div className="w-full h-full bg-primary flex items-center justify-center text-white text-xs font-bold font-meta tracking-wider">
+                    <div className="w-full h-full bg-primary flex items-center justify-center text-white text-[10px] font-black tracking-widest">
                       {initials || 'M'}
                     </div>
                   )}
                 </div>
                 <div className="hidden lg:block text-left">
-                  <p className="text-sm font-bold text-on-surface leading-none mb-1">{userName}</p>
-                   <p className="text-[10px] text-accent font-bold tracking-widest uppercase mb-0">
-                    {userPlatform} {userRegNo && `· ${userRegNo}`} · Verified
+                  <p className="text-xs font-black text-on-surface leading-none mb-1 uppercase tracking-tighter">{userName}</p>
+                   <p className="text-[9px] text-accent font-black tracking-widest uppercase mb-0">
+                    {userPlatform} {userRegNo && `· ${userRegNo}`}
                   </p>
                 </div>
                 <span
-                  className="material-symbols-outlined text-stone-400 text-[18px] group-hover:text-primary transition-colors"
+                  className="material-symbols-outlined text-on-surface/20 text-[18px] group-hover:text-primary transition-colors"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}
                 >expand_more</span>
               </button>
@@ -328,13 +328,13 @@ export default function DashboardLayout() {
         </div>
 
         {/* Dashboard Footer */}
-        <footer className="mt-12 py-12 px-12 border-t border-stone-200 bg-stone-50">
-          <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-xs text-stone-500 mb-0 uppercase font-bold tracking-widest">© 2024 The Base Movement. Ghana First.</p>
-            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8">
-              <Link className="font-meta text-xs text-stone-400 hover:underline hover:text-emerald-600 transition-colors" to="/dashboard/privacy">Privacy Policy</Link>
-              <Link className="font-meta text-xs text-stone-400 hover:underline hover:text-emerald-600 transition-colors" to="/dashboard/terms">Terms of Service</Link>
-              <Link className="font-meta text-xs text-stone-400 hover:underline hover:text-emerald-600 transition-colors" to="/dashboard/contact">Contact Us</Link>
+        <footer className="mt-16 py-16 px-12 border-t border-border/10 bg-muted/5">
+          <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <p className="text-[10px] text-muted-foreground/40 mb-0 uppercase font-black tracking-[0.2em]">© 2024 The Base Movement. Ghana First.</p>
+            <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10">
+              <Link className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy</Link>
+              <Link className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms</Link>
+              <Link className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/contact">Support</Link>
             </div>
           </div>
         </footer>

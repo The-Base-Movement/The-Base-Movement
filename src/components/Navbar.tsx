@@ -55,56 +55,56 @@ export default function Navbar() {
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <header className="bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50">
-      <nav className="flex justify-between items-center max-w-[1280px] mx-auto px-8 h-20">
+    <header className="bg-white border-b border-border/40 sticky top-0 z-50">
+      <nav className="flex justify-between items-center max-w-[1440px] mx-auto px-8 h-20">
         <div className="flex items-center gap-4">
           <img alt="The Base Logo" className="h-10 w-10" src="/logo.png"  decoding="async" />
-          <Link to="/" className="text-emerald-900 dark:text-emerald-50 hover:opacity-80 transition-opacity mb-0">
-            <h1 className="text-xl mb-0">The Base</h1>
+          <Link to="/" className="text-on-surface hover:opacity-80 transition-opacity mb-0">
+            <h1 className="text-xl font-black uppercase tracking-tighter mb-0">The Base</h1>
           </Link>
         </div>
         
-        <div className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-tight">
+        <div className="hidden md:flex items-center space-x-10 text-[10px] font-black tracking-widest">
           <Link 
             to="/" 
-            className={`transition-colors duration-200 ${isActive('/') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
+            className={`transition-colors duration-200 ${isActive('/') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
           >
             Home
           </Link>
           <Link 
             to="/blog" 
-            className={`transition-colors duration-200 ${isActive('/blog') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
+            className={`transition-colors duration-200 ${isActive('/blog') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
           >
             Updates
           </Link>
           <Link 
             to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} 
-            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
           >
             The Plan
           </Link>
           <Link 
             to={isLoggedIn ? "/dashboard/store" : "/store"} 
-            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
           >
             Supplies
           </Link>
           <Link 
             to={isLoggedIn ? "/dashboard/donate" : "/donate"} 
-            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
           >
             Donate
           </Link>
           <Link 
             to={isLoggedIn ? "/dashboard/contact" : "/contact"} 
-            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-slate-500 dark:text-slate-400 hover:text-primary'}`}
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
           >
             Contact
           </Link>
           {isLoggedIn && (
             <Link 
               to="/dashboard" 
-              className={`transition-colors duration-200 font-bold ${isActive('/dashboard') ? 'text-primary dark:text-emerald-400 border-b-2 border-primary dark:border-emerald-400 pb-1' : 'text-primary hover:text-emerald-700'}`}
+              className={`transition-colors duration-200 ${isActive('/dashboard') ? 'text-primary' : 'text-primary/60 hover:text-primary'}`}
             >
               Dashboard
             </Link>
@@ -122,21 +122,21 @@ export default function Navbar() {
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 shadow-xl py-2 z-50">
-                  <div className="px-4 py-2 border-b border-slate-100 mb-1">
-                    <p className="text-sm font-bold text-charcoal-dark mb-0">Member Portal</p>
-                    <p className="text-xs text-slate-500 mb-0 font-bold tracking-widest">Active</p>
+                <div className="absolute right-0 mt-3 w-64 bg-white border border-border/40 shadow-2xl rounded-2xl py-3 z-50">
+                  <div className="px-5 py-3 border-b border-border/10 mb-2">
+                    <p className="text-xs font-black text-on-surface tracking-tighter mb-0 leading-none">Member portal</p>
+                    <p className="text-[9px] text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase leading-none">Active patriot</p>
                   </div>
-                  <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal-dark hover:bg-slate-50 font-meta transition-colors">
+                  <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black tracking-widest text-on-surface hover:bg-muted/5 transition-colors">
                     <User className="w-4 h-4 text-primary" /> Dashboard
                   </Link>
-                  <Link to="/settings" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal-dark hover:bg-slate-50 font-meta transition-colors">
-                    <Settings className="w-4 h-4 text-slate-400" /> Profile Settings
+                  <Link to="/settings" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black tracking-widest text-on-surface hover:bg-muted/5 transition-colors">
+                    <Settings className="w-4 h-4 text-on-surface/20" /> Settings
                   </Link>
-                  <div className="border-t border-slate-100 mt-1 pt-1">
+                  <div className="border-t border-border/10 mt-2 pt-2">
                     <button 
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-red-50 font-meta transition-colors"
+                      className="flex items-center gap-3 w-full text-left px-5 py-3 text-[10px] font-black tracking-widest text-destructive hover:bg-destructive/5 transition-colors"
                     >
                       <LogOut className="w-4 h-4" /> Logout
                     </button>
@@ -146,10 +146,10 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link to="/login" className="px-5 py-2 border border-primary text-primary text-sm font-bold tracking-widest hover:bg-surface-warm transition-all active:scale-95">
+              <Link to="/login" className="px-6 h-11 flex items-center justify-center border border-primary text-primary text-[10px] font-black tracking-widest hover:bg-primary/5 transition-all active:scale-95 rounded-xl">
                 Login
               </Link>
-              <Link to="/register" className="px-5 py-2 bg-primary text-white text-sm font-bold tracking-widest hover:opacity-90 transition-all active:scale-95">
+              <Link to="/register" className="px-6 h-11 flex items-center justify-center bg-primary text-white text-[10px] font-black tracking-widest hover:brightness-110 transition-all active:scale-95 rounded-xl shadow-lg shadow-primary/20">
                 Register
               </Link>
             </>
@@ -158,7 +158,7 @@ export default function Navbar() {
 
         {/* Mobile menu toggle */}
         <div className="md:hidden flex items-center">
-          <button onClick={() => setIsOpen(!isOpen)} className="text-slate-500 hover:text-emerald-800">
+          <button onClick={() => setIsOpen(!isOpen)} className="text-on-surface/40 hover:text-primary transition-colors p-2">
             <span className="material-symbols-outlined text-3xl">{isOpen ? 'close' : 'menu'}</span>
           </button>
         </div>
@@ -166,24 +166,25 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-lg px-4 py-4 space-y-4 font-meta">
-          <Link to="/" className={`block py-2 ${isActive('/') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Home</Link>
-          <Link to="/blog" className={`block py-2 ${isActive('/blog') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Updates</Link>
-          <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>The Plan</Link>
-          <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Supplies</Link>
-          <Link to={isLoggedIn ? "/dashboard/donate" : "/donate"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Donate</Link>
-          <Link to={isLoggedIn ? "/dashboard/contact" : "/contact"} className={`block py-2 ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'text-emerald-800 font-bold' : 'text-slate-600'}`}>Contact</Link>
-          <div className="pt-4 flex flex-col gap-3 border-t border-gray-100">
+        <div className="md:hidden bg-white border-t border-border/10 shadow-2xl px-6 py-8 space-y-2">
+          <Link to="/" className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive('/') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Home</Link>
+          <Link to="/blog" className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive('/blog') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Updates</Link>
+          <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>The Plan</Link>
+          <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Supplies</Link>
+          <Link to={isLoggedIn ? "/dashboard/donate" : "/donate"} className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Donate</Link>
+          <Link to={isLoggedIn ? "/dashboard/contact" : "/contact"} className={`block py-3 px-4 rounded-xl text-[10px] font-black tracking-widest ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Contact</Link>
+          
+          <div className="pt-8 flex flex-col gap-3 border-t border-border/10 mt-4">
             {isLoggedIn ? (
               <>
-                <Link to="/dashboard" className="flex items-center gap-2 py-2 text-emerald-800 font-bold"><User className="w-4 h-4"/> Dashboard</Link>
-                <Link to="/settings" className="flex items-center gap-2 py-2 text-slate-600"><Settings className="w-4 h-4"/> Profile Settings</Link>
-                <button onClick={handleLogout} className="flex items-center gap-2 py-2 text-[var(--brand-red)] font-bold text-left"><LogOut className="w-4 h-4"/> Logout</button>
+                <Link to="/dashboard" className="flex items-center gap-3 py-4 px-4 bg-primary/5 text-primary rounded-xl text-[10px] font-black tracking-widest"><User className="w-4 h-4"/> Dashboard</Link>
+                <Link to="/settings" className="flex items-center gap-3 py-4 px-4 text-on-surface/60 rounded-xl text-[10px] font-black tracking-widest"><Settings className="w-4 h-4"/> Settings</Link>
+                <button onClick={handleLogout} className="flex items-center gap-3 py-4 px-4 text-destructive rounded-xl text-[10px] font-black tracking-widest text-left"><LogOut className="w-4 h-4"/> Logout</button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-center px-6 py-3 border border-[var(--brand-green)] text-[var(--brand-green)] font-meta transition-all active:scale-95">Login</Link>
-                <Link to="/register" className="text-center px-6 py-3 bg-[var(--brand-green)] text-white font-meta transition-all active:scale-95">Register</Link>
+                <Link to="/login" className="text-center px-6 py-4 border border-primary text-primary rounded-xl text-[10px] font-black tracking-widest transition-all active:scale-95">Login</Link>
+                <Link to="/register" className="text-center px-6 py-4 bg-primary text-white rounded-xl text-[10px] font-black tracking-widest transition-all active:scale-95 shadow-lg shadow-primary/20">Register</Link>
               </>
             )}
           </div>

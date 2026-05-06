@@ -50,9 +50,9 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
   }
 
   return (
-    <div className="relative w-full aspect-[3/4] bg-stone-50/50 flex items-center justify-center p-8 overflow-hidden group">
+    <div className="relative w-full aspect-[3/4] bg-muted/10 flex items-center justify-center p-8 overflow-hidden group rounded-3xl border border-border/40">
       {/* Map Background Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--brand-gold)_0%,_transparent_70%)] opacity-5 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_hsl(var(--accent))_0%,_transparent_70%)] opacity-5 pointer-events-none" />
       
       <TooltipProvider>
         <svg 
@@ -73,7 +73,7 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
                     whileHover={{ 
                       scale: 1.05, 
                       strokeWidth: 2, 
-                      stroke: 'var(--brand-gold)',
+                      stroke: 'hsl(var(--accent))',
                       zIndex: 50
                     }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -85,30 +85,30 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
                     onClick={() => onRegionClick?.(path.name)}
                   />
                 </TooltipTrigger>
-                <TooltipContent className="rounded-none border-stone-200 bg-[var(--brand-black)] text-white p-4 shadow-2xl">
-                  <div className="space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--brand-red)]">{path.name} Region</p>
+                <TooltipContent className="rounded-2xl border-border/10 bg-on-surface text-white p-5 shadow-2xl backdrop-blur-xl">
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive">{path.name} Region</p>
                     <div className="flex justify-between gap-8 items-end">
                       <div>
                         <p className="text-2xl font-black font-meta tracking-tighter">
                           {stat ? stat.memberCount.toLocaleString() : '0'}
                         </p>
-                        <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Total Members</p>
+                        <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">Total Members</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-black text-stone-300">
+                        <p className="text-lg font-black text-white/80">
                           {stat ? stat.chapters : '0'}
                         </p>
-                        <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">Chapters</p>
+                        <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">Chapters</p>
                       </div>
                     </div>
                     {stat && (
                       <div className="pt-2 mt-2 border-t border-white/10 flex items-center justify-between">
-                        <span className="text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 bg-white/10">
-                          {stat.performance} Impact
-                        </span>
-                        <span className="text-[8px] font-bold text-stone-500 uppercase">Click for details</span>
-                      </div>
+                          <span className="text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 bg-white/10 rounded">
+                            {stat.performance} Impact
+                          </span>
+                          <span className="text-[8px] font-bold text-white/20 uppercase">Click for details</span>
+                        </div>
                     )}
                   </div>
                 </TooltipContent>
@@ -119,20 +119,20 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
       </TooltipProvider>
 
       {/* Map Legend */}
-      <div className="absolute bottom-6 left-6 space-y-3 bg-white/80 backdrop-blur-md p-4 border border-stone-100 shadow-xl">
-        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-stone-400 mb-2">Expansion Density</p>
+      <div className="absolute bottom-6 left-6 space-y-3 bg-white/80 backdrop-blur-md p-5 border border-border/10 shadow-xl rounded-2xl">
+        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface/40 mb-2">Expansion Density</p>
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex gap-1">
               {[0.2, 0.4, 0.6, 0.8, 1.0].map((op, i) => (
                 <div 
                   key={i} 
-                  className="w-4 h-4" 
-                  style={{ backgroundColor: 'var(--brand-red)', opacity: op }}
+                  className="w-4 h-4 rounded-sm" 
+                  style={{ backgroundColor: 'hsl(var(--destructive))', opacity: op }}
                 />
               ))}
             </div>
-            <div className="flex justify-between text-[8px] font-bold text-stone-400 uppercase tracking-tighter mt-1">
+            <div className="flex justify-between text-[8px] font-black text-on-surface/40 uppercase tracking-widest mt-1">
               <span>Low</span>
               <span>High</span>
             </div>
@@ -141,10 +141,10 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
       </div>
 
       {/* Compass / Branding */}
-      <div className="absolute top-6 right-6 opacity-20 pointer-events-none">
-        <div className="w-12 h-12 border border-stone-300 rounded-full flex items-center justify-center relative">
-          <div className="absolute top-0 w-px h-2 bg-stone-400" />
-          <span className="text-[8px] font-black text-stone-400">N</span>
+      <div className="absolute top-8 right-8 opacity-20 pointer-events-none">
+        <div className="w-12 h-12 border border-on-surface/20 rounded-full flex items-center justify-center relative">
+          <div className="absolute top-0 w-px h-2 bg-on-surface/40" />
+          <span className="text-[8px] font-black text-on-surface/40">N</span>
         </div>
       </div>
     </div>

@@ -124,17 +124,17 @@ export default function MediaLibrary() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-            <ImageIcon className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <ImageIcon className="w-8 h-8 text-on-surface" />
             Media library
           </h1>
-          <p className="text-stone-500 text-sm mt-1">Central repository for movement assets and deployment media.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Central repository for movement assets and deployment media.</p>
         </div>
         
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="rounded-xl border-stone-200 text-stone-600 text-[10px] px-6 font-bold hover:bg-stone-50 shadow-sm h-10 transition-all"
+            className="rounded-xl border-border/60 text-on-surface/80 text-[10px] px-6 font-bold hover:bg-muted/5 shadow-sm h-10 transition-all"
             onClick={loadFiles}
           >
             Refresh library
@@ -150,7 +150,7 @@ export default function MediaLibrary() {
               disabled={isUploading}
             />
             <Button 
-              className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all flex items-center gap-2"
+              className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
               asChild
               disabled={isUploading}
             >
@@ -174,7 +174,7 @@ export default function MediaLibrary() {
           <select
             value={activeFolder}
             onChange={(e) => setActiveFolder(e.target.value)}
-            className="w-full h-12 bg-white border border-stone-200 rounded-xl px-4 text-sm font-bold focus:border-stone-900 outline-none shadow-sm"
+            className="w-full h-12 bg-white border border-border/60 rounded-xl px-4 text-sm font-bold focus:border-on-surface outline-none shadow-sm"
           >
             {folders.map((folder) => (
               <option key={folder.id} value={folder.id}>
@@ -186,9 +186,9 @@ export default function MediaLibrary() {
 
         {/* Sidebar - Folders (Desktop Only) */}
         <div className="hidden lg:block space-y-6">
-          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-stone-100 bg-stone-50">
-              <h3 className="font-bold text-stone-900 text-xs normal-case">Asset categories</h3>
+          <Card className="rounded-xl border-border/60 shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-border/10 bg-muted/5">
+              <h3 className="font-bold text-on-surface text-xs normal-case">Asset categories</h3>
             </div>
             <CardContent className="p-2">
               <div className="space-y-1">
@@ -199,11 +199,11 @@ export default function MediaLibrary() {
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
                       activeFolder === folder.id 
-                        ? "bg-stone-900 text-white shadow-md" 
-                        : "text-stone-600 hover:bg-stone-50 hover:text-stone-900"
+                        ? "bg-on-surface text-white shadow-md" 
+                        : "text-on-surface/60 hover:bg-muted/5 hover:text-on-surface"
                     )}
                   >
-                    <folder.icon className={cn("w-4 h-4", activeFolder === folder.id ? "text-emerald-400" : "text-stone-400")} />
+                    <folder.icon className={cn("w-4 h-4", activeFolder === folder.id ? "text-primary" : "text-muted-foreground/40")} />
                     {folder.label}
                   </button>
                 ))}
@@ -216,30 +216,30 @@ export default function MediaLibrary() {
         <div className="lg:col-span-3 space-y-6">
           <div className="flex items-center gap-4">
             <div className="relative flex-1 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 group-focus-within:text-stone-900 transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-on-surface transition-colors" />
               <Input 
                 placeholder="Search your assets..." 
-                className="pl-12 h-12 rounded-xl border-stone-200 focus:ring-0 focus:border-stone-400 transition-all bg-white shadow-sm"
+                className="pl-12 h-12 rounded-xl border-border/60 focus:ring-0 focus:border-on-surface transition-all bg-white shadow-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
 
-          <Card className="rounded-2xl border-stone-200 shadow-sm min-h-[500px] overflow-hidden bg-white">
+          <Card className="rounded-2xl border-border/60 shadow-sm min-h-[500px] overflow-hidden bg-white">
             <CardContent className="p-8">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-[400px] space-y-4">
-                  <div className="w-10 h-10 border-3 border-stone-100 border-t-stone-900 rounded-full animate-spin" />
-                  <p className="text-stone-400 text-sm font-medium">Scanning repository...</p>
+                  <div className="w-10 h-10 border-3 border-border/10 border-t-on-surface rounded-full animate-spin" />
+                  <p className="text-muted-foreground/40 text-sm font-medium">Scanning repository...</p>
                 </div>
               ) : filteredFiles.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-[400px] space-y-4 text-center">
-                  <div className="w-16 h-16 rounded-3xl bg-stone-50 flex items-center justify-center mb-2">
-                    <ImageIcon className="w-8 h-8 text-stone-200" />
+                  <div className="w-16 h-16 rounded-3xl bg-muted/5 flex items-center justify-center mb-2">
+                    <ImageIcon className="w-8 h-8 text-muted-foreground/20" />
                   </div>
-                  <h3 className="font-bold text-stone-900 text-lg">No assets found</h3>
-                  <p className="text-stone-500 text-sm max-w-xs">
+                  <h3 className="font-bold text-on-surface text-lg">No assets found</h3>
+                  <p className="text-muted-foreground/80 text-sm max-w-xs">
                     {searchQuery 
                       ? `No results match "${searchQuery}". Try a different term.` 
                       : `Your ${activeFolder.replace('-', ' ')} folder is currently empty.`}
@@ -258,7 +258,7 @@ export default function MediaLibrary() {
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                   {filteredFiles.map((url, idx) => (
                     <div key={idx} className="group relative">
-                      <div className="aspect-square rounded-xl overflow-hidden bg-stone-50 border border-stone-100 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-1">
+                      <div className="aspect-square rounded-xl overflow-hidden bg-muted/5 border border-border/10 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-1">
                         <img src={url} 
                           alt="Media asset" 
                           className="w-full h-full object-cover"
@@ -267,15 +267,15 @@ export default function MediaLibrary() {
                           <Button 
                             size="icon" 
                             variant="secondary" 
-                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-white text-stone-900 shadow-xl"
+                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-white text-on-surface shadow-xl"
                             onClick={() => copyToClipboard(url)}
                           >
-                            {copiedUrl === url ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                            {copiedUrl === url ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
                           </Button>
                           <Button 
                             size="icon" 
                             variant="secondary" 
-                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-white text-stone-900 shadow-xl"
+                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-white text-on-surface shadow-xl"
                             asChild
                           >
                             <a href={url} target="_blank" rel="noopener noreferrer">
@@ -285,7 +285,7 @@ export default function MediaLibrary() {
                           <Button 
                             size="icon" 
                             variant="secondary" 
-                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-red-50 text-stone-900 hover:text-red-600 shadow-xl"
+                            className="h-9 w-9 rounded-lg bg-white/90 hover:bg-destructive/10 text-on-surface hover:text-destructive shadow-xl"
                             onClick={() => setAssetToDelete(url)}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -293,10 +293,10 @@ export default function MediaLibrary() {
                         </div>
                       </div>
                       <div className="mt-2 px-1">
-                        <p className="text-[10px] font-bold text-stone-900 truncate">
+                        <p className="text-[10px] font-bold text-on-surface truncate">
                           {url.split('/').pop()}
                         </p>
-                        <p className="text-[9px] text-stone-400 font-medium normal-case mt-0.5">
+                        <p className="text-[9px] text-muted-foreground/40 font-medium normal-case mt-0.5">
                           {activeFolder.replace('-', ' ')}
                         </p>
                       </div>
@@ -308,27 +308,27 @@ export default function MediaLibrary() {
           </Card>
 
           {/* Storage Usage Section (Moved to Bottom) */}
-          <Card className="rounded-2xl border-stone-200 shadow-sm bg-stone-900 text-white overflow-hidden p-8">
+          <Card className="rounded-2xl border-border/60 shadow-sm bg-on-surface text-white overflow-hidden p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
               <div className="flex items-center gap-6">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center shrink-0">
-                  <Filter className="w-7 h-7 text-emerald-400" />
+                <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0">
+                  <Filter className="w-7 h-7 text-primary" />
                 </div>
                 <div>
                   <h4 className="font-bold text-lg">Cloud storage intelligence</h4>
-                  <p className="text-xs text-stone-400 normal-case mt-1">Real-time usage monitoring for Supabase storage buckets.</p>
+                  <p className="text-xs text-white/60 normal-case mt-1">Real-time usage monitoring for Supabase storage buckets.</p>
                 </div>
               </div>
               
               <div className="flex-1 max-w-md space-y-4">
-                <div className="flex justify-between text-[11px] font-bold text-stone-400 uppercase tracking-widest">
+                <div className="flex justify-between text-[11px] font-bold text-white/40 uppercase tracking-widest">
                   <span>Capacity utilization</span>
-                  <span className="text-emerald-400">12%</span>
+                  <span className="text-primary">12%</span>
                 </div>
                 <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 w-[12%] shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                  <div className="h-full bg-primary w-[12%] shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" />
                 </div>
-                <div className="flex justify-between text-[10px] font-bold text-stone-500 uppercase tracking-tight">
+                <div className="flex justify-between text-[10px] font-bold text-white/20 uppercase tracking-tight">
                   <span className="normal-case">0.6 GB consumed</span>
                   <span className="normal-case">5.0 GB limit</span>
                 </div>

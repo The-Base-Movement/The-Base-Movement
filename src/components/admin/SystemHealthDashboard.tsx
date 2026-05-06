@@ -55,20 +55,20 @@ export function SystemHealthDashboard() {
   }
 
   const services = [
-    { name: 'Neon PostgreSQL', status: 'Healthy', latency: '42ms', uptime: '99.99%', icon: Database, color: 'text-emerald-500' },
-    { name: 'Supabase Data API', status: 'Healthy', latency: '65ms', uptime: '99.98%', icon: Zap, color: 'text-[var(--brand-gold)]' },
-    { name: 'Neon Auth (Edge)', status: 'Healthy', latency: '28ms', uptime: '100%', icon: ShieldCheck, color: 'text-blue-500' },
-    { name: 'Image Processing (CDN)', status: 'Optimized', latency: '120ms', uptime: '99.95%', icon: Globe, color: 'text-[var(--brand-red)]' },
+    { name: 'Neon PostgreSQL', status: 'Healthy', latency: '42ms', uptime: '99.99%', icon: Database, color: 'text-primary' },
+    { name: 'Supabase Data API', status: 'Healthy', latency: '65ms', uptime: '99.98%', icon: Zap, color: 'text-accent' },
+    { name: 'Neon Auth (Edge)', status: 'Healthy', latency: '28ms', uptime: '100%', icon: ShieldCheck, color: 'text-primary' },
+    { name: 'Image Processing (CDN)', status: 'Optimized', latency: '120ms', uptime: '99.95%', icon: Globe, color: 'text-accent' },
   ]
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Real-time Latency Monitor */}
-      <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
-        <CardHeader className="p-8 border-b border-stone-100 flex flex-row items-center justify-between">
+      <Card className="rounded-3xl border-border/40 shadow-sm overflow-hidden bg-white">
+        <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-lg font-black font-meta uppercase tracking-tight flex items-center gap-2">
-              <Activity className="w-5 h-5 text-[var(--brand-red)]" />
+              <Activity className="w-5 h-5 text-destructive" />
               Real-time API Latency
             </CardTitle>
             <CardDescription className="text-xs mt-1">Live telemetry monitoring of global data engine response times.</CardDescription>
@@ -77,7 +77,7 @@ export function SystemHealthDashboard() {
             variant="ghost" 
             size="sm" 
             onClick={handleManualRefresh}
-            className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[var(--brand-black)]"
+            className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-on-surface"
           >
             <RefreshCw className={cn("w-3.5 h-3.5 mr-2", isRefreshing && "animate-spin")} />
             Recalibrate Streams
@@ -88,29 +88,29 @@ export function SystemHealthDashboard() {
             <AreaChart data={latencyData}>
               <defs>
                 <linearGradient id="colorLatency" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--brand-red)" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="var(--brand-red)" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.1}/>
+                  <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border)/0.4)" />
               <XAxis 
                 dataKey="time" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 9, fontWeight: 700, fill: '#a8a29e' }}
+                tick={{ fontSize: 9, fontWeight: 700, fill: 'hsl(var(--on-surface)/0.4)' }}
                 dy={10}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 9, fontWeight: 700, fill: '#a8a29e' }}
+                tick={{ fontSize: 9, fontWeight: 700, fill: 'hsl(var(--on-surface)/0.4)' }}
                 domain={[0, 200]}
               />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: 'var(--brand-black)', 
+                  backgroundColor: 'hsl(var(--on-surface))', 
                   border: 'none', 
-                  borderRadius: '0', 
+                  borderRadius: '12px', 
                   color: 'white',
                   fontSize: '9px',
                   fontWeight: '900',
@@ -121,7 +121,7 @@ export function SystemHealthDashboard() {
               <Area 
                 type="monotone" 
                 dataKey="value" 
-                stroke="var(--brand-red)" 
+                stroke="hsl(var(--destructive))" 
                 strokeWidth={2}
                 fillOpacity={1} 
                 fill="url(#colorLatency)" 
@@ -135,25 +135,25 @@ export function SystemHealthDashboard() {
       {/* Infrastructure Nodes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {services.map((service) => (
-          <Card key={service.name} className="rounded-none border-stone-200 shadow-sm group hover:border-[var(--brand-black)] transition-all">
+          <Card key={service.name} className="rounded-2xl border-border/40 shadow-sm group hover:border-on-surface transition-all overflow-hidden">
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <div className={cn("w-10 h-10 flex items-center justify-center bg-stone-50", service.color)}>
+                <div className={cn("w-10 h-10 flex items-center justify-center bg-muted/10 rounded-xl", service.color)}>
                   <service.icon className="w-5 h-5" />
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500 flex items-center gap-1 justify-end">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  <p className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1 justify-end">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
                     {service.status}
                   </p>
-                  <p className="text-[8px] font-bold text-stone-400 uppercase mt-0.5">{service.uptime} Uptime</p>
+                  <p className="text-[8px] font-bold text-muted-foreground/40 uppercase mt-0.5">{service.uptime} Uptime</p>
                 </div>
               </div>
-              <h4 className="text-[10px] font-black uppercase tracking-tight text-stone-900 mb-1">{service.name}</h4>
+              <h4 className="text-[10px] font-black uppercase tracking-tight text-on-surface mb-1">{service.name}</h4>
               <div className="flex items-end justify-between">
-                <p className="text-2xl font-black font-meta tracking-tighter text-stone-900">{service.latency}</p>
-                <div className="w-16 h-1 bg-stone-100 overflow-hidden">
-                  <div className="h-full bg-stone-900 w-3/4 animate-shimmer" />
+                <p className="text-2xl font-black font-meta tracking-tighter text-on-surface">{service.latency}</p>
+                <div className="w-16 h-1 bg-muted/20 overflow-hidden rounded-full">
+                  <div className="h-full bg-on-surface w-3/4 animate-shimmer" />
                 </div>
               </div>
             </CardContent>
@@ -163,25 +163,25 @@ export function SystemHealthDashboard() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* Hardware & Compute Telemetry */}
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
-          <CardHeader className="p-8 border-b border-stone-100">
-            <CardTitle className="text-xs font-black uppercase tracking-widest text-stone-400 flex items-center gap-2">
+        <Card className="rounded-3xl border-border/40 shadow-sm overflow-hidden bg-white">
+          <CardHeader className="p-8 border-b border-border/10">
+            <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 flex items-center gap-2">
               <Cpu className="w-4 h-4" /> Compute Resource Utilization
             </CardTitle>
           </CardHeader>
           <CardContent className="p-8 space-y-6">
             {[
-              { label: 'Database Compute (CU)', value: 42, color: 'bg-[var(--brand-gold)]' },
-              { label: 'Edge Function Execution', value: 18, color: 'bg-blue-500' },
-              { label: 'Memory Threshold (Cache)', value: 65, color: 'bg-[var(--brand-red)]' },
-              { label: 'Storage Bandwidth', value: 24, color: 'bg-[var(--brand-black)]' },
+              { label: 'Database Compute (CU)', value: 42, color: 'bg-accent' },
+              { label: 'Edge Function Execution', value: 18, color: 'bg-primary' },
+              { label: 'Memory Threshold (Cache)', value: 65, color: 'bg-destructive' },
+              { label: 'Storage Bandwidth', value: 24, color: 'bg-on-surface' },
             ].map((stat) => (
               <div key={stat.label} className="space-y-2">
                 <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
-                  <span className="text-stone-600">{stat.label}</span>
-                  <span className="text-stone-900">{stat.value}%</span>
+                  <span className="text-on-surface/60">{stat.label}</span>
+                  <span className="text-on-surface">{stat.value}%</span>
                 </div>
-                <div className="h-1.5 w-full bg-stone-50 overflow-hidden">
+                <div className="h-1.5 w-full bg-muted/10 overflow-hidden rounded-full">
                   <div 
                     className={cn("h-full transition-all duration-1000", stat.color)}
                     style={{ width: `${stat.value}%` }}
@@ -193,9 +193,9 @@ export function SystemHealthDashboard() {
         </Card>
 
         {/* Global Traffic Distribution */}
-        <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
-          <CardHeader className="p-8 border-b border-stone-100">
-            <CardTitle className="text-xs font-black uppercase tracking-widest text-stone-400 flex items-center gap-2">
+        <Card className="rounded-3xl border-border/40 shadow-sm overflow-hidden bg-white">
+          <CardHeader className="p-8 border-b border-border/10">
+            <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground/40 flex items-center gap-2">
               <BarChart3 className="w-4 h-4" /> Global Throughput Analysis
             </CardTitle>
           </CardHeader>
@@ -203,26 +203,26 @@ export function SystemHealthDashboard() {
             <div className="flex items-center justify-center h-[200px]">
               <div className="text-center space-y-4">
                 <div className="relative inline-block">
-                  <div className="w-32 h-32 rounded-full border-8 border-stone-100" />
-                  <div className="absolute inset-0 w-32 h-32 rounded-full border-8 border-[var(--brand-gold)] border-t-transparent animate-spin" />
+                  <div className="w-32 h-32 rounded-full border-8 border-muted/10" />
+                  <div className="absolute inset-0 w-32 h-32 rounded-full border-8 border-accent border-t-transparent animate-spin" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <p className="text-2xl font-black font-meta">2.4k</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-stone-900">Requests Per Minute</p>
-                  <p className="text-[8px] font-bold text-stone-400 uppercase mt-1">Normal Operating Range</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-on-surface">Requests Per Minute</p>
+                  <p className="text-[8px] font-bold text-muted-foreground/40 uppercase mt-1">Normal Operating Range</p>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-stone-50">
+            <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-border/10">
               <div className="text-center">
                 <p className="text-lg font-black font-meta">0.02%</p>
-                <p className="text-[8px] font-black uppercase tracking-widest text-stone-400">Error Rate</p>
+                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Error Rate</p>
               </div>
               <div className="text-center">
                 <p className="text-lg font-black font-meta">14.2 GB</p>
-                <p className="text-[8px] font-black uppercase tracking-widest text-stone-400">Daily Egress</p>
+                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Daily Egress</p>
               </div>
             </div>
           </CardContent>
@@ -230,19 +230,19 @@ export function SystemHealthDashboard() {
       </div>
 
       {/* Infrastructure Incidents */}
-      <Card className="rounded-none border-stone-200 shadow-sm bg-stone-950 text-white overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--brand-red)] opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
+      <Card className="rounded-3xl border-border/40 shadow-sm bg-on-surface text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-destructive opacity-10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
         <CardContent className="p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
           <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-white/5 border border-white/10 flex items-center justify-center">
-              <ShieldCheck className="w-8 h-8 text-emerald-500" />
+            <div className="w-16 h-16 bg-white/5 border border-white/10 flex items-center justify-center rounded-2xl rotate-3">
+              <ShieldCheck className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h3 className="text-2xl font-black font-meta uppercase tracking-tight">Intelligence Integrity Verified</h3>
-              <p className="text-stone-400 text-xs mt-1">No infrastructure incidents detected in the last 72 hours. All systems optimal.</p>
+              <h3 className="text-2xl font-black font-meta uppercase tracking-tight leading-tight">Intelligence Integrity Verified</h3>
+              <p className="text-white/40 text-xs mt-1">No infrastructure incidents detected in the last 72 hours. All systems optimal.</p>
             </div>
           </div>
-          <Button variant="outline" className="h-12 border-white/20 text-white hover:bg-white hover:text-stone-950 transition-all rounded-none text-[10px] font-black uppercase tracking-widest px-8">
+          <Button variant="outline" className="h-12 border-white/20 text-white hover:bg-white hover:text-on-surface transition-all rounded-xl text-[10px] font-black uppercase tracking-widest px-8">
             Access Security Logs
           </Button>
         </CardContent>

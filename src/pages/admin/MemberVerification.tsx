@@ -40,11 +40,11 @@ import type { RegistrationSubmission } from '@/components/admin/RegistrationForm
 // PendingVerification type imported from adminService
 
 const statusColor = (status: PendingVerification['status']) => {
-  if (status === 'In Review')  return 'bg-amber-500/10 text-amber-600 border-amber-200'
-  if (status === 'Processing') return 'bg-stone-500/10 text-stone-700 border-stone-200'
-  if (status === 'Flagged')    return 'bg-red-500/10 text-red-600 border-red-200'
-  if (status === 'Approved')   return 'bg-emerald-500/10 text-emerald-600 border-emerald-200'
-  if (status === 'Rejected')   return 'bg-red-900/10 text-red-800 border-red-300'
+  if (status === 'In Review')  return 'bg-accent/10 text-accent border-accent/20'
+  if (status === 'Processing') return 'bg-muted/30 text-on-surface/80 border-border/60'
+  if (status === 'Flagged')    return 'bg-destructive/10 text-destructive border-destructive/20'
+  if (status === 'Approved')   return 'bg-primary/10 text-primary border-primary/20'
+  if (status === 'Rejected')   return 'bg-destructive/20 text-destructive border-destructive/30'
   return ''
 }
 
@@ -174,26 +174,26 @@ export default function MemberVerification() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-            <ShieldCheck className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <ShieldCheck className="w-8 h-8 text-on-surface" />
             Member verification
           </h1>
-          <p className="text-stone-500 text-sm mt-1">Review and approve new member registrations for movement security.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Review and approve new member registrations for movement security.</p>
         </div>
         <div className="flex items-center gap-4">
           {pendingCount > 0 && (
-            <div className="hidden md:flex px-4 py-2 bg-amber-50 border border-amber-100 items-center gap-2 rounded-xl shadow-sm">
-              <AlertCircle className="w-4 h-4 text-amber-500" />
+            <div className="hidden md:flex px-4 py-2 bg-accent/5 border border-accent/20 items-center gap-2 rounded-xl shadow-sm">
+              <AlertCircle className="w-4 h-4 text-accent" />
               <div className="text-right">
-                <span className="text-[9px] font-bold text-amber-600 uppercase tracking-wider block">Pending</span>
-                <span className="text-sm font-bold text-amber-700 tracking-tight">
+                <span className="text-[9px] font-bold text-accent uppercase tracking-wider block">Pending</span>
+                <span className="text-sm font-bold text-on-surface tracking-tight">
                   {pendingCount} review{pendingCount !== 1 ? 's' : ''}
                 </span>
               </div>
             </div>
           )}
           <Button
-            className="rounded-xl bg-stone-900 text-white text-[10px] px-6 font-bold hover:bg-stone-800 shadow-sm h-10 transition-all flex items-center gap-2"
+            className="rounded-xl bg-on-surface text-white text-[10px] px-6 font-bold hover:bg-on-surface/90 shadow-sm h-10 transition-all flex items-center gap-2"
             onClick={() => setShowRegForm(true)}
           >
             <UserPlus className="w-3.5 h-3.5" /> Register new member
@@ -206,23 +206,23 @@ export default function MemberVerification() {
 
         {/* ── Left: Pending List ──────────────────────────────────────────── */}
         <div className="xl:col-span-2 space-y-6">
-          <Card className="rounded-xl border-stone-200 shadow-sm overflow-hidden bg-white">
-            <CardHeader className="p-6 border-b border-stone-100 bg-stone-50/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <Card className="rounded-xl border-border/40 shadow-sm overflow-hidden bg-white">
+            <CardHeader className="p-6 border-b border-border/40 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
                 <Input
                   value={search}
                   onChange={e => handleSearch(e.target.value)}
                   placeholder="Search by name, ID, region..."
-                  className="pl-9 h-9 text-xs rounded-lg border-stone-200 shadow-sm"
+                  className="pl-9 h-9 text-xs rounded-lg border-border/60 shadow-sm focus:ring-on-surface/20"
                 />
               </div>
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
                 <select
                   value={statusFilter}
                   onChange={e => handleFilter(e.target.value as PendingVerification['status'] | 'All')}
-                  className="h-9 pl-9 pr-8 text-[9px] font-bold rounded-lg border border-stone-200 bg-white text-stone-700 focus:outline-none focus:border-stone-400 appearance-none cursor-pointer transition-colors shadow-sm normal-case"
+                  className="h-9 pl-9 pr-8 text-[9px] font-bold rounded-lg border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:border-on-surface appearance-none cursor-pointer transition-colors shadow-sm normal-case"
                 >
                   {STATUS_OPTIONS.map(s => (
                     <option key={s} value={s}>{s === 'All' ? 'All statuses' : s}</option>
@@ -233,23 +233,23 @@ export default function MemberVerification() {
             <CardContent className="p-0">
               {loading ? (
                 <div className="py-24 flex flex-col items-center justify-center gap-4">
-                  <Loader2 className="w-8 h-8 text-stone-900 animate-spin" />
-                  <p className="text-[10px] font-bold text-stone-400 normal-case">Fetching identity files...</p>
+                  <Loader2 className="w-8 h-8 text-on-surface animate-spin" />
+                  <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Fetching identity files...</p>
                 </div>
               ) : filtered.length === 0 ? (
-                <div className="py-12 text-center text-stone-400 text-xs font-bold normal-case">
+                <div className="py-12 text-center text-muted-foreground/40 text-xs font-bold normal-case">
                   No registrations match your search.
                 </div>
               ) : (
-                <div className="divide-y divide-stone-50">
+                <div className="divide-y divide-border/40">
                   {paginated.map((member) => (
                     <div
                       key={member.id}
                       className={cn(
                         'p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer transition-all',
                         selectedMember?.id === member.id
-                          ? 'bg-stone-900 text-white shadow-lg'
-                          : 'hover:bg-stone-50'
+                          ? 'bg-on-surface text-white shadow-lg'
+                          : 'hover:bg-muted/10'
                       )}
                       onClick={() => {
                         setSelectedMember(member)
@@ -260,11 +260,11 @@ export default function MemberVerification() {
                       <div className="flex items-center gap-4">
                         <div className={cn(
                           'w-12 h-12 overflow-hidden flex items-center justify-center font-bold text-xs shadow-inner shrink-0 rounded-lg',
-                          selectedMember?.id === member.id ? 'bg-white/10' : 'bg-stone-100'
+                          selectedMember?.id === member.id ? 'bg-white/10' : 'bg-muted/10'
                         )}>
                           {member.photoUrl
                             ? <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                            : <span className={selectedMember?.id === member.id ? 'text-white' : 'text-stone-400'}>
+                            : <span className={selectedMember?.id === member.id ? 'text-white' : 'text-muted-foreground/40'}>
                                 {member.name.split(' ').map(n => n[0]).join('')}
                               </span>
                           }
@@ -272,7 +272,7 @@ export default function MemberVerification() {
                         <div>
                           <p className={cn(
                             'text-sm font-bold tracking-tight leading-none',
-                            selectedMember?.id === member.id ? 'text-white' : 'text-stone-900'
+                            selectedMember?.id === member.id ? 'text-white' : 'text-on-surface'
                           )}>
                             {member.name}
                           </p>
@@ -311,15 +311,15 @@ export default function MemberVerification() {
 
             {/* Pagination bar */}
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-stone-100 bg-stone-50/30 flex items-center justify-between">
-                <p className="text-[9px] font-bold tracking-wider text-stone-400">
+              <div className="px-6 py-4 border-t border-border/10 bg-muted/5 flex items-center justify-between">
+                <p className="text-[9px] font-bold tracking-wider text-muted-foreground/40">
                   Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
                 </p>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={safePage === 1}
-                    className="w-8 h-8 flex items-center justify-center border border-stone-200 text-stone-500 hover:bg-stone-900 hover:text-white hover:border-stone-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg"
+                    className="w-8 h-8 flex items-center justify-center border border-border/60 text-on-surface/80 hover:bg-on-surface hover:text-white hover:border-on-surface disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" />
                   </button>
@@ -330,8 +330,8 @@ export default function MemberVerification() {
                       onClick={() => setCurrentPage(page)}
                       className={`w-8 h-8 flex items-center justify-center border text-[9px] font-bold transition-all rounded-lg ${
                         page === safePage
-                          ? 'bg-stone-900 text-white border-stone-900 shadow-sm'
-                          : 'border-stone-200 text-stone-500 hover:bg-stone-100'
+                          ? 'bg-on-surface text-white border-on-surface shadow-sm'
+                          : 'border-border/60 text-on-surface/80 hover:bg-muted/30'
                       }`}
                     >
                       {page}
@@ -341,7 +341,7 @@ export default function MemberVerification() {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={safePage === totalPages}
-                    className="w-8 h-8 flex items-center justify-center border border-stone-200 text-stone-500 hover:bg-stone-900 hover:text-white hover:border-stone-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg"
+                    className="w-8 h-8 flex items-center justify-center border border-border/60 text-on-surface/80 hover:bg-on-surface hover:text-white hover:border-on-surface disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-lg"
                   >
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
@@ -357,7 +357,7 @@ export default function MemberVerification() {
             <div className="space-y-4 sticky top-8">
 
               {/* Identity Card */}
-              <Card className="rounded-xl border-stone-900 bg-stone-900 text-white shadow-2xl overflow-hidden relative">
+              <Card className="rounded-xl border-on-surface bg-on-surface text-white shadow-2xl overflow-hidden relative">
                 <div className="absolute top-0 right-0 p-4 opacity-5">
                   <ShieldCheck className="w-32 h-32 rotate-12" />
                 </div>
@@ -365,7 +365,7 @@ export default function MemberVerification() {
                 <CardHeader className="p-6 border-b border-white/10 relative z-10">
                   <div className="flex justify-between items-start gap-3">
                     <div className="flex-1 min-w-0">
-                      <span className="text-[9px] font-bold text-stone-500 tracking-wider">
+                      <span className="text-[9px] font-bold text-on-surface/60 tracking-wider">
                         Reviewing · {selectedMember.id}
                       </span>
                       <CardTitle className="text-xl font-bold tracking-tight mt-1 leading-tight">
@@ -373,23 +373,23 @@ export default function MemberVerification() {
                       </CardTitle>
                       <div className={cn(
                         'inline-flex mt-2 px-2 py-0.5 text-[8px] font-bold tracking-wider border rounded',
-                        selectedMember.status === 'Approved' && 'bg-emerald-500/20 text-emerald-400 border-emerald-400/30',
-                        selectedMember.status === 'Rejected' && 'bg-red-500/20 text-red-400 border-red-400/30',
-                        (selectedMember.status === 'In Review' || selectedMember.status === 'Processing') && 'bg-amber-500/20 text-amber-400 border-amber-400/30',
-                        selectedMember.status === 'Flagged' && 'bg-red-500/20 text-red-400 border-red-400/30',
+                        selectedMember.status === 'Approved' && 'bg-primary/20 text-primary border-primary/30',
+                        selectedMember.status === 'Rejected' && 'bg-destructive/20 text-destructive border-destructive/30',
+                        (selectedMember.status === 'In Review' || selectedMember.status === 'Processing') && 'bg-accent/20 text-accent border-accent/30',
+                        selectedMember.status === 'Flagged' && 'bg-destructive/20 text-destructive border-destructive/30',
                       )}>
                         {selectedMember.status}
                       </div>
                     </div>
                     {/* Photo */}
                     <button
-                      className="w-14 h-16 bg-stone-800 flex-shrink-0 overflow-hidden border border-white/10 hover:opacity-80 transition-opacity rounded-lg"
+                      className="w-14 h-16 bg-white/5 flex-shrink-0 overflow-hidden border border-white/10 hover:opacity-80 transition-opacity rounded-lg"
                       onClick={() => selectedMember.photoUrl && setShowPhotoFull(true)}
                       title={selectedMember.photoUrl ? 'View photo' : 'No photo uploaded'}
                     >
                       {selectedMember.photoUrl
                         ? <img src={selectedMember.photoUrl} alt={selectedMember.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                        : <div className="w-full h-full flex items-center justify-center text-[9px] text-stone-500 font-bold italic">
+                        : <div className="w-full h-full flex items-center justify-center text-[9px] text-on-surface/60 font-bold italic">
                             No photo
                           </div>
                       }
@@ -411,7 +411,7 @@ export default function MemberVerification() {
                       { label: 'Education', value: selectedMember.educationLevel },
                     ].map(({ label, value }) => (
                       <div key={label} className="space-y-0.5">
-                        <p className="text-[8px] font-bold text-stone-500 tracking-wider">{label}</p>
+                        <p className="text-[8px] font-bold text-on-surface/60 tracking-wider">{label}</p>
                         <p className="text-[10px] font-bold tracking-tight text-white leading-tight">
                           {value || '—'}
                         </p>
@@ -421,20 +421,20 @@ export default function MemberVerification() {
 
                   {/* Contact */}
                   <div className="border-t border-white/10 pt-4 space-y-1">
-                    <p className="text-[8px] font-bold text-stone-500 tracking-wider">Phone</p>
+                    <p className="text-[8px] font-bold text-on-surface/60 tracking-wider">Phone</p>
                     <p className="text-[10px] font-bold text-white">{selectedMember.phone || '—'}</p>
                   </div>
 
                   {/* Emergency contact */}
                   <div className="border-t border-white/10 pt-4 space-y-2">
-                    <p className="text-[8px] font-bold text-stone-500 tracking-wider mb-2">Emergency contact</p>
+                    <p className="text-[8px] font-bold text-on-surface/60 tracking-wider mb-2">Emergency contact</p>
                     <div className="grid grid-cols-2 gap-3">
                       {[
                         { label: 'Name', value: selectedMember.emergencyName },
                         { label: 'Relation', value: selectedMember.emergencyRelationship },
                       ].map(({ label, value }) => (
                         <div key={label} className="space-y-0.5">
-                          <p className="text-[8px] font-bold text-stone-500 tracking-wider">{label}</p>
+                          <p className="text-[8px] font-bold text-muted-foreground/40 tracking-wider">{label}</p>
                           <p className="text-[10px] font-bold tracking-tight text-white">{value || '—'}</p>
                         </div>
                       ))}
@@ -444,7 +444,7 @@ export default function MemberVerification() {
 
                   {/* Verification checklist */}
                   <div className="border-t border-white/10 pt-4 space-y-2">
-                    <h4 className="text-[9px] font-bold tracking-wider text-stone-500">Verification steps</h4>
+                    <h4 className="text-[9px] font-bold tracking-wider text-on-surface/60">Verification steps</h4>
                     {[
                       { label: 'Form submitted', done: true },
                       { label: 'Photo uploaded', done: !!selectedMember.photoUrl },
@@ -452,14 +452,14 @@ export default function MemberVerification() {
                     ].map(({ label, done }) => (
                       <div key={label} className="flex items-center gap-3 p-2.5 bg-white/5 border border-white/5 rounded-lg">
                         {done
-                          ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                          : <div className="w-3.5 h-3.5 rounded-full border border-stone-600 flex items-center justify-center shrink-0">
-                              <div className="w-1 h-1 bg-stone-600" />
+                          ? <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
+                          : <div className="w-3.5 h-3.5 rounded-full border border-muted-foreground/20 flex items-center justify-center shrink-0">
+                              <div className="w-1 h-1 bg-muted-foreground/20" />
                             </div>
                         }
                         <span className={cn(
                           'text-[9px] font-bold tracking-tight',
-                          done ? 'text-white' : 'text-stone-500'
+                          done ? 'text-white' : 'text-muted-foreground/40'
                         )}>{label}</span>
                       </div>
                     ))}
@@ -468,11 +468,11 @@ export default function MemberVerification() {
                   {/* AI Assistant Section */}
                   <div className="border-t border-white/10 pt-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-[9px] font-bold tracking-wider text-stone-500">Security assistant</h4>
+                      <h4 className="text-[9px] font-bold tracking-wider text-on-surface/60">Security assistant</h4>
                       {aiResult && (
                         <span className={cn(
                           "text-[8px] font-bold px-1.5 py-0.5 tracking-wider rounded",
-                          aiResult.flagged ? "bg-red-500 text-white" : "bg-emerald-500 text-white"
+                          aiResult.flagged ? "bg-destructive text-white" : "bg-primary text-white"
                         )}>
                           {aiResult.confidence}% match
                         </span>
@@ -491,15 +491,15 @@ export default function MemberVerification() {
 
                     {aiAnalyzing && (
                       <div className="p-4 bg-white/5 border border-white/10 flex flex-col items-center gap-3 animate-pulse rounded-xl">
-                        <Fingerprint className="w-6 h-6 text-amber-500 animate-bounce" />
-                        <p className="text-[9px] font-bold text-stone-400 tracking-wider">Analyzing identity...</p>
+                        <Fingerprint className="w-6 h-6 text-accent animate-bounce" />
+                        <p className="text-[9px] font-bold text-muted-foreground/40 tracking-wider">Analyzing identity...</p>
                       </div>
                     )}
 
                     {aiResult && (
                       <div className={cn(
                         "p-4 border rounded-xl",
-                        aiResult.flagged ? "bg-red-500/10 border-red-500/20" : "bg-emerald-500/10 border-emerald-500/20"
+                        aiResult.flagged ? "bg-destructive/10 border-destructive/20" : "bg-primary/10 border-primary/20"
                       )}>
                         <div className="flex flex-wrap gap-2">
                           {aiResult.matches.map(m => (
@@ -520,13 +520,13 @@ export default function MemberVerification() {
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <Button
                         onClick={() => handleVerdict(false)}
-                        className="h-11 bg-red-600 text-white hover:bg-red-700 transition-all text-[9px] font-bold tracking-wider border-0 rounded-xl"
+                        className="h-11 bg-destructive text-white hover:bg-destructive/90 transition-all text-[9px] font-bold tracking-wider border-0 rounded-xl"
                       >
                         <XCircle className="w-3.5 h-3.5 mr-1.5" /> Reject
                       </Button>
                       <Button
                         onClick={() => handleVerdict(true)}
-                        className="h-11 bg-emerald-600 text-white hover:bg-emerald-700 transition-all text-[9px] font-bold tracking-wider rounded-xl"
+                        className="h-11 bg-primary text-white hover:bg-primary/90 transition-all text-[9px] font-bold tracking-wider rounded-xl"
                       >
                         <UserCheck className="w-3.5 h-3.5 mr-1.5" /> Approve
                       </Button>
@@ -534,13 +534,13 @@ export default function MemberVerification() {
                   )}
 
                   {selectedMember.status === 'Approved' && (
-                    <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold tracking-wider rounded-xl">
+                    <div className="flex items-center gap-2 p-3 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-wider rounded-xl">
                       <CheckCircle2 className="w-4 h-4" /> Member approved
                     </div>
                   )}
 
                   {selectedMember.status === 'Rejected' && (
-                    <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold tracking-wider rounded-xl">
+                    <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold tracking-wider rounded-xl">
                       <XCircle className="w-4 h-4" /> Registration rejected
                     </div>
                   )}
@@ -549,11 +549,11 @@ export default function MemberVerification() {
 
               {/* View photo button (if available) */}
               {selectedMember.photoUrl && (
-                <Card className="rounded-xl border-stone-200 shadow-sm bg-white">
+                <Card className="rounded-xl border-border/40 shadow-sm bg-white">
                   <CardContent className="p-4 space-y-2">
                     <Button
                       variant="ghost"
-                      className="w-full h-10 text-[10px] font-bold tracking-wider text-stone-400 hover:text-stone-900 rounded-lg"
+                      className="w-full h-10 text-[10px] font-bold tracking-wider text-muted-foreground/40 hover:text-on-surface hover:bg-muted/5 rounded-lg"
                       onClick={() => setShowPhotoFull(true)}
                     >
                       <Eye className="w-4 h-4 mr-2" /> View full photo
@@ -561,7 +561,7 @@ export default function MemberVerification() {
                     {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
                       <Button
                         variant="ghost"
-                        className="w-full h-10 text-[10px] font-bold tracking-wider text-stone-500 hover:bg-stone-50 rounded-lg"
+                        className="w-full h-10 text-[10px] font-bold tracking-wider text-muted-foreground/80 hover:bg-muted/5 rounded-lg"
                         onClick={() => setViewingVaultRecord(selectedMember)}
                       >
                         <Database className="w-4 h-4 mr-2" /> View audit record
@@ -572,7 +572,7 @@ export default function MemberVerification() {
               )}
             </div>
           ) : (
-            <div className="h-[400px] border-2 border-dashed border-stone-200 rounded-xl flex flex-col items-center justify-center text-stone-300 gap-4 bg-white/50">
+            <div className="h-[400px] border-2 border-dashed border-border/40 rounded-xl flex flex-col items-center justify-center text-muted-foreground/40 gap-4 bg-white/50">
               <ShieldCheck className="w-12 h-12 opacity-20" />
               <p className="text-[10px] font-bold tracking-wider">Select a file to review</p>
             </div>
@@ -582,7 +582,7 @@ export default function MemberVerification() {
 
       {/* ── Registration Form Modal ──────────────────────────────────────────── */}
       {showRegForm && (
-        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-[100] bg-on-surface/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <RegistrationForm
             onClose={() => setShowRegForm(false)}
             onSuccess={() => setShowRegForm(false)}
@@ -594,7 +594,7 @@ export default function MemberVerification() {
       {/* ── Full-screen Photo Lightbox ───────────────────────────────────────── */}
       {showPhotoFull && selectedMember?.photoUrl && (
         <div
-          className="fixed inset-0 z-[110] bg-black/90 flex items-center justify-center p-8"
+          className="fixed inset-0 z-[110] bg-on-surface/90 flex items-center justify-center p-8"
           onClick={() => setShowPhotoFull(false)}
         >
           <button
@@ -623,21 +623,21 @@ export default function MemberVerification() {
 
       {/* ── Audit Vault Modal ────────────────────────────────────────────────── */}
       {viewingVaultRecord && (
-        <div className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <Card className="max-w-4xl w-full rounded-xl border-0 shadow-2xl overflow-hidden bg-stone-50">
-            <CardHeader className="bg-[var(--brand-black)] text-white p-8 border-b border-white/10 relative">
+        <div className="fixed inset-0 z-[120] bg-on-surface/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <Card className="max-w-4xl w-full rounded-xl border-0 shadow-2xl overflow-hidden bg-muted/10">
+            <CardHeader className="bg-on-surface text-white p-8 border-b border-white/10 relative">
               <div className="absolute top-0 right-0 p-6 opacity-10">
                 <Lock className="w-24 h-24 rotate-12" />
               </div>
               <div className="flex justify-between items-start relative z-10">
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-stone-400 tracking-wider">
+                    <span className="text-[10px] font-bold text-on-surface/60 tracking-wider">
                       Secure vault record
                     </span>
                     <div className={cn(
                       "px-2 py-0.5 text-[8px] font-bold tracking-wider border border-white/20 rounded",
-                      viewingVaultRecord.status === 'Approved' ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+                      viewingVaultRecord.status === 'Approved' ? "bg-primary/20 text-primary" : "bg-destructive/20 text-destructive"
                     )}>
                       {viewingVaultRecord.status}
                     </div>
@@ -645,7 +645,7 @@ export default function MemberVerification() {
                   <h2 className="text-3xl font-black font-meta tracking-tighter leading-none pt-2">
                     {viewingVaultRecord.name}
                   </h2>
-                  <p className="text-stone-400 text-xs font-bold tracking-wider">
+                  <p className="text-on-surface/60 text-xs font-bold tracking-wider">
                     Permanent record ID: {viewingVaultRecord.id}
                   </p>
                 </div>
@@ -661,7 +661,7 @@ export default function MemberVerification() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="space-y-8">
                   <section>
-                    <h3 className="text-[10px] font-bold tracking-wider text-stone-400 border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
+                    <h3 className="text-[10px] font-bold tracking-wider text-muted-foreground/40 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
                       <FileText className="w-3.5 h-3.5" /> Identity metadata
                     </h3>
                     <div className="grid grid-cols-2 gap-y-4 gap-x-8">
@@ -677,41 +677,41 @@ export default function MemberVerification() {
                         { label: 'Age range', value: viewingVaultRecord.ageRange },
                       ].map(f => (
                         <div key={f.label}>
-                          <p className="text-[8px] font-bold text-stone-400 tracking-wider">{f.label}</p>
-                          <p className="text-[11px] font-bold tracking-tight text-stone-900">{f.value || '—'}</p>
+                          <p className="text-[8px] font-bold text-on-surface/60 tracking-wider">{f.label}</p>
+                          <p className="text-[11px] font-bold tracking-tight text-on-surface">{f.value || '—'}</p>
                         </div>
                       ))}
                     </div>
                   </section>
 
                   <section>
-                    <h3 className="text-[10px] font-bold tracking-wider text-stone-400 border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
+                    <h3 className="text-[10px] font-bold tracking-wider text-on-surface/60 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
                       <History className="w-3.5 h-3.5" /> Audit history
                     </h3>
                     <div className="space-y-3">
-                      <div className="p-4 bg-white border-l-2 border-stone-900 shadow-sm rounded-r-xl">
+                      <div className="p-4 bg-white border-l-2 border-on-surface shadow-sm rounded-r-xl">
                         <div className="flex justify-between items-start">
-                          <p className="text-[10px] font-bold tracking-tight text-stone-900">Registration submitted</p>
-                          <span className="text-[8px] font-bold text-stone-400">{viewingVaultRecord.submitted}</span>
+                          <p className="text-[10px] font-bold tracking-tight text-on-surface">Registration submitted</p>
+                          <span className="text-[8px] font-bold text-on-surface/60">{viewingVaultRecord.submitted}</span>
                         </div>
-                        <p className="text-[9px] text-stone-500 mt-1 tracking-tight">System generated entry upon form completion.</p>
+                        <p className="text-[9px] text-on-surface/40 mt-1 tracking-tight">System generated entry upon form completion.</p>
                       </div>
                       {viewingVaultRecord.status === 'Approved' && (
-                        <div className="p-4 bg-white border-l-2 border-emerald-500 shadow-sm rounded-r-xl">
+                        <div className="p-4 bg-white border-l-2 border-primary shadow-sm rounded-r-xl">
                           <div className="flex justify-between items-start">
-                            <p className="text-[10px] font-bold tracking-tight text-emerald-600">Verification approved</p>
-                            <span className="text-[8px] font-bold text-stone-400">Just now</span>
+                            <p className="text-[10px] font-bold tracking-tight text-primary">Verification approved</p>
+                            <span className="text-[8px] font-bold text-on-surface/60">Just now</span>
                           </div>
-                          <p className="text-[9px] text-stone-500 mt-1 tracking-tight">Administrator: National HQ</p>
+                          <p className="text-[9px] text-on-surface/40 mt-1 tracking-tight">Administrator: National HQ</p>
                         </div>
                       )}
                       {viewingVaultRecord.status === 'Rejected' && (
-                        <div className="p-4 bg-white border-l-2 border-red-500 shadow-sm rounded-r-xl">
+                        <div className="p-4 bg-white border-l-2 border-destructive shadow-sm rounded-r-xl">
                           <div className="flex justify-between items-start">
-                            <p className="text-[10px] font-bold tracking-tight text-red-600">Verification rejected</p>
-                            <span className="text-[8px] font-bold text-stone-400">Just now</span>
+                            <p className="text-[10px] font-bold tracking-tight text-destructive">Verification rejected</p>
+                            <span className="text-[8px] font-bold text-on-surface/60">Just now</span>
                           </div>
-                          <p className="text-[9px] text-stone-500 mt-1 tracking-tight">Administrator: National HQ</p>
+                          <p className="text-[9px] text-on-surface/40 mt-1 tracking-tight">Administrator: National HQ</p>
                         </div>
                       )}
                     </div>
@@ -720,27 +720,27 @@ export default function MemberVerification() {
 
                 <div className="space-y-8">
                   <section>
-                    <h3 className="text-[10px] font-bold tracking-wider text-stone-400 border-b border-stone-200 pb-2 mb-4">
+                    <h3 className="text-[10px] font-bold tracking-wider text-muted-foreground/40 border-b border-border/40 pb-2 mb-4">
                       Captured credentials
                     </h3>
-                    <div className="aspect-[3/4] bg-stone-200 overflow-hidden shadow-inner border border-stone-300 relative group rounded-xl">
+                    <div className="aspect-[3/4] bg-muted/30 overflow-hidden shadow-inner border border-border/60 relative group rounded-xl">
                       {viewingVaultRecord.photoUrl ? (
                         <img src={viewingVaultRecord.photoUrl} alt="Vault Record" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 gap-2">
+                        <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/40 gap-2">
                           <EyeOff className="w-8 h-8 opacity-20" />
                           <p className="text-[9px] font-bold tracking-wider">No biometric data</p>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                      <div className="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                         <Database className="text-white w-12 h-12 opacity-50" />
                       </div>
                     </div>
                   </section>
                   
-                  <div className="p-6 bg-stone-100 border border-stone-200 rounded-xl">
-                    <p className="text-[9px] font-bold tracking-wider text-stone-500 mb-2 italic">Legal disclaimer</p>
-                    <p className="text-[10px] text-stone-600 leading-relaxed font-medium italic">
+                  <div className="p-6 bg-muted/30 border border-border/40 rounded-xl">
+                    <p className="text-[9px] font-bold tracking-wider text-on-surface/60 mb-2 italic">Legal disclaimer</p>
+                    <p className="text-[10px] text-on-surface/40 leading-relaxed font-medium italic">
                       This record is persistently stored in the movement's secure audit vault. Metadata cannot be altered after verification completion.
                     </p>
                   </div>

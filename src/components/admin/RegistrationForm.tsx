@@ -168,16 +168,16 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
   }
 
   return (
-    <div className="bg-white max-w-5xl w-full max-h-[90vh] overflow-hidden relative animate-in fade-in zoom-in-95 duration-300 shadow-2xl flex flex-col font-body-md">
+    <div className="bg-white max-w-5xl w-full max-h-[90vh] overflow-hidden relative animate-in fade-in zoom-in-95 duration-300 shadow-2xl flex flex-col font-meta">
       {/* Header */}
-      <div className="bg-charcoal-dark p-6 flex items-center justify-between shrink-0">
+      <div className="bg-on-surface p-8 flex items-center justify-between shrink-0">
         <div>
-          <h2 className="text-xl font-black font-meta text-white uppercase tracking-tighter">Register New Member</h2>
-          <p className="text-warm-gold text-[10px] mt-1 uppercase tracking-widest font-bold">Admin Override Workflow</p>
+          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Register New Member</h2>
+          <p className="text-accent text-[10px] mt-1 uppercase tracking-widest font-bold opacity-80">Admin Override Workflow</p>
         </div>
         <button 
           onClick={onClose}
-          className="text-slate-400 hover:text-white transition-colors"
+          className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/20 transition-all"
         >
           <X className="w-6 h-6" />
         </button>
@@ -188,9 +188,9 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Vertical Sidebar Navigation */}
           <div className="lg:col-span-4 space-y-2 sticky top-0 bg-white z-10 pb-4">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 pl-4">Registration Progress</p>
+            <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em] mb-8 pl-4">Registration Progress</p>
             
-            <div className="space-y-1">
+            <div className="space-y-2">
               {[
                 { step: 1, label: 'Primary Details' },
                 { step: 2, label: 'Demographic info' },
@@ -199,12 +199,12 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               ].map((item) => (
                 <div 
                   key={item.step}
-                  className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-slate-50 border-[var(--brand-green)] shadow-sm' : 'border-transparent text-slate-400 opacity-60'}`}
+                  className={`flex items-center gap-5 p-5 transition-all border-l-4 rounded-r-2xl ${formStep === item.step ? 'bg-muted/5 border-primary shadow-sm' : 'border-transparent text-muted-foreground/40 opacity-60'}`}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-[var(--brand-green)] text-white' : 'bg-slate-200 text-slate-500'}`}>
-                    {formStep > item.step ? <CheckCircle2 className="w-5 h-5" /> : item.step}
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-black shrink-0 transition-all ${formStep >= item.step ? 'bg-primary text-white scale-110 shadow-lg shadow-primary/20' : 'bg-muted/10 text-muted-foreground/60'}`}>
+                    {formStep > item.step ? <CheckCircle2 className="w-6 h-6" /> : item.step}
                   </div>
-                  <span className={`text-xs font-bold tracking-tight font-meta ${formStep === item.step ? 'text-charcoal-dark' : ''}`}>
+                  <span className={`text-[11px] font-black uppercase tracking-widest ${formStep === item.step ? 'text-on-surface' : ''}`}>
                     {item.label}
                   </span>
                 </div>
@@ -214,18 +214,18 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
 
           {/* Form Content Area */}
           <div className="lg:col-span-8">
-            <form onSubmit={handleSubmit} className="bg-white border border-slate-200 p-8 shadow-sm">
+            <form onSubmit={handleSubmit} className="bg-white border border-border/40 p-10 shadow-sm rounded-3xl">
               {/* STEP 1: Primary Details */}
               {formStep === 1 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark font-meta uppercase font-black text-lg tracking-tighter">Step 1: Primary Details</h3>
-                    <p className="text-slate-500 mt-1 mb-0 text-sm">Basic information required for your membership profile.</p>
+                  <div className="border-b-2 border-on-surface pb-4 mb-8">
+                    <h3 className="text-on-surface font-black uppercase text-xl tracking-tighter">Step 1: Primary Details</h3>
+                    <p className="text-muted-foreground/60 mt-1 mb-0 text-sm">Basic information required for your membership profile.</p>
                   </div>
-
+ 
                   <div className="space-y-3">
-                    <label htmlFor="fullName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Full Name <span className="text-[var(--brand-red)]">*</span>
+                    <label htmlFor="fullName" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                      Full Name <span className="text-destructive">*</span>
                     </label>
                     <input
                       id="fullName"
@@ -233,20 +233,20 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       required
                       value={formData.fullName}
                       onChange={(e) => handleChange('fullName', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                     />
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                      Select Platform <span className="text-[var(--brand-red)]">*</span>
+                    <label className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block mb-4">
+                      Select Platform <span className="text-destructive">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
-                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'GHANA' ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-xl font-black uppercase tracking-widest text-[10px] ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                         <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
                         Base Ghana
                       </label>
-                      <label className={`cursor-pointer border p-4 text-center transition-colors font-meta font-bold uppercase tracking-wider text-sm ${platform === 'DIASPORA' ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-xl font-black uppercase tracking-widest text-[10px] ${platform === 'DIASPORA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                         <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
                         Base Diaspora
                       </label>
@@ -256,15 +256,15 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   <div className="grid md:grid-cols-2 gap-8">
                     {platform === 'DIASPORA' ? (
                       <div className="space-y-3">
-                        <label htmlFor="selectedCountry" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                          Country of Residence <span className="text-[var(--brand-red)]">*</span>
+                        <label htmlFor="selectedCountry" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                          Country of Residence <span className="text-destructive">*</span>
                         </label>
                         <select 
                           id="selectedCountry"
                           required
                           value={formData.country} 
                           onChange={(e) => handleChange('country', e.target.value)}
-                          className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                          className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                           style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
                         >
                           {diasporaCountries.map((country) => (
@@ -275,14 +275,14 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     ) : null}
 
                     <div className="space-y-3">
-                      <label htmlFor="contactNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Contact Number <span className="text-[var(--brand-red)]">*</span>
+                      <label htmlFor="contactNumber" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                        Contact Number <span className="text-destructive">*</span>
                       </label>
-                      <div className="flex">
+                      <div className="flex gap-2">
                         <select
                           value={formData.countryCode}
                           onChange={(e) => handleChange('countryCode', e.target.value)}
-                          className="flex items-center px-2 bg-slate-100 border border-slate-200 font-meta font-bold text-charcoal-dark text-xs appearance-none focus:outline-none"
+                          className="flex items-center px-4 bg-muted/5 border border-border/60 rounded-xl font-black text-on-surface text-[10px] appearance-none focus:outline-none"
                         >
                           {Array.from(new Set(Object.values(countryCodes))).sort().map((code) => (
                             <option key={code} value={code}>{code}</option>
@@ -295,15 +295,15 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           required
                           value={formData.contactNumber}
                           onChange={(e) => handleChange('contactNumber', e.target.value)}
-                          className="w-full form-understate p-4 text-charcoal-dark text-sm border-l-0 bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                          className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Account Password <span className="text-[var(--brand-red)]">*</span>
+                    <label htmlFor="password" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                      Account Password <span className="text-destructive">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -314,12 +314,12 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         minLength={6}
                         value={formData.password}
                         onChange={(e) => handleChange('password', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[var(--brand-green)]"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary"
                       >
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
@@ -331,33 +331,33 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               {/* STEP 2: Demographic Details */}
               {formStep === 2 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark font-meta uppercase font-black text-lg tracking-tighter">Step 2: Demographic Details</h3>
-                    <p className="text-slate-500 mt-1 mb-0 text-sm">Further details to finalize your membership chapter.</p>
+                  <div className="border-b-2 border-on-surface pb-4 mb-8">
+                    <h3 className="text-on-surface font-black uppercase text-xl tracking-tighter">Step 2: Demographic Details</h3>
+                    <p className="text-muted-foreground/60 mt-1 mb-0 text-sm">Further details to finalize your membership chapter.</p>
                   </div>
-
+ 
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                        Age Range <span className="text-[var(--brand-red)]">*</span>
+                      <label className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block mb-4">
+                        Age Range <span className="text-destructive">*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {ageRanges.map(range => (
-                          <label key={range} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.ageRange === range ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                          <label key={range} className={`cursor-pointer border p-3 text-center transition-all rounded-xl font-black uppercase tracking-widest text-[9px] ${formData.ageRange === range ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                             <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} className="hidden" />
                             {range}
                           </label>
                         ))}
                       </div>
                     </div>
-
+ 
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block mb-3">
-                        Gender <span className="text-[var(--brand-red)]">*</span>
+                      <label className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block mb-4">
+                        Gender <span className="text-destructive">*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {['Male', 'Female'].map(g => (
-                          <label key={g} className={`cursor-pointer border p-3 text-center transition-colors font-meta font-bold uppercase tracking-widest text-[10px] ${formData.gender === g ? 'border-[var(--brand-green)] bg-[var(--brand-green)]/5 text-[var(--brand-green)]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                          <label key={g} className={`cursor-pointer border p-3 text-center transition-all rounded-xl font-black uppercase tracking-widest text-[9px] ${formData.gender === g ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                             <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} className="hidden" />
                             {g}
                           </label>
@@ -367,8 +367,8 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   </div>
 
                   <div className="space-y-3">
-                    <label htmlFor="residentialAddress" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Residential Address <span className="text-[var(--brand-red)]">*</span>
+                    <label htmlFor="residentialAddress" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                      Residential Address <span className="text-destructive">*</span>
                     </label>
                     <input
                       id="residentialAddress"
@@ -376,7 +376,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       required
                       value={formData.residentialAddress}
                       onChange={(e) => handleChange('residentialAddress', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                     />
                   </div>
 
@@ -384,15 +384,15 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     {platform === 'GHANA' ? (
                       <>
                         <div className="space-y-3">
-                          <label htmlFor="region" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                            Region <span className="text-[var(--brand-red)]">*</span>
+                          <label htmlFor="region" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                            Region <span className="text-destructive">*</span>
                           </label>
                           <select 
                             id="region"
                             required
                             value={formData.region} 
                             onChange={(e) => handleChange('region', e.target.value)}
-                            className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                            className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                             style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
                           >
                             <option value="">Select Region</option>
@@ -402,8 +402,8 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           </select>
                         </div>
                         <div className="space-y-3">
-                          <label htmlFor="constituency" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                            Constituency <span className="text-[var(--brand-red)]">*</span>
+                          <label htmlFor="constituency" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                            Constituency <span className="text-destructive">*</span>
                           </label>
                           <select 
                             id="constituency"
@@ -411,7 +411,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             disabled={!formData.region}
                             value={formData.constituency} 
                             onChange={(e) => handleChange('constituency', e.target.value)}
-                            className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta disabled:opacity-50 bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                            className="w-full p-4 text-on-surface text-sm appearance-none disabled:opacity-50 bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                             style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
                           >
                             <option value="">Select Constituency</option>
@@ -423,8 +423,8 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       </>
                     ) : (
                       <div className="space-y-3">
-                        <label htmlFor="chapter" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                          Assigned Chapter <span className="text-[var(--brand-red)]">*</span>
+                        <label htmlFor="chapter" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                          Assigned Chapter <span className="text-destructive">*</span>
                         </label>
                         <input
                           id="chapter"
@@ -432,7 +432,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           required
                           value={formData.chapter}
                           onChange={(e) => handleChange('chapter', e.target.value)}
-                          className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                          className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                         />
                       </div>
                     )}
@@ -443,14 +443,14 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               {/* STEP 3: Emergency & Profession */}
               {formStep === 3 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark font-meta uppercase font-black text-lg tracking-tighter">Step 3: Emergency & Profession Details</h3>
-                    <p className="text-slate-500 mt-1 mb-0 text-sm">Crucial for member safety and institutional records.</p>
+                  <div className="border-b-2 border-on-surface pb-4 mb-8">
+                    <h3 className="text-on-surface font-black uppercase text-xl tracking-tighter">Step 3: Emergency & Profession Details</h3>
+                    <p className="text-muted-foreground/60 mt-1 mb-0 text-sm">Crucial for member safety and institutional records.</p>
                   </div>
-
+ 
                   <div className="space-y-3">
-                    <label htmlFor="emergencyContactName" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Emergency Contact Name <span className="text-[var(--brand-red)]">*</span>
+                    <label htmlFor="emergencyContactName" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                      Emergency Contact Name <span className="text-destructive">*</span>
                     </label>
                     <input
                       id="emergencyContactName"
@@ -458,14 +458,14 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       required
                       value={formData.emergencyContactName}
                       onChange={(e) => handleChange('emergencyContactName', e.target.value)}
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                     />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label htmlFor="emergencyRelationship" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Relationship <span className="text-[var(--brand-red)]">*</span>
+                      <label htmlFor="emergencyRelationship" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                        Relationship <span className="text-destructive">*</span>
                       </label>
                       <input
                         id="emergencyRelationship"
@@ -473,12 +473,12 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         required
                         value={formData.emergencyRelationship}
                         onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                       />
                     </div>
                     <div className="space-y-3">
-                      <label htmlFor="emergencyNumber" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Emergency Contact Number <span className="text-[var(--brand-red)]">*</span>
+                      <label htmlFor="emergencyNumber" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                        Emergency Contact Number <span className="text-destructive">*</span>
                       </label>
                       <input
                         id="emergencyNumber"
@@ -487,15 +487,15 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         required
                         value={formData.emergencyNumber}
                         onChange={(e) => handleChange('emergencyNumber', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label htmlFor="profession" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Profession / Occupation <span className="text-[var(--brand-red)]">*</span>
+                      <label htmlFor="profession" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                        Profession / Occupation <span className="text-destructive">*</span>
                       </label>
                       <input
                         id="profession"
@@ -503,19 +503,19 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         required
                         value={formData.profession}
                         onChange={(e) => handleChange('profession', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                       />
                     </div>
                     <div className="space-y-3">
-                      <label htmlFor="educationLevel" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                        Education Level <span className="text-[var(--brand-red)]">*</span>
+                      <label htmlFor="educationLevel" className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                        Education Level <span className="text-destructive">*</span>
                       </label>
                       <select 
                         id="educationLevel"
                         required
                         value={formData.educationLevel} 
                         onChange={(e) => handleChange('educationLevel', e.target.value)}
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none font-meta bg-slate-50 border border-slate-200 focus:border-[var(--brand-green)] focus:outline-none transition-colors"
+                        className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-xl focus:outline-none transition-colors"
                         style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
                       >
                         <option value="">Select Level</option>
@@ -531,30 +531,32 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               {/* STEP 4: Verification */}
               {formStep === 4 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
-                    <h3 className="text-charcoal-dark font-meta uppercase font-black text-lg tracking-tighter">Step 4: Final Verification</h3>
-                    <p className="text-slate-500 mt-1 mb-0 text-sm">Identity confirmation and oath of commitment.</p>
+                  <div className="border-b-2 border-on-surface pb-4 mb-8">
+                    <h3 className="text-on-surface font-black uppercase text-xl tracking-tighter">Step 4: Final Verification</h3>
+                    <p className="text-muted-foreground/60 mt-1 mb-0 text-sm">Identity confirmation and oath of commitment.</p>
                   </div>
 
                   <div className="space-y-6">
-                    <label className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase block">
-                      Passport Photo <span className="text-[var(--brand-red)]">*</span>
+                    <label className="text-[10px] font-black text-on-surface/60 tracking-[0.2em] uppercase block">
+                      Passport Photo <span className="text-destructive">*</span>
                     </label>
                     
                     {!photoUrl ? (
-                      <div className="border-2 border-dashed border-slate-200 p-12 text-center bg-slate-50 relative group transition-colors hover:border-[var(--brand-green)]">
+                      <div className="border-2 border-dashed border-border/40 p-16 text-center bg-muted/5 relative group transition-all hover:border-primary rounded-3xl overflow-hidden">
                         <input
                           type="file"
                           accept="image/*"
                           onChange={handlePhotoUpload}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                         />
-                        <Upload className="w-12 h-12 text-slate-300 mx-auto mb-4 group-hover:text-[var(--brand-green)] transition-colors" />
-                        <p className="font-meta font-bold text-slate-500 uppercase tracking-widest text-[10px]">Click to upload passport photo</p>
+                        <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all">
+                          <Upload className="w-10 h-10 text-primary transition-colors" />
+                        </div>
+                        <p className="font-black text-on-surface/60 uppercase tracking-[0.2em] text-[10px]">Click to upload passport photo</p>
                       </div>
                     ) : (
-                      <div className="relative bg-slate-100 p-4 border border-slate-200">
-                        <div className="relative h-[400px] w-full bg-charcoal-dark overflow-hidden">
+                      <div className="relative bg-muted/5 p-6 border border-border/40 rounded-3xl overflow-hidden">
+                        <div className="relative h-[400px] w-full bg-on-surface rounded-2xl overflow-hidden shadow-2xl">
                           <Cropper
                             image={photoUrl}
                             crop={crop}
@@ -565,7 +567,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             onZoomChange={setZoom}
                           />
                         </div>
-                        <div className="flex items-center gap-4 mt-6 px-4 pb-4">
+                        <div className="flex items-center gap-6 mt-8 px-4 pb-2">
                           <input
                             type="range"
                             value={zoom}
@@ -574,39 +576,40 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             step={0.1}
                             aria-labelledby="Zoom"
                             onChange={(e) => setZoom(Number(e.target.value))}
-                            className="w-full accent-brand-green"
+                            className="w-full accent-primary h-2 rounded-lg bg-muted/20"
                           />
                           <button
                             type="button"
                             onClick={() => setPhotoUrl(null)}
-                            className="shrink-0 p-2 bg-slate-200 text-charcoal-dark hover:bg-[var(--brand-red)] hover:text-white transition-colors"
+                            className="shrink-0 w-12 h-12 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all flex items-center justify-center shadow-lg shadow-destructive/10"
                             title="Remove photo"
                           >
-                            <X className="w-5 h-5" />
+                            <X className="w-6 h-6" />
                           </button>
                         </div>
-                        <p className="text-[10px] text-slate-500 font-meta tracking-widest uppercase mt-2 text-center font-bold">Position your face within the frame</p>
+                        <p className="text-[10px] text-muted-foreground/40 tracking-[0.2em] uppercase mt-4 text-center font-black">Position your face within the frame</p>
                       </div>
                     )}
                   </div>
 
                   {/* Oath */}
-                  <div className="bg-charcoal-dark text-white p-8 mt-8 border-l-4 border-[var(--brand-green)]">
-                    <h5 className="text-warm-gold mb-3 font-bold">The Base Declaration</h5>
-                    <p className="text-slate-300 mb-6 leading-relaxed text-sm">
-                      I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong>THE BASE</strong>: Patriotism, Honesty, and Discipline and pledge to advance the cause of <strong>GHANA FIRST</strong> in all my actions.
+                  <div className="bg-on-surface text-white p-10 mt-10 border-l-8 border-primary rounded-3xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+                    <h5 className="text-accent mb-4 font-black uppercase tracking-widest text-xs">The Base Declaration</h5>
+                    <p className="text-white/60 mb-8 leading-relaxed text-sm font-medium">
+                      I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong className="text-white">THE BASE</strong>: Patriotism, Honesty, and Discipline and pledge to advance the cause of <strong className="text-accent">GHANA FIRST</strong> in all my actions.
                     </p>
                     
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-5">
                       <input
                         type="checkbox"
                         id="privacy"
                         checked={agreed}
                         onChange={(e) => setAgreed(e.target.checked)}
-                        className="mt-1 w-5 h-5 shrink-0 text-[var(--brand-green)] bg-charcoal-dark border-slate-500 rounded-none focus:ring-brand-green cursor-pointer"
+                        className="mt-1 w-6 h-6 shrink-0 accent-primary bg-on-surface border-white/20 rounded-lg cursor-pointer"
                       />
-                      <label htmlFor="privacy" className="text-sm text-slate-300 cursor-pointer leading-tight font-medium">
-                        I accept this declaration on behalf of the member and agree to the <span className="text-warm-gold font-bold">Privacy Policy</span> <span className="text-[var(--brand-red)]">*</span>
+                      <label htmlFor="privacy" className="text-sm text-white/40 cursor-pointer leading-tight font-bold">
+                        I accept this declaration on behalf of the member and agree to the <span className="text-accent font-black underline underline-offset-4 decoration-accent/20">Privacy Policy</span> <span className="text-destructive">*</span>
                       </label>
                     </div>
                   </div>
@@ -614,12 +617,12 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               )}
 
               {/* Navigation Controls */}
-              <div className="pt-8 mt-8 border-t border-slate-200 flex justify-between gap-4">
+              <div className="pt-10 mt-10 border-t border-border/10 flex justify-between gap-6">
                 {formStep > 1 ? (
                   <button
                     type="button"
                     onClick={goBack}
-                    className="w-1/3 bg-slate-100 hover:bg-slate-200 text-charcoal-dark font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-2 transition-all shadow-sm"
+                    className="w-1/3 h-16 bg-muted/10 hover:bg-muted/20 text-on-surface font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
                   >
                     <ArrowLeft className="w-5 h-5" /> Back
                   </button>
@@ -630,10 +633,13 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                 <button
                   type="submit"
                   disabled={(formStep === 4 && !agreed) || isSubmitting}
-                  className={`font-meta font-bold uppercase tracking-widest py-4 flex items-center justify-center gap-3 transition-all flex-1 shadow-md ${((formStep === 4 && !agreed) || isSubmitting) ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-[var(--brand-green)] text-white hover:opacity-90 active:scale-[0.99]'}`}
+                  className={`h-16 font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl flex items-center justify-center gap-4 transition-all flex-1 shadow-2xl active:scale-[0.98] ${((formStep === 4 && !agreed) || isSubmitting) ? 'bg-muted/20 text-muted-foreground/40 cursor-not-allowed' : 'bg-primary text-white hover:shadow-primary/40'}`}
                 >
                   {isSubmitting ? (
-                    'Processing...'
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </div>
                   ) : formStep < 4 ? (
                     <>Next Step <ArrowRight className="w-5 h-5" /></>
                   ) : (

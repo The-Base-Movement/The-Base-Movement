@@ -400,10 +400,10 @@ export default function Register() {
                 <FileText className="w-8 h-8 text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-on-surface font-meta uppercase tracking-tight text-base mb-1">Local Membership (Ghana)</h3>
+                <h3 className="font-bold text-on-surface font-meta tracking-tight text-base mb-1">Local Membership (Ghana)</h3>
                 <p className="text-sm text-muted-foreground">For residents living and voting within the 16 regions of Ghana.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-primary transition-colors" />
+              <ArrowRight className="w-6 h-6 text-on-surface/20 group-hover:text-primary transition-colors" />
             </button>
 
             <button
@@ -418,10 +418,10 @@ export default function Register() {
                 <User className="w-8 h-8 text-accent" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-on-surface font-meta uppercase tracking-tight text-base mb-1">Diaspora Membership</h3>
+                <h3 className="font-bold text-on-surface font-meta tracking-tight text-base mb-1">Diaspora Membership</h3>
                 <p className="text-sm text-muted-foreground">For Ghanaians living abroad who wish to support the movement.</p>
               </div>
-              <ArrowRight className="w-6 h-6 text-slate-300 group-hover:text-accent transition-colors" />
+              <ArrowRight className="w-6 h-6 text-on-surface/20 group-hover:text-accent transition-colors" />
             </button>
           </div>
 
@@ -449,9 +449,9 @@ export default function Register() {
           <h2 className="text-muted-foreground mb-8">Official Registration Form</h2>
           <button
             onClick={() => setStep('choice')}
-            className="inline-flex items-center gap-2 px-6 py-2 border border-border/60 text-[10px] font-black text-muted-foreground uppercase tracking-widest hover:bg-muted/30 transition-all font-meta"
+            className="inline-flex items-center gap-2 px-6 py-2 border border-border/60 text-[10px] font-black text-muted-foreground tracking-widest hover:bg-muted/30 transition-all font-meta"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Registration Options
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to registration options
           </button>
         </div>
       </div>
@@ -459,13 +459,13 @@ export default function Register() {
       <div className="max-w-6xl mx-auto py-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-3 space-y-2 sticky top-8">
-            <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-[0.2em] mb-6 pl-4">Registration Progress</p>
+            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-[0.2em] mb-6 pl-4">Registration progress</p>
             <div className="space-y-1">
               {[
-                { step: 1, label: 'Primary Details' },
+                { step: 1, label: 'Primary details' },
                 { step: 2, label: 'Demographic info' },
                 { step: 3, label: 'Emergency contact' },
-                { step: 4, label: 'Final Verification' }
+                { step: 4, label: 'Final verification' }
               ].map((item) => (
                 <div key={item.step} className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-primary shadow-sm' : 'border-transparent text-muted-foreground/80 opacity-60'}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
@@ -479,7 +479,7 @@ export default function Register() {
             </div>
 
             <div className="mt-12 pl-4 pt-8 border-t border-border/60">
-              <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-[0.2em] mb-1">Need Assistance?</p>
+              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-[0.2em] mb-1">Need assistance?</p>
               <a href="mailto:info@thebasemovement.com" className="text-xs font-meta font-medium text-muted-foreground hover:text-primary transition-colors">
                 info@thebasemovement.com
               </a>
@@ -491,19 +491,19 @@ export default function Register() {
               <form onSubmit={handleSubmit}>
               {formStep === 1 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                  <div className="border-b-2 border-primary/20 pb-3 mb-8">
                     <h3 className="text-on-surface">Step 1: Primary Details</h3>
                   </div>
 
                   {/* AI Verification Scanner - Local Membership Only */}
                   {platform === 'GHANA' && (
-                    <div className="relative overflow-hidden mb-10 bg-gradient-to-br from-zinc-950 to-zinc-900 rounded-lg p-8 border border-white/10 shadow-2xl">
+                    <div className="relative overflow-hidden mb-10 bg-on-surface rounded-2xl p-8 border border-white/5 shadow-2xl">
                       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 -mr-32 -mt-32 blur-3xl"></div>
                       <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <Zap className="w-5 h-5 text-accent" />
-                            <h4 className="text-white font-meta font-bold tracking-tight text-lg">AI Identity Verification</h4>
+                            <h4 className="text-white font-meta font-bold tracking-tight text-lg">AI identity verification</h4>
                           </div>
                           <p className="text-muted-foreground/60 text-sm max-w-sm mb-0">
                             Scan your Ghana Card or Voter ID to instantly auto-fill your profile and verify your membership.
@@ -534,8 +534,8 @@ export default function Register() {
                   )}
 
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">
-                      Full Name <span className="text-muted-foreground/80 ml-1">(First & Last Name)</span>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">
+                      Full name <span className="text-muted-foreground/80 ml-1">(First & last name)</span>
                     </label>
                     <input 
                       required 
@@ -548,19 +548,19 @@ export default function Register() {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Membership Platform</label>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">Membership platform</label>
                     <div className="grid grid-cols-2 gap-4">
                       <button
                         type="button"
                         onClick={() => handlePlatformChange('GHANA')}
-                        className={`p-4 border text-sm font-bold uppercase tracking-widest font-meta transition-all ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground hover:border-slate-300'}`}
+                        className={`p-4 border text-sm font-bold tracking-widest font-meta transition-all ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground hover:border-primary/40'}`}
                       >
                         Ghana Base
                       </button>
                       <button
                         type="button"
                         onClick={() => handlePlatformChange('DIASPORA')}
-                        className={`p-4 border text-sm font-bold uppercase tracking-widest font-meta transition-all ${platform === 'DIASPORA' ? 'border-accent bg-accent/5 text-accent' : 'border-border/60 text-muted-foreground hover:border-slate-300'}`}
+                        className={`p-4 border text-sm font-bold tracking-widest font-meta transition-all ${platform === 'DIASPORA' ? 'border-accent bg-accent/5 text-accent' : 'border-border/60 text-muted-foreground hover:border-accent/40'}`}
                       >
                         Diaspora Base
                       </button>
@@ -569,14 +569,14 @@ export default function Register() {
                   
                   {platform === 'GHANA' && (
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">National ID Number (Optional)</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">National ID number (Optional)</label>
                       <input value={formData.idNumber} onChange={(e) => handleChange('idNumber', e.target.value)} placeholder="GHA-000000000-0" className="w-full form-understate p-4 text-on-surface text-sm" />
                     </div>
                   )}
                   <div className="grid md:grid-cols-2 gap-8">
                     {platform === 'DIASPORA' && (
                       <div className="space-y-3">
-                        <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Country</label>
+                        <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">Country</label>
                         <select 
                           required 
                           value={formData.country} 
@@ -596,7 +596,7 @@ export default function Register() {
                       </div>
                     )}
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Phone</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">Phone</label>
                       <div className="flex">
                         <select value={formData.countryCode} onChange={(e) => handleChange('countryCode', e.target.value)} className="px-2 bg-muted border border-border/60 text-xs">
                           {Array.from(new Set(Object.values(dbCountryCodes))).map(code => <option key={code} value={code}>{code}</option>)}
@@ -633,7 +633,7 @@ export default function Register() {
 
               {formStep === 2 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                  <div className="border-b-2 border-primary/20 pb-3 mb-8">
                     <h3 className="text-on-surface">Step 2: Demographic Details</h3>
                   </div>
                   <div className="grid md:grid-cols-2 gap-8">
@@ -678,7 +678,7 @@ export default function Register() {
 
               {formStep === 3 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                  <div className="border-b-2 border-primary/20 pb-3 mb-8">
                     <h3 className="text-on-surface">Step 3: Emergency & Profile</h3>
                   </div>
                   <div className="space-y-3">
@@ -700,7 +700,7 @@ export default function Register() {
 
               {formStep === 4 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-charcoal-dark pb-2 mb-6">
+                  <div className="border-b-2 border-primary/20 pb-3 mb-8">
                     <h3 className="text-on-surface">Step 4: Final Verification</h3>
                   </div>
                   <div className="space-y-6">
@@ -712,12 +712,12 @@ export default function Register() {
                         <p className="text-[10px] font-bold uppercase text-muted-foreground">Upload Photo</p>
                       </div>
                     ) : (
-                      <div className="relative h-[400px] bg-zinc-950/90">
+                      <div className="relative h-[400px] bg-on-surface">
                         <Cropper image={photoUrl} crop={crop} zoom={zoom} aspect={3/4} onCropChange={setCrop} onCropComplete={onCropComplete} onZoomChange={setZoom} />
                       </div>
                     )}
                   </div>
-                  <div className="flex items-start gap-4 p-6 bg-zinc-950/90 text-white border-l-4 border-primary">
+                  <div className="flex items-start gap-4 p-6 bg-on-surface text-white border-l-4 border-primary">
                     <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-1" />
                     <label className="text-sm">I accept the declaration and agree to the Privacy Policy.</label>
                   </div>

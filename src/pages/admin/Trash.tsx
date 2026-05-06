@@ -122,11 +122,11 @@ export default function TrashPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
-            <Trash2 className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <Trash2 className="w-8 h-8 text-on-surface" />
             Trash vault
           </h1>
-          <p className="text-stone-500 text-sm mt-1">
+          <p className="text-muted-foreground/80 text-sm mt-1">
             Items are retained for 30 days before permanent purging.
           </p>
         </div>
@@ -137,7 +137,7 @@ export default function TrashPage() {
         <select
           value={activeTab}
           onChange={(e) => setActiveTab(e.target.value as TrashTab)}
-          className="w-full h-12 bg-white border border-stone-200 rounded-xl px-4 text-sm font-bold focus:border-stone-900 outline-none shadow-sm"
+          className="w-full h-12 bg-white border border-border/40 rounded-xl px-4 text-sm font-bold focus:border-on-surface outline-none shadow-sm"
         >
           <option value="blogs">Blog Posts ({blogs.length})</option>
           <option value="products">Inventory Items ({products.length})</option>
@@ -147,14 +147,14 @@ export default function TrashPage() {
       </div>
 
       {/* Tabs (Desktop Only) */}
-      <div className="hidden lg:flex items-center gap-2 mb-8 bg-stone-100 p-1.5 rounded-2xl w-fit border border-stone-200">
+      <div className="hidden lg:flex items-center gap-2 mb-8 bg-muted/10 p-1.5 rounded-2xl w-fit border border-border/40">
         <button
           onClick={() => setActiveTab('blogs')}
           className={cn(
             "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
             activeTab === 'blogs' 
-              ? "bg-white text-stone-900 shadow-sm border border-stone-200" 
-              : "text-stone-500 hover:text-stone-700"
+              ? "bg-white text-on-surface shadow-sm border border-border/40" 
+              : "text-on-surface/40 hover:text-on-surface/60"
           )}
         >
           <FileText className="w-3.5 h-3.5" />
@@ -165,8 +165,8 @@ export default function TrashPage() {
           className={cn(
             "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
             activeTab === 'products' 
-              ? "bg-white text-stone-900 shadow-sm border border-stone-200" 
-              : "text-stone-500 hover:text-stone-700"
+              ? "bg-white text-on-surface shadow-sm border border-border/40" 
+              : "text-on-surface/40 hover:text-on-surface/60"
           )}
         >
           <Package className="w-3.5 h-3.5" />
@@ -177,8 +177,8 @@ export default function TrashPage() {
           className={cn(
             "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
             activeTab === 'media' 
-              ? "bg-white text-stone-900 shadow-sm border border-stone-200" 
-              : "text-stone-500 hover:text-stone-700"
+              ? "bg-white text-on-surface shadow-sm border border-border/40" 
+              : "text-on-surface/40 hover:text-on-surface/60"
           )}
         >
           <ImageIcon className="w-3.5 h-3.5" />
@@ -189,8 +189,8 @@ export default function TrashPage() {
           className={cn(
             "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all",
             activeTab === 'authors' 
-              ? "bg-white text-stone-900 shadow-sm border border-stone-200" 
-              : "text-stone-500 hover:text-stone-700"
+              ? "bg-white text-on-surface shadow-sm border border-border/40" 
+              : "text-on-surface/40 hover:text-on-surface/60"
           )}
         >
           <PenTool className="w-3.5 h-3.5" />
@@ -199,13 +199,13 @@ export default function TrashPage() {
       </div>
 
       {/* Retention Notice */}
-      <div className="mb-8 p-4 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-4">
-        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-          <Clock className="w-5 h-5 text-amber-600" />
+      <div className="mb-8 p-4 bg-accent/5 border border-accent/20 rounded-2xl flex items-start gap-4">
+        <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+          <Clock className="w-5 h-5 text-accent" />
         </div>
         <div>
-          <h4 className="text-sm font-bold text-amber-900">30-Day Retention Policy</h4>
-          <p className="text-xs text-amber-700 mt-0.5 font-medium leading-relaxed">
+          <h4 className="text-sm font-bold text-on-surface">30-Day Retention Policy</h4>
+          <p className="text-xs text-muted-foreground/80 mt-0.5 font-medium leading-relaxed">
             All items moved to the trash are automatically purged after 30 days. Restoration is not possible once an item has been permanently deleted from the vault.
           </p>
         </div>
@@ -215,19 +215,19 @@ export default function TrashPage() {
       <div className="grid grid-cols-1 gap-4">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-64 space-y-4">
-            <div className="w-8 h-8 border-2 border-stone-100 border-t-stone-900 rounded-full animate-spin" />
-            <p className="text-stone-400 text-xs font-bold uppercase tracking-widest">Scanning vault...</p>
+            <div className="w-8 h-8 border-2 border-border/40 border-t-on-surface rounded-full animate-spin" />
+            <p className="text-muted-foreground/40 text-xs font-bold uppercase tracking-widest">Scanning vault...</p>
           </div>
         ) : (activeTab === 'blogs' && blogs.length === 0) || 
             (activeTab === 'products' && products.length === 0) || 
             (activeTab === 'media' && media.length === 0) ||
             (activeTab === 'authors' && authors.length === 0) ? (
-          <div className="bg-white border border-stone-200 rounded-3xl p-12 text-center">
-            <div className="w-20 h-20 rounded-3xl bg-stone-50 flex items-center justify-center mx-auto mb-4">
-              <Trash className="w-10 h-10 text-stone-200" />
+          <div className="bg-white border border-border/40 rounded-3xl p-12 text-center">
+            <div className="w-20 h-20 rounded-3xl bg-muted/10 flex items-center justify-center mx-auto mb-4">
+              <Trash className="w-10 h-10 text-muted-foreground/20" />
             </div>
-            <h3 className="text-xl font-bold text-stone-900">Trash is empty</h3>
-            <p className="text-stone-500 text-sm mt-2 max-w-sm mx-auto font-medium">
+            <h3 className="text-xl font-bold text-on-surface">Trash is empty</h3>
+            <p className="text-on-surface/60 text-sm mt-2 max-w-sm mx-auto font-medium">
               Excellent! All movement data is either active or has been permanently archived.
             </p>
           </div>
@@ -319,29 +319,29 @@ function TrashItemCard({
   image?: string;
 }) {
   return (
-    <Card className="rounded-2xl border-stone-200 shadow-sm overflow-hidden bg-white hover:shadow-md transition-all group">
+    <Card className="rounded-2xl border-border/40 shadow-sm overflow-hidden bg-white hover:shadow-md transition-all group">
       <CardContent className="p-0">
         <div className="flex h-32">
           {/* Visual Preview */}
-          <div className="w-32 bg-stone-100 flex items-center justify-center shrink-0 border-r border-stone-100 overflow-hidden">
+          <div className="w-32 bg-muted/10 flex items-center justify-center shrink-0 border-r border-border/40 overflow-hidden">
             {image ? (
               <img src={image} alt="" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all"  decoding="async" loading="lazy" />
             ) : (
-              <div className="text-stone-300">{icon}</div>
+              <div className="text-muted-foreground/40">{icon}</div>
             )}
           </div>
           
           <div className="flex-1 p-5 flex flex-col justify-between overflow-hidden">
             <div>
               <div className="flex items-center justify-between gap-2 mb-1">
-                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest truncate">{subtitle}</p>
-                <div className="flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest truncate">{subtitle}</p>
+                <div className="flex items-center gap-1 text-[9px] font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full">
                   <Calendar className="w-2.5 h-2.5" />
                   {daysRemaining} left
                 </div>
               </div>
-              <h4 className="font-bold text-stone-900 truncate leading-tight">{title}</h4>
-              <p className="text-[10px] text-stone-400 mt-1 flex items-center gap-1">
+              <h4 className="font-bold text-on-surface truncate leading-tight">{title}</h4>
+              <p className="text-[10px] text-muted-foreground/40 mt-1 flex items-center gap-1">
                 <Trash className="w-3 h-3" />
                 Deleted {new Date(deletedAt).toLocaleDateString()}
               </p>
@@ -352,7 +352,7 @@ function TrashItemCard({
                 onClick={onRestore}
                 variant="outline" 
                 size="sm" 
-                className="flex-1 h-8 rounded-lg text-[10px] font-bold border-stone-200 hover:bg-stone-50 gap-1.5 normal-case"
+                className="flex-1 h-8 rounded-lg text-[10px] font-bold border-border/60 hover:bg-muted/10 gap-1.5 normal-case"
               >
                 <RotateCcw className="w-3 h-3" />
                 Restore
@@ -361,7 +361,7 @@ function TrashItemCard({
                 onClick={onDelete}
                 variant="outline" 
                 size="sm" 
-                className="h-8 w-8 p-0 rounded-lg border-stone-200 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-colors"
+                className="h-8 w-8 p-0 rounded-lg border-border/60 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
               >
                 <Trash2 className="w-3 h-3" />
               </Button>

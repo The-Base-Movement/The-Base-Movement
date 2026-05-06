@@ -6,8 +6,9 @@ export interface Member {
   phone: string
   region: string
   constituency: string
-  status: 'Active' | 'Pending' | 'Suspended' | 'In Review'
+  status: 'Active' | 'Pending' | 'Suspended' | 'In Review' | 'Approved'
   joined: string
+  platform: 'GHANA' | 'DIASPORA'
   type: 'Standard' | 'Premium'
   avatarUrl?: string
   gender?: string

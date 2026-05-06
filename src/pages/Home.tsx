@@ -71,7 +71,7 @@ export default function Home() {
     <main className="bg-background font-body-md">
       {/* Hero Section */}
       <section 
-        className="relative bg-zinc-950 text-white pt-32 pb-32 md:pt-40 md:pb-40 overflow-hidden border-b-[8px] border-accent group"
+        className="relative bg-on-surface text-white pt-32 pb-32 md:pt-40 md:pb-40 overflow-hidden border-b-[8px] border-accent group"
         onMouseMove={handleMouseMove}
       >
         {!lowBandwidthMode ? (
@@ -89,10 +89,10 @@ export default function Home() {
             ></div>
           </>
         ) : (
-          <div className="absolute inset-0 z-0 bg-gradient-to-br from-charcoal-dark to-slate-900 opacity-50"></div>
+          <div className="absolute inset-0 z-0 bg-gradient-to-br from-on-surface to-on-surface/90 opacity-50"></div>
         )}
 
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-charcoal-dark via-charcoal-dark/60 to-transparent"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-on-surface via-on-surface/60 to-transparent"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-5xl md:text-h1 font-meta font-black mb-6 leading-[1.1] tracking-tighter uppercase">
@@ -102,10 +102,10 @@ export default function Home() {
               A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry and innovation.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-6 justify-center md:justify-start">
-              <Link to="/register" className="bg-destructive hover:opacity-90 text-white font-meta font-bold px-8 py-4 flex items-center justify-center gap-3 transition-transform hover:-translate-y-1 shadow-lg w-full sm:w-auto">
+              <Link to="/register" className="bg-destructive hover:brightness-110 text-white font-black uppercase tracking-widest text-[10px] px-10 py-5 flex items-center justify-center gap-3 transition-all hover:scale-105 shadow-2xl shadow-destructive/20 w-full sm:w-auto">
                 Register Now <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link to="/our-agenda" className="border-2 border-white text-white hover:bg-white hover:text-charcoal-dark font-meta font-bold px-8 py-4 transition-all w-full sm:w-auto text-center">
+              <Link to="/our-agenda" className="border-2 border-white/20 text-white hover:bg-white hover:text-on-surface font-black uppercase tracking-widest text-[10px] px-10 py-5 transition-all w-full sm:w-auto text-center">
                 Read the Plan
               </Link>
             </div>
@@ -121,7 +121,7 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="grid md:grid-cols-2 gap-12 md:gap-24">
             <div className="border-t-[4px] border-primary pt-8 group">
-              <h3 className="text-h3 font-meta font-black text-charcoal-dark mb-4 flex items-center gap-3 tracking-tight">
+              <h3 className="text-h3 font-meta font-black text-on-surface mb-4 flex items-center gap-3 tracking-tight">
                 <MapPin className="text-primary w-8 h-8" /> Base Ghana
               </h3>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
@@ -133,7 +133,7 @@ export default function Home() {
             </div>
             
             <div className="border-t-[4px] border-accent pt-8 group">
-              <h3 className="text-h3 font-meta font-black text-charcoal-dark mb-4 flex items-center gap-3 tracking-tight">
+              <h3 className="text-h3 font-meta font-black text-on-surface mb-4 flex items-center gap-3 tracking-tight">
                 <Globe className="text-accent w-8 h-8" /> Base Diaspora
               </h3>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
@@ -148,7 +148,7 @@ export default function Home() {
       </section>
 
       {/* Vision, Mission, Values - Editorial Grid */}
-      <section className="py-24 bg-zinc-950 text-white border-t border-border/40">
+      <section className="py-24 bg-on-surface text-white border-t border-white/5">
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="mb-16">
             <h2 className="text-4xl md:text-5xl font-meta font-black leading-tight mb-6 uppercase tracking-tighter">
@@ -158,22 +158,22 @@ export default function Home() {
           
           <div className="grid md:grid-cols-3 gap-12">
             <div className="border-l-2 border-destructive pl-6">
-              <span className="text-destructive font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Mission</span>
-              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Actionable Agenda</h3>
+              <span className="text-destructive font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our mission</span>
+              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Actionable agenda</h3>
               <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
                 To deliver an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians, covering education, governance, industrialisation, infrastructure, institutional reform, and agriculture.
               </p>
             </div>
             <div className="border-l-2 border-accent pl-6">
-              <span className="text-accent font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Values</span>
-              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Patriotism, Honesty, Discipline</h3>
+              <span className="text-accent font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our values</span>
+              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Patriotism, honesty, discipline</h3>
               <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
                 We are guided by love of country, transparency in leadership, and the moral courage to do what is right for Ghana.
               </p>
             </div>
             <div className="border-l-2 border-primary pl-6">
-              <span className="text-primary font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our Vision</span>
-              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">A Transformed Nation</h3>
+              <span className="text-primary font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our vision</span>
+              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">A transformed nation</h3>
               <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
                 A Ghana with quality education, lean accountable government, industrialisation, tourism, and agro-processing, quality infrastructure, comprehensive institutional reform, and expertise-led agriculture.
               </p>
@@ -189,12 +189,12 @@ export default function Home() {
             <div className="pl-8 relative">
               <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
               <AnimatedCounter target={355482} />
-              <p className="text-xl text-slate-500 mt-4 tracking-widest font-meta font-bold">Citizens Joined</p>
+              <p className="text-sm text-on-surface/40 mt-4 tracking-[0.2em] font-black uppercase">Citizens Joined</p>
             </div>
             <div className="pl-8 relative">
               <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
               <AnimatedCounter target={2} />
-              <p className="text-xl text-slate-500 mt-4 tracking-widest font-meta font-bold">Global Platforms</p>
+              <p className="text-sm text-on-surface/40 mt-4 tracking-[0.2em] font-black uppercase">Global Platforms</p>
             </div>
           </div>
         </div>
@@ -205,11 +205,11 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <span className="text-primary font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Updates</span>
-              <h2 className="text-3xl md:text-h2 font-meta font-black text-charcoal-dark tracking-tight">Latest Insights</h2>
+              <span className="text-primary font-black tracking-[0.2em] text-[10px] mb-3 block">UPDATES</span>
+              <h2 className="text-3xl md:text-h2 font-meta font-black text-on-surface tracking-tight uppercase">Latest insights</h2>
             </div>
             <Link to="/blog" className="hidden md:flex items-center gap-2 text-primary font-meta font-bold tracking-widest text-xs hover:underline">
-              View All News <ArrowRight className="w-4 h-4" />
+              View all news <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
@@ -243,7 +243,7 @@ export default function Home() {
                       {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                     </span>
                   </div>
-                  <h3 className="text-lg font-meta font-bold text-charcoal-dark tracking-tight leading-tight group-hover:text-[primary] transition-colors">
+                  <h3 className="text-lg font-meta font-black text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
                     {post.title}
                   </h3>
                 </Link>
@@ -252,7 +252,7 @@ export default function Home() {
           </div>
 
           <Link to="/blog" className="md:hidden flex items-center justify-center gap-2 mt-10 text-[primary] font-meta font-bold tracking-widest text-xs border border-[primary] py-4">
-            View All News <ArrowRight className="w-4 h-4" />
+            View all news <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
@@ -260,7 +260,7 @@ export default function Home() {
       {/* Decisive CTA Section */}
       <section className="relative px-8 pb-32 bg-white">
         <div className="max-w-[1280px] mx-auto">
-          <div className="relative z-20 bg-stone-950 rounded-[2rem] overflow-hidden shadow-[0_48px_96px_-16px_rgba(0,0,0,0.5)] -mt-20">
+          <div className="relative z-20 bg-on-surface rounded-[2rem] overflow-hidden shadow-[0_48px_96px_-16px_rgba(0,0,0,0.5)] -mt-20">
             {/* Subtle Texture/Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-[primary]/20 to-transparent opacity-50 pointer-events-none" />
             <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] pointer-events-none" />
@@ -268,7 +268,7 @@ export default function Home() {
             <div className="relative z-10 p-12 md:p-24 flex flex-col items-center text-center">
               {/* Content Column */}
               <div className="max-w-4xl">
-                <span className="text-accent font-meta font-bold tracking-[0.4em] text-xs mb-6 block">READY TO BUILD GHANA?</span>
+                <span className="text-accent font-meta font-bold tracking-[0.4em] text-xs mb-6 block uppercase">Ready to build Ghana?</span>
                 <h2 className="text-4xl md:text-6xl font-meta font-black text-white mb-8 leading-[1.1] tracking-tighter">
                   Join 355,482 people building Ghana’s future.
                 </h2>
@@ -277,7 +277,7 @@ export default function Home() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row items-center gap-5 justify-center mb-12">
-                  <Link to="/register" className="bg-accent hover:opacity-90 text-charcoal-dark font-meta font-bold px-10 py-5 text-lg transition-all hover:scale-105 shadow-[0_20px_40px_-10px_rgba(218,165,32,0.3)] flex items-center justify-center gap-3 w-full sm:w-auto">
+                  <Link to="/register" className="bg-accent hover:brightness-110 text-on-surface font-black uppercase tracking-widest text-[10px] px-10 py-5 transition-all hover:scale-105 shadow-2xl shadow-accent/20 flex items-center justify-center gap-3 w-full sm:w-auto">
                     Join The Base <ArrowRight className="w-5 h-5" />
                   </Link>
                   <Link to="/our-agenda" className="text-muted-foreground hover:text-white border-2 border-white/10 hover:border-white/40 font-meta font-bold px-10 py-5 text-lg transition-all w-full sm:w-auto text-center">
