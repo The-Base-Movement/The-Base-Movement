@@ -125,35 +125,48 @@ export function ProductCard({ product, onShare }: ProductProps) {
         </div>
 
         <CardContent className="p-6 flex flex-col flex-1">
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex items-center gap-1 mb-2">
+            <Star className="w-3 h-3 fill-warm-gold text-warm-gold" />
+            <span className="text-[10px] font-bold text-stone-500 tracking-tight uppercase">Rating {product.rating || '4.8'}</span>
+          </div>
+
+          <div className="mb-2">
             <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
               <h5 
                 id={`product-name-${product.id}`}
-                className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors line-clamp-1 mb-0 font-bold"
+                className="text-stone-900 group-hover:text-primary transition-colors line-clamp-2 mb-0 font-bold leading-tight text-sm uppercase tracking-tight"
               >
                 {product.name}
               </h5>
             </Link>
-            <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 fill-warm-gold text-warm-gold" />
-              <span className="text-[10px] font-bold text-stone-500">{product.rating || '4.8'}</span>
-            </div>
           </div>
           
           <p className="text-muted-gray mb-4 line-clamp-2 text-xs leading-relaxed font-medium">
             {product.description}
           </p>
           
-          <div className="mt-auto pt-4 border-t border-stone-100 flex items-center justify-between">
-            <span className="text-lg font-bold text-[var(--brand-green)]">
-              {product.price}
-            </span>
+          <div className="mt-auto pt-6 border-t border-stone-100 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-stone-400 uppercase tracking-tight">Investment</span>
+              <span className="text-xl font-bold text-primary font-meta">
+                GH₵{product.price.toString().replace('GHS', '').replace('GH₵', '').trim()}
+              </span>
+            </div>
             
-            <Button asChild variant="link" className="text-stone-400 hover:text-brand-green p-0 h-auto">
-              <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
-                View Gear <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
+            <div className="grid grid-cols-2 gap-3">
+              <Button 
+                onClick={handleQuickAdd}
+                variant="primary" 
+                className="h-10 text-[10px] font-bold tracking-tight uppercase shadow-lg shadow-primary/10"
+              >
+                Buy now
+              </Button>
+              <Button asChild variant="ghost" className="h-10 text-[10px] font-bold tracking-tight uppercase border-stone-200">
+                <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
+                  View Gear
+                </Link>
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

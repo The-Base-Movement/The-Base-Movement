@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ShoppingBag, Search, Heart } from 'lucide-react'
+import { ShoppingBag, Search, Heart, Filter } from 'lucide-react'
 import { Button } from '../components/ui/neon-button'
 import { ProductCard } from '@/components/ProductCard'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
@@ -126,80 +126,80 @@ export default function Store() {
           </div>
         </div>
 
-        {/* Search & Filter Bar */}
-        <div className="mt-10 flex flex-col lg:flex-row gap-6 items-center justify-between bg-white p-4 border border-stone-200 rounded-sm shadow-sm">
-          {/* Category Filters */}
-          <div className="w-full lg:w-auto">
-            {/* Mobile Dropdown */}
-            <div className="relative sm:hidden">
-              <select
-                value={activeCategory}
-                onChange={(e) => {
-                  setActiveCategory(e.target.value)
-                  setCurrentPage(1)
-                }}
-                className="w-full bg-stone-50 border border-stone-200 rounded-sm px-4 py-3 text-xs font-meta font-bold tracking-tight appearance-none focus:ring-1 focus:ring-brand-green outline-none"
-              >
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
-                <span className="material-symbols-outlined text-[18px]">expand_more</span>
-              </div>
-            </div>
-
-            {/* Desktop Buttons */}
-            <div className="hidden sm:flex flex-wrap gap-2">
+      <div className="flex flex-col lg:flex-row gap-12 mt-12">
+        {/* Sidebar Filters */}
+        <aside className="lg:w-1/4 space-y-12">
+          <div className="bg-white p-8 border border-stone-200 rounded-none shadow-sm">
+            <h4 className="text-stone-900 font-bold tracking-tight mb-6 flex items-center gap-2">
+              <Filter className="w-4 h-4 text-primary" />
+              Categories
+            </h4>
+            <div className="flex flex-col gap-2">
               {categories.map(category => (
-                <Button
+                <button
                   key={category}
-                  variant={activeCategory === category ? "primary" : "ghost"}
-                  size="sm"
                   onClick={() => {
                     setActiveCategory(category)
                     setCurrentPage(1)
                   }}
-                  className={activeCategory === category ? "shadow-md" : "text-stone-500 hover:bg-stone-100"}
+                  className={`text-left py-3 px-4 transition-all text-[12px] font-bold tracking-tight ${activeCategory === category ? 'bg-primary/5 text-primary border-l-4 border-primary' : 'text-stone-500 hover:text-primary hover:bg-stone-50'}`}
                 >
                   {category}
-                </Button>
+                </button>
               ))}
             </div>
           </div>
 
-          <div className="relative w-full lg:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-            <input 
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
-                setCurrentPage(1)
-              }}
-              className="w-full pl-11 pr-4 py-2.5 bg-stone-50 border border-stone-200 rounded-sm text-xs font-meta focus:ring-1 focus:ring-brand-green focus:outline-none transition-all"
-            />
+          <div className="bg-white p-8 border border-stone-200 rounded-none shadow-sm">
+            <h4 className="text-stone-900 font-bold tracking-tight mb-6 flex items-center gap-2">
+              <Search className="w-4 h-4 text-primary" />
+              Find Gear
+            </h4>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
+              <input 
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setCurrentPage(1)
+                }}
+                className="w-full pl-11 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-none text-xs font-meta focus:ring-1 focus:ring-primary focus:outline-none transition-all"
+              />
+            </div>
+          </div>
+          
+          <div className="bg-charcoal-dark p-8 rounded-none text-white relative overflow-hidden">
+            <div className="relative z-10">
+              <p className="text-warm-gold text-[10px] font-bold tracking-tight mb-4 uppercase">Support the cause</p>
+              <h4 className="text-white mb-4">Every cedi builds the base</h4>
+              <p className="text-stone-300 text-xs leading-relaxed mb-0">
+                All profits are reinvested into grassroots organizing and community infrastructure.
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        {/* Product Section */}
+        <div className="lg:w-3/4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {loading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="aspect-[3/4] bg-stone-200 animate-pulse rounded-none" />
+              ))
+            ) : paginatedProducts.length > 0 ? (
+              paginatedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} onShare={handleShare} />
+              ))
+            ) : (
+              <div className="col-span-full py-24 text-center bg-white border border-stone-200 rounded-none">
+                <ShoppingBag className="w-16 h-16 text-stone-100 mx-auto mb-4" />
+                <h3 className="text-stone-400 font-bold tracking-tight">No products match your criteria.</h3>
+              </div>
+            )}
           </div>
         </div>
-      </header>
-
-      {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {loading ? (
-          Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="aspect-[3/4] bg-stone-200 animate-pulse rounded-sm" />
-          ))
-        ) : paginatedProducts.length > 0 ? (
-          paginatedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} onShare={handleShare} />
-          ))
-        ) : (
-          <div className="col-span-full py-24 text-center">
-            <ShoppingBag className="w-16 h-16 text-stone-200 mx-auto mb-4" />
-            <h3 className="text-stone-400">No products found in this category.</h3>
-          </div>
-        )}
       </div>
 
       {/* Pagination UI */}
