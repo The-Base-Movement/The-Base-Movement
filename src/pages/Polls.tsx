@@ -130,11 +130,11 @@ export default function Polls() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 p-4 border border-white/10">
                     <p className="text-[10px] font-bold text-white/40 tracking-tight mb-1">Total votes</p>
-                    <h3 className="text-white mb-0">12,450</h3>
+                    <h3 className="text-white mb-0">{polls.reduce((acc, p) => acc + p.totalVotes, 0).toLocaleString()}</h3>
                   </div>
                   <div className="bg-white/5 p-4 border border-white/10">
                     <p className="text-[10px] font-bold text-white/40 tracking-tight mb-1">Active polls</p>
-                    <h3 className="text-white mb-0">2</h3>
+                    <h3 className="text-white mb-0">{activePolls.length}</h3>
                   </div>
                 </div>
               </div>
@@ -208,12 +208,12 @@ export default function Polls() {
             </div>
 
             {/* Engagement Card */}
-            <div className="bg-[var(--brand-green)] p-8 rounded-none text-white">
-              <h4 className="tracking-tight mb-4">Suggest a poll</h4>
-              <p className="text-white/80 leading-relaxed mb-6 font-medium">
+            <div className="bg-primary p-8 rounded-none text-white shadow-xl shadow-primary/20">
+              <h4 className="tracking-tight mb-4 text-white">Suggest a poll</h4>
+              <p className="text-white/80 leading-relaxed mb-6 font-medium text-xs">
                 Have a question you think the movement needs to answer? Submit your proposal for a new opinion poll.
               </p>
-              <Button className="w-full bg-white text-[var(--brand-green)] hover:bg-stone-50 rounded-none tracking-tight">
+              <Button className="w-full bg-white text-primary hover:bg-stone-50 rounded-none tracking-tight font-bold">
                 Submit proposal
               </Button>
             </div>
