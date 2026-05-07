@@ -27,6 +27,17 @@ export default function FieldDirectives() {
   const [reports, setReports] = useState<FieldReport[]>([])
   const [loading, setLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Form State
+  const [newDirective, setNewDirective] = useState<Omit<FieldDirective, 'id' | 'status'>>({
+    title: '',
+    description: '',
+    target_type: 'Regional',
+    priority: 'Normal',
+    points_awarded: 50,
+    deadline: ''
+  })
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +58,37 @@ export default function FieldDirectives() {
     }
     fetchData()
   }, [])
+
+  const handleIssueDirective = async () => {
+    if (!newDirective.title || !newDirective.description) {
+      toast.error('Tactical title and objective description are required.')
+      return
+    }
+
+    setIsSubmitting(true)
+    const success = await adminService.createFieldDirective({
+      ...newDirective
+    })
+
+    if (success) {
+      toast.success('Tactical directive deployed to the field.')
+      setIsCreating(false)
+      setNewDirective({
+        title: '',
+        description: '',
+        target_type: 'Regional',
+        priority: 'Normal',
+        points_awarded: 50,
+        deadline: ''
+      })
+      // Refresh list
+      const updated = await adminService.getFieldDirectives()
+      setDirectives(updated)
+    } else {
+      toast.error('Failed to deploy tactical protocol.')
+    }
+    setIsSubmitting(false)
+  }
 
   const handleVerify = async (reportId: string, status: 'Verified' | 'Rejected') => {
     const success = await adminService.verifyFieldReport(reportId, status)
@@ -252,11 +294,21 @@ export default function FieldDirectives() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Directive title</label>
-                    <input type="text" placeholder="e.g. Regional Flyer Blitz" className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg" />
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Regional Flyer Blitz" 
+                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg"
+                      value={newDirective.title}
+                      onChange={(e) => setNewDirective({ ...newDirective, title: e.target.value })}
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Target level</label>
-                    <select className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg">
+                    <select 
+                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg"
+                      value={newDirective.target_type}
+                      onChange={(e) => setNewDirective({ ...newDirective, target_type: e.target.value as FieldDirective['target_type'] })}
+                    >
                       <option>Regional</option>
                       <option>Chapter</option>
                       <option>Global</option>
@@ -265,16 +317,31 @@ export default function FieldDirectives() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Objective description</label>
-                  <textarea rows={3} placeholder="Describe the tactical goal..." className="w-full bg-muted/5 border-border/60 text-xs font-bold p-4 focus:ring-1 focus:ring-on-surface outline-none resize-none rounded-lg" />
+                  <textarea 
+                    rows={3} 
+                    placeholder="Describe the tactical goal..." 
+                    className="w-full bg-muted/5 border-border/60 text-xs font-bold p-4 focus:ring-1 focus:ring-on-surface outline-none resize-none rounded-lg"
+                    value={newDirective.description}
+                    onChange={(e) => setNewDirective({ ...newDirective, description: e.target.value })}
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Points awarded</label>
-                    <input type="number" defaultValue={50} className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg" />
+                    <input 
+                      type="number" 
+                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg"
+                      value={newDirective.points_awarded}
+                      onChange={(e) => setNewDirective({ ...newDirective, points_awarded: Number(e.target.value) })}
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Priority</label>
-                    <select className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg">
+                    <select 
+                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg"
+                      value={newDirective.priority}
+                      onChange={(e) => setNewDirective({ ...newDirective, priority: e.target.value as FieldDirective['priority'] })}
+                    >
                       <option>Normal</option>
                       <option>High</option>
                       <option>Urgent</option>
@@ -287,14 +354,17 @@ export default function FieldDirectives() {
                   variant="outline" 
                   onClick={() => setIsCreating(false)} 
                   className="flex-1 h-12 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-stone-50 transition-all active:scale-95"
+                  disabled={isSubmitting}
                 >
                   Cancel Directive
                 </Button>
                 <Button 
                   variant="primary"
                   className="flex-1 h-12 rounded-sm font-black text-[10px] uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  onClick={handleIssueDirective}
+                  disabled={isSubmitting}
                 >
-                  <Send className="w-4 h-4 mr-2" /> Deploy Protocol
+                  <Send className="w-4 h-4 mr-2" /> {isSubmitting ? 'Deploying...' : 'Deploy Protocol'}
                 </Button>
               </div>
             </CardContent>

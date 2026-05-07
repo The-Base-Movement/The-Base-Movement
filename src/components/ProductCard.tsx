@@ -116,7 +116,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
               <Button 
                 onClick={handleQuickAdd}
                 variant="solid"
-                className="w-full h-10 bg-white text-stone-900 hover:bg-white/90"
+                className="w-full h-10 bg-brand-green text-white hover:opacity-90 border-transparent shadow-lg shadow-brand-green/20"
               >
                 <Plus className="w-3.5 h-3.5 mr-2" /> Quick Add
               </Button>

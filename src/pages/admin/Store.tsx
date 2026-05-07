@@ -1035,6 +1035,24 @@ export default function AdminStore() {
               </div>
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
+              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Summary</Label>
+              <textarea 
+                value={selectedProduct?.description || ''} 
+                onChange={e => setSelectedProduct(prev => ({ ...prev!, description: e.target.value }))}
+                placeholder="Short patriotic summary..."
+                className="col-span-3 min-h-[80px] bg-white rounded-lg border border-border/60 p-3 text-xs focus:ring-1 focus:ring-brand-green outline-none" 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Full Details</Label>
+              <textarea 
+                value={selectedProduct?.longDescription || ''} 
+                onChange={e => setSelectedProduct(prev => ({ ...prev!, longDescription: e.target.value }))}
+                placeholder="Complete product specs and movement significance..."
+                className="col-span-3 min-h-[120px] bg-white rounded-lg border border-border/60 p-3 text-xs focus:ring-1 focus:ring-brand-green outline-none" 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
               <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Product Gallery</Label>
               <div className="col-span-3 space-y-4">
                 {/* Image Grid */}

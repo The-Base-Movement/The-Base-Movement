@@ -13,6 +13,57 @@ import type {
 } from '@/types/admin'
 import type { Product } from '@/types/product'
 
+// --- Internal Database Interfaces ---
+
+interface DBProduct {
+  id: string
+  name: string
+  slug: string
+  price_ghs: number
+  description: string
+  long_description?: string
+  status: string
+  category: string
+  rating?: number
+  reviews?: number
+  image_url: string
+  sizes?: string[]
+  colors?: string[]
+  is_featured?: boolean
+  customization_allowed?: boolean
+  specifications?: Record<string, string | number | boolean | null>
+  product_images?: { id: string, url: string, alt_text: string, display_order: number }[]
+  product_reviews?: { id: string, author_name: string, rating: number, content: string, is_verified: boolean, created_at: string }[]
+}
+
+interface DBReview {
+  id: string;
+  author_name: string;
+  rating: number;
+  content: string;
+  created_at: string;
+}
+
+interface DBJoinItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  quantity: number;
+  price_at_purchase: number;
+  created_at: string;
+  store_inventory: { name: string } | null;
+}
+
+interface DBOrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  quantity: number;
+  price_at_purchase: number;
+  created_at: string;
+  store_inventory: { name: string } | null;
+}
+
 class LogisticsService {
   private static instance: LogisticsService
 
@@ -30,7 +81,7 @@ class LogisticsService {
   async getInventory(): Promise<InventoryItem[]> {
     const { data, error } = await supabase
       .from('store_inventory')
-      .select('*, product_images(url)')
+      .select('*')
       .is('deleted_at', null)
       .order('name', { ascending: true })
 
@@ -46,9 +97,11 @@ class LogisticsService {
       price: `GHS ${i.price_ghs}`,
       stock: i.stock_quantity,
       status: i.status,
-      image: i.image_emoji || i.product_images?.[0]?.url || '📦',
-      images: i.product_images?.map(img => img.url) || [],
-      color: i.brand_color
+      image: i.image_emoji || i.image_url || '📦',
+      images: i.image_url ? [i.image_url] : [],
+      color: i.brand_color,
+      description: i.description,
+      longDescription: i.long_description
     }))
   }
 
@@ -76,7 +129,7 @@ class LogisticsService {
       rating: i.rating || 4.8,
       reviews: i.reviews || 0,
       image: i.image_url,
-      longDescription: i.description,
+      longDescription: i.long_description || i.description || 'Official movement gear. Designed for patriots.',
       sizes: i.sizes || ['S', 'M', 'L', 'XL'],
       colors: i.colors || ['Black', 'Green']
     }))
@@ -87,8 +140,7 @@ class LogisticsService {
       .from('store_inventory')
       .select(`
         *,
-        product_images (*),
-        product_reviews (*)
+        product_reviews:reviews (*)
       `)
       .eq('slug', slug)
       .is('deleted_at', null)
@@ -104,31 +156,8 @@ class LogisticsService {
       return all.find(p => p.slug === slug) || null
     }
 
-    interface DBProduct {
-      id: string
-      name: string
-      slug: string
-      price_ghs: number
-      description: string
-      long_description?: string
-      status: string
-      category: string
-      rating?: number
-      reviews?: number
-      image_url: string
-      sizes?: string[]
-      colors?: string[]
-      is_featured?: boolean
-      customization_allowed?: boolean
-      specifications?: Record<string, string | number | boolean | null>
-      product_images?: { id: string, url: string, alt_text: string, display_order: number }[]
-      product_reviews?: { id: string, patriot_name: string, rating: number, content: string, is_verified: boolean, created_at: string }[]
-    }
-
     const typedData = data as unknown as DBProduct
 
-    // Sort images by display order
-    const gallery = (typedData.product_images || []).sort((a, b) => a.display_order - b.display_order)
 
     return {
       id: typedData.id,
@@ -147,25 +176,20 @@ class LogisticsService {
       is_featured: typedData.is_featured,
       customization_allowed: typedData.customization_allowed,
       specifications: typedData.specifications,
-      gallery_images: gallery.map((img) => ({
-        id: img.id,
-        url: img.url,
-        alt_text: img.alt_text,
-        display_order: img.display_order
-      })),
-      reviews_data: (typedData.product_reviews || []).map((rev) => ({
+      gallery_images: [],
+      reviews_data: (typedData.product_reviews as unknown as DBReview[] || []).map((rev) => ({
         id: rev.id,
-        patriot_name: rev.patriot_name,
+        patriot_name: rev.author_name,
         rating: rev.rating,
         content: rev.content,
-        is_verified: rev.is_verified,
+        is_verified: true,
         created_at: rev.created_at
       }))
     }
   }
 
   async addInventoryItem(item: Omit<InventoryItem, 'id'>): Promise<boolean> {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('store_inventory')
       .insert({
         name: item.name,
@@ -174,7 +198,9 @@ class LogisticsService {
         stock_quantity: item.stock,
         status: item.status,
         image_emoji: item.image,
-        brand_color: item.color
+        brand_color: item.color,
+        description: item.description,
+        long_description: item.longDescription
       })
       .select()
       .single()
@@ -182,15 +208,6 @@ class LogisticsService {
     if (error) {
       console.error('[DATABASE] Failed to add inventory item:', error)
       return false
-    }
-
-    if (item.images && item.images.length > 0) {
-      const imageInserts = item.images.map((url, idx) => ({
-        product_id: data.id,
-        url,
-        display_order: idx
-      }))
-      await supabase.from('product_images').insert(imageInserts)
     }
 
     return true
@@ -205,6 +222,8 @@ class LogisticsService {
     if (item.status) updateData.status = item.status
     if (item.image) updateData.image_emoji = item.image
     if (item.color) updateData.brand_color = item.color
+    if (item.description !== undefined) updateData.description = item.description
+    if (item.longDescription !== undefined) updateData.long_description = item.longDescription
 
     const { error } = await supabase
       .from('store_inventory')
@@ -214,19 +233,6 @@ class LogisticsService {
     if (error) {
       console.error('[DATABASE] Failed to update inventory item:', error)
       return false
-    }
-
-    if (item.images) {
-      // Refresh gallery
-      await supabase.from('product_images').delete().eq('product_id', id)
-      if (item.images.length > 0) {
-        const imageInserts = item.images.map((url, idx) => ({
-          product_id: id,
-          url,
-          display_order: idx
-        }))
-        await supabase.from('product_images').insert(imageInserts)
-      }
     }
 
     return true
@@ -350,30 +356,33 @@ class LogisticsService {
     return true
   }
 
-  async getLogisticsAudit(): Promise<LogisticsAuditEntry[]> {
-    const { data, error } = await supabase
-      .from('logistics_audit')
-      .select('*, store_inventory(name)')
-      .order('timestamp', { ascending: false })
+  async getLogisticsAudit(limit = 50): Promise<LogisticsAuditEntry[]> {
+    try {
+      const { data, error } = await supabase
+        .from('logistics_audit')
+        .select('*, store_inventory(name)')
+        .order('timestamp', { ascending: false })
+        .limit(limit)
 
-    if (error) {
-      console.error('[DATABASE] Failed to fetch logistics audit:', error)
+      if (error) throw error
+
+      return (data || []).map(entry => ({
+        id: entry.id,
+        requestId: entry.request_id,
+        productId: entry.product_id,
+        productName: entry.store_inventory?.name,
+        action: entry.action,
+        quantityChange: entry.quantity_change,
+        sourceLocation: entry.source_location,
+        destinationLocation: entry.destination_location,
+        performedBy: entry.performed_by,
+        notes: entry.notes,
+        timestamp: entry.timestamp
+      }))
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch logistics audit ledger:', error)
       return []
     }
-
-    return data.map(entry => ({
-      id: entry.id,
-      requestId: entry.request_id,
-      productId: entry.product_id,
-      productName: entry.store_inventory?.name,
-      action: entry.action,
-      quantityChange: entry.quantity_change,
-      sourceLocation: entry.source_location,
-      destinationLocation: entry.destination_location,
-      performedBy: entry.performed_by,
-      notes: entry.notes,
-      timestamp: entry.timestamp
-    }))
   }
 
   // --- Regional Data ---
@@ -467,17 +476,22 @@ class LogisticsService {
             product_id,
             quantity,
             price_at_purchase,
-            created_at
+            created_at,
+            store_inventory(name)
           )
         `)
         .order('created_at', { ascending: false })
         .limit(limit)
-
+      
       if (error) throw error
+
 
       return (data || []).map((o) => ({
         ...o,
-        items: o.store_order_items || []
+        items: (o.store_order_items as unknown as DBJoinItem[] || []).map((item) => ({
+          ...item,
+          product_name: item.store_inventory?.name
+        }))
       })) as Order[]
     } catch (error) {
       console.error('[DATABASE] Failed to fetch orders:', error)
@@ -507,15 +521,6 @@ class LogisticsService {
       if (error) throw error
       if (!data) return null
 
-      interface DBOrderItem {
-        id: string;
-        order_id: string;
-        product_id: string;
-        quantity: number;
-        price_at_purchase: number;
-        created_at: string;
-        store_inventory: { name: string } | null;
-      }
 
       return {
         ...data,
@@ -579,17 +584,64 @@ class LogisticsService {
   }
 
   async updateOrderStatus(orderId: string, status: Order['status']): Promise<boolean> {
-    const { error } = await supabase
-      .from('store_orders')
-      .update({ status })
-      .eq('id', orderId)
+    try {
+      const updates: Partial<Order> = { status, updated_at: new Date().toISOString() }
+      
+      if (status === 'Dispatched') {
+        updates.dispatched_at = new Date().toISOString()
+      } else if (status === 'Delivered') {
+        updates.delivered_at = new Date().toISOString()
+      }
 
-    if (error) {
-      console.error('[DATABASE] Failed to update order status:', error)
+      // 1. Update the order
+      const { error: orderError } = await supabase
+        .from('store_orders')
+        .update(updates)
+        .eq('id', orderId)
+
+      if (orderError) throw orderError
+
+      // 2. If Dispatched, deduct stock from inventory
+      if (status === 'Dispatched') {
+        const order = await this.getOrderById(orderId)
+        if (order && order.items) {
+          for (const item of order.items) {
+            // Atomic decrement logic would be better via RPC, but for now we do sequential updates
+            const { data: product } = await supabase
+              .from('store_inventory')
+              .select('stock_quantity')
+              .eq('id', item.product_id)
+              .single()
+
+            if (product) {
+              const newStock = Math.max(0, product.stock_quantity - item.quantity)
+              await supabase
+                .from('store_inventory')
+                .update({ stock_quantity: newStock })
+                .eq('id', item.product_id)
+              
+              // 3. Log to logistics audit
+              await supabase
+                .from('logistics_audit')
+                .insert({
+                  product_id: item.product_id,
+                  action: 'DISPATCHED',
+                  quantity_change: -item.quantity,
+                  source_location: 'Central Hub',
+                  performed_by: 'System / Logistics Engine',
+                  notes: `Auto-deducted for Order #${orderId.slice(0, 8)}`,
+                  timestamp: new Date().toISOString()
+                })
+            }
+          }
+        }
+      }
+
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Order status update failed:', error)
       return false
     }
-
-    return true
   }
 
   async getLogisticsLatency(): Promise<LogisticsLatency[]> {
@@ -669,6 +721,41 @@ class LogisticsService {
       return []
     }
   }
+
+  async replenishInventory(): Promise<boolean> {
+    try {
+      const alerts = await this.getInventoryAlerts()
+      if (alerts.length === 0) return true
+
+      for (const item of alerts) {
+        const replenishedStock = (item.low_stock_threshold || 10) * 5 // Set to 5x threshold
+        const { error } = await supabase
+          .from('store_inventory')
+          .update({ stock_quantity: replenishedStock })
+          .eq('id', item.id)
+        
+        if (error) throw error
+
+        // Log replenishment
+        await supabase
+          .from('logistics_audit')
+          .insert({
+            product_id: item.id,
+            action: 'REPLENISHED',
+            quantity_change: replenishedStock - item.stock_quantity,
+            source_location: 'Central Hub',
+            performed_by: 'System / Logistics Engine',
+            notes: 'Automated bulk replenishment protocol',
+            timestamp: new Date().toISOString()
+          })
+      }
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Replenishment protocol failed:', error)
+      return false
+    }
+  }
+
 }
 
 export const logisticsService = LogisticsService.getInstance()

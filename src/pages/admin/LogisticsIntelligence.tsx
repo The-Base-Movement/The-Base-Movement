@@ -10,7 +10,9 @@ import {
   Filter,
   FileText,
   PackagePlus,
-  Loader2
+  Loader2,
+  ShieldCheck,
+  History
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/neon-button'
@@ -23,7 +25,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { adminService } from '@/services/adminService'
+import type { LogisticsAuditEntry } from '@/types/admin'
 import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
 import { toast } from 'sonner'
 
 interface LogisticsStats {
@@ -45,6 +49,7 @@ interface InventoryAlert {
 export default function LogisticsIntelligence() {
   const [velocity, setVelocity] = useState<LogisticsStats[]>([])
   const [alerts, setAlerts] = useState<InventoryAlert[]>([])
+  const [auditLogs, setAuditLogs] = useState<LogisticsAuditEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [isReplenishing, setIsReplenishing] = useState(false)
   const [isOptimizing, setIsOptimizing] = useState(false)
@@ -55,12 +60,14 @@ export default function LogisticsIntelligence() {
     const fetchLogisticsData = async () => {
       setLoading(true)
       try {
-        const [velocityData, alertsData] = await Promise.all([
+        const [velocityData, alertsData, auditData] = await Promise.all([
           adminService.getLogisticsVelocity(),
-          adminService.getInventoryAlerts()
+          adminService.getInventoryAlerts(),
+          adminService.getLogisticsAudit(15)
         ])
         setVelocity(velocityData)
         setAlerts(alertsData)
+        setAuditLogs(auditData)
       } catch (error) {
         console.error('[LOGISTICS] Failed to synchronize supply chain telemetry:', error)
         toast.error('Failed to synchronize supply chain telemetry.')
@@ -74,9 +81,21 @@ export default function LogisticsIntelligence() {
 
   const handleReplenishAll = async () => {
     setIsReplenishing(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    toast.success('Replenishment protocol initiated for all low-stock assets.')
+    const success = await adminService.replenishInventory()
+    
+    if (success) {
+      toast.success('Replenishment protocol initiated for all low-stock assets.')
+      // Refresh telemetry
+      const [updatedAlerts, updatedAudit] = await Promise.all([
+        adminService.getInventoryAlerts(),
+        adminService.getLogisticsAudit(15)
+      ])
+      setAlerts(updatedAlerts)
+      setAuditLogs(updatedAudit)
+    } else {
+      toast.error('Replenishment protocol failed.')
+    }
+    
     setIsReplenishing(false)
     setShowReplenishConfirm(false)
   }
@@ -391,6 +410,73 @@ export default function LogisticsIntelligence() {
           <div className="absolute top-0 left-0 w-full h-full border-[20px] border-transparent border-t-muted/5 border-l-muted/5 pointer-events-none" />
           <div className="absolute bottom-0 right-0 w-full h-full border-[20px] border-transparent border-b-muted/5 border-r-muted/5 pointer-events-none" />
         </div>
+      </Card>
+
+      {/* 📜 Supply Chain Audit Ledger */}
+      <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
+        <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
+                <History className="w-4 h-4 text-primary" /> Supply chain audit vault
+              </CardTitle>
+              <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-1">Immutable ledger of replenishment and stock adjustment events.</CardDescription>
+            </div>
+            <ShieldCheck className="w-4 h-4 text-primary" />
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-muted/30 border-b border-border/40">
+                <tr>
+                  <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Timestamp</th>
+                  <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Action</th>
+                  <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Change</th>
+                  <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Source Hub</th>
+                  <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Authorized By</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {auditLogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-[10px] font-bold text-muted-foreground/80 normal-case">No audit entries detected in the ledger.</td>
+                  </tr>
+                ) : (
+                  auditLogs.map((log) => (
+                    <tr key={log.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-6 py-4">
+                        <span className="text-[10px] font-bold normal-case text-on-surface/60">
+                          {format(new Date(log.timestamp), 'MMM dd, HH:mm')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={cn(
+                          "px-2 py-0.5 text-[8px] font-bold normal-case rounded-full",
+                          log.action === 'REPLENISHED' ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/60"
+                        )}>
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-[10px] font-bold text-on-surface">+{log.quantityChange} units</span>
+                      </td>
+                      <td className="px-6 py-4 text-[10px] font-bold text-on-surface/60 normal-case">{log.sourceLocation}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center">
+                            <ShieldCheck className="w-2 h-2 text-primary" />
+                          </div>
+                          <span className="text-[10px] font-bold text-on-surface/80 normal-case">{log.performedBy}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
       </Card>
 
       {/* 🔐 Replenish All Confirmation */}

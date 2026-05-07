@@ -6,10 +6,24 @@ import {
   Vote, 
   ClipboardList,
   Crosshair,
-  TrendingUp,
+  Activity,
+  PieChart as PieIcon,
+  BarChart as BarIcon,
   Map as MapIcon,
-  Activity
+  TrendingUp
 } from 'lucide-react'
+import { 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area
+} from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
@@ -61,8 +75,37 @@ export default function GroundGameCommand() {
     )
   }
 
+  const handleDispatchAsset = async (requestId: string) => {
+    const success = await adminService.updateTransportRequest(requestId, 'DISPATCHED')
+    if (success) {
+      toast.success('Logistics asset dispatched to pickup location.')
+      setTransportReqs(prev => prev.map(r => r.id === requestId ? { ...r, status: 'DISPATCHED' } : r))
+    } else {
+      toast.error('Failed to initialize dispatch protocol.')
+    }
+  }
+
   const verifiedVoters = voterRegs.filter(v => v.registration_status === 'VERIFIED_VOTER').length
-  const totalContacts = campaigns.reduce((acc, curr) => acc + (curr.goal_contacts || 0), 0) // Placeholder logic
+  const totalContacts = campaigns.reduce((acc, curr) => acc + (curr.goal_contacts || 0), 0)
+
+  // 📊 Process Registration Trends (Last 7 days)
+  const regTrends = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date()
+    date.setDate(date.getDate() - (6 - i))
+    const dateStr = date.toISOString().slice(0, 10)
+    return {
+      date: format(date, 'MMM dd'),
+      count: voterRegs.filter(v => v.created_at?.slice(0, 10) === dateStr).length
+    }
+  })
+
+  // 🎯 Process Canvassing Sentiment
+  const sentimentData = [
+    { name: 'Strong Support', value: fieldLogs.filter(l => l.interaction_result === 'STRONG_SUPPORT').length, color: 'var(--brand-green)' },
+    { name: 'Leaning', value: fieldLogs.filter(l => l.interaction_result === 'LEANING').length, color: '#3b82f6' },
+    { name: 'Undecided', value: fieldLogs.filter(l => l.interaction_result === 'UNDECIDED').length, color: '#f59e0b' },
+    { name: 'Hostile', value: fieldLogs.filter(l => l.interaction_result === 'HOSTILE').length, color: '#ef4444' }
+  ].filter(d => d.value > 0)
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -96,6 +139,87 @@ export default function GroundGameCommand() {
             </div>
             <ClipboardList className="w-8 h-8 text-muted-foreground/20" />
           </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* 📈 Registration Velocity Chart */}
+        <Card className="rounded-sm border-border/60 shadow-sm bg-background p-6">
+          <CardHeader className="p-0 mb-6">
+            <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
+              <Activity className="w-4 h-4 text-primary" /> Registration velocity
+            </CardTitle>
+            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">7-day mobilization trend</CardDescription>
+          </CardHeader>
+          <div className="h-[240px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={regTrends}>
+                <defs>
+                  <linearGradient id="colorReg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--brand-green)" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="var(--brand-green)" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                <XAxis 
+                  dataKey="date" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0A0A0A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}
+                  itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
+                />
+                <Area type="monotone" dataKey="count" stroke="var(--brand-green)" fillOpacity={1} fill="url(#colorReg)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* 🥧 Field Sentiment Distribution */}
+        <Card className="rounded-sm border-border/60 shadow-sm bg-background p-6">
+          <CardHeader className="p-0 mb-6">
+            <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
+              <PieIcon className="w-4 h-4 text-primary" /> Field sentiment breakdown
+            </CardTitle>
+            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Canvassing interaction intelligence</CardDescription>
+          </CardHeader>
+          <div className="h-[240px] w-full flex items-center justify-center">
+            {sentimentData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={sentimentData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {sentimentData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0A0A0A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}
+                    itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-center">
+                <BarIcon className="w-8 h-8 text-muted-foreground/10 mx-auto mb-2" />
+                <p className="text-[10px] font-bold text-muted-foreground/20 normal-case">Awaiting canvassing data...</p>
+              </div>
+            )}
+          </div>
         </Card>
       </div>
 
@@ -211,6 +335,7 @@ export default function GroundGameCommand() {
                         {req.status === 'PENDING' && (
                           <Button 
                             variant="primary"
+                            onClick={() => handleDispatchAsset(req.id)}
                             className="h-11 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                           >
                             Dispatch Asset

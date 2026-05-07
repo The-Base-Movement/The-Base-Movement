@@ -125,7 +125,7 @@ class AdminService {
 
     if (!authService.isAuthenticated()) return false
     if (!this.currentUser) return false
-    if (this.currentUser.role === 'SUPER_ADMIN') return true
+    if (this.currentUser.role === 'SUPER_ADMIN' || this.currentUser.role === 'FOUNDER') return true
     return this.currentUser.permissions.some(p => p.action === action && p.resource === resource)
   }
 
@@ -219,7 +219,7 @@ class AdminService {
     return success
   }
 
-  async getCountries(): Promise<{ name: string; dialing_code: string; is_diaspora: boolean }[]> {
+  async getCountries(): Promise<{ id: string | number; name: string; dialing_code: string; is_diaspora: boolean }[]> {
     return memberService.getCountries()
   }
 
@@ -271,12 +271,17 @@ class AdminService {
     return pollService.getPolls()
   }
 
-  async getDonationCampaigns(status: 'Active' | 'Closed' = 'Active'): Promise<DonationCampaign[]> {
-    const { data, error } = await supabase
+  async getDonationCampaigns(status?: 'Active' | 'Closed'): Promise<DonationCampaign[]> {
+    let query = supabase
       .from('donation_campaigns')
       .select('*')
-      .eq('status', status)
       .order('created_at', { ascending: false });
+
+    if (status) {
+      query = query.eq('status', status)
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.warn('[DATABASE] Failed to fetch campaigns:', error);
@@ -304,6 +309,65 @@ class AdminService {
       status: c.status,
       imageUrl: c.image_url
     }));
+  }
+
+  async createDonationCampaign(campaign: Omit<DonationCampaign, 'id' | 'raisedAmount'>): Promise<boolean> {
+    const { error } = await supabase
+      .from('donation_campaigns')
+      .insert({
+        title: campaign.title,
+        description: campaign.description,
+        target_amount: campaign.targetAmount,
+        end_date: campaign.endDate,
+        status: campaign.status,
+        image_url: campaign.imageUrl
+      })
+    
+    if (error) {
+      console.error('[DATABASE] Failed to create campaign:', error)
+      return false
+    }
+    
+    await this.logAction('CAMPAIGN_CREATE', `CAMPAIGNS/${campaign.title}`, 'Success')
+    return true
+  }
+
+  async updateDonationCampaign(id: string, campaign: Partial<DonationCampaign>): Promise<boolean> {
+    const updates: Record<string, string | number | null> = {}
+    if (campaign.title) updates.title = campaign.title
+    if (campaign.description) updates.description = campaign.description
+    if (campaign.targetAmount) updates.target_amount = campaign.targetAmount
+    if (campaign.endDate) updates.end_date = campaign.endDate
+    if (campaign.status) updates.status = campaign.status
+    if (campaign.imageUrl) updates.image_url = campaign.imageUrl
+
+    const { error } = await supabase
+      .from('donation_campaigns')
+      .update(updates)
+      .eq('id', id)
+    
+    if (error) {
+      console.error('[DATABASE] Failed to update campaign:', error)
+      return false
+    }
+    
+    await this.logAction('CAMPAIGN_UPDATE', `CAMPAIGNS/${id}`, 'Success')
+    return true
+  }
+
+  async deleteDonationCampaign(id: string, title: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('donation_campaigns')
+      .delete()
+      .eq('id', id)
+    
+    if (error) {
+      console.error('[DATABASE] Failed to delete campaign:', error)
+      return false
+    }
+    
+    await this.logAction('CAMPAIGN_DELETE', `CAMPAIGNS/${title}`, 'Warning')
+    return true
   }
 
   async getMemberDonations(memberPhone: string): Promise<DonationRecord[]> {
@@ -449,9 +513,6 @@ class AdminService {
     return success
   }
 
-  async getLogisticsAudit(): Promise<LogisticsAuditEntry[]> {
-    return logisticsService.getLogisticsAudit()
-  }
 
   // --- Analytics ---
   async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
@@ -756,7 +817,9 @@ class AdminService {
     // Normalize role string to match AdminRole type exactly
     let role: AdminRole = 'VERIFIER';
     const dbRole = admin.role?.toUpperCase() || '';
-    if (dbRole.includes('SUPER')) role = 'SUPER_ADMIN';
+    if (dbRole.includes('FOUNDER')) role = 'FOUNDER';
+    else if (dbRole.includes('ORGANIZER')) role = 'ORGANIZER';
+    else if (dbRole.includes('SUPER')) role = 'SUPER_ADMIN';
     else if (dbRole.includes('CHIEF_EDITOR')) role = 'CHIEF_EDITOR';
     else if (dbRole.includes('SENIOR_EDITOR')) role = 'SENIOR_EDITOR';
     else if (dbRole.includes('REGIONAL')) role = 'REGIONAL_DIRECTOR';
@@ -1033,6 +1096,14 @@ class AdminService {
     return success
   }
 
+  async replenishInventory(): Promise<boolean> {
+    const success = await logisticsService.replenishInventory()
+    if (success) {
+      await this.logAction('INVENTORY_REPLENISH', 'STORE/ALL', 'Success')
+    }
+    return success
+  }
+
   // --- PHASE 6: REGIONAL AUTONOMY & FIELD OPERATIONS ---
 
   async getFieldEvents(chapterName?: string): Promise<FieldEvent[]> {
@@ -1093,6 +1164,10 @@ class AdminService {
 
   async getInventoryAlerts(): Promise<InventoryAlert[]> {
     return logisticsService.getInventoryAlerts()
+  }
+
+  async getLogisticsAudit(limit?: number): Promise<LogisticsAuditEntry[]> {
+    return logisticsService.getLogisticsAudit(limit)
   }
 
   async getFieldActions(): Promise<FieldAction[]> {
@@ -1167,6 +1242,22 @@ class AdminService {
 
   async getGOTVTransportRequests(): Promise<GOTVTransportRequest[]> {
     return intelligenceService.getGOTVTransportRequests()
+  }
+
+  async updateTransportRequest(requestId: string, status: GOTVTransportRequest['status']): Promise<boolean> {
+    const success = await intelligenceService.updateTransportRequest(requestId, status)
+    if (success) {
+      await this.logAction('TRANSPORT_UPDATE', `TRANSPORT/${requestId}`, 'Success', { status })
+    }
+    return success
+  }
+
+  async createCanvassingCampaign(campaign: Partial<CanvassingCampaign>): Promise<boolean> {
+    const success = await intelligenceService.createCanvassingCampaign(campaign)
+    if (success) {
+      await this.logAction('CREATE_CAMPAIGN', `CAMPAIGNS/${campaign.title}`, 'Success', { title: campaign.title })
+    }
+    return success
   }
 
   // --- Phase 15: Public Engagement & Communication (Standardization) ---

@@ -76,6 +76,7 @@ const AdminWarRoomCommand = lazy(() => import('./pages/admin/WarRoomCommand'))
 const AdminGroundGameCommand = lazy(() => import('./pages/admin/GroundGameCommand'))
 const AdminTrash = lazy(() => import('./pages/admin/Trash'))
 const AdminRoadmap = lazy(() => import('./pages/admin/Roadmap'))
+const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPriorities'))
 
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -164,6 +165,7 @@ export default function App() {
                 <Route path="/admin/war-room" element={<AdminWarRoomCommand />} />
                 <Route path="/admin/ground-game" element={<AdminGroundGameCommand />} />
                 <Route path="/admin/donations" element={<AdminDonations />} />
+                <Route path="/admin/priorities" element={<AdminStrategicPriorities />} />
                 <Route path="/admin/members" element={<AdminMembers />} />
                 <Route path="/admin/verification" element={<AdminMemberVerification />} />
                 <Route path="/admin/chapters" element={<AdminChapters />} />

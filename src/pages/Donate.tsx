@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Phone, Globe, Check, ArrowDownToLine, Activity, X } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
+import { Card, CardContent } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import type { DonationRecord, DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
@@ -15,7 +17,9 @@ export default function Donate() {
   const [contributions, setContributions] = useState<DonationRecord[]>([])
   const [campaigns, setCampaigns] = useState<DonationCampaign[]>([])
   const [pastCampaigns, setPastCampaigns] = useState<DonationCampaign[]>([])
+  const [countries, setCountries] = useState<{ id: string | number; name: string; dialing_code: string; is_diaspora: boolean }[]>([])
   const [loading, setLoading] = useState(true)
+  const [countriesLoading, setCountriesLoading] = useState(true)
 
   // Auth & Pre-fill states (Initialized directly to avoid cascading renders)
   const [isLoggedIn] = useState(() => !!localStorage.getItem('userName'))
@@ -36,25 +40,43 @@ export default function Donate() {
   })
 
   useEffect(() => {
-    async function fetchCampaigns() {
-      const [activeData, pastData] = await Promise.all([
-        adminService.getDonationCampaigns('Active'),
-        adminService.getDonationCampaigns('Closed')
-      ])
-      setCampaigns(activeData)
-      setPastCampaigns(pastData)
-      
-      // Auto-select first active campaign if none selected
-      if (activeData.length > 0) {
-        setFormData(prev => {
-          if (!prev.campaignId) {
-            return { ...prev, campaignId: activeData[0].id }
-          }
-          return prev
-        })
+    async function fetchData() {
+      setLoading(true)
+      setCountriesLoading(true)
+      try {
+        const [activeData, pastData, countriesData] = await Promise.all([
+          adminService.getDonationCampaigns('Active'),
+          adminService.getDonationCampaigns('Closed'),
+          adminService.getCountries()
+        ])
+        setCampaigns(activeData)
+        setPastCampaigns(pastData)
+        setCountries(countriesData)
+        
+        // Auto-select first active campaign if none selected
+        if (activeData.length > 0) {
+          setFormData(prev => {
+            if (!prev.campaignId) {
+              return { ...prev, campaignId: activeData[0].id }
+            }
+            return prev
+          })
+        }
+
+        // Update default country if Ghana exists
+        const ghana = countriesData.find(c => c.name.toLowerCase() === 'ghana')
+        if (ghana) {
+          setFormData(prev => ({ ...prev, country: ghana.name }))
+        }
+      } catch (err) {
+        console.error('[DONATE] Data fetch failed:', err)
+        toast.error('Tactical data synchronization failed.')
+      } finally {
+        setLoading(false)
+        setCountriesLoading(false)
       }
     }
-    fetchCampaigns()
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -124,52 +146,53 @@ export default function Donate() {
   }
 
   return (
-    <main className="bg-surface-warm font-body-md min-h-screen pb-24">
+    <main className="bg-background font-body-md min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-charcoal-dark text-white pt-24 pb-0 mb-0 relative overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center pb-0 mb-0">
-          <h1 className="text-4xl md:text-h1 font-bold mb-4 tracking-tighter font-meta">Support the Movement</h1>
-          <div className="flex h-1 w-24 mx-auto mb-6">
-            <div className="flex-1 bg-destructive"></div>
-            <div className="flex-1 bg-accent"></div>
-            <div className="flex-1 bg-primary"></div>
+      <div className="bg-on-surface text-white pt-32 pb-16 relative overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--brand-green)_0%,_transparent_70%)]"></div>
+        <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">Financial Mobilization Unit</span>
           </div>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto font-body-md">
-            Your contribution helps grow and sustain The Base movement across Ghana and the diaspora. Together, we are building a nation that works for everyone.
+          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight font-meta uppercase">
+            Support the <span className="text-primary drop-shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.3)]">Movement</span>
+          </h1>
+          <p className="text-sm text-white/40 max-w-2xl mx-auto font-bold uppercase tracking-widest leading-relaxed">
+            Your contribution fuels the growth and sustainability of the base cell structure across Ghana and the diaspora.
           </p>
         </div>
       </div>
 
       {!submitted && (
-        <div className={`sticky top-[72px] z-50 bg-off-white/95 backdrop-blur-md border-t-4 transition-all duration-300 border-b border-stone-200 py-6 shadow-sm mt-0 ${hasScrolled ? 'border-t-primary' : 'border-t-transparent'}`}>
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-            <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
-              <div className="hidden md:flex items-center gap-3 shrink-0 border-r border-stone-200 pr-6">
-                <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain"  decoding="async" loading="lazy" />
-                <div className="text-left text-stone-900">
-                  <p className="font-meta font-bold text-sm uppercase tracking-tighter leading-none">Support the</p>
-                  <p className="text-tiny font-bold uppercase tracking-[0.2em] text-primary">Movement</p>
-                </div>
-              </div>
-
-              <div className="flex-1 w-full relative">
-                <div className="absolute top-[16px] left-0 right-0 h-[1px] bg-stone-200 z-0"></div>
-                <div className="grid grid-cols-4 gap-4 relative z-10">
+        <div className={cn(
+          "sticky top-[72px] z-50 bg-white/95 backdrop-blur-md transition-all duration-300 border-b border-border/40 py-4 shadow-sm",
+          hasScrolled ? "translate-y-0" : "translate-y-0"
+        )}>
+          <div className="max-w-[1280px] mx-auto px-8">
+            <div className="flex items-center justify-center">
+              <div className="flex-1 max-w-2xl relative">
+                <div className="absolute top-[14px] left-0 right-0 h-[1px] bg-border/40 z-0"></div>
+                <div className="grid grid-cols-4 gap-2 relative z-10">
                     {[
                       { step: 1, label: 'Details', id: 'payment-section', color: 'bg-destructive', text: 'text-white' },
-                      { step: 2, label: 'Donor', id: 'donor-section', color: 'bg-accent', text: 'text-black' },
-                      { step: 3, label: 'Link', id: 'link-section', color: 'bg-black', text: 'text-white' },
+                      { step: 2, label: 'Donor', id: 'donor-section', color: 'bg-accent', text: 'text-white' },
+                      { step: 3, label: 'Link', id: 'link-section', color: 'bg-on-surface', text: 'text-white' },
                       { step: 4, label: 'Proof', id: 'receipt-section', color: 'bg-primary', text: 'text-white' }
                     ].map((s) => (
-                      <div key={s.step} className="flex flex-col items-center">
-                        <div 
-                          onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                          className={`w-8 h-8 rounded-none flex items-center justify-center font-meta font-bold text-xs border-2 transition-all cursor-pointer ${activeStep === s.step ? `${s.color} border-transparent ${s.text} scale-110 shadow-lg` : 'bg-white border-stone-200 text-stone-400'}`}
-                        >
+                      <div key={s.step} className="flex flex-col items-center group cursor-pointer" onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
+                        <div className={cn(
+                          "w-7 h-7 flex items-center justify-center text-[10px] font-black transition-all border",
+                          activeStep === s.step 
+                            ? `${s.color} border-transparent ${s.text} shadow-lg shadow-black/10 scale-110` 
+                            : "bg-white border-border/60 text-muted-foreground/40 group-hover:border-on-surface group-hover:text-on-surface"
+                        )}>
                           {s.step}
                         </div>
-                        <span className={`text-tiny font-meta font-semibold uppercase tracking-widest mt-2 text-center transition-colors ${activeStep === s.step ? 'text-primary font-bold' : 'text-stone-400'}`}>
+                        <span className={cn(
+                          "text-[8px] font-black uppercase tracking-[0.2em] mt-2 transition-colors",
+                          activeStep === s.step ? "text-on-surface" : "text-muted-foreground/40"
+                        )}>
                           {s.label}
                         </span>
                       </div>
@@ -200,131 +223,130 @@ export default function Donate() {
         ) : (
           <div className="relative">
             {/* Active Campaigns Section */}
-            <section className="mt-12">
-              <div className="flex items-center justify-between mb-8">
+            <section className="mt-16">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                 <div>
-                  <h2 className="text-2xl font-bold text-charcoal-dark tracking-tight font-meta">Active Campaigns</h2>
-                  <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest mt-1">Direct your support to specific movement priorities</p>
+                  <h2 className="text-2xl font-black text-on-surface tracking-tight uppercase font-meta">Strategic Priorities</h2>
+                  <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mt-2">Deploy your capital to critical movement cells.</p>
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {loading ? (
                   Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="h-64 bg-slate-100 animate-pulse rounded-none border border-slate-200" />
+                    <div key={i} className="h-[400px] bg-muted/30 animate-pulse rounded-sm border border-border/40" />
                   ))
                 ) : campaigns.map(c => (
-                  <div key={c.id} className="bg-white border border-slate-200 p-6 flex flex-col group hover:shadow-lg transition-all duration-300">
-                    <div className="aspect-video bg-slate-100 mb-4 overflow-hidden relative">
-                      {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  decoding="async" loading="lazy" />}
-                      <div className="absolute top-3 right-3">
-                        <span className="bg-primary text-white text-tiny font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-lg">Active</span>
+                  <Card key={c.id} className="rounded-sm border-border/60 shadow-sm flex flex-col group hover:shadow-md transition-all duration-500 overflow-hidden bg-white">
+                    <div className="aspect-[16/10] bg-muted/50 overflow-hidden relative">
+                      {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover grayscale-[50%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"  decoding="async" loading="lazy" />}
+                      <div className="absolute top-4 right-4">
+                        <span className="bg-primary text-white text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 shadow-xl">In mobilization</span>
                       </div>
                     </div>
-                    <h3 className="font-bold text-charcoal-dark font-meta text-lg mb-2 group-hover:text-primary transition-colors">{c.title}</h3>
-                    <p className="text-xs text-slate-500 mb-6 line-clamp-2 leading-relaxed">{c.description}</p>
-                    
-                    <div className="mt-auto">
-                      <div className="flex justify-between text-tiny font-bold uppercase tracking-widest text-slate-400 mb-2">
-                        <span>Progress</span>
-                        <span className="text-primary">{Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
-                      </div>
-                      <div className="h-1.5 bg-slate-100 mb-4">
-                        <div 
-                          className="h-full bg-primary transition-all duration-1000" 
-                          style={{ width: `${Math.min(100, (c.raisedAmount / c.targetAmount) * 100)}%` }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-end">
+                    <CardContent className="p-8 flex flex-col flex-1">
+                      <h3 className="font-bold text-on-surface font-meta text-base mb-3 group-hover:text-primary transition-colors uppercase tracking-tight">{c.title}</h3>
+                      <p className="text-[11px] font-bold text-muted-foreground/60 mb-8 line-clamp-2 leading-relaxed normal-case">{c.description}</p>
+                      
+                      <div className="mt-auto space-y-6">
                         <div>
-                          <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest">Raised</p>
-                          <p className="text-sm font-bold text-charcoal-dark font-meta tracking-tight">GHS {c.raisedAmount.toLocaleString()}</p>
+                          <div className="flex justify-between items-end mb-2">
+                            <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest">Strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
+                            <span className="text-xs font-black font-meta text-on-surface">GHS {c.raisedAmount.toLocaleString()}</span>
+                          </div>
+                          <div className="h-1.5 w-full bg-muted/10 overflow-hidden rounded-full border border-border/5">
+                            <div 
+                              className="h-full bg-primary transition-all duration-1000 shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" 
+                              style={{ width: `${Math.min(100, (c.raisedAmount / c.targetAmount) * 100)}%` }}
+                            />
+                          </div>
                         </div>
+                        
                         <Button 
-                          variant="link"
+                          variant="outline"
                           onClick={() => {
                             setFormData(prev => ({ ...prev, campaignId: c.id }))
                             document.getElementById('donor-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                           }}
-                          className="text-primary p-0 h-auto"
+                          className="w-full h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] border-border/60 hover:bg-on-surface hover:text-white transition-all shadow-sm active:scale-95"
                         >
-                          Support <ArrowDownToLine className="w-3 h-3 rotate-[-90deg]" />
+                          Direct Capital <ArrowDownToLine className="w-4 h-4 ml-2 rotate-[-90deg]" />
                         </Button>
                       </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </section>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch pt-12">
               
-              <div id="payment-section" className="bg-charcoal-dark text-white p-8 md:p-10 shadow-xl relative overflow-hidden flex flex-col scroll-mt-[180px]">
+              <div id="payment-section" className="bg-on-surface text-white p-8 md:p-10 shadow-xl relative overflow-hidden flex flex-col scroll-mt-[180px] rounded-sm">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transform translate-x-4 -translate-y-4">
                   <Phone className="w-32 h-32 text-primary" />
                 </div>
                 
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-8 h-8 bg-destructive text-white flex items-center justify-center font-meta font-bold text-xs rounded-none">01</span>
-                  <h3 className="font-bold text-white font-meta tracking-tighter text-xl">Payment Details</h3>
+                  <span className="w-7 h-7 bg-destructive text-white flex items-center justify-center font-meta font-black text-[10px]">01</span>
+                  <h3 className="font-bold text-white font-meta tracking-tight text-lg uppercase">Capital Transfer</h3>
                 </div>
                 
                 <div className="space-y-8 flex-1">
                   <div>
-                    <p className="text-tiny font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Account Holder</p>
-                    <p className="font-bold text-primary text-2xl tracking-tight leading-none">Paul Kofi Agyekum</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 font-meta mb-2">Account Holder</p>
+                    <p className="font-black text-primary text-xl tracking-tight leading-none uppercase">Paul Kofi Agyekum</p>
                   </div>
                   <div>
-                    <p className="text-tiny font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">MoMo Number</p>
-                    <p className="font-bold font-meta tracking-wider text-white text-2xl">+233 538 873 569</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 font-meta mb-2">MoMo Identifier</p>
+                    <p className="font-black font-meta tracking-wider text-white text-xl">+233 538 873 569</p>
                   </div>
                   <div className="grid grid-cols-1 gap-6 pt-8 border-t border-white/10">
                     <div>
-                      <p className="text-tiny font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Network</p>
-                      <p className="text-slate-300 font-semibold font-meta uppercase text-sm">MTN Mobile Money</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 font-meta mb-2">Network Hub</p>
+                      <p className="text-white/60 font-black font-meta uppercase text-[11px]">MTN Mobile Money</p>
                     </div>
                     <div>
-                      <p className="text-tiny font-semibold uppercase tracking-[0.2em] text-slate-500 font-meta mb-2">Reference</p>
-                      <p className="text-accent font-bold font-meta uppercase text-sm italic border-b border-accent/30 pb-1">"THE BASE"</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 font-meta mb-2">Deployment Reference</p>
+                      <p className="text-accent font-black font-meta uppercase text-[11px] italic border-b border-accent/30 pb-1">"THE BASE"</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-12 p-6 bg-white/5 border border-white/10 flex items-start gap-4 rounded-none">
+                <div className="mt-12 p-5 bg-white/5 border border-white/10 flex items-start gap-4 rounded-sm">
                   <div className="text-primary mt-0.5">
-                    <span className="material-symbols-outlined text-[20px]">info</span>
+                    <Check className="w-4 h-4" />
                   </div>
-                  <p className="text-micro text-slate-400 leading-relaxed font-medium tracking-wider">
-                    Please complete the transfer first, then capture your receipt.
+                  <p className="text-[10px] text-white/40 leading-relaxed font-bold tracking-tight uppercase">
+                    Complete transfer protocol first, then capture receipt for verification.
                   </p>
                 </div>
               </div>
 
               {/* Column 2: Donation Form */}
-              <div id="donor-section" className="bg-white border border-slate-200 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px]">
+              <div id="donor-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px] rounded-sm">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-8 h-8 bg-accent text-black flex items-center justify-center font-meta font-bold text-xs rounded-none">02</span>
-                  <h3 className="font-bold text-charcoal-dark font-meta tracking-tighter text-xl">Donor Information</h3>
+                  <span className="w-7 h-7 bg-accent text-white flex items-center justify-center font-meta font-black text-[10px]">02</span>
+                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg uppercase">Contributor Profile</h3>
                 </div>
 
                 <form onSubmit={handleSubmit} id="donationForm" className="space-y-6 flex-1">
                   <div className="space-y-2">
-                    <label htmlFor="fullName" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                      Full name <span className="text-destructive">*</span>
+                    <label htmlFor="fullName" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                      Identification <span className="text-destructive">*</span>
                     </label>
                     <input 
                       id="fullName" 
-                      placeholder="Your name" 
+                      placeholder="Legal full name" 
                       required 
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                       onFocus={() => setActiveStep(2)} 
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50/50 rounded-none" 
+                      className="w-full h-12 px-4 text-on-surface text-sm bg-muted/20 border-b border-border/60 focus:border-on-surface outline-none transition-all font-bold" 
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="phone" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                      Phone number <span className="text-destructive">*</span>
+                    <label htmlFor="phone" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                      Contact Line <span className="text-destructive">*</span>
                     </label>
                     <input 
                       id="phone" 
@@ -333,13 +355,13 @@ export default function Donate() {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       onFocus={() => setActiveStep(2)} 
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm bg-slate-50/50 rounded-none" 
+                      className="w-full h-12 px-4 text-on-surface text-sm bg-muted/20 border-b border-border/60 focus:border-on-surface outline-none transition-all font-bold" 
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label htmlFor="amount" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
+                      <label htmlFor="amount" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
                         Amount (GHS) <span className="text-destructive">*</span>
                       </label>
                       <input 
@@ -350,25 +372,43 @@ export default function Donate() {
                         value={formData.amount}
                         onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                         onFocus={() => setActiveStep(2)} 
-                        className="w-full form-understate p-4 text-charcoal-dark text-sm font-meta bg-slate-50/50 rounded-none" 
+                        className="w-full h-12 px-4 text-on-surface text-sm bg-muted/20 border-b border-border/60 focus:border-on-surface outline-none transition-all font-black font-meta" 
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="country" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                        Country <span className="text-destructive">*</span>
+                      <label htmlFor="country" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                        Jurisdiction <span className="text-destructive">*</span>
                       </label>
-                      <select id="country" required onFocus={() => setActiveStep(2)} className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none bg-slate-50/50" style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7rem top 50%', backgroundSize: '.65rem auto' }}>
-                        <option value="GH">Ghana</option>
-                        <option value="NG">Nigeria</option>
-                        <option value="UK">United Kingdom</option>
-                        <option value="US">United States</option>
+                      <select 
+                        id="country" 
+                        required 
+                        value={formData.country}
+                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                        onFocus={() => setActiveStep(2)} 
+                        disabled={countriesLoading}
+                        className="w-full h-12 px-4 text-on-surface text-sm bg-muted/20 border-b border-border/60 focus:border-on-surface outline-none transition-all font-bold appearance-none disabled:opacity-50"
+                      >
+                        {countriesLoading ? (
+                          <option>Synchronizing...</option>
+                        ) : countries.length > 0 ? (
+                          countries.map((c) => (
+                            <option key={c.id} value={c.name}>{c.name}</option>
+                          ))
+                        ) : (
+                          <>
+                            <option value="GH">Ghana</option>
+                            <option value="NG">Nigeria</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="US">United States</option>
+                          </>
+                        )}
                       </select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="campaign" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                      Select Campaign <span className="text-destructive">*</span>
+                    <label htmlFor="campaign" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                      Target Cell <span className="text-destructive">*</span>
                     </label>
                     <select 
                       id="campaign" 
@@ -376,8 +416,7 @@ export default function Donate() {
                       value={formData.campaignId}
                       onChange={(e) => setFormData({ ...formData, campaignId: e.target.value })}
                       onFocus={() => setActiveStep(2)} 
-                      className="w-full form-understate p-4 text-charcoal-dark text-sm appearance-none bg-slate-50/50"
-                      style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7rem top 50%', backgroundSize: '.65rem auto' }}
+                      className="w-full h-12 px-4 text-on-surface text-sm bg-muted/20 border-b border-border/60 focus:border-on-surface outline-none transition-all font-bold appearance-none"
                     >
                       {campaigns.map(c => (
                         <option key={c.id} value={c.id}>{c.title}</option>
@@ -385,47 +424,47 @@ export default function Donate() {
                     </select>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-200 p-6 rounded-none space-y-4">
-                    <p className="text-tiny font-bold font-meta uppercase tracking-widest text-slate-500">Member Tracking</p>
-                    <input id="membership" placeholder="ID Number (Optional)" className="w-full bg-white border border-slate-200 p-4 text-sm font-meta placeholder-slate-300 focus:outline-none focus:border-primary transition-all" />
+                  <div className="bg-muted/10 border border-border/40 p-6 rounded-sm space-y-4">
+                    <p className="text-[9px] font-black font-meta uppercase tracking-widest text-muted-foreground/40">Patriot Tracking</p>
+                    <input id="membership" placeholder="ID Number (Optional)" className="w-full bg-white border border-border/40 p-4 text-sm font-bold placeholder-muted-foreground/20 focus:outline-none focus:border-on-surface transition-all rounded-sm" />
                   </div>
                 </form>
               </div>
 
               {/* Column 3: Link Membership */}
-              <div id="link-section" className="bg-white border border-slate-200 shadow-sm p-8 md:p-10 flex flex-col rounded-none scroll-mt-[180px]">
+              <div id="link-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col rounded-sm scroll-mt-[180px]">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-8 h-8 bg-black text-white flex items-center justify-center font-meta font-bold text-xs rounded-none">03</span>
-                  <h3 className="font-bold text-charcoal-dark font-meta tracking-tighter text-xl">
-                    {isLoggedIn ? 'Member Recognized' : 'Link Membership'}
+                  <span className="w-7 h-7 bg-on-surface text-white flex items-center justify-center font-meta font-black text-[10px]">03</span>
+                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg uppercase">
+                    {isLoggedIn ? 'Patriot Profile' : 'Link Patriot'}
                   </h3>
                 </div>
 
                 <div className="space-y-8 flex-1 flex flex-col">
-                    <div className="bg-slate-50 border border-slate-100 p-6 rounded-none space-y-4">
+                    <div className="bg-muted/10 border border-border/40 p-6 rounded-sm space-y-6">
                       <div className="flex items-center gap-3">
-                        <Activity className="w-5 h-5 text-primary" />
-                        <h4 className="font-bold text-charcoal-dark font-meta tracking-tight text-sm">
-                          {isLoggedIn ? 'Automatic Integration' : 'Member Integration'} <span className="text-stone-400 font-normal">(optional)</span>
+                        <Activity className="w-4 h-4 text-primary" />
+                        <h4 className="font-black text-on-surface font-meta tracking-tight text-[11px] uppercase">
+                          {isLoggedIn ? 'Active Session' : 'Movement ID'} <span className="text-muted-foreground/40 font-bold lowercase tracking-normal">(optional)</span>
                         </h4>
                       </div>
-                      <p className="text-xs text-slate-500 font-body-md leading-relaxed">
+                      <p className="text-[10px] text-muted-foreground/60 font-bold leading-relaxed uppercase tracking-tight">
                         {isLoggedIn 
-                          ? 'We have identified your membership. This donation will be automatically linked to your movement profile.'
-                          : 'If you are a registered member, enter your membership number to link this donation to your profile.'
+                          ? 'Automatic recognition active. This deployment will be linked to your patriot profile.'
+                          : 'Enter your movement identification number to synchronize this capital with your profile.'
                         }
                       </p>
                       <div className="space-y-2">
-                        <label htmlFor="membershipNumber" className="text-tiny font-semibold text-charcoal-dark font-meta tracking-widest uppercase">
-                          Membership Number
+                        <label htmlFor="membershipNumber" className="text-[9px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                          Movement ID
                         </label>
                         <input 
                           id="membershipNumber" 
-                          placeholder="e.g. GH-2028-345501 or DI-2028-345501" 
+                          placeholder="e.g. GH-2028-XXXXXX" 
                           value={formData.membershipNumber}
                           onChange={(e) => setFormData({ ...formData, membershipNumber: e.target.value })}
                           onFocus={() => setActiveStep(3)}
-                          className="w-full bg-white p-4 text-charcoal-dark text-sm border border-slate-200 focus:border-primary outline-none transition-all" 
+                          className="w-full bg-white p-4 text-on-surface text-sm border border-border/40 focus:border-on-surface outline-none transition-all font-bold rounded-sm shadow-inner" 
                         />
                       </div>
                       <label className="flex items-center gap-3 cursor-pointer group">
@@ -435,25 +474,25 @@ export default function Donate() {
                             checked={formData.showOnDashboard}
                             onChange={(e) => setFormData({ ...formData, showOnDashboard: e.target.checked })}
                             onFocus={() => setActiveStep(3)}
-                            className="peer h-5 w-5 cursor-pointer appearance-none border-2 border-accent rounded-none checked:bg-accent transition-all" 
+                            className="peer h-4 w-4 cursor-pointer appearance-none border border-border/60 rounded-sm checked:bg-primary transition-all" 
                           />
-                          <Check className="absolute h-3.5 w-3.5 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" />
+                          <Check className="absolute h-3 w-3 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" />
                         </div>
-                        <span className="text-xs text-slate-600 font-meta font-semibold group-hover:text-primary transition-colors">Show my donation on my dashboard once verified</span>
+                        <span className="text-[10px] text-muted-foreground/80 font-black uppercase tracking-tight group-hover:text-on-surface transition-colors">Publish to personal dossier</span>
                       </label>
                     </div>
                 </div>
               </div>
 
               {/* Column 4: Upload Receipt */}
-              <div id="receipt-section" className="bg-white border border-slate-200 shadow-sm p-8 md:p-10 flex flex-col rounded-none scroll-mt-[180px]">
+              <div id="receipt-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col rounded-sm scroll-mt-[180px]">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-8 h-8 bg-primary text-white flex items-center justify-center font-meta font-bold text-xs rounded-none">04</span>
-                  <h3 className="font-bold text-charcoal-dark font-meta tracking-tighter text-xl">Proof of Payment</h3>
+                  <span className="w-7 h-7 bg-primary text-white flex items-center justify-center font-meta font-black text-[10px]">04</span>
+                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg uppercase">Audit Trail</h3>
                 </div>
 
                 <div className="space-y-8 flex-1 flex flex-col">
-                    <div className="border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-none p-12 text-center hover:bg-slate-100 hover:border-primary transition-all group cursor-pointer relative flex-1 flex flex-col justify-center">
+                    <div className="border border-dashed border-border/60 bg-muted/5 rounded-sm p-12 text-center hover:bg-muted/10 hover:border-on-surface transition-all group cursor-pointer relative flex-1 flex flex-col justify-center">
                       <input 
                         type="file" 
                         form="donationForm" 
@@ -463,20 +502,20 @@ export default function Donate() {
                         id="receipt" 
                         required 
                       />
-                      <div className="w-16 h-16 bg-white shadow-sm border border-slate-100 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 rounded-none">
-                        <ArrowDownToLine className="w-8 h-8 text-slate-400 group-hover:text-primary transition-colors" />
+                      <div className="w-14 h-14 bg-white shadow-sm border border-border/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 rounded-sm">
+                        <ArrowDownToLine className="w-6 h-6 text-muted-foreground/40 group-hover:text-primary transition-colors" />
                       </div>
-                      <p className="text-sm text-slate-700 font-semibold mb-1 tracking-tight font-meta">Click or drag receipt</p>
-                      <p className="text-tiny text-slate-400 font-meta uppercase tracking-widest">JPG, PNG, or PDF</p>
+                      <p className="text-[10px] text-on-surface font-black uppercase tracking-widest mb-1 font-meta">Synchronize Receipt</p>
+                      <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-[0.2em]">JPG, PNG, or PDF</p>
                     </div>
 
-                    <div className="bg-surface-warm p-6 border border-slate-100 rounded-none">
+                    <div className="bg-muted/10 p-5 border border-border/40 rounded-sm">
                       <div className="flex items-center gap-3 mb-3">
-                        <Globe className="w-5 h-5 text-primary" />
-                        <h4 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-xs">International option</h4>
+                        <Globe className="w-4 h-4 text-primary" />
+                        <h4 className="font-black text-on-surface font-meta uppercase tracking-tight text-[10px]">Global Diaspora Portal</h4>
                       </div>
-                      <p className="text-sm text-slate-600 leading-relaxed font-body-md">
-                        Use code <span className="text-primary font-bold">THEBASEM</span> on TapTap Send for a bonus.
+                      <p className="text-[10px] text-muted-foreground/60 leading-relaxed font-bold uppercase tracking-tight">
+                        Use deployment code <span className="text-primary font-black">THEBASEM</span> on TapTap for resource scaling bonus.
                       </p>
                     </div>
 
@@ -484,9 +523,10 @@ export default function Donate() {
                       type="submit"
                       form="donationForm"
                       variant="primary"
-                      className="w-full py-8 flex items-center justify-center gap-2 whitespace-nowrap"
+                      className="w-full py-8 flex items-center justify-center gap-3 rounded-sm shadow-lg shadow-brand-green/20"
                     >
-                      <Heart className="w-6 h-6" /> Confirm Donation
+                      <Heart className="w-5 h-5" />
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em]">Authorize Contribution</span>
                     </Button>
                 </div>
               </div>
@@ -496,109 +536,112 @@ export default function Donate() {
             {/* Movement Victories Section */}
             {pastCampaigns.length > 0 && (
               <section className="mt-24">
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                   <div>
-                    <h2 className="text-2xl font-bold text-charcoal-dark tracking-tight font-meta flex items-center gap-3">
-                      <Check className="w-6 h-6 text-primary" />
-                      Movement Victories
+                    <h2 className="text-2xl font-black text-on-surface tracking-tight uppercase font-meta flex items-center gap-3">
+                      <Check className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.4)]" />
+                      Strategic Victories
                     </h2>
-                    <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest mt-1">Proof of what we can achieve when patriots unite</p>
+                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mt-2">Historical proof of patriot mobilization success.</p>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 opacity-75">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                   {pastCampaigns.map(c => (
-                    <div key={c.id} className="bg-white border border-slate-200 p-5 flex flex-col relative grayscale hover:grayscale-0 transition-all duration-500">
+                    <Card key={c.id} className="bg-white border border-border/60 p-5 flex flex-col relative grayscale hover:grayscale-0 transition-all duration-700 opacity-75 hover:opacity-100 rounded-sm">
                       <div className="absolute top-4 right-4 z-10">
-                        <span className="bg-black text-white text-micro font-bold uppercase tracking-widest px-2 py-1 rounded-none shadow-xl flex items-center gap-1">
-                          <Check className="w-2 h-2" /> 100% Funded
+                        <span className="bg-on-surface text-white text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1 shadow-xl flex items-center gap-1">
+                          <Check className="w-3 h-3 text-primary" /> 100% SECURED
                         </span>
                       </div>
-                      <div className="aspect-square bg-slate-50 mb-4 overflow-hidden opacity-50">
+                      <div className="aspect-square bg-muted/30 mb-5 overflow-hidden rounded-sm border border-border/5">
                         {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />}
                       </div>
-                      <h4 className="font-bold text-charcoal-dark font-meta text-sm mb-1">{c.title}</h4>
-                      <p className="text-micro text-slate-500 mb-4 line-clamp-2">{c.description}</p>
-                      <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between items-center">
+                      <h4 className="font-bold text-on-surface font-meta text-xs mb-2 uppercase tracking-tight">{c.title}</h4>
+                      <p className="text-[10px] font-bold text-muted-foreground/40 mb-6 line-clamp-2 normal-case leading-relaxed">{c.description}</p>
+                      <div className="mt-auto pt-4 border-t border-border/40 flex justify-between items-center">
                         <div>
-                          <p className="text-micro font-bold text-slate-400 uppercase tracking-widest">Total Impact</p>
-                          <p className="text-xs font-bold text-primary">GHS {c.raisedAmount.toLocaleString()}</p>
+                          <p className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest">Total impact</p>
+                          <p className="text-xs font-black text-primary">GHS {c.raisedAmount.toLocaleString()}</p>
                         </div>
-                        <span className="text-micro font-bold text-slate-300 uppercase tracking-widest italic">Campaign Completed</span>
+                        <span className="text-[8px] font-black text-on-surface/20 uppercase tracking-[0.2em] italic">Decommissioned</span>
                       </div>
-                    </div>
+                    </Card>
                   ))}
                 </div>
               </section>
             )}
 
             {/* Contribution History Section */}
-            <section className="mt-20">
-              <div className="flex items-center justify-between mb-8">
+            <section className="mt-24">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                 <div>
-                  <h2 className="text-2xl font-bold text-charcoal-dark tracking-tight font-meta flex items-center gap-3">
-                    <Activity className="w-6 h-6 text-primary" />
-                    Contribution History
+                  <h2 className="text-2xl font-black text-on-surface tracking-tight uppercase font-meta flex items-center gap-3">
+                    <Activity className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
+                    Capital Deployment History
                   </h2>
-                  <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest mt-1">Track your personal impact on the movement</p>
+                  <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mt-2">Immutable record of your personal impact.</p>
                 </div>
-                <div className="hidden sm:flex gap-4">
-                  <div className="px-4 py-2 bg-white border border-slate-200 text-center rounded-none">
-                    <p className="text-tiny font-semibold text-slate-400 uppercase tracking-widest">Total donated</p>
-                    <p className="text-sm font-bold text-charcoal-dark uppercase tracking-tight">GHS 1,250</p>
+                <div className="flex gap-4">
+                  <div className="px-5 py-3 bg-white border border-border/60 text-center rounded-sm shadow-sm">
+                    <p className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Aggregate support</p>
+                    <p className="text-sm font-black text-on-surface uppercase tracking-tight font-meta mt-1">GHS 1,250</p>
                   </div>
-                  <div className="px-4 py-2 bg-primary/5 border border-primary/20 text-center rounded-none">
-                    <p className="text-tiny font-semibold text-primary uppercase tracking-widest">Points earned</p>
-                    <p className="text-sm font-bold text-primary uppercase tracking-tight">125 XP</p>
+                  <div className="px-5 py-3 bg-primary/10 border border-primary/20 text-center rounded-sm shadow-sm">
+                    <p className="text-[8px] font-black text-primary uppercase tracking-[0.2em]">Mobilization XP</p>
+                    <p className="text-sm font-black text-primary uppercase tracking-tight font-meta mt-1">125 Units</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white border border-slate-200 shadow-sm overflow-hidden rounded-none">
+              <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
                 {/* Desktop Table View */}
                 <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-100">
-                        <th className="p-5 text-sm font-semibold text-slate-500 uppercase tracking-widest">Date</th>
-                        <th className="p-5 text-sm font-semibold text-slate-500 uppercase tracking-widest">Amount</th>
-                        <th className="p-5 text-sm font-semibold text-slate-500 uppercase tracking-widest">Method</th>
-                        <th className="p-5 text-sm font-semibold text-slate-500 uppercase tracking-widest">Status</th>
-                        <th className="p-5 text-sm font-semibold text-slate-500 uppercase tracking-widest text-right">Receipt</th>
+                      <tr className="bg-muted/30 border-b border-border/40">
+                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Deployment Details</th>
+                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Capital</th>
+                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Channel</th>
+                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Verification</th>
+                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] text-right">Audit</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-50">
+                    <tbody className="divide-y divide-border/40">
                       {loading ? (
                         <tr>
-                          <td colSpan={5} className="p-10 text-center text-slate-400 italic font-meta text-xs uppercase tracking-widest">
-                            Fetching contribution history...
+                          <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-black uppercase tracking-[0.2em] italic">
+                            Synchronizing deployment ledger...
                           </td>
                         </tr>
                       ) : contributions.length > 0 ? (
                         contributions.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/50 transition-colors group">
-                          <td className="p-5">
-                            <p className="text-sm font-semibold text-charcoal-dark">{item.date}</p>
-                            <p className="text-tiny text-primary font-bold uppercase tracking-wider mt-0.5">{item.campaignTitle || 'General Fund'}</p>
-                            <p className="text-tiny text-slate-400 font-meta font-semibold uppercase tracking-widest">{item.id}</p>
+                        <tr key={idx} className="hover:bg-muted/30 transition-colors group">
+                          <td className="p-6">
+                            <p className="text-xs font-black text-on-surface uppercase tracking-tight">{item.date}</p>
+                            <p className="text-[10px] text-primary font-black uppercase tracking-widest mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
+                            <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">TX-{item.id.toUpperCase()}</p>
                           </td>
-                          <td className="p-5">
-                            <p className="text-sm font-bold text-charcoal-dark">{item.amount}</p>
+                          <td className="p-6">
+                            <p className="text-sm font-black text-on-surface font-meta">{item.amount}</p>
                           </td>
-                          <td className="p-5">
+                          <td className="p-6">
                             <div className="flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 bg-slate-300 rounded-none"></span>
-                              <p className="text-sm font-semibold text-slate-500 uppercase tracking-tight">{item.method}</p>
+                              <span className="w-2 h-2 bg-muted/40 rounded-full"></span>
+                              <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-tight">{item.method}</p>
                             </div>
                           </td>
-                          <td className="p-5">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 text-primary text-xs font-semibold uppercase tracking-widest rounded-none">
-                              <div className="w-1 h-1 bg-primary rounded-none"></div>
+                          <td className="p-6">
+                            <span className={cn(
+                              "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm shadow-sm",
+                              item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
+                            )}>
+                              <div className={cn("w-1.5 h-1.5 rounded-full", item.status === 'Verified' ? "bg-primary" : "bg-accent")}></div>
                               {item.status}
                             </span>
                           </td>
-                          <td className="p-5 text-right">
-                            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-primary">
+                          <td className="p-6 text-right">
+                            <Button variant="ghost" size="sm" className="text-muted-foreground/40 hover:text-primary transition-all rounded-sm active:scale-95">
                               <ArrowDownToLine className="w-4 h-4" />
                             </Button>
                           </td>
@@ -606,9 +649,9 @@ export default function Donate() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={5} className="p-12 text-center">
-                            <Activity className="w-8 h-8 text-slate-200 mx-auto mb-3" />
-                            <p className="text-slate-400 font-meta text-xs uppercase tracking-widest">No contributions recorded yet.</p>
+                          <td colSpan={5} className="p-16 text-center">
+                            <Activity className="w-8 h-8 text-muted-foreground/20 mx-auto mb-4" />
+                            <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">No deployment history detected.</p>
                           </td>
                         </tr>
                       )}
@@ -617,62 +660,65 @@ export default function Donate() {
                 </div>
 
                 {/* Mobile Card View */}
-                <div className="sm:hidden divide-y divide-slate-100">
+                <div className="sm:hidden divide-y divide-border/40">
                   {contributions.map((item, idx) => (
-                    <div key={idx} className="p-6 bg-white space-y-4">
+                    <div key={idx} className="p-8 bg-white space-y-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-bold text-charcoal-dark">{item.date}</p>
-                          <p className="text-xs text-slate-400 font-meta uppercase tracking-widest">{item.id}</p>
+                          <p className="text-sm font-black text-on-surface uppercase tracking-tight">{item.date}</p>
+                          <p className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-[0.2em] mt-1">TX-{item.id.toUpperCase()}</p>
                         </div>
-                        <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs font-semibold uppercase tracking-widest">
+                        <span className={cn(
+                          "px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm",
+                          item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
+                        )}>
                           {item.status}
                         </span>
                       </div>
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-xs text-slate-400 uppercase tracking-widest mb-1">Amount</p>
-                          <p className="text-lg font-bold text-charcoal-dark">{item.amount}</p>
+                          <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">Capital Deployment</p>
+                          <p className="text-xl font-black text-on-surface font-meta">{item.amount}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-slate-400 uppercase tracking-widest mb-1">Method</p>
-                          <p className="text-sm font-semibold text-slate-600">{item.method}</p>
+                          <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">Channel</p>
+                          <p className="text-[10px] font-black text-on-surface uppercase tracking-tight">{item.method}</p>
                         </div>
                       </div>
-                      <Button variant="default" className="w-full h-10 border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-widest rounded-none">
-                        <ArrowDownToLine className="w-4 h-4 mr-2" /> View Receipt
+                      <Button variant="outline" className="w-full h-12 border-border/60 text-muted-foreground/40 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-on-surface hover:text-white transition-all shadow-sm">
+                        <ArrowDownToLine className="w-4 h-4 mr-2" /> Synchronize Proof
                       </Button>
                     </div>
                   ))}
                 </div>
 
-                 <div className="p-5 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center">
-                    <p className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Recent Contributions</p>
+                 <div className="p-6 bg-muted/30 border-t border-border/40 flex justify-between items-center">
+                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Live mobilization ledger</p>
                     <button 
                        onClick={() => setIsHistoryModalOpen(true)}
-                       className="text-sm font-bold text-primary uppercase tracking-widest hover:underline transition-all"
+                       className="text-[10px] font-black text-primary uppercase tracking-[0.3em] hover:text-on-surface transition-all border-b border-primary/30 pb-1"
                      >
-                       Full History
+                       Full Operational Audit
                      </button>
-                 </div>
-              </div>
+                  </div>
+              </Card>
             </section>
 
              {/* History Modal */}
              {isHistoryModalOpen && (
                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                 <div className="absolute inset-0 bg-charcoal-dark/60 backdrop-blur-md" onClick={() => setIsHistoryModalOpen(false)}></div>
-                 <div className="relative w-full max-w-4xl bg-white border border-slate-200 shadow-2xl overflow-hidden rounded-none flex flex-col max-h-[85vh]">
-                   <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
-                     <div className="flex items-center gap-3">
-                       <Activity className="w-5 h-5 text-primary" />
-                       <h3 className="font-bold text-charcoal-dark font-meta uppercase tracking-tight text-lg">Full Contribution History</h3>
+                 <div className="absolute inset-0 bg-on-surface/60 backdrop-blur-md" onClick={() => setIsHistoryModalOpen(false)}></div>
+                 <div className="relative w-full max-w-4xl bg-white border border-border/60 shadow-2xl overflow-hidden rounded-sm flex flex-col max-h-[85vh]">
+                   <div className="p-8 border-b border-border/40 flex items-center justify-between bg-white sticky top-0 z-10">
+                     <div className="flex items-center gap-4">
+                       <Activity className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
+                       <h3 className="font-black text-on-surface font-meta uppercase tracking-tight text-xl leading-none">Capital Deployment Ledger</h3>
                      </div>
                      <Button 
                        variant="ghost"
                        size="icon"
                        onClick={() => setIsHistoryModalOpen(false)}
-                       className="text-slate-400 hover:text-primary"
+                       className="text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 transition-all"
                      >
                        <X className="w-6 h-6" />
                      </Button>
@@ -682,28 +728,31 @@ export default function Donate() {
                      {contributions.length > 0 ? (
                        <table className="w-full text-left border-collapse">
                          <thead>
-                           <tr className="bg-slate-50 border-b border-slate-100">
-                             <th className="p-5 text-tiny font-bold text-slate-400 uppercase tracking-[0.2em]">Date / ID</th>
-                             <th className="p-5 text-tiny font-bold text-slate-400 uppercase tracking-[0.2em]">Amount</th>
-                             <th className="p-5 text-tiny font-bold text-slate-400 uppercase tracking-[0.2em]">Method</th>
-                             <th className="p-5 text-tiny font-bold text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                           <tr className="bg-muted/30 border-b border-border/40">
+                             <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Deployment Details</th>
+                             <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Capital</th>
+                             <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Channel</th>
+                             <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Verification</th>
                            </tr>
                          </thead>
-                         <tbody className="divide-y divide-slate-50">
+                         <tbody className="divide-y divide-border/40">
                            {contributions.map((item, idx) => (
-                             <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
-                               <td className="p-5">
-                                 <p className="text-sm font-semibold text-charcoal-dark">{item.date}</p>
-                                 <p className="text-tiny text-slate-400 font-meta font-bold tracking-widest">{item.id}</p>
+                             <tr key={idx} className="hover:bg-muted/10 transition-colors group">
+                               <td className="p-6">
+                                 <p className="text-xs font-black text-on-surface uppercase tracking-tight">{item.date}</p>
+                                 <p className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-[0.2em] mt-1">TX-{item.id.toUpperCase()}</p>
                                </td>
-                               <td className="p-5">
-                                 <p className="text-sm font-bold text-charcoal-dark">{item.amount}</p>
+                               <td className="p-6">
+                                 <p className="text-sm font-black text-on-surface font-meta">{item.amount}</p>
                                </td>
-                               <td className="p-5">
-                                 <p className="text-tiny font-bold text-slate-500 uppercase tracking-widest">{item.method}</p>
+                               <td className="p-6">
+                                 <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-tight">{item.method}</p>
                                </td>
-                               <td className="p-5">
-                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 text-primary text-tiny font-bold uppercase tracking-[0.2em] rounded-none">
+                               <td className="p-6">
+                                 <span className={cn(
+                                   "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm",
+                                   item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
+                                 )}>
                                    {item.status}
                                  </span>
                                </td>
@@ -712,38 +761,40 @@ export default function Donate() {
                          </tbody>
                        </table>
                      ) : (
-                       <div className="py-20 px-8 text-center">
-                         <div className="w-16 h-16 bg-slate-50 flex items-center justify-center mx-auto mb-6 rounded-none">
-                           <Activity className="w-8 h-8 text-slate-300" />
+                       <div className="py-32 px-8 text-center bg-muted/5">
+                         <div className="w-20 h-20 bg-white shadow-sm border border-border/10 flex items-center justify-center mx-auto mb-8 rounded-sm">
+                           <Activity className="w-8 h-8 text-muted-foreground/20" />
                          </div>
-                         <h4 className="text-xl font-bold text-charcoal-dark mb-2 font-meta">No contributions made</h4>
-                         <p className="text-slate-500 max-w-sm mx-auto mb-8 text-sm">
-                           You haven't made any contributions yet. Support the movement to build a better Ghana for everyone.
+                         <h4 className="text-xl font-black text-on-surface mb-3 font-meta uppercase tracking-tight">Deployment records inactive</h4>
+                         <p className="text-[11px] text-muted-foreground/60 max-w-sm mx-auto mb-8 font-bold uppercase tracking-tight leading-relaxed">
+                           No capital deployment detected for this session. Support the movement cells to build a technically robust Ghana.
                          </p>
                        </div>
                      )}
                    </div>
 
-                   <div className="p-6 border-t border-slate-100 flex items-center justify-between bg-slate-50 sticky bottom-0 z-10">
-                     <div className="flex items-center gap-2 text-tiny font-bold text-slate-400 uppercase tracking-widest">
-                       {contributions.length} Records Found
+                   <div className="p-8 border-t border-border/40 flex items-center justify-between bg-muted/10 sticky bottom-0 z-10">
+                     <div className="flex items-center gap-3 text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">
+                       <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_var(--brand-green-full)]"></span>
+                       {contributions.length} DEPLOYMENT RECORDS SECURED
                      </div>
                      <div className="flex gap-4">
-                       <button 
+                       <Button 
+                         variant="outline"
                          onClick={() => setIsHistoryModalOpen(false)}
-                         className="px-6 py-3 border border-slate-200 text-slate-500 font-meta font-bold text-xs uppercase tracking-widest hover:bg-white transition-all rounded-none flex items-center gap-2"
+                         className="px-6 h-12 border-border/60 text-muted-foreground/40 font-black text-[10px] uppercase tracking-[0.3em] rounded-sm hover:bg-white transition-all flex items-center gap-2"
                        >
-                         <ArrowDownToLine className="w-4 h-4" /> Download History
-                       </button>
-                       <button 
+                         <ArrowDownToLine className="w-4 h-4" /> Download Audit
+                       </Button>
+                       <Button 
                          onClick={() => {
                            setIsHistoryModalOpen(false)
                            document.getElementById('payment-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                          }}
-                         className="px-8 py-3 bg-primary text-white font-meta font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all rounded-none flex items-center gap-2 shadow-lg shadow-primary/20"
+                         className="px-8 h-12 bg-on-surface text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-sm hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-black/10"
                        >
-                         <Heart className="w-4 h-4" /> Contribute Now
-                       </button>
+                         <Heart className="w-4 h-4 text-primary" /> Contribute
+                       </Button>
                      </div>
                    </div>
                  </div>

@@ -87,6 +87,8 @@ export interface DBInventoryItem {
   image_emoji: string
   brand_color: string
   image_url?: string
+  description?: string
+  long_description?: string
   product_images?: { url: string }[]
   deleted_at?: string | null
 }
@@ -101,6 +103,8 @@ export interface InventoryItem {
   image: string
   images?: string[]
   color: string
+  description?: string
+  longDescription?: string
   deletedAt?: string | null
 }
 
@@ -508,7 +512,7 @@ export interface AuditLogEntry {
   details?: Record<string, unknown>
 }
 
-export type AdminRole = 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER' | 'CHIEF_EDITOR' | 'SENIOR_EDITOR' | 'EDITOR' | 'JUNIOR_EDITOR' | 'REGIONAL_CORRESPONDENT'
+export type AdminRole = 'FOUNDER' | 'ORGANIZER' | 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER' | 'CHIEF_EDITOR' | 'SENIOR_EDITOR' | 'EDITOR' | 'JUNIOR_EDITOR' | 'REGIONAL_CORRESPONDENT'
 
 export interface AdminPermission {
   action: 'VERIFY_MEMBER' | 'DELETE_MEMBER' | 'MANAGE_CHAPTER' | 'MANAGE_POLLS' | 'MANAGE_INVENTORY' | 'VIEW_AUDIT_LOGS' | 'APPOINT_LEAD' | 'MANAGE_BLOGS' | 'MANAGE_DONATIONS'

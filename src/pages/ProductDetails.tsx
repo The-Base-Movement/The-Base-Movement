@@ -382,11 +382,11 @@ export default function ProductDetails() {
             <Button 
               onClick={handleAddToCart}
               disabled={isComingSoon}
-              className={`flex-1 h-14 text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg ${
-                isComingSoon 
-                  ? 'bg-stone-200 text-stone-400 cursor-not-allowed' 
-                  : 'bg-[var(--brand-green)] hover:opacity-90 text-white shadow-brand-green/20'
-              }`}
+              variant={isComingSoon ? "outline" : "primary"}
+              className={cn(
+                "flex-1 h-14 text-xs font-bold uppercase tracking-widest rounded-sm",
+                isComingSoon ? "bg-stone-100 text-stone-400 border-stone-200" : "shadow-lg shadow-brand-green/20"
+              )}
             >
               {isComingSoon ? 'Coming Soon' : (
                 <div className="flex items-center justify-center gap-2">

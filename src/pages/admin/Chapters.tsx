@@ -23,6 +23,17 @@ import { Textarea } from '@/components/ui/textarea'
 import { useState, useEffect, useMemo } from 'react'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
+import { 
+  ScatterChart, 
+  Scatter, 
+  XAxis, 
+  YAxis, 
+  ZAxis, 
+  Tooltip, 
+  ResponsiveContainer,
+  Cell,
+  CartesianGrid
+} from 'recharts'
 
 // Removing local mock data as we are now using ChaptersContext
 export default function ChaptersManagement() {
@@ -229,6 +240,85 @@ export default function ChaptersManagement() {
             <div className="absolute bottom-0 left-0 h-1 bg-border/60 transition-all duration-300 w-0 group-hover:w-full" style={{ backgroundColor: stat.color }} />
           </Card>
         ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* 📊 Resource Intensity vs Mobilization */}
+        <Card className="rounded-sm border-border/60 shadow-sm bg-background p-6">
+          <CardHeader className="p-0 mb-8">
+            <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
+              <Globe className="w-4 h-4 text-primary" /> Resource-to-impact correlation
+            </CardTitle>
+            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Mapping jurisdictional investment against mobilization strength.</CardDescription>
+          </CardHeader>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                <XAxis 
+                  type="number" 
+                  dataKey="chapters" 
+                  name="Chapters" 
+                  unit="" 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
+                  label={{ value: 'Chapter Density', position: 'bottom', offset: 0, fontSize: 10, fill: 'rgba(255,255,255,0.4)' }}
+                />
+                <YAxis 
+                  type="number" 
+                  dataKey="memberCount" 
+                  name="Patriots" 
+                  unit="" 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
+                  label={{ value: 'Mobilization Strength', angle: -90, position: 'insideLeft', fontSize: 10, fill: 'rgba(255,255,255,0.4)' }}
+                />
+                <ZAxis type="number" dataKey="chapters" range={[60, 400]} />
+                <Tooltip 
+                  cursor={{ strokeDasharray: '3 3' }}
+                  contentStyle={{ backgroundColor: '#0A0A0A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}
+                  itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
+                />
+                <Scatter name="Regions" data={regionalStats} fill="var(--brand-green)">
+                  {regionalStats.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Scatter>
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* 🗺️ Regional Allocation Summary */}
+        <Card className="rounded-sm border-border/60 shadow-sm bg-background p-6">
+          <CardHeader className="p-0 mb-8">
+            <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
+              <Plus className="w-4 h-4 text-primary" /> Logistical footprint
+            </CardTitle>
+            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Jurisdictional resource distribution hierarchy.</CardDescription>
+          </CardHeader>
+          <div className="space-y-5">
+             {regionalStats.slice(0, 5).map((stat) => (
+                <div key={stat.region} className="group cursor-pointer">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-[10px] font-bold text-on-surface/80 group-hover:text-on-surface transition-colors normal-case">{stat.region}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground/40 normal-case">{stat.chapters} active hubs</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-muted/10 overflow-hidden rounded-full border border-white/5">
+                    <div 
+                      className="h-full transition-all duration-1000 shadow-[0_0_8px_rgba(var(--brand-green-rgb),0.3)]" 
+                      style={{ 
+                        width: `${Math.min((stat.memberCount / 2000) * 100, 100)}%`,
+                        backgroundColor: stat.color 
+                      }} 
+                    />
+                  </div>
+                </div>
+             ))}
+          </div>
+        </Card>
       </div>
 
       {/* Regional Impact Intelligence Map */}

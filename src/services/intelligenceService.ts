@@ -351,6 +351,33 @@ class IntelligenceService {
       return []
     }
   }
+
+  async updateTransportRequest(requestId: string, status: GOTVTransportRequest['status']): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('gotv_transport_requests')
+        .update({ status })
+        .eq('id', requestId)
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to update transport request:', error)
+      return false
+    }
+  }
+
+  async createCanvassingCampaign(campaign: Partial<CanvassingCampaign>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('canvassing_campaigns')
+        .insert([campaign])
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to create canvassing campaign:', error)
+      return false
+    }
+  }
 }
 
 export const intelligenceService = IntelligenceService.getInstance()

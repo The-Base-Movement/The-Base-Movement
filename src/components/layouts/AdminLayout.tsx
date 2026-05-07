@@ -159,6 +159,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       icon: DollarSign,
       items: [
         { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
+        { to: '/admin/priorities', icon: Target, label: 'Strategic Priorities', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
         { to: '/admin/store', icon: ShoppingBag, label: 'Supplies', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
         { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
         { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Logistics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
@@ -406,13 +407,17 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   <div className="text-right hidden sm:block pt-3">
                     <p className="text-[11px] font-bold text-on-surface leading-none">{user?.name}</p>
                     <p className="text-[9px] font-medium text-muted-foreground/80 mt-1 leading-none uppercase tracking-tighter">
-                      {user?.role === 'SUPER_ADMIN' 
-                        ? 'System Admin' 
-                        : user?.role === 'REGIONAL_DIRECTOR'
-                          ? 'Regional Director'
-                          : user?.role === 'CONSTITUENCY_LEAD'
-                            ? 'Constituency Lead'
-                            : 'Staff Verifier'}
+                      {user?.role === 'FOUNDER' 
+                        ? 'Movement Founder' 
+                        : user?.role === 'ORGANIZER'
+                          ? 'Strategic Organizer'
+                          : user?.role === 'SUPER_ADMIN' 
+                            ? 'System Admin' 
+                            : user?.role === 'REGIONAL_DIRECTOR'
+                              ? 'Regional Director'
+                              : user?.role === 'CONSTITUENCY_LEAD'
+                                ? 'Constituency Lead'
+                                : 'Staff Verifier'}
                     </p>
                   </div>
                   <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-[10px] rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all overflow-hidden">

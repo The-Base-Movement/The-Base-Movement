@@ -36,6 +36,25 @@ import { Input } from '@/components/ui/input'
 import type { AdminRole, AdminPermission } from '@/types/admin'
 
 const DEFAULT_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
+  'FOUNDER': [
+    { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
+    { action: 'DELETE_MEMBER', resource: 'MEMBERS' },
+    { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
+    { action: 'MANAGE_POLLS', resource: 'POLLS' },
+    { action: 'MANAGE_INVENTORY', resource: 'STORE' },
+    { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+    { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+    { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+    { action: 'APPOINT_LEAD', resource: 'CHAPTERS' }
+  ],
+  'ORGANIZER': [
+    { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
+    { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
+    { action: 'MANAGE_POLLS', resource: 'POLLS' },
+    { action: 'MANAGE_INVENTORY', resource: 'STORE' },
+    { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' },
+    { action: 'MANAGE_BLOGS', resource: 'BLOGS' }
+  ],
   'SUPER_ADMIN': [
     { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
     { action: 'DELETE_MEMBER', resource: 'MEMBERS' },
@@ -483,6 +502,8 @@ export default function Administrators() {
                 onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value as AdminRole })}
                 className="w-full h-10 px-3 text-xs font-bold border border-border/60 rounded-lg focus:outline-none focus:border-on-surface"
               >
+                <option value="FOUNDER">Founder</option>
+                <option value="ORGANIZER">Organizer</option>
                 <option value="VERIFIER">Verifier</option>
                 <option value="CONSTITUENCY_LEAD">Constituency Lead</option>
                 <option value="REGIONAL_DIRECTOR">Regional Director</option>
