@@ -127,9 +127,9 @@ export default function Store() {
         </div>
       </header>
 
-      <div className="flex flex-col lg:flex-row gap-12 mt-12">
+      <div className="flex flex-col lg:flex-row gap-12 mt-12 items-start">
         {/* Sidebar Filters */}
-        <aside className="lg:w-1/4 space-y-12">
+        <aside className="lg:w-1/4 space-y-12 sticky top-24">
           <div className="bg-white p-8 border border-stone-200 rounded-none shadow-sm">
             <h4 className="text-stone-900 font-bold tracking-tight mb-6 flex items-center gap-2">
               <Filter className="w-4 h-4 text-primary" />
