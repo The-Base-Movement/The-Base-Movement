@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { GraduationCap, Building2, Factory, Construction, Landmark, Sprout, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { useBranding } from '@/hooks/useBranding'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 const agendaPillars = [
   {
@@ -234,11 +235,7 @@ export default function OurAgenda() {
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <h1 className="tracking-tighter mb-4">The Plan</h1>
-          <div className="flex h-1 w-24 mx-auto mb-6">
-            <div className="flex-1 bg-destructive"></div>
-            <div className="flex-1 bg-accent"></div>
-            <div className="flex-1 bg-primary"></div>
-          </div>
+          <BrandLine className="mx-auto" />
           <p className="text-slate-300 max-w-2xl mx-auto mb-0">
             The Six Aims of The Base. A detailed, actionable blueprint to build a stronger, more prosperous nation through patriotism, honesty, and discipline.
           </p>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Mail, Phone, MapPin, Send } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, MessageSquare, Globe, ArrowRight } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '../components/ui/neon-button'
 import { adminService } from '../services/adminService'
 import { useBranding } from '@/hooks/useBranding'
@@ -47,12 +48,10 @@ export default function Contact() {
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
-          <h1 className="text-4xl md:text-h1 font-bold mb-4 tracking-tight font-meta">Contact us</h1>
-          <div className="flex h-1 w-24 mx-auto mb-6">
-            <div className="flex-1 bg-[var(--brand-red)]"></div>
-            <div className="flex-1 bg-[var(--brand-gold)]"></div>
-            <div className="flex-1 bg-[var(--brand-green)]"></div>
-          </div>
+          <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter mb-4">
+            Get in touch
+          </h1>
+          <BrandLine className="mx-auto" />
           <p className="text-lg text-slate-300 max-w-2xl mx-auto font-body-md">
             Have a question or want to get involved? Reach out to our team. We are a movement of ordinary citizens building an extraordinary nation.
           </p>

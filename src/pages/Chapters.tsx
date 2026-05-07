@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { MapPin, Search, Plus, Filter, Building2, Send } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ChapterCard } from '@/components/ChapterCard'
@@ -142,11 +143,7 @@ export default function Chapters() {
                 <h1 className="text-stone-900 mb-4">
                   Movement Chapters
                 </h1>
-                <div className="flex h-1 w-24 mb-6">
-                  <div className="flex-1 bg-destructive" />
-                  <div className="flex-1 bg-accent" />
-                  <div className="flex-1 bg-primary" />
-                </div>
+                <BrandLine />
               <p className="text-stone-500 max-w-xl">
                 Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {chapters.length}+ regional hubs.
               </p>

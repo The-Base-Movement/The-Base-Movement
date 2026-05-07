@@ -5,6 +5,7 @@ import { adminService, type BlogPost } from '@/services/adminService'
 import { usePerformance } from '@/context/PerformanceContext'
 import { Button } from '@/components/ui/neon-button'
 import { useBranding } from '@/hooks/useBranding'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 function AnimatedCounter({ target, duration = 2000, className }: { target: number; duration?: number; className?: string }) {
   const [count, setCount] = useState(0)
@@ -103,11 +104,7 @@ export default function Home() {
               Ghana First,<br />Jobs for the youth!
             </h1>
             <div className="flex justify-center md:justify-start">
-              <div className="flex h-1 w-24 mb-6">
-                <div className="flex-1 bg-destructive" />
-                <div className="flex-1 bg-accent" />
-                <div className="flex-1 bg-primary" />
-              </div>
+              <BrandLine />
             </div>
             <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl mb-10 leading-relaxed font-body-md mx-auto md:mx-0">
               A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry and innovation.
@@ -174,11 +171,7 @@ export default function Home() {
             <h2 id="foundation-heading" className="text-4xl md:text-5xl font-meta font-bold leading-tight mb-4 tracking-tighter">
               Our Foundation
             </h2>
-            <div className="flex h-1 w-24 mb-6">
-              <div className="flex-1 bg-destructive" />
-              <div className="flex-1 bg-accent" />
-              <div className="flex-1 bg-primary" />
-            </div>
+            <BrandLine />
           </div>
           
           <div className="grid md:grid-cols-3 gap-12">
@@ -237,11 +230,7 @@ export default function Home() {
             <div>
               <span className="text-primary font-bold tracking-tight text-[10px] mb-3 block">Updates</span>
               <h2 id="updates-heading" className="text-3xl md:text-h2 font-meta font-bold text-on-surface tracking-tight">Latest updates</h2>
-              <div className="flex h-1 w-24 mt-4">
-                <div className="flex-1 bg-destructive" />
-                <div className="flex-1 bg-accent" />
-                <div className="flex-1 bg-primary" />
-              </div>
+              <BrandLine className="mt-4" />
             </div>
             <Link to="/blog" className="hidden md:flex items-center gap-2 text-primary font-meta font-bold tracking-tight text-xs hover:underline">
               View all news <ArrowRight className="w-4 h-4" />

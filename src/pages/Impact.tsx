@@ -11,6 +11,7 @@ import {
   Calendar, 
   X 
 } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '../components/ui/neon-button'
 import { cn } from '@/lib/utils'
 import { donationService } from '@/services/donationService'
@@ -195,11 +196,7 @@ export default function Impact() {
             Our Collective Impact
           </h1>
           <div className="flex justify-center mb-6">
-            <div className="flex h-1 w-24">
-              <div className="flex-1 bg-destructive" />
-              <div className="flex-1 bg-accent" />
-              <div className="flex-1 bg-primary" />
-            </div>
+            <BrandLine />
           </div>
           <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed">
             Live analytics reflecting our collective momentum across the nation. Every member joined and every contribution made is a direct investment in the Ghana we deserve.

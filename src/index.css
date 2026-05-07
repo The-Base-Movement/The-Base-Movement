@@ -171,7 +171,7 @@
 
 @layer utilities {
   .brand-line {
-    @apply flex h-1 w-24 mb-6;
+    @apply flex h-1.5 w-32 mb-6;
   }
   .brand-line-destructive { @apply flex-1 bg-destructive; }
   .brand-line-accent { @apply flex-1 bg-accent; }

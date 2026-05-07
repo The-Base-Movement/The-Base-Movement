@@ -5,6 +5,7 @@ import { Button } from '../components/ui/neon-button'
 import { ProductCard } from '@/components/ProductCard'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
+import { BrandLine } from '@/components/ui/BrandLine'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'
 import { adminService } from '@/services/adminService'
@@ -93,11 +94,7 @@ export default function Store() {
               <ShoppingBag className="w-8 h-8 text-brand-green" />
               Supplies
             </h1>
-            <div className="flex h-1 w-24 mb-6">
-              <div className="flex-1 bg-destructive" />
-              <div className="flex-1 bg-accent" />
-              <div className="flex-1 bg-primary" />
-            </div>
+            <BrandLine />
             <p className="text-muted-gray max-w-xl mb-0">
               Equip yourself with official movement gear. Every purchase directly funds our grassroots organizing and civic education programs.
             </p>

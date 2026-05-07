@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/neon-button'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Vote, ArrowRight, Clock, Lock } from 'lucide-react'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
@@ -67,16 +68,12 @@ export default function Polls() {
         <div className="max-w-7xl mx-auto px-8 py-6">
           <Breadcrumbs />
           <div className="mt-4">
-              <h1 className="text-stone-900 mb-4 flex items-center gap-3">
+              <h1 className="text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-4 text-stone-900 flex items-center gap-3">
                 <Vote className="w-8 h-8 text-primary" />
                 Feedback
               </h1>
-              <div className="flex h-1 w-24 mb-6">
-                <div className="flex-1 bg-destructive" />
-                <div className="flex-1 bg-accent" />
-                <div className="flex-1 bg-primary" />
-              </div>
-            <p className="text-stone-500 max-w-2xl mt-2 mb-0">
+              <BrandLine />
+            <p className="text-stone-500 max-w-2xl mt-4 mb-0">
               Your voice shapes the movement. Participate in our regular polls to help prioritize the plan and regional interventions.
             </p>
           </div>

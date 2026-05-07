@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Globe, Search, MapPin, Users, User, ArrowUpDown, Filter, X } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/neon-button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -138,12 +139,10 @@ export default function Members() {
             <div className="w-10 h-10 bg-[var(--brand-green)]/20 rounded-none flex items-center justify-center">
               <Users className="w-6 h-6 text-[var(--brand-green)]" />
             </div>
-            <h1 className="text-white">Member <span className="text-[var(--brand-green)]">Directory</span></h1>
-          </div>
-          <div className="flex h-1 w-24 mb-6">
-            <div className="flex-1 bg-[var(--brand-red)]"></div>
-            <div className="flex-1 bg-[var(--brand-gold)]"></div>
-            <div className="flex-1 bg-[var(--brand-green)]"></div>
+            <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter mb-4">
+              Movement Directory
+            </h1>
+            <BrandLine />
           </div>
           <p className="text-white/60 max-w-xl mb-0">
             The Base movement is built by its people. Connect with brothers and sisters committed to Ghana's prosperity, both at home and in the diaspora.
