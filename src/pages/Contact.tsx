@@ -104,7 +104,7 @@ export default function Contact() {
               {/* Headquarters Image */}
               <div className="overflow-hidden border border-slate-200 shadow-sm group bg-white">
                 <div className="aspect-[16/9] overflow-hidden">
-                  <img src="/party-headquarters.webp" 
+                  <img src="/branding/party-headquarters-image.webp" 
                     alt="The Base Party Headquarters" 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                    decoding="async" loading="lazy" />

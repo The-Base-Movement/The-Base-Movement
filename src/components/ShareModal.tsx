@@ -1,7 +1,6 @@
-import { X, Copy, Check, Mail } from 'lucide-react'
+import { X, Copy, Check, Mail, Facebook, MessageCircle, Twitter } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/neon-button'
-import { FacebookIcon, WhatsAppIcon, XIcon } from './icons/SocialIcons'
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -24,7 +23,7 @@ export function ShareModal({ isOpen, onClose, title = "Share & Invite Others", u
 const shareOptions = [
   { 
     name: 'WhatsApp', 
-    icon: WhatsAppIcon, 
+    icon: MessageCircle, 
     color: 'bg-[#25D366]', 
     hover: 'hover:bg-[#25D366]/10',
     textColor: 'text-[#25D366]',
@@ -33,7 +32,7 @@ const shareOptions = [
   },
   { 
     name: 'Facebook', 
-    icon: FacebookIcon, 
+    icon: Facebook, 
     color: 'bg-[#1877F2]', 
     hover: 'hover:bg-[#1877F2]/10',
     textColor: 'text-[#1877F2]',
@@ -42,7 +41,7 @@ const shareOptions = [
   },
   { 
     name: 'X', 
-    icon: XIcon, 
+    icon: Twitter, 
     color: 'bg-[#000000]', 
     hover: 'hover:bg-[#000000]/10',
     textColor: 'text-black',
