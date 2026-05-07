@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
 import type { DonationDetail } from '@/types/admin'
+import { RealtimeChannel } from '@supabase/supabase-js'
 
 class DonationService {
   private static instance: DonationService
@@ -204,7 +205,7 @@ class DonationService {
     }))
   }
 
-  subscribeToPublicDonations(callback: (donation: DonationDetail) => void) {
+  subscribeToPublicDonations(callback: (donation: DonationDetail) => void): RealtimeChannel {
     return supabase
       .channel('public_donations')
       .on(

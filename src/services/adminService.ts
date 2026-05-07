@@ -10,6 +10,7 @@ import { gamificationService } from './gamificationService'
 import { intelligenceService } from './intelligenceService'
 import { pollService } from './pollService'
 import { auditService } from './auditService'
+import { RealtimeChannel } from '@supabase/supabase-js'
 import type { Product } from '@/types/product'
 import type { 
   Member, 
@@ -707,7 +708,7 @@ class AdminService {
     return success
   }
 
-  subscribeToPublicDonations(callback: (donation: DonationDetail) => void) {
+  subscribeToPublicDonations(callback: (donation: DonationDetail) => void): RealtimeChannel {
     return donationService.subscribeToPublicDonations(callback)
   }
 
