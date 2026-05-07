@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Mail, Phone, MapPin, Send, MessageSquare, Globe, ArrowRight } from 'lucide-react'
+import { Mail, Phone, MapPin, Send } from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '../components/ui/neon-button'
 import { adminService } from '../services/adminService'
