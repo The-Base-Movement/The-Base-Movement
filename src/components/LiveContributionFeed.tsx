@@ -27,7 +27,7 @@ export function LiveContributionFeed() {
     fetchRecentDonations()
 
     // Subscribe to real-time updates via central service
-    const subscription = adminService.subscribeToPublicDonations((newDonation) => {
+    const subscription: RealtimeChannel = adminService.subscribeToPublicDonations((newDonation) => {
       setDonations(prev => {
         // Prevent duplicates in case of race conditions
         if (prev.some(d => d.id === newDonation.id)) return prev
