@@ -125,6 +125,7 @@ export default function Store() {
             </Button>
           </div>
         </div>
+      </header>
 
       <div className="flex flex-col lg:flex-row gap-12 mt-12">
         {/* Sidebar Filters */}
