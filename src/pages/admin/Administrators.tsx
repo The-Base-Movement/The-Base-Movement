@@ -8,6 +8,7 @@ import {
   ShieldAlert,
   Zap
 } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { Button } from '@/components/ui/neon-button'
 import { 
@@ -183,6 +184,7 @@ export default function Administrators() {
             <Shield className="w-8 h-8 text-on-surface" />
             Administrators
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Authorized personnel with leadership credentials.</p>
         </div>
         </div>
@@ -190,7 +192,7 @@ export default function Administrators() {
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setIsProvisionModalOpen(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" />
@@ -221,10 +223,10 @@ export default function Administrators() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-muted/5 border-b border-border/60">
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40">Administrator</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40">Access level</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40">Region</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 text-right">Actions</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 normal-case">Administrator</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 normal-case">Access level</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 normal-case">Region</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 normal-case text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/10">
@@ -388,7 +390,7 @@ export default function Administrators() {
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-on-surface tracking-tight">{admin.name}</h4>
-                      <p className="text-[10px] font-bold text-muted-foreground/40 mt-0.5 uppercase tracking-widest">{admin.id}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/40 mt-0.5 normal-case tracking-widest">{admin.id}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-muted/5 rounded-full border border-border/10">
@@ -398,7 +400,7 @@ export default function Administrators() {
                       <ShieldCheck className="w-3.5 h-3.5 text-primary" />
                     )}
                     <span className={cn(
-                      "text-[9px] font-black uppercase tracking-tighter",
+                      "text-[9px] font-bold tracking-tighter",
                       admin.role === 'SUPER_ADMIN' ? "text-destructive" : "text-primary"
                     )}>
                       {admin.role.replace('_', ' ')}
@@ -408,14 +410,14 @@ export default function Administrators() {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
-                    <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Region</span>
-                    <span className="text-[10px] font-bold text-on-surface uppercase">{admin.region || 'National HQ'}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground/40 normal-case tracking-widest">Region</span>
+                    <span className="text-[10px] font-bold text-on-surface normal-case">{admin.region || 'National HQ'}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Button 
                       variant="outline" 
-                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-stone-50 shadow-sm transition-all active:scale-95"
+                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold tracking-tight hover:bg-stone-50 shadow-sm transition-all active:scale-95"
                       onClick={() => {
                         setSelectedAdmin(admin)
                         setIsActivityModalOpen(true)
@@ -519,18 +521,18 @@ export default function Administrators() {
           <DialogFooter className="gap-4">
             <Button 
               variant="outline" 
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
+              className="flex-1 h-12 text-[10px] font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               onClick={() => setIsProvisionModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
               variant="primary"
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="flex-1 h-12 text-[10px] font-bold capitalize tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={handleProvision}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Provisioning...' : 'Grant Access'}
+              Grant Access
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -563,14 +565,14 @@ export default function Administrators() {
           <DialogFooter className="gap-4">
             <Button 
               variant="outline" 
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
+              className="flex-1 h-12 text-[10px] font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               onClick={() => setIsPermissionsModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
               variant="primary"
-              className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="flex-1 h-12 text-[10px] font-bold capitalize tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={handleUpdatePermissions}
             >
               Update Credentials
@@ -606,7 +608,7 @@ export default function Administrators() {
           <DialogFooter>
             <Button 
               variant="primary"
-              className="w-full h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="w-full h-12 text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={() => setIsActivityModalOpen(false)}
             >
               Close Vault

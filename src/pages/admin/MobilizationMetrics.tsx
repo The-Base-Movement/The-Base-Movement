@@ -17,6 +17,7 @@ import { adminService } from '@/services/adminService'
 import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/types/admin'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function MobilizationMetrics() {
   const [leaderboard, setLeaderboard] = useState<ChapterLeaderboard[]>([])
@@ -51,24 +52,25 @@ export default function MobilizationMetrics() {
       {/* 🏆 Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Trophy className="w-8 h-8 text-on-surface" />
             Mobilization metrics
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Performance tracking and impact analytics for regional chapters.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2" /> Filter telemetry
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Download className="w-4 h-4 mr-2" /> Export intelligence
           </Button>
@@ -213,8 +215,8 @@ export default function MobilizationMetrics() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Points</p>
-                        <p className="text-lg font-black text-on-surface tracking-tighter">{entry.total_mobilization_points.toLocaleString()}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Points</p>
+                        <p className="text-lg font-bold text-on-surface tracking-tighter">{entry.total_mobilization_points.toLocaleString()}</p>
                       </div>
                     </div>
 
@@ -224,7 +226,7 @@ export default function MobilizationMetrics() {
                           <Users className="w-4 h-4 text-muted-foreground/80" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-bold text-muted-foreground/80 uppercase">Members</p>
+                          <p className="text-[9px] font-bold text-muted-foreground/40">Members</p>
                           <p className="text-xs font-bold text-on-surface">{entry.total_patriots}</p>
                         </div>
                       </div>
@@ -233,7 +235,7 @@ export default function MobilizationMetrics() {
                           <Zap className="w-4 h-4 text-accent" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-bold text-muted-foreground/80 uppercase">Badges</p>
+                          <p className="text-[9px] font-bold text-muted-foreground/40">Badges</p>
                           <p className="text-xs font-bold text-on-surface">{entry.achievements_unlocked}</p>
                         </div>
                       </div>

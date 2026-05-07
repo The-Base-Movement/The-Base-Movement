@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Phone, Globe, Check, ArrowDownToLine, Activity, X } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '@/components/ui/neon-button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import type { DonationRecord, DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
-
-// Mock data removed in favor of live Supabase fetching
 
 export default function Donate() {
   const [submitted, setSubmitted] = useState(false)
@@ -153,13 +152,14 @@ export default function Donate() {
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">Financial Mobilization Unit</span>
+            <span className="text-[10px] font-bold text-white/60 tracking-tight">Financial Mobilization Unit</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight font-meta uppercase">
+          <h1 className="mb-4 tracking-tight font-meta">
             Support the <span className="text-primary drop-shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.3)]">Movement</span>
           </h1>
-          <p className="text-sm text-white/40 max-w-2xl mx-auto font-bold uppercase tracking-widest leading-relaxed">
-            Your contribution fuels the growth and sustainability of the base cell structure across Ghana and the diaspora.
+          <BrandLine className="mx-auto" />
+          <p className="text-slate-300 max-w-2xl mx-auto mb-0">
+            Your contributions for the growth and sustainability of the movement.
           </p>
         </div>
       </div>
@@ -226,8 +226,8 @@ export default function Donate() {
             <section className="mt-16">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                 <div>
-                  <h2 className="text-2xl font-black text-on-surface tracking-tight uppercase font-meta">Strategic Priorities</h2>
-                  <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mt-2">Deploy your capital to critical movement cells.</p>
+                  <h2 className="text-2xl font-bold text-on-surface tracking-tight font-meta">Strategic Priorities</h2>
+                  <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mt-2">Deploy your capital to critical movement cells.</p>
                 </div>
               </div>
               
@@ -241,7 +241,7 @@ export default function Donate() {
                     <div className="aspect-[16/10] bg-muted/50 overflow-hidden relative">
                       {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover grayscale-[50%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"  decoding="async" loading="lazy" />}
                       <div className="absolute top-4 right-4">
-                        <span className="bg-primary text-white text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 shadow-xl">In mobilization</span>
+                        <span className="bg-primary text-white text-[9px] font-bold tracking-tight px-3 py-1 shadow-xl">In mobilization</span>
                       </div>
                     </div>
                     <CardContent className="p-8 flex flex-col flex-1">
@@ -251,8 +251,8 @@ export default function Donate() {
                       <div className="mt-auto space-y-6">
                         <div>
                           <div className="flex justify-between items-end mb-2">
-                            <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest">Strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
-                            <span className="text-xs font-black font-meta text-on-surface">GHS {c.raisedAmount.toLocaleString()}</span>
+                            <span className="text-[9px] font-bold text-muted-foreground/40 tracking-tight">Strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
+                            <span className="text-xs font-bold font-meta text-on-surface">GHS {c.raisedAmount.toLocaleString()}</span>
                           </div>
                           <div className="h-1.5 w-full bg-muted/10 overflow-hidden rounded-full border border-border/5">
                             <div 
@@ -268,7 +268,7 @@ export default function Donate() {
                             setFormData(prev => ({ ...prev, campaignId: c.id }))
                             document.getElementById('donor-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                           }}
-                          className="w-full h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] border-border/60 hover:bg-on-surface hover:text-white transition-all shadow-sm active:scale-95"
+                          className="w-full h-12 rounded-sm text-[10px] font-bold tracking-tight border-border/60 hover:bg-on-surface hover:text-white transition-all shadow-sm active:scale-95"
                         >
                           Direct Capital <ArrowDownToLine className="w-4 h-4 ml-2 rotate-[-90deg]" />
                         </Button>
@@ -286,18 +286,18 @@ export default function Donate() {
                 </div>
                 
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-7 h-7 bg-destructive text-white flex items-center justify-center font-meta font-black text-[10px]">01</span>
-                  <h3 className="font-bold text-white font-meta tracking-tight text-lg uppercase">Capital Transfer</h3>
+                  <span className="w-7 h-7 bg-destructive text-white flex items-center justify-center font-meta font-bold text-[10px]">01</span>
+                  <h3 className="font-bold text-white font-meta tracking-tight text-lg">Capital Transfer</h3>
                 </div>
                 
                 <div className="space-y-8 flex-1">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 font-meta mb-2">Account Holder</p>
-                    <p className="font-black text-primary text-xl tracking-tight leading-none uppercase">Paul Kofi Agyekum</p>
+                    <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">Account Holder</p>
+                    <p className="font-bold text-primary text-xl tracking-tight leading-none">Paul Kofi Agyekum</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 font-meta mb-2">MoMo Identifier</p>
-                    <p className="font-black font-meta tracking-wider text-white text-xl">+233 538 873 569</p>
+                    <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">MoMo Identifier</p>
+                    <p className="font-bold font-meta tracking-wider text-white text-xl">+233 538 873 569</p>
                   </div>
                   <div className="grid grid-cols-1 gap-6 pt-8 border-t border-white/10">
                     <div>
@@ -526,7 +526,7 @@ export default function Donate() {
                       className="w-full py-8 flex items-center justify-center gap-3 rounded-sm shadow-lg shadow-brand-green/20"
                     >
                       <Heart className="w-5 h-5" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em]">Authorize Contribution</span>
+                      <span className="text-[10px] font-bold tracking-tight">Authorize Contribution</span>
                     </Button>
                 </div>
               </div>

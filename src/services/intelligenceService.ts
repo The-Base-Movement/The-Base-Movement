@@ -352,6 +352,34 @@ class IntelligenceService {
     }
   }
 
+  async getGhanaRegions(): Promise<{ id: string, name: string }[]> {
+    try {
+      const { data, error } = await supabase
+        .from('ghana_regions')
+        .select('*')
+        .order('name', { ascending: true })
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch regions:', error)
+      return []
+    }
+  }
+
+  async getGhanaConstituencies(regionId?: string): Promise<{ id: string, region_id: string, name: string }[]> {
+    try {
+      let query = supabase.from('ghana_constituencies').select('*').order('name', { ascending: true })
+      if (regionId) query = query.eq('region_id', regionId)
+      
+      const { data, error } = await query
+      if (error) throw error
+      return data || []
+    } catch (error) {
+      console.error('[DATABASE] Failed to fetch constituencies:', error)
+      return []
+    }
+  }
+
   async updateTransportRequest(requestId: string, status: GOTVTransportRequest['status']): Promise<boolean> {
     try {
       const { error } = await supabase

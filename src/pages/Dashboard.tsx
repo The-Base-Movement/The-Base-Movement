@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { WelcomeModal } from '@/components/WelcomeModal'
 import { ShareModal } from '@/components/ShareModal'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { adminService } from '@/services/adminService'
 import type { Notification, Achievement, LeaderboardEntry, FieldAction } from '@/types/admin'
 import { Trophy, Medal, TrendingUp, Award, MapPin, Navigation, ShieldCheck, Users, Flag } from 'lucide-react'
@@ -178,7 +179,7 @@ export default function Dashboard() {
       <div className="w-full h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="font-black text-on-surface/40 tracking-[0.2em] text-tiny animate-pulse">Synchronizing live data...</p>
+          <p className="font-bold text-on-surface/40 tracking-tight text-tiny animate-pulse">Synchronizing live data...</p>
         </div>
       </div>
     )
@@ -186,6 +187,18 @@ export default function Dashboard() {
 
   return (
     <div className="w-full px-4 sm:px-12 py-6 sm:py-8">
+      {/* Page Header */}
+      <div className="mb-12">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 mb-6 backdrop-blur-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
+          <span className="text-[10px] font-bold text-primary tracking-tight">NATIONAL INFRASTRUCTURE STABILIZED</span>
+        </div>
+        <h1 className="tracking-tighter mb-4 text-on-surface">Operational Dashboard</h1>
+        <BrandLine />
+        <p className="text-on-surface/60 max-w-2xl mb-0">
+          Welcome back, <span className="text-on-surface font-bold">{member?.full_name || 'Patriot'}</span>. Your tactical overview and movement directives are synchronized.
+        </p>
+      </div>
       <WelcomeModal 
         isOpen={isWelcomeModalOpen}
         onClose={() => setIsWelcomeModalOpen(false)}
@@ -201,12 +214,12 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm group hover:border-primary/40 transition-all">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-tiny font-bold text-on-surface/40 uppercase tracking-widest">New Members</span>
+              <span className="text-tiny font-bold text-on-surface/40 tracking-tight">New Members</span>
               <Users className="w-4 h-4 text-primary opacity-40" />
             </div>
             <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-black tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
-              <span className="text-tiny font-bold text-on-surface/20 uppercase">Past 24h</span>
+              <h3 className="text-3xl font-bold tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
+              <span className="text-tiny font-bold text-on-surface/20">Past 24h</span>
             </div>
             <p className="text-micro text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and the regional rollout is now underway.</p>
           </div>
@@ -257,12 +270,12 @@ export default function Dashboard() {
             {userLocation && (
               <div className="flex items-center gap-2 px-3 py-1 bg-primary/5 border border-primary/10 animate-in fade-in slide-in-from-right-4 duration-500">
                 <ShieldCheck className="w-3 h-3 text-primary" />
-                <span className="text-micro font-black uppercase tracking-[0.2em] text-primary">Signal Active: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}</span>
+                <span className="text-micro font-bold tracking-tight text-primary">Signal Active: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}</span>
               </div>
             )}
             <div className="flex items-center gap-2 px-3 py-1 bg-destructive/10 border border-destructive/20 rounded-full">
               <span className="flex h-1.5 w-1.5 rounded-full bg-destructive animate-pulse"></span>
-              <span className="text-[9px] font-black uppercase tracking-widest text-destructive">National Activity</span>
+              <span className="text-[9px] font-bold tracking-tight text-destructive">National Activity</span>
             </div>
           </div>
         </div>
@@ -306,22 +319,22 @@ export default function Dashboard() {
                 <div className="flex-1 p-6 relative">
                   <div className="flex items-center gap-2 mb-3">
                     <span className={cn(
-                      "text-micro font-black uppercase tracking-widest px-2 py-0.5",
+                      "text-micro font-bold tracking-tight px-2 py-0.5",
                       action.status === 'Live' ? "bg-destructive/10 text-destructive" : "bg-muted text-on-surface/40"
                     )}>
                       {action.status}
                     </span>
-                    <span className="text-micro font-black uppercase tracking-widest text-on-surface/40">{action.type}</span>
+                    <span className="text-micro font-bold tracking-tight text-on-surface/40">{action.type}</span>
                   </div>
-                  <h3 className="text-sm font-black tracking-tight text-on-surface mb-2 leading-tight">{action.title}</h3>
+                  <h3 className="text-sm font-bold tracking-tight text-on-surface mb-2 leading-tight">{action.title}</h3>
                   <div className="flex items-center gap-4 text-on-surface/40 mb-6">
                     <div className="flex items-center gap-1.5">
                       <MapPin className="w-3 h-3" />
-                      <span className="text-[9px] font-black tracking-widest truncate max-w-[120px]">{action.location_name}</span>
+                      <span className="text-[9px] font-bold tracking-tight truncate max-w-[120px]">{action.location_name}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Users className="w-3 h-3" />
-                      <span className="text-[9px] font-black tracking-widest">{action.target_attendance} Target</span>
+                      <span className="text-[9px] font-bold tracking-tight">{action.target_attendance} Target</span>
                     </div>
                   </div>
                   
@@ -422,58 +435,58 @@ export default function Dashboard() {
           <div className="bg-surface-warm border-t-[4px] border-t-transparent relative overflow-hidden rounded-sm shadow-sm flex flex-col">
             <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
             <div className="p-6 sm:p-8 flex-1">
-              <h3 className="mb-6 sm:mb-8 border-b border-accent/20 pb-4 text-on-surface tracking-tighter italic font-black text-xl">Identity Details</h3>
+              <h3 className="mb-6 sm:mb-8 border-b border-accent/20 pb-4 text-on-surface tracking-tighter italic font-bold text-xl">Identity Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 sm:gap-y-10 gap-x-12">
                 <div className="min-w-0">
-                  <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Full Name</p>
+                  <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Full Name</p>
                   <p className="text-lg font-bold text-on-surface truncate mb-0 capitalize">{member?.full_name?.toLowerCase() || 'Not Available'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Registration Number</p>
+                  <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Registration Number</p>
                   <p className="text-lg font-bold text-on-surface break-all sm:break-normal mb-0">{member?.registration_number || 'N/A'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Platform Status</p>
-                  <span className="inline-block px-4 py-1.5 bg-primary text-white text-tiny font-bold tracking-widest rounded-none shadow-lg shadow-primary/20">
+                  <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Platform Status</p>
+                  <span className="inline-block px-4 py-1.5 bg-primary text-white text-tiny font-bold tracking-tight rounded-none shadow-lg shadow-primary/20">
                     {member?.platform === 'ADMIN' ? 'Chapter Lead' : (member?.platform === 'PATRIOT' ? 'Member' : (member?.platform || 'Member'))}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Verification Status</p>
+                  <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Verification Status</p>
                   <span className={cn(
-                    "inline-block px-4 py-1.5 text-white text-tiny font-bold tracking-widest rounded-none shadow-lg",
+                    "inline-block px-4 py-1.5 text-white text-tiny font-bold tracking-tight rounded-none shadow-lg",
                     (member?.status === 'Active' || member?.status === 'Approved') ? "bg-emerald-600 shadow-emerald-600/20" : "bg-amber-600 shadow-amber-600/20"
                   )}>
                     {(member?.status === 'Active' || member?.status === 'Approved') ? 'Verified Patriot' : 'Pending Review'}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Phone Number</p>
+                  <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Phone Number</p>
                   <p className="text-lg font-bold text-on-surface">{member?.phone_number || 'Not Provided'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Age Range</p>
+                  <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Age Range</p>
                   <p className="text-lg font-bold text-on-surface">{member?.age_range || 'Not Set'}</p>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Gender</p>
+                  <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Gender</p>
                   <p className="text-lg font-bold text-on-surface">{member?.gender || 'Not Set'}</p>
                 </div>
                 {member?.region && (
                   <div className="min-w-0">
-                    <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Region</p>
+                    <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Region</p>
                     <p className="text-lg font-bold text-on-surface truncate">{member.region}</p>
                   </div>
                 )}
                 {member?.chapter && (
                   <div className="min-w-0">
-                    <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Assigned Chapter</p>
+                    <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Assigned Chapter</p>
                     <p className="text-lg font-bold text-on-surface truncate">{member.chapter}</p>
                   </div>
                 )}
                 {member?.profession && (
                   <div className="min-w-0">
-                    <p className="text-tiny text-accent uppercase tracking-[0.2em] mb-2 font-black">Profession</p>
+                    <p className="text-tiny text-accent tracking-tight mb-2 font-bold">Profession</p>
                     <p className="text-lg font-bold text-on-surface truncate">{member.profession}</p>
                   </div>
                 )}
@@ -486,7 +499,7 @@ export default function Dashboard() {
                 <span className="material-symbols-outlined text-accent text-2xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>verified_user</span>
               </div>
               <div>
-                <p className="font-black tracking-tighter text-on-surface text-sm mb-0.5 leading-none">Verified civic member</p>
+                <p className="font-bold tracking-tighter text-on-surface text-sm mb-0.5 leading-none">Verified civic member</p>
                 <p className="text-[11px] font-bold text-on-surface/30 mb-0 leading-none">Authenticated for official voting and policy contribution.</p>
               </div>
             </div>
@@ -497,13 +510,13 @@ export default function Dashboard() {
         <div className="bg-white border border-border/40 rounded-sm shadow-sm p-6 sm:p-8 col-span-1 lg:col-span-12 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-tiny font-bold tracking-widest text-on-surface m-0 flex items-center gap-2">
+              <h3 className="text-tiny font-bold tracking-tight text-on-surface m-0 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-primary" />
                 Movement impact
               </h3>
-              <p className="text-micro font-black text-on-surface/20 tracking-widest mt-1">Total points earned through direct action.</p>
+              <p className="text-micro font-bold text-on-surface/20 tracking-tight mt-1">Total points earned through direct action.</p>
             </div>
-            <span className="text-2xl font-black italic tracking-tighter text-primary">{totalPoints.toLocaleString()}</span>
+            <span className="text-2xl font-bold italic tracking-tighter text-primary">{totalPoints.toLocaleString()}</span>
           </div>
           
           <div className="space-y-4">
@@ -516,8 +529,8 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-micro font-black text-on-surface/20 tracking-widest">Next milestone: Chapter Leader</span>
-              <span className="text-micro font-black text-on-surface/40 tracking-widest">
+              <span className="text-micro font-bold text-on-surface/20 tracking-tight">Next milestone: Chapter Leader</span>
+              <span className="text-micro font-bold text-on-surface/40 tracking-tight">
                 {1000 - totalPoints > 0 ? `${1000 - totalPoints} points remaining` : 'Elite Achievement Unlocked'}
               </span>
             </div>
@@ -534,14 +547,14 @@ export default function Dashboard() {
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-colors duration-700" />
             
             <div className="flex-1 relative z-10">
-              <h2 className="text-white mb-4 text-2xl font-black tracking-tighter">Invite others to join The Base</h2>
+              <h2 className="text-white mb-4 text-2xl font-bold tracking-tighter">Invite others to join The Base</h2>
               <p className="text-white/70 text-sm font-medium leading-relaxed max-w-2xl mb-0">
                 Our strength grows when more people take part in the movement. Share your unique registration link with fellow Ghanaians and help build a more resilient and representative civic voice for the nation.
               </p>
             </div>
 
             <div className="w-full lg:w-1/2 min-w-[320px] relative z-10 bg-white/5 p-4 border border-white/10 backdrop-blur-sm rounded-sm">
-              <p className="text-white/40 text-tiny font-black tracking-[0.2em] mb-3">Your referral link</p>
+              <p className="text-white/40 text-tiny font-bold tracking-tight mb-3">Your referral link</p>
               <div className="relative mb-4 flex items-center border-b border-white/20 pb-1">
                 <input 
                   className="w-full bg-transparent border-none text-white font-bold py-2 pl-0 pr-10 rounded-none focus:ring-0 focus:outline-none placeholder:text-white/20 text-sm tracking-tight" 
@@ -563,7 +576,7 @@ export default function Dashboard() {
               <Button 
                 variant="accent"
                 onClick={handleShare}
-                className="w-full py-4 uppercase tracking-[0.3em] text-tiny flex items-center justify-center gap-2 hover:brightness-110 shadow-lg shadow-black/20"
+                className="w-full py-4 tracking-tight text-tiny flex items-center justify-center gap-2 hover:brightness-110 shadow-lg shadow-black/20"
               >
                 <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>share</span>
                 Invite & Share
@@ -579,11 +592,11 @@ export default function Dashboard() {
           {/* Achievements Gallery */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden">
             <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
-              <h3 className="text-xs font-black tracking-widest text-on-surface flex items-center gap-2 m-0">
+              <h3 className="text-xs font-bold tracking-tight text-on-surface flex items-center gap-2 m-0">
                 <Trophy className="w-4 h-4 text-accent" />
                 Movement achievements
               </h3>
-              <span className="text-tiny font-bold text-on-surface/30 tracking-widest uppercase">{achievements.length} Badges Earned</span>
+              <span className="text-tiny font-bold text-on-surface/30 tracking-tight">{achievements.length} Badges Earned</span>
             </div>
             <div className="p-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
               {/* Earned Badges */}
@@ -592,8 +605,8 @@ export default function Dashboard() {
                   <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 border-2 border-accent/50 bg-[radial-gradient(circle_at_center,_rgba(184,134,11,0.1)_0%,transparent_100%)] shadow-sm group-hover:scale-110 transition-transform">
                     <Award className="w-8 h-8 text-accent" />
                   </div>
-                  <p className="text-tiny font-black tracking-tight text-on-surface m-0">{achievement.name}</p>
-                  <p className="text-micro text-on-surface/40 font-black mt-1 leading-tight">{achievement.description}</p>
+                  <p className="text-tiny font-bold tracking-tight text-on-surface m-0">{achievement.name}</p>
+                  <p className="text-micro text-on-surface/40 font-bold mt-1 leading-tight">{achievement.description}</p>
                 </div>
               ))}
 
@@ -606,8 +619,8 @@ export default function Dashboard() {
                   <div className="w-16 h-16 bg-on-surface/5 rounded-full flex items-center justify-center mb-3 border-2 border-border/10 grayscale">
                     <Medal className="w-6 h-6 text-on-surface/10" />
                   </div>
-                  <p className="text-tiny font-black tracking-tight text-on-surface/20 m-0">{locked.name}</p>
-                  <p className="text-micro text-on-surface/10 font-black mt-1 leading-tight">Locked ({locked.points_awarded || 0} pts)</p>
+                  <p className="text-tiny font-bold tracking-tight text-on-surface/20 m-0">{locked.name}</p>
+                  <p className="text-micro text-on-surface/10 font-bold mt-1 leading-tight">Locked ({locked.points_awarded || 0} pts)</p>
                 </div>
               ))}
             </div>
@@ -616,17 +629,17 @@ export default function Dashboard() {
           {/* Regional Leaderboard */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden">
             <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
-              <h3 className="text-xs font-black tracking-widest text-on-surface flex items-center gap-2 m-0">
+              <h3 className="text-xs font-bold tracking-tight text-on-surface flex items-center gap-2 m-0">
                 <span className="material-symbols-outlined text-primary text-sm">trending_up</span>
                 {member?.region || 'National'} leaderboard
               </h3>
-              <span className="text-tiny font-bold text-on-surface/30 tracking-widest uppercase">Top Community Members</span>
+              <span className="text-tiny font-bold text-on-surface/30 tracking-tight">Top Community Members</span>
             </div>
             <div className="divide-y divide-border/10">
               {leaderboard.map((entry) => (
                 <div key={entry.name} className="p-4 flex items-center justify-between hover:bg-on-surface/5 transition-colors">
                   <div className="flex items-center gap-4">
-                    <span className={`w-6 h-6 rounded-none flex items-center justify-center text-tiny font-black ${
+                    <span className={`w-6 h-6 rounded-none flex items-center justify-center text-tiny font-bold ${
                       entry.rank === 1 ? 'bg-accent text-on-surface' : 
                       entry.rank === 2 ? 'bg-on-surface/20 text-on-surface/60' : 
                       entry.rank === 3 ? 'bg-accent/30 text-accent' : 'bg-on-surface/5 text-on-surface/20'
@@ -634,13 +647,13 @@ export default function Dashboard() {
                       {entry.rank}
                     </span>
                     <div>
-                      <p className="text-tiny font-black tracking-tight text-on-surface m-0">{entry.name}</p>
-                      <p className="text-micro text-on-surface/20 font-black tracking-widest">{entry.region}</p>
+                      <p className="text-tiny font-bold tracking-tight text-on-surface m-0">{entry.name}</p>
+                      <p className="text-micro text-on-surface/20 font-bold tracking-tight">{entry.region}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs font-black text-primary m-0">{entry.points.toLocaleString()}</p>
-                    <p className="text-micro text-on-surface/10 font-black tracking-widest">Points</p>
+                    <p className="text-xs font-bold text-primary m-0">{entry.points.toLocaleString()}</p>
+                    <p className="text-micro text-on-surface/10 font-bold tracking-tight">Points</p>
                   </div>
                 </div>
               ))}

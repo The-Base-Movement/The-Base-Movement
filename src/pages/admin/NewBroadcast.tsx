@@ -26,6 +26,7 @@ import type { Broadcast, Region } from '@/services/adminService'
 import { cn } from "@/lib/utils"
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function NewBroadcast() {
   const navigate = useNavigate()
@@ -124,16 +125,17 @@ export default function NewBroadcast() {
         
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
               <Megaphone className="w-8 h-8 text-on-surface" />
               Send new broadcast
             </h1>
+            <BrandLine className="mt-4" />
             <p className="text-muted-foreground/80 text-sm mt-1">Deploying a movement-wide communication to the field.</p>
           </div>
           <Button 
             variant="outline"
             onClick={() => navigate('/admin/broadcasts')}
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] h-11 px-8 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight h-11 px-8 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Intelligence
           </Button>
@@ -144,7 +146,7 @@ export default function NewBroadcast() {
         <CardHeader className="p-8 bg-on-surface text-white border-b border-white/5 relative">
           <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50" />
           <div className="flex items-center gap-3">
-            <Shield className="w-5 h-5 text-destructive" />
+            <Shield className="w-5 h-5 text-brand-red" />
             <div>
               <CardTitle className="text-lg font-bold tracking-tight">Deployment configuration</CardTitle>
               <p className="text-xs text-white/40 font-medium mt-0.5">Define your target audience and broadcast priority.</p>
@@ -360,7 +362,7 @@ export default function NewBroadcast() {
             <Button 
               variant="outline" 
               onClick={() => navigate('/admin/broadcasts')}
-              className="rounded-sm h-12 px-10 text-[10px] font-black uppercase tracking-[0.2em] border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+              className="rounded-sm h-12 px-10 text-[10px] font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Abort Transmission
             </Button>
@@ -368,7 +370,7 @@ export default function NewBroadcast() {
               variant="primary"
               disabled={isSending}
               onClick={handleSend}
-              className="rounded-sm h-12 px-12 text-[10px] font-black uppercase tracking-[0.3em] min-w-[200px] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm h-12 px-12 text-[10px] font-bold tracking-tight min-w-[200px] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               {isSending ? (
                 <>

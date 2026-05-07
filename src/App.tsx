@@ -74,6 +74,7 @@ const AdminRallyCommand = lazy(() => import('./pages/admin/RallyCommand'))
 const AdminSentimentIntelligence = lazy(() => import('./pages/admin/SentimentIntelligence'))
 const AdminWarRoomCommand = lazy(() => import('./pages/admin/WarRoomCommand'))
 const AdminGroundGameCommand = lazy(() => import('./pages/admin/GroundGameCommand'))
+const AdminDeployMission = lazy(() => import('./pages/admin/DeployMission'))
 const AdminTrash = lazy(() => import('./pages/admin/Trash'))
 const AdminRoadmap = lazy(() => import('./pages/admin/Roadmap'))
 const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPriorities'))
@@ -164,6 +165,7 @@ export default function App() {
                 <Route path="/admin/sentiment-intelligence" element={<AdminSentimentIntelligence />} />
                 <Route path="/admin/war-room" element={<AdminWarRoomCommand />} />
                 <Route path="/admin/ground-game" element={<AdminGroundGameCommand />} />
+                <Route path="/admin/ground-game/deploy" element={<AdminDeployMission />} />
                 <Route path="/admin/donations" element={<AdminDonations />} />
                 <Route path="/admin/priorities" element={<AdminStrategicPriorities />} />
                 <Route path="/admin/members" element={<AdminMembers />} />

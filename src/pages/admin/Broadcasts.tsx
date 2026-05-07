@@ -19,6 +19,7 @@ import { adminService } from '@/services/adminService'
 import type { Broadcast } from '@/services/adminService'
 import { cn } from "@/lib/utils"
 import { useNavigate } from 'react-router-dom'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function Broadcasts() {
   const navigate = useNavigate()
@@ -70,20 +71,20 @@ export default function Broadcasts() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Megaphone className="w-8 h-8 text-on-surface" />
             Communication hub
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Direct HQ-to-field mobilization and broadcast history.</p>
         </div>
         <Button 
           variant="primary"
           size="lg"
           onClick={() => navigate('/admin/broadcasts/new')}
-          className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+          className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus className="w-4 h-4 mr-2" /> Deploy New Broadcast
         </Button>
@@ -214,7 +215,7 @@ export default function Broadcasts() {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-stone-50 shadow-sm active:scale-95"
+                          className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-11 px-8 text-[10px] font-bold tracking-tight hover:bg-stone-50 shadow-sm active:scale-95"
                           onClick={() => fetchMetrics(broadcast.id)}
                         >
                           Refresh Telemetry
@@ -278,7 +279,7 @@ export default function Broadcasts() {
               </p>
               <Button 
                 variant="outline"
-                className="w-full text-white border-destructive/60 hover:bg-destructive/20 text-[10px] font-black uppercase tracking-[0.3em] h-12 rounded-sm transition-all hover:scale-[1.02] shadow-lg shadow-destructive/10 active:scale-95"
+                className="w-full text-white border-destructive/60 hover:bg-destructive/20 text-[10px] font-bold tracking-tight h-12 rounded-sm transition-all hover:scale-[1.02] shadow-lg shadow-destructive/10 active:scale-95"
               >
                 Trigger Tactical Alert
               </Button>

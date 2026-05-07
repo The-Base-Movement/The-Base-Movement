@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService, type Region } from '@/services/adminService'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function AdminRegions() {
   const [regions, setRegions] = useState<Region[]>([])
@@ -55,13 +56,14 @@ export default function AdminRegions() {
             <MapPin className="w-8 h-8 text-on-surface" />
             Regions & constituencies
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Manage administrative regions and regional jurisdictions.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="primary" 
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+            className="rounded-sm text-[10px] font-bold capitalize tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Define New Region
           </Button>
@@ -212,7 +214,7 @@ export default function AdminRegions() {
                       </div>
                       <Button
                         variant="outline"
-                        className="h-10 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                        className="h-10 px-8 text-[10px] font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       >
                         <Plus className="w-4 h-4 mr-2" /> Define Constituency
                       </Button>

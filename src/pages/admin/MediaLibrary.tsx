@@ -19,6 +19,7 @@ import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function MediaLibrary() {
   const [files, setFiles] = useState<string[]>([])
@@ -124,12 +125,13 @@ export default function MediaLibrary() {
   return (
     <div className="animate-in fade-in duration-500 pb-20">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <ImageIcon className="w-8 h-8 text-on-surface" />
             Media library
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Central repository for movement assets and deployment media.</p>
         </div>
         
@@ -137,7 +139,7 @@ export default function MediaLibrary() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             onClick={loadFiles}
           >
             Refresh Vault
@@ -155,7 +157,7 @@ export default function MediaLibrary() {
             <Button 
               variant="primary"
               size="lg"
-              className="rounded-sm text-[10px] uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               asChild
               disabled={isUploading}
             >
@@ -203,7 +205,7 @@ export default function MediaLibrary() {
                     variant={activeFolder === folder.id ? "primary" : "ghost"}
                     onClick={() => setActiveFolder(folder.id)}
                     className={cn(
-                      "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] transition-all h-14 active:scale-95",
+                      "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-[10px] font-bold tracking-tight transition-all h-14 active:scale-95",
                       activeFolder === folder.id 
                         ? "shadow-lg shadow-brand-green/20" 
                         : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
@@ -252,7 +254,7 @@ export default function MediaLibrary() {
                   </p>
                   <Button 
                     variant="primary" 
-                    className="mt-6 rounded-sm px-12 h-14 text-[10px] uppercase tracking-[0.3em] font-black shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                    className="mt-6 rounded-sm px-12 h-14 text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                     asChild
                   >
                     <label htmlFor="media-upload" className="cursor-pointer">
@@ -327,14 +329,14 @@ export default function MediaLibrary() {
               </div>
               
               <div className="flex-1 max-w-md space-y-4">
-                <div className="flex justify-between text-[11px] font-bold text-white/40 uppercase tracking-widest">
+                <div className="flex justify-between text-[11px] font-bold text-white/40 tracking-widest">
                   <span>Capacity utilization</span>
                   <span className="text-primary">12%</span>
                 </div>
                 <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
                   <div className="h-full bg-primary w-[12%] shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" />
                 </div>
-                <div className="flex justify-between text-[10px] font-bold text-white/20 uppercase tracking-tight">
+                <div className="flex justify-between text-[10px] font-bold text-white/20 tracking-tight">
                   <span className="normal-case">0.6 GB consumed</span>
                   <span className="normal-case">5.0 GB limit</span>
                 </div>

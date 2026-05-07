@@ -39,6 +39,7 @@ import { Editor } from '@tinymce/tinymce-react'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import type { BlogPost, AdminUser } from '@/types/admin'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { useToast } from '@/hooks/use-toast'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { toast as sonnerToast } from 'sonner'
@@ -305,6 +306,7 @@ export default function AdminBlogs() {
           <h2 className="text-3xl font-bold text-on-surface tracking-tight normal-case">
             {editingPost ? 'Edit post' : 'Create new post'}
           </h2>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1 font-medium">
             Fill in the details below to configure and publish your post.
           </p>
@@ -619,7 +621,7 @@ export default function AdminBlogs() {
                 type="submit" 
                 disabled={isLoading}
                 variant="primary"
-                className="w-full h-14 rounded-sm text-[11px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
+                className="w-full h-14 rounded-sm text-[11px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
               >
                 {isLoading ? 'Processing...' : (
                   formData.status === 'Published' 
@@ -633,7 +635,7 @@ export default function AdminBlogs() {
                 type="button" 
                 variant="outline" 
                 onClick={() => setCurrentView('list')}
-                className="w-full h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80 hover:text-red-500 border-border/40 hover:bg-red-50 transition-all shadow-sm active:scale-95"
+                className="w-full h-12 rounded-sm text-[10px] font-bold tracking-tight text-muted-foreground/80 hover:text-red-500 border-border/40 hover:bg-red-50 transition-all shadow-sm active:scale-95"
               >
                 Abort & Discard
               </Button>
@@ -649,17 +651,20 @@ export default function AdminBlogs() {
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-muted-foreground/40 normal-case">
-            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-on-surface text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
-              Blog posts
-            </Button>
-            <span className="text-sm text-muted-foreground/20">/</span>
-            <span className="text-sm font-semibold text-on-surface normal-case">View post</span>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 text-muted-foreground/40 normal-case mb-2">
+              <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-on-surface text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
+                Blog posts
+              </Button>
+              <span className="text-sm text-muted-foreground/20">/</span>
+              <span className="text-sm font-semibold text-on-surface normal-case">View post</span>
+            </div>
+            <BrandLine />
           </div>
           <Button 
             onClick={() => handleEditPost(viewPost)}
             variant="primary"
-            className="h-12 px-10 text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2 rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="h-12 px-10 text-[10px] font-bold tracking-tight flex items-center gap-2 rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Edit2 className="w-4 h-4 mr-2" /> Edit post
           </Button>
@@ -678,7 +683,7 @@ export default function AdminBlogs() {
               </Badge>
               <div className="flex items-center gap-1.5 text-muted-foreground/40">
                 <Calendar className="w-4 h-4" />
-                <span className="text-xs font-medium">{new Date(viewPost.publishedAt).toLocaleDateString()}</span>
+                <span className="text-xs font-bold">{new Date(viewPost.publishedAt).toLocaleDateString()}</span>
               </div>
             </div>
             
@@ -705,17 +710,18 @@ export default function AdminBlogs() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <FileText className="w-8 h-8 text-on-surface" />
             Blog posts
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Draft and publish strategic articles for the movement feed.</p>
         </div>
         <Button 
           onClick={() => handleEditPost()}
           variant="primary"
           size="lg"
-          className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+          className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus className="w-4 h-4 mr-2" /> Create new post
         </Button>
@@ -788,7 +794,7 @@ export default function AdminBlogs() {
             <Button 
               variant="outline" 
               onClick={() => setSearchQuery('')}
-              className="mt-6 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-[0.3em] px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+              className="mt-6 rounded-sm border-border/40 font-bold text-[10px] tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Clear search
             </Button>
@@ -811,12 +817,12 @@ export default function AdminBlogs() {
                 </div>
                 <div className="absolute top-4 right-12">
                   <Badge className={cn(
-                    "backdrop-blur-sm text-[10px] font-black tracking-widest rounded-full border-none shadow-sm px-3",
+                    "backdrop-blur-sm text-[10px] font-bold tracking-tight rounded-full border-none shadow-sm px-3",
                     post.status === 'Published' ? "bg-brand-green text-white" : 
                     post.status === 'Pending Verification' ? "bg-brand-gold text-on-surface" :
                     "bg-amber-500/80 text-white"
                   )}>
-                    {post.status.toUpperCase()}
+                    {post.status}
                   </Badge>
                 </div>
                 {post.isFeatured && (

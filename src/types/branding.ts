@@ -14,6 +14,8 @@ export interface BrandingSettings {
   registration_form_diaspora_url: string
   primary_email: string
   newsletter_email: string
+  font_scale_global: number
+  font_scale_headings: number
   [key: string]: unknown
 }
 
@@ -32,5 +34,7 @@ export const defaultSettings: BrandingSettings = {
   registration_form_ghana_url: '/docs/registration-form-ghana.pdf',
   registration_form_diaspora_url: '/docs/registration-form-diaspora.pdf',
   primary_email: 'info@thebasemovement.com',
-  newsletter_email: 'info@thebasemovement.com'
+  newsletter_email: 'info@thebasemovement.com',
+  font_scale_global: 1.0,
+  font_scale_headings: 1.0
 }

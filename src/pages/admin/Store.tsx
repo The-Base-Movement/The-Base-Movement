@@ -29,6 +29,7 @@ import {
   CardTitle,
   CardFooter
 } from '@/components/ui/card'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { cn } from '@/lib/utils'
 import { adminService, type InventoryItem, type ResourceRequest, type LogisticsAuditEntry } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -243,10 +244,11 @@ export default function AdminStore() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Package className="w-8 h-8 text-on-surface" />
             Logistics and supply
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Movement inventory, merchandising, and regional distribution.</p>
         </div>
         <div className="flex items-center gap-4">
@@ -284,7 +286,7 @@ export default function AdminStore() {
               variant="primary"
               size="lg"
               onClick={() => handleOpenModal()}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               <Plus className="w-4 h-4 mr-2" /> Establish Asset
             </Button>
@@ -314,7 +316,7 @@ export default function AdminStore() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="h-10 px-8 text-[10px] font-black uppercase tracking-[0.3em] border-accent/40 text-accent hover:bg-accent/5 transition-all shadow-sm rounded-sm active:scale-95"
+                className="h-10 px-8 text-[10px] font-bold tracking-tight border-brand-red/40 text-brand-red hover:bg-brand-red/5 transition-all shadow-sm rounded-sm active:scale-95"
               >
                 Scan Alerts
               </Button>
@@ -453,12 +455,12 @@ export default function AdminStore() {
                         <span className="text-xs font-bold text-on-surface/80">{product.category}</span>
                       </td>
                       <td className="px-6 py-5">
-                        <span className="text-xs font-black text-on-surface">{product.price}</span>
+                        <span className="text-xs font-bold text-on-surface">{product.price}</span>
                       </td>
                       <td className="px-6 py-5 text-center">
                         <span className={cn(
-                          "text-xs font-black",
-                          product.stock === 0 ? "text-destructive" : product.stock < 50 ? "text-accent" : "text-on-surface"
+                          "text-xs font-bold",
+                          product.stock === 0 ? "text-brand-red" : product.stock < 50 ? "text-accent" : "text-on-surface"
                         )}>
                           {product.stock.toLocaleString()}
                         </span>
@@ -522,7 +524,7 @@ export default function AdminStore() {
                       </div>
                       <div className="space-y-1">
                         <h4 className="text-sm font-bold text-on-surface tracking-tight">{product.name}</h4>
-                        <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">#ITM-{product.id.substring(0, 6)}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">#ITM-{product.id.substring(0, 6)}</p>
                       </div>
                     </div>
                     <div className={cn(
@@ -537,13 +539,13 @@ export default function AdminStore() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-muted/10 rounded-sm border border-border/40">
-                      <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-1">Price</p>
-                      <p className="text-sm font-black text-on-surface">{product.price}</p>
+                      <p className="text-[9px] font-bold text-muted-foreground/80 tracking-tight mb-1">Price</p>
+                      <p className="text-sm font-bold text-on-surface">{product.price}</p>
                     </div>
                     <div className="p-4 bg-muted/10 rounded-sm border border-border/40">
-                      <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-1">Stock</p>
+                      <p className="text-[9px] font-bold text-muted-foreground/80 tracking-tight mb-1">Stock</p>
                       <p className={cn(
-                        "text-sm font-black",
+                        "text-sm font-bold",
                         product.stock < 50 ? "text-accent" : "text-on-surface"
                       )}>{product.stock.toLocaleString()}</p>
                     </div>
@@ -552,7 +554,7 @@ export default function AdminStore() {
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
                       variant="outline" 
-                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       onClick={() => handleOpenModal(product)}
                     >
                       <Edit3 className="w-4 h-4 mr-2" /> Edit Asset
@@ -684,8 +686,8 @@ export default function AdminStore() {
                       <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">{req.constituency || 'Regional HQ'}</p>
                     </div>
                     <div className={cn(
-                      "px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-full",
-                      req.priority === 'Urgent' ? "bg-destructive/10 text-destructive" : "bg-muted/10 text-on-surface/80"
+                      "px-2 py-0.5 text-[9px] font-bold tracking-tight rounded-full",
+                      req.priority === 'Urgent' ? "bg-brand-red/10 text-brand-red" : "bg-muted/10 text-on-surface/80"
                     )}>
                       {req.priority}
                     </div>
@@ -697,7 +699,7 @@ export default function AdminStore() {
                       {req.items.map(item => (
                         <div key={item.id} className="flex justify-between items-center">
                           <span className="text-[11px] font-bold text-on-surface">{item.productName}</span>
-                          <span className="text-xs font-black text-muted-foreground/80">x{item.quantity}</span>
+                          <span className="text-xs font-bold text-muted-foreground/80">x{item.quantity}</span>
                         </div>
                       ))}
                     </div>
@@ -757,7 +759,7 @@ export default function AdminStore() {
               <Button
                 variant="outline"
                 size="lg"
-                className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 disabled={auditLogs.length === 0}
                 onClick={() => {
                   try {
@@ -831,7 +833,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
-                          "text-xs font-black",
+                          "text-xs font-bold",
                           log.quantityChange > 0 ? "text-[var(--brand-green)]" : "text-[var(--brand-red)]"
                         )}>
                           {log.quantityChange > 0 ? '+' : ''}{log.quantityChange}
@@ -882,7 +884,7 @@ export default function AdminStore() {
                       </div>
                     </div>
                     <div className={cn(
-                      "text-lg font-black",
+                      "text-lg font-bold",
                       log.quantityChange > 0 ? "text-emerald-600" : "text-red-600"
                     )}>
                       {log.quantityChange > 0 ? '+' : ''}{log.quantityChange}
@@ -1021,7 +1023,7 @@ export default function AdminStore() {
                 <Input 
                   value={selectedProduct?.price || ''} 
                   onChange={e => setSelectedProduct(prev => ({ ...prev!, price: e.target.value }))}
-                  className="h-10 rounded-lg border-border/60 text-xs font-black" 
+                  className="h-10 rounded-lg border-border/60 text-xs font-bold" 
                 />
               </div>
               <div className="grid grid-cols-2 items-center gap-4">
@@ -1030,7 +1032,7 @@ export default function AdminStore() {
                   type="number"
                   value={selectedProduct?.stock || 0} 
                   onChange={e => setSelectedProduct(prev => ({ ...prev!, stock: parseInt(e.target.value) }))}
-                  className="h-10 rounded-lg border-border/60 text-xs font-black" 
+                  className="h-10 rounded-lg border-border/60 text-xs font-bold" 
                 />
               </div>
             </div>
@@ -1089,7 +1091,7 @@ export default function AdminStore() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                   <Label className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest">Icon Fallback</Label>
+                   <Label className="text-[9px] font-bold text-muted-foreground/80 capitalize tracking-tight">Icon Fallback</Label>
                    <Input 
                     value={selectedProduct?.image?.startsWith('http') ? '' : (selectedProduct?.image || '')} 
                     onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}
@@ -1102,13 +1104,13 @@ export default function AdminStore() {
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] h-11 px-8 hover:bg-muted/10 transition-all active:scale-95">
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-[10px] font-bold capitalize tracking-tight h-11 px-8 hover:bg-muted/10 transition-all active:scale-95">
               Cancel
             </Button>
             <Button 
               onClick={handleSave} 
               disabled={isSaving}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] bg-on-surface text-white hover:bg-on-surface/90 h-11 px-10 min-w-[160px] shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-[10px] font-bold capitalize tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-11 px-10 min-w-[160px] shadow-lg transition-all hover:scale-[1.02] active:scale-95"
             >
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Changes'}
             </Button>
@@ -1130,12 +1132,12 @@ export default function AdminStore() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
-            <AlertDialogCancel className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] h-10 px-6 border-border/60">
+            <AlertDialogCancel className="rounded-sm text-[10px] font-bold capitalize tracking-[0.2em] h-10 px-6 border-border/60">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDelete}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] bg-red-600 text-white hover:bg-red-700 h-10 px-8 active:scale-95"
+              className="rounded-sm text-[10px] font-bold capitalize tracking-[0.2em] bg-red-600 text-white hover:bg-red-700 h-10 px-8 active:scale-95"
             >
               Confirm Removal
             </AlertDialogAction>

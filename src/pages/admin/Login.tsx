@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Eye, EyeOff, Shield, ArrowRight } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 import { authService } from '@/services/authService'
 import { useNavigate } from 'react-router-dom'
@@ -38,17 +39,18 @@ export default function AdminLogin() {
       <div className="max-w-md w-full">
         <Card className="border-border/40 shadow-2xl rounded-sm overflow-hidden bg-white/80 backdrop-blur-xl">
           <CardContent className="p-10">
-            <div className="text-center mb-10">
-              <div className="w-16 h-16 bg-destructive/10 rounded-sm flex items-center justify-center mx-auto mb-4 rotate-3">
+            <div className="text-center mb-10 flex flex-col items-center">
+              <div className="w-16 h-16 bg-destructive/10 rounded-sm flex items-center justify-center mb-4 rotate-3">
                 <Shield className="w-8 h-8 text-destructive" />
               </div>
-              <h1 className="text-2xl font-black text-on-surface mb-2 font-meta tracking-tight">Admin login</h1>
-              <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-[0.2em]">Authorized personnel only</p>
+              <h1 className="text-2xl font-bold text-on-surface mb-2 font-meta tracking-tight">Admin login</h1>
+              <BrandLine className="mb-4" />
+              <p className="text-[10px] text-muted-foreground/60 font-bold capitalize tracking-tight">Authorized personnel only</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleLogin}>
               <div className="space-y-2">
-                <Label htmlFor="admin-email" className="text-xs font-bold text-on-surface/80 uppercase tracking-wider">Email</Label>
+                <Label htmlFor="admin-email" className="text-xs font-bold text-on-surface/80 capitalize tracking-tight">Email</Label>
                 <Input
                   id="admin-email"
                   type="email"
@@ -61,7 +63,7 @@ export default function AdminLogin() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="admin-password" className="text-xs font-bold text-on-surface/80 uppercase tracking-wider">Password</Label>
+                <Label htmlFor="admin-password" className="text-xs font-bold text-on-surface/80 capitalize tracking-tight">Password</Label>
                 <div className="relative">
                   <Input
                     id="admin-password"
@@ -104,7 +106,7 @@ export default function AdminLogin() {
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-border/40"></span>
                 </div>
-                <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-bold">
+                <div className="relative flex justify-center text-[10px] capitalize tracking-tight font-bold">
                   <span className="bg-white px-4 text-muted-foreground/40">Or authorized via</span>
                 </div>
               </div>
@@ -144,7 +146,7 @@ export default function AdminLogin() {
             </form>
 
             <div className="text-center mt-6 pt-6 border-t border-border/40">
-              <Link to="/login" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 hover:text-primary transition-colors">
+              <Link to="/login" className="text-[10px] font-bold capitalize tracking-tight text-muted-foreground/60 hover:text-primary transition-colors">
                 Member login instead?
               </Link>
             </div>

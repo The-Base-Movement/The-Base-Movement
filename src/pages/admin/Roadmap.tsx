@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/utils'
 import { adminService, type Milestone } from '@/services/adminService'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function RoadmapManagement() {
   const [milestones, setMilestones] = useState<Milestone[]>([])
@@ -148,13 +149,14 @@ export default function RoadmapManagement() {
             <Flag className="w-8 h-8 text-on-surface" />
             National Strategic Roadmap
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Manage movement objectives, mobilization phases, and strategic timelines.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => handleOpenModal()}
           >
             <Plus className="w-4 h-4 mr-2" /> Establish Milestone
@@ -300,7 +302,7 @@ export default function RoadmapManagement() {
                     </td>
                     <td className="px-6 py-5">
                       <span className={cn(
-                        "text-[9px] font-black uppercase tracking-widest",
+                        "text-[9px] font-bold normal-case tracking-tight",
                         milestone.importance_level === 'Critical' ? "text-[var(--brand-red)]" : "text-on-surface/40"
                       )}>
                         {milestone.importance_level}
@@ -359,7 +361,7 @@ export default function RoadmapManagement() {
                   {/* Left Column */}
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Objective Title</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Objective Title</label>
                       <Input 
                         required
                         placeholder="e.g. National Logistics Hub" 
@@ -369,7 +371,7 @@ export default function RoadmapManagement() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Strategic Category</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Strategic Category</label>
                       <select
                         value={formData.category}
                         onChange={e => setFormData({...formData, category: e.target.value})}
@@ -383,7 +385,7 @@ export default function RoadmapManagement() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Target Date</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Target Date</label>
                       <Input 
                         required
                         type="date"
@@ -393,7 +395,7 @@ export default function RoadmapManagement() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Target Member Count</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Target Member Count</label>
                       <Input 
                         type="number"
                         placeholder="0" 
@@ -407,7 +409,7 @@ export default function RoadmapManagement() {
                   {/* Right Column */}
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Status</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Status</label>
                       <select
                         value={formData.status}
                         onChange={e => setFormData({...formData, status: e.target.value as Milestone['status']})}
@@ -419,7 +421,7 @@ export default function RoadmapManagement() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Importance Level</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Importance Level</label>
                       <select
                         value={formData.importance_level}
                         onChange={e => setFormData({...formData, importance_level: e.target.value as Milestone['importance_level']})}
@@ -431,7 +433,7 @@ export default function RoadmapManagement() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Objective Description</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Objective Description</label>
                       <textarea
                         required
                         rows={4}
@@ -448,7 +450,7 @@ export default function RoadmapManagement() {
                 <Button 
                   type="button"
                   variant="outline" 
-                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-[0.3em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                  className="flex-1 h-12 text-[10px] font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                   onClick={() => setShowModal(false)}
                 >
                   Discard
@@ -457,7 +459,7 @@ export default function RoadmapManagement() {
                   type="submit"
                   variant="primary"
                   disabled={isSubmitting}
-                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="flex-1 h-12 text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   {isSubmitting ? 'Syncing...' : editingMilestone ? 'Commit Changes' : 'Establish Milestone'}
                 </Button>

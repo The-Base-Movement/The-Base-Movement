@@ -21,6 +21,7 @@ import { adminService } from '@/services/adminService'
 import type { FieldDirective, FieldReport } from '@/services/adminService'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function FieldDirectives() {
   const [directives, setDirectives] = useState<FieldDirective[]>([])
@@ -112,17 +113,18 @@ export default function FieldDirectives() {
       {/* 🎯 Tactical Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Target className="w-8 h-8 text-on-surface" />
             Field directives
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Deploying decentralized tactical objectives across the movement.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-bold tracking-tight hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
           >
             <BarChart className="w-4 h-4 mr-2" /> Tactical Analytics
           </Button>
@@ -130,7 +132,7 @@ export default function FieldDirectives() {
             variant="primary"
             size="lg"
             onClick={() => setIsCreating(true)}
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Issue New Directive
           </Button>
@@ -194,7 +196,7 @@ export default function FieldDirectives() {
             </h2>
             <Button 
               variant="outline" 
-              className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
+              className="h-11 px-8 text-[10px] font-bold tracking-tight hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
             >
               <Filter className="w-4 h-4 mr-2" /> Filter Feed
             </Button>
@@ -249,14 +251,14 @@ export default function FieldDirectives() {
                         <Button 
                           variant="outline" 
                           onClick={() => handleVerify(report.id, 'Rejected')}
-                          className="h-12 border-border/40 text-destructive hover:bg-destructive/10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95"
+                          className="h-12 border-border/40 text-brand-red hover:bg-brand-red/10 rounded-sm text-[10px] font-bold tracking-tight transition-all active:scale-95"
                         >
                           <XCircle className="w-4 h-4 mr-2" /> Reject Report
                         </Button>
                         <Button 
                           variant="primary"
                           onClick={() => handleVerify(report.id, 'Verified')}
-                          className="h-12 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                          className="h-12 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                         >
                           <CheckCircle className="w-4 h-4 mr-2" /> Verify Action
                         </Button>
@@ -353,14 +355,14 @@ export default function FieldDirectives() {
                 <Button 
                   variant="outline" 
                   onClick={() => setIsCreating(false)} 
-                  className="flex-1 h-12 rounded-sm border-border/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-stone-50 transition-all active:scale-95"
+                  className="flex-1 h-12 rounded-sm border-border/40 font-bold text-[10px] tracking-tight hover:bg-stone-50 transition-all active:scale-95"
                   disabled={isSubmitting}
                 >
                   Cancel Directive
                 </Button>
                 <Button 
                   variant="primary"
-                  className="flex-1 h-12 rounded-sm font-black text-[10px] uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="flex-1 h-12 rounded-sm font-bold text-[10px] tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                   onClick={handleIssueDirective}
                   disabled={isSubmitting}
                 >

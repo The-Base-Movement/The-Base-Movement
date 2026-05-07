@@ -30,6 +30,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { cn } from '@/lib/utils'
 import { adminService, type PendingVerification } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -174,10 +175,11 @@ export default function MemberVerification() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <ShieldCheck className="w-8 h-8 text-on-surface" />
             Member verification
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Review and approve new member registrations for movement security.</p>
         </div>
         <div className="flex items-center gap-4">
@@ -185,7 +187,7 @@ export default function MemberVerification() {
             <div className="hidden md:flex px-4 py-2 bg-accent/5 border border-accent/20 items-center gap-2 rounded-sm shadow-sm">
               <AlertCircle className="w-4 h-4 text-accent" />
               <div className="text-right">
-                <span className="text-[9px] font-bold text-accent uppercase tracking-wider block">Pending</span>
+                <span className="text-[9px] font-bold text-accent tracking-tight block">Pending</span>
                 <span className="text-sm font-bold text-on-surface tracking-tight">
                   {pendingCount} review{pendingCount !== 1 ? 's' : ''}
                 </span>
@@ -195,7 +197,7 @@ export default function MemberVerification() {
           <Button
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setShowRegForm(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" /> Establish Identity
@@ -334,7 +336,7 @@ export default function MemberVerification() {
                       variant={page === safePage ? "primary" : "outline"}
                       onClick={() => setCurrentPage(page)}
                       className={cn(
-                        "w-8 h-8 flex items-center justify-center text-[9px] font-black transition-all rounded-sm active:scale-95",
+                        "w-8 h-8 flex items-center justify-center text-[9px] font-bold transition-all rounded-sm active:scale-95",
                         page === safePage
                           ? "shadow-sm shadow-brand-green/20"
                           : "border-border/40 text-on-surface/80 hover:bg-stone-50"
@@ -492,7 +494,7 @@ export default function MemberVerification() {
                         variant="primary"
                         size="sm"
                         onClick={handleAiScan}
-                        className="w-full h-11 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
+                        className="w-full h-11 text-white text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
                       >
                         <Cpu className="w-4 h-4 mr-2" /> Execute Identity Scan
                       </Button>
@@ -530,14 +532,14 @@ export default function MemberVerification() {
                       <Button
                         variant="outline"
                         onClick={() => handleVerdict(false)}
-                        className="h-11 border-destructive/40 text-destructive hover:bg-destructive/10 transition-all text-[10px] font-black uppercase tracking-[0.2em] rounded-sm active:scale-95"
+                        className="h-11 border-brand-red/40 text-brand-red hover:bg-brand-red/10 transition-all text-[10px] font-bold tracking-tight rounded-sm active:scale-95"
                       >
                         <XCircle className="w-4 h-4 mr-2" /> Reject Entry
                       </Button>
                       <Button
                         variant="primary"
                         onClick={() => handleVerdict(true)}
-                        className="h-11 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
+                        className="h-11 text-white text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
                       >
                         <UserCheck className="w-4 h-4 mr-2" /> Approve Admission
                       </Button>
@@ -564,7 +566,7 @@ export default function MemberVerification() {
                   <CardContent className="p-4 space-y-2">
                     <Button
                       variant="outline"
-                      className="w-full h-11 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
+                      className="w-full h-11 text-[10px] font-bold tracking-tight text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
                       onClick={() => setShowPhotoFull(true)}
                     >
                       <Eye className="w-4 h-4 mr-2" /> Inspect Biometric Data
@@ -572,7 +574,7 @@ export default function MemberVerification() {
                     {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
                       <Button
                         variant="outline"
-                        className="w-full h-11 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
+                        className="w-full h-11 text-[10px] font-bold tracking-tight text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
                         onClick={() => setViewingVaultRecord(selectedMember)}
                       >
                         <Database className="w-4 h-4 mr-2" /> Open Audit Vault
@@ -653,7 +655,7 @@ export default function MemberVerification() {
                       {viewingVaultRecord.status}
                     </div>
                   </div>
-                  <h2 className="text-3xl font-black font-meta tracking-tighter leading-none pt-2">
+                  <h2 className="text-3xl font-bold font-meta tracking-tighter leading-none pt-2">
                     {viewingVaultRecord.name}
                   </h2>
                   <p className="text-on-surface/60 text-xs font-bold tracking-wider">

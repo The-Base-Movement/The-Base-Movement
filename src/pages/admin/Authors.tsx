@@ -3,6 +3,7 @@ import { Plus, Search, PenTool, Edit3, Trash2, Shield, Loader2 } from 'lucide-re
 import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { contentService } from '@/services/contentService'
 import type { Author } from '@/types/admin'
@@ -69,6 +70,7 @@ export default function AdminAuthors() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 className="text-4xl font-bold tracking-tight text-stone-900 mb-2 font-meta">Author Directory</h1>
+          <BrandLine className="mb-4" />
           <p className="text-stone-500 text-sm max-w-xl">
             Manage the official editorial profiles, biographies, and access credentials for the movement's content creators.
           </p>
@@ -77,7 +79,7 @@ export default function AdminAuthors() {
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold capitalize tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => window.location.href = '/admin/authors/new'}
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -118,7 +120,7 @@ export default function AdminAuthors() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-[10px] text-stone-500 uppercase tracking-widest bg-stone-50/80 border-b border-stone-100">
+            <thead className="text-[10px] text-stone-500 capitalize tracking-tight bg-stone-50/80 border-b border-stone-100">
               <tr>
                 <th className="px-6 py-4 font-bold">Author Profile</th>
                 <th className="px-6 py-4 font-bold">Role & Title</th>

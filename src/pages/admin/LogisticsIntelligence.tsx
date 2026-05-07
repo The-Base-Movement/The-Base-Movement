@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   History
 } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/neon-button'
 import {
@@ -128,12 +129,13 @@ export default function LogisticsIntelligence() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* 🚀 Header & Tactical Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Package className="w-8 h-8 text-on-surface" />
             Logistics monitoring
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Automated supply chain monitoring and regional dispatch tracking.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -142,7 +144,7 @@ export default function LogisticsIntelligence() {
             size="lg"
             onClick={handleRouteOptimization}
             disabled={isOptimizing}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-black uppercase tracking-[0.2em] hover:bg-stone-50 h-12 transition-all active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-bold tracking-tight hover:bg-stone-50 h-12 transition-all active:scale-95"
           >
             {isOptimizing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Filter className="w-4 h-4 mr-2" />} 
             Route Optimization
@@ -152,7 +154,7 @@ export default function LogisticsIntelligence() {
             size="lg"
             onClick={() => setShowReplenishConfirm(true)}
             disabled={isReplenishing}
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             {isReplenishing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PackagePlus className="w-4 h-4 mr-2" />} 
             Replenish All
@@ -195,12 +197,12 @@ export default function LogisticsIntelligence() {
           ].map((stat, i) => (
             <Card key={i} className={cn("rounded-sm border-border/60 shadow-sm bg-white p-6 hover:border-on-surface/40 transition-colors", stat.className)}>
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-bold normal-case text-muted-foreground/80">{stat.label}</span>
+                <span className="text-[10px] font-bold text-muted-foreground/80">{stat.label}</span>
                 <stat.icon className={cn("w-5 h-5", stat.color)} />
               </div>
               <div>
-                <p className="text-xl md:text-3xl font-black tracking-tighter text-on-surface">{stat.value}</p>
-                <p className="text-[10px] font-bold text-muted-foreground/80 normal-case mt-1">{stat.sub}</p>
+                <p className="text-xl md:text-3xl font-bold tracking-tighter text-on-surface">{stat.value}</p>
+                <p className="text-[10px] font-bold text-muted-foreground/80 mt-1">{stat.sub}</p>
               </div>
             </Card>
           ))
@@ -232,7 +234,7 @@ export default function LogisticsIntelligence() {
                       <p className="text-[8px] text-muted-foreground/80 font-bold normal-case mt-1">{item.category.toLowerCase()}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-black text-destructive">{item.stock_quantity} <span className="text-[8px] text-muted-foreground/40 font-bold normal-case ml-1">in stock</span></p>
+                      <p className="text-xs font-bold text-destructive">{item.stock_quantity} <span className="text-[8px] text-muted-foreground/40 font-bold normal-case ml-1">in stock</span></p>
                       <p className="text-[8px] text-muted-foreground/80 font-bold normal-case mt-1">Threshold: {item.low_stock_threshold}</p>
                     </div>
                   </div>
@@ -246,7 +248,7 @@ export default function LogisticsIntelligence() {
                 variant="primary"
                 onClick={handleGeneratePurchaseOrder}
                 disabled={isGeneratingPO}
-                className="bg-destructive text-white hover:bg-destructive/90 rounded-sm h-11 px-10 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 shadow-lg shadow-destructive/20 border-0 transition-all hover:scale-[1.02] active:scale-95"
+                className="bg-brand-red text-white hover:bg-brand-red/90 rounded-sm h-11 px-10 font-bold text-[10px] tracking-tight flex items-center gap-2 shadow-lg shadow-brand-red/20 border-0 transition-all hover:scale-[1.02] active:scale-95"
               >
                 {isGeneratingPO ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
                 Generate Purchase Order
@@ -292,7 +294,7 @@ export default function LogisticsIntelligence() {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             <Clock className="w-3 h-3 text-border/60" />
-                            <span className="text-xs font-black text-on-surface">{v.avg_dispatch_hours}h</span>
+                            <span className="text-xs font-bold text-on-surface">{v.avg_dispatch_hours}h</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -325,28 +327,28 @@ export default function LogisticsIntelligence() {
                   velocity.map((v, idx) => (
                     <div key={idx} className="p-6 space-y-4">
                       <div className="flex justify-between items-center">
-                        <h4 className="text-sm font-black text-on-surface">{v.region || 'Unknown'}</h4>
+                        <h4 className="text-sm font-bold text-on-surface">{v.region || 'Unknown'}</h4>
                         <div className="px-3 py-1 bg-muted/10 rounded-full">
-                          <p className="text-[9px] font-bold text-on-surface/80 uppercase tracking-tight">{v.total_orders} Orders</p>
+                          <p className="text-[9px] font-bold text-on-surface/80 tracking-tight">{v.total_orders} Orders</p>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <p className="text-[8px] font-bold text-muted-foreground/80 uppercase tracking-widest">Dispatch Time</p>
+                          <p className="text-[8px] font-bold text-muted-foreground/80 tracking-tight">Dispatch Time</p>
                           <div className="flex items-center gap-1.5">
                             <Clock className="w-3 h-3 text-muted-foreground/80" />
-                            <p className="text-xs font-black text-on-surface">{v.avg_dispatch_hours}h</p>
+                            <p className="text-xs font-bold text-on-surface">{v.avg_dispatch_hours}h</p>
                           </div>
                         </div>
                         <div className="space-y-1 text-right">
-                          <p className="text-[8px] font-bold text-muted-foreground/80 uppercase tracking-widest">Delivery</p>
-                          <p className="text-xs font-black text-on-surface">{v.avg_delivery_hours}h</p>
+                          <p className="text-[8px] font-bold text-muted-foreground/80 tracking-tight">Delivery</p>
+                          <p className="text-xs font-bold text-on-surface">{v.avg_delivery_hours}h</p>
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground/80 uppercase tracking-widest">
+                        <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground/80 tracking-tight">
                           <span>Fulfillment Rate</span>
                           <span className="text-primary">{v.fulfillment_rate}%</span>
                         </div>
@@ -370,14 +372,14 @@ export default function LogisticsIntelligence() {
       <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden p-0">
         <div className="bg-on-surface p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
-            <h3 className="text-white text-xl font-black normal-case font-meta leading-tight">National supply chain map</h3>
+            <h3 className="text-white text-xl font-bold font-meta leading-tight">National supply chain map</h3>
             <p className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-2">Real-time visualization of material flow across the 16 regions.</p>
           </div>
           <Button 
             variant="outline" 
             size="lg"
             onClick={() => toast.success('Initializing high-fidelity enterprise visualization protocol...')}
-            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-sm h-12 px-10 font-black text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-black/20 transition-all active:scale-95"
+            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-sm h-12 px-10 font-bold text-[10px] tracking-tight shadow-xl shadow-black/20 transition-all active:scale-95"
           >
             <Map className="w-4 h-4 mr-2" /> Enterprise View
           </Button>
@@ -397,7 +399,7 @@ export default function LogisticsIntelligence() {
             <div className="w-16 h-16 bg-white rounded-sm shadow-sm border border-border/40 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
               <Map className="w-8 h-8 text-border/60" />
             </div>
-            <h4 className="text-on-surface text-[11px] font-black mb-2">Syncing regional data</h4>
+            <h4 className="text-on-surface text-[11px] font-bold mb-2">Syncing regional data</h4>
             <p className="text-[10px] font-bold normal-case text-muted-foreground/80">No regional data available yet. Waiting for hub connection.</p>
             <div className="flex items-center justify-center gap-2 mt-6">
               <span className="w-1.5 h-1.5 rounded-full bg-border/60 animate-bounce" />
@@ -497,7 +499,7 @@ export default function LogisticsIntelligence() {
             <Button 
               variant="outline" 
               onClick={() => setShowReplenishConfirm(false)}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] h-12 px-8 border-border/40 hover:bg-stone-50 transition-all active:scale-95"
+              className="rounded-sm text-[10px] font-bold tracking-tight h-12 px-8 border-border/40 hover:bg-stone-50 transition-all active:scale-95"
             >
               Cancel
             </Button>
@@ -505,7 +507,7 @@ export default function LogisticsIntelligence() {
               variant="primary"
               onClick={handleReplenishAll}
               disabled={isReplenishing}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] h-12 px-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-[10px] font-bold tracking-tight h-12 px-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               {isReplenishing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Protocol'}
             </Button>

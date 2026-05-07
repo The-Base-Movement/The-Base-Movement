@@ -117,88 +117,53 @@
   }
   body {
     @apply bg-background text-on-surface antialiased;
-    font-size: 14px;
+    font-size: var(--p-size);
   }
-  @screen sm {
-    body { font-size: 15px; }
-  }
-  @screen lg {
-    body { font-size: 16px; }
-  }
-
-  /* Unified Typography Scale */
+  
+  /* Unified Typography Scale using Responsive Variables */
   h1, .h1 {
-    @apply font-meta font-black tracking-tighter leading-[1.1];
-    font-size: 1.5rem;
-  }
-  @screen sm {
-    h1, .h1 { font-size: 2rem; }
-  }
-  @screen lg {
-    h1, .h1 { font-size: 2.5rem; }
+    @apply font-meta font-bold tracking-tighter leading-[1.1];
+    font-size: var(--h1-size);
   }
 
   h2, .h2 {
-    @apply font-meta font-black tracking-tight leading-[1.2];
-    font-size: 1.25rem;
-  }
-  @screen sm {
-    h2, .h2 { font-size: 1.5rem; }
-  }
-  @screen lg {
-    h2, .h2 { font-size: 2rem; }
+    @apply font-meta font-bold tracking-tight leading-[1.2];
+    font-size: var(--h2-size);
   }
 
   h3, .h3 {
     @apply font-meta font-bold tracking-tight leading-[1.3];
-    font-size: 1.125rem;
-  }
-  @screen sm {
-    h3, .h3 { font-size: 1.25rem; }
-  }
-  @screen lg {
-    h3, .h3 { font-size: 1.5rem; }
+    font-size: var(--h3-size);
   }
 
   h4, .h4 {
     @apply font-meta font-bold tracking-tight leading-[1.4];
-    font-size: 1.125rem;
-  }
-  @screen sm {
-    h4, .h4 { font-size: 1.25rem; }
-  }
-  @screen lg {
-    h4, .h4 { font-size: 1.5rem; }
+    font-size: var(--h4-size);
   }
 
   h5, .h5 {
     @apply font-meta font-bold tracking-wide leading-[1.5];
-    font-size: 1rem;
-  }
-  @screen sm {
-    h5, .h5 { font-size: 1.125rem; }
-  }
-  @screen lg {
-    h5, .h5 { font-size: 1.25rem; }
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
   }
 
   h6, .h6 {
     @apply font-meta font-bold tracking-widest leading-[1.6];
-    font-size: 0.75rem;
-  }
-  @screen sm {
-    h6, .h6 { font-size: 0.875rem; }
-  }
-  @screen lg {
-    h6, .h6 { font-size: 1rem; }
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
   }
 
   p {
     @apply font-body-md leading-relaxed mb-4;
+    font-size: var(--p-size);
   }
 }
 
 @layer utilities {
+  .brand-line {
+    @apply flex h-1 w-24 mb-6;
+  }
+  .brand-line-destructive { @apply flex-1 bg-destructive; }
+  .brand-line-accent { @apply flex-1 bg-accent; }
+  .brand-line-primary { @apply flex-1 bg-primary; }
   .text-balance {
     text-wrap: balance;
   }

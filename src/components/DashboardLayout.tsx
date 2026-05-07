@@ -1,16 +1,30 @@
 import { useState, useEffect } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Search } from 'lucide-react'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { 
+  LogOut, 
+  User as UserIcon, 
+  Settings as SettingsIcon,
+  Search 
+} from 'lucide-react'
 import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
 import { Button } from './ui/neon-button'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
 import { useBranding } from '@/hooks/useBranding'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function DashboardLayout() {
   const { settings } = useBranding()
   const location = useLocation()
+  const navigate = useNavigate()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [userName, setUserName] = useState('Member')
   const [userPlatform, setUserPlatform] = useState('Member')
@@ -58,10 +72,26 @@ export default function DashboardLayout() {
   // Derive initials from the stored name
   const initials = (userName || 'Member')
     .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(n => n[0]?.toUpperCase() || '')
+    .map(n => n[0])
     .join('')
+    .toUpperCase()
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout()
+      localStorage.removeItem('userToken')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('userEmail')
+      localStorage.removeItem('userAvatar')
+      localStorage.removeItem('userPlatform')
+      localStorage.removeItem('userRegNo')
+      navigate('/login')
+    } catch (error) {
+      console.error('[AUTH] Sign out sequence failed:', error)
+      // Fallback redirect
+      navigate('/login')
+    }
+  }
 
   const isActive = (path: string) => location.pathname === path
 
@@ -114,8 +144,8 @@ export default function DashboardLayout() {
           <img src={settings.logo_url} alt="The Base Logo" className="h-10 w-10 object-contain shrink-0"  decoding="async" />
           {!isSidebarCollapsed && (
             <div className="overflow-hidden whitespace-nowrap">
-              <h1 className="text-xl font-black text-on-surface leading-none mb-0 tracking-tighter uppercase">The Base</h1>
-              <p className="text-tiny text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase">Civic Movement</p>
+              <h1 className="text-xl font-bold text-on-surface leading-none mb-0 tracking-tighter">The Base</h1>
+              <p className="text-tiny text-accent font-bold tracking-tight mt-1 mb-0">Civic Movement</p>
             </div>
           )}
         </div>
@@ -157,11 +187,11 @@ export default function DashboardLayout() {
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
               </div>
               <div className="px-2">
-                <p className="text-on-surface text-tiny font-black tracking-[0.2em] leading-tight mb-1">
+                <p className="text-on-surface text-tiny font-bold tracking-tight leading-tight mb-1">
                   Dr. George Oti Bonsu
                 </p>
-                <p className="text-accent text-tiny font-black tracking-widest mb-0">
-                  Movement founder
+                <p className="text-accent text-tiny font-bold tracking-tight mb-0">
+                  Movement Founder
                 </p>
               </div>
             </div>
@@ -263,32 +293,67 @@ export default function DashboardLayout() {
               {/* Divider */}
               <div className="h-6 w-px bg-border/20 mx-8"></div>
 
-              {/* User Avatar + Name */}
-              <button className="flex items-center gap-4 group">
-                {/* Avatar: real photo or initials fallback */}
-                <div className="w-10 h-10 rounded-sm overflow-hidden ring-4 ring-primary/5 group-hover:ring-primary/20 transition-all shadow-2xl shrink-0">
-                  {avatarUrl ? (
-                    <img src={avatarUrl}
-                      alt={userName}
-                      className="w-full h-full object-cover"
-                     decoding="async" />
-                  ) : (
-                    <div className="w-full h-full bg-primary flex items-center justify-center text-white text-tiny font-black tracking-widest">
-                      {initials || 'M'}
+              {/* User Avatar + Name with Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-4 group outline-none">
+                    {/* Avatar: real photo or initials fallback */}
+                    <div className="w-10 h-10 rounded-sm overflow-hidden ring-4 ring-primary/5 group-hover:ring-primary/20 transition-all shadow-2xl shrink-0">
+                      {avatarUrl ? (
+                        <img src={avatarUrl}
+                          alt={userName}
+                          className="w-full h-full object-cover"
+                         decoding="async" />
+                      ) : (
+                        <div className="w-full h-full bg-primary flex items-center justify-center text-white text-tiny font-black tracking-widest">
+                          {initials || 'M'}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="hidden lg:block text-left">
-                  <p className="text-xs font-black text-on-surface leading-none mb-1 capitalize tracking-tight">{userName?.toLowerCase()}</p>
-                   <p className="text-tiny text-accent font-black tracking-widest mb-0">
-                    {userPlatform === 'ADMIN' ? 'Chapter Lead' : (userPlatform === 'PATRIOT' ? 'Member' : 'Member')} {userRegNo && `· ${userRegNo}`}
-                  </p>
-                </div>
-                <span
-                  className="material-symbols-outlined text-on-surface/20 text-[18px] group-hover:text-primary transition-colors"
-                  style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}
-                >expand_more</span>
-              </button>
+                    <div className="hidden lg:block text-left">
+                      <p className="text-xs font-bold text-on-surface leading-none mb-1 capitalize tracking-tight">{userName?.toLowerCase()}</p>
+                       <p className="text-tiny text-accent font-bold tracking-tight mb-0">
+                        {userPlatform === 'ADMIN' ? 'Chapter Lead' : (userPlatform === 'PATRIOT' ? 'Member' : 'Member')} {userRegNo && `· ${userRegNo}`}
+                      </p>
+                    </div>
+                    <span
+                      className="material-symbols-outlined text-on-surface/20 text-[18px] group-hover:text-primary transition-colors"
+                      style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}
+                    >expand_more</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 mt-2 bg-white border-border/40 shadow-2xl rounded-none">
+                  <DropdownMenuLabel className="p-4">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-xs font-bold text-on-surface leading-none capitalize">{userName?.toLowerCase()}</p>
+                      <p className="text-tiny font-bold text-muted-foreground/60 tracking-tight truncate">{userRegNo || 'Unverified Account'}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-border/10" />
+                  <DropdownMenuItem asChild className="cursor-pointer p-3 focus:bg-primary/5 transition-colors group">
+                    <Link to="/dashboard/settings" className="flex items-center gap-3 w-full">
+                      <UserIcon className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                      <span className="text-[11px] font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Member Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer p-3 focus:bg-primary/5 transition-colors group">
+                    <Link to="/dashboard/settings?tab=security" className="flex items-center gap-3 w-full">
+                      <SettingsIcon className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                      <span className="text-[11px] font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Security Settings</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-border/10" />
+                  <DropdownMenuItem 
+                    onClick={handleLogout}
+                    className="cursor-pointer p-3 focus:bg-destructive/5 transition-colors group text-destructive"
+                  >
+                    <div className="flex items-center gap-3 w-full">
+                      <LogOut className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                      <span className="text-[11px] font-bold tracking-tight">Sign out of Base</span>
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

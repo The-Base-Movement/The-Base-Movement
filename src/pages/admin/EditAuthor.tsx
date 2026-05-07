@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { contentService } from '@/services/contentService'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -181,14 +182,15 @@ export default function AdminEditAuthor() {
       
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-on-surface font-meta">
-              {isEditing ? 'Edit Editorial Profile' : 'New Editorial Profile'}
-            </h1>
-            <p className="text-muted-foreground/80 text-sm">
-              Configure credentials and biographical information for the movement's content creators.
-            </p>
-          </div>
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold tracking-tight text-on-surface font-meta mb-2">
+            {isEditing ? 'Edit Editorial Profile' : 'New Editorial Profile'}
+          </h1>
+          <BrandLine className="mb-4" />
+          <p className="text-muted-foreground/80 text-sm">
+            Configure credentials and biographical information for the movement's content creators.
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -198,13 +200,13 @@ export default function AdminEditAuthor() {
             {!isEditing && (
               <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="flex items-center justify-between border-b border-border/10 pb-2">
-                  <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest">Personnel Search</h3>
+                  <h3 className="text-sm font-bold text-on-surface capitalize tracking-tight">Personnel Search</h3>
                   {selectedMember && (
                     <Button 
                       type="button" 
                       variant="ghost" 
                       onClick={clearMemberSelection}
-                      className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/5 text-[10px] font-bold uppercase tracking-wider"
+                      className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/5 text-[10px] font-bold capitalize tracking-tight"
                     >
                       <X className="w-3 h-3 mr-1" /> Reset selection
                     </Button>
@@ -251,7 +253,7 @@ export default function AdminEditAuthor() {
                                 <p className="text-sm font-bold text-on-surface truncate">{member.name}</p>
                                 <p className="text-[10px] text-muted-foreground/60 truncate">{member.id} • {member.region} • {member.profession}</p>
                               </div>
-                              <div className="text-[10px] font-black uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">Select</div>
+                              <div className="text-[10px] font-bold capitalize tracking-tight text-primary opacity-0 group-hover:opacity-100 transition-opacity">Select</div>
                             </button>
                           ))}
                         </div>
@@ -270,7 +272,7 @@ export default function AdminEditAuthor() {
                     <div className="flex-1">
                       <p className="text-sm font-bold text-on-surface flex items-center gap-2">
                         {selectedMember.name}
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-[9px] uppercase font-black tracking-widest">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-[9px] capitalize font-bold tracking-tight">
                           <Check className="w-2 h-2" /> Identified
                         </span>
                       </p>
@@ -284,7 +286,7 @@ export default function AdminEditAuthor() {
 
             {/* Identity Section */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest border-b border-border/10 pb-2">Identity & Role</h3>
+              <h3 className="text-sm font-bold text-on-surface capitalize tracking-tight border-b border-border/10 pb-2">Identity & Role</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -324,7 +326,7 @@ export default function AdminEditAuthor() {
 
             {/* Profile Media */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest border-b border-border/10 pb-2">Profile Media</h3>
+              <h3 className="text-sm font-bold text-on-surface capitalize tracking-tight border-b border-border/10 pb-2">Profile Media</h3>
               
               <div className="flex flex-col sm:flex-row items-start gap-6">
                 <div className="w-32 h-32 rounded-sm bg-muted/10 border-2 border-dashed border-border/40 flex items-center justify-center overflow-hidden shrink-0 relative group">
@@ -338,7 +340,7 @@ export default function AdminEditAuthor() {
                   ) : (
                     <div className="text-center text-muted-foreground/40 p-4">
                       <ImageIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <span className="text-[10px] uppercase tracking-wider font-bold">No Image</span>
+                      <span className="text-[10px] capitalize tracking-tight font-bold">No Image</span>
                     </div>
                   )}
                   {isUploading && (
@@ -384,7 +386,7 @@ export default function AdminEditAuthor() {
 
             {/* Biographical Data */}
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-on-surface uppercase tracking-widest border-b border-border/10 pb-2">Biographical Information</h3>
+              <h3 className="text-sm font-bold text-on-surface capitalize tracking-tight border-b border-border/10 pb-2">Biographical Information</h3>
               
               <div className="space-y-2">
                 <Label className="text-sm font-bold text-on-surface/80">Professional Biography</Label>
@@ -403,7 +405,7 @@ export default function AdminEditAuthor() {
               type="button" 
               variant="outline" 
               onClick={() => navigate('/admin/authors')}
-              className="border-border/40 hover:bg-stone-50 transition-all rounded-sm text-[10px] font-black uppercase tracking-widest h-12 px-8"
+              className="border-border/40 hover:bg-stone-50 transition-all rounded-sm text-[10px] font-bold capitalize tracking-tight h-12 px-8"
             >
               Cancel
             </Button>
@@ -411,7 +413,7 @@ export default function AdminEditAuthor() {
               type="submit" 
               variant="primary"
               disabled={isSaving}
-              className="px-10 h-12 rounded-sm shadow-lg shadow-brand-green/20 text-[10px] font-black uppercase tracking-widest"
+              className="px-10 h-12 rounded-sm shadow-lg shadow-brand-green/20 text-[10px] font-bold capitalize tracking-tight"
             >
               {isSaving ? (
                 <>

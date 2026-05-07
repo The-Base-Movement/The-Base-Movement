@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { RapidResponseDirective, CrisisIncident, MediaCounterNarrative } from '@/types/admin'
 import { cn } from '@/lib/utils'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 
@@ -72,10 +73,11 @@ export default function WarRoomCommand() {
       {/* ⚔️ War room header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
-            <ShieldAlert className="w-8 h-8 text-destructive" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+            <ShieldAlert className="w-8 h-8 text-brand-red" />
             War room
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Real-time intelligence, rapid response dispatch, and threat neutralization.</p>
         </div>
       </div>
@@ -140,7 +142,7 @@ export default function WarRoomCommand() {
                         <Button 
                           variant="primary"
                           size="sm"
-                          className="h-11 px-10 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                          className="h-11 px-10 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                         >
                           Update Status
                         </Button>
@@ -187,7 +189,7 @@ export default function WarRoomCommand() {
                         {nar.dispatch_status === 'PENDING' && (
                           <Button 
                             variant="primary"
-                            className="h-12 px-10 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-900/40 border-0 transition-all hover:scale-[1.02] active:scale-95"
+                            className="h-12 px-10 rounded-sm text-[10px] font-bold tracking-tight bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-900/40 border-0 transition-all hover:scale-[1.02] active:scale-95"
                           >
                             <Send className="w-4 h-4 mr-2" /> Dispatch Strike
                           </Button>

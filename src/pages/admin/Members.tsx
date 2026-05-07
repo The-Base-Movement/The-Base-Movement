@@ -23,6 +23,7 @@ import {
   CheckCircle,
   UserCheck
 } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { adminService, type AuditLogEntry, type Member } from '@/services/adminService'
 import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
@@ -319,17 +320,18 @@ export default function MembersList() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Users className="w-8 h-8 text-on-surface" />
             Member directory
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Manage and coordinate registered members.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] uppercase font-black tracking-[0.2em] px-10 border-border/40 h-12 shadow-sm transition-all active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-10 border-border/40 h-12 shadow-sm transition-all active:scale-95"
             onClick={handleExport}
             disabled={isExporting || members.length === 0}
           >
@@ -340,7 +342,7 @@ export default function MembersList() {
             variant="primary"
             size="lg"
             onClick={handleAddMember}
-            className="rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" />
             Establish Identity
@@ -366,7 +368,7 @@ export default function MembersList() {
                 {isLoading ? (
                   <div className="h-7 w-16 bg-muted/20 animate-pulse rounded-lg mt-1" />
                 ) : (
-                  <p className="text-xl font-black text-on-surface leading-tight mt-0.5">
+                  <p className="text-xl font-bold text-on-surface leading-tight mt-0.5">
                     {stat.value.toLocaleString()}
                   </p>
                 )}
@@ -401,14 +403,14 @@ export default function MembersList() {
                 <div className="flex flex-row gap-2">
                   <Button 
                     variant="ghost" 
-                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
+                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-[10px] font-bold tracking-tight text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
                   >
                     <MapPin className="w-4 h-4 mr-2 text-muted-foreground/40" /> Origins
                   </Button>
                   
                   <Button 
                     variant="ghost" 
-                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
+                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-[10px] font-bold tracking-tight text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
                   >
                     <ShieldCheck className="w-4 h-4 mr-2 text-muted-foreground/40" /> Statuses
                   </Button>
@@ -418,7 +420,7 @@ export default function MembersList() {
               {(searchTerm !== '') && (
                 <Button 
                   variant="ghost" 
-                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95"
+                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-[10px] font-bold tracking-tight transition-all active:scale-95"
                   onClick={() => {
                     setSearchTerm('')
                     setCurrentPage(1)
@@ -445,17 +447,17 @@ export default function MembersList() {
                 <Button 
                   variant="ghost" 
                   onClick={handleBulkVerify}
-                  className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-white hover:bg-white/10 active:scale-95"
+                  className="h-10 px-6 text-[10px] font-bold tracking-tight text-white hover:bg-white/10 active:scale-95"
                 >
                   <UserCheck className="w-4 h-4 mr-2 text-primary" /> Verify
                 </Button>
-                <Button variant="ghost" className="h-9 px-4 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10">
+                <Button variant="ghost" className="h-9 px-4 text-[10px] font-bold tracking-tight text-white hover:bg-white/10">
                   <Globe2 className="w-4 h-4 mr-2 text-primary" /> Assign
                 </Button>
                 <Button 
                   variant="ghost" 
                   onClick={handleBulkDelete}
-                  className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-red-400 hover:bg-red-500/10 active:scale-95"
+                  className="h-10 px-6 text-[10px] font-bold tracking-tight text-red-400 hover:bg-red-500/10 active:scale-95"
                 >
                   <Trash2 className="w-4 h-4 mr-2" /> Purge
                 </Button>
@@ -517,12 +519,12 @@ export default function MembersList() {
                           <div className="w-16 h-16 rounded-sm bg-muted/30 flex items-center justify-center mb-6">
                             <Users className="w-8 h-8 text-muted-foreground/40" />
                           </div>
-                          <h3 className="text-xl font-black text-on-surface tracking-tight normal-case">No members yet</h3>
+                          <h3 className="text-xl font-bold text-on-surface tracking-tight normal-case">No members yet</h3>
                           <p className="text-muted-foreground/80 text-sm mt-1 font-medium">Create your first member record to get started.</p>
                           <Button 
                             variant="primary"
                             size="lg"
-                            className="mt-6 rounded-sm text-[10px] uppercase font-black tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                            className="mt-6 rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                             onClick={handleAddMember}
                           >
                             <Plus className="w-4 h-4 mr-2" />
@@ -544,7 +546,7 @@ export default function MembersList() {
                               setSearchTerm('')
                               setCurrentPage(1)
                             }}
-                            className="mt-6 h-11 px-10 rounded-sm text-[10px] uppercase tracking-[0.2em] font-black border-border/40 transition-all active:scale-95"
+                            className="mt-6 h-11 px-10 rounded-sm text-[10px] tracking-tight font-bold border-border/40 transition-all active:scale-95"
                           >
                             <RotateCcw className="w-4 h-4 mr-2" /> Clear Filters
                           </Button>
@@ -575,7 +577,7 @@ export default function MembersList() {
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-on-surface leading-tight group-hover:text-destructive transition-colors">{member.name}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">ID: {member.id.substring(0, 8)}</p>
+                            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">ID: {member.id.substring(0, 8)}</p>
                           </div>
                         </div>
                       </div>
@@ -593,12 +595,12 @@ export default function MembersList() {
                     <td className="px-6 py-5">
                       <div>
                         <p className="text-xs font-bold text-on-surface">{member.region}</p>
-                        <p className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-wider mt-0.5">{member.constituency}</p>
+                        <p className="text-[10px] font-medium text-muted-foreground/80 tracking-tight mt-0.5">{member.constituency}</p>
                       </div>
                     </td>
                     <td className="px-6 py-5">
                       <span className={cn(
-                        "px-3 py-1 text-[9px] font-bold uppercase tracking-wider rounded-full border inline-flex items-center gap-1.5",
+                        "px-3 py-1 text-[9px] font-bold tracking-tight rounded-full border inline-flex items-center gap-1.5",
                         member.status === 'Active' 
                           ? "bg-primary/10 text-primary border-primary/20" 
                           : member.status === 'Pending'
@@ -676,7 +678,7 @@ export default function MembersList() {
             <div className="flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95" 
+                className="h-11 px-8 text-[10px] font-bold tracking-tight rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95" 
                 disabled={currentPage === 1}
                 onClick={handlePrevPage}
               >
@@ -689,7 +691,7 @@ export default function MembersList() {
               </div>
               <Button 
                 variant="outline" 
-                className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95"
+                className="h-11 px-8 text-[10px] font-bold tracking-tight rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95"
                 disabled={currentPage >= totalPages || totalPages === 0}
                 onClick={handleNextPage}
               >
@@ -741,7 +743,7 @@ export default function MembersList() {
               <div className="grid grid-cols-2 gap-4">
                 <Button 
                   onClick={handlePrint}
-                  className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-black uppercase tracking-[0.3em] text-[10px] shadow-lg rounded-none transition-all active:scale-95"
+                  className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-bold tracking-tight text-[10px] shadow-lg rounded-none transition-all active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">print</span>
                   Print Card
@@ -749,7 +751,7 @@ export default function MembersList() {
                 <Button 
                   variant="primary"
                   onClick={handleDownload}
-                  className="h-14 flex-1 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="h-14 flex-1 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">download</span>
                   Download PDF
@@ -770,7 +772,7 @@ export default function MembersList() {
                 <Lock className="w-5 h-5 text-accent" />
               </div>
               <div>
-                <h2 className="text-xl font-black tracking-tight font-meta">Audit history</h2>
+                <h2 className="text-xl font-bold tracking-tight font-meta">Audit history</h2>
                 <p className="text-[10px] font-medium text-muted-foreground/80 mt-1">
                   Full chain of custody for {auditTargetMember}
                 </p>
@@ -780,7 +782,7 @@ export default function MembersList() {
 
           <div className="p-8 space-y-6 max-h-[60vh] overflow-y-auto">
             {!viewingAuditLogs || viewingAuditLogs.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground/80 text-xs font-bold uppercase tracking-widest">
+              <div className="py-12 text-center text-muted-foreground/80 text-xs font-bold tracking-tight">
                 No audit records found for this resource.
               </div>
             ) : (
@@ -793,10 +795,10 @@ export default function MembersList() {
                           <FileText className="w-4 h-4 text-muted-foreground/80" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">
+                          <p className="text-[10px] font-bold tracking-tight text-muted-foreground/80">
                             {new Date(log.timestamp).toLocaleString()}
                           </p>
-                          <h4 className="text-sm font-black text-on-surface mt-1 uppercase tracking-tight">{log.action}</h4>
+                          <h4 className="text-sm font-bold text-on-surface mt-1 tracking-tight">{log.action}</h4>
                           <p className="text-xs text-muted-foreground/80 font-medium mt-1">Processed by: {log.adminName}</p>
                           {log.details && (
                             <div className="mt-3 p-3 bg-muted/30 text-[10px] font-mono text-on-surface/80 break-all border-l-2 border-border/60">
@@ -806,7 +808,7 @@ export default function MembersList() {
                         </div>
                       </div>
                       <span className={cn(
-                        "px-2 py-0.5 text-[8px] font-black uppercase tracking-widest border",
+                        "px-2 py-0.5 text-[8px] font-bold tracking-widest border",
                         log.status === 'Success' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-accent/10 text-accent border-accent/20'
                       )}>
                         {log.status}
@@ -821,7 +823,7 @@ export default function MembersList() {
           <div className="p-6 border-t border-border/40 bg-stone-50/50 flex justify-end">
             <Button 
               onClick={() => setIsAuditModalOpen(false)}
-              className="bg-on-surface text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-sm h-11 px-8 shadow-md transition-all active:scale-95"
+              className="bg-on-surface text-white text-[10px] font-bold tracking-[0.2em] rounded-sm h-11 px-8 shadow-md transition-all active:scale-95"
             >
               Close history
             </Button>

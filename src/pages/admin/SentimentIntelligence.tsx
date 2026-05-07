@@ -15,6 +15,7 @@ import type { MemberFeedback, SentimentTelemetry, ImpactProjection } from '@/typ
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { useToast } from '@/hooks/use-toast'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function SentimentIntelligence() {
   const [feedback, setFeedback] = useState<MemberFeedback[]>([])
@@ -76,30 +77,31 @@ export default function SentimentIntelligence() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Brain className="w-8 h-8 text-on-surface" />
             Sentiment analysis
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">AI-powered member sentiment tracking across all regions.</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4 px-4 py-2 bg-white border border-border/40 rounded-sm shadow-sm">
             <div className="text-right">
-              <span className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-wider block">Average sentiment</span>
+              <span className="text-[9px] font-bold text-muted-foreground/40 block">Average sentiment</span>
               <span className={cn(
                 "text-lg font-bold tracking-tight",
-                nationalScore >= 0 ? "text-primary" : "text-destructive"
+                nationalScore >= 0 ? "text-primary" : "text-brand-red"
               )}>
                 {(nationalScore * 100).toFixed(1)}
               </span>
             </div>
-            <Activity className={cn("w-5 h-5", nationalScore >= 0 ? "text-primary" : "text-destructive")} />
+            <Activity className={cn("w-5 h-5", nationalScore >= 0 ? "text-primary" : "text-brand-red")} />
           </div>
           <div className="flex items-center gap-2">
             <Button 
               variant="primary"
               size="lg"
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02]"
+              className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={() => toast({ title: "Analysis started", description: "Aggregating regional sentiment data..." })}
             >
               <Activity className="w-4 h-4 mr-2" /> Run AI Analysis
@@ -107,7 +109,7 @@ export default function SentimentIntelligence() {
             <Button 
               variant="outline" 
               size="lg"
-              className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all shadow-sm"
+              className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
               onClick={() => toast({ title: "Report exported", description: "Your intelligence briefing is ready for download." })}
             >
               <BarChart3 className="w-4 h-4 mr-2" /> Export Briefing
@@ -122,8 +124,8 @@ export default function SentimentIntelligence() {
             <CardHeader className="p-6 border-b border-border bg-muted/20">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-xs font-bold uppercase tracking-wider text-on-surface">Impact forecasts</CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase text-muted-foreground mt-1">30-day mobilization projections</CardDescription>
+                  <CardTitle className="text-xs font-bold text-on-surface">Impact forecasts</CardTitle>
+                  <CardDescription className="text-[10px] font-bold text-muted-foreground/40 mt-1">30-day mobilization projections</CardDescription>
                 </div>
                 <Target className="w-4 h-4 text-muted-foreground" />
               </div>
@@ -139,10 +141,10 @@ export default function SentimentIntelligence() {
                   projections.map((proj) => (
                     <div key={proj.id} className="relative pt-2">
                       <div className="flex justify-between items-end mb-2">
-                        <h4 className="text-[11px] font-bold uppercase text-on-surface">{proj.region}</h4>
+                        <h4 className="text-[11px] font-bold text-on-surface">{proj.region}</h4>
                         <div className="text-right">
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase">Projected reach</span>
-                          <p className="text-sm font-black text-destructive">{proj.projected_reach_30d.toLocaleString()}</p>
+                          <span className="text-[10px] font-bold text-muted-foreground/40">Projected reach</span>
+                          <p className="text-sm font-bold text-brand-red">{proj.projected_reach_30d.toLocaleString()}</p>
                         </div>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden flex">

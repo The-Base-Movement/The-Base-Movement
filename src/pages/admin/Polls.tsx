@@ -10,10 +10,12 @@ import {
   ChevronRight,
   X,
   Trash2,
+  Users,
   Calendar
 } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
+import { Badge } from "@/components/ui/badge"
 import { 
   Card, 
   CardContent, 
@@ -23,6 +25,7 @@ import {
 import { cn } from '@/lib/utils'
 import { adminService, type Poll, type PollStats } from '@/services/adminService'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 // Mock Data for Polls
 export default function PollsManagement() {
@@ -139,13 +142,14 @@ export default function PollsManagement() {
             <BarChart3 className="w-8 h-8 text-on-surface" />
             Engagement hub
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Manage opinion polls, surveys, and movement feedback.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setShowCreateModal(true)}
           >
             <Plus className="w-4 h-4 mr-2" /> Establish Campaign
@@ -347,17 +351,21 @@ export default function PollsManagement() {
                       <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">{poll.id}</p>
                     </div>
                     <div className={cn(
-                      "px-2 py-0.5 text-[9px] font-black uppercase tracking-tighter border rounded-full",
+                      "px-2 py-0.5 text-[9px] font-bold normal-case tracking-tighter border rounded-full",
                       poll.status === 'Active' ? "bg-primary/10 text-primary border-primary/20" : "bg-accent/10 text-accent border-accent/20"
                     )}>
                       {poll.status}
                     </div>
                   </div>
 
-                  <div className="p-4 bg-muted/10 rounded-sm border border-border/40 space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Responses</span>
-                      <span className="text-sm font-bold text-on-surface">{poll.totalVotes.toLocaleString()}</span>
+                  <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-muted/5 rounded-lg border border-border/10">
+                        <Users className="w-5 h-5 text-on-surface" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-widest">Field participants</p>
+                        <span className="text-sm font-bold text-on-surface">{poll.totalVotes.toLocaleString()}</span>
+                      </div>
                     </div>
                     <div className="w-full h-1.5 bg-muted/30 rounded-full overflow-hidden">
                       <div 
@@ -368,15 +376,14 @@ export default function PollsManagement() {
                         }} 
                       />
                     </div>
-                  </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Region</p>
-                      <p className="text-xs font-bold text-on-surface">{poll.region}</p>
-                    </div>
+                  <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-widest">Global engagement</span>
+                        <Badge variant="default" className="px-2 py-0.5 text-[9px] font-bold normal-case tracking-tighter border rounded-full">HQ Verified</Badge>
+                      </div>
                     <div className="space-y-1 text-right">
-                      <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Expires</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-widest">Expires</p>
                       <p className="text-xs font-bold text-on-surface/80">{poll.endDate}</p>
                     </div>
                   </div>
@@ -384,7 +391,7 @@ export default function PollsManagement() {
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
                       variant="outline" 
-                      className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                      className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                     >
                       Manage Campaign
@@ -416,7 +423,7 @@ export default function PollsManagement() {
             <Button 
               variant="outline"
               size="sm"
-              className="h-11 px-10 text-[10px] font-black uppercase tracking-[0.3em] border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm transition-all shadow-lg active:scale-95"
+              className="h-11 px-10 text-[10px] font-bold tracking-tight border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm transition-all shadow-lg active:scale-95"
               onClick={() => setIsAnalyticsModalOpen(true)}
             >
               Scan Analytics Guide
@@ -439,7 +446,7 @@ export default function PollsManagement() {
             </div>
             <Button 
               variant="ghost" 
-              className="h-9 px-0 text-[10px] font-black uppercase tracking-[0.3em] text-accent hover:bg-transparent hover:text-accent/80 transition-colors group/btn active:scale-95"
+              className="h-9 px-0 text-[10px] font-bold tracking-tight text-accent hover:bg-transparent hover:text-accent/80 transition-colors group/btn active:scale-95"
               onClick={() => setIsFeedbackModalOpen(true)}
             >
               Scan Feedback Vault <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover/btn:translate-x-1" />
@@ -472,7 +479,7 @@ export default function PollsManagement() {
                   <div className="space-y-6">
                     {/* Question */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Campaign question / topic</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Campaign question / topic</label>
                       <Input 
                         required
                         placeholder="e.g. Should we increase regional chapter funding?" 
@@ -485,7 +492,7 @@ export default function PollsManagement() {
                     {/* Target Base & Location */}
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Target Audience Base</label>
+                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Target Audience Base</label>
                         <select
                           value={newPoll.targetBase}
                           onChange={e => {
@@ -504,7 +511,7 @@ export default function PollsManagement() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">
+                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">
                           {newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}
                         </label>
                         <select
@@ -539,7 +546,7 @@ export default function PollsManagement() {
 
                     {/* End Date */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 uppercase">Expiration date</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Operational title</label>
                       <div className="relative">
                         <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80 pointer-events-none" />
                         <Input 
@@ -554,7 +561,7 @@ export default function PollsManagement() {
 
                   {/* Right Column: Poll Options */}
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 flex justify-between uppercase">
+                    <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 flex justify-between normal-case">
                       Engagement Options
                       <span className="text-muted-foreground/40 normal-case">Min 2 Required</span>
                     </label>
@@ -591,7 +598,7 @@ export default function PollsManagement() {
                     <Button 
                       type="button"
                       variant="outline" 
-                      className="w-full h-11 text-[10px] font-black uppercase tracking-[0.3em] text-stone-500 hover:text-on-surface hover:bg-stone-50 border-stone-200 rounded-sm transition-all shadow-sm active:scale-95"
+                      className="w-full h-11 text-[10px] font-bold tracking-tight text-stone-500 hover:text-on-surface hover:bg-stone-50 border-stone-200 rounded-sm transition-all shadow-sm active:scale-95"
                       onClick={() => setNewPoll({...newPoll, options: [...newPoll.options, '']})}
                     >
                       <Plus className="w-4 h-4 mr-2" /> Add Selection
@@ -603,7 +610,7 @@ export default function PollsManagement() {
                 <Button 
                   type="button"
                   variant="outline" 
-                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-[0.3em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                  className="flex-1 h-12 text-[10px] font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                   onClick={() => setShowCreateModal(false)}
                 >
                   Discard
@@ -612,7 +619,7 @@ export default function PollsManagement() {
                   type="submit"
                   variant="primary"
                   disabled={isSubmitting}
-                  className="flex-1 h-12 text-[10px] uppercase font-black tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="flex-1 h-12 text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   {isSubmitting ? 'Launching...' : 'Deploy Campaign'}
                 </Button>
@@ -655,7 +662,7 @@ export default function PollsManagement() {
             <div className="p-6 pt-0 border-t border-border/40 bg-muted/5 flex justify-end mt-4">
               <Button 
                 variant="primary"
-                className="h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm w-full shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                className="h-12 text-[10px] font-bold tracking-tight rounded-sm w-full shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 onClick={() => setIsFeedbackModalOpen(false)}
               >
                 Close Vault
@@ -696,7 +703,7 @@ export default function PollsManagement() {
             <div className="p-6 pt-0">
               <Button 
                 variant="primary"
-                className="h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm w-full shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                className="h-12 text-[10px] font-bold tracking-tight rounded-sm w-full shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 onClick={() => setIsAnalyticsModalOpen(false)}
               >
                 Got It

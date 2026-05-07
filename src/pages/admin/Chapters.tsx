@@ -1,4 +1,5 @@
 import { MapPin, Users, Plus, Search, ChevronRight, Shield, Crown, Globe, History } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { 
@@ -159,12 +160,13 @@ export default function ChaptersManagement() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <MapPin className="w-8 h-8 text-on-surface" />
             Chapters
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Coordinate regional cells and constituency headquarters.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -172,7 +174,7 @@ export default function ChaptersManagement() {
             variant="outline" 
             size="lg"
             onClick={() => toast.info("Accessing audit vault...")}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-black uppercase tracking-[0.3em] hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
             <History className="w-4 h-4 mr-2" /> Inspect Audit Trail
           </Button>
@@ -181,7 +183,7 @@ export default function ChaptersManagement() {
               variant="primary"
               size="lg"
               onClick={openAddModal}
-              className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
             </Button>
@@ -198,7 +200,7 @@ export default function ChaptersManagement() {
             </div>
             <div>
               <p className="text-[10px] font-bold opacity-80 normal-case">Total chapters</p>
-              <h3 className="text-2xl font-black font-meta">{chapters.length}</h3>
+              <h3 className="text-2xl font-bold font-meta">{chapters.length}</h3>
             </div>
           </CardContent>
         </Card>
@@ -209,7 +211,7 @@ export default function ChaptersManagement() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Movement size</p>
-              <h3 className="text-2xl font-black font-meta text-on-surface">{totalMembers.toLocaleString()}</h3>
+              <h3 className="text-2xl font-bold font-meta text-on-surface">{totalMembers.toLocaleString()}</h3>
             </div>
           </CardContent>
         </Card>
@@ -225,7 +227,7 @@ export default function ChaptersManagement() {
               <div>
                 <p className="text-[10px] font-bold text-muted-foreground/40 group-hover:text-on-surface transition-colors normal-case">{stat.region}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <h3 className="text-xl font-black font-meta text-on-surface">{stat.memberCount.toLocaleString()}</h3>
+                  <h3 className="text-xl font-bold font-meta text-on-surface">{stat.memberCount.toLocaleString()}</h3>
                   <div className={cn(
                     "px-1.5 py-0.5 text-[8px] font-bold border rounded normal-case",
                     stat.performance === 'High' && "bg-primary/10 text-primary border-primary/20",
@@ -334,15 +336,15 @@ export default function ChaptersManagement() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 md:flex md:gap-4 w-full md:w-auto">
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 bg-primary rounded-sm shrink-0" />
-              <span className="text-[9px] font-black text-muted-foreground/80 uppercase tracking-tight">High strength</span>
+              <span className="text-[9px] font-bold text-muted-foreground/80 tracking-tight">High strength</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 bg-accent rounded-sm shrink-0" />
-              <span className="text-[9px] font-black text-muted-foreground/80 uppercase tracking-tight">Moderate</span>
+              <span className="text-[9px] font-bold text-muted-foreground/80 tracking-tight">Moderate</span>
             </div>
             <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
               <div className="w-2.5 h-2.5 bg-border/40 rounded-sm shrink-0" />
-              <span className="text-[9px] font-black text-muted-foreground/80 uppercase tracking-tight">Emerging density</span>
+              <span className="text-[9px] font-bold text-muted-foreground/80 tracking-tight">Emerging density</span>
             </div>
           </div>
         </CardHeader>
@@ -365,7 +367,7 @@ export default function ChaptersManagement() {
                 <circle cx="100" cy="125" r="8" fill="hsl(var(--on-surface))" />
              </svg>
              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-[10px] font-black normal-case text-muted-foreground/20 transform -rotate-45">National Geospatial Grid</span>
+                <span className="text-[10px] font-bold normal-case text-muted-foreground/20 transform -rotate-45">National Geospatial Grid</span>
              </div>
           </div>
           
@@ -466,7 +468,7 @@ export default function ChaptersManagement() {
                         variant="outline" 
                         size="sm"
                         onClick={() => openEditModal(chapter)}
-                        className="h-11 px-0 text-[10px] font-black uppercase tracking-[0.2em] border-border/40 hover:bg-stone-50 transition-all rounded-sm shadow-sm active:scale-95"
+                        className="h-11 px-0 text-[10px] font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all rounded-sm shadow-sm active:scale-95"
                       >
                         Configure Hub
                       </Button>
@@ -475,7 +477,7 @@ export default function ChaptersManagement() {
                       <Button 
                         variant="ghost" 
                         onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
-                        className="h-11 px-0 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-destructive transition-all rounded-sm border-0 bg-transparent active:scale-95"
+                        className="h-11 px-0 text-[10px] font-bold tracking-tight text-muted-foreground/40 hover:text-destructive transition-all rounded-sm border-0 bg-transparent active:scale-95"
                       >
                         Decommission <ChevronRight className="w-3.5 h-3.5 ml-1" />
                       </Button>
@@ -496,7 +498,7 @@ export default function ChaptersManagement() {
             <div className="w-14 h-14 rounded-full bg-muted/5 flex items-center justify-center group-hover:bg-on-surface group-hover:text-white transition-all shadow-inner">
               <Plus className="w-7 h-7" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Establish new chapter</span>
+            <span className="text-[10px] font-bold tracking-tight">Establish new chapter</span>
           </Button>
         )}
       </div>
@@ -512,7 +514,7 @@ export default function ChaptersManagement() {
               variant="outline"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+              className="h-11 px-8 text-[10px] font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Previous
             </Button>
@@ -523,7 +525,7 @@ export default function ChaptersManagement() {
                     variant={currentPage === i + 1 ? "primary" : "outline"}
                     onClick={() => setCurrentPage(i + 1)}
                     className={cn(
-                      "min-w-[44px] h-11 text-[10px] font-black transition-all rounded-sm active:scale-95",
+                      "min-w-[44px] h-11 text-[10px] font-bold transition-all rounded-sm active:scale-95",
                       currentPage === i + 1 
                         ? "shadow-md shadow-brand-green/20" 
                         : "text-muted-foreground/60 border-border/40 hover:bg-stone-50"
@@ -537,7 +539,7 @@ export default function ChaptersManagement() {
               variant="outline"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+              className="h-11 px-8 text-[10px] font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Next
             </Button>
@@ -624,14 +626,14 @@ export default function ChaptersManagement() {
                 type="button" 
                 variant="outline" 
                 onClick={closeModal}
-                className="flex-1 h-14 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
+                className="flex-1 h-14 text-[10px] font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
                 variant="primary"
-                className="flex-1 h-14 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                className="flex-1 h-14 text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               >
                 {editingChapterId ? 'Synchronize Hub' : 'Establish Chapter'}
               </Button>

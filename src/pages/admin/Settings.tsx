@@ -39,6 +39,7 @@ import {
   CardTitle,
   CardDescription 
 } from '@/components/ui/card'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { cn } from '@/lib/utils'
 import { useSearchParams } from 'react-router-dom'
 import {
@@ -416,10 +417,11 @@ export default function AdminSettings() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3 font-meta">
             <Globe className="w-8 h-8 text-stone-900" />
             System settings
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-stone-500 text-sm mt-1">Manage your administrative identity and platform configuration.</p>
         </div>
       </div>
@@ -435,7 +437,7 @@ export default function AdminSettings() {
                 variant={isActive ? "outline" : "ghost"}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-3 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] transition-all group h-12 active:scale-95",
+                  "w-full flex items-center justify-between px-4 py-3 rounded-sm text-[10px] font-bold tracking-tight transition-all group h-12 active:scale-95",
                   isActive 
                     ? "bg-white text-stone-900 shadow-sm border-stone-200" 
                     : "text-stone-400 hover:text-stone-600 hover:bg-stone-50"
@@ -540,7 +542,7 @@ export default function AdminSettings() {
                       size="lg"
                       onClick={handleSaveProfile}
                       disabled={isSaving}
-                      className="rounded-sm text-[10px] uppercase tracking-[0.3em] px-8 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+                      className="rounded-sm text-[10px] font-bold tracking-tight px-8 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                     >
                       {isSaving ? 'Syncing...' : 'Synchronize Profile'}
                     </Button>
@@ -609,7 +611,7 @@ export default function AdminSettings() {
                           window.dispatchEvent(new Event('admin_density_changed'))
                         }}
                         className={cn(
-                          "p-4 rounded-sm border text-[10px] font-black uppercase tracking-[0.3em] transition-all text-center h-12 active:scale-95",
+                          "p-4 rounded-sm border text-[10px] font-bold tracking-tight transition-all text-center h-12 active:scale-95",
                           mode === interfaceDensity 
                             ? "shadow-lg shadow-brand-green/20" 
                             : "border-stone-200 text-stone-400 hover:border-stone-300 bg-white"
@@ -686,7 +688,7 @@ export default function AdminSettings() {
                     </div>
 
                     <div className="space-y-6 pt-6 border-t border-stone-100">
-                      <h3 className="text-xs font-bold text-stone-900 uppercase tracking-widest flex items-center gap-2">
+                      <h3 className="text-xs font-bold text-stone-900 tracking-tight flex items-center gap-2">
                         <Palette className="w-4 h-4 text-primary" />
                         Movement Palette Control
                       </h3>
@@ -716,6 +718,48 @@ export default function AdminSettings() {
                       </div>
                     </div>
 
+                    <div className="space-y-6 pt-6 border-t border-stone-100">
+                      <h3 className="text-xs font-bold text-stone-900 tracking-tight flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-primary" />
+                        Tactical Typography Orchestration
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-end">
+                            <Label className="text-[10px] font-bold text-stone-500 normal-case">Global font scale</Label>
+                            <span className="text-[10px] font-mono font-bold text-primary">{(siteSettings.font_scale_global as number || 1.0).toFixed(2)}x</span>
+                          </div>
+                          <input 
+                            type="range" 
+                            min="0.8" 
+                            max="1.5" 
+                            step="0.05"
+                            value={(siteSettings.font_scale_global as number) || 1.0}
+                            onChange={(e) => setSiteSettings({ ...siteSettings, font_scale_global: parseFloat(e.target.value) })}
+                            className="w-full h-1.5 bg-stone-100 rounded-lg appearance-none cursor-pointer accent-primary"
+                          />
+                          <p className="text-[9px] text-stone-400 italic leading-tight">Adjusts the base font size for all paragraphs and body text.</p>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-end">
+                            <Label className="text-[10px] font-bold text-stone-500 normal-case">Heading emphasis scale</Label>
+                            <span className="text-[10px] font-mono font-bold text-primary">{(siteSettings.font_scale_headings as number || 1.0).toFixed(2)}x</span>
+                          </div>
+                          <input 
+                            type="range" 
+                            min="0.8" 
+                            max="2.0" 
+                            step="0.05"
+                            value={(siteSettings.font_scale_headings as number) || 1.0}
+                            onChange={(e) => setSiteSettings({ ...siteSettings, font_scale_headings: parseFloat(e.target.value) })}
+                            className="w-full h-1.5 bg-stone-100 rounded-lg appearance-none cursor-pointer accent-primary"
+                          />
+                          <p className="text-[9px] text-stone-400 italic leading-tight">Specifically scales H1-H6 headings for high-impact visibility.</p>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="pt-6 flex justify-end border-t border-stone-100">
                       <Button 
                         variant="primary"
@@ -724,14 +768,22 @@ export default function AdminSettings() {
                           setIsSaving(true)
                           const toastId = toast.loading('Syncing movement configurations...')
                           try {
-                            const p1 = adminService.updateSiteSetting('primary_email', siteSettings.primary_email)
-                            const p2 = adminService.updateSiteSetting('newsletter_email', siteSettings.newsletter_email)
-                            const p3 = adminService.updateSiteSetting('primary_color', siteSettings.primary_color)
-                            const p4 = adminService.updateSiteSetting('accent_color', siteSettings.accent_color)
-                            const p5 = adminService.updateSiteSetting('destructive_color', siteSettings.destructive_color)
-                            const p6 = adminService.updateSiteSetting('registration_form_ghana_url', siteSettings.registration_form_ghana_url)
-                            const p7 = adminService.updateSiteSetting('registration_form_diaspora_url', siteSettings.registration_form_diaspora_url)
-                            await Promise.all([p1, p2, p3, p4, p5, p6, p7])
+                            const settingsToUpdate = [
+                              { key: 'primary_email', value: siteSettings.primary_email },
+                              { key: 'newsletter_email', value: siteSettings.newsletter_email },
+                              { key: 'primary_color', value: siteSettings.primary_color },
+                              { key: 'accent_color', value: siteSettings.accent_color },
+                              { key: 'destructive_color', value: siteSettings.destructive_color },
+                              { key: 'registration_form_ghana_url', value: siteSettings.registration_form_ghana_url },
+                              { key: 'registration_form_diaspora_url', value: siteSettings.registration_form_diaspora_url },
+                              { key: 'font_scale_global', value: siteSettings.font_scale_global },
+                              { key: 'font_scale_headings', value: siteSettings.font_scale_headings }
+                            ]
+                            
+                            await Promise.all(settingsToUpdate.map(s => 
+                              adminService.updateSiteSetting(s.key, s.value)
+                            ))
+
                             window.dispatchEvent(new CustomEvent('site_settings_updated'))
                             toast.success('Movement configurations synchronized', { id: toastId })
                           } catch (err: unknown) {
@@ -741,7 +793,7 @@ export default function AdminSettings() {
                           }
                         }}
                         disabled={isSaving}
-                        className="rounded-sm text-[10px] uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+                        className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                       >
                         {isSaving ? 'Synchronizing...' : 'Commit Configurations'}
                       </Button>
@@ -777,7 +829,7 @@ export default function AdminSettings() {
                             {siteSettings.registration_form_ghana_url as string || 'No form uploaded'}
                           </p>
                         </div>
-                        <label className="cursor-pointer bg-brand-green text-white px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-brand-green/90 transition-all active:scale-95 shadow-lg shadow-brand-green/10">
+                        <label className="cursor-pointer bg-brand-green text-white px-6 h-10 rounded-sm text-[10px] font-bold capitalize tracking-tight flex items-center gap-2 hover:bg-brand-green/90 transition-all active:scale-95 shadow-lg shadow-brand-green/10">
                           <Upload className="w-3.5 h-3.5" />
                           Upload
                           <input 
@@ -827,7 +879,7 @@ export default function AdminSettings() {
                             {siteSettings.registration_form_diaspora_url as string || 'No form uploaded'}
                           </p>
                         </div>
-                        <label className="cursor-pointer bg-blue-600 text-white px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
+                        <label className="cursor-pointer bg-blue-600 text-white px-6 h-10 rounded-sm text-[10px] font-bold capitalize tracking-tight flex items-center gap-2 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
                           <Upload className="w-3.5 h-3.5" />
                           Upload
                           <input 
@@ -898,7 +950,8 @@ export default function AdminSettings() {
                               className="w-full h-full object-contain"
                             />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <label className="cursor-pointer bg-white text-stone-900 px-3 py-1.5 rounded-sm text-[9px] font-bold uppercase tracking-wider flex items-center gap-2">
+                              <label className="cursor-pointer bg-white text-stone-900 px-3 py-1.5 rounded-sm text-[9px] font-bold capitalize tracking-tight flex items-center gap-2">
+
                                 <Upload className="w-3 h-3" />
                                 Replace Asset
                                 <input 
@@ -968,13 +1021,13 @@ export default function AdminSettings() {
                         />
                       </div>
                     </div>
-                    <Button 
-                      variant="primary"
-                      size="lg"
-                      onClick={handleUpdatePassword}
-                      disabled={isSaving || !passwordForm.newPassword}
-                      className="w-full rounded-sm text-[10px] uppercase tracking-[0.3em] h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
-                    >
+                      <Button 
+                        variant="primary"
+                        size="lg"
+                        onClick={handleUpdatePassword}
+                        disabled={isSaving || !passwordForm.newPassword}
+                        className="w-full rounded-sm text-[10px] font-bold capitalize tracking-tight h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+                      >
                       {isSaving ? 'Hardening...' : 'Harden Security Credentials'}
                     </Button>
                   </div>
@@ -1015,7 +1068,7 @@ export default function AdminSettings() {
                             <Button 
                               variant="outline" 
                               onClick={() => handleUnenrollMfa(mfaFactors[0].id)}
-                              className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] border-destructive/20 text-destructive hover:bg-destructive/5 rounded-sm transition-all active:scale-95"
+                              className="h-10 px-6 text-[10px] font-bold capitalize tracking-tight border-destructive/20 text-destructive hover:bg-destructive/5 rounded-sm transition-all active:scale-95"
                             >
                               Disable protection
                             </Button>
@@ -1024,7 +1077,7 @@ export default function AdminSettings() {
                               variant="outline" 
                               size="sm"
                               onClick={handleStartMfaEnroll}
-                              className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] border-stone-200 rounded-sm transition-all active:scale-95"
+                              className="h-10 px-6 text-[10px] font-bold capitalize tracking-tight border-stone-200 rounded-sm transition-all active:scale-95"
                             >
                               Establish MFA Protection
                             </Button>
@@ -1064,7 +1117,7 @@ export default function AdminSettings() {
                         <Button 
                           variant="primary"
                           onClick={() => setMfaStep('verify')}
-                          className="w-full text-white font-black uppercase tracking-[0.3em] text-[10px] h-12 rounded-sm shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+                          className="w-full text-white font-bold capitalize tracking-tight text-[10px] h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                         >
                           I've scanned it, proceed
                         </Button>
@@ -1090,13 +1143,13 @@ export default function AdminSettings() {
                           variant="primary"
                           onClick={handleVerifyMfa}
                           disabled={isSaving || mfaCode.length < 6}
-                          className="w-full text-white font-black uppercase tracking-[0.3em] text-[10px] h-12 rounded-sm shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+                          className="w-full text-white font-bold capitalize tracking-tight text-[10px] h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                         >
                           {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify and Enable MFA"}
                         </Button>
                         <button 
                           onClick={() => setMfaStep('qr')}
-                          className="w-full text-[10px] font-bold text-stone-400 uppercase tracking-widest hover:text-stone-600"
+                          className="w-full text-[10px] font-bold text-stone-400 capitalize tracking-tight hover:text-stone-600"
                         >
                           Go back to QR code
                         </button>
@@ -1119,7 +1172,7 @@ export default function AdminSettings() {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="h-10 px-6 text-[10px] font-black uppercase tracking-[0.2em] border-stone-200 rounded-sm hover:bg-stone-50 transition-all active:scale-95"
+                  className="h-10 px-6 text-[10px] font-bold capitalize tracking-tight border-stone-200 rounded-sm hover:bg-stone-50 transition-all active:scale-95"
                   onClick={handleExportLogs}
                 >
                   Export Audit report

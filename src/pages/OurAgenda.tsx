@@ -233,7 +233,7 @@ export default function OurAgenda() {
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
-          <h1 className="uppercase tracking-tighter mb-4">The Plan</h1>
+          <h1 className="tracking-tighter mb-4">The Plan</h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
             <div className="flex-1 bg-destructive"></div>
             <div className="flex-1 bg-accent"></div>
@@ -353,7 +353,7 @@ export default function OurAgenda() {
               <div className="max-w-2xl mx-auto space-y-4 text-slate-300 mb-8">
                 <p>These Aims define the Ghana we are building. These Objectives are the steps we will be held accountable to. Together, they form THE BASE's covenant with every Ghanaian who believes this country can, and must, do better.</p>
                 <p>We do not offer vague promises. We offer an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians and the potential of an extraordinary nation.</p>
-                <p className="text-accent font-bold uppercase tracking-widest mt-4 mb-0">Ghana First. Always.</p>
+                <p className="text-accent font-bold tracking-tight mt-4 mb-0">Ghana First. Always.</p>
               </div>
               {isLoggedIn ? (
                 <Button asChild variant="primary" size="lg">

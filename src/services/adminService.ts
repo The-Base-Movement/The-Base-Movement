@@ -1252,6 +1252,14 @@ class AdminService {
     return success
   }
 
+  async getGhanaRegions(): Promise<{ id: string, name: string }[]> {
+    return intelligenceService.getGhanaRegions()
+  }
+
+  async getGhanaConstituencies(regionId?: string): Promise<{ id: string, region_id: string, name: string }[]> {
+    return intelligenceService.getGhanaConstituencies(regionId)
+  }
+
   async createCanvassingCampaign(campaign: Partial<CanvassingCampaign>): Promise<boolean> {
     const success = await intelligenceService.createCanvassingCampaign(campaign)
     if (success) {

@@ -18,6 +18,7 @@ import { adminService } from '@/services/adminService'
 import type { FieldEvent, MobilizationLedger } from '@/services/adminService'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function ChapterLeadHub() {
   const [events, setEvents] = useState<FieldEvent[]>([])
@@ -71,27 +72,27 @@ export default function ChapterLeadHub() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* 🏛️ Hub Header */}
-      {/* 🏛️ Hub Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
             <MapPin className="w-8 h-8 text-on-surface" />
             {chapterName} hub
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Empowering regional autonomy through tactical coordination.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-black uppercase tracking-[0.2em] hover:bg-stone-100 h-10 transition-all active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-bold capitalize tracking-tight hover:bg-stone-100 h-10 transition-all active:scale-95"
           >
             <BarChart3 className="w-4 h-4 mr-2" /> Local Telemetry
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] uppercase tracking-[0.3em] px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
+            className="rounded-sm text-[10px] font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> New Field Event
           </Button>
@@ -111,7 +112,7 @@ export default function ChapterLeadHub() {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-[9px] font-bold normal-case text-muted-foreground/40 mb-1">{stat.label}</p>
-                  <h3 className="text-2xl font-black font-meta text-on-surface tracking-tighter">{stat.value}</h3>
+                  <h3 className="text-2xl font-bold font-meta text-on-surface tracking-tighter">{stat.value}</h3>
                 </div>
                 <div className={cn("w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110 rounded-lg", stat.bg)}>
                   <stat.icon className={cn("w-5 h-5", stat.color)} />
@@ -126,7 +127,7 @@ export default function ChapterLeadHub() {
         {/* 📅 Field Operations (Events) */}
         <div className="xl:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black normal-case tracking-tight font-meta flex items-center gap-2">
+            <h2 className="text-lg font-bold normal-case tracking-tight font-meta flex items-center gap-2">
               <MapPin className="w-5 h-5 text-destructive" /> Upcoming field operations
             </h2>
             <div className="flex items-center gap-2">
@@ -159,7 +160,7 @@ export default function ChapterLeadHub() {
                       {event.status.toLowerCase()}
                     </div>
                   </div>
-                  <CardTitle className="text-base font-black normal-case tracking-tight text-on-surface leading-tight group-hover:text-destructive transition-colors">
+                  <CardTitle className="text-base font-bold normal-case tracking-tight text-on-surface leading-tight group-hover:text-destructive transition-colors">
                     {event.title}
                   </CardTitle>
                 </CardHeader>
@@ -177,17 +178,17 @@ export default function ChapterLeadHub() {
                   <div className="flex items-center justify-between pt-4 border-t border-border/10">
                     <div className="flex -space-x-2">
                       {[1, 2, 3].map(i => (
-                        <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-muted/10 flex items-center justify-center text-[8px] font-black overflow-hidden">
+                        <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-muted/10 flex items-center justify-center text-[8px] font-bold overflow-hidden">
                           <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="attendee" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                         </div>
                       ))}
-                      <div className="w-7 h-7 rounded-full border-2 border-white bg-on-surface flex items-center justify-center text-[8px] font-black text-white">
+                      <div className="w-7 h-7 rounded-full border-2 border-white bg-on-surface flex items-center justify-center text-[8px] font-bold text-white">
                         +{event.attendees_expected - 3}
                       </div>
                     </div>
                     <Button 
                       variant="ghost" 
-                      className="h-9 px-4 text-[9px] font-black uppercase tracking-widest hover:bg-muted/5 group-hover:text-destructive rounded-sm active:scale-95"
+                      className="h-9 px-4 text-[9px] font-bold capitalize tracking-tight hover:bg-muted/5 group-hover:text-destructive rounded-sm active:scale-95"
                     >
                       Logistics Hub <ChevronRight className="w-3.5 h-3.5 ml-2" />
                     </Button>
@@ -228,7 +229,7 @@ export default function ChapterLeadHub() {
                   </div>
                   <div className="text-right">
                     <p className={cn(
-                      "text-sm font-black font-meta",
+                      "text-sm font-bold font-meta",
                       item.transaction_type === 'Allocation' ? "text-primary" : "text-destructive"
                     )}>
                       {item.transaction_type === 'Allocation' ? '+' : '-'} GH₵{item.amount.toLocaleString()}
@@ -247,11 +248,11 @@ export default function ChapterLeadHub() {
           <div className="p-8 mt-auto border-t border-white/5 bg-white/5 relative z-10">
             <div className="flex justify-between items-center mb-4">
               <span className="text-[9px] font-bold normal-case text-white/40">Total allocation</span>
-              <span className="text-lg font-black font-meta text-primary">GH₵{ledger.filter(l => l.transaction_type === 'Allocation').reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
+              <span className="text-lg font-bold font-meta text-primary">GH₵{ledger.filter(l => l.transaction_type === 'Allocation').reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
             </div>
             <Button 
               variant="outline" 
-              className="w-full h-12 border-white/20 text-white font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white/10 rounded-sm transition-all active:scale-95"
+              className="w-full h-12 border-white/20 text-white font-bold text-[10px] capitalize tracking-tight hover:bg-white/10 rounded-sm transition-all active:scale-95"
             >
               Request Additional Funds
             </Button>

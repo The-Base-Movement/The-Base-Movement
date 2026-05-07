@@ -125,12 +125,12 @@ module.exports = {
         "body-lg": ["Work Sans"]
       },
       fontSize: {
-        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
-        "meta": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
-        "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
-        "h1": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-        "h2": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+        "body-md": ["var(--p-size)", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "meta": ["var(--fs-sm)", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+        "h3": ["var(--h3-size)", {"lineHeight": "1.3", "fontWeight": "600"}],
+        "h1": ["var(--h1-size)", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+        "h2": ["var(--h2-size)", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+        "body-lg": ["var(--fs-lg)", {"lineHeight": "1.6", "fontWeight": "400"}]
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",

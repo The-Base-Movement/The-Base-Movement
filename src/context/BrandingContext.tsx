@@ -72,6 +72,22 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
               --brand-gold: ${settings.accent_color};
               --destructive: ${settings.destructive_color};
               --brand-red: ${settings.destructive_color};
+
+              /* Typography Management */
+              --font-scale: ${settings.font_scale_global || 1.0};
+              --font-heading-scale: ${settings.font_scale_headings || 1.0};
+              
+              /* Derived Responsive Sizes with clamp() */
+              --h1-size: clamp(calc(1.75rem * var(--font-heading-scale)), calc(4.5vw * var(--font-heading-scale)), calc(3.5rem * var(--font-heading-scale)));
+              --h2-size: clamp(calc(1.5rem * var(--font-heading-scale)), calc(3.5vw * var(--font-heading-scale)), calc(2.75rem * var(--font-heading-scale)));
+              --h3-size: clamp(calc(1.25rem * var(--font-heading-scale)), calc(2.5vw * var(--font-heading-scale)), calc(2rem * var(--font-heading-scale)));
+              --h4-size: clamp(calc(1.1rem * var(--font-heading-scale)), calc(2vw * var(--font-heading-scale)), calc(1.5rem * var(--font-heading-scale)));
+              --h5-size: clamp(calc(1rem * var(--font-heading-scale)), calc(1.5vw * var(--font-heading-scale)), calc(1.25rem * var(--font-heading-scale)));
+              --h6-size: clamp(calc(0.875rem * var(--font-heading-scale)), calc(1.2vw * var(--font-heading-scale)), calc(1.1rem * var(--font-heading-scale)));
+              
+              /* Body Text Scaling */
+              --p-size: clamp(calc(0.875rem * var(--font-scale)), calc(0.5vw + 0.75rem), calc(1.125rem * var(--font-scale)));
+              --text-tiny: clamp(0.65rem, 0.4vw + 0.5rem, 0.8rem);
             }
           `}
         </style>

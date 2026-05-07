@@ -17,6 +17,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 import { PenTool } from 'lucide-react'
 
@@ -126,6 +127,7 @@ export default function TrashPage() {
             <Trash2 className="w-8 h-8 text-on-surface" />
             Trash vault
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">
             Items are retained for 30 days before permanent purging.
           </p>
@@ -152,7 +154,7 @@ export default function TrashPage() {
           variant={activeTab === 'blogs' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('blogs')}
           className={cn(
-            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-bold normal-case tracking-tight transition-all active:scale-95",
             activeTab === 'blogs' 
               ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -165,7 +167,7 @@ export default function TrashPage() {
           variant={activeTab === 'products' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('products')}
           className={cn(
-            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-bold normal-case tracking-tight transition-all active:scale-95",
             activeTab === 'products' 
               ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -178,7 +180,7 @@ export default function TrashPage() {
           variant={activeTab === 'media' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('media')}
           className={cn(
-            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-bold normal-case tracking-tight transition-all active:scale-95",
             activeTab === 'media' 
               ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -191,7 +193,7 @@ export default function TrashPage() {
           variant={activeTab === 'authors' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('authors')}
           className={cn(
-            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95",
+            "flex items-center gap-2 px-6 h-10 rounded-sm text-[10px] font-bold normal-case tracking-tight transition-all active:scale-95",
             activeTab === 'authors' 
               ? "bg-white text-on-surface shadow-sm border-border/40" 
               : "text-on-surface/40 hover:text-on-surface/60"
@@ -220,7 +222,7 @@ export default function TrashPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-64 space-y-4">
             <div className="w-8 h-8 border-2 border-border/40 border-t-on-surface rounded-full animate-spin" />
-            <p className="text-muted-foreground/40 text-xs font-bold uppercase tracking-widest">Scanning vault...</p>
+            <p className="text-muted-foreground/40 text-xs font-bold normal-case tracking-widest">Scanning vault...</p>
           </div>
         ) : (activeTab === 'blogs' && blogs.length === 0) || 
             (activeTab === 'products' && products.length === 0) || 
@@ -338,7 +340,7 @@ function TrashItemCard({
           <div className="flex-1 p-5 flex flex-col justify-between overflow-hidden">
             <div>
               <div className="flex items-center justify-between gap-2 mb-1">
-                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest truncate">{subtitle}</p>
+                <p className="text-[9px] font-bold text-muted-foreground/40 normal-case tracking-widest truncate">{subtitle}</p>
                 <div className="flex items-center gap-1 text-[9px] font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full">
                   <Calendar className="w-2.5 h-2.5" />
                   {daysRemaining} left
@@ -356,7 +358,7 @@ function TrashItemCard({
                 onClick={onRestore}
                 variant="outline" 
                 size="sm" 
-                className="flex-1 h-10 rounded-sm border-border/40 text-[10px] font-black uppercase tracking-[0.1em] hover:bg-stone-50 gap-2 transition-all active:scale-95"
+                className="flex-1 h-10 rounded-sm border-border/40 text-[10px] font-bold normal-case tracking-tight hover:bg-stone-50 gap-2 transition-all active:scale-95"
               >
                 <RotateCcw className="w-4 h-4" />
                 Restore Item

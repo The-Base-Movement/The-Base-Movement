@@ -35,6 +35,7 @@ import {
 } from 'recharts'
 import { useToast } from '@/hooks/use-toast'
 import { useNavigate } from 'react-router-dom'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 interface StatCardProps {
   title: string
@@ -207,10 +208,11 @@ export default function AdminDashboard() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Activity className="w-8 h-8 text-on-surface" />
             Operational dashboard
           </h1>
+          <BrandLine className="mt-4" />
           <div className="flex items-center gap-4 mt-1">
             <p className="text-muted-foreground/80 text-xs flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-primary rounded-full" />
@@ -223,7 +225,7 @@ export default function AdminDashboard() {
           <Button 
             variant="primary" 
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-8 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-8 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
             onClick={handleExport}
             disabled={isExporting}
           >
@@ -233,7 +235,7 @@ export default function AdminDashboard() {
           <Button 
             variant="outline"
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-8 border-border/40 hover:bg-stone-50 h-12 transition-all active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-8 border-border/40 hover:bg-stone-50 h-12 transition-all active:scale-95"
             onClick={handlePlatformLogs}
           >
             System logs
@@ -312,6 +314,8 @@ export default function AdminDashboard() {
                       fontWeight: '500',
                       padding: '8px 12px'
                     }} 
+                    labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: '4px' }}
+                    itemStyle={{ color: 'white' }}
                   />
                   <Area 
                     type="monotone" 
@@ -334,7 +338,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-sm font-bold text-on-surface">Regional Distribution</CardTitle>
                 <CardDescription className="text-[11px] font-medium text-muted-foreground/80 mt-1">Top performing regions by member count</CardDescription>
               </div>
-              <Button variant="ghost" className="h-7 px-2 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 hover:text-on-surface active:scale-95">
+              <Button variant="ghost" className="h-7 px-2 text-[10px] font-bold tracking-tight text-muted-foreground/80 hover:text-on-surface active:scale-95">
                 View All
               </Button>
             </CardHeader>
@@ -418,7 +422,7 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
                 <div className="p-4 border-t border-border/40 text-center">
-                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 hover:text-on-surface active:scale-95">
+                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-[10px] font-bold tracking-tight text-muted-foreground/80 hover:text-on-surface active:scale-95">
                     View full activity log
                   </Button>
                 </div>

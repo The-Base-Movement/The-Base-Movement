@@ -18,6 +18,7 @@ import type { FieldAction, RallyAttendance } from '@/types/admin'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
+import { BrandLine } from '@/components/ui/BrandLine'
 
 export default function RallyCommand() {
   const [actions, setActions] = useState<FieldAction[]>([])
@@ -98,20 +99,21 @@ export default function RallyCommand() {
             <Users className="w-8 h-8 text-on-surface" />
             Rally command
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Real-time attendance telemetry and geo-fenced verification for field actions.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-black uppercase tracking-[0.2em] hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-bold capitalize tracking-tight hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2" /> Global Manifest
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold capitalize tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Schedule Action
           </Button>
@@ -173,7 +175,7 @@ export default function RallyCommand() {
                     <span className="text-[10px] font-bold normal-case text-muted-foreground/80">Verified strength</span>
                     <Users className="w-4 h-4 text-muted-foreground/80" />
                   </div>
-                  <p className="text-3xl font-black tracking-tighter text-on-surface">{attendance.filter(a => a.is_verified).length}</p>
+                  <p className="text-3xl font-bold tracking-tighter text-on-surface">{attendance.filter(a => a.is_verified).length}</p>
                   <p className="text-[9px] font-bold text-muted-foreground/80 normal-case mt-1">Confirmed field personnel</p>
                 </Card>
                 <Card className="rounded-sm border-border/40 shadow-sm bg-white p-6">
@@ -181,7 +183,7 @@ export default function RallyCommand() {
                     <span className="text-[10px] font-bold normal-case text-muted-foreground/80">Check-in velocity</span>
                     <Clock className="w-4 h-4 text-muted-foreground/80" />
                   </div>
-                  <p className="text-3xl font-black tracking-tighter text-on-surface">{attendance.length}</p>
+                  <p className="text-3xl font-bold tracking-tighter text-on-surface">{attendance.length}</p>
                   <p className="text-[9px] font-bold text-muted-foreground/80 normal-case mt-1">Total signals received</p>
                 </Card>
                 <Card className="rounded-sm border-border/40 shadow-sm bg-white p-6">
@@ -189,7 +191,7 @@ export default function RallyCommand() {
                     <span className="text-[10px] font-bold normal-case text-muted-foreground/80">Target achievement</span>
                     <Navigation className="w-4 h-4 text-muted-foreground/80" />
                   </div>
-                  <p className="text-3xl font-black tracking-tighter text-on-surface">
+                  <p className="text-3xl font-bold tracking-tighter text-on-surface">
                     {Math.round((attendance.length / selectedAction.target_attendance) * 100)}%
                   </p>
                   <p className="text-[9px] font-bold text-muted-foreground/80 normal-case mt-1">Goal: {selectedAction.target_attendance}</p>
@@ -261,7 +263,7 @@ export default function RallyCommand() {
                                   <Button 
                                     variant="primary"
                                     size="sm"
-                                    className="rounded-sm text-[10px] font-black uppercase tracking-[0.2em] h-9 px-6 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                                    className="rounded-sm text-[10px] font-bold capitalize tracking-tight h-9 px-6 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                                     onClick={() => handleVerify(entry.id)}
                                     disabled={verifying === entry.id}
                                   >

@@ -14,6 +14,7 @@ import {
   ArrowRight,
   Download
 } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { 
   Card, 
   CardContent
@@ -126,19 +127,20 @@ export default function FinancialAudit() {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <DollarSign className="w-8 h-8 text-on-surface" />
             Financial audit
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Reviewing contributions, transactions, and campaign funding.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             onClick={handleExport}
             disabled={filteredDonations.length === 0}
           >
@@ -147,7 +149,7 @@ export default function FinancialAudit() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             onClick={() => fetchData()} 
           >
             <Loader2 className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
@@ -199,7 +201,7 @@ export default function FinancialAudit() {
                   variant={statusFilter === status ? "primary" : "ghost"}
                   onClick={() => setStatusFilter(status as 'All' | 'Pending' | 'Verified' | 'Rejected')}
                   className={cn(
-                    "h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm transition-all active:scale-95",
+                    "h-11 px-8 text-[10px] font-bold tracking-tight rounded-sm transition-all active:scale-95",
                     statusFilter === status 
                       ? "shadow-lg shadow-brand-green/20" 
                       : "text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 border border-transparent hover:border-stone-100"
@@ -277,7 +279,7 @@ export default function FinancialAudit() {
                         {/* Amount & Receipt */}
                         <div className="p-6 lg:w-1/4 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-border/40 bg-muted/5">
                           <p className="text-[10px] font-bold text-muted-foreground/60 mb-1">Transaction value</p>
-                          <span className="text-2xl font-black font-meta text-on-surface tracking-tighter">GH₵ {parseFloat(donation.amount).toLocaleString()}</span>
+                          <span className="text-2xl font-bold font-meta text-on-surface tracking-tighter">GH₵ {parseFloat(donation.amount).toLocaleString()}</span>
                           
                           <div className="mt-4">
                             {donation.receiptUrl ? (
@@ -285,7 +287,7 @@ export default function FinancialAudit() {
                                 variant="outline" 
                                 size="sm" 
                                 onClick={() => setSelectedReceipt(donation.receiptUrl || null)}
-                                className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface/80 hover:text-accent hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm w-fit active:scale-95"
+                                className="h-11 px-8 text-[10px] font-bold tracking-tight text-on-surface/80 hover:text-accent hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm w-fit active:scale-95"
                               >
                                 <Eye className="w-4 h-4 mr-2" /> Inspect Evidence
                               </Button>
@@ -307,7 +309,7 @@ export default function FinancialAudit() {
                                   variant="outline" 
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Rejected')}
                                   disabled={isVerifying === donation.id}
-                                  className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.2em] text-brand-red border-brand-red/20 hover:bg-brand-red/10 transition-all shadow-sm rounded-sm active:scale-95"
+                                  className="flex-1 h-12 text-[10px] font-bold tracking-tight text-brand-red border-brand-red/20 hover:bg-brand-red/10 transition-all shadow-sm rounded-sm active:scale-95"
                                 >
                                   Flag for Audit
                                 </Button>
@@ -315,7 +317,7 @@ export default function FinancialAudit() {
                                   variant="primary"
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Verified')}
                                   disabled={isVerifying === donation.id}
-                                  className="flex-1 h-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                                  className="flex-1 h-12 text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                                 >
                                   Approve Record
                                 </Button>
@@ -377,7 +379,7 @@ export default function FinancialAudit() {
               <Button 
                 variant="primary"
                 onClick={() => setSelectedReceipt(null)}
-                className="h-14 px-12 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                className="h-14 px-12 text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               >
                 Close viewer
               </Button>

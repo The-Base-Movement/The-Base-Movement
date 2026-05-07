@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { 
   MapPin, 
   Users, 
@@ -12,6 +13,7 @@ import {
   Map as MapIcon,
   TrendingUp
 } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { 
   XAxis, 
   YAxis, 
@@ -33,6 +35,7 @@ import { format } from 'date-fns'
 import { toast } from 'sonner'
 
 export default function GroundGameCommand() {
+  const navigate = useNavigate()
   const [voterRegs, setVoterRegs] = useState<VoterRegistration[]>([])
   const [campaigns, setCampaigns] = useState<CanvassingCampaign[]>([])
   const [transportReqs, setTransportReqs] = useState<GOTVTransportRequest[]>([])
@@ -69,7 +72,7 @@ export default function GroundGameCommand() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <MapPin className="w-12 h-12 text-primary animate-bounce" />
-          <p className="text-[10px] font-bold normal-case text-primary">Initializing ground game protocols...</p>
+          <p className="text-[10px] font-bold text-primary">Initializing ground game protocols...</p>
         </div>
       </div>
     )
@@ -83,6 +86,10 @@ export default function GroundGameCommand() {
     } else {
       toast.error('Failed to initialize dispatch protocol.')
     }
+  }
+
+  const handleDeployMission = () => {
+    navigate('/admin/ground-game/deploy')
   }
 
   const verifiedVoters = voterRegs.filter(v => v.registration_status === 'VERIFIED_VOTER').length
@@ -109,13 +116,13 @@ export default function GroundGameCommand() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      {/* 🗳️ Ground game header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <MapPin className="w-8 h-8 text-on-surface" />
             Ground command
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Election day logistics, voter registration tracking, and canvassing command.</p>
         </div>
       </div>
@@ -124,7 +131,7 @@ export default function GroundGameCommand() {
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-1">Registered voters</p>
+              <p className="text-[10px] font-bold text-muted-foreground/40 mb-1">Registered voters</p>
               <h3 className="text-3xl font-bold text-primary tracking-tight">{verifiedVoters.toLocaleString()}</h3>
             </div>
             <Vote className="w-8 h-8 text-muted-foreground/20" />
@@ -134,7 +141,7 @@ export default function GroundGameCommand() {
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-1">Campaign outreach</p>
+              <p className="text-[10px] font-bold text-muted-foreground/40 mb-1">Campaign outreach</p>
               <h3 className="text-3xl font-bold text-on-surface tracking-tight">{totalContacts.toLocaleString()} <span className="text-sm font-normal text-muted-foreground/40">doors</span></h3>
             </div>
             <ClipboardList className="w-8 h-8 text-muted-foreground/20" />
@@ -174,7 +181,8 @@ export default function GroundGameCommand() {
                 />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0A0A0A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}
-                  itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
+                  itemStyle={{ fontSize: '10px', fontWeight: 'bold', color: 'white' }}
+                  labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: '4px' }}
                 />
                 <Area type="monotone" dataKey="count" stroke="var(--brand-green)" fillOpacity={1} fill="url(#colorReg)" strokeWidth={2} />
               </AreaChart>
@@ -209,7 +217,8 @@ export default function GroundGameCommand() {
                   </Pie>
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#0A0A0A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}
-                    itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
+                    itemStyle={{ fontSize: '10px', fontWeight: 'bold', color: 'white' }}
+                    labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: '4px' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -238,7 +247,8 @@ export default function GroundGameCommand() {
                 </div>
                 <Button 
                   variant="primary"
-                  className="h-12 px-10 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  onClick={handleDeployMission}
+                  className="h-12 px-10 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   <Crosshair className="w-4 h-4 mr-2" /> Deploy Mission
                 </Button>
@@ -336,7 +346,7 @@ export default function GroundGameCommand() {
                           <Button 
                             variant="primary"
                             onClick={() => handleDispatchAsset(req.id)}
-                            className="h-11 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                            className="h-11 px-8 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                           >
                             Dispatch Asset
                           </Button>
@@ -363,7 +373,7 @@ export default function GroundGameCommand() {
               <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto sidebar-scroll">
                 {fieldLogs.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-[10px] font-bold text-white/20 normal-case">Awaiting field intelligence...</p>
+                    <p className="text-[10px] font-bold text-white/20">Awaiting field intelligence...</p>
                   </div>
                 ) : (
                   fieldLogs.map((log) => (
@@ -384,7 +394,7 @@ export default function GroundGameCommand() {
                       <p className="text-[11px] text-white/80 mb-2">"{log.address_notes || 'No notes provided'}"</p>
                       <div className="flex items-center gap-2">
                         <MapPin className="w-3 h-3 text-white/20" />
-                        <span className="text-[9px] font-bold text-white/40 normal-case">Sector {log.canvasser_id.substring(0, 4)}</span>
+                        <span className="text-[9px] font-bold text-white/40">Sector {log.canvasser_id.substring(0, 4)}</span>
                       </div>
                     </div>
                   ))
@@ -395,6 +405,7 @@ export default function GroundGameCommand() {
         </div>
 
       </div>
+
     </div>
   )
 }

@@ -12,6 +12,7 @@ import {
   FileText,
   Download,
 } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { 
   Card, 
   CardContent, 
@@ -106,12 +107,13 @@ export default function LeadershipHub() {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <ShieldCheck className="w-8 h-8 text-on-surface" />
             Leadership hub
           </h1>
+          <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Managing the administrative pipeline for local leadership applications.</p>
         </div>
         <Button 
@@ -119,7 +121,7 @@ export default function LeadershipHub() {
           size="lg"
           onClick={handleGenerateReport}
           disabled={isGenerating}
-          className="rounded-sm text-[10px] font-black uppercase tracking-[0.3em] px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+          className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           {isGenerating ? (
             <Clock className="w-4 h-4 mr-2 animate-spin" />
@@ -145,7 +147,7 @@ export default function LeadershipHub() {
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.3em] border-border/40 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
+            className="h-11 px-8 text-[10px] font-bold tracking-tight border-border/40 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2 text-muted-foreground/40" /> Filter Status
           </Button>
@@ -158,14 +160,14 @@ export default function LeadershipHub() {
           <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />
           <CardContent className="p-6">
             <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Growth rate</p>
-            <h3 className="text-3xl font-black font-meta text-on-surface mt-1">+12%</h3>
+            <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">+12%</h3>
           </CardContent>
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
           <CardContent className="p-6">
             <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Pending requests</p>
-            <h3 className="text-3xl font-black font-meta text-on-surface mt-1">
+            <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">
               {applications.filter(a => a.status === 'Pending').length}
             </h3>
           </CardContent>
@@ -174,7 +176,7 @@ export default function LeadershipHub() {
           <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
           <CardContent className="p-6">
             <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">New leaders appointed</p>
-            <h3 className="text-3xl font-black font-meta text-on-surface mt-1">
+            <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">
               {applications.filter(a => a.status === 'Approved').length}
             </h3>
           </CardContent>
@@ -186,7 +188,7 @@ export default function LeadershipHub() {
         <CardHeader className="p-8 border-b border-border/40">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg font-black font-meta normal-case">Active applications</CardTitle>
+              <CardTitle className="text-lg font-bold font-meta normal-case">Active applications</CardTitle>
               <CardDescription className="text-xs">Review and approve new Chapter Leaders.</CardDescription>
             </div>
             <Button 
@@ -228,11 +230,11 @@ export default function LeadershipHub() {
                   <tr key={app.id} className="hover:bg-muted/30 transition-colors group">
                     <td className="p-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-border/40 flex items-center justify-center font-black text-[10px] normal-case rounded-lg">
+                        <div className="w-10 h-10 bg-border/40 flex items-center justify-center font-bold text-[10px] normal-case rounded-lg">
                           {app.applicant_name?.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div>
-                          <p className="text-[11px] font-black text-on-surface normal-case">{app.applicant_name}</p>
+                          <p className="text-[11px] font-bold text-on-surface normal-case">{app.applicant_name}</p>
                           <p className="text-[9px] text-muted-foreground/40 font-bold normal-case mt-0.5">Patriot ID: {app.applicant_id.substring(0, 8)}</p>
                         </div>
                       </div>
@@ -266,14 +268,14 @@ export default function LeadershipHub() {
                         <div className="flex items-center justify-end gap-2">
                           <Button 
                             variant="outline" 
-                            className="h-11 px-8 text-[10px] font-black uppercase tracking-[0.3em] text-destructive border-destructive/20 hover:bg-destructive/10 transition-all shadow-sm rounded-sm active:scale-95"
+                            className="h-11 px-8 text-[10px] font-bold tracking-tight text-destructive border-destructive/20 hover:bg-destructive/10 transition-all shadow-sm rounded-sm active:scale-95"
                           >
                             <XCircle className="w-4 h-4 mr-2" /> Reject Application
                           </Button>
                           <Button 
                             variant="primary"
                             onClick={() => handleApprove(app.id, app.applicant_name || 'Applicant')}
-                            className="h-11 px-10 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                            className="h-11 px-10 text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                           >
                             <CheckCircle2 className="w-4 h-4 mr-2 text-accent" /> Appoint Leader
                           </Button>
