@@ -2,16 +2,18 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Clock, CheckCircle2, ArrowRight, Users, BarChart3 } from 'lucide-react'
 
 import type { Poll } from '@/services/adminService'
+import { toast } from 'sonner'
 
 interface OpinionPollCardProps {
   poll: Poll
   voting: string | null
   showResults: boolean
+  isLoggedIn: boolean
   handleVote: (pollId: string, optionId: string) => void
   toggleResults: (pollId: string) => void
 }
 
-export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleResults }: OpinionPollCardProps) {
+export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleVote, toggleResults }: OpinionPollCardProps) {
   // Rank options by votes to assign colors
   const sortedOptions = [...poll.options].sort((a, b) => b.votes - a.votes);
   const getRankColor = (optionId: string) => {
@@ -75,11 +77,21 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
                   </div>
                 ) : (
                   <button
-                    onClick={() => handleVote(poll.id, option.id)}
+                    onClick={() => {
+                      if (isLoggedIn) {
+                        handleVote(poll.id, option.id)
+                      } else {
+                        toast.error('Voting is reserved for verified movement members. Join The Base to participate!')
+                        window.location.href = '/login'
+                      }
+                    }}
                     disabled={voting === poll.id}
                     className="w-full text-left px-5 py-4 border border-stone-200 hover:border-[var(--brand-green)] hover:bg-stone-50 transition-all rounded-none flex justify-between items-center group/btn"
                   >
-                    <span className="text-sm font-bold text-stone-700">{option.label}</span>
+                    <span className="text-sm font-bold text-stone-700">
+                      {option.label}
+                      {!isLoggedIn && <span className="block text-[10px] font-bold text-stone-400 mt-1 uppercase tracking-tight">Members only</span>}
+                    </span>
                     <ArrowRight className="w-4 h-4 opacity-0 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all text-[var(--brand-green)]" />
                   </button>
                 )}

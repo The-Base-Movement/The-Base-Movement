@@ -98,7 +98,6 @@ export default function App() {
               <Route path="/checkout" element={<Navigate to="/store/checkout" replace />} />
               <Route path="/dashboard/checkout" element={<Navigate to="/dashboard/store/checkout" replace />} />
               <Route path="/members" element={<Navigate to="/dashboard/members" replace />} />
-              <Route path="/polls" element={<Navigate to="/dashboard/polls" replace />} />
               <Route path="/register/preview" element={<RegistrationFormPreview />} />
 
               {/* ── Public routes (Navbar + Footer) ── */}
@@ -118,6 +117,7 @@ export default function App() {
                 <Route path="/store/checkout" element={<Checkout />} />
                 <Route path="/store/summary" element={<OrderSummary />} />
                 <Route path="/impact" element={<Impact />} />
+                <Route path="/polls" element={<Polls />} />
                 <Route path="/chapters" element={<Navigate to="/dashboard/chapters" replace />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />

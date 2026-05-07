@@ -13,6 +13,7 @@ export default function Polls() {
   const [loading, setLoading] = useState(true)
   const [voting, setVoting] = useState<string | null>(null)
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
+  const [isLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true')
 
   useEffect(() => {
     async function loadPolls() {
@@ -106,6 +107,7 @@ export default function Polls() {
                   poll={poll} 
                   voting={voting} 
                   showResults={!!showResults[poll.id]} 
+                  isLoggedIn={isLoggedIn}
                   handleVote={handleVote} 
                   toggleResults={toggleResults} 
                 />
