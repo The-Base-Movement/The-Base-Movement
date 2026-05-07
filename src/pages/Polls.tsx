@@ -65,7 +65,7 @@ export default function Polls() {
   return (
     <div className="bg-stone-50/50 min-h-screen pb-20">
       {/* Header */}
-      <div className="bg-white border-b border-stone-200 sticky top-0 z-30">
+      <div className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-8 py-6">
           <Breadcrumbs />
           <div className="mt-4">
@@ -82,7 +82,7 @@ export default function Polls() {
           </div>
 
           <main className="max-w-7xl mx-auto px-8 mt-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
 
           {/* Active Polls Section */}
           <div className="lg:col-span-2 space-y-8">
@@ -116,7 +116,7 @@ export default function Polls() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8">
+          <div className="space-y-8 sticky top-24">
             {/* Stats Overview */}
             <div className="bg-charcoal-dark p-8 rounded-none text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10">
