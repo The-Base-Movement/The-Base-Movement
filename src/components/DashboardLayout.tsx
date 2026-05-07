@@ -17,6 +17,7 @@ export default function DashboardLayout() {
   const [userRegNo, setUserRegNo] = useState('')
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -104,174 +105,127 @@ export default function DashboardLayout() {
       />
 
       {/* Navigation Shell (SideNavBar) */}
-      <aside aria-label="Dashboard Sidebar" className={`fixed left-0 top-0 h-full flex flex-col bg-muted/5 text-on-surface w-64 border-r border-border/40 z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+      <aside 
+        aria-label="Dashboard Sidebar" 
+        className={`fixed left-0 top-0 h-full flex flex-col bg-muted/5 text-on-surface border-r border-border/40 z-50 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}
+      >
         {/* Fixed Header */}
-        <div className="px-6 py-8 flex items-center gap-3 bg-white z-10 shrink-0">
-          <img src={settings.logo_url} alt="The Base Logo" className="h-10 w-10 object-contain"  decoding="async" />
-          <div>
-            <h1 className="text-xl font-black text-on-surface leading-none mb-0 tracking-tighter uppercase">The Base</h1>
-            <p className="text-tiny text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase">Civic Movement</p>
-          </div>
+        <div className={`py-8 flex items-center bg-white z-10 shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-6 gap-3'}`}>
+          <img src={settings.logo_url} alt="The Base Logo" className="h-10 w-10 object-contain shrink-0"  decoding="async" />
+          {!isSidebarCollapsed && (
+            <div className="overflow-hidden whitespace-nowrap">
+              <h1 className="text-xl font-black text-on-surface leading-none mb-0 tracking-tighter uppercase">The Base</h1>
+              <p className="text-tiny text-accent font-black tracking-[0.2em] mt-1 mb-0 uppercase">Civic Movement</p>
+            </div>
+          )}
         </div>
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto sidebar-scroll pb-8">
           <div className="space-y-1">
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>dashboard</span>
-              Overview
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/blog') || location.pathname.startsWith('/dashboard/blog/') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard/blog"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>article</span>
-              Updates
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/agenda') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard/agenda"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>event_note</span>
-              The Plan
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/impact') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard/impact"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>insights</span>
-              Impact
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/polls') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard/polls"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>how_to_vote</span>
-              Feedback
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/store') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard/store"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>shopping_bag</span>
-              Supplies
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/donate') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard/donate"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>volunteer_activism</span>
-              Donations
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/members') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard/members"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>groups</span>
-              Verified
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/dashboard/chapters') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/dashboard/chapters"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>account_balance</span>
-              Chapters
-            </Link>
-            <Link 
-              className={`flex items-center px-6 py-3 transition-all font-meta text-sm font-semibold tracking-wider ${isActive('/settings') ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-              to="/settings"
-            >
-              <span className="material-symbols-outlined mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>person</span>
-              Profile
-            </Link>
+            {[
+              { to: '/dashboard', icon: 'grid_view', label: 'Overview' },
+              { to: '/dashboard/blog', icon: 'article', label: 'Updates' },
+              { to: '/dashboard/agenda', icon: 'event_note', label: 'The Plan' },
+              { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },
+              { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Feedback' },
+              { to: '/dashboard/store', icon: 'shopping_bag', label: 'Supplies' },
+              { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donations' },
+              { to: '/dashboard/members', icon: 'groups', label: 'Verified' },
+              { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
+              { to: '/settings', icon: 'person', label: 'Account' },
+            ].map((item) => (
+              <Link 
+                key={item.to}
+                className={`flex items-center transition-all font-meta text-sm font-semibold tracking-wider ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-6 py-3'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
+                to={item.to}
+              >
+                <span className={`material-symbols-outlined ${isSidebarCollapsed ? 'mr-0' : 'mr-3'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{item.icon}</span>
+                {!isSidebarCollapsed && item.label}
+              </Link>
+            ))}
           </div>
 
           {/* Leader Portrait */}
-          <div className="mx-4 my-8 flex flex-col gap-4">
-            <div className="overflow-hidden rounded-none relative group shrink-0 shadow-lg border border-border/10">
-              <img src={settings.founder_image_url || "/founder.jpg"}
-                alt="Dr. George Oti Bonsu The Base Movement Founder"
-                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
-               decoding="async" />
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
+          {!isSidebarCollapsed && (
+            <div className="mx-4 my-8 flex flex-col gap-4 transition-opacity duration-300">
+              <div className="overflow-hidden rounded-none relative group shrink-0 shadow-lg border border-border/10">
+                <img src={settings.founder_image_url || "/founder.jpg"}
+                  alt="Dr. George Oti Bonsu The Base Movement Founder"
+                  className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+                 decoding="async" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
+              </div>
+              <div className="px-2">
+                <p className="text-on-surface text-tiny font-black tracking-[0.2em] leading-tight mb-1">
+                  Dr. George Oti Bonsu
+                </p>
+                <p className="text-accent text-tiny font-black tracking-widest mb-0">
+                  Movement founder
+                </p>
+              </div>
             </div>
-            <div className="px-2">
-              <p className="text-on-surface text-tiny font-black tracking-[0.2em] leading-tight mb-1">
-                Dr. George Oti Bonsu
-              </p>
-              <p className="text-accent text-tiny font-black tracking-widest mb-0">
-                Movement founder
-              </p>
-            </div>
-          </div>
+          )}
 
-          <div className="px-6 pt-2">
+          <div className={`pt-2 transition-all duration-300 ${isSidebarCollapsed ? 'px-2' : 'px-6'}`}>
             <Button 
               variant="primary"
               onClick={() => setIsShareModalOpen(true)}
-              className="w-full h-14 text-tiny font-bold tracking-tight shadow-2xl shadow-primary/20"
+              className={`w-full font-bold tracking-tight shadow-2xl shadow-primary/20 flex items-center justify-center overflow-hidden ${isSidebarCollapsed ? 'h-12 px-0' : 'h-14'}`}
             >
-              Invite & Share
+              {isSidebarCollapsed ? (
+                <span className="material-symbols-outlined">share</span>
+              ) : (
+                <span className="text-tiny">Invite & Share</span>
+              )}
             </Button>
-            <div className="mt-8 space-y-4 pl-2">
+            
+            <div className={`mt-8 space-y-4 ${isSidebarCollapsed ? 'px-0 flex flex-col items-center' : 'pl-2'}`}>
               <Link 
                 className={`flex items-center transition-all font-bold text-tiny tracking-tight ${isActive('/dashboard/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`} 
                 to="/dashboard/contact"
               >
-                <span className="material-symbols-outlined text-lg mr-3" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>help</span>
-                Support
+                <span className={`material-symbols-outlined ${isSidebarCollapsed ? 'text-2xl' : 'text-lg mr-3'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>help</span>
+                {!isSidebarCollapsed && "Support"}
+              </Link>
+
+              <Link
+                to="/"
+                className={`flex items-center rounded-sm border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-bold text-tiny tracking-tight group bg-white/50 ${isSidebarCollapsed ? 'w-10 h-10 justify-center' : 'w-full h-12 px-4 gap-3 mt-8'}`}
+              >
+                <span className="material-symbols-outlined text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
+                {!isSidebarCollapsed && "Back to Site"}
               </Link>
             </div>
-
-            {/* Back to Landing Page */}
-            <Link
-              to="/"
-              className="mt-8 flex items-center gap-3 w-full h-12 px-4 rounded-sm border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-bold text-tiny tracking-tight group bg-white/50"
-            >
-              <span className="material-symbols-outlined text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
-              Back to Site
-            </Link>
           </div>
         </div>
       </aside>
 
       {/* Main Content Canvas */}
-      <main className="md:ml-64 min-h-screen bg-muted/10 flex flex-col pt-16">
+      <main className={`min-h-screen bg-muted/10 flex flex-col pt-16 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
 
         {/* ── Topbar ── fixed, clears the sidebar */}
-        <div className="fixed top-0 left-0 md:left-64 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-border/40 shadow-sm">
+        <div className={`fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-border/40 shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-64'}`}>
           <div className="flex items-center justify-between px-6 md:px-10 h-16">
 
-            {/* Left: Hamburger (Mobile) + Breadcrumb */}
-            <div className="flex items-center gap-4">
+            {/* Left: Hamburger (Mobile) + Current Page Title */}
+            <div className="flex items-center gap-6">
               <button 
-                onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden p-2 -ml-2 rounded-sm hover:bg-muted/10 text-on-surface/60"
+                onClick={() => {
+                  if (window.innerWidth < 768) {
+                    setIsSidebarOpen(true)
+                  } else {
+                    setIsSidebarCollapsed(!isSidebarCollapsed)
+                  }
+                }}
+                className="p-2 -ml-2 rounded-sm hover:bg-muted/10 text-on-surface/60 transition-colors"
               >
-                <span className="material-symbols-outlined text-[24px]">menu</span>
+                <span className="material-symbols-outlined text-[28px]">menu</span>
               </button>
-              <div className="flex items-center gap-2">
-                <Link to="/dashboard" className="flex items-center gap-2 shrink-0">
-                  <img src={settings.logo_url} alt="The Base" className="h-6 w-6 object-contain"  decoding="async" />
-                </Link>
-                <div className="hidden sm:flex items-center gap-3 text-on-surface/40 font-meta font-bold text-[10px] tracking-tight border-l border-border/20 pl-4 ml-2">
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-none overflow-hidden flex items-center justify-center">
-                      <img src="/logo-icon.png" alt="" className="w-full h-full object-contain grayscale opacity-50" />
-                    </div>
-                    The Base
-                  </span>
-                  <span className="text-border/40 font-normal">/</span>
-                  <span className="text-primary font-bold tracking-tight">{getPageTitle()}</span>
-                </div>
-              </div>
-              <h1 className="text-xl font-bold tracking-tight text-on-surface m-0 hidden lg:block">
-                {location.pathname.includes('settings') ? 'Member Settings' : 'Dashboard Overview'}
-              </h1>
+              
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-on-surface m-0 uppercase font-meta">
+                {getPageTitle()}
+            </h1>
           </div>
 
           {/* Right: Actions + Avatar */}
