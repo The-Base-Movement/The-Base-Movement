@@ -41,10 +41,15 @@ When refactoring or creating components, agents MUST perform the following syste
 - [x] Neutralized final residual tokens in `Settings.tsx`
 - [x] Verified 100% compliance across all storefront and admin modules
 
-## Current Architectural State: HARDENED
-The platform now exhibits total typographic parity. Every label, status badge, and heading strictly follows the **General Rule**:
-- **Case**: `normal-case` (Mandatory for readability)
-- **Weight**: `font-bold` (Mandatory for interactive density)
-- **Tracking**: `tracking-tight` (Mandatory for visual cohesion)
+## 5. Visual Branding: The BrandLine Protocol
+To maintain institutional visual authority, all movement branding lines MUST utilize the centralized `<BrandLine />` component. Hardcoded implementations are strictly prohibited.
 
-**Vigilance Note**: Any future UI contributions must be audited against these standards prior to deployment. The legacy `tracking-wider`, `tracking-widest`, and `uppercase` tokens have been formally deprecated and purged from the digital infrastructure.
+### Architectural Standards:
+- **Component**: Always import and use `<BrandLine />` from `@/components/ui/BrandLine`.
+- **Global Prominence**: The brand line dimensions are centrally managed in `index.css` (`.brand-line`) to ensure platform-wide consistency.
+- **Normalization**: Legacy hardcoded sequences (e.g., `flex h-1 w-24`) have been purged and synchronized with the component architecture.
+
+**Current Architectural State: HARDENED**
+The platform now exhibits total typographic and visual parity. Every label, status badge, and branding element strictly follows the defined protocols.
+
+**Vigilance Note**: Any future UI contributions must be audited against these standards prior to deployment. The legacy `tracking-wider`, `tracking-widest`, `uppercase`, and hardcoded branding sequences have been formally deprecated and purged from the digital infrastructure.
