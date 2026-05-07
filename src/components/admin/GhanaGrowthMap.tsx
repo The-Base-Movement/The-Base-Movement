@@ -87,27 +87,27 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
                 </TooltipTrigger>
                 <TooltipContent className="rounded-sm border-border/10 bg-on-surface text-white p-5 shadow-2xl backdrop-blur-xl">
                   <div className="space-y-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive">{path.name} Region</p>
+                    <p className="text-[10px] font-bold text-destructive tracking-tight">{path.name} region</p>
                     <div className="flex justify-between gap-8 items-end">
                       <div>
-                        <p className="text-2xl font-black font-meta tracking-tighter">
+                        <p className="text-2xl font-bold font-meta tracking-tight">
                           {stat ? stat.memberCount.toLocaleString() : '0'}
                         </p>
-                        <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">Total Members</p>
+                        <p className="text-[9px] font-bold text-white/40 tracking-tight mt-1">Total members</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-black text-white/80">
+                        <p className="text-lg font-bold text-white/80 tracking-tight">
                           {stat ? stat.chapters : '0'}
                         </p>
-                        <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">Chapters</p>
+                        <p className="text-[9px] font-bold text-white/40 tracking-tight mt-1">Chapters</p>
                       </div>
                     </div>
                     {stat && (
                       <div className="pt-2 mt-2 border-t border-white/10 flex items-center justify-between">
-                          <span className="text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 bg-white/10 rounded">
-                            {stat.performance} Impact
+                          <span className="text-[8px] font-bold tracking-tight px-2 py-0.5 bg-white/10 rounded">
+                            {stat.performance} impact
                           </span>
-                          <span className="text-[8px] font-bold text-white/20 uppercase">Click for details</span>
+                          <span className="text-[8px] font-bold text-white/20">Click for details</span>
                         </div>
                     )}
                   </div>
@@ -120,7 +120,7 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
 
       {/* Map Legend */}
       <div className="absolute bottom-6 left-6 space-y-3 bg-white/80 backdrop-blur-md p-5 border border-border/10 shadow-xl rounded-sm">
-        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface/40 mb-2">Expansion Density</p>
+        <p className="text-[9px] font-bold text-on-surface/40 mb-2 tracking-tight">Expansion density</p>
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex gap-1">
@@ -132,7 +132,7 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
                 />
               ))}
             </div>
-            <div className="flex justify-between text-[8px] font-black text-on-surface/40 uppercase tracking-widest mt-1">
+            <div className="flex justify-between text-[8px] font-bold text-on-surface/40 tracking-tight mt-1">
               <span>Low</span>
               <span>High</span>
             </div>
@@ -144,7 +144,7 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
       <div className="absolute top-8 right-8 opacity-20 pointer-events-none">
         <div className="w-12 h-12 border border-on-surface/20 rounded-full flex items-center justify-center relative">
           <div className="absolute top-0 w-px h-2 bg-on-surface/40" />
-          <span className="text-[8px] font-black text-on-surface/40">N</span>
+          <span className="text-[8px] font-bold text-on-surface/40 tracking-tight">N</span>
         </div>
       </div>
     </div>

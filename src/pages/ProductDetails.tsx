@@ -111,8 +111,8 @@ export default function ProductDetails() {
     return (
       <div className="bg-off-white min-h-screen">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 text-center">
-          <h2 className="text-2xl font-bold text-stone-900 mb-4">Product Not Found</h2>
-          <Link to="/store" className="text-brand-green font-bold hover:underline">Back to Store</Link>
+          <h2 className="text-2xl font-bold text-stone-900 mb-4">Product not found</h2>
+          <Link to="/store" className="text-brand-green font-bold hover:underline">Back to store</Link>
         </div>
       </div>
     )
@@ -131,7 +131,7 @@ export default function ProductDetails() {
           className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-meta text-[10px] font-bold uppercase tracking-widest">Back to Store</span>
+          <span className="font-meta text-[10px] font-bold tracking-tight">Back to store</span>
         </Link>
 
         <div className="flex items-center gap-3">
@@ -140,7 +140,7 @@ export default function ProductDetails() {
             className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
           >
             <Heart className="w-4 h-4 text-stone-500 group-hover:text-brand-red transition-all" />
-            <span className="font-meta text-[10px] font-bold uppercase tracking-widest text-stone-600 group-hover:text-brand-red">Wishlist</span>
+            <span className="font-meta text-[10px] font-bold tracking-tight text-stone-600 group-hover:text-brand-red">Wishlist</span>
             {wishlistCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-brand-red text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                 {wishlistCount}
@@ -152,7 +152,7 @@ export default function ProductDetails() {
             className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
           >
             <ShoppingBag className="w-4 h-4 text-stone-500 group-hover:text-brand-green transition-all" />
-            <span className="font-meta text-[10px] font-bold uppercase tracking-widest text-stone-600 group-hover:text-brand-green">Bag</span>
+            <span className="font-meta text-[10px] font-bold tracking-tight text-stone-600 group-hover:text-brand-green">Bag</span>
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-brand-green text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                 {cartCount}
@@ -174,7 +174,7 @@ export default function ProductDetails() {
               )}
               {isComingSoon && (
                 <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-[2px] flex items-center justify-center">
-                  <span className="text-white font-black uppercase tracking-[0.3em] text-lg border-2 border-white/40 px-8 py-3">Coming Soon</span>
+                  <span className="text-white font-bold tracking-tight text-lg border-2 border-white/40 px-8 py-3">Coming soon</span>
                 </div>
               )}
             </div>
@@ -201,7 +201,7 @@ export default function ProductDetails() {
         {/* Product Info */}
         <div className="flex flex-col">
           <div className="mb-8">
-            <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-bold tracking-widest uppercase rounded-full mb-4">
+            <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-bold tracking-tight rounded-full mb-4">
               {product.category}
             </span>
             <h1 className="font-h1 text-h2 text-stone-900 mb-4">{product.name}</h1>
@@ -213,7 +213,7 @@ export default function ProductDetails() {
                 <span className="ml-2 text-sm font-bold text-stone-900">{product.rating || '4.8'}</span>
               </div>
               <span className="text-stone-300">|</span>
-              <span className="text-sm text-stone-500">{product.reviews || 0} Verified Reviews</span>
+              <span className="text-sm text-stone-500">{product.reviews || 0} Verified reviews</span>
             </div>
             <p className="text-2xl font-bold text-brand-green">{product.price}</p>
           </div>
@@ -226,7 +226,7 @@ export default function ProductDetails() {
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
               <div>
-                <p className="text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-4">Color: {selectedColor}</p>
+                <p className="text-[10px] font-bold text-stone-900 tracking-tight mb-4">Color: {selectedColor}</p>
                 <div className="flex gap-3">
                   {product.colors.map(color => (
                     <button
@@ -247,12 +247,12 @@ export default function ProductDetails() {
             {product.sizes && product.sizes.length > 0 && (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <p className="text-[10px] font-bold text-stone-900 uppercase tracking-widest">Select Size</p>
+                  <p className="text-[10px] font-bold text-stone-900 tracking-tight">Select size</p>
                   <button 
                     onClick={() => setShowSizeGuide(true)}
-                    className="text-[10px] font-bold text-brand-green uppercase tracking-widest hover:underline"
+                    className="text-[10px] font-bold text-brand-green tracking-tight hover:underline"
                   >
-                    Size Guide
+                    Size guide
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -277,8 +277,8 @@ export default function ProductDetails() {
             {product.customization_allowed && (
               <div className="p-6 bg-stone-50 border-l-4 border-brand-green space-y-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-[10px] font-black text-stone-900 uppercase tracking-widest">Patriot Customization</p>
-                  <span className="text-[9px] font-bold text-brand-green bg-brand-green/10 px-2 py-0.5 uppercase">Free</span>
+                  <p className="text-[10px] font-bold text-stone-900 tracking-tight">Patriot customization</p>
+                  <span className="text-[9px] font-bold text-brand-green bg-brand-green/10 px-2 py-0.5">Free</span>
                 </div>
                 <div className="relative">
                   <input
@@ -288,8 +288,8 @@ export default function ProductDetails() {
                     onChange={(e) => setCustomizationText(e.target.value.substring(0, 24))}
                     className="w-full h-12 bg-white border border-stone-200 px-4 text-xs font-bold focus:border-brand-green outline-none transition-all rounded-sm placeholder:text-stone-300 placeholder:font-medium"
                   />
-                  <span className="absolute right-3 bottom-[-18px] text-[8px] font-bold text-stone-400 uppercase">
-                    {customizationText.length}/24 Characters
+                  <span className="absolute right-3 bottom-[-18px] text-[8px] font-bold text-stone-400">
+                    {customizationText.length}/24 characters
                   </span>
                 </div>
               </div>
@@ -298,10 +298,10 @@ export default function ProductDetails() {
             {/* Regional Availability Check */}
             <div className="p-6 bg-stone-50 border border-stone-200 rounded-sm space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-black text-stone-900 uppercase tracking-widest">Regional Fulfillment</p>
+                <p className="text-[10px] font-bold text-stone-900 tracking-tight">Regional fulfillment</p>
                 <div className="flex items-center gap-1">
                   <div className={cn("w-2 h-2 rounded-full animate-pulse", availability ? (availability.available ? "bg-brand-green" : "bg-brand-red") : "bg-stone-300")} />
-                  <span className="text-[9px] font-bold text-stone-500 uppercase">Live Status</span>
+                  <span className="text-[9px] font-bold text-stone-500">Live status</span>
                 </div>
               </div>
               
@@ -312,7 +312,7 @@ export default function ProductDetails() {
                     setSelectedRegion(e.target.value)
                     setAvailability(null)
                   }}
-                  className="flex-1 h-10 bg-white border border-stone-200 px-3 text-[10px] font-bold uppercase tracking-wider outline-none focus:border-brand-green rounded-sm"
+                  className="flex-1 h-10 bg-white border border-stone-200 px-3 text-[10px] font-bold tracking-tight outline-none focus:border-brand-green rounded-sm"
                 >
                   {['Greater Accra', 'Ashanti', 'Western', 'Central', 'Eastern', 'Volta', 'Northern', 'Upper East', 'Upper West', 'Bono', 'Bono East', 'Ahafo', 'Savannah', 'North East', 'Oti', 'Western North'].map(r => (
                     <option key={r} value={r}>{r}</option>
@@ -321,7 +321,7 @@ export default function ProductDetails() {
                 <Button 
                   onClick={checkRegionalAvailability}
                   disabled={checkingAvailability}
-                  className="h-10 px-4 bg-stone-900 text-white text-[9px] font-black uppercase tracking-widest rounded-sm hover:bg-brand-green transition-all"
+                  className="h-10 px-4 bg-stone-900 text-white text-[9px] font-bold tracking-tight rounded-sm hover:bg-brand-green transition-all"
                 >
                   {checkingAvailability ? 'Checking...' : 'Check'}
                 </Button>
@@ -344,7 +344,7 @@ export default function ProductDetails() {
             {/* Quantity */}
             <div className="flex items-end gap-8">
               <div className="flex-1">
-                <p className="text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-4">Quantity</p>
+                <p className="text-[10px] font-bold text-stone-900 tracking-tight mb-4">Quantity</p>
                 <div className="flex items-center w-full h-12 border border-stone-200 bg-white rounded-sm overflow-hidden">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -364,11 +364,11 @@ export default function ProductDetails() {
               
               {product.specifications && Object.keys(product.specifications).length > 0 && (
                 <div className="flex-1 hidden md:block">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-4">Quick Specs</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-4">Quick specs</p>
                   <div className="grid grid-cols-2 gap-2">
                     {Object.entries(product.specifications).slice(0, 2).map(([key, value]) => (
                       <div key={key} className="flex flex-col">
-                        <span className="text-[8px] font-black text-stone-400 uppercase">{key}</span>
+                        <span className="text-[8px] font-bold text-stone-400">{key}</span>
                         <span className="text-[10px] font-bold text-stone-900 truncate">{value}</span>
                       </div>
                     ))}
@@ -384,14 +384,14 @@ export default function ProductDetails() {
               disabled={isComingSoon}
               variant={isComingSoon ? "outline" : "primary"}
               className={cn(
-                "flex-1 h-14 text-xs font-bold uppercase tracking-widest rounded-sm",
+                "flex-1 h-14 text-xs font-bold tracking-tight rounded-sm",
                 isComingSoon ? "bg-stone-100 text-stone-400 border-stone-200" : "shadow-lg shadow-brand-green/20"
               )}
             >
-              {isComingSoon ? 'Coming Soon' : (
+              {isComingSoon ? 'Coming soon' : (
                 <div className="flex items-center justify-center gap-2">
                   <ShoppingBag className="w-4 h-4" />
-                  Add to Bag
+                  Add to bag
                 </div>
               )}
             </Button>
@@ -421,17 +421,17 @@ export default function ProductDetails() {
           <div className="grid grid-cols-3 gap-2 sm:gap-6 py-8 border-t border-stone-200">
             <div className="flex flex-col items-center text-center gap-2">
               <Truck className="w-5 h-5 text-brand-green" />
-              <p className="text-sm font-bold text-stone-900 uppercase tracking-widest leading-tight">Fast Delivery</p>
+              <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Fast delivery</p>
               <p className="text-sm text-stone-500 font-medium leading-tight">2-3 Days</p>
             </div>
             <div className="flex flex-col items-center text-center gap-2 border-x border-stone-100 px-2">
               <ShieldCheck className="w-5 h-5 text-brand-green" />
-              <p className="text-sm font-bold text-stone-900 uppercase tracking-widest leading-tight">Secure Pay</p>
+              <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Secure pay</p>
               <p className="text-sm text-stone-500 font-medium leading-tight">Verified</p>
             </div>
             <div className="flex flex-col items-center text-center gap-2">
               <RefreshCw className="w-5 h-5 text-brand-green" />
-              <p className="text-sm font-bold text-stone-900 uppercase tracking-widest leading-tight">Easy Returns</p>
+              <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Easy returns</p>
               <p className="text-sm text-stone-500 font-medium leading-tight">7-Day Policy</p>
             </div>
           </div>
@@ -442,17 +442,17 @@ export default function ProductDetails() {
       <section className="mt-24 pt-24 border-t border-stone-200">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
           <div>
-            <span className="text-[10px] font-black text-brand-green uppercase tracking-[0.3em] mb-4 block">Voice of the Movement</span>
-            <h2 className="font-h2 text-h3 text-stone-900">Patriot Reviews</h2>
+            <span className="text-[10px] font-bold text-brand-green tracking-tight mb-4 block">Voice of the movement</span>
+            <h2 className="font-h2 text-h3 text-stone-900">Patriot reviews</h2>
           </div>
           <div className="flex items-center gap-6">
             <div className="text-right">
-              <p className="text-3xl font-black text-stone-900">{product.rating || '4.8'}</p>
-              <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Average Patriot Rating</p>
+              <p className="text-3xl font-bold text-stone-900">{product.rating || '4.8'}</p>
+              <p className="text-[9px] font-bold text-stone-400 tracking-tight">Average patriot rating</p>
             </div>
             <div className="w-px h-12 bg-stone-200" />
-            <Button className="h-12 bg-brand-green text-white text-[10px] font-black uppercase tracking-widest px-8 rounded-none">
-              Write a Review
+            <Button className="h-12 bg-brand-green text-white text-[10px] font-bold tracking-tight px-8 rounded-none">
+              Write a review
             </Button>
           </div>
         </div>
@@ -468,21 +468,21 @@ export default function ProductDetails() {
                     ))}
                   </div>
                   {review.is_verified && (
-                    <span className="text-[8px] font-black text-brand-green uppercase tracking-widest bg-brand-green/5 px-2 py-1 flex items-center gap-1">
-                      <ShieldCheck className="w-2.5 h-2.5" /> Verified Patriot
+                    <span className="text-[8px] font-bold text-brand-green tracking-tight bg-brand-green/5 px-2 py-1 flex items-center gap-1">
+                      <ShieldCheck className="w-2.5 h-2.5" /> Verified patriot
                     </span>
                   )}
                 </div>
                 <p className="text-sm text-stone-600 font-medium leading-relaxed italic">"{review.content}"</p>
                 <div className="pt-6 border-t border-stone-50 flex items-center justify-between">
-                  <span className="text-[10px] font-black text-stone-900 uppercase tracking-tight">{review.patriot_name}</span>
+                  <span className="text-[10px] font-bold text-stone-900 tracking-tight">{review.patriot_name}</span>
                   <span className="text-[9px] font-bold text-stone-400">{new Date(review.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
             ))
           ) : (
             <div className="col-span-full py-16 bg-stone-50 text-center border border-dashed border-stone-200">
-              <p className="text-[10px] font-black text-stone-400 uppercase tracking-[0.2em]">Be the first patriot to review this gear.</p>
+              <p className="text-[10px] font-bold text-stone-400 tracking-tight">Be the first patriot to review this gear.</p>
             </div>
           )}
         </div>
@@ -492,30 +492,30 @@ export default function ProductDetails() {
       {product.specifications && Object.keys(product.specifications).length > 0 && (
         <section className="mt-24 grid md:grid-cols-2 gap-16 items-start">
           <div className="space-y-8">
-            <h2 className="font-h2 text-h3 text-stone-900">Technical Details</h2>
+            <h2 className="font-h2 text-h3 text-stone-900">Technical details</h2>
             <div className="grid gap-4">
               {Object.entries(product.specifications).map(([key, value]) => (
                 <div key={key} className="flex justify-between py-4 border-b border-stone-100">
-                  <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest">{key}</span>
+                  <span className="text-[10px] font-bold text-stone-400 tracking-tight">{key}</span>
                   <span className="text-xs font-bold text-stone-900">{value}</span>
                 </div>
               ))}
             </div>
           </div>
           <div className="bg-[var(--brand-black)] p-12 text-white relative overflow-hidden">
-            <h3 className="font-h3 text-lg uppercase tracking-widest mb-6 relative z-10">Movement Quality Standard</h3>
+            <h3 className="font-h3 text-lg tracking-tight mb-6 relative z-10">Movement quality standard</h3>
             <p className="text-xs text-stone-400 leading-relaxed mb-8 relative z-10">
               Every item in the movement catalog undergoes strict quality control. We ensure that all materials are ethically sourced and designed to withstand the rigors of field mobilization.
             </p>
             <ul className="space-y-4 relative z-10">
-              <li className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Durable Field-Ready Fabric
+              <li className="flex items-center gap-3 text-[10px] font-bold tracking-tight">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Durable field-ready fabric
               </li>
-              <li className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Authentic Movement Branding
+              <li className="flex items-center gap-3 text-[10px] font-bold tracking-tight">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Authentic movement branding
               </li>
-              <li className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Supporting Local Production
+              <li className="flex items-center gap-3 text-[10px] font-bold tracking-tight">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Supporting local production
               </li>
             </ul>
             <ShoppingBag className="absolute -bottom-10 -right-10 w-48 h-48 text-white/5 -rotate-12" />
@@ -525,7 +525,7 @@ export default function ProductDetails() {
 
       {/* Recommended Products */}
       <section className="mt-24">
-        <h2 className="font-h2 text-h3 text-stone-900 mb-12">You Might Also Like</h2>
+        <h2 className="font-h2 text-h3 text-stone-900 mb-12">You might also like</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="aspect-[4/5] bg-stone-100 rounded-sm animate-pulse" />
@@ -543,8 +543,8 @@ export default function ProductDetails() {
           <div className="relative bg-white w-full max-w-lg shadow-2xl rounded-none overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="bg-brand-green p-6 text-white flex justify-between items-center">
               <div>
-                <h3 className="font-h3 text-lg uppercase tracking-widest">Apparel Size Guide</h3>
-                <p className="text-[10px] opacity-80 uppercase tracking-widest">All measurements in inches</p>
+                <h3 className="font-h3 text-lg tracking-tight">Apparel size guide</h3>
+                <p className="text-[10px] opacity-80 tracking-tight">All measurements in inches</p>
               </div>
               <button 
                 onClick={() => setShowSizeGuide(false)}
@@ -559,10 +559,10 @@ export default function ProductDetails() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b-2 border-stone-100">
-                      <th className="py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Size</th>
-                      <th className="py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">Chest</th>
-                      <th className="py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">Length</th>
-                      <th className="py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">Sleeve</th>
+                      <th className="py-4 text-[10px] font-bold text-stone-400 tracking-tight">Size</th>
+                      <th className="py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center">Chest</th>
+                      <th className="py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center">Length</th>
+                      <th className="py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center">Sleeve</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-50">
@@ -588,9 +588,9 @@ export default function ProductDetails() {
               </p>
               <Button 
                 onClick={() => setShowSizeGuide(false)}
-                className="w-full mt-8 bg-stone-900 hover:bg-stone-800 text-white text-[10px] font-bold uppercase tracking-widest rounded-none h-12"
+                className="w-full mt-8 bg-stone-900 hover:bg-stone-800 text-white text-[10px] font-bold tracking-tight rounded-none h-12"
               >
-                Close Guide
+                Close guide
               </Button>
             </div>
           </div>

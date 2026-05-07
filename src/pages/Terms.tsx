@@ -1,81 +1,99 @@
 import { FileText, Scale, Info, CheckCircle } from 'lucide-react'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { Helmet } from 'react-helmet-async'
 
 export default function Terms() {
   return (
-    <div className="py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FileText className="w-6 h-6 text-destructive" />
-          </div>
-          <h1 className="text-3xl font-bold text-stone-950 mb-2">Terms of Service</h1>
-          <p className="text-gray-600">Please read these terms carefully before joining the movement</p>
-        </div>
+    <main className="bg-surface-warm font-body-md min-h-screen pb-24">
+      <Helmet>
+        <title>Terms of Service | The Base Movement</title>
+        <meta name="description" content="Official terms and membership agreement for The Base Movement." />
+      </Helmet>
 
-        <div className="space-y-6">
-          <div className="flex gap-4">
-            <div className="w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center shrink-0">
-              <Scale className="w-5 h-5 text-destructive" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-stone-950 mb-2">Membership Agreement</h2>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                By joining The Base, you agree to support the movement's objectives of promoting civic engagement and youth empowerment. You commit to upholding the values of integrity, accountability, and national development.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center shrink-0">
-              <Info className="w-5 h-5 text-accent" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-stone-950 mb-2">Code of Conduct</h2>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Members are expected to engage in constructive dialogue and represent the movement with dignity. Any form of hate speech, violence, or illegal activity will result in immediate termination of membership.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-              <CheckCircle className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-stone-950 mb-2">Platform Usage</h2>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Your member portal is for personal use only. You are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account.
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mt-6">
-            <h3 className="font-semibold text-stone-950 mb-3">Commitments</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-1.5 shrink-0"></span>
-                <span>Support movement activities and events</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0"></span>
-                <span>Promote the values of The Base within your community</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-stone-950 mt-1.5 shrink-0"></span>
-                <span>Engage respectfully with other members</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></span>
-                <span>Uphold the principles of 'Ghana First'</span>
-              </li>
-            </ul>
-          </div>
-
-          <p className="text-sm text-gray-500 text-center pt-4">
-            Last updated: April 2026. By continuing to use the portal, you agree to these terms.
+      {/* Hero */}
+      <div className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+        <div className="max-w-[1280px] mx-auto px-8 relative z-10">
+          <Breadcrumbs />
+          <p className="font-meta text-warm-gold tracking-tight text-[12px] mb-3 mt-6">Member Governance</p>
+          <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight mb-4">
+            Terms of <span className="text-brand-green">service</span>
+          </h1>
+          <p className="text-lg text-slate-300 max-w-2xl font-body-md">
+            The institutional framework and membership agreement that governs participation in The Base Movement.
           </p>
         </div>
       </div>
-    </div>
+
+      <div className="max-w-[1280px] mx-auto px-8 py-16">
+        <div className="max-w-4xl">
+          <div className="space-y-12">
+            
+            <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-brand-green/10 rounded-none flex items-center justify-center shrink-0">
+                  <Scale className="w-6 h-6 text-brand-green" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Membership agreement</h2>
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                    By joining The Base, you agree to support the movement's objectives of promoting civic engagement and youth empowerment. You commit to upholding the values of integrity, accountability, and national development. This agreement constitutes a formal commitment to the principles of 'Ghana First'.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-warm-gold/10 rounded-none flex items-center justify-center shrink-0">
+                  <Info className="w-6 h-6 text-warm-gold" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Code of conduct</h2>
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                    Members are expected to engage in constructive dialogue and represent the movement with dignity at all times. Any form of hate speech, violence, or illegal activity will result in immediate termination of membership and potential restriction from movement spaces.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-charcoal-dark/10 rounded-none flex items-center justify-center shrink-0">
+                  <CheckCircle className="w-6 h-6 text-charcoal-dark" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Platform usage & security</h2>
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                    Your member portal is for personal use only. You are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account. Unauthorized attempts to access movement data or disrupt platform operations will be met with institutional and legal action.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <div className="bg-charcoal-dark p-8 md:p-12 border-l-4 border-warm-gold text-white">
+              <h3 className="font-meta font-bold text-xl tracking-tight mb-6">Institutional commitments</h3>
+              <ul className="space-y-4">
+                {[
+                  'Support movement activities and local chapter events',
+                  'Promote the values of The Base within your digital and local community',
+                  'Engage respectfully with other members and movement leadership',
+                  'Maintain the integrity of movement information and internal dispatches'
+                ].map((commitment, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-warm-gold mt-2 shrink-0"></span>
+                    <span className="text-sm text-slate-400">{commitment}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <p className="text-xs text-slate-400 pt-8 border-t border-slate-200">
+              Last updated: April 2026. By continuing to use the portal, you agree to these institutional terms.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
   )
 }

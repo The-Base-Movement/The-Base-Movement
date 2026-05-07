@@ -223,10 +223,10 @@ export default function Administrators() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-muted/5 border-b border-border/60">
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 normal-case">Administrator</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 normal-case">Access level</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 normal-case">Region</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 normal-case text-right">Actions</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 tracking-tight">Administrator</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 tracking-tight">Access level</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 tracking-tight">Region</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/40 tracking-tight text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/10">
@@ -241,7 +241,7 @@ export default function Administrators() {
                   ))
                 ) : filteredAdmins.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground/40 font-bold text-xs normal-case">
+                    <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground/40 font-bold text-xs tracking-tight">
                       No authorized personnel found.
                     </td>
                   </tr>
@@ -311,7 +311,7 @@ export default function Administrators() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48 rounded-sm border-border/60">
-                              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/40">Admin Actions</DropdownMenuLabel>
+                              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground/40">Admin actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem 
                                 className="text-xs font-bold py-2 cursor-pointer"
@@ -320,7 +320,7 @@ export default function Administrators() {
                                   setIsPermissionsModalOpen(true)
                                 }}
                               >
-                                Edit Permissions
+                                Edit permissions
                               </DropdownMenuItem>
                               <DropdownMenuItem 
                                 className="text-xs font-bold py-2 cursor-pointer"
@@ -329,14 +329,14 @@ export default function Administrators() {
                                   setIsActivityModalOpen(true)
                                 }}
                               >
-                                Activity Logs
+                                Activity logs
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem 
                                 className="text-xs font-bold text-destructive py-2 cursor-pointer hover:bg-destructive/10 focus:bg-destructive/10"
                                 onSelect={() => handleRevoke(admin.id, admin.name)}
                               >
-                                Revoke Access
+                                Revoke access
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -390,7 +390,7 @@ export default function Administrators() {
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-on-surface tracking-tight">{admin.name}</h4>
-                      <p className="text-[10px] font-bold text-muted-foreground/40 mt-0.5 normal-case tracking-widest">{admin.id}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/40 mt-0.5 tracking-tight">{admin.id}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-muted/5 rounded-full border border-border/10">
@@ -400,7 +400,7 @@ export default function Administrators() {
                       <ShieldCheck className="w-3.5 h-3.5 text-primary" />
                     )}
                     <span className={cn(
-                      "text-[9px] font-bold tracking-tighter",
+                      "text-[9px] font-bold tracking-tight",
                       admin.role === 'SUPER_ADMIN' ? "text-destructive" : "text-primary"
                     )}>
                       {admin.role.replace('_', ' ')}
@@ -410,8 +410,8 @@ export default function Administrators() {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
-                    <span className="text-[10px] font-bold text-muted-foreground/40 normal-case tracking-widest">Region</span>
-                    <span className="text-[10px] font-bold text-on-surface normal-case">{admin.region || 'National HQ'}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Region</span>
+                    <span className="text-[10px] font-bold text-on-surface tracking-tight">{admin.region || 'National HQ'}</span>
                   </div>
 
                   <div className="flex items-center gap-2">

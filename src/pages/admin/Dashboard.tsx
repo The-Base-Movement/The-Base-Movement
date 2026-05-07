@@ -346,10 +346,10 @@ export default function AdminDashboard() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-muted/30 border-b border-border/40">
-                    <th className="p-4 pl-6 text-[10px] font-bold tracking-wider text-muted-foreground/80">Region</th>
-                    <th className="p-4 text-[10px] font-bold tracking-wider text-muted-foreground/80">Members</th>
-                    <th className="p-4 text-[10px] font-bold tracking-wider text-muted-foreground/80">Chapters</th>
-                    <th className="p-4 pr-6 text-right text-[10px] font-bold tracking-wider text-muted-foreground/80">Status</th>
+                    <th className="p-4 pl-6 text-[10px] font-bold tracking-tight text-muted-foreground/80">Region</th>
+                    <th className="p-4 text-[10px] font-bold tracking-tight text-muted-foreground/80">Members</th>
+                    <th className="p-4 text-[10px] font-bold tracking-tight text-muted-foreground/80">Chapters</th>
+                    <th className="p-4 pr-6 text-right text-[10px] font-bold tracking-tight text-muted-foreground/80">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
@@ -455,7 +455,7 @@ export default function AdminDashboard() {
                 )}
                 <div className="pt-4">
                    <div className="bg-muted/10 rounded-lg p-4 flex justify-between items-center border border-border/40">
-                      <p className="text-[10px] font-bold text-muted-foreground/80 tracking-wider">Overall velocity</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Overall velocity</p>
                      <p className="text-sm font-bold text-on-surface tracking-tight">3.2 Days</p>
                    </div>
                 </div>
@@ -469,7 +469,7 @@ export default function AdminDashboard() {
           {/* Health & Status Consolidated */}
           <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
-              <CardTitle className="text-[11px] font-bold tracking-wider text-muted-foreground/80">Operations health</CardTitle>
+              <CardTitle className="text-[11px] font-bold tracking-tight text-muted-foreground/80">Operations health</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-8">
               {/* System Health */}
@@ -492,7 +492,7 @@ export default function AdminDashboard() {
 
               {/* Engagement Pulse (Simplified) */}
               <div className="space-y-6">
-                <p className="text-[10px] font-bold text-muted-foreground/80 tracking-wider">Sentiment pulse</p>
+                <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Sentiment pulse</p>
                 {sentimentStats.length > 0 && sentimentStats.some(s => s.score > 0) ? (
                   sentimentStats.slice(0, 3).map((stat) => (
                     <div key={stat.topic} className="space-y-2">
@@ -520,11 +520,11 @@ export default function AdminDashboard() {
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-6">
                     <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold tracking-wider text-white/40">Core system</span>
+                    <span className="text-[10px] font-bold tracking-tight text-white/40">Core system</span>
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold tabular-nums tracking-tighter">99.8%</span>
-                    <span className="text-[10px] font-medium text-white/30 tracking-wider">Uptime</span>
+                    <span className="text-[10px] font-medium text-white/30 tracking-tight">Uptime</span>
                   </div>
                 </div>
               </div>
@@ -534,7 +534,7 @@ export default function AdminDashboard() {
           {/* Regional Traffic Summary */}
           <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
-              <CardTitle className="text-[11px] font-bold tracking-wider text-muted-foreground/80">Regional traffic</CardTitle>
+              <CardTitle className="text-[11px] font-bold tracking-tight text-muted-foreground/80">Regional traffic</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-6">

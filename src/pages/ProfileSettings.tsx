@@ -287,7 +287,7 @@ export default function ProfileSettings() {
       <div className="w-full h-screen flex items-center justify-center bg-off-white">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-12 h-12 text-[var(--brand-green)] animate-spin" />
-          <p className="font-meta text-stone-500 uppercase tracking-widest text-xs animate-pulse">Syncing Profile with HQ...</p>
+          <p className="font-meta text-stone-500 tracking-tight text-xs animate-pulse">Syncing profile with HQ...</p>
         </div>
       </div>
     )
@@ -298,8 +298,8 @@ export default function ProfileSettings() {
       
       {/* Page Title - Now with horizontal padding only for content alignment */}
       <div className="mb-10 border-b border-divider-gold pb-6 px-4 md:px-10">
-        <p className="font-meta text-warm-gold uppercase tracking-widest text-xs mb-1">Account</p>
-        <h2 className="font-meta font-black text-3xl text-[var(--brand-green)] uppercase tracking-tight">Profile Settings</h2>
+        <p className="font-meta text-warm-gold tracking-tight text-xs mb-1">Account</p>
+        <h2 className="font-meta font-bold text-3xl text-[var(--brand-green)] tracking-tight">Profile Settings</h2>
         <p className="text-muted-gray text-sm mt-1">Manage your identity, download your card and update your details.</p>
       </div>
 
@@ -309,7 +309,7 @@ export default function ProfileSettings() {
         <div className="xl:col-span-5 space-y-8">
           
           <div className="bg-white border border-slate-200 p-2 shadow-2xl relative group">
-            <h3 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-[0.2em] mb-4 pl-2">Membership Card Preview</h3>
+            <h3 className="font-meta font-bold text-[10px] text-slate-400 tracking-tight mb-4 pl-2">Membership card preview</h3>
             
             {/* The Membership Card Component */}
             <div ref={cardRef}>
@@ -337,14 +337,14 @@ export default function ProfileSettings() {
           <div className="grid grid-cols-2 gap-2 sm:gap-4">
             <button 
               onClick={handlePrint}
-              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-warm-gold text-charcoal-dark font-meta font-black uppercase tracking-widest text-[9px] sm:text-[10px] hover:opacity-90 transition-all shadow-md leading-tight"
+              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-warm-gold text-charcoal-dark font-meta font-bold tracking-tight text-[9px] sm:text-[10px] hover:opacity-90 transition-all shadow-md leading-tight"
             >
               <span className="material-symbols-outlined text-[16px] sm:text-[18px]">print</span>
-              Print Card
+              Print card
             </button>
             <button 
               onClick={handleDownload}
-              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-white border border-slate-200 text-charcoal-dark font-meta font-black uppercase tracking-widest text-[9px] sm:text-[10px] hover:bg-slate-50 transition-all shadow-sm leading-tight"
+              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-white border border-slate-200 text-charcoal-dark font-meta font-bold tracking-tight text-[9px] sm:text-[10px] hover:bg-slate-50 transition-all shadow-sm leading-tight"
             >
               <span className="material-symbols-outlined text-[16px] sm:text-[18px]">download</span>
               Download PDF
@@ -353,10 +353,10 @@ export default function ProfileSettings() {
 
 
           <div className="bg-white border border-slate-200 p-8 shadow-sm">
-            <h4 className="font-meta font-bold text-[10px] text-slate-400 uppercase tracking-widest mb-4">Membership Verification</h4>
+            <h4 className="font-meta font-bold text-[10px] text-slate-400 tracking-tight mb-4">Membership verification</h4>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-[var(--brand-green)] animate-pulse"></div>
-              <p className="text-xs font-bold text-charcoal-dark font-meta uppercase tracking-tight">Status: Active & Verified</p>
+              <p className="text-xs font-bold text-charcoal-dark font-meta tracking-tight">Status: Active & Verified</p>
             </div>
             <p className="text-[11px] sm:text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
               Your digital card is real-time verifiable. Use the QR code to present your credentials at official movement events.
@@ -366,10 +366,10 @@ export default function ProfileSettings() {
           {/* Phase 14: Voter Registration Pipeline */}
           <div className="bg-white border border-stone-200 p-8 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-meta font-bold text-[10px] text-stone-400 uppercase tracking-widest flex items-center gap-2">
-                <span className="material-symbols-outlined text-[14px]">how_to_vote</span> Election Readiness
+              <h4 className="font-meta font-bold text-[10px] text-stone-400 flex items-center gap-2 tracking-tight">
+                <span className="material-symbols-outlined text-[14px]">how_to_vote</span> Election readiness
               </h4>
-              <span className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[8px] font-black uppercase tracking-widest">Unverified</span>
+              <span className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[8px] font-bold tracking-tight">Unverified</span>
             </div>
             <p className="text-[11px] text-stone-500 mb-4 leading-relaxed">
               Verify your official voter registration to unlock the Patriot Ground Game badge. Your polling station data secures our election day logistics.
@@ -382,9 +382,9 @@ export default function ProfileSettings() {
               />
               <button 
                 type="button"
-                className="w-full py-2.5 bg-stone-900 text-white font-meta font-black uppercase tracking-widest text-[9px] hover:bg-[var(--brand-green)] transition-colors"
+                className="w-full py-2.5 bg-stone-900 text-white font-meta font-bold tracking-tight text-[9px] hover:bg-[var(--brand-green)] transition-colors"
               >
-                Submit Voter ID
+                Submit voter ID
               </button>
             </div>
           </div>
@@ -395,16 +395,16 @@ export default function ProfileSettings() {
           <form onSubmit={handleSave} className="space-y-8">
             <section className="bg-white border border-slate-200 p-6 md:p-10 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 border-b border-slate-100 pb-6 gap-2">
-                <h3 className="font-meta font-bold text-xs sm:text-sm text-charcoal-dark uppercase tracking-wider flex items-center gap-3">
+                <h3 className="font-meta font-bold text-xs sm:text-sm text-charcoal-dark flex items-center gap-3 tracking-tight">
                   <span className="w-6 h-6 bg-slate-100 flex items-center justify-center text-[14px] shrink-0">01</span>
-                  Personal Information
+                  Personal information
                 </h3>
-                <p className="text-[10px] text-slate-400 font-meta uppercase tracking-widest italic">Official Records</p>
+                <p className="text-[10px] text-slate-400 font-meta italic tracking-tight">Official records</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">
                     Full Name <span className="text-[var(--brand-red)]">*</span>
                   </label>
                   <input
@@ -412,29 +412,29 @@ export default function ProfileSettings() {
                     value={form.fullName}
                     onChange={e => handleChange('fullName', e.target.value)}
                     placeholder="Full name as on official ID"
-                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Email Address</label>
+                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Email address</label>
                   <input
                     type="email"
                     value={form.email}
                     onChange={e => handleChange('email', e.target.value)}
                     placeholder="Email address (e.g. you@example.com)"
-                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Phone Number</label>
+                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Phone number</label>
                   <div className="flex gap-2">
                     <div className="relative">
                       <select
                         value={form.countryCode}
                         onChange={e => handleChange('countryCode', e.target.value)}
-                        className="w-24 border-b-2 border-slate-100 bg-transparent py-3 pr-8 text-xs text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                        className="w-24 border-b-2 border-slate-100 bg-transparent py-3 pr-8 text-xs text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                       >
                         <option value="+233">+233 (GH)</option>
                         {dbCountries.map(c => (
@@ -448,18 +448,18 @@ export default function ProfileSettings() {
                       value={form.phone}
                       onChange={e => handleChange('phone', e.target.value)}
                       placeholder="e.g. 24 123 4567"
-                      className="flex-1 border-b-2 border-slate-100 bg-transparent py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                      className="flex-1 border-b-2 border-slate-100 bg-transparent py-3 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Gender & Age Group</label>
+                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Gender & age group</label>
                   <div className="relative">
                     <select
                       value={form.gender}
                       onChange={e => handleChange('gender', e.target.value)}
-                      className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                      className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                     >
                       <option value="Male / 18 - 25">Male / 18 - 25</option>
                       <option value="Male / 26 - 40">Male / 26 - 40</option>
@@ -473,22 +473,22 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Profession</label>
+                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Profession</label>
                   <input
                     value={form.profession}
                     onChange={e => handleChange('profession', e.target.value)}
                     placeholder="E.g. Teacher, Engineer, Student"
-                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Assigned Chapter</label>
+                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Assigned chapter</label>
                   <div className="relative">
                     <select
                       value={form.chapter}
                       onChange={e => handleChange('chapter', e.target.value)}
-                      className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                      className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                     >
                       <option value="">Select Chapter</option>
                       {availableChapters.map(name => (
@@ -502,7 +502,7 @@ export default function ProfileSettings() {
                 {userPlatform === 'GHANA' ? (
                   <>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Region</label>
+                      <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Region</label>
                       <div className="relative">
                         <select
                           value={form.region}
@@ -510,7 +510,7 @@ export default function ProfileSettings() {
                             const newRegion = e.target.value
                             setForm(prev => ({ ...prev, region: newRegion, constituency: '' }))
                           }}
-                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                         >
                           <option value="">Select Region</option>
                           {dbRegions.map(reg => (
@@ -522,13 +522,13 @@ export default function ProfileSettings() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Constituency</label>
+                      <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Constituency</label>
                       <div className="relative">
                         <select
                           value={form.constituency}
                           disabled={!form.region}
                           onChange={e => handleChange('constituency', e.target.value)}
-                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer disabled:opacity-50"
+                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer disabled:opacity-50"
                         >
                           <option value="">Select Constituency</option>
                           {form.region && dbConstituencies
@@ -544,7 +544,7 @@ export default function ProfileSettings() {
                 ) : (
                   <div className="space-y-4 md:col-span-2 md:grid md:grid-cols-2 md:gap-8 md:space-y-0">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Country of Residence</label>
+                      <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Country of residence</label>
                       <div className="relative">
                         <select
                           value={form.country}
@@ -559,7 +559,7 @@ export default function ProfileSettings() {
                               constituency: countryName !== 'Ghana' ? '' : prev.constituency
                             }))
                           }}
-                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                          className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                         >
                           <option value="">Select Country</option>
                           {dbCountries.map(c => (
@@ -573,7 +573,7 @@ export default function ProfileSettings() {
                     {form.country === 'Ghana' && (
                       <>
                         <div className="space-y-2">
-                          <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Region</label>
+                          <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Region</label>
                           <div className="relative">
                             <select
                               value={form.region}
@@ -581,7 +581,7 @@ export default function ProfileSettings() {
                                 const newRegion = e.target.value
                                 setForm(prev => ({ ...prev, region: newRegion, constituency: '' }))
                               }}
-                              className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
+                              className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer"
                             >
                               <option value="">Select Region</option>
                               {dbRegions.map(reg => (
@@ -593,13 +593,13 @@ export default function ProfileSettings() {
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Constituency</label>
+                          <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Constituency</label>
                           <div className="relative">
                             <select
                               value={form.constituency}
                               disabled={!form.region}
                               onChange={e => handleChange('constituency', e.target.value)}
-                              className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-black uppercase tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer disabled:opacity-50"
+                              className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 pr-8 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all appearance-none cursor-pointer disabled:opacity-50"
                             >
                               <option value="">Select Constituency</option>
                               {dbConstituencies
@@ -620,7 +620,7 @@ export default function ProfileSettings() {
                 )}
 
                 <div className="md:col-span-2 space-y-4 pt-4">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">Short Bio</label>
+                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Short bio</label>
                   <textarea
                     rows={4}
                     value={form.bio}
@@ -634,18 +634,18 @@ export default function ProfileSettings() {
 
             <section className="bg-white border border-slate-200 p-6 md:p-10 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 border-b border-slate-100 pb-6 gap-2">
-                <h3 className="font-meta font-bold text-xs sm:text-sm text-charcoal-dark uppercase tracking-wider flex items-center gap-3">
+                <h3 className="font-meta font-bold text-xs sm:text-sm text-charcoal-dark flex items-center gap-3 tracking-tight">
                   <span className="w-6 h-6 bg-slate-100 flex items-center justify-center text-[14px] shrink-0">02</span>
-                  Performance Preferences
+                  Performance preferences
                 </h3>
-                <p className="text-[10px] text-slate-400 font-meta uppercase tracking-widest italic">App Experience</p>
+                <p className="text-[10px] text-slate-400 font-meta italic tracking-tight">App experience</p>
               </div>
 
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-meta font-bold text-slate-400 uppercase tracking-[0.2em] block">
-                      Low-Bandwidth Mode
+                    <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">
+                      Low-bandwidth mode
                     </label>
                     <p className="text-xs text-slate-500 font-body-md max-w-md">
                       Reduces data usage by hiding heavy background images and optimizing assets. Recommended for slow connections.
@@ -662,16 +662,16 @@ export default function ProfileSettings() {
             <div className="flex flex-col sm:flex-row items-center gap-6 pt-4">
               <button
                 type="submit"
-                className="w-full sm:w-auto flex items-center justify-center gap-3 px-16 py-6 bg-[var(--brand-green)] text-white font-meta font-black uppercase tracking-[0.3em] text-xs hover:opacity-95 active:scale-[0.98] transition-all shadow-2xl shadow-brand-green/20"
+                className="w-full sm:w-auto flex items-center justify-center gap-3 px-16 py-6 bg-[var(--brand-green)] text-white font-meta font-bold tracking-tight text-xs hover:opacity-95 active:scale-[0.98] transition-all shadow-2xl shadow-brand-green/20"
               >
                 <span className="material-symbols-outlined text-[18px]">lock_reset</span>
-                Save Changes
+                Save changes
               </button>
 
               {saved && (
-                <div className="flex items-center gap-3 text-[var(--brand-green)] text-[10px] font-meta font-black uppercase tracking-widest animate-in fade-in slide-in-from-left-2 duration-500">
+                <div className="flex items-center gap-3 text-[var(--brand-green)] text-[10px] font-meta font-bold tracking-tight animate-in fade-in slide-in-from-left-2 duration-500">
                   <span className="material-symbols-outlined text-[20px]">verified</span>
-                  Information Synchronized
+                  Information synchronized
                 </div>
               )}
             </div>
@@ -680,17 +680,17 @@ export default function ProfileSettings() {
             <section className="mt-16 p-10 border-2 border-dashed border-red-100 bg-red-50/20">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
                 <div>
-                  <h4 className="font-meta font-bold text-xs text-[var(--brand-red)] uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                  <h4 className="font-meta font-bold text-xs text-[var(--brand-red)] mb-2 flex items-center gap-2 tracking-tight">
                     <span className="material-symbols-outlined text-[18px]">warning</span>
-                    Danger Zone
+                    Danger zone
                   </h4>
                   <p className="text-[12px] sm:text-xs text-slate-500 font-body-md max-w-md">Deactivating your account will permanently delete all your contribution history and movement records. This action cannot be undone.</p>
                 </div>
                 <button
                   type="button"
-                  className="w-full lg:w-auto px-8 py-3.5 border-2 border-red-200 text-[var(--brand-red)] text-[10px] font-meta font-black uppercase tracking-widest hover:bg-[var(--brand-red)] hover:text-white transition-all shadow-sm"
+                  className="w-full lg:w-auto px-8 py-3.5 border-2 border-red-200 text-[var(--brand-red)] text-[10px] font-meta font-bold tracking-tight hover:bg-[var(--brand-red)] hover:text-white transition-all shadow-sm"
                 >
-                  Deactivate Membership
+                  Deactivate membership
                 </button>
               </div>
             </section>

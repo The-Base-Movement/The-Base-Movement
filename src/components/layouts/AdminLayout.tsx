@@ -224,8 +224,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 "transition-all duration-300 origin-left",
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
-                <p className="text-white font-black text-xl leading-none mb-0 tracking-tighter uppercase">The Base</p>
-                <p className="text-[var(--brand-green)] text-[10px] font-black tracking-[0.2em] mt-1.5 leading-none uppercase">Admin Panel</p>
+                <p className="text-white font-bold text-xl leading-none mb-0 tracking-tight">The Base</p>
+                <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-tight mt-1.5 leading-none">Admin panel</p>
               </div>
 
             </Link>
@@ -246,7 +246,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             >
               <Zap className="w-4 h-4 text-[var(--brand-gold)] group-hover:scale-110 transition-transform shrink-0" />
               <span className={cn(
-                "text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 text-stone-100 group-hover:text-white",
+                "text-[10px] font-bold tracking-tight transition-all duration-300 text-stone-100 group-hover:text-white",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0 hidden"
               )}>
                 View live site
@@ -315,7 +315,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           )}
 
                           <span className={cn(
-                            "text-[11px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300",
+                            "text-[11px] font-bold tracking-tight whitespace-nowrap transition-all duration-300",
                             isSidebarOpen ? "opacity-100" : "opacity-0"
                           )}>
                             {item.label}
@@ -346,7 +346,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             >
               <LogOut className="w-5 h-5 group-hover:text-[var(--brand-gold)] shrink-0 transition-colors" />
               <span className={cn(
-                "text-[11px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300",
+                "text-[11px] font-bold tracking-tight whitespace-nowrap transition-all duration-300",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0"
               )}>
                 Sign out
@@ -391,7 +391,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   {/* Pulse effect */}
                   <span className="absolute top-2 right-2 w-4 h-4 bg-[var(--brand-red)] rounded-full animate-ping opacity-75" />
                   {/* Luminous Numeric Badge */}
-                  <span className="absolute top-2 right-2 min-w-[16px] h-4 px-1 bg-[var(--brand-red)] rounded-full border-2 border-white shadow-[0_0_8px_rgba(206,17,38,0.6)] flex items-center justify-center text-[8px] font-black text-white">
+                  <span className="absolute top-2 right-2 min-w-[16px] h-4 px-1 bg-[var(--brand-red)] rounded-full border-2 border-white shadow-[0_0_8px_rgba(206,17,38,0.6)] flex items-center justify-center text-[8px] font-bold text-white">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 </>
@@ -406,7 +406,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-muted/30 rounded-lg transition-colors cursor-pointer group">
                   <div className="text-right hidden sm:block pt-3">
                     <p className="text-[11px] font-bold text-on-surface leading-none">{user?.name}</p>
-                    <p className="text-[9px] font-medium text-muted-foreground/80 mt-1 leading-none uppercase tracking-tighter">
+                    <p className="text-[9px] font-bold text-muted-foreground/80 mt-1 leading-none tracking-tight">
                       {user?.role === 'FOUNDER' 
                         ? 'Movement Founder' 
                         : user?.role === 'ORGANIZER'

@@ -182,7 +182,7 @@ export default function Donate() {
                     ].map((s) => (
                       <div key={s.step} className="flex flex-col items-center group cursor-pointer" onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
                         <div className={cn(
-                          "w-7 h-7 flex items-center justify-center text-[10px] font-black transition-all border",
+                          "w-7 h-7 flex items-center justify-center text-[10px] font-bold transition-all border",
                           activeStep === s.step 
                             ? `${s.color} border-transparent ${s.text} shadow-lg shadow-black/10 scale-110` 
                             : "bg-white border-border/60 text-muted-foreground/40 group-hover:border-on-surface group-hover:text-on-surface"
@@ -190,7 +190,7 @@ export default function Donate() {
                           {s.step}
                         </div>
                         <span className={cn(
-                          "text-[8px] font-black uppercase tracking-[0.2em] mt-2 transition-colors",
+                          "text-[8px] font-bold tracking-tight mt-2 transition-colors",
                           activeStep === s.step ? "text-on-surface" : "text-muted-foreground/40"
                         )}>
                           {s.label}
@@ -245,7 +245,7 @@ export default function Donate() {
                       </div>
                     </div>
                     <CardContent className="p-8 flex flex-col flex-1">
-                      <h3 className="font-bold text-on-surface font-meta text-base mb-3 group-hover:text-primary transition-colors uppercase tracking-tight">{c.title}</h3>
+                      <h3 className="font-bold text-on-surface font-meta text-base mb-3 group-hover:text-primary transition-colors tracking-tight">{c.title}</h3>
                       <p className="text-[11px] font-bold text-muted-foreground/60 mb-8 line-clamp-2 leading-relaxed normal-case">{c.description}</p>
                       
                       <div className="mt-auto space-y-6">
@@ -297,16 +297,16 @@ export default function Donate() {
                   </div>
                   <div>
                     <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">MoMo Identifier</p>
-                    <p className="font-bold font-meta tracking-wider text-white text-xl">+233 538 873 569</p>
+                    <p className="font-bold font-meta tracking-tight text-white text-xl">+233 538 873 569</p>
                   </div>
                   <div className="grid grid-cols-1 gap-6 pt-8 border-t border-white/10">
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 font-meta mb-2">Network Hub</p>
-                      <p className="text-white/60 font-black font-meta uppercase text-[11px]">MTN Mobile Money</p>
+                      <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">Network Hub</p>
+                      <p className="text-white/60 font-bold font-meta text-[11px]">MTN Mobile Money</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 font-meta mb-2">Deployment Reference</p>
-                      <p className="text-accent font-black font-meta uppercase text-[11px] italic border-b border-accent/30 pb-1">"THE BASE"</p>
+                      <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">Deployment Reference</p>
+                      <p className="text-accent font-bold font-meta text-[11px] italic border-b border-accent/30 pb-1">"THE BASE"</p>
                     </div>
                   </div>
                 </div>
@@ -315,7 +315,7 @@ export default function Donate() {
                   <div className="text-primary mt-0.5">
                     <Check className="w-4 h-4" />
                   </div>
-                  <p className="text-[10px] text-white/40 leading-relaxed font-bold tracking-tight uppercase">
+                  <p className="text-[10px] text-white/40 leading-relaxed font-bold tracking-tight">
                     Complete transfer protocol first, then capture receipt for verification.
                   </p>
                 </div>
@@ -324,13 +324,13 @@ export default function Donate() {
               {/* Column 2: Donation Form */}
               <div id="donor-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px] rounded-sm">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-7 h-7 bg-accent text-white flex items-center justify-center font-meta font-black text-[10px]">02</span>
-                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg uppercase">Contributor Profile</h3>
+                  <span className="w-7 h-7 bg-accent text-white flex items-center justify-center font-meta font-bold text-[10px]">02</span>
+                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg">Contributor profile</h3>
                 </div>
 
                 <form onSubmit={handleSubmit} id="donationForm" className="space-y-6 flex-1">
                   <div className="space-y-2">
-                    <label htmlFor="fullName" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                    <label htmlFor="fullName" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
                       Identification <span className="text-destructive">*</span>
                     </label>
                     <input 
@@ -345,8 +345,8 @@ export default function Donate() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="phone" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
-                      Contact Line <span className="text-destructive">*</span>
+                    <label htmlFor="phone" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
+                      Contact line <span className="text-destructive">*</span>
                     </label>
                     <input 
                       id="phone" 
@@ -361,7 +361,7 @@ export default function Donate() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label htmlFor="amount" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                      <label htmlFor="amount" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
                         Amount (GHS) <span className="text-destructive">*</span>
                       </label>
                       <input 
@@ -372,11 +372,11 @@ export default function Donate() {
                         value={formData.amount}
                         onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                         onFocus={() => setActiveStep(2)} 
-                        className="w-full h-12 px-4 text-on-surface text-sm bg-muted/20 border-b border-border/60 focus:border-on-surface outline-none transition-all font-black font-meta" 
+                        className="w-full h-12 px-4 text-on-surface text-sm bg-muted/20 border-b border-border/60 focus:border-on-surface outline-none transition-all font-bold font-meta" 
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="country" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                      <label htmlFor="country" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
                         Jurisdiction <span className="text-destructive">*</span>
                       </label>
                       <select 
@@ -407,8 +407,8 @@ export default function Donate() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="campaign" className="text-[10px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
-                      Target Cell <span className="text-destructive">*</span>
+                    <label htmlFor="campaign" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
+                      Target cell <span className="text-destructive">*</span>
                     </label>
                     <select 
                       id="campaign" 
@@ -425,7 +425,7 @@ export default function Donate() {
                   </div>
 
                   <div className="bg-muted/10 border border-border/40 p-6 rounded-sm space-y-4">
-                    <p className="text-[9px] font-black font-meta uppercase tracking-widest text-muted-foreground/40">Patriot Tracking</p>
+                    <p className="text-[9px] font-bold font-meta tracking-tight text-muted-foreground/40">Patriot tracking</p>
                     <input id="membership" placeholder="ID Number (Optional)" className="w-full bg-white border border-border/40 p-4 text-sm font-bold placeholder-muted-foreground/20 focus:outline-none focus:border-on-surface transition-all rounded-sm" />
                   </div>
                 </form>
@@ -434,9 +434,9 @@ export default function Donate() {
               {/* Column 3: Link Membership */}
               <div id="link-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col rounded-sm scroll-mt-[180px]">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-7 h-7 bg-on-surface text-white flex items-center justify-center font-meta font-black text-[10px]">03</span>
-                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg uppercase">
-                    {isLoggedIn ? 'Patriot Profile' : 'Link Patriot'}
+                  <span className="w-7 h-7 bg-on-surface text-white flex items-center justify-center font-meta font-bold text-[10px]">03</span>
+                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg">
+                    {isLoggedIn ? 'Patriot profile' : 'Link patriot'}
                   </h3>
                 </div>
 
@@ -444,18 +444,18 @@ export default function Donate() {
                     <div className="bg-muted/10 border border-border/40 p-6 rounded-sm space-y-6">
                       <div className="flex items-center gap-3">
                         <Activity className="w-4 h-4 text-primary" />
-                        <h4 className="font-black text-on-surface font-meta tracking-tight text-[11px] uppercase">
-                          {isLoggedIn ? 'Active Session' : 'Movement ID'} <span className="text-muted-foreground/40 font-bold lowercase tracking-normal">(optional)</span>
+                        <h4 className="font-bold text-on-surface font-meta tracking-tight text-[11px]">
+                          {isLoggedIn ? 'Active session' : 'Movement ID'} <span className="text-muted-foreground/40 font-bold tracking-normal">(optional)</span>
                         </h4>
                       </div>
-                      <p className="text-[10px] text-muted-foreground/60 font-bold leading-relaxed uppercase tracking-tight">
+                      <p className="text-[10px] text-muted-foreground/60 font-bold leading-relaxed tracking-tight">
                         {isLoggedIn 
                           ? 'Automatic recognition active. This deployment will be linked to your patriot profile.'
                           : 'Enter your movement identification number to synchronize this capital with your profile.'
                         }
                       </p>
                       <div className="space-y-2">
-                        <label htmlFor="membershipNumber" className="text-[9px] font-black text-muted-foreground/40 font-meta tracking-widest uppercase">
+                        <label htmlFor="membershipNumber" className="text-[9px] font-bold text-muted-foreground/40 font-meta tracking-tight">
                           Movement ID
                         </label>
                         <input 
@@ -478,7 +478,7 @@ export default function Donate() {
                           />
                           <Check className="absolute h-3 w-3 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" />
                         </div>
-                        <span className="text-[10px] text-muted-foreground/80 font-black uppercase tracking-tight group-hover:text-on-surface transition-colors">Publish to personal dossier</span>
+                        <span className="text-[10px] text-muted-foreground/80 font-bold tracking-tight group-hover:text-on-surface transition-colors">Publish to personal dossier</span>
                       </label>
                     </div>
                 </div>
@@ -487,8 +487,8 @@ export default function Donate() {
               {/* Column 4: Upload Receipt */}
               <div id="receipt-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col rounded-sm scroll-mt-[180px]">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-7 h-7 bg-primary text-white flex items-center justify-center font-meta font-black text-[10px]">04</span>
-                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg uppercase">Audit Trail</h3>
+                  <span className="w-7 h-7 bg-primary text-white flex items-center justify-center font-meta font-bold text-[10px]">04</span>
+                  <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg">Audit trail</h3>
                 </div>
 
                 <div className="space-y-8 flex-1 flex flex-col">
@@ -505,17 +505,17 @@ export default function Donate() {
                       <div className="w-14 h-14 bg-white shadow-sm border border-border/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 rounded-sm">
                         <ArrowDownToLine className="w-6 h-6 text-muted-foreground/40 group-hover:text-primary transition-colors" />
                       </div>
-                      <p className="text-[10px] text-on-surface font-black uppercase tracking-widest mb-1 font-meta">Synchronize Receipt</p>
-                      <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-[0.2em]">JPG, PNG, or PDF</p>
+                      <p className="text-[10px] text-on-surface font-bold tracking-tight mb-1 font-meta">Synchronize receipt</p>
+                      <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">JPG, PNG, or PDF</p>
                     </div>
 
                     <div className="bg-muted/10 p-5 border border-border/40 rounded-sm">
                       <div className="flex items-center gap-3 mb-3">
                         <Globe className="w-4 h-4 text-primary" />
-                        <h4 className="font-black text-on-surface font-meta uppercase tracking-tight text-[10px]">Global Diaspora Portal</h4>
+                        <h4 className="font-bold text-on-surface font-meta tracking-tight text-[10px]">Global diaspora portal</h4>
                       </div>
-                      <p className="text-[10px] text-muted-foreground/60 leading-relaxed font-bold uppercase tracking-tight">
-                        Use deployment code <span className="text-primary font-black">THEBASEM</span> on TapTap for resource scaling bonus.
+                      <p className="text-[10px] text-muted-foreground/60 leading-relaxed font-bold tracking-tight">
+                        Use deployment code <span className="text-primary font-bold">THEBASEM</span> on TapTap for resource scaling bonus.
                       </p>
                     </div>
 
@@ -538,11 +538,11 @@ export default function Donate() {
               <section className="mt-24">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                   <div>
-                    <h2 className="text-2xl font-black text-on-surface tracking-tight uppercase font-meta flex items-center gap-3">
+                    <h2 className="text-2xl font-bold text-on-surface tracking-tight font-meta flex items-center gap-3">
                       <Check className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.4)]" />
-                      Strategic Victories
+                      Strategic victories
                     </h2>
-                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mt-2">Historical proof of patriot mobilization success.</p>
+                    <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mt-2">Historical proof of patriot mobilization success.</p>
                   </div>
                 </div>
                 
@@ -550,21 +550,21 @@ export default function Donate() {
                   {pastCampaigns.map(c => (
                     <Card key={c.id} className="bg-white border border-border/60 p-5 flex flex-col relative grayscale hover:grayscale-0 transition-all duration-700 opacity-75 hover:opacity-100 rounded-sm">
                       <div className="absolute top-4 right-4 z-10">
-                        <span className="bg-on-surface text-white text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1 shadow-xl flex items-center gap-1">
-                          <Check className="w-3 h-3 text-primary" /> 100% SECURED
+                        <span className="bg-on-surface text-white text-[8px] font-bold tracking-tight px-3 py-1 shadow-xl flex items-center gap-1">
+                          <Check className="w-3 h-3 text-primary" /> 100% Secured
                         </span>
                       </div>
                       <div className="aspect-square bg-muted/30 mb-5 overflow-hidden rounded-sm border border-border/5">
                         {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />}
                       </div>
-                      <h4 className="font-bold text-on-surface font-meta text-xs mb-2 uppercase tracking-tight">{c.title}</h4>
-                      <p className="text-[10px] font-bold text-muted-foreground/40 mb-6 line-clamp-2 normal-case leading-relaxed">{c.description}</p>
+                      <h4 className="font-bold text-on-surface font-meta text-xs mb-2 tracking-tight">{c.title}</h4>
+                      <p className="text-[10px] font-bold text-muted-foreground/40 mb-6 line-clamp-2 leading-relaxed">{c.description}</p>
                       <div className="mt-auto pt-4 border-t border-border/40 flex justify-between items-center">
                         <div>
-                          <p className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest">Total impact</p>
-                          <p className="text-xs font-black text-primary">GHS {c.raisedAmount.toLocaleString()}</p>
+                          <p className="text-[8px] font-bold text-muted-foreground/40 tracking-tight">Total impact</p>
+                          <p className="text-xs font-bold text-primary">GHS {c.raisedAmount.toLocaleString()}</p>
                         </div>
-                        <span className="text-[8px] font-black text-on-surface/20 uppercase tracking-[0.2em] italic">Decommissioned</span>
+                        <span className="text-[8px] font-bold text-on-surface/20 tracking-tight italic">Decommissioned</span>
                       </div>
                     </Card>
                   ))}
@@ -576,20 +576,20 @@ export default function Donate() {
             <section className="mt-24">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                 <div>
-                  <h2 className="text-2xl font-black text-on-surface tracking-tight uppercase font-meta flex items-center gap-3">
+                  <h2 className="text-2xl font-bold text-on-surface tracking-tight font-meta flex items-center gap-3">
                     <Activity className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
-                    Capital Deployment History
+                    Capital deployment history
                   </h2>
-                  <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mt-2">Immutable record of your personal impact.</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mt-2">Immutable record of your personal impact.</p>
                 </div>
                 <div className="flex gap-4">
                   <div className="px-5 py-3 bg-white border border-border/60 text-center rounded-sm shadow-sm">
-                    <p className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Aggregate support</p>
-                    <p className="text-sm font-black text-on-surface uppercase tracking-tight font-meta mt-1">GHS 1,250</p>
+                    <p className="text-[8px] font-bold text-muted-foreground/40 tracking-tight">Aggregate support</p>
+                    <p className="text-sm font-bold text-on-surface tracking-tight font-meta mt-1">GHS 1,250</p>
                   </div>
                   <div className="px-5 py-3 bg-primary/10 border border-primary/20 text-center rounded-sm shadow-sm">
-                    <p className="text-[8px] font-black text-primary uppercase tracking-[0.2em]">Mobilization XP</p>
-                    <p className="text-sm font-black text-primary uppercase tracking-tight font-meta mt-1">125 Units</p>
+                    <p className="text-[8px] font-bold text-primary tracking-tight">Mobilization XP</p>
+                    <p className="text-sm font-bold text-primary tracking-tight font-meta mt-1">125 Units</p>
                   </div>
                 </div>
               </div>
@@ -600,17 +600,17 @@ export default function Donate() {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-muted/30 border-b border-border/40">
-                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Deployment Details</th>
-                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Capital</th>
-                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Channel</th>
-                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Verification</th>
-                        <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] text-right">Audit</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Deployment details</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Capital</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Channel</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Verification</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight text-right">Audit</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/40">
                       {loading ? (
                         <tr>
-                          <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-black uppercase tracking-[0.2em] italic">
+                          <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
                             Synchronizing deployment ledger...
                           </td>
                         </tr>
@@ -618,22 +618,22 @@ export default function Donate() {
                         contributions.map((item, idx) => (
                         <tr key={idx} className="hover:bg-muted/30 transition-colors group">
                           <td className="p-6">
-                            <p className="text-xs font-black text-on-surface uppercase tracking-tight">{item.date}</p>
-                            <p className="text-[10px] text-primary font-black uppercase tracking-widest mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
-                            <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-widest mt-1">TX-{item.id.toUpperCase()}</p>
+                            <p className="text-xs font-bold text-on-surface tracking-tight">{item.date}</p>
+                            <p className="text-[10px] text-primary font-bold tracking-tight mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
+                            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">TX-{item.id.toLowerCase()}</p>
                           </td>
                           <td className="p-6">
-                            <p className="text-sm font-black text-on-surface font-meta">{item.amount}</p>
+                            <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
                           </td>
                           <td className="p-6">
                             <div className="flex items-center gap-2">
                               <span className="w-2 h-2 bg-muted/40 rounded-full"></span>
-                              <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-tight">{item.method}</p>
+                              <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.method}</p>
                             </div>
                           </td>
                           <td className="p-6">
                             <span className={cn(
-                              "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm shadow-sm",
+                              "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm shadow-sm",
                               item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
                             )}>
                               <div className={cn("w-1.5 h-1.5 rounded-full", item.status === 'Verified' ? "bg-primary" : "bg-accent")}></div>
@@ -651,7 +651,7 @@ export default function Donate() {
                         <tr>
                           <td colSpan={5} className="p-16 text-center">
                             <Activity className="w-8 h-8 text-muted-foreground/20 mx-auto mb-4" />
-                            <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">No deployment history detected.</p>
+                            <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">No deployment history detected.</p>
                           </td>
                         </tr>
                       )}
@@ -665,11 +665,11 @@ export default function Donate() {
                     <div key={idx} className="p-8 bg-white space-y-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-black text-on-surface uppercase tracking-tight">{item.date}</p>
-                          <p className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-[0.2em] mt-1">TX-{item.id.toUpperCase()}</p>
+                          <p className="text-sm font-bold text-on-surface tracking-tight">{item.date}</p>
+                          <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight mt-1">TX-{item.id.toLowerCase()}</p>
                         </div>
                         <span className={cn(
-                          "px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm",
+                          "px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm",
                           item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
                         )}>
                           {item.status}
@@ -677,28 +677,28 @@ export default function Donate() {
                       </div>
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">Capital Deployment</p>
-                          <p className="text-xl font-black text-on-surface font-meta">{item.amount}</p>
+                          <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Capital deployment</p>
+                          <p className="text-xl font-bold text-on-surface font-meta">{item.amount}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">Channel</p>
-                          <p className="text-[10px] font-black text-on-surface uppercase tracking-tight">{item.method}</p>
+                          <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Channel</p>
+                          <p className="text-[10px] font-bold text-on-surface tracking-tight">{item.method}</p>
                         </div>
                       </div>
-                      <Button variant="outline" className="w-full h-12 border-border/60 text-muted-foreground/40 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-on-surface hover:text-white transition-all shadow-sm">
-                        <ArrowDownToLine className="w-4 h-4 mr-2" /> Synchronize Proof
+                      <Button variant="outline" className="w-full h-12 border-border/60 text-muted-foreground/40 text-[10px] font-bold tracking-tight rounded-sm hover:bg-on-surface hover:text-white transition-all shadow-sm">
+                        <ArrowDownToLine className="w-4 h-4 mr-2" /> Synchronize proof
                       </Button>
                     </div>
                   ))}
                 </div>
 
                  <div className="p-6 bg-muted/30 border-t border-border/40 flex justify-between items-center">
-                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Live mobilization ledger</p>
+                    <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Live mobilization ledger</p>
                     <button 
                        onClick={() => setIsHistoryModalOpen(true)}
-                       className="text-[10px] font-black text-primary uppercase tracking-[0.3em] hover:text-on-surface transition-all border-b border-primary/30 pb-1"
+                       className="text-[10px] font-bold text-primary tracking-tight hover:text-on-surface transition-all border-b border-primary/30 pb-1"
                      >
-                       Full Operational Audit
+                       Full operational audit
                      </button>
                   </div>
               </Card>
@@ -712,7 +712,7 @@ export default function Donate() {
                    <div className="p-8 border-b border-border/40 flex items-center justify-between bg-white sticky top-0 z-10">
                      <div className="flex items-center gap-4">
                        <Activity className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
-                       <h3 className="font-black text-on-surface font-meta uppercase tracking-tight text-xl leading-none">Capital Deployment Ledger</h3>
+                       <h3 className="font-bold text-on-surface font-meta tracking-tight text-xl leading-none">Capital deployment ledger</h3>
                      </div>
                      <Button 
                        variant="ghost"
@@ -729,28 +729,28 @@ export default function Donate() {
                        <table className="w-full text-left border-collapse">
                          <thead>
                            <tr className="bg-muted/30 border-b border-border/40">
-                             <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Deployment Details</th>
-                             <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Capital</th>
-                             <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Channel</th>
-                             <th className="p-6 text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Verification</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Deployment details</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Capital</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Channel</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Verification</th>
                            </tr>
                          </thead>
                          <tbody className="divide-y divide-border/40">
                            {contributions.map((item, idx) => (
                              <tr key={idx} className="hover:bg-muted/10 transition-colors group">
                                <td className="p-6">
-                                 <p className="text-xs font-black text-on-surface uppercase tracking-tight">{item.date}</p>
-                                 <p className="text-[10px] text-muted-foreground/40 font-black uppercase tracking-[0.2em] mt-1">TX-{item.id.toUpperCase()}</p>
+                                 <p className="text-xs font-bold text-on-surface tracking-tight">{item.date}</p>
+                                 <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight mt-1">TX-{item.id.toLowerCase()}</p>
                                </td>
                                <td className="p-6">
-                                 <p className="text-sm font-black text-on-surface font-meta">{item.amount}</p>
+                                 <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
                                </td>
                                <td className="p-6">
-                                 <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-tight">{item.method}</p>
+                                 <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.method}</p>
                                </td>
                                <td className="p-6">
                                  <span className={cn(
-                                   "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm",
+                                   "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm",
                                    item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
                                  )}>
                                    {item.status}
@@ -765,8 +765,8 @@ export default function Donate() {
                          <div className="w-20 h-20 bg-white shadow-sm border border-border/10 flex items-center justify-center mx-auto mb-8 rounded-sm">
                            <Activity className="w-8 h-8 text-muted-foreground/20" />
                          </div>
-                         <h4 className="text-xl font-black text-on-surface mb-3 font-meta uppercase tracking-tight">Deployment records inactive</h4>
-                         <p className="text-[11px] text-muted-foreground/60 max-w-sm mx-auto mb-8 font-bold uppercase tracking-tight leading-relaxed">
+                         <h4 className="text-xl font-bold text-on-surface mb-3 font-meta tracking-tight">Deployment records inactive</h4>
+                         <p className="text-[11px] text-muted-foreground/60 max-w-sm mx-auto mb-8 font-bold tracking-tight leading-relaxed">
                            No capital deployment detected for this session. Support the movement cells to build a technically robust Ghana.
                          </p>
                        </div>
@@ -774,24 +774,24 @@ export default function Donate() {
                    </div>
 
                    <div className="p-8 border-t border-border/40 flex items-center justify-between bg-muted/10 sticky bottom-0 z-10">
-                     <div className="flex items-center gap-3 text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">
+                     <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/40 tracking-tight">
                        <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_var(--brand-green-full)]"></span>
-                       {contributions.length} DEPLOYMENT RECORDS SECURED
+                       {contributions.length} deployment records secured
                      </div>
                      <div className="flex gap-4">
                        <Button 
                          variant="outline"
                          onClick={() => setIsHistoryModalOpen(false)}
-                         className="px-6 h-12 border-border/60 text-muted-foreground/40 font-black text-[10px] uppercase tracking-[0.3em] rounded-sm hover:bg-white transition-all flex items-center gap-2"
+                         className="px-6 h-12 border-border/60 text-muted-foreground/40 font-bold text-[10px] tracking-tight rounded-sm hover:bg-white transition-all flex items-center gap-2"
                        >
-                         <ArrowDownToLine className="w-4 h-4" /> Download Audit
+                         <ArrowDownToLine className="w-4 h-4" /> Download audit
                        </Button>
                        <Button 
                          onClick={() => {
                            setIsHistoryModalOpen(false)
                            document.getElementById('payment-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                          }}
-                         className="px-8 h-12 bg-on-surface text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-sm hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-black/10"
+                         className="px-8 h-12 bg-on-surface text-white font-bold text-[10px] tracking-tight rounded-sm hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-black/10"
                        >
                          <Heart className="w-4 h-4 text-primary" /> Contribute
                        </Button>

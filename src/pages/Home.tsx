@@ -44,7 +44,7 @@ function AnimatedCounter({ target, duration = 2000, className }: { target: numbe
   return (
     <div 
       ref={ref} 
-      className={className || "text-6xl md:text-[5rem] font-meta font-black tracking-tighter transition-colors duration-300"} 
+      className={className || "text-6xl md:text-[5rem] font-meta font-bold tracking-tighter transition-colors duration-300"} 
       style={!className ? { color: getColor(count) } : undefined}
     >
       {count.toLocaleString()}
@@ -99,9 +99,16 @@ export default function Home() {
         <div className="absolute inset-0 z-0 bg-gradient-to-t from-on-surface via-on-surface/60 to-transparent"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 text-center md:text-left">
-            <h1 id="hero-heading" className="text-5xl md:text-h1 font-meta font-black mb-6 leading-[1.1] tracking-tighter uppercase">
+            <h1 id="hero-heading" className="text-5xl md:text-h1 font-meta font-bold mb-4 leading-[1.1] tracking-tighter">
               Ghana First,<br />Jobs for the youth!
             </h1>
+            <div className="flex justify-center md:justify-start">
+              <div className="flex h-1 w-24 mb-6">
+                <div className="flex-1 bg-destructive" />
+                <div className="flex-1 bg-accent" />
+                <div className="flex-1 bg-primary" />
+              </div>
+            </div>
             <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl mb-10 leading-relaxed font-body-md mx-auto md:mx-0">
               A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry and innovation.
             </p>
@@ -130,7 +137,7 @@ export default function Home() {
           <h2 id="platforms-heading" className="sr-only">Our Platforms</h2>
           <div className="grid md:grid-cols-2 gap-12 md:gap-24">
             <div className="border-t-[4px] border-primary pt-8 group">
-              <h3 className="text-h3 font-meta font-black text-on-surface mb-4 flex items-center gap-3 tracking-tight">
+              <h3 className="text-h3 font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight">
                 <MapPin className="text-primary w-8 h-8" /> Base Ghana
               </h3>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
@@ -144,7 +151,7 @@ export default function Home() {
             </div>
             
             <div className="border-t-[4px] border-accent pt-8 group">
-              <h3 className="text-h3 font-meta font-black text-on-surface mb-4 flex items-center gap-3 tracking-tight">
+              <h3 className="text-h3 font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight">
                 <Globe className="text-accent w-8 h-8" /> Base Diaspora
               </h3>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
@@ -164,28 +171,33 @@ export default function Home() {
       <section aria-labelledby="foundation-heading" className="py-24 bg-on-surface text-white border-t border-white/5">
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="mb-16">
-            <h2 id="foundation-heading" className="text-4xl md:text-5xl font-meta font-black leading-tight mb-6 uppercase tracking-tighter">
+            <h2 id="foundation-heading" className="text-4xl md:text-5xl font-meta font-bold leading-tight mb-4 tracking-tighter">
               Our Foundation
             </h2>
+            <div className="flex h-1 w-24 mb-6">
+              <div className="flex-1 bg-destructive" />
+              <div className="flex-1 bg-accent" />
+              <div className="flex-1 bg-primary" />
+            </div>
           </div>
           
           <div className="grid md:grid-cols-3 gap-12">
             <div className="border-l-2 border-destructive pl-6">
-              <span className="text-destructive font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our mission</span>
+              <span className="text-destructive font-meta font-bold tracking-tight text-xs mb-3 block">Our mission</span>
               <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Actionable agenda</h3>
               <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
                 To deliver an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians, covering education, governance, industrialisation, infrastructure, institutional reform, and agriculture.
               </p>
             </div>
             <div className="border-l-2 border-accent pl-6">
-              <span className="text-accent font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our values</span>
+              <span className="text-accent font-meta font-bold tracking-tight text-xs mb-3 block">Our values</span>
               <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Patriotism, honesty, discipline</h3>
               <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
                 We are guided by love of country, transparency in leadership, and the moral courage to do what is right for Ghana.
               </p>
             </div>
             <div className="border-l-2 border-primary pl-6">
-              <span className="text-primary font-meta font-bold tracking-widest uppercase text-xs mb-3 block">Our vision</span>
+              <span className="text-primary font-meta font-bold tracking-tight text-xs mb-3 block">Our vision</span>
               <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">A transformed nation</h3>
               <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
                 A Ghana with quality education, lean accountable government, industrialisation, tourism, and agro-processing, quality infrastructure, comprehensive institutional reform, and expertise-led agriculture.
@@ -205,14 +217,14 @@ export default function Home() {
               <dd className="m-0">
                 <AnimatedCounter target={355482} />
               </dd>
-              <dt className="text-sm text-on-surface/40 mt-4 tracking-[0.2em] font-black uppercase">Citizens Joined</dt>
+              <dt className="text-sm text-on-surface/40 mt-4 tracking-tight font-bold">Citizens joined</dt>
             </div>
             <div className="pl-8 relative">
               <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
               <dd className="m-0">
                 <AnimatedCounter target={2} />
               </dd>
-              <dt className="text-sm text-on-surface/40 mt-4 tracking-[0.2em] font-black uppercase">Global Platforms</dt>
+              <dt className="text-sm text-on-surface/40 mt-4 tracking-tight font-bold">Global platforms</dt>
             </div>
           </dl>
         </div>
@@ -223,10 +235,15 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <span className="text-primary font-black tracking-[0.2em] text-[10px] mb-3 block">UPDATES</span>
-              <h2 id="updates-heading" className="text-3xl md:text-h2 font-meta font-black text-on-surface tracking-tight uppercase">Latest updates</h2>
+              <span className="text-primary font-bold tracking-tight text-[10px] mb-3 block">Updates</span>
+              <h2 id="updates-heading" className="text-3xl md:text-h2 font-meta font-bold text-on-surface tracking-tight">Latest updates</h2>
+              <div className="flex h-1 w-24 mt-4">
+                <div className="flex-1 bg-destructive" />
+                <div className="flex-1 bg-accent" />
+                <div className="flex-1 bg-primary" />
+              </div>
             </div>
-            <Link to="/blog" className="hidden md:flex items-center gap-2 text-primary font-meta font-bold tracking-widest text-xs hover:underline">
+            <Link to="/blog" className="hidden md:flex items-center gap-2 text-primary font-meta font-bold tracking-tight text-xs hover:underline">
               View all news <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -251,17 +268,17 @@ export default function Home() {
                        decoding="async" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/80">
-                        <span className="text-[10px] font-black text-muted-foreground/80 uppercase tracking-widest">The Base</span>
+                        <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">The Base</span>
                       </div>
                     )}
                   </div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[10px] font-meta font-bold text-primary uppercase tracking-widest">{post.category}</span>
+                    <span className="text-[10px] font-meta font-bold text-primary tracking-tight">{post.category}</span>
                     <span className="text-[10px] text-muted-foreground/60 font-meta">
                       {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                     </span>
                   </div>
-                  <h3 className="text-lg font-meta font-black text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
+                  <h3 className="text-lg font-meta font-bold text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
                     {post.title}
                   </h3>
                 </Link>
@@ -288,8 +305,8 @@ export default function Home() {
             <div className="relative z-10 p-12 md:p-24 flex flex-col items-center text-center">
               {/* Content Column */}
               <div className="max-w-4xl">
-                <span className="text-accent font-meta font-bold tracking-[0.4em] text-xs mb-6 block uppercase">Ready to build Ghana?</span>
-                <h2 id="cta-heading" className="text-4xl md:text-6xl font-meta font-black text-white mb-8 leading-[1.1] tracking-tighter">
+                <span className="text-accent font-meta font-bold tracking-tight text-xs mb-6 block">Ready to build Ghana?</span>
+                <h2 id="cta-heading" className="text-4xl md:text-6xl font-meta font-bold text-white mb-8 leading-[1.1] tracking-tighter">
                   Join 355,482 people building Ghana’s future.
                 </h2>
                 <p className="text-lg md:text-xl text-muted-foreground/80 mb-12 leading-relaxed font-body-md max-w-2xl mx-auto">
@@ -312,7 +329,7 @@ export default function Home() {
                 {/* Trust Row - Pill Badges */}
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   {['Base Ghana', 'Base Diaspora', 'Free Registration'].map((label) => (
-                    <span key={label} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-meta font-bold text-muted-foreground/80 uppercase tracking-widest">
+                    <span key={label} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-meta font-bold text-muted-foreground/80 tracking-tight">
                       {label}
                     </span>
                   ))}

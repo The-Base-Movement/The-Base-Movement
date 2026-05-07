@@ -519,7 +519,7 @@ export default function MembersList() {
                           <div className="w-16 h-16 rounded-sm bg-muted/30 flex items-center justify-center mb-6">
                             <Users className="w-8 h-8 text-muted-foreground/40" />
                           </div>
-                          <h3 className="text-xl font-bold text-on-surface tracking-tight normal-case">No members yet</h3>
+                          <h3 className="text-xl font-bold text-on-surface tracking-tight">No members yet</h3>
                           <p className="text-muted-foreground/80 text-sm mt-1 font-medium">Create your first member record to get started.</p>
                           <Button 
                             variant="primary"
@@ -528,7 +528,7 @@ export default function MembersList() {
                             onClick={handleAddMember}
                           >
                             <Plus className="w-4 h-4 mr-2" />
-                            Establish First Identity
+                            Establish first identity
                           </Button>
                         </div>
                       ) : (
@@ -548,7 +548,7 @@ export default function MembersList() {
                             }}
                             className="mt-6 h-11 px-10 rounded-sm text-[10px] tracking-tight font-bold border-border/40 transition-all active:scale-95"
                           >
-                            <RotateCcw className="w-4 h-4 mr-2" /> Clear Filters
+                            <RotateCcw className="w-4 h-4 mr-2" /> Clear filters
                           </Button>
                         </div>
                       )}
@@ -726,7 +726,7 @@ export default function MembersList() {
                 region={selectedMember.region}
                 constituency={selectedMember.constituency}
                 chapter={selectedMember.chapter}
-                status={selectedMember.status === 'Active' ? 'Active Member' : selectedMember.status}
+                status={selectedMember.status === 'Active' ? 'Active member' : selectedMember.status}
                 joinedDate={selectedMember.joined}
                 initials={selectedMember.name.split(' ').map(n => n[0]).join('')}
                 avatarUrl={selectedMember.avatarUrl}
@@ -746,7 +746,7 @@ export default function MembersList() {
                   className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-bold tracking-tight text-[10px] shadow-lg rounded-none transition-all active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">print</span>
-                  Print Card
+                  Print card
                 </Button>
                 <Button 
                   variant="primary"
@@ -808,7 +808,7 @@ export default function MembersList() {
                         </div>
                       </div>
                       <span className={cn(
-                        "px-2 py-0.5 text-[8px] font-bold tracking-widest border",
+                        "px-2 py-0.5 text-[8px] font-bold tracking-tight border",
                         log.status === 'Success' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-accent/10 text-accent border-accent/20'
                       )}>
                         {log.status}
@@ -823,7 +823,7 @@ export default function MembersList() {
           <div className="p-6 border-t border-border/40 bg-stone-50/50 flex justify-end">
             <Button 
               onClick={() => setIsAuditModalOpen(false)}
-              className="bg-on-surface text-white text-[10px] font-bold tracking-[0.2em] rounded-sm h-11 px-8 shadow-md transition-all active:scale-95"
+              className="bg-on-surface text-white text-[10px] font-bold tracking-tight rounded-sm h-11 px-8 shadow-md transition-all active:scale-95"
             >
               Close history
             </Button>

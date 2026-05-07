@@ -811,7 +811,7 @@ export default function AdminBlogs() {
                   loading="lazy" 
                 />
                 <div className="absolute top-4 left-4">
-                  <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-[10px] font-bold tracking-wider rounded-full border-none shadow-sm px-3">
+                  <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-[10px] font-bold tracking-tight rounded-full border-none shadow-sm px-3">
                     {post.category}
                   </Badge>
                 </div>

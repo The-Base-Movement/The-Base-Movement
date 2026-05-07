@@ -363,7 +363,7 @@ export default function PollsManagement() {
                         <Users className="w-5 h-5 text-on-surface" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-widest">Field participants</p>
+                        <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Field participants</p>
                         <span className="text-sm font-bold text-on-surface">{poll.totalVotes.toLocaleString()}</span>
                       </div>
                     </div>
@@ -379,11 +379,11 @@ export default function PollsManagement() {
 
                   <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-widest">Global engagement</span>
-                        <Badge variant="default" className="px-2 py-0.5 text-[9px] font-bold normal-case tracking-tighter border rounded-full">HQ Verified</Badge>
+                        <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Global engagement</span>
+                        <Badge variant="default" className="px-2 py-0.5 text-[9px] font-bold normal-case tracking-tight border rounded-full">HQ Verified</Badge>
                       </div>
                     <div className="space-y-1 text-right">
-                      <p className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-widest">Expires</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Expires</p>
                       <p className="text-xs font-bold text-on-surface/80">{poll.endDate}</p>
                     </div>
                   </div>

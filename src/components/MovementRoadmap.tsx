@@ -64,11 +64,11 @@ export function MovementRoadmap() {
     <div className="space-y-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-2xl font-black tracking-tighter text-on-surface flex items-center gap-3 m-0">
+          <h2 className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-3 m-0">
             <span className="p-2 bg-[var(--brand-red)]/10 rounded-none">
               <Flag className="w-6 h-6 text-[var(--brand-red)]" />
             </span>
-            National Strategic <span className="text-[var(--brand-green)]">Roadmap</span>
+            National strategic <span className="text-[var(--brand-green)]">roadmap</span>
           </h2>
           <p className="text-xs font-bold text-on-surface/40 mt-3 ml-12">
             The path to building the Ghana we deserve.
@@ -77,15 +77,15 @@ export function MovementRoadmap() {
         <div className="flex items-center gap-4 ml-12 md:ml-0">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgb(var(--brand-green-rgb))' }} />
-            <span className="text-micro font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-green-rgb))' }}>Completed</span>
+            <span className="text-micro font-bold tracking-tight" style={{ color: 'rgb(var(--brand-green-rgb))' }}>Completed</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgb(var(--brand-gold-rgb))' }} />
-            <span className="text-micro font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-gold-rgb))' }}>Active</span>
+            <span className="text-micro font-bold tracking-tight" style={{ color: 'rgb(var(--brand-gold-rgb))' }}>Active</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'rgb(var(--brand-red-rgb))' }} />
-            <span className="text-micro font-black uppercase tracking-widest" style={{ color: 'rgb(var(--brand-red-rgb))' }}>Future</span>
+            <span className="text-micro font-bold tracking-tight" style={{ color: 'rgb(var(--brand-red-rgb))' }}>Future</span>
           </div>
         </div>
       </div>
@@ -156,9 +156,9 @@ export function MovementRoadmap() {
                       >
                         {milestone.status}
                       </span>
-                      <span className="text-tiny font-bold text-on-surface/20 tracking-widest capitalize">{milestone.category}</span>
+                      <span className="text-tiny font-bold text-on-surface/20 tracking-tight capitalize">{milestone.category}</span>
                     </div>
-                    <h4 className="text-lg font-black italic tracking-tighter text-on-surface group-hover:text-[var(--brand-red)] transition-colors leading-tight">
+                    <h4 className="text-lg font-bold italic tracking-tight text-on-surface group-hover:text-[var(--brand-red)] transition-colors leading-tight">
                       {milestone.title}
                     </h4>
                   </div>
@@ -168,7 +168,7 @@ export function MovementRoadmap() {
                   </p>
 
                   <div className={cn(
-                    "flex flex-wrap items-center gap-4 pt-6 border-t border-stone-50 text-tiny font-bold text-on-surface/30 uppercase tracking-[0.1em]",
+                    "flex flex-wrap items-center gap-4 pt-6 border-t border-stone-50 text-tiny font-bold text-on-surface/30 tracking-tight",
                     index % 2 === 0 ? "sm:justify-end" : "sm:justify-start"
                   )}>
                     <div className="flex items-center gap-2">

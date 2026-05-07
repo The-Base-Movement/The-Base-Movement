@@ -22,7 +22,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
           <div className="w-12 h-12 bg-stone-50 rounded-none flex items-center justify-center text-stone-400 group-hover:text-[var(--brand-green)] transition-colors">
             {chapter.country === 'Ghana' ? <MapPin className="w-6 h-6" /> : <span className="text-2xl">{countryFlags[chapter.country] || '🌍'}</span>}
           </div>
-          <span className={`px-3 py-1 rounded-none text-[10px] font-semibold tracking-widest ${
+          <span className={`px-3 py-1 rounded-none text-[10px] font-bold tracking-tight ${
             requestSent[chapter.id] 
               ? 'bg-amber-50 text-amber-600'
               : (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member' 
@@ -36,13 +36,13 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
         <h3 className="text-stone-900 mb-1 group-hover:text-[var(--brand-green)] transition-colors text-lg">
           {chapter.name}
         </h3>
-        <p className="text-stone-400 text-[10px] font-bold tracking-[0.2em] mb-6 uppercase">
+        <p className="text-stone-400 text-[10px] font-bold tracking-tight mb-6">
           {chapter.city_or_region}, {chapter.country}
         </p>
         
         <div className="space-y-4 pt-6 border-t border-stone-50 mt-auto">
           <div className="flex justify-between items-center">
-            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Strength</span>
+            <span className="text-[10px] font-bold text-stone-400 tracking-tight">Strength</span>
             <div className="flex items-center gap-2">
               <Users className="w-3 h-3 text-[var(--brand-green)]" />
               <span className="text-sm font-bold text-stone-700">{chapter.member_count}</span>
@@ -53,17 +53,17 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
         {(chapter.status as string) === 'Join Chapter' && !requestSent[chapter.id] ? (
           <button 
             onClick={(e) => handleJoinRequest(e, chapter.id)}
-            className="w-full mt-8 h-12 border border-[var(--brand-green)] bg-[var(--brand-green)] text-white rounded-none text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-[var(--brand-green)] transition-all flex items-center justify-center gap-2"
+            className="w-full mt-8 h-12 border border-[var(--brand-green)] bg-[var(--brand-green)] text-white rounded-none text-[10px] font-bold tracking-tight hover:bg-white hover:text-[var(--brand-green)] transition-all flex items-center justify-center gap-2"
           >
-            Join Chapter <ArrowRight className="w-3 h-3" />
+            Join chapter <ArrowRight className="w-3 h-3" />
           </button>
         ) : (
-          <div className={`w-full mt-8 h-12 border rounded-none text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+          <div className={`w-full mt-8 h-12 border rounded-none text-[10px] font-bold tracking-tight transition-all flex items-center justify-center gap-2 ${
             requestSent[chapter.id] 
               ? 'border-amber-200 bg-amber-50 text-amber-600' 
               : 'border-stone-100 text-stone-400 group-hover:bg-[var(--brand-green)] group-hover:text-white group-hover:border-[var(--brand-green)]'
           }`}>
-            {requestSent[chapter.id] ? 'Request Sent' : 'View Details'} <ArrowRight className="w-3 h-3" />
+            {requestSent[chapter.id] ? 'Request sent' : 'View details'} <ArrowRight className="w-3 h-3" />
           </div>
         )}
       </div>

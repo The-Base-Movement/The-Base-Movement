@@ -29,7 +29,7 @@ export default function OrderSummary() {
       <div className="min-h-screen flex items-center justify-center bg-off-white">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 text-[var(--brand-green)] animate-spin" />
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Retrieving Transaction Data...</p>
+          <p className="text-[10px] font-bold tracking-tight text-stone-400">Retrieving transaction data...</p>
         </div>
       </div>
     )
@@ -40,10 +40,10 @@ export default function OrderSummary() {
       <div className="min-h-screen flex items-center justify-center bg-off-white">
         <div className="max-w-md w-full p-8 text-center bg-white border border-stone-200">
           <ShoppingBag className="w-12 h-12 text-stone-200 mx-auto mb-4" />
-          <h2 className="text-xl font-black font-meta uppercase tracking-tight text-stone-900">Order Not Found</h2>
-          <p className="text-xs text-stone-500 mt-2 mb-6 uppercase tracking-widest">The requested order could not be synchronized with the vault.</p>
+          <h2 className="text-xl font-bold font-meta tracking-tight text-stone-900">Order not found</h2>
+          <p className="text-xs text-stone-500 mt-2 mb-6 tracking-tight">The requested order could not be synchronized with the vault.</p>
           <Button asChild className="w-full h-12 bg-stone-900 text-white rounded-none">
-            <Link to="/store">Back to Store</Link>
+            <Link to="/store">Back to store</Link>
           </Button>
         </div>
       </div>
@@ -70,12 +70,12 @@ export default function OrderSummary() {
                   <img src="/logo.png" alt="The Base" className="w-10 h-10 object-contain"  decoding="async" loading="lazy" />
                 </div>
                 <div className="text-left border-l border-white/20 pl-4">
-                  <h2 className="font-h1 text-2xl uppercase tracking-tighter leading-none">The Base</h2>
-                  <p className="text-[8px] font-bold uppercase tracking-[0.2em] opacity-80">Official Store</p>
+                  <h2 className="font-h1 text-2xl tracking-tight leading-none">The Base</h2>
+                  <p className="text-[8px] font-bold tracking-tight opacity-80">Official store</p>
                 </div>
               </div>
-              <h1 className="font-h1 text-h3 mb-1 uppercase tracking-tight">Order Confirmed</h1>
-              <p className="font-meta text-[10px] opacity-90 uppercase tracking-widest">Your support drives the movement forward</p>
+              <h1 className="font-h1 text-h3 mb-1 tracking-tight">Order confirmed</h1>
+              <p className="font-meta text-[10px] opacity-90 tracking-tight">Your support drives the movement forward</p>
             </div>
           </div>
 
@@ -84,11 +84,11 @@ export default function OrderSummary() {
             <div className="flex flex-col gap-6 py-6 border-b border-stone-100 mb-8">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Order Identifier</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-1">Order identifier</p>
                   <p className="font-bold text-stone-900 break-all sm:break-normal">#{orderNumber}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1 sm:text-right">Date</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-1 sm:text-right">Date</p>
                   <p className="font-bold text-stone-900 sm:text-right">{date}</p>
                 </div>
               </div>
@@ -101,7 +101,7 @@ export default function OrderSummary() {
               </div>
               
               <div className="relative z-10">
-                <h3 className="font-h3 text-xl text-stone-900 mb-6 uppercase tracking-tight">Items Ordered</h3>
+                <h3 className="font-h3 text-xl text-stone-900 mb-6 tracking-tight">Items ordered</h3>
                 <div className="space-y-4">
                 {order.items.map((item: OrderItem) => (
                   <div key={item.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 bg-stone-50 px-4 rounded-sm">
@@ -110,8 +110,8 @@ export default function OrderSummary() {
                         <ShoppingBag className="w-6 h-6 text-stone-300" />
                       </div>
                       <div>
-                        <p className="font-bold text-stone-900 text-sm leading-tight uppercase tracking-tight">{item.product_name || 'Official Gear'}</p>
-                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">Quantity: {item.quantity}</p>
+                        <p className="font-bold text-stone-900 text-sm leading-tight tracking-tight">{item.product_name || 'Official gear'}</p>
+                        <p className="text-[10px] font-bold text-stone-400 tracking-tight mt-1">Quantity: {item.quantity}</p>
                       </div>
                     </div>
                     <p className="font-bold text-stone-900 text-sm whitespace-nowrap">GHS {Number(item.price_at_purchase * item.quantity).toFixed(2)}</p>
@@ -124,16 +124,16 @@ export default function OrderSummary() {
             {/* Totals */}
             <div className="bg-stone-900 p-8 rounded-sm text-white mb-10">
               <div className="space-y-4">
-                <div className="flex justify-between text-xs font-meta uppercase tracking-widest opacity-60">
+                <div className="flex justify-between text-xs font-meta tracking-tight opacity-60">
                   <span>Subtotal</span>
                   <span>GHS {Number(order.subtotal).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-xs font-meta uppercase tracking-widest opacity-60">
+                <div className="flex justify-between text-xs font-meta tracking-tight opacity-60">
                   <span>Shipping</span>
                   <span>GHS {Number(order.shipping_fee).toFixed(2)}</span>
                 </div>
                 <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                  <span className="font-h3 text-lg uppercase tracking-tight">Total Paid via {order.payment_method?.toUpperCase()}</span>
+                  <span className="font-h3 text-lg tracking-tight">Total paid via {order.payment_method?.toUpperCase()}</span>
                   <span className="font-h3 text-2xl text-brand-green whitespace-nowrap">GHS {Number(order.total_amount).toFixed(2)}</span>
                 </div>
               </div>
@@ -146,23 +146,23 @@ export default function OrderSummary() {
                   <span className="material-symbols-outlined text-brand-green">mail</span>
                 </div>
                 <div>
-                  <p className="font-bold text-stone-900 text-sm mb-1 uppercase tracking-tight">Confirmation Sent</p>
+                  <p className="font-bold text-stone-900 text-sm mb-1 tracking-tight">Confirmation sent</p>
                   <p className="text-xs text-stone-500 leading-relaxed font-medium">A detailed receipt and tracking information has been sent to <span className="font-bold text-stone-900">{order.email}</span>.</p>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all duration-300">
-                  <Printer className="w-4 h-4 mr-2" /> Print Invoice
+                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold tracking-tight rounded-sm transition-all duration-300">
+                  <Printer className="w-4 h-4 mr-2" /> Print invoice
                 </Button>
-                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all duration-300">
-                  <Share2 className="w-4 h-4 mr-2" /> Share Support
+                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold tracking-tight rounded-sm transition-all duration-300">
+                  <Share2 className="w-4 h-4 mr-2" /> Share support
                 </Button>
               </div>
 
-              <Button asChild className="w-full h-14 bg-brand-green hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20">
+              <Button asChild className="w-full h-14 bg-brand-green hover:bg-emerald-700 text-white text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20">
                 <Link to="/dashboard">
-                  Back to Dashboard
+                  Back to dashboard
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
@@ -171,8 +171,8 @@ export default function OrderSummary() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-xs text-stone-400 font-meta uppercase tracking-widest flex items-center justify-center flex-wrap gap-1">
-            Problems with your order? <Link to="/contact" className="text-brand-green font-bold hover:underline whitespace-nowrap">Contact Support</Link>
+          <p className="text-xs text-stone-400 font-meta tracking-tight flex items-center justify-center flex-wrap gap-1">
+            Problems with your order? <Link to="/contact" className="text-brand-green font-bold hover:underline whitespace-nowrap">Contact support</Link>
           </p>
         </div>
         </div>

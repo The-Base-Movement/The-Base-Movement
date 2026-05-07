@@ -153,7 +153,7 @@ export default function Impact() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-charcoal-dark mb-0">{item.fullName}</p>
-                        <p className="text-[11px] font-bold text-slate-400 mb-0 uppercase tracking-wider">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
+                        <p className="text-[11px] font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -165,7 +165,7 @@ export default function Impact() {
               ) : (
                 <div className="py-20 text-center">
                   <Activity className="w-12 h-12 text-slate-100 mx-auto mb-4" />
-                  <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No activity recorded yet</p>
+                  <p className="text-sm font-bold text-slate-400 tracking-tight">No activity recorded yet</p>
                 </div>
               )}
             </div>
@@ -187,13 +187,20 @@ export default function Impact() {
         <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-stone-900/50" />
         
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-black uppercase tracking-widest rounded-none mb-6 ring-1 ring-brand-green/20">
+          <span className="inline-flex items-center gap-2 px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-bold tracking-tight rounded-none mb-6 ring-1 ring-brand-green/20">
             <span className="w-1 h-1 bg-brand-green rounded-full animate-pulse" />
             Live Movement Metrics
           </span>
-          <h1 className="text-white text-5xl md:text-7xl font-black tracking-tighter mb-6">
+          <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter mb-4">
             Our Collective Impact
           </h1>
+          <div className="flex justify-center mb-6">
+            <div className="flex h-1 w-24">
+              <div className="flex-1 bg-destructive" />
+              <div className="flex-1 bg-accent" />
+              <div className="flex-1 bg-primary" />
+            </div>
+          </div>
           <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed">
             Live analytics reflecting our collective momentum across the nation. Every member joined and every contribution made is a direct investment in the Ghana we deserve.
           </p>
@@ -221,7 +228,7 @@ export default function Impact() {
                   ) : (
                     <>
                       <div className="flex justify-between items-start mb-4">
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0">{stat.status}</p>
+                        <p className="text-[9px] font-bold text-slate-400 tracking-tight mb-0">{stat.status}</p>
                         <ArrowUpRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-brand-green transition-colors" />
                       </div>
                       <div className="flex justify-between items-end mb-4">
@@ -380,7 +387,7 @@ export default function Impact() {
                   <div className="p-4 bg-slate-50 rounded-none border border-slate-100 animate-in fade-in slide-in-from-top-2 mt-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Start Date</label>
+                        <label className="text-[8px] font-bold text-slate-400 tracking-tight">Start Date</label>
                         <input 
                           type="date" 
                           className="w-full bg-white border border-slate-200 rounded-none p-2 text-xs font-meta font-semibold text-charcoal-dark focus:ring-1 focus:ring-brand-green outline-none" 
@@ -388,7 +395,7 @@ export default function Impact() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">End Date</label>
+                        <label className="text-[8px] font-bold text-slate-400 tracking-tight">End Date</label>
                         <input 
                           type="date" 
                           className="w-full bg-white border border-slate-200 rounded-none p-2 text-xs font-meta font-semibold text-charcoal-dark focus:ring-1 focus:ring-brand-green outline-none" 
@@ -418,7 +425,7 @@ export default function Impact() {
                       Showing results for:<br/>
                       <span className="text-brand-green font-bold">{dateRange.start || '...'}</span> to <span className="text-brand-green font-bold">{dateRange.end || '...'}</span>
                     </p>
-                    <p className="text-[10px] font-bold text-slate-300 mt-4 mb-0 uppercase tracking-widest text-center">No records found for this specific range.</p>
+                    <p className="text-[10px] font-bold text-slate-300 mt-4 mb-0 tracking-tight text-center">No records found for this specific range.</p>
                   </div>
                 ) : Object.values(contributions).flat().length > 0 ? (
                   Object.values(contributions).flat().map((item, idx) => (
@@ -429,7 +436,7 @@ export default function Impact() {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-charcoal-dark mb-0">{item.fullName}</p>
-                          <p className="text-[11px] font-bold text-slate-400 mb-0 uppercase tracking-wider">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
+                          <p className="text-[11px] font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -441,7 +448,7 @@ export default function Impact() {
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center py-12 bg-slate-50/30 rounded-none border border-dashed border-slate-200">
                     <Activity className="w-8 h-8 text-slate-200 mb-3" />
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">No activity recorded yet</p>
+                    <p className="text-[10px] font-bold text-slate-400 tracking-tight text-center">No activity recorded yet</p>
                     <p className="text-micro text-slate-300 mt-2 text-center px-4">Actions will appear here as they are verified</p>
                   </div>
                 )}
@@ -450,7 +457,7 @@ export default function Impact() {
                 <Button 
                   variant="ghost"
                   onClick={() => setShowFullActivity(true)}
-                  className="w-full h-12 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green group text-[10px] font-bold uppercase tracking-widest border border-transparent transition-all rounded-sm"
+                  className="w-full h-12 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green group text-[10px] font-bold tracking-tight border border-transparent transition-all rounded-sm"
                 >
                   View full activity log
                   <ArrowUpRight className="w-3.5 h-3.5 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

@@ -36,9 +36,9 @@ export default function Press() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10">
           <Breadcrumbs />
-          <p className="font-meta text-warm-gold uppercase tracking-[0.2em] text-[12px] mb-3 mt-6">Media & Communications</p>
-          <h1 className="font-meta font-black text-4xl md:text-5xl tracking-tight leading-tight mb-4">
-            Press <span className="text-brand-green">Center</span>
+          <p className="font-meta text-warm-gold tracking-tight text-[12px] mb-3 mt-6">Media & communications</p>
+          <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight mb-4">
+            Press <span className="text-brand-green">center</span>
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl font-body-md">
             Authoritative updates, media assets, and official statements from The Base Movement's communication desk.
@@ -52,25 +52,25 @@ export default function Press() {
           {/* Main Feed */}
           <div className="lg:col-span-2 space-y-12">
             <div>
-              <h2 className="font-meta font-black text-2xl uppercase tracking-tight mb-8 flex items-center gap-3">
+              <h2 className="font-meta font-bold text-2xl tracking-tight mb-8 flex items-center gap-3">
                 <Newspaper className="w-6 h-6 text-brand-green" />
-                Latest Press Releases
+                Latest press releases
               </h2>
               
               <div className="space-y-8">
                 {loading ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-4 text-stone-300">
                     <Loader2 className="w-8 h-8 animate-spin" />
-                    <p className="text-[10px] font-black uppercase tracking-widest">Scanning Dispatch Desk...</p>
+                    <p className="text-[10px] font-bold tracking-tight">Scanning dispatch desk...</p>
                   </div>
                 ) : releases.length > 0 ? (
                   releases.map((pr) => (
                     <div key={pr.id} className="bg-white p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
                       <div className="flex items-center gap-3 mb-4">
-                        <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest rounded-sm">
+                        <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-[10px] font-bold tracking-tight rounded-sm">
                           {pr.category}
                         </span>
-                        <span className="text-[11px] text-slate-400 font-medium tracking-widest">
+                        <span className="text-[11px] text-slate-400 font-medium tracking-tight">
                           {new Date(pr.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </span>
                       </div>
@@ -89,7 +89,7 @@ export default function Press() {
                 ) : (
                   <div className="p-12 border-2 border-dashed border-slate-100 text-center">
                     <Newspaper className="w-12 h-12 text-slate-200 mx-auto mb-4" />
-                    <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">No active dispatches found.</p>
+                    <p className="text-slate-400 text-sm font-bold tracking-tight">No active dispatches found.</p>
                   </div>
                 )}
               </div>
@@ -100,20 +100,20 @@ export default function Press() {
           <div className="space-y-8">
             {/* Media Contact */}
             <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
-              <h3 className="font-meta font-black text-xl tracking-tight mb-4 flex items-center gap-2">
+              <h3 className="font-meta font-bold text-xl tracking-tight mb-4 flex items-center gap-2">
                 <Mail className="w-5 h-5 text-warm-gold" />
-                Media Inquiries
+                Media inquiries
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed mb-6">
                 For interview requests, official commentary, or verified data inquiries, contact our communications team.
               </p>
               <div className="space-y-4">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">General Press</p>
+                  <p className="text-[10px] font-bold tracking-tight text-slate-500 mb-1">General press</p>
                   <p className="text-sm font-bold">press@thebasemovement.org</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Global Diaspora</p>
+                  <p className="text-[10px] font-bold tracking-tight text-slate-500 mb-1">Global diaspora</p>
                   <p className="text-sm font-bold">diaspora.media@thebasemovement.org</p>
                 </div>
               </div>
@@ -121,9 +121,9 @@ export default function Press() {
 
             {/* Media Kit */}
             <div className="bg-white p-8 border border-slate-100 shadow-sm">
-              <h3 className="font-meta font-black text-xl tracking-tight mb-4 flex items-center gap-2 text-charcoal-dark">
+              <h3 className="font-meta font-bold text-xl tracking-tight mb-4 flex items-center gap-2 text-charcoal-dark">
                 <Download className="w-5 h-5 text-brand-green" />
-                Media Kit
+                Media kit
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed mb-6">
                 Download official brand assets, leadership bios, and movement backgrounders for editorial use.
@@ -175,10 +175,10 @@ export default function Press() {
             <div className="p-8 border-b border-slate-100 flex justify-between items-start bg-stone-50/50">
               <div className="pr-8">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest rounded-sm">
+                  <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-[10px] font-bold tracking-tight rounded-sm">
                     {selectedRelease.category}
                   </span>
-                  <span className="text-[11px] text-slate-400 font-medium tracking-widest">
+                  <span className="text-[11px] text-slate-400 font-medium tracking-tight">
                     {new Date(selectedRelease.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </span>
                 </div>

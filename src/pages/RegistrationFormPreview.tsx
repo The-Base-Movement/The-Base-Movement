@@ -66,10 +66,10 @@ export default function RegistrationFormPreview() {
           <div className="flex items-center gap-6">
             <img src={settings.logo_url} alt="The Base" className="h-24 w-24 object-contain" />
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-tighter leading-none mb-1">The Base — Membership</h1>
-              <h2 className="text-xl font-bold uppercase tracking-tight text-brand-green leading-none mb-2">{formTitle}</h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-                {platform === 'DIASPORA' ? 'Ghanaian Diaspora — Supporting the movement from abroad' : 'Ghana First, Jobs for the Youth — A movement of the Ghanaian people'}
+              <h1 className="text-3xl font-bold tracking-tight leading-none mb-1">The base — Membership</h1>
+              <h2 className="text-xl font-bold tracking-tight text-brand-green leading-none mb-2">{formTitle}</h2>
+              <p className="text-[10px] font-bold tracking-tight text-muted-foreground/60">
+                {platform === 'DIASPORA' ? 'Ghanaian diaspora — Supporting the movement from abroad' : 'Ghana first, jobs for the youth — A movement of the Ghanaian people'}
               </p>
             </div>
           </div>
@@ -82,12 +82,12 @@ export default function RegistrationFormPreview() {
 
         {/* Section 1: Membership Platform */}
         <div className="mb-8">
-          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-black uppercase tracking-widest mb-4">
-            1. Membership Platform
+          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-bold tracking-tight mb-4">
+            1. Membership platform
           </div>
           <div className="grid grid-cols-2 gap-8 pl-4">
             <div className="space-y-4">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">I am registering as:*</p>
+              <p className="text-[10px] font-bold tracking-tight text-stone-500">I am registering as:*</p>
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-2">
                   <div className={cn("w-4 h-4 border-2 border-stone-300 flex items-center justify-center", platform === 'GHANA' && "bg-brand-green border-brand-green")}>
@@ -104,7 +104,7 @@ export default function RegistrationFormPreview() {
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Country of Residence (Diaspora Only)</p>
+              <p className="text-[10px] font-bold tracking-tight text-stone-500">Country of residence (Diaspora only)</p>
               <div className="h-8 border-b-2 border-stone-100" />
             </div>
           </div>
@@ -112,22 +112,22 @@ export default function RegistrationFormPreview() {
 
         {/* Section 2: Personal Information */}
         <div className="mb-8">
-          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-black uppercase tracking-widest mb-4">
-            2. Personal Information
+          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-bold tracking-tight mb-4">
+            2. Personal information
           </div>
           <div className="grid grid-cols-1 gap-6 pl-4">
             <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Full Name (As on Ghana Card / Passport)*</p>
+              <p className="text-[10px] font-bold tracking-tight text-stone-500">Full name (As on Ghana card / passport)*</p>
               <div className="h-8 border-b-2 border-stone-100" />
             </div>
             
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Date of Birth (DD/MM/YYYY)*</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Date of birth (DD/MM/YYYY)*</p>
                 <div className="h-8 border-b-2 border-stone-100 w-full" />
               </div>
               <div className="space-y-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Gender*</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Gender*</p>
                 <div className="flex items-center gap-6">
                   {['Male', 'Female', 'Other'].map(g => (
                     <div key={g} className="flex items-center gap-2">
@@ -141,7 +141,7 @@ export default function RegistrationFormPreview() {
 
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Age Range*</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Age range*</p>
                 <div className="grid grid-cols-3 gap-y-2">
                   {['16-25', '26-35', '36-45', '46-60', '60+'].map(r => (
                     <div key={r} className="flex items-center gap-2">
@@ -152,13 +152,13 @@ export default function RegistrationFormPreview() {
                 </div>
               </div>
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Number of Children</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Number of children</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Ghana Card / National ID Number</p>
+              <p className="text-[10px] font-bold tracking-tight text-stone-500">Ghana card / national ID number</p>
               <div className="h-8 border-b-2 border-stone-100" />
             </div>
           </div>
@@ -166,36 +166,36 @@ export default function RegistrationFormPreview() {
 
         {/* Section 3: Contact Details */}
         <div className="mb-8">
-          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-black uppercase tracking-widest mb-4">
-            3. Contact Details
+          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-bold tracking-tight mb-4">
+            3. Contact details
           </div>
           <div className="grid grid-cols-1 gap-6 pl-4">
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Phone Number (With Country Code)*</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Phone number (With country code)*</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Email Address</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Email address</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Residential Address*</p>
+              <p className="text-[10px] font-bold tracking-tight text-stone-500">Residential address*</p>
               <div className="h-8 border-b-2 border-stone-100" />
             </div>
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Region*</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Region*</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Constituency*</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Constituency*</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Ghana Post GPS Address (e.g. GA-123-4567)</p>
+              <p className="text-[10px] font-bold tracking-tight text-stone-500">Ghana Post GPS address (e.g. GA-123-4567)</p>
               <div className="h-8 border-b-2 border-stone-100" />
             </div>
           </div>
@@ -203,17 +203,17 @@ export default function RegistrationFormPreview() {
 
         {/* Section 4: Profession & Education */}
         <div className="mb-8">
-          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-black uppercase tracking-widest mb-4">
-            4. Profession & Education
+          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-bold tracking-tight mb-4">
+            4. Profession & education
           </div>
           <div className="grid grid-cols-1 gap-6 pl-4">
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Profession / Skill</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Profession / skill</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
               <div className="space-y-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Employment Status</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Employment status</p>
                 <div className="grid grid-cols-2 gap-y-2">
                   {['Employed', 'Self-employed', 'Student', 'Unemployed', 'Retired'].map(s => (
                     <div key={s} className="flex items-center gap-2">
@@ -225,7 +225,7 @@ export default function RegistrationFormPreview() {
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Highest Level of Education</p>
+              <p className="text-[10px] font-bold tracking-tight text-stone-500">Highest level of education</p>
               <div className="h-8 border-b-2 border-stone-100" />
             </div>
           </div>
@@ -233,27 +233,28 @@ export default function RegistrationFormPreview() {
 
         {/* Section 5: Next of Kin */}
         <div className="mb-8">
-          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-black uppercase tracking-widest mb-4">
-            5. Next of Kin
+          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-bold tracking-tight mb-4">
+            5. Next of kin
           </div>
           <div className="grid grid-cols-1 gap-6 pl-4">
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Full Name</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Full name</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Relationship</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Relationship</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
             </div>
+            </div>
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Phone Contact</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Phone contact</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
               <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Address</p>
+                <p className="text-[10px] font-bold tracking-tight text-stone-500">Address</p>
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
             </div>
@@ -262,8 +263,8 @@ export default function RegistrationFormPreview() {
 
         {/* Section 6: Declaration */}
         <div className="mb-12">
-          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-black uppercase tracking-widest mb-4">
-            6. Declaration & Signature
+          <div className="bg-brand-green text-white px-4 py-1.5 text-xs font-bold tracking-tight mb-4">
+            6. Declaration & signature
           </div>
           <div className="pl-4 space-y-8">
             <p className="text-[11px] leading-relaxed text-on-surface/80">
@@ -272,15 +273,15 @@ export default function RegistrationFormPreview() {
             <div className="grid grid-cols-3 gap-12 items-end">
               <div className="space-y-2">
                 <div className="h-12 border-b-2 border-stone-200" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-center">Signature of Applicant*</p>
+                <p className="text-[9px] font-bold tracking-tight text-center">Signature of applicant*</p>
               </div>
               <div className="space-y-2">
                 <div className="h-12 border-b-2 border-stone-200" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-center">Date*</p>
+                <p className="text-[9px] font-bold tracking-tight text-center">Date*</p>
               </div>
               <div className="space-y-2">
                 <div className="h-12 border-b-2 border-stone-200" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-center">Place*</p>
+                <p className="text-[9px] font-bold tracking-tight text-center">Place*</p>
               </div>
             </div>
           </div>
@@ -288,8 +289,8 @@ export default function RegistrationFormPreview() {
 
         {/* Footer Info */}
         <div className="border-t-2 border-stone-100 pt-8 flex justify-between items-center opacity-40 grayscale">
-           <p className="text-[9px] font-bold uppercase tracking-widest">thebasemovement.com</p>
-           <p className="text-[9px] font-bold uppercase tracking-widest">Submission: hand to chapter head, or upload at /register/upload</p>
+           <p className="text-[9px] font-bold tracking-tight">thebasemovement.com</p>
+           <p className="text-[9px] font-bold tracking-tight">Submission: hand to chapter head, or upload at /register/upload</p>
         </div>
       </div>
 

@@ -329,7 +329,7 @@ export default function MediaLibrary() {
               </div>
               
               <div className="flex-1 max-w-md space-y-4">
-                <div className="flex justify-between text-[11px] font-bold text-white/40 tracking-widest">
+                <div className="flex justify-between text-[11px] font-bold text-white/40 tracking-tight">
                   <span>Capacity utilization</span>
                   <span className="text-primary">12%</span>
                 </div>

@@ -222,7 +222,7 @@ export default function TrashPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-64 space-y-4">
             <div className="w-8 h-8 border-2 border-border/40 border-t-on-surface rounded-full animate-spin" />
-            <p className="text-muted-foreground/40 text-xs font-bold normal-case tracking-widest">Scanning vault...</p>
+            <p className="text-muted-foreground/40 text-xs font-bold tracking-tight">Scanning vault...</p>
           </div>
         ) : (activeTab === 'blogs' && blogs.length === 0) || 
             (activeTab === 'products' && products.length === 0) || 
@@ -340,7 +340,7 @@ function TrashItemCard({
           <div className="flex-1 p-5 flex flex-col justify-between overflow-hidden">
             <div>
               <div className="flex items-center justify-between gap-2 mb-1">
-                <p className="text-[9px] font-bold text-muted-foreground/40 normal-case tracking-widest truncate">{subtitle}</p>
+                <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight truncate">{subtitle}</p>
                 <div className="flex items-center gap-1 text-[9px] font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full">
                   <Calendar className="w-2.5 h-2.5" />
                   {daysRemaining} left
@@ -361,7 +361,7 @@ function TrashItemCard({
                 className="flex-1 h-10 rounded-sm border-border/40 text-[10px] font-bold normal-case tracking-tight hover:bg-stone-50 gap-2 transition-all active:scale-95"
               >
                 <RotateCcw className="w-4 h-4" />
-                Restore Item
+                Restore item
               </Button>
               <Button 
                 onClick={onDelete}

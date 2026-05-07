@@ -54,7 +54,7 @@ export default function VerifyID() {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 border-4 border-border/60 border-t-destructive rounded-full animate-spin mx-auto" />
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80">Verifying Identity...</p>
+          <p className="text-[10px] font-bold tracking-tight text-muted-foreground/80">Verifying identity...</p>
         </div>
       </div>
     )
@@ -68,8 +68,8 @@ export default function VerifyID() {
           <div className="inline-block p-3 bg-white shadow-xl rounded-[12px] border border-border/40">
             <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain"  decoding="async" loading="lazy" />
           </div>
-          <h1 className="text-xl font-black font-meta uppercase tracking-tighter">The Base Movement</h1>
-          <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest">Official Verification Portal</p>
+          <h1 className="text-xl font-bold font-meta tracking-tight">The Base Movement</h1>
+          <p className="text-[9px] font-bold text-muted-foreground/80 tracking-tight">Official verification portal</p>
         </div>
 
         {error ? (
@@ -80,13 +80,13 @@ export default function VerifyID() {
                 <XCircle className="w-10 h-10 text-destructive" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-black font-meta uppercase tracking-tight text-on-surface">Verification Failed</h2>
+                <h2 className="text-2xl font-bold font-meta tracking-tight text-on-surface">Verification failed</h2>
                 <p className="text-stone-500 text-sm">{error}</p>
               </div>
               <div className="pt-4">
                 <Link to="/">
-                  <Button className="w-full h-12 bg-stone-950 text-white text-[10px] uppercase font-bold tracking-widest rounded-none">
-                    Return to Home
+                  <Button className="w-full h-12 bg-stone-950 text-white text-[10px] font-bold tracking-tight rounded-none">
+                    Return to home
                   </Button>
                 </Link>
               </div>
@@ -109,38 +109,38 @@ export default function VerifyID() {
               </div>
               <div className="flex items-center justify-center gap-2 mb-2">
                 <CheckCircle2 className="w-5 h-5 text-primary" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Identity Verified</span>
+                <span className="text-[10px] font-bold tracking-tight text-primary">Identity verified</span>
               </div>
-              <h2 className="text-2xl font-black font-meta uppercase tracking-tight text-on-surface">{member.full_name}</h2>
-              <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest mt-1">{member.id}</p>
+              <h2 className="text-2xl font-bold font-meta tracking-tight text-on-surface">{member.full_name}</h2>
+              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mt-1">{member.id}</p>
             </CardHeader>
             <CardContent className="p-8 space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-1">
+                  <p className="text-[8px] font-bold tracking-tight text-muted-foreground/80 flex items-center gap-1">
                     <MapPin className="w-3 h-3" /> Region
                   </p>
-                  <p className="text-xs font-black text-on-surface uppercase">{member.region}</p>
+                  <p className="text-xs font-bold text-on-surface">{member.region}</p>
                 </div>
                 <div className="space-y-1 text-right">
-                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-1 justify-end">
+                  <p className="text-[8px] font-bold tracking-tight text-muted-foreground/80 flex items-center gap-1 justify-end">
                     <Activity className="w-3 h-3" /> Status
                   </p>
-                  <span className="text-[10px] font-black px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 uppercase">
+                  <span className="text-[10px] font-bold px-2 py-0.5 bg-primary/10 text-primary border border-primary/20">
                     {member.type}
                   </span>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-1">
+                  <p className="text-[8px] font-bold tracking-tight text-muted-foreground/80 flex items-center gap-1">
                     <ShieldCheck className="w-3 h-3" /> Constituency
                   </p>
-                  <p className="text-xs font-black text-on-surface uppercase">{member.constituency}</p>
+                  <p className="text-xs font-bold text-on-surface">{member.constituency}</p>
                 </div>
                 <div className="space-y-1 text-right">
-                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-1 justify-end">
+                  <p className="text-[8px] font-bold tracking-tight text-muted-foreground/80 flex items-center gap-1 justify-end">
                     <Calendar className="w-3 h-3" /> Member Since
                   </p>
-                  <p className="text-xs font-black text-on-surface uppercase">
+                  <p className="text-xs font-bold text-on-surface">
                     {new Date(member.created_at).toLocaleDateString([], { month: 'short', year: 'numeric' })}
                   </p>
                 </div>
@@ -149,7 +149,7 @@ export default function VerifyID() {
               <div className="pt-6 border-t border-border/40">
                 <div className="p-4 bg-background border border-border/40 flex items-start gap-3">
                   <AlertTriangle className="w-4 h-4 text-muted-foreground/80 mt-0.5" />
-                  <p className="text-[9px] text-stone-500 leading-relaxed uppercase font-bold tracking-tight">
+                  <p className="text-[9px] text-stone-500 leading-relaxed font-bold tracking-tight">
                     This verification is for official use only. Access to this data is logged and monitored for security purposes.
                   </p>
                 </div>
@@ -159,7 +159,7 @@ export default function VerifyID() {
         )}
 
         <div className="text-center">
-          <p className="text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground/80">
+          <p className="text-[8px] font-bold tracking-tight text-muted-foreground/80">
             &copy; {new Date().getFullYear()} The Base Movement | Security Vault V2.0
           </p>
         </div>

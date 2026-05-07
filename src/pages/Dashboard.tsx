@@ -191,7 +191,7 @@ export default function Dashboard() {
       <div className="mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 mb-6 backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
-          <span className="text-[10px] font-bold text-primary tracking-tight">NATIONAL INFRASTRUCTURE STABILIZED</span>
+          <span className="text-[10px] font-bold text-primary tracking-tight">National infrastructure stabilized</span>
         </div>
         <h1 className="tracking-tighter mb-4 text-on-surface">Operational Dashboard</h1>
         <BrandLine />
@@ -225,34 +225,34 @@ export default function Dashboard() {
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-tiny font-bold text-on-surface/40 uppercase tracking-widest">Active Outreach</span>
+              <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Active outreach</span>
               <Navigation className="w-4 h-4 text-primary opacity-40" />
             </div>
             <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-black tracking-tighter m-0">{fieldActions.length}</h3>
-              <span className="text-tiny font-bold text-on-surface/20 uppercase">In Area</span>
+              <h3 className="text-3xl font-bold tracking-tight m-0">{fieldActions.length}</h3>
+              <span className="text-tiny font-bold text-on-surface/20">In area</span>
             </div>
             <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">No community actions detected yet.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-tiny font-bold text-on-surface/40 uppercase tracking-widest">Impact Points</span>
+              <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Impact points</span>
               <Trophy className="w-4 h-4 text-[var(--brand-gold)] opacity-40" />
             </div>
             <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-black tracking-tighter m-0">{totalPoints}</h3>
-              <span className="text-tiny font-bold text-on-surface/20 uppercase">Earned</span>
+              <h3 className="text-3xl font-bold tracking-tight m-0">{totalPoints}</h3>
+              <span className="text-tiny font-bold text-on-surface/20">Earned</span>
             </div>
             <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">Participate to earn your first points.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-tiny font-bold text-on-surface/40 uppercase tracking-widest">Achievements</span>
+              <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Achievements</span>
               <Flag className="w-4 h-4 text-[var(--brand-red)] opacity-40" />
             </div>
             <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-black tracking-tighter m-0">{achievements.length}</h3>
-              <span className="text-tiny font-bold text-on-surface/20 uppercase">Unlocked</span>
+              <h3 className="text-3xl font-bold tracking-tight m-0">{achievements.length}</h3>
+              <span className="text-tiny font-bold text-on-surface/20">Unlocked</span>
             </div>
             <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">Complete actions to earn badges.</p>
           </div>
@@ -296,7 +296,7 @@ export default function Dashboard() {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="h-10 px-8 text-tiny font-black uppercase tracking-widest border-primary/20 text-primary hover:bg-primary hover:text-white transition-all rounded-none"
+                    className="h-10 px-8 text-tiny font-bold tracking-tight border-primary/20 text-primary hover:bg-primary hover:text-white transition-all rounded-none"
                   >
                     Find Local Chapters
                   </Button>
@@ -312,9 +312,9 @@ export default function Dashboard() {
             fieldActions.map((action) => (
               <div key={action.id} className="bg-white border border-border/40 shadow-sm rounded-sm overflow-hidden flex flex-col md:flex-row group hover:border-primary/40 transition-all">
                 <div className="w-full md:w-32 bg-on-surface flex flex-col items-center justify-center p-6 text-white border-b md:border-b-0 md:border-r border-white/5">
-                  <span className="text-tiny font-black uppercase tracking-widest text-white/40 mb-1">{format(new Date(action.start_time), 'MMM')}</span>
-                  <span className="text-3xl font-black italic tracking-tighter">{format(new Date(action.start_time), 'dd')}</span>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-destructive mt-2">{format(new Date(action.start_time), 'HH:mm')}</span>
+                  <span className="text-tiny font-bold tracking-tight text-white/40 mb-1">{format(new Date(action.start_time), 'MMM')}</span>
+                  <span className="text-3xl font-bold italic tracking-tighter">{format(new Date(action.start_time), 'dd')}</span>
+                  <span className="text-[9px] font-bold tracking-tight text-destructive mt-2">{format(new Date(action.start_time), 'HH:mm')}</span>
                 </div>
                 <div className="flex-1 p-6 relative">
                   <div className="flex items-center gap-2 mb-3">
@@ -341,12 +341,12 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/10">
                     <div className="flex items-center gap-2">
                       <Navigation className="w-3.5 h-3.5 text-on-surface/10" />
-                      <span className="text-[9px] font-black text-on-surface/20 tracking-widest">{action.geofence_radius_meters}m radius</span>
+                      <span className="text-[9px] font-bold text-on-surface/20 tracking-tight">{action.geofence_radius_meters}m radius</span>
                     </div>
                     <Button 
                       variant="solid"
                       onClick={() => handleCheckIn(action)}
-                      className="h-9 px-6 text-[9px] font-black uppercase tracking-widest shadow-xl"
+                      className="h-9 px-6 text-[9px] font-bold tracking-tight shadow-xl"
                       disabled={checkingIn === action.id}
                     >
                       {checkingIn === action.id ? 'Signaling...' : 'Field check-in'}
@@ -383,11 +383,11 @@ export default function Dashboard() {
           {/* Section 2: Movement Directives */}
           <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden flex flex-col">
             <div className="bg-on-surface/5 border-b border-border/10 p-4 flex items-center justify-between">
-              <h3 className="text-xs font-black tracking-widest text-primary flex items-center gap-2 m-0">
+              <h3 className="text-xs font-bold tracking-tight text-primary flex items-center gap-2 m-0">
                 <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>campaign</span>
                 Movement Directives
               </h3>
-              <span className="text-tiny font-bold text-on-surface/30 tracking-widest uppercase">{notifications.length} Active Updates</span>
+              <span className="text-tiny font-bold text-on-surface/30 tracking-tight">{notifications.length} Active updates</span>
             </div>
             <div className="divide-y divide-border/10 max-h-[400px] overflow-y-auto flex-1">
               {notifications.length === 0 ? (
@@ -402,13 +402,13 @@ export default function Dashboard() {
                     <div className="flex items-start justify-between gap-4 mb-2">
                       <div className="flex items-center gap-2">
                         {note.type === 'Alert' && (
-                          <span className="px-2 py-0.5 bg-destructive text-white text-micro font-black uppercase tracking-widest rounded-none">Urgent</span>
+                          <span className="px-2 py-0.5 bg-destructive text-white text-micro font-bold tracking-tight rounded-none">Urgent</span>
                         )}
-                        <h4 className={`text-sm font-black tracking-tight m-0 ${note.is_read ? 'text-on-surface/40' : 'text-on-surface'}`}>
+                        <h4 className={`text-sm font-bold tracking-tight m-0 ${note.is_read ? 'text-on-surface/40' : 'text-on-surface'}`}>
                           {note.title}
                         </h4>
                       </div>
-                      <span className="text-tiny text-on-surface/20 font-black tracking-widest shrink-0">
+                      <span className="text-tiny text-on-surface/20 font-bold tracking-tight">
                         {new Date(note.created_at).toLocaleDateString()}
                       </span>
                     </div>
@@ -421,7 +421,7 @@ export default function Dashboard() {
                             setNotifications(prev => prev.map(n => n.id === note.id ? { ...n, is_read: true } : n))
                           }
                         }}
-                        className="h-auto p-0 text-tiny font-black uppercase tracking-widest text-primary hover:underline justify-start"
+                        className="h-auto p-0 text-tiny font-bold tracking-tight text-primary hover:underline justify-start"
                       >
                         Acknowledge directive
                       </Button>

@@ -139,9 +139,14 @@ export default function Chapters() {
           <Breadcrumbs />
           <div className="mt-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-                <h1 className="text-stone-900 mb-2">
+                <h1 className="text-stone-900 mb-4">
                   Movement Chapters
                 </h1>
+                <div className="flex h-1 w-24 mb-6">
+                  <div className="flex-1 bg-destructive" />
+                  <div className="flex-1 bg-accent" />
+                  <div className="flex-1 bg-primary" />
+                </div>
               <p className="text-stone-500 max-w-xl">
                 Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {chapters.length}+ regional hubs.
               </p>
@@ -149,7 +154,7 @@ export default function Chapters() {
             <div className="flex gap-3">
               <Button 
                 onClick={() => setIsRequestModalOpen(true)}
-                className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-semibold tracking-widest text-xs h-12 px-6 rounded-none"
+                className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-semibold tracking-tight text-xs h-12 px-6 rounded-none"
               >
                 <Plus className="w-4 h-4 mr-2" /> Request a Chapter
               </Button>
@@ -161,13 +166,13 @@ export default function Chapters() {
             <div className="flex bg-stone-100 p-1 rounded-none w-full sm:w-auto">
               <button 
                 onClick={() => setActiveTab('ghana')}
-                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-widest rounded-none transition-all ${activeTab === 'ghana' ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-tight rounded-none transition-all ${activeTab === 'ghana' ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
               >
                 Ghana Regional
               </button>
               <button 
                 onClick={() => setActiveTab('diaspora')}
-                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-widest rounded-none transition-all ${activeTab === 'diaspora' ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-tight rounded-none transition-all ${activeTab === 'diaspora' ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
               >
                 Global Diaspora
               </button>
@@ -208,11 +213,11 @@ export default function Chapters() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--brand-green)]/10 rounded-none -mr-32 -mt-32 blur-3xl"></div>
           <div className="relative z-10 grid md:grid-cols-3 gap-12 text-center md:text-left">
             <div>
-              <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">Total Chapters</p>
+              <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-tight mb-4">Total chapters</p>
               <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{chapters.length}</p>
             </div>
             <div>
-              <p className="text-warm-gold text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">Countries Represented</p>
+              <p className="text-warm-gold text-[10px] font-bold tracking-tight mb-4">Countries represented</p>
               <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{new Set(chapters.map(c => c.country)).size}</p>
             </div>
             <div className="flex flex-col justify-center">
@@ -234,7 +239,7 @@ export default function Chapters() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
             <div className="flex items-center gap-3 mb-2">
               <Building2 className="w-5 h-5 text-[var(--brand-green)]" />
-              <DialogTitle className="text-xl font-bold tracking-tight uppercase font-meta">Request a Chapter</DialogTitle>
+              <DialogTitle className="text-xl font-bold tracking-tight font-meta">Request a chapter</DialogTitle>
             </div>
             <DialogDescription className="text-stone-400 text-xs">
               Propose a new chapter for your region. Requests are reviewed by the National Executive Committee for strategic alignment and leadership verification.
@@ -254,7 +259,7 @@ export default function Chapters() {
           ) : (
             <form onSubmit={handleSubmitRequest} className="p-8 space-y-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Chapter Location / Country</label>
+                <label className="text-[10px] font-bold text-stone-400 tracking-tight">Chapter location / country</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
                   <Input 
@@ -268,7 +273,7 @@ export default function Chapters() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Why start a chapter here?</label>
+                <label className="text-[10px] font-bold text-stone-400 tracking-tight">Why start a chapter here?</label>
                 <Textarea 
                   required
                   placeholder="Describe the local interest and your vision for organizing this hub..."
@@ -283,14 +288,14 @@ export default function Chapters() {
                   type="button" 
                   variant="default" 
                   onClick={() => setIsRequestModalOpen(false)}
-                  className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold uppercase tracking-widest rounded-none"
+                  className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold tracking-tight rounded-none"
                 >
                   Cancel
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="h-12 bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold text-[10px] uppercase tracking-widest rounded-none min-w-[140px]"
+                  className="h-12 bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold text-[10px] tracking-tight rounded-none min-w-[140px]"
                 >
                   {isSubmitting ? 'Processing...' : 'Submit Request'}
                 </Button>

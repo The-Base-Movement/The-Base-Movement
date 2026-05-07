@@ -1051,11 +1051,11 @@ export default function AdminSettings() {
                         <div className="flex items-center gap-3">
                           <h4 className="text-sm font-bold text-stone-900">Two-Factor Authentication</h4>
                           {mfaFactors.length > 0 ? (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-[9px] font-bold text-emerald-600 uppercase tracking-tighter">
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-[9px] font-bold text-emerald-600 tracking-tight">
                               Protected
                             </span>
                           ) : (
-                            <span className="px-2 py-0.5 rounded-full bg-amber-50 border border-amber-100 text-[9px] font-bold text-amber-600 uppercase tracking-tighter">
+                            <span className="px-2 py-0.5 rounded-full bg-amber-50 border border-amber-100 text-[9px] font-bold text-amber-600 tracking-tight">
                               Not configured
                             </span>
                           )}
@@ -1127,7 +1127,7 @@ export default function AdminSettings() {
                     {mfaStep === 'verify' && (
                       <div className="space-y-6">
                         <div className="space-y-3">
-                          <Label className="text-[10px] font-bold tracking-wider text-stone-500">Verification code</Label>
+                          <Label className="text-[10px] font-bold tracking-tight text-stone-500">Verification code</Label>
                           <Input 
                             value={mfaCode}
                             onChange={(e) => setMfaCode(e.target.value)}
@@ -1219,10 +1219,10 @@ export default function AdminSettings() {
                   <table className="w-full text-left">
                     <thead>
                       <tr className="bg-stone-50/30 border-b border-stone-100">
-                        <th className="p-4 pl-8 text-[9px] font-bold tracking-wider text-stone-400">Timestamp</th>
-                        <th className="p-4 text-[9px] font-bold tracking-wider text-stone-400">Admin</th>
-                        <th className="p-4 text-[9px] font-bold tracking-wider text-stone-400">Action</th>
-                        <th className="p-4 pr-8 text-right text-[9px] font-bold tracking-wider text-stone-400">Status</th>
+                        <th className="p-4 pl-8 text-[9px] font-bold tracking-tight text-stone-400">Timestamp</th>
+                        <th className="p-4 text-[9px] font-bold tracking-tight text-stone-400">Admin</th>
+                        <th className="p-4 text-[9px] font-bold tracking-tight text-stone-400">Action</th>
+                        <th className="p-4 pr-8 text-right text-[9px] font-bold tracking-tight text-stone-400">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-50">

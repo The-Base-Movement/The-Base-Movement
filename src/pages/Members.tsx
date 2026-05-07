@@ -168,8 +168,8 @@ export default function Members() {
                   className="w-full lg:w-auto"
                 >
                   <TabsList className="bg-slate-50 p-1 h-12 w-full lg:w-auto">
-                    <TabsTrigger value="GHANA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-widest data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Ghana</TabsTrigger>
-                    <TabsTrigger value="DIASPORA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-widest data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Diaspora</TabsTrigger>
+                    <TabsTrigger value="GHANA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-tight data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Ghana</TabsTrigger>
+                    <TabsTrigger value="DIASPORA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-tight data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Diaspora</TabsTrigger>
                   </TabsList>
                 </Tabs>
 
@@ -186,7 +186,7 @@ export default function Members() {
                 <div className="flex items-center gap-2 w-full lg:w-auto bg-slate-50 p-1 rounded-none">
                   <button 
                     onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                    className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest text-slate-500 hover:text-[var(--brand-green)] transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-tight text-slate-500 hover:text-[var(--brand-green)] transition-colors"
                   >
                     <ArrowUpDown className="w-3 h-3" />
                     Sort {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
@@ -198,50 +198,50 @@ export default function Members() {
               <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-50">
                 <div className="flex items-center gap-2 text-slate-400 mr-2">
                   <Filter className="w-3 h-3" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Filter By:</span>
+                  <span className="text-[10px] font-bold tracking-tight">Filter by:</span>
                 </div>
 
                 {activePlatform === 'GHANA' ? (
                   <>
                     <Select value={selectedRegion} onValueChange={(val) => { setSelectedRegion(val); setSelectedConstituency('all'); }}>
-                      <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-[10px] font-bold tracking-widest rounded-none h-10">
-                        <SelectValue placeholder="All Regions" />
+                      <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-[10px] font-bold tracking-tight rounded-none h-10">
+                        <SelectValue placeholder="All regions" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all" className="text-xs uppercase font-bold">All Regions</SelectItem>
-                        {ghanaRegions.map(r => <SelectItem key={r} value={r} className="text-xs uppercase font-bold">{r}</SelectItem>)}
+                        <SelectItem value="all" className="text-xs font-bold">All regions</SelectItem>
+                        {ghanaRegions.map(r => <SelectItem key={r} value={r} className="text-xs font-bold">{r}</SelectItem>)}
                       </SelectContent>
                     </Select>
 
                     <Select value={selectedConstituency} onValueChange={setSelectedConstituency} disabled={selectedRegion === 'all'}>
-                      <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-black uppercase tracking-widest rounded-lg h-10">
-                        <SelectValue placeholder="All Constituencies" />
+                      <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-bold tracking-tight rounded-none h-10">
+                        <SelectValue placeholder="All constituencies" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all" className="text-xs uppercase font-bold">All Constituencies</SelectItem>
-                        {constituencies.map(c => <SelectItem key={c} value={c} className="text-xs uppercase font-bold">{c}</SelectItem>)}
+                        <SelectItem value="all" className="text-xs font-bold">All constituencies</SelectItem>
+                        {constituencies.map(c => <SelectItem key={c} value={c} className="text-xs font-bold">{c}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </>
                 ) : (
                   <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                    <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-black uppercase tracking-widest rounded-lg h-10">
-                      <SelectValue placeholder="All Countries" />
+                    <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-bold tracking-tight rounded-none h-10">
+                      <SelectValue placeholder="All countries" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all" className="text-xs uppercase font-bold">All Countries</SelectItem>
-                      {diasporaCountries.map(c => <SelectItem key={c} value={c} className="text-xs uppercase font-bold">{c}</SelectItem>)}
+                      <SelectItem value="all" className="text-xs font-bold">All countries</SelectItem>
+                      {diasporaCountries.map(c => <SelectItem key={c} value={c} className="text-xs font-bold">{c}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 )}
 
                 <Select value={selectedProfession} onValueChange={setSelectedProfession}>
-                  <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-black uppercase tracking-widest rounded-lg h-10">
-                    <SelectValue placeholder="All Professions" />
+                  <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-bold tracking-tight rounded-none h-10">
+                    <SelectValue placeholder="All professions" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all" className="text-xs uppercase font-bold">All Professions</SelectItem>
-                    {professions.map(p => <SelectItem key={p} value={p} className="text-xs uppercase font-bold">{p}</SelectItem>)}
+                    <SelectItem value="all" className="text-xs font-bold">All professions</SelectItem>
+                    {professions.map(p => <SelectItem key={p} value={p} className="text-xs font-bold">{p}</SelectItem>)}
                   </SelectContent>
                 </Select>
 
@@ -254,10 +254,10 @@ export default function Members() {
                       setSelectedCountry('all');
                       setSelectedProfession('all');
                     }}
-                    className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest text-red-500 hover:bg-red-50 rounded-none transition-all ml-auto"
+                    className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-tight text-red-500 hover:bg-red-50 rounded-none transition-all ml-auto"
                   >
                     <X className="w-3 h-3" />
-                    Clear Filters
+                    Clear filters
                   </button>
                 )}
               </div>
@@ -280,7 +280,7 @@ export default function Members() {
                   <div className="w-20 h-20 bg-slate-50 rounded-none flex items-center justify-center mb-6">
                     <Users className="w-10 h-10 text-slate-200" />
                   </div>
-                  <h3 className="text-charcoal-dark">No Members Found</h3>
+                  <h3 className="text-charcoal-dark">No members found</h3>
                   <p className="text-slate-400 max-w-sm mt-2">We couldn't find any members matching your current filters. Try adjusting your search criteria.</p>
                   <button 
                     onClick={() => {
@@ -290,9 +290,9 @@ export default function Members() {
                       setSelectedCountry('all');
                       setSelectedProfession('all');
                     }}
-                    className="mt-8 text-[var(--brand-green)] font-black text-[10px] uppercase tracking-widest hover:underline"
+                    className="mt-8 text-[var(--brand-green)] font-bold text-[10px] tracking-tight hover:underline"
                   >
-                    Reset All Filters
+                    Reset all filters
                   </button>
                 </div>
               )}
@@ -315,8 +315,8 @@ export default function Members() {
                 </div>
                 <DialogTitle className="text-white mb-1">{selectedMember?.name}</DialogTitle>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">{selectedMember?.profession}</span>
-                  <span className="text-[10px] font-black bg-primary/20 text-primary px-2 py-0.5 rounded-none tracking-widest">
+                  <span className="text-[10px] font-bold text-primary tracking-tight">{selectedMember?.profession}</span>
+                  <span className="text-[10px] font-bold bg-primary/20 text-primary px-2 py-0.5 rounded-none tracking-tight">
                     {selectedMember?.status === 'Active' || selectedMember?.status === 'Approved' || !selectedMember?.status ? 'VERIFIED' : 'PENDING'}
                   </span>
                 </div>
@@ -329,27 +329,27 @@ export default function Members() {
             {/* Membership Info */}
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-1">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Platform</p>
+                <p className="text-[9px] font-bold text-slate-400 tracking-tight">Platform</p>
                 <div className="flex items-center gap-2">
                   <Globe className="w-3 h-3 text-primary" />
-                  <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">{selectedMember?.platform}</p>
+                  <p className="text-xs font-bold text-charcoal-dark mb-0">{selectedMember?.platform}</p>
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0">Joined Date</p>
+                <p className="text-[9px] font-bold text-slate-400 tracking-tight mb-0">Joined date</p>
                 <div className="flex items-center gap-2">
                   <Users className="w-3 h-3 text-accent" />
-                  <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">Oct 2024</p>
+                  <p className="text-xs font-bold text-charcoal-dark mb-0">Oct 2024</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="space-y-1">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Location</p>
+                <p className="text-[9px] font-bold text-slate-400 tracking-tight">Location</p>
                 <div className="flex items-center gap-2 bg-slate-50 p-3 rounded-none border border-slate-100">
                   <MapPin className="w-4 h-4 text-primary" />
-                  <p className="text-xs font-bold text-charcoal-dark uppercase mb-0">
+                  <p className="text-xs font-bold text-charcoal-dark mb-0">
                     {selectedMember?.platform === 'GHANA' 
                       ? `${selectedMember?.constituency}, ${selectedMember?.region} Region` 
                       : `${selectedMember?.country}`}
@@ -358,7 +358,7 @@ export default function Members() {
               </div>
 
               <div className="space-y-1">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Member Bio</p>
+                <p className="text-[9px] font-bold text-slate-400 tracking-tight">Member bio</p>
                 <p className="text-xs text-slate-600 leading-relaxed font-medium">
                   Committed to the growth and prosperity of Ghana. Active participant in community development projects and movement initiatives.
                 </p>
@@ -370,7 +370,7 @@ export default function Members() {
                 variant="primary"
                 className="flex-1 py-6 text-[10px] shadow-lg shadow-primary/20"
               >
-                Send Message
+                Send message
               </Button>
               <Button 
                 variant="ghost"

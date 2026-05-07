@@ -83,24 +83,24 @@ const shareOptions = [
         <div className="p-8 space-y-6">
           {/* Copy Link Section */}
           <div className="space-y-3">
-            <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">Your personal invite link:</p>
+            <p className="text-[10px] font-bold text-stone-400 text-center tracking-tight">Your personal invite link:</p>
             <div className="space-y-2">
               <div className="w-full p-4 bg-stone-50 border border-stone-100 text-stone-600 text-sm font-medium break-all text-center">
                 {url}
               </div>
-              <Button 
+               <Button 
                 onClick={handleCopy}
-                className={`w-full h-12 rounded-none font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${copied ? 'bg-emerald-600 text-white' : 'bg-white border border-stone-200 text-stone-600 hover:bg-[var(--brand-green)] hover:text-white hover:border-[var(--brand-green)]'}`}
+                className={`w-full h-12 rounded-none font-bold text-xs tracking-tight transition-all flex items-center justify-center gap-2 ${copied ? 'bg-emerald-600 text-white' : 'bg-white border border-stone-200 text-stone-600 hover:bg-[var(--brand-green)] hover:text-white hover:border-[var(--brand-green)]'}`}
               >
                 {copied ? (
                   <>
                     <Check className="w-4 h-4" />
-                    Copied to Clipboard
+                    Copied to clipboard
                   </>
                 ) : (
                   <>
                     <Copy className="w-4 h-4" />
-                    Copy Link
+                    Copy link
                   </>
                 )}
               </Button>
@@ -108,10 +108,10 @@ const shareOptions = [
           </div>
 
           <div className="relative">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+             <div className="absolute inset-0 flex items-center" aria-hidden="true">
               <div className="w-full border-t border-stone-100"></div>
             </div>
-            <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
+            <div className="relative flex justify-center text-[10px] font-bold tracking-tight">
               <span className="bg-white px-4 text-stone-400">Or share directly</span>
             </div>
           </div>

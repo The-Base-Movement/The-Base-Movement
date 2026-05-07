@@ -251,7 +251,7 @@ export default function OurAgenda() {
           {/* Sticky Navigation */}
           <aside className="lg:w-1/4 hidden lg:block">
             <div className="sticky top-20 space-y-4 font-meta">
-              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-6">Plan Pillars</p>
+              <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-6">Plan pillars</p>
               <nav aria-label="Agenda Pillars" className="flex flex-col space-y-2">
                 {agendaPillars.map((pillar) => (
                   <a 
@@ -271,10 +271,10 @@ export default function OurAgenda() {
                  decoding="async" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <p className="text-white text-[10px] font-bold uppercase tracking-widest leading-tight mb-0">
+                  <p className="text-white text-[10px] font-bold tracking-tight leading-tight mb-0">
                     Dr. George Oti Bonsu
                   </p>
-                  <p className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5 mb-0">
+                  <p className="text-white/70 text-[9px] font-bold tracking-tight mt-0.5 mb-0">
                     Movement Founder
                   </p>
                 </div>
@@ -289,13 +289,13 @@ export default function OurAgenda() {
             <section aria-labelledby="agenda-intro-heading" className="grid md:grid-cols-2 gap-8 mb-16">
               <h2 id="agenda-intro-heading" className="sr-only">Agenda Definitions</h2>
               <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
-                <h3 className="text-primary uppercase tracking-tight mb-4">What is an Aim?</h3>
+                <h3 className="text-primary tracking-tight mb-4">What is an Aim?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm mb-0">
                   An Aim is a broad, long-term statement of intent. It describes the desired end state or the overall direction a movement or organisation wishes to pursue. Aims are visionary in nature. They answer the question: "What kind of Ghana are we trying to build?" They are not time-bound or immediately measurable, but they provide the moral compass and purpose that guides all action.
                 </p>
               </div>
               <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
-                <h3 className="text-primary uppercase tracking-tight mb-4">What is an Objective?</h3>
+                <h3 className="text-primary tracking-tight mb-4">What is an Objective?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm mb-0">
                   An Objective is a specific, actionable, and measurable step taken in pursuit of an Aim. Objectives answer the question: "Exactly what will we do and how?" They are concrete, time-oriented, and directly deliverable. Where an Aim sets the destination, an Objective maps the route. Every objective in this document is derived from one of THE BASE's six core Aims.
                 </p>
@@ -316,7 +316,7 @@ export default function OurAgenda() {
                     <div className="w-12 h-12 shrink-0 flex items-center justify-center bg-surface-warm" style={{ color: pillar.color }}>
                       <pillar.icon className="w-6 h-6" />
                     </div>
-                    <p className="text-[10px] font-bold tracking-widest uppercase mb-0" style={{ color: pillar.color }}>Aim {pillar.number}</p>
+                    <p className="text-[10px] font-bold tracking-tight mb-0" style={{ color: pillar.color }}>Aim {pillar.number}</p>
                   </div>
                   <h2 id={`pillar-heading-${pillar.id}`} className="mb-0">{pillar.title}</h2>
                 </div>
@@ -326,7 +326,7 @@ export default function OurAgenda() {
                 </p>
 
                 <div className="space-y-8">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">Objectives</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-0">Objectives</p>
                   {pillar.objectives.map((obj, idx) => (
                     <div key={idx} className="bg-surface-warm p-6 rounded-none">
                       <h3 className="mb-4">{obj.title}</h3>

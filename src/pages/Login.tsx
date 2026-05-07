@@ -48,15 +48,15 @@ export default function Login() {
           <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
             <img src={settings.logo_url} alt="The Base" className="h-16 w-auto mx-auto mb-4 object-contain"  decoding="async" />
           </Link>
-          <h1 className="text-2xl font-black text-charcoal-dark uppercase tracking-tighter font-meta mb-2">The Base</h1>
-          <p className="text-sm text-slate-500 font-meta tracking-widest uppercase">Member Sign In</p>
+          <h1 className="text-2xl font-bold text-charcoal-dark tracking-tight font-meta mb-2">The Base</h1>
+          <p className="text-sm text-slate-500 font-meta tracking-tight">Member sign in</p>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-none shadow-sm p-8 md:p-10">
           <form className="space-y-6" onSubmit={handleLogin}>
             <div className="space-y-2">
-              <label htmlFor="phone" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase">
-                Phone Number or Email
+              <label htmlFor="phone" className="text-xs font-bold text-charcoal-dark font-meta tracking-tight">
+                Phone number or email
               </label>
               <input
                 id="phone"
@@ -74,7 +74,7 @@ export default function Login() {
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-widest uppercase">
+                <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-tight">
                   Password
                 </label>
                 <Link to="#" className="text-xs text-[var(--brand-green)] hover:underline font-meta">
@@ -104,7 +104,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[var(--brand-green)] hover:opacity-90 text-white font-meta font-bold uppercase tracking-wider py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
+              className="w-full bg-[var(--brand-green)] hover:opacity-90 text-white font-meta font-bold tracking-tight py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
@@ -121,8 +121,8 @@ export default function Login() {
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-slate-100"></span>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-4 text-slate-400 font-meta tracking-widest">Or continue with</span>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-white px-4 text-slate-400 font-meta tracking-tight">Or continue with</span>
               </div>
             </div>
 
@@ -135,7 +135,7 @@ export default function Login() {
                   toast.error(error instanceof Error ? error.message : 'Google login failed')
                 }
               }}
-              className="w-full bg-white border border-slate-200 hover:bg-slate-50 text-charcoal-dark font-meta font-bold uppercase tracking-wider py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-3"
+              className="w-full bg-white border border-slate-200 hover:bg-slate-50 text-charcoal-dark font-meta font-bold tracking-tight py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-3"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path

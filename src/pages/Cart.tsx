@@ -55,7 +55,7 @@ export default function Cart() {
                       </p>
                     </div>
                     
-                    <div className="flex flex-wrap gap-4 text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-4">
+                    <div className="flex flex-wrap gap-4 text-[10px] font-bold text-stone-500 tracking-tight mb-4">
                       {item.selectedSize && <span>Size: {item.selectedSize}</span>}
                       {item.selectedColor && <span>Color: {item.selectedColor}</span>}
                     </div>
@@ -79,7 +79,7 @@ export default function Cart() {
 
                       <button 
                         onClick={() => removeFromCart(item.id)}
-                        className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold uppercase tracking-widest"
+                        className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold tracking-tight"
                       >
                         <Trash2 className="w-4 h-4" />
                         Remove
@@ -94,7 +94,7 @@ export default function Cart() {
                 className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mt-4 group"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                <span className="font-meta text-[10px] font-bold uppercase tracking-widest">Continue Shopping</span>
+                <span className="font-meta text-[10px] font-bold tracking-tight">Continue shopping</span>
               </Link>
             </div>
 
@@ -104,15 +104,15 @@ export default function Cart() {
                 <h2 className="font-h3 text-xl text-stone-900 mb-6 pb-4 border-b border-stone-100">Order Summary</h2>
                 
                 <div className="space-y-4 mb-8">
-                  <div className="flex justify-between text-sm text-stone-600 font-meta uppercase tracking-wider">
+                  <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
                     <span>Subtotal</span>
                     <span className="font-bold text-stone-900">GHS {subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-stone-600 font-meta uppercase tracking-wider">
+                  <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
                     <span>Shipping Estimate</span>
                     <span className="font-bold text-stone-900">GHS {shipping.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-stone-600 font-meta uppercase tracking-wider">
+                  <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
                     <span>Taxes</span>
                     <span className="font-bold text-stone-900">Calculated at checkout</span>
                   </div>
@@ -122,7 +122,7 @@ export default function Cart() {
                   </div>
                 </div>
 
-                <Button asChild className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20">
+                <Button asChild className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 text-white text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20">
                   <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/checkout' : '/store/checkout'}>
                     Proceed to Checkout
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -132,11 +132,11 @@ export default function Cart() {
                 <div className="mt-8 space-y-4">
                   <div className="flex items-center gap-3 text-stone-500">
                     <span className="material-symbols-outlined text-sm">verified_user</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">100% Secure Transaction</span>
+                    <span className="text-[10px] font-bold tracking-tight">100% Secure transaction</span>
                   </div>
                   <div className="flex items-center gap-3 text-stone-500">
                     <span className="material-symbols-outlined text-sm">local_shipping</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Free Shipping over GHS 500</span>
+                    <span className="text-[10px] font-bold tracking-tight">Free shipping over GHS 500</span>
                   </div>
                 </div>
               </div>
@@ -149,7 +149,7 @@ export default function Cart() {
             </div>
             <h2 className="font-h3 text-2xl text-stone-900 mb-2">Your bag is empty</h2>
             <p className="text-muted-gray font-body-md mb-8">Looks like you haven't added anything to your bag yet.</p>
-            <Button asChild className="bg-[var(--brand-green)] hover:opacity-90 text-white px-8 h-12 text-xs font-bold uppercase tracking-widest rounded-sm">
+            <Button asChild className="bg-[var(--brand-green)] hover:opacity-90 text-white px-8 h-12 text-xs font-bold tracking-tight rounded-sm">
               <Link to="/store">Explore the Store</Link>
             </Button>
           </div>

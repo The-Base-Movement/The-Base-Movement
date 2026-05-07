@@ -57,7 +57,7 @@ export function DeleteConfirmationModal({
               
               <div className="space-y-1">
                 <DialogHeader>
-                  <DialogTitle className="text-xl font-black text-on-surface uppercase tracking-tighter">
+                  <DialogTitle className="text-xl font-bold text-on-surface tracking-tight">
                     {title}
                   </DialogTitle>
                   <DialogDescription className="text-muted-foreground/60 text-sm font-medium leading-relaxed pt-1">
@@ -69,8 +69,8 @@ export function DeleteConfirmationModal({
 
             {/* Item Preview Card */}
             <div className="bg-muted/5 rounded-sm p-5 border border-border/40 mb-8">
-              <p className="text-[10px] font-black text-on-surface/40 uppercase tracking-[0.2em] mb-2">Target Item</p>
-              <p className="text-sm font-black text-on-surface truncate">{itemName}</p>
+              <p className="text-[10px] font-bold text-on-surface/40 tracking-tight mb-2">Target item</p>
+              <p className="text-sm font-bold text-on-surface truncate tracking-tight">{itemName}</p>
             </div>
 
             <DialogFooter className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -79,7 +79,7 @@ export function DeleteConfirmationModal({
                 variant="ghost"
                 onClick={onClose}
                 disabled={isLoading}
-                className="flex-1 h-14 rounded-sm text-on-surface/60 font-black uppercase tracking-widest text-[10px] hover:bg-muted/5 hover:text-on-surface transition-all"
+                className="flex-1 h-14 rounded-sm text-on-surface/60 font-bold tracking-tight text-[10px] hover:bg-muted/5 hover:text-on-surface transition-all"
               >
                 Cancel
               </Button>
@@ -88,7 +88,7 @@ export function DeleteConfirmationModal({
                 onClick={onConfirm}
                 disabled={isLoading}
                 className={cn(
-                  "flex-1 h-14 rounded-sm text-white font-black uppercase tracking-widest text-[10px] shadow-2xl transition-all active:scale-[0.98] gap-3",
+                  "flex-1 h-14 rounded-sm text-white font-bold tracking-tight text-[10px] shadow-2xl transition-all active:scale-[0.98] gap-3",
                   isPermanent 
                     ? "bg-destructive hover:bg-destructive/90 shadow-destructive/20" 
                     : "bg-on-surface hover:bg-on-surface/90 shadow-on-surface/20"
@@ -99,7 +99,7 @@ export function DeleteConfirmationModal({
                 ) : (
                   isPermanent ? <Trash2 className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />
                 )}
-                {isLoading ? 'Processing...' : isPermanent ? 'Permanently Delete' : 'Move to Trash'}
+                {isLoading ? 'Processing...' : isPermanent ? 'Permanently delete' : 'Move to trash'}
               </Button>
             </DialogFooter>
           </div>

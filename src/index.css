@@ -154,12 +154,12 @@
   }
 
   h5, .h5 {
-    @apply font-meta font-bold tracking-wide leading-[1.5];
+    @apply font-meta font-bold tracking-tight leading-[1.5];
     font-size: var(--h5-size);
   }
 
   h6, .h6 {
-    @apply font-meta font-bold tracking-widest leading-[1.6];
+    @apply font-meta font-bold tracking-tight leading-[1.6];
     font-size: var(--h6-size);
   }
 

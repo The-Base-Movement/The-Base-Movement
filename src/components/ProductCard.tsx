@@ -68,12 +68,12 @@ export function ProductCard({ product, onShare }: ProductProps) {
           {/* Status Badge */}
           <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
             {isComingSoon && (
-              <span className="bg-stone-800 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-lg">
-                Coming Soon
+              <span className="bg-stone-800 text-white text-[10px] font-bold tracking-tight px-2.5 py-1 rounded-sm shadow-lg">
+                Coming soon
               </span>
             )}
             {product.category && (
-              <span className={`text-[11px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-lg border backdrop-blur-sm transition-all duration-300 ${
+              <span className={`text-[11px] font-bold tracking-tight px-3 py-1.5 rounded-sm shadow-lg border backdrop-blur-sm transition-all duration-300 ${
                 product.category === 'Apparel' ? 'bg-brand-green/20 text-brand-green border-brand-green/30' :
                 product.category === 'Accessories' ? 'bg-brand-gold/20 text-[#92400e] border-brand-gold/40' :
                 product.category === 'Limited Edition' ? 'bg-brand-red/20 text-brand-red border-brand-red/30' :
@@ -129,7 +129,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
             <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
               <h5 
                 id={`product-name-${product.id}`}
-                className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors line-clamp-1 lowercase first-letter:uppercase mb-0 font-bold"
+                className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors line-clamp-1 mb-0 font-bold"
               >
                 {product.name}
               </h5>
@@ -145,7 +145,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
           </p>
           
           <div className="mt-auto pt-4 border-t border-stone-100 flex items-center justify-between">
-            <span className="text-lg font-black text-[var(--brand-green)]">
+            <span className="text-lg font-bold text-[var(--brand-green)]">
               {product.price}
             </span>
             

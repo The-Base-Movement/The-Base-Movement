@@ -20,9 +20,9 @@ export default function NotFound() {
           <Search className="w-10 h-10 text-brand-green group-hover:scale-110 transition-transform" />
         </div>
 
-        <p className="font-meta text-brand-green uppercase tracking-[0.3em] text-[12px] font-black mb-4">Error 404</p>
-        <h1 className="font-meta font-black text-4xl md:text-5xl tracking-tight leading-tight text-charcoal-dark mb-6">
-          Path Not Found <span className="text-brand-green">.</span>
+        <p className="font-meta text-brand-green tracking-tight text-[12px] font-bold mb-4">Error 404</p>
+        <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight text-charcoal-dark mb-6">
+          Path not found <span className="text-brand-green">.</span>
         </h1>
         
         <p className="text-slate-500 text-sm md:text-base leading-relaxed mb-10 px-4">
@@ -33,13 +33,13 @@ export default function NotFound() {
           <Button asChild variant="primary" size="lg" className="h-14 px-10 w-full sm:w-auto">
             <Link to="/">
               <Home className="w-4 h-4 mr-2" />
-              Return Home
+              Return home
             </Link>
           </Button>
           
           <Button asChild variant="ghost" size="lg" className="h-14 px-10 w-full sm:w-auto border-slate-200">
             <Link to="/blog">
-              Browse Insights
+              Browse insights
               <ArrowRight className="w-4 h-4 ml-2" />
             </Link>
           </Button>
@@ -48,7 +48,7 @@ export default function NotFound() {
 
       {/* Movement Motto */}
       <div className="mt-20 text-center">
-        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em] mb-0">Ghana First • Collective Progress</p>
+        <p className="text-[10px] font-bold text-slate-300 tracking-tight mb-0">Ghana first • Collective progress</p>
       </div>
     </main>
   )

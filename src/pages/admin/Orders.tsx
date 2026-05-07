@@ -382,7 +382,7 @@ export default function AdminOrders() {
                         <div className="flex items-center gap-2 pt-2">
                           <Button
                             variant="outline"
-                            className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold capitalize tracking-[0.2em] shadow-sm hover:bg-stone-50 transition-all active:scale-95"
+                            className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold capitalize tracking-tight shadow-sm hover:bg-stone-50 transition-all active:scale-95"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedOrder(order);
@@ -393,7 +393,7 @@ export default function AdminOrders() {
                           {nextStatus && (
                             <Button
                               variant="primary"
-                              className="flex-1 h-12 rounded-sm text-[10px] font-bold capitalize tracking-[0.3em] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                              className="flex-1 h-12 rounded-sm text-[10px] font-bold capitalize tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                               disabled={updatingId === order.id}
                               onClick={(e) => {
                                 e.stopPropagation();

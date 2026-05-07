@@ -144,8 +144,8 @@ export default function DashboardLayout() {
           <img src={settings.logo_url} alt="The Base Logo" className="h-10 w-10 object-contain shrink-0"  decoding="async" />
           {!isSidebarCollapsed && (
             <div className="overflow-hidden whitespace-nowrap">
-              <h1 className="text-xl font-bold text-on-surface leading-none mb-0 tracking-tighter">The Base</h1>
-              <p className="text-tiny text-accent font-bold tracking-tight mt-1 mb-0">Civic Movement</p>
+              <h1 className="text-xl font-bold text-on-surface leading-none mb-0 tracking-tight">The Base</h1>
+              <p className="text-tiny text-accent font-bold tracking-tight mt-1 mb-0">Civic movement</p>
             </div>
           )}
         </div>
@@ -167,7 +167,7 @@ export default function DashboardLayout() {
             ].map((item) => (
               <Link 
                 key={item.to}
-                className={`flex items-center transition-all font-meta text-sm font-semibold tracking-wider ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-6 py-3'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
+                className={`flex items-center transition-all font-meta text-sm font-bold tracking-tight ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-6 py-3'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
                 to={item.to}
               >
                 <span className={`material-symbols-outlined ${isSidebarCollapsed ? 'mr-0' : 'mr-3'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{item.icon}</span>
@@ -253,7 +253,7 @@ export default function DashboardLayout() {
                 <span className="material-symbols-outlined text-[28px]">menu</span>
               </button>
               
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-on-surface m-0 uppercase font-meta">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-surface m-0 font-meta">
                 {getPageTitle()}
             </h1>
           </div>
@@ -284,7 +284,7 @@ export default function DashboardLayout() {
                 >notifications</span>
                 {/* Unread badge */}
                 {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-destructive rounded-full ring-2 ring-white text-micro flex items-center justify-center text-white font-black">
+                  <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-destructive rounded-full ring-2 ring-white text-micro flex items-center justify-center text-white font-bold tracking-tight">
                     {unreadCount}
                   </span>
                 )}
@@ -305,7 +305,7 @@ export default function DashboardLayout() {
                           className="w-full h-full object-cover"
                          decoding="async" />
                       ) : (
-                        <div className="w-full h-full bg-primary flex items-center justify-center text-white text-tiny font-black tracking-widest">
+                        <div className="w-full h-full bg-primary flex items-center justify-center text-white text-tiny font-bold tracking-tight">
                           {initials || 'M'}
                         </div>
                       )}
@@ -365,7 +365,7 @@ export default function DashboardLayout() {
         {/* Dashboard Footer */}
         <footer className="mt-16 py-16 px-12 border-t border-border/10 bg-muted/5">
           <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-tiny text-muted-foreground/40 mb-0 font-black tracking-[0.2em]">© {new Date().getFullYear()} The Base Movement. Ghana First.</p>
+            <p className="text-tiny text-muted-foreground/40 mb-0 font-bold tracking-tight">© {new Date().getFullYear()} The Base Movement. Ghana First.</p>
             <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10">
               <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy Policy</Link>
               <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms of Service</Link>

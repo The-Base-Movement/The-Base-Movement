@@ -175,7 +175,7 @@ export default function Checkout() {
             className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mb-4 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-meta text-[10px] font-bold uppercase tracking-widest">Back to Bag</span>
+            <span className="font-meta text-[10px] font-bold tracking-tight">Back to bag</span>
           </Link>
           <h1 className="font-h1 text-2xl sm:text-h2 text-stone-900 flex items-center gap-3">
             <CheckCircle className="w-8 h-8 text-[var(--brand-green)] shrink-0" />
@@ -197,7 +197,7 @@ export default function Checkout() {
 
               <div className="grid sm:grid-cols-2 gap-6">
                 <div className="sm:col-span-2">
-                  <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-2">Full Name</label>
+                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Full name</label>
                   <input
                     type="text"
                     name="fullName"
@@ -209,7 +209,7 @@ export default function Checkout() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-2">Email Address</label>
+                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Email address</label>
                   <input
                     type="email"
                     name="email"
@@ -221,7 +221,7 @@ export default function Checkout() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-2">Phone Number</label>
+                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Phone number</label>
                   <input
                     type="tel"
                     name="phone"
@@ -233,7 +233,7 @@ export default function Checkout() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-2">Shipping Address</label>
+                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Shipping address</label>
                   <input
                     type="text"
                     name="address"
@@ -245,7 +245,7 @@ export default function Checkout() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-2">Country</label>
+                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Country</label>
                   <select
                     name="country"
                     value={formData.country}
@@ -260,7 +260,7 @@ export default function Checkout() {
                 </div>
                 {isDiaspora ? (
                   <div>
-                    <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-2">State / Province</label>
+                    <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">State / Province</label>
                     <input
                       type="text"
                       name="stateProvince"
@@ -272,7 +272,7 @@ export default function Checkout() {
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-2">Region</label>
+                    <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Region</label>
                     <select
                       name="region"
                       value={formData.region}
@@ -312,8 +312,8 @@ export default function Checkout() {
                     <Smartphone className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="font-bold text-stone-900 text-sm">Mobile Money</p>
-                    <p className="text-[10px] text-stone-500 uppercase tracking-wider">MTN, Telecel, AT Money</p>
+                    <p className="font-bold text-stone-900 text-sm">Mobile money</p>
+                    <p className="text-[10px] text-stone-500 tracking-tight">MTN, Telecel, AT money</p>
                   </div>
                 </button>
 
@@ -330,25 +330,25 @@ export default function Checkout() {
                     <CreditCard className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="font-bold text-stone-900 text-sm">Credit / Debit Card</p>
-                    <p className="text-[10px] text-stone-500 uppercase tracking-wider">Visa, Mastercard, AMEX</p>
+                    <p className="font-bold text-stone-900 text-sm">Credit / debit card</p>
+                    <p className="text-[10px] text-stone-500 tracking-tight">Visa, Mastercard, AMEX</p>
                   </div>
                 </button>
               </div>
 
               {paymentMethod === 'momo' && (
                 <div className="mt-8 p-6 bg-stone-50 border border-stone-100 rounded-sm">
-                  <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-4">Select Network</label>
+                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-4">Select network</label>
                   <div className="flex flex-wrap gap-4">
                     {['MTN', 'Telecel', 'AT Money'].map(network => (
                       <label key={network} className="flex items-center gap-2 cursor-pointer group">
                         <input type="radio" name="network" className="w-4 h-4 text-[var(--brand-green)] focus:ring-[var(--brand-green)]" />
-                        <span className="text-xs font-bold text-stone-600 group-hover:text-stone-900 uppercase tracking-wider">{network}</span>
+                        <span className="text-xs font-bold text-stone-600 group-hover:text-stone-900 tracking-tight">{network}</span>
                       </label>
                     ))}
                   </div>
                   <div className="mt-6">
-                    <label className="block text-[10px] font-bold text-stone-900 uppercase tracking-widest mb-2">MoMo Number</label>
+                    <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">MoMo number</label>
                     <input
                       type="tel"
                       className="w-full h-12 bg-white border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
@@ -370,7 +370,7 @@ export default function Checkout() {
                   <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="flex justify-between items-start gap-4">
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-stone-900 line-clamp-1">{item.name}</p>
-                      <p className="text-[10px] text-stone-500 uppercase tracking-widest">Qty: {item.quantity} | {item.selectedSize}</p>
+                      <p className="text-[10px] text-stone-500 tracking-tight">Qty: {item.quantity} | {item.selectedSize}</p>
                     </div>
                     <p className="text-xs font-bold text-stone-900">
                       GHS {(item.quantity * (typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price)).toFixed(2)}
@@ -380,11 +380,11 @@ export default function Checkout() {
               </div>
 
               <div className="space-y-4 pt-6 border-t border-stone-100 mb-8">
-                <div className="flex justify-between text-xs text-stone-600 uppercase tracking-wider">
+                <div className="flex justify-between text-xs text-stone-600 tracking-tight">
                   <span>Subtotal</span>
                   <span className="font-bold text-stone-900">GHS {subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-xs text-stone-600 uppercase tracking-wider">
+                <div className="flex justify-between text-xs text-stone-600 tracking-tight">
                   <span>Shipping</span>
                   <span className="font-bold text-stone-900">GHS {shipping.toFixed(2)}</span>
                 </div>
@@ -400,16 +400,16 @@ export default function Checkout() {
                           onChange={(e) => setUsePoints(e.target.checked)}
                           className="w-4 h-4 rounded border-stone-300 text-[var(--brand-green)] focus:ring-[var(--brand-green)]"
                         />
-                        <label htmlFor="usePoints" className="text-[10px] font-bold text-stone-900 uppercase tracking-widest cursor-pointer">
+                        <label htmlFor="usePoints" className="text-[10px] font-bold text-stone-900 tracking-tight cursor-pointer">
                           Redeem Points
                         </label>
                       </div>
-                      <span className="text-[10px] font-bold text-[var(--brand-green)] uppercase tracking-widest">
+                      <span className="text-[10px] font-bold text-[var(--brand-green)] tracking-tight">
                         {userPoints.toLocaleString()} Available
                       </span>
                     </div>
                     {usePoints && (
-                      <div className="flex justify-between text-xs text-[var(--brand-green)] uppercase tracking-wider animate-in fade-in slide-in-from-top-1">
+                      <div className="flex justify-between text-xs text-[var(--brand-green)] tracking-tight animate-in fade-in slide-in-from-top-1">
                         <span>Points Discount</span>
                         <span className="font-bold">- GHS {appliedPointsValue.toFixed(2)}</span>
                       </div>
@@ -426,7 +426,7 @@ export default function Checkout() {
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold uppercase tracking-widest rounded-sm shadow-lg shadow-brand-green/20"
+                className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20"
               >
                 {isSubmitting ? 'Processing Order...' : 'Complete Purchase'}
               </Button>
@@ -434,11 +434,11 @@ export default function Checkout() {
               <div className="mt-8 space-y-4">
                 <div className="flex items-center gap-3 text-stone-500">
                   <ShieldCheck className="w-4 h-4" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Encrypted Checkout</span>
+                  <span className="text-[10px] font-bold tracking-tight">Encrypted checkout</span>
                 </div>
                 <div className="flex items-center gap-3 text-stone-500">
                   <Globe className="w-4 h-4" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Worldwide Shipping</span>
+                  <span className="text-[10px] font-bold tracking-tight">Worldwide shipping</span>
                 </div>
               </div>
             </div>

@@ -89,10 +89,15 @@ export default function Store() {
       <header className="mb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-stone-900 mb-2 flex items-center gap-3">
+            <h1 className="text-stone-900 mb-4 flex items-center gap-3">
               <ShoppingBag className="w-8 h-8 text-brand-green" />
               Supplies
             </h1>
+            <div className="flex h-1 w-24 mb-6">
+              <div className="flex-1 bg-destructive" />
+              <div className="flex-1 bg-accent" />
+              <div className="flex-1 bg-primary" />
+            </div>
             <p className="text-muted-gray max-w-xl mb-0">
               Equip yourself with official movement gear. Every purchase directly funds our grassroots organizing and civic education programs.
             </p>
@@ -136,7 +141,7 @@ export default function Store() {
                   setActiveCategory(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="w-full bg-stone-50 border border-stone-200 rounded-sm px-4 py-3 text-xs font-meta font-bold uppercase tracking-widest appearance-none focus:ring-1 focus:ring-brand-green outline-none"
+                className="w-full bg-stone-50 border border-stone-200 rounded-sm px-4 py-3 text-xs font-meta font-bold tracking-tight appearance-none focus:ring-1 focus:ring-brand-green outline-none"
               >
                 {categories.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>

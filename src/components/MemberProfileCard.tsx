@@ -27,15 +27,15 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
               <div className="min-w-0">
                 <h3 
                   id={`member-name-${member.id}`}
-                  className="text-charcoal-dark truncate text-base font-bold uppercase tracking-tight"
+                  className="text-charcoal-dark truncate text-base font-bold tracking-tight"
                 >
                   {member.name}
                 </h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 mb-0">{member.profession}</p>
+                <p className="text-[10px] font-bold text-slate-400 tracking-tight mt-0.5 mb-0">{member.profession}</p>
               </div>
             </div>
             <div className="flex flex-col items-end shrink-0">
-              <span className="text-[7px] font-black bg-primary/10 text-primary px-1.5 py-0.5 rounded-none tracking-widest uppercase">
+              <span className="text-[7px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-none tracking-tight">
                 {member.status === 'Active' || member.status === 'Approved' || !member.status ? 'VERIFIED' : 'PENDING'}
               </span>
             </div>
@@ -44,19 +44,19 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
           <div className="mt-6 pt-6 border-t border-slate-50 space-y-3">
             <div className="flex items-center gap-2 text-slate-500">
               <MapPin className="w-3 h-3 text-primary" />
-              <span className="text-[10px] font-bold uppercase tracking-tight truncate">
+              <span className="text-[10px] font-bold tracking-tight truncate">
                 {member.platform === 'GHANA' ? `${member.constituency}, ${member.region}` : member.country}
               </span>
             </div>
             <div className="flex items-center gap-2 text-slate-500">
               <Globe className="w-3 h-3 text-accent" />
-              <span className="text-[10px] font-bold uppercase tracking-tight">{member.platform} PLATFORM</span>
+              <span className="text-[10px] font-bold tracking-tight">{member.platform} platform</span>
             </div>
           </div>
 
           <div className="mt-6">
-            <button className="w-full py-2.5 bg-slate-50 group-hover:bg-primary group-hover:text-white text-[9px] font-bold tracking-[0.2em] rounded-none transition-all uppercase">
-              View Profile
+            <button className="w-full py-2.5 bg-slate-50 group-hover:bg-primary group-hover:text-white text-[9px] font-bold tracking-tight rounded-none transition-all">
+              View profile
             </button>
           </div>
         </CardContent>

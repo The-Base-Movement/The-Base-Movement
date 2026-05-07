@@ -29,13 +29,13 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
       <CardContent className="p-8">
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <span className="text-[10px] font-bold text-[var(--brand-green)] bg-[var(--brand-green)]/5 px-2 py-1 rounded-none uppercase tracking-widest shrink-0 mb-0">
+            <span className="text-[10px] font-bold text-[var(--brand-green)] bg-[var(--brand-green)]/5 px-2 py-1 rounded-none tracking-tight shrink-0 mb-0">
               {poll.category}
             </span>
             <div className="flex items-center gap-2">
               <Clock className="w-3.5 h-3.5 text-stone-400" />
-              <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">
-                {poll.status === 'Active' ? 'Ends In:' : 'Ended'}
+              <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-0">
+                {poll.status === 'Active' ? 'Ends in:' : 'Ended'}
               </p>
               <p className="text-xs font-bold text-stone-700 mb-0">
                 {poll.status === 'Active' ? `${days} Day${days !== 1 ? 's' : ''}` : 'Closed'}
@@ -62,7 +62,7 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
                         {isSelected && <CheckCircle2 className="w-4 h-4 text-[var(--brand-green)]" />}
                         <span className={`text-sm font-medium ${isSelected ? 'text-[var(--brand-green)]' : 'text-stone-600'}`}>{option.label}</span>
                       </div>
-                      <span className="text-stone-400 text-[10px] font-bold tracking-widest">{percentage}%</span>
+                      <span className="text-stone-400 text-[10px] font-bold tracking-tight">{percentage}%</span>
                       {/* Progress Bar Background */}
                       <div 
                         className="absolute inset-0 -z-10 transition-all duration-1000 ease-out"
@@ -89,7 +89,7 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
         </div>
 
         <div className="mt-8 pt-6 border-t border-stone-100 flex justify-between items-center">
-          <div className="flex items-center gap-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">
+          <div className="flex items-center gap-4 text-[10px] font-bold text-stone-400 tracking-tight mb-0">
             <div className="flex items-center gap-1.5">
               <Users className="w-4 h-4" />
               {poll.totalVotes.toLocaleString()} Votes
@@ -103,9 +103,9 @@ export function OpinionPollCard({ poll, voting, showResults, handleVote, toggleR
             </button>
           </div>
           {poll.voted && (
-            <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 uppercase tracking-widest mb-0">
+            <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 tracking-tight mb-0">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              VOTE RECORDED
+              Vote recorded
             </span>
           )}
         </div>

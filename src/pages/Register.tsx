@@ -300,14 +300,14 @@ export default function Register() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-6 animate-bounce">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h1 className="text-3xl font-black text-on-surface uppercase tracking-tighter font-meta mb-2">Registration Complete</h1>
-            <p className="text-muted-foreground font-meta uppercase tracking-widest text-xs">Welcome to the movement, patriot.</p>
+            <h1 className="text-3xl font-bold text-on-surface tracking-tighter font-meta mb-2">Registration complete</h1>
+            <p className="text-muted-foreground font-meta tracking-tight text-xs">Welcome to the movement, patriot.</p>
           </div>
 
           <div className="space-y-8">
             <div className="bg-white border border-border/60 p-2 shadow-2xl relative">
               <div className="border-b border-border/40 pb-3 mb-4 px-4 pt-2">
-                <h3 className="font-meta font-bold text-[10px] text-muted-foreground/80 uppercase tracking-[0.2em]">Official Membership Card</h3>
+                <h3 className="font-meta font-bold text-[10px] text-muted-foreground/80 tracking-tight">Official membership card</h3>
               </div>
               
               <div className="max-w-md mx-auto py-4">
@@ -329,22 +329,22 @@ export default function Register() {
               <div className="bg-muted/30 p-6 mt-4 border-t border-border/40">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                   <div>
-                    <h4 className="font-meta font-bold text-xs text-on-surface uppercase tracking-wider mb-1">Registration Number</h4>
-                    <p className="font-meta font-black text-xl text-primary tracking-tight">{regNumber}</p>
+                    <h4 className="font-meta font-bold text-xs text-on-surface tracking-tight mb-1">Registration number</h4>
+                    <p className="font-meta font-bold text-xl text-primary tracking-tight">{regNumber}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <button 
                       onClick={() => window.print()}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-on-surface font-meta font-black uppercase tracking-widest text-[10px] hover:opacity-90 transition-all shadow-md"
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-on-surface font-meta font-bold tracking-tight text-[10px] hover:opacity-90 transition-all shadow-md"
                     >
                       <span className="material-symbols-outlined text-[18px]">print</span>
-                      Print Card
+                      Print card
                     </button>
                     <button 
                       onClick={() => setSubmitted(false)}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-border/60 text-on-surface font-meta font-black uppercase tracking-widest text-[10px] hover:bg-muted/30 transition-all shadow-sm"
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-border/60 text-on-surface font-meta font-bold tracking-tight text-[10px] hover:bg-muted/30 transition-all shadow-sm"
                     >
-                      <ArrowLeft className="w-4 h-4" /> Edit Info
+                      <ArrowLeft className="w-4 h-4" /> Edit info
                     </button>
                   </div>
                 </div>
@@ -353,10 +353,10 @@ export default function Register() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white border border-border/60 p-8 shadow-sm">
-                <h4 className="font-meta font-bold text-[10px] text-muted-foreground/80 uppercase tracking-widest mb-4">Membership Verification</h4>
+                <h4 className="font-meta font-bold text-[10px] text-muted-foreground/80 tracking-tight mb-4">Membership verification</h4>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                  <p className="text-xs font-bold text-on-surface font-meta uppercase tracking-tight">Status: VERIFIED</p>
+                  <p className="text-xs font-bold text-on-surface font-meta tracking-tight">Status: Verified</p>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2 font-body-md leading-relaxed">
                   Your official records have been synchronized with the movement's hub. You can now access the platform overview.
@@ -365,12 +365,12 @@ export default function Register() {
 
                 <div className="bg-primary text-white p-8 flex flex-col justify-between">
                 <div>
-                  <h4 className="font-meta font-bold text-[10px] text-white/60 uppercase tracking-widest mb-4">Next Step</h4>
-                  <p className="text-sm font-bold font-meta uppercase leading-tight mb-4">Access your portal to join a chapter.</p>
+                  <h4 className="font-meta font-bold text-[10px] text-white/60 tracking-tight mb-4">Next step</h4>
+                  <p className="text-sm font-bold font-meta leading-tight mb-4">Access your portal to join a chapter.</p>
                 </div>
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="w-full inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-white/10 hover:bg-white/20 p-3 text-center justify-center transition-colors cursor-pointer"
+                  className="w-full inline-flex items-center gap-2 text-xs font-bold tracking-tight bg-white/10 hover:bg-white/20 p-3 text-center justify-center transition-colors cursor-pointer"
                 >
                   Enter Overview <ArrowRight className="w-4 h-4" />
                 </button>
@@ -387,9 +387,9 @@ export default function Register() {
         <div className="max-w-5xl w-full mx-auto">
           <div className="text-center mb-12">
             <img src={settings.logo_url} alt="The Base" className="h-24 w-auto mx-auto mb-6 object-contain"  decoding="async" />
-            <h1 className="text-4xl font-black text-on-surface uppercase tracking-tighter font-meta mb-2">The Base</h1>
+            <h1 className="text-4xl font-bold text-on-surface tracking-tighter font-meta mb-2">The Base</h1>
             <div className="w-20 h-1.5 bg-destructive mx-auto mb-6"></div>
-            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-[0.3em] font-meta">Membership Registration Options</h2>
+            <h2 className="text-sm font-bold text-muted-foreground tracking-tight font-meta">Membership registration options</h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -410,12 +410,12 @@ export default function Register() {
                   <div className="w-20 h-20 bg-brand-green/5 flex items-center justify-center group-hover:bg-brand-green/10 transition-colors">
                     <FileText className="w-10 h-10 text-brand-green" />
                   </div>
-                  <div className="text-[10px] font-black text-brand-green bg-brand-green/10 px-3 py-1 uppercase tracking-widest">In-Country</div>
+                  <div className="text-[10px] font-bold text-brand-green bg-brand-green/10 px-3 py-1 tracking-tight">In-country</div>
                 </div>
                 
                 <div className="space-y-4">
-                  <h3 className="font-black text-3xl text-on-surface uppercase tracking-tight font-meta leading-none group-hover:text-brand-green transition-colors">
-                    Local Membership <br/> (Ghana)
+                  <h3 className="font-bold text-3xl text-on-surface tracking-tight font-meta leading-none group-hover:text-brand-green transition-colors">
+                    Local membership <br/> (Ghana)
                   </h3>
                   <div className="space-y-4 pt-2">
                     <p className="text-sm text-muted-foreground leading-relaxed font-body-md">
@@ -438,10 +438,10 @@ export default function Register() {
                       <Link 
                         to="/register/preview?platform=GHANA" 
                         onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-green/60 hover:text-brand-green hover:underline transition-all"
+                        className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-brand-green/60 hover:text-brand-green hover:underline transition-all"
                       >
                         <Download className="w-3 h-3" />
-                        Download Paper Form (Ghana)
+                        Download paper form (Ghana)
                       </Link>
                     </div>
                   </div>
@@ -449,8 +449,8 @@ export default function Register() {
               </div>
 
               <div className="mt-10 pt-6 border-t border-border/40 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-brand-green">
-                  Select Membership <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <div className="flex items-center gap-2 text-[11px] font-bold tracking-tight text-brand-green">
+                  Select membership <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
                 <div className="text-on-surface/5 group-hover:text-brand-green/20 transition-colors">
                   <ArrowRight className="w-16 h-16 rotate-[-45deg]" />
@@ -475,12 +475,12 @@ export default function Register() {
                   <div className="w-20 h-20 bg-brand-gold/5 flex items-center justify-center group-hover:bg-brand-gold/10 transition-colors">
                     <User className="w-10 h-10 text-brand-gold" />
                   </div>
-                  <div className="text-[10px] font-black text-brand-gold bg-brand-gold/10 px-3 py-1 uppercase tracking-widest">Global Community</div>
+                  <div className="text-[10px] font-bold text-brand-gold bg-brand-gold/10 px-3 py-1 tracking-tight">Global community</div>
                 </div>
                 
                 <div className="space-y-4">
-                  <h3 className="font-black text-3xl text-on-surface uppercase tracking-tight font-meta leading-none group-hover:text-brand-gold transition-colors">
-                    Diaspora <br/> Membership
+                  <h3 className="font-bold text-3xl text-on-surface tracking-tight font-meta leading-none group-hover:text-brand-gold transition-colors">
+                    Diaspora <br/> membership
                   </h3>
                   <div className="space-y-4 pt-2">
                     <p className="text-sm text-muted-foreground leading-relaxed font-body-md">
@@ -503,10 +503,10 @@ export default function Register() {
                       <Link 
                         to="/register/preview?platform=DIASPORA" 
                         onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-gold/60 hover:text-brand-gold hover:underline transition-all"
+                        className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-brand-gold/60 hover:text-brand-gold hover:underline transition-all"
                       >
                         <Download className="w-3 h-3" />
-                        Download Paper Form (Diaspora)
+                        Download paper form (Diaspora)
                       </Link>
                     </div>
                   </div>
@@ -514,8 +514,8 @@ export default function Register() {
               </div>
 
               <div className="mt-10 pt-6 border-t border-border/40 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-brand-gold">
-                  Select Membership <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <div className="flex items-center gap-2 text-[11px] font-bold tracking-tight text-brand-gold">
+                  Select membership <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
                 <div className="text-on-surface/5 group-hover:text-brand-gold/20 transition-colors">
                   <ArrowRight className="w-16 h-16 rotate-[-45deg]" />
@@ -548,7 +548,7 @@ export default function Register() {
           <h2 className="text-muted-foreground mb-8">Official Registration Form</h2>
           <button
             onClick={() => setStep('choice')}
-            className="inline-flex items-center gap-2 px-6 py-2 border border-border/60 text-[10px] font-black text-muted-foreground tracking-widest hover:bg-muted/30 transition-all font-meta"
+            className="inline-flex items-center gap-2 px-6 py-2 border border-border/60 text-[10px] font-bold text-muted-foreground tracking-tight hover:bg-muted/30 transition-all font-meta"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to registration options
           </button>
@@ -558,7 +558,7 @@ export default function Register() {
       <div className="max-w-6xl mx-auto py-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-3 space-y-2 sticky top-8">
-            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-[0.2em] mb-6 pl-4">Registration progress</p>
+            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-6 pl-4">Registration progress</p>
             <div className="space-y-1">
               {[
                 { step: 1, label: 'Primary details' },
@@ -578,7 +578,7 @@ export default function Register() {
             </div>
 
             <div className="mt-12 pl-4 pt-8 border-t border-border/60">
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-[0.2em] mb-1">Need assistance?</p>
+              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-1">Need assistance?</p>
               <a href="mailto:info@thebasemovement.com" className="text-xs font-meta font-medium text-muted-foreground hover:text-primary transition-colors">
                 info@thebasemovement.com
               </a>
@@ -591,7 +591,7 @@ export default function Register() {
               {formStep === 1 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-primary/20 pb-3 mb-8">
-                    <h3 className="text-on-surface">Step 1: Primary Details</h3>
+                    <h3 className="text-on-surface">Step 1: Primary details</h3>
                   </div>
 
                   {/* AI Verification Scanner - Local Membership Only */}
@@ -635,7 +635,7 @@ export default function Register() {
                   )}
 
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">
                       Full name <span className="text-muted-foreground/80 ml-1">(First & last name)</span>
                     </label>
                     <input 
@@ -649,19 +649,19 @@ export default function Register() {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">Membership platform</label>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Membership platform</label>
                     <div className="grid grid-cols-2 gap-4">
                       <button
                         type="button"
                         onClick={() => handlePlatformChange('GHANA')}
-                        className={`p-4 border text-sm font-bold tracking-widest font-meta transition-all ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground hover:border-primary/40'}`}
+                        className={`p-4 border text-sm font-bold tracking-tight font-meta transition-all ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground hover:border-primary/40'}`}
                       >
                         Ghana Base
                       </button>
                       <button
                         type="button"
                         onClick={() => handlePlatformChange('DIASPORA')}
-                        className={`p-4 border text-sm font-bold tracking-widest font-meta transition-all ${platform === 'DIASPORA' ? 'border-accent bg-accent/5 text-accent' : 'border-border/60 text-muted-foreground hover:border-accent/40'}`}
+                        className={`p-4 border text-sm font-bold tracking-tight font-meta transition-all ${platform === 'DIASPORA' ? 'border-accent bg-accent/5 text-accent' : 'border-border/60 text-muted-foreground hover:border-accent/40'}`}
                       >
                         Diaspora Base
                       </button>
@@ -670,14 +670,14 @@ export default function Register() {
                   
                   {platform === 'GHANA' && (
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">National ID number (Optional)</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">National ID number (Optional)</label>
                       <input value={formData.idNumber} onChange={(e) => handleChange('idNumber', e.target.value)} placeholder="GHA-000000000-0" className="w-full form-understate p-4 text-on-surface text-sm" />
                     </div>
                   )}
                   <div className="grid md:grid-cols-2 gap-8">
                     {platform === 'DIASPORA' && (
                       <div className="space-y-3">
-                        <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">Country</label>
+                        <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Country</label>
                         <select 
                           required 
                           value={formData.country} 
@@ -697,7 +697,7 @@ export default function Register() {
                       </div>
                     )}
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest block">Phone</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Phone</label>
                       <div className="flex">
                         <select value={formData.countryCode} onChange={(e) => handleChange('countryCode', e.target.value)} className="px-2 bg-muted border border-border/60 text-xs">
                           {Array.from(new Set(Object.values(dbCountryCodes))).map(code => <option key={code} value={code}>{code}</option>)}
@@ -707,7 +707,7 @@ export default function Register() {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Password</label>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Password</label>
                     <div className="relative">
                       <input 
                         type={showPassword ? 'text' : 'password'} 
@@ -736,18 +736,18 @@ export default function Register() {
               {formStep === 2 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-primary/20 pb-3 mb-8">
-                    <h3 className="text-on-surface">Step 2: Demographic Details</h3>
+                    <h3 className="text-on-surface">Step 2: Demographic details</h3>
                   </div>
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Age Range</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Age range</label>
                       <select required value={formData.ageRange} onChange={(e) => handleChange('ageRange', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                         <option value="">Select Range</option>
                         {ageRanges.map(r => <option key={r} value={r}>{r}</option>)}
                       </select>
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Gender</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Gender</label>
                       <select required value={formData.gender} onChange={(e) => handleChange('gender', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -757,7 +757,7 @@ export default function Register() {
                   </div>
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Number of Children</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Number of children</label>
                       <input 
                         type="number" 
                         min="0" 
@@ -771,14 +771,14 @@ export default function Register() {
                   {platform === 'GHANA' && (
                     <div className="grid md:grid-cols-2 gap-8">
                       <div className="space-y-3">
-                        <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Region</label>
+                        <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Region</label>
                         <select required value={formData.region} onChange={(e) => handleChange('region', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                           <option value="">Select Region</option>
                           {dbRegions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
                         </select>
                       </div>
                       <div className="space-y-3">
-                        <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Constituency</label>
+                        <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Constituency</label>
                         <select required value={formData.constituency} onChange={(e) => handleChange('constituency', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm">
                           <option value="">Select Constituency</option>
                           {formData.region && dbConstituencies
@@ -795,19 +795,19 @@ export default function Register() {
               {formStep === 3 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-primary/20 pb-3 mb-8">
-                    <h3 className="text-on-surface">Step 3: Emergency & Profile</h3>
+                    <h3 className="text-on-surface">Step 3: Emergency & profile</h3>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Profession</label>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Profession</label>
                     <input required value={formData.profession} onChange={(e) => handleChange('profession', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm" />
                   </div>
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Emergency Name</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Emergency name</label>
                       <input required value={formData.emergencyContactName} onChange={(e) => handleChange('emergencyContactName', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Emergency Phone</label>
+                      <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Emergency phone</label>
                       <input required value={formData.emergencyNumber} onChange={(e) => handleChange('emergencyNumber', e.target.value)} className="w-full form-understate p-4 text-on-surface text-sm" />
                     </div>
                   </div>
@@ -817,15 +817,15 @@ export default function Register() {
               {formStep === 4 && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="border-b-2 border-primary/20 pb-3 mb-8">
-                    <h3 className="text-on-surface">Step 4: Final Verification</h3>
+                    <h3 className="text-on-surface">Step 4: Final verification</h3>
                   </div>
                   <div className="space-y-6">
-                    <label className="text-xs font-bold text-on-surface font-meta tracking-widest uppercase block">Photo</label>
+                    <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Photo</label>
                     {!photoUrl ? (
                       <div className="border-2 border-dashed p-12 text-center bg-muted/30 relative">
                         <input type="file" accept="image/*" onChange={handlePhotoUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
                         <Upload className="mx-auto mb-4 text-muted-foreground/40" />
-                        <p className="text-[10px] font-bold uppercase text-muted-foreground">Upload Photo</p>
+                        <p className="text-[10px] font-bold text-muted-foreground">Upload photo</p>
                       </div>
                     ) : (
                       <div className="relative h-[400px] bg-on-surface">
@@ -856,7 +856,7 @@ export default function Register() {
                     </>
                   ) : (
                     <>
-                      {formStep < 4 ? 'Next Step' : 'Submit Registration'}
+                      {formStep < 4 ? 'Next step' : 'Submit registration'}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </>
                   )}

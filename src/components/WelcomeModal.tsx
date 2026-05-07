@@ -70,11 +70,11 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
                   <h5 className="text-stone-900 leading-tight mb-1">
                     {assignedChapter.name}
                   </h5>
-                  <span className="text-[10px] font-bold text-white bg-[var(--brand-green)] px-2 py-0.5 rounded-none uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-white bg-[var(--brand-green)] px-2 py-0.5 rounded-none tracking-tight">
                     Assigned
                   </span>
                 </div>
-                <p className="text-xs font-bold text-[var(--brand-green)] uppercase tracking-wider mb-0">
+                <p className="text-xs font-bold text-[var(--brand-green)] tracking-tight mb-0">
                   {assignedChapter.region}
                 </p>
               </div>
@@ -85,15 +85,15 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
           <div className="space-y-4">
             <Button 
               onClick={onClose}
-              className="w-full h-14 bg-[var(--brand-green)] text-white hover:bg-emerald-800 rounded-none font-bold text-sm uppercase tracking-[0.2em] shadow-xl shadow-brand-green/20 transition-all active:scale-95 flex items-center justify-center gap-3"
+              className="w-full h-14 bg-[var(--brand-green)] text-white hover:bg-emerald-800 rounded-none font-bold text-sm tracking-tight shadow-xl shadow-brand-green/20 transition-all active:scale-95 flex items-center justify-center gap-3"
             >
               <Check className="w-5 h-5" />
-              Confirm This Chapter
+              Confirm this chapter
             </Button>
             
             <button 
               onClick={handleChooseDifferent}
-              className="w-full py-4 text-xs font-bold text-stone-400 hover:text-[var(--brand-green)] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 group"
+              className="w-full py-4 text-xs font-bold text-stone-400 hover:text-[var(--brand-green)] tracking-tight transition-colors flex items-center justify-center gap-2 group"
             >
               <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
               Choose a different chapter
@@ -104,7 +104,7 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
           <div className="mt-10 pt-8 border-t border-stone-100">
             <div className="flex items-center gap-3 text-stone-400">
               <Building2 className="w-4 h-4" />
-              <p className="text-[10px] font-bold uppercase tracking-widest mb-0">
+              <p className="text-[10px] font-bold tracking-tight mb-0">
                 Assigned based on your region: {assignedChapter.region}
               </p>
             </div>

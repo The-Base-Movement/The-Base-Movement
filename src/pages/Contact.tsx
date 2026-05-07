@@ -47,7 +47,7 @@ export default function Contact() {
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
-          <h1 className="text-4xl md:text-h1 font-black mb-4 uppercase tracking-tighter font-meta">Contact Us</h1>
+          <h1 className="text-4xl md:text-h1 font-bold mb-4 tracking-tight font-meta">Contact us</h1>
           <div className="flex h-1 w-24 mx-auto mb-6">
             <div className="flex-1 bg-[var(--brand-red)]"></div>
             <div className="flex-1 bg-[var(--brand-gold)]"></div>
@@ -65,7 +65,7 @@ export default function Contact() {
           {/* Contact Info */}
           <div className="lg:col-span-2 space-y-8">
             <div>
-              <h2 className="text-2xl font-bold text-charcoal-dark mb-4 font-meta uppercase tracking-tight">Get In Touch</h2>
+              <h2 className="text-2xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Get in touch</h2>
               <p className="text-slate-600 mb-8 leading-relaxed text-sm md:text-base">
                 Whether you're in Ghana or the Diaspora, your voice matters to this movement. Let us know how you'd like to contribute.
               </p>
@@ -77,7 +77,7 @@ export default function Contact() {
                   <Mail className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 font-meta">Email</p>
+                  <p className="text-[10px] font-bold tracking-tight text-slate-400 mb-1 font-meta">Email</p>
                   <p className="text-charcoal-dark font-medium text-sm md:text-base truncate">{contactEmail}</p>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function Contact() {
                   <Phone className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 font-meta">Phone</p>
+                  <p className="text-[10px] font-bold tracking-tight text-slate-400 mb-1 font-meta">Phone</p>
                   <p className="text-charcoal-dark font-medium text-sm md:text-base">Contact via email for inquiries</p>
                 </div>
               </div>
@@ -97,7 +97,7 @@ export default function Contact() {
                   <MapPin className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 font-meta">Location</p>
+                  <p className="text-[10px] font-bold tracking-tight text-slate-400 mb-1 font-meta">Location</p>
                   <p className="text-charcoal-dark font-medium text-sm md:text-base">Ghana & Global Diaspora</p>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function Contact() {
                    decoding="async" loading="lazy" />
                 </div>
                 <div className="p-5 border-t border-slate-100">
-                  <p className="text-[10px] font-meta font-bold text-[var(--brand-green)] uppercase tracking-widest">Official Headquarters</p>
+                  <p className="text-[10px] font-meta font-bold text-[var(--brand-green)] tracking-tight">Official headquarters</p>
                   <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
                     Our central hub in Accra, serving as the heart of movement operations and community engagement.
                   </p>
@@ -123,21 +123,21 @@ export default function Contact() {
           {/* Form */}
           <div className="lg:col-span-3">
             <div className="bg-white p-6 sm:p-8 md:p-12 border border-slate-200 rounded-none shadow-sm h-full">
-              <h2 className="text-2xl font-bold text-charcoal-dark mb-8 font-meta uppercase tracking-tight">Send Us a Message</h2>
+              <h2 className="text-2xl font-bold text-charcoal-dark mb-8 font-meta tracking-tight">Send us a message</h2>
               
               {submitted ? (
                 <div className="text-center py-12 md:py-20">
                   <div className="w-20 h-20 bg-surface-warm flex items-center justify-center mx-auto mb-6">
                     <Send className="w-10 h-10 text-[var(--brand-green)]" />
                   </div>
-                  <h3 className="text-xl font-bold text-charcoal-dark mb-3 font-meta uppercase tracking-tight">Message Sent</h3>
+                  <h3 className="text-xl font-bold text-charcoal-dark mb-3 font-meta tracking-tight">Message sent</h3>
                   <p className="text-slate-600 text-sm md:text-base max-w-xs mx-auto">Thank you for reaching out. Our team will get back to you shortly.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
-                    <label htmlFor="fullName" className="text-[10px] font-bold text-charcoal-dark font-meta uppercase tracking-widest">
-                      FULL NAME <span className="text-[var(--brand-red)]">*</span>
+                    <label htmlFor="fullName" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">
+                      Full name <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <input 
                       id="fullName" 
@@ -150,7 +150,7 @@ export default function Contact() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label htmlFor="email" className="text-[10px] font-bold text-charcoal-dark font-meta uppercase tracking-widest">EMAIL ADDRESS</label>
+                      <label htmlFor="email" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">Email address</label>
                       <input 
                         id="email" 
                         type="email" 
@@ -160,7 +160,7 @@ export default function Contact() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="phone" className="text-[10px] font-bold text-charcoal-dark font-meta uppercase tracking-widest">PHONE NUMBER</label>
+                      <label htmlFor="phone" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">Phone number</label>
                       <input 
                         id="phone" 
                         type="text" 
@@ -172,7 +172,7 @@ export default function Contact() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="platform" className="text-[10px] font-bold text-charcoal-dark font-meta uppercase tracking-widest">YOUR PLATFORM</label>
+                    <label htmlFor="platform" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">Your platform</label>
                     <select 
                       id="platform" 
                       value={formData.platform}
@@ -187,8 +187,8 @@ export default function Contact() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="message" className="text-[10px] font-bold text-charcoal-dark font-meta uppercase tracking-widest">
-                      MESSAGE <span className="text-[var(--brand-red)]">*</span>
+                    <label htmlFor="message" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">
+                      Message <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <textarea
                       id="message"

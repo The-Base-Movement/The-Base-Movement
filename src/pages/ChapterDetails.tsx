@@ -19,9 +19,9 @@ export default function ChapterDetails() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-stone-900 mb-4">Chapter Not Found</h2>
+          <h2 className="text-2xl font-bold text-stone-900 mb-4">Chapter not found</h2>
           <Link to="/dashboard/chapters">
-            <Button variant="default" className="rounded-none">Back to Chapters</Button>
+            <Button variant="default" className="rounded-none">Back to chapters</Button>
           </Link>
         </div>
       </div>
@@ -40,13 +40,13 @@ export default function ChapterDetails() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <span className={`px-3 py-0.5 rounded-none text-[9px] font-semibold tracking-widest uppercase ${
+                <span className={`px-3 py-0.5 rounded-none text-[9px] font-bold tracking-tight ${
                   chapter.status === 'Active' || chapter.status === 'Member' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
                 }`}>
                   {chapter.status}
                 </span>
                 <span className="text-stone-300">|</span>
-                <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest">Verified Chapter</span>
+                <span className="text-[10px] font-bold text-stone-400 tracking-tight">Verified chapter</span>
               </div>
               <h1 className="text-4xl font-bold text-stone-900 tracking-tighter font-meta">
                 {chapter.name}
@@ -58,7 +58,7 @@ export default function ChapterDetails() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-[var(--brand-green)]" />
-                  {chapter.member_count} Active Members
+                  {chapter.member_count} Active members
                 </div>
               </div>
             </div>
@@ -71,8 +71,8 @@ export default function ChapterDetails() {
               >
                 <Share2 className="w-4 h-4 mr-2" /> Share
               </Button>
-              <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-semibold tracking-widest text-xs h-12 px-8 rounded-none">
-                Join This Chapter
+              <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-xs h-12 px-8 rounded-none">
+                Join this chapter
               </Button>
             </div>
           </div>
@@ -104,11 +104,11 @@ export default function ChapterDetails() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
                 <div className="p-6 bg-stone-50 border border-stone-100 rounded-none">
-                  <h4 className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest mb-2">Local Focus</h4>
+                  <h4 className="text-[10px] font-bold text-stone-400 tracking-tight mb-2">Local focus</h4>
                   <p className="text-sm font-bold text-stone-800">Youth Empowerment & Civic Literacy</p>
                 </div>
                 <div className="p-6 bg-stone-50 border border-stone-100 rounded-none">
-                  <h4 className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest mb-2">Meeting Schedule</h4>
+                  <h4 className="text-[10px] font-bold text-stone-400 tracking-tight mb-2">Meeting schedule</h4>
                   <p className="text-sm font-bold text-stone-800">Every First Saturday of the Month</p>
                 </div>
               </div>
@@ -122,7 +122,7 @@ export default function ChapterDetails() {
                   <Calendar className="w-5 h-5 text-[var(--brand-green)]" />
                   Recent Activities
                 </h2>
-                <button className="text-[10px] font-semibold text-[var(--brand-green)] uppercase tracking-widest hover:underline">View All</button>
+                <button className="text-[10px] font-bold text-[var(--brand-green)] tracking-tight hover:underline">View all</button>
               </div>
               
               <div className="space-y-4">
@@ -134,12 +134,12 @@ export default function ChapterDetails() {
                   <div key={i} className="bg-white border border-stone-200 p-6 rounded-none flex items-center justify-between group hover:border-[var(--brand-green)] transition-colors">
                     <div className="flex items-center gap-6">
                       <div className="w-12 h-12 bg-stone-50 flex flex-col items-center justify-center text-stone-400 font-meta">
-                        <span className="text-[10px] font-bold uppercase">{activity.date.split(' ')[0]}</span>
-                        <span className="text-lg font-black leading-none">{activity.date.split(' ')[1].replace(',', '')}</span>
+                        <span className="text-[10px] font-bold">{activity.date.split(' ')[0]}</span>
+                        <span className="text-lg font-bold leading-none">{activity.date.split(' ')[1].replace(',', '')}</span>
                       </div>
                       <div>
                         <h4 className="font-bold text-stone-900 group-hover:text-[var(--brand-green)] transition-colors">{activity.title}</h4>
-                        <p className="text-xs text-stone-400 uppercase tracking-widest mt-1">{activity.type}</p>
+                        <p className="text-xs text-stone-400 tracking-tight mt-1">{activity.type}</p>
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-[var(--brand-green)] transition-all" />
@@ -156,7 +156,7 @@ export default function ChapterDetails() {
             <div className="bg-white border border-stone-200 rounded-none overflow-hidden flex flex-col">
               <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
               <div className="p-8">
-                <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-6 border-b border-stone-100 pb-4">Chapter Leadership</h3>
+                <h3 className="text-sm font-bold tracking-tight mb-6 border-b border-stone-100 pb-4 text-stone-900">Chapter leadership</h3>
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-stone-100 rounded-none flex items-center justify-center text-stone-400">
@@ -164,7 +164,7 @@ export default function ChapterDetails() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-stone-900">Dr. Samuel Appiah</p>
-                    <p className="text-[10px] text-stone-400 uppercase tracking-widest">Regional Coordinator</p>
+                    <p className="text-[10px] text-stone-400 tracking-tight">Regional coordinator</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -173,7 +173,7 @@ export default function ChapterDetails() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-stone-900">Sarah Mensah</p>
-                    <p className="text-[10px] text-stone-400 uppercase tracking-widest">Chapter Secretary</p>
+                    <p className="text-[10px] text-stone-400 tracking-tight">Chapter secretary</p>
                   </div>
                 </div>
               </div>
@@ -197,11 +197,11 @@ export default function ChapterDetails() {
               <ShieldCheck className="w-24 h-24 text-[var(--brand-green)]" />
             </div>
             <div className="relative z-10">
-              <h3 className="text-warm-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Official Verification</h3>
+              <h3 className="text-warm-gold text-[10px] font-bold tracking-tight mb-4">Official verification</h3>
               <p className="text-sm leading-relaxed text-stone-300 mb-6">
                 This chapter is officially recognized and verified by The Base National Headquarters. All activities are coordinated with the central movement agenda.
               </p>
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-medium border border-green-100 w-fit">
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-bold border border-green-100 w-fit">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Verified
               </span>
@@ -210,13 +210,13 @@ export default function ChapterDetails() {
 
           {/* Quick Support */}
           <div className="bg-stone-100 p-8 rounded-none border border-stone-200">
-            <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-4">Support Local</h3>
+            <h3 className="text-sm font-bold tracking-tight mb-4 text-stone-900">Support local</h3>
             <p className="text-xs text-stone-500 leading-relaxed mb-6">
               Your donations to this specific chapter help fund local townhalls and community outreach programs in {chapter.city_or_region}.
             </p>
             <Link to="/dashboard/donate">
               <Button className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white rounded-none">
-                Donate to Chapter
+                Donate to chapter
               </Button>
             </Link>
           </div>

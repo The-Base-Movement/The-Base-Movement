@@ -139,7 +139,7 @@ export default function AdminRegions() {
             </Card>
           ))
         ) : filteredRegions.length === 0 ? (
-          <div className="py-20 text-center text-muted-foreground/80 text-sm font-bold tracking-wider border border-dashed border-border/40 rounded-sm bg-muted/5">
+          <div className="py-20 text-center text-muted-foreground/80 text-sm font-bold tracking-tight border border-dashed border-border/40 rounded-sm bg-muted/5">
             No matching geographical data found.
           </div>
         ) : (
@@ -168,7 +168,7 @@ export default function AdminRegions() {
                       <p className="text-sm font-bold tracking-tight text-on-surface">
                         {region.name}
                       </p>
-                      <p className="text-[10px] text-muted-foreground/80 font-bold tracking-wider">
+                      <p className="text-[10px] text-muted-foreground/80 font-bold tracking-tight">
                         {region.constituencies.length} constituencies
                       </p>
                     </div>
@@ -241,7 +241,7 @@ export default function AdminRegions() {
                         </div>
                       ))}
                       {visibleConstituencies.length === 0 && (
-                        <p className="col-span-full text-center text-[10px] text-muted-foreground/60 font-bold tracking-wider py-4">
+                        <p className="col-span-full text-center text-[10px] text-muted-foreground/60 font-bold tracking-tight py-4">
                           No match found.
                         </p>
                       )}

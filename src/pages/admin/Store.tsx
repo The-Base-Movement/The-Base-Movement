@@ -923,14 +923,14 @@ export default function AdminStore() {
                   <Box className="w-4 h-4 text-on-surface" />
                   Fulfillment intelligence
                 </div>
-                <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Live metrics</span>
+                <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Live metrics</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-2">
                   <div className="flex justify-between text-[10px] font-bold tracking-tight">
-                    <span className="text-muted-foreground/80 uppercase">Delivered</span>
+                    <span className="text-muted-foreground/80">Delivered</span>
                     <span className="text-emerald-600">{deliveredPct}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-muted/10 rounded-full overflow-hidden">
@@ -939,7 +939,7 @@ export default function AdminStore() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-[10px] font-bold tracking-tight">
-                    <span className="text-muted-foreground/80 uppercase">In progress</span>
+                    <span className="text-muted-foreground/80">In progress</span>
                     <span className="text-amber-600">{processingPct}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-muted/10 rounded-full overflow-hidden">
@@ -948,7 +948,7 @@ export default function AdminStore() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-[10px] font-bold tracking-tight">
-                    <span className="text-muted-foreground/80 uppercase">Rejected</span>
+                    <span className="text-muted-foreground/80">Rejected</span>
                     <span className="text-red-600">{rejectedPct}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-muted/10 rounded-full overflow-hidden">
@@ -972,7 +972,7 @@ export default function AdminStore() {
         isOpen={!!deleteConfirm}
         onClose={() => setDeleteConfirm(null)}
         onConfirm={handleDelete}
-        title="Move to Trash"
+        title="Move to trash"
         description="This product will be moved to the trash vault. You can restore it within 30 days before it is permanently removed from the catalog."
         itemName={deleteConfirm?.name || ''}
         isLoading={!!isDeleting}
@@ -1012,8 +1012,8 @@ export default function AdminStore() {
                 <SelectContent className="rounded-lg">
                   <SelectItem value="Apparel">Apparel</SelectItem>
                   <SelectItem value="Accessories">Accessories</SelectItem>
-                  <SelectItem value="Print">Print Material</SelectItem>
-                  <SelectItem value="Digital">Digital Goods</SelectItem>
+                  <SelectItem value="Print">Print material</SelectItem>
+                  <SelectItem value="Digital">Digital goods</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1046,7 +1046,7 @@ export default function AdminStore() {
               />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
-              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Full Details</Label>
+              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Full details</Label>
               <textarea 
                 value={selectedProduct?.longDescription || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, longDescription: e.target.value }))}
@@ -1055,7 +1055,7 @@ export default function AdminStore() {
               />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
-              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Product Gallery</Label>
+              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Product gallery</Label>
               <div className="col-span-3 space-y-4">
                 {/* Image Grid */}
                 <div className="grid grid-cols-4 gap-2">
@@ -1084,14 +1084,14 @@ export default function AdminStore() {
                     ) : (
                       <>
                         <Plus className="w-4 h-4 text-muted-foreground/80" />
-                        <span className="text-[8px] font-bold text-muted-foreground/80">Add Image</span>
+                        <span className="text-[8px] font-bold text-muted-foreground/80">Add image</span>
                       </>
                     )}
                   </label>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                   <Label className="text-[9px] font-bold text-muted-foreground/80 capitalize tracking-tight">Icon Fallback</Label>
+                   <Label className="text-[9px] font-bold text-muted-foreground/80 capitalize tracking-tight">Icon fallback</Label>
                    <Input 
                     value={selectedProduct?.image?.startsWith('http') ? '' : (selectedProduct?.image || '')} 
                     onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}
@@ -1112,7 +1112,7 @@ export default function AdminStore() {
               disabled={isSaving}
               className="rounded-sm text-[10px] font-bold capitalize tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-11 px-10 min-w-[160px] shadow-lg transition-all hover:scale-[1.02] active:scale-95"
             >
-              {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Changes'}
+              {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm changes'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1132,14 +1132,14 @@ export default function AdminStore() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
-            <AlertDialogCancel className="rounded-sm text-[10px] font-bold capitalize tracking-[0.2em] h-10 px-6 border-border/60">
+            <AlertDialogCancel className="rounded-sm text-[10px] font-bold tracking-tight h-10 px-6 border-border/60">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDelete}
-              className="rounded-sm text-[10px] font-bold capitalize tracking-[0.2em] bg-red-600 text-white hover:bg-red-700 h-10 px-8 active:scale-95"
+              className="rounded-sm text-[10px] font-bold tracking-tight bg-red-600 text-white hover:bg-red-700 h-10 px-8 active:scale-95"
             >
-              Confirm Removal
+              Confirm removal
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

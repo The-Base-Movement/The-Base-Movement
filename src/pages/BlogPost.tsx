@@ -76,7 +76,7 @@ export default function BlogPost() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-8 h-8 text-[var(--brand-green)] animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Loading Insight File...</p>
+        <p className="text-[10px] font-bold tracking-tight text-stone-400">Loading insight file...</p>
       </div>
     )
   }
@@ -92,12 +92,12 @@ export default function BlogPost() {
           <div className="w-16 h-16 bg-stone-100 flex items-center justify-center mb-8 rotate-3">
             <Search className="w-8 h-8 text-stone-300" />
           </div>
-          <h2 className="font-meta font-black text-2xl tracking-tight text-charcoal-dark mb-4 uppercase">Insight Not Found</h2>
+          <h2 className="font-meta font-bold text-2xl tracking-tight text-charcoal-dark mb-4">Insight not found</h2>
           <p className="text-sm font-medium text-stone-500 max-w-xs mx-auto mb-10 leading-relaxed">
             The coordinate you requested does not exist or has been archived within the movement's vault.
           </p>
           <Button onClick={() => navigate(baseUrl)} variant="primary" size="lg" className="h-14 px-10">
-            Return to Insights
+            Return to insights
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
@@ -128,7 +128,7 @@ export default function BlogPost() {
              <Button 
               onClick={() => handleShare()}
               variant="default" 
-              className="h-10 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-[10px] font-bold uppercase tracking-widest"
+              className="h-10 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-[10px] font-bold tracking-tight"
              >
               <Share2 className="w-4 h-4 mr-2" /> Share
             </Button>
@@ -142,10 +142,10 @@ export default function BlogPost() {
           {/* Header */}
           <header className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-              <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-[10px] font-bold uppercase tracking-widest">
+              <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-[10px] font-bold tracking-tight">
                 {post.category}
               </span>
-              <div className="flex items-center gap-4 text-stone-400 text-[10px] font-medium tracking-widest uppercase">
+              <div className="flex items-center gap-4 text-stone-400 text-[10px] font-bold tracking-tight">
                 <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A'}</span>
                 <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {post.readTime}</span>
               </div>
@@ -171,7 +171,7 @@ export default function BlogPost() {
               <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
                 <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
                 <img src="/logo.png" alt="The Base" className="w-32 h-32 opacity-20 mb-6 grayscale" />
-                <span className="text-xs font-black text-white/20 uppercase tracking-[0.4em]">The Base Editorial</span>
+                <span className="text-xs font-bold text-white/20 tracking-tight">The Base editorial</span>
               </div>
             )}
             <div className="absolute inset-0 bg-charcoal-dark/10"></div>
@@ -183,7 +183,7 @@ export default function BlogPost() {
             <aside className="lg:col-span-1 space-y-8 order-2 lg:order-1">
               <div className="sticky top-32 space-y-8">
                 <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">Authored By</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-0">Authored by</p>
                   <div className="flex items-center gap-3">
                     <img src={post.authorImage || '/founder.jpg'} 
                       alt={post.authorName} 
@@ -193,7 +193,7 @@ export default function BlogPost() {
                       <p className="text-sm font-bold text-stone-900 leading-none mb-0">
                         {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName}
                       </p>
-                      <p className="text-[9px] text-stone-500 uppercase tracking-widest mt-1.5 mb-0 font-medium">
+                      <p className="text-[9px] text-stone-500 tracking-tight mt-1.5 mb-0 font-medium">
                         {post.authorName?.toUpperCase() === 'ADMIN' ? 'Movement Research' : post.authorRole}
                       </p>
                     </div>
@@ -204,7 +204,7 @@ export default function BlogPost() {
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Share this Insight</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Share this insight</p>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { brandColor: '#1877F2', key: 'facebook', icon: <Facebook className="w-4 h-4" /> },
@@ -236,13 +236,13 @@ export default function BlogPost() {
                 </div>
 
                 <div className="pt-8 border-t border-stone-100 space-y-6">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-0">Explore Categories</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-0">Explore categories</p>
                   <div className="space-y-2">
                     {['Movement', 'Youth', 'Diaspora', 'Integrity', 'Economy', 'Community'].map((cat) => (
                       <Link 
                         to={`/blog?category=${cat.toLowerCase()}`} 
                         key={cat} 
-                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-[10px] font-bold tracking-widest text-stone-600 hover:text-[var(--brand-green)] transition-all"
+                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-[10px] font-bold tracking-tight text-stone-600 hover:text-[var(--brand-green)] transition-all"
                       >
                         {cat}
                         <ChevronRight className="w-3 h-3 text-stone-300" />
@@ -267,7 +267,7 @@ export default function BlogPost() {
               {/* Tags & Footer */}
               <div className="mt-16 pt-8 border-t border-stone-100 flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1.5 bg-stone-100 text-stone-500 text-[10px] font-bold tracking-widest hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors">
+                  <span key={tag} className="px-3 py-1.5 bg-stone-100 text-stone-500 text-[10px] font-bold tracking-tight hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors">
                     #{tag}
                   </span>
                 ))}
@@ -284,7 +284,7 @@ export default function BlogPost() {
                     <p className="text-stone-400 mb-0">Join "The Base" movement and be a part of Ghana's industrial revolution.</p>
                   </div>
                   <Link to="/register">
-                    <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-widest text-xs h-14 px-10 rounded-none">
+                    <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-xs h-14 px-10 rounded-none">
                       Register as a member
                     </Button>
                   </Link>
@@ -298,7 +298,7 @@ export default function BlogPost() {
 
               {/* Related Insights Section */}
               <div className="mt-24">
-                <p className="text-[10px] font-bold text-warm-gold uppercase tracking-widest mb-10">Related Insights</p>
+                <p className="text-[10px] font-bold text-warm-gold tracking-tight mb-10">Related insights</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   {relatedPosts.map((related) => (
                     <Link to={`${baseUrl}/${related.slug}`} key={related.id} className="block group">
@@ -314,7 +314,7 @@ export default function BlogPost() {
                           )}
                           <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                         </div>
-                        <span className="text-[9px] font-bold text-[var(--brand-green)] uppercase tracking-widest mb-0">{related.category}</span>
+                        <span className="text-[9px] font-bold text-[var(--brand-green)] tracking-tight mb-0">{related.category}</span>
                         <h5 className="text-stone-900 mt-2 group-hover:text-[var(--brand-green)] transition-colors leading-tight mb-0">
                           {related.title}
                         </h5>
