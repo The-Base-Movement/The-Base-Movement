@@ -19,7 +19,6 @@ import type {
   Poll, 
   InventoryItem,
   DonationCampaign,
-  DonationRecord,
   DonationDetail,
   FieldEvent,
   MobilizationLedger,
@@ -69,7 +68,7 @@ import type {
 // Re-export all types so consumers can import from either location
 export type {
   Member, Region, Chapter, Poll, PollOption, InventoryItem,
-  DonationCampaign, DonationRecord, DonationDetail,
+  DonationCampaign, DonationDetail,
   FieldEvent, MobilizationLedger, RegionalStat, Milestone,
   FieldDirective, FieldReport, ChapterApplication, Achievement,
   LogisticsVelocity, InventoryAlert, MemberFeedback, SentimentTelemetry,
