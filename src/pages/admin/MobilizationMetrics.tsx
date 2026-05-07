@@ -209,7 +209,7 @@ export default function MobilizationMetrics() {
                         </div>
                         <div>
                           <h4 className="text-sm font-bold text-on-surface tracking-tight">{entry.chapter}</h4>
-                          <p className="text-[10px] font-bold text-muted-foreground/80 flex items-center gap-1 mt-0.5 uppercase tracking-widest">
+                          <p className="text-[10px] font-bold text-muted-foreground/80 flex items-center gap-1 mt-0.5 normal-case tracking-tight">
                             <MapPin className="w-3 h-3" /> {entry.region}
                           </p>
                         </div>

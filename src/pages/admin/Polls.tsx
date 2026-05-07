@@ -348,7 +348,7 @@ export default function PollsManagement() {
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
                       <h4 className="text-sm font-bold text-on-surface leading-tight">{poll.question}</h4>
-                      <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">{poll.id}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-tight">{poll.id}</p>
                     </div>
                     <div className={cn(
                       "px-2 py-0.5 text-[9px] font-bold normal-case tracking-tighter border rounded-full",

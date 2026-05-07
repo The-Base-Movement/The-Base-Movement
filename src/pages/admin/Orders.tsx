@@ -254,12 +254,12 @@ export default function AdminOrders() {
               {loading ? (
                 <div className="p-20 text-center">
                   <RefreshCw className="w-8 h-8 animate-spin text-brand-green/20 mx-auto mb-4" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-300">Synchronizing order flow...</p>
+                  <p className="text-[10px] font-bold normal-case tracking-tight text-slate-300">Synchronizing order flow...</p>
                 </div>
               ) : filtered.length === 0 ? (
                 <div className="p-20 text-center">
                   <Package className="w-12 h-12 text-slate-100 mx-auto mb-4" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">No Orders Found</p>
+                  <p className="text-[10px] font-bold normal-case tracking-tight text-slate-400">No orders found</p>
                   <p className="text-xs text-slate-300 mt-2 max-w-xs mx-auto">The merchandise feed is currently idle. Activity will appear as patriots complete movement-wide purchases.</p>
                 </div>
               ) : (
@@ -300,7 +300,7 @@ export default function AdminOrders() {
                           <td className="px-6 py-5 font-bold text-charcoal-dark text-sm">
                             GHS {Number(order.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </td>
-                          <td className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                          <td className="px-6 py-5 text-[10px] font-bold text-slate-400 normal-case tracking-tight">
                             {order.payment_method === 'momo' ? 'MoMo' : 'Card'}
                           </td>
                           <td className="px-6 py-5">
@@ -358,7 +358,7 @@ export default function AdminOrders() {
                       >
                         <div className="flex justify-between items-start">
                           <div className="space-y-1">
-                            <p className="text-[10px] font-mono font-bold text-muted-foreground/60 tracking-widest uppercase">#{order.id.slice(0, 8)}</p>
+                            <p className="text-[10px] font-mono font-bold text-muted-foreground/60 tracking-tight normal-case">#{order.id.slice(0, 8)}</p>
                             <h4 className="text-sm font-bold text-on-surface">{order.full_name}</h4>
                             <p className="text-[10px] font-bold text-muted-foreground/60">{order.region_or_state || 'Unknown Region'}</p>
                           </div>
@@ -370,11 +370,11 @@ export default function AdminOrders() {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div className="p-4 bg-white border border-border/40 rounded-sm shadow-sm">
-                            <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Value</p>
+                            <p className="text-[9px] font-bold text-muted-foreground/60 normal-case tracking-tight mb-1">Value</p>
                             <p className="text-sm font-bold text-on-surface">GHS {Number(order.total_amount).toFixed(2)}</p>
                           </div>
                           <div className="p-4 bg-white border border-border/40 rounded-sm shadow-sm">
-                            <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Payment</p>
+                            <p className="text-[9px] font-bold text-muted-foreground/60 normal-case tracking-tight mb-1">Payment</p>
                             <p className="text-sm font-bold text-on-surface capitalize">{order.payment_method}</p>
                           </div>
                         </div>
@@ -466,7 +466,7 @@ export default function AdminOrders() {
                 {/* Manifest Items */}
                 <div className="space-y-4 pt-6 border-t border-slate-50">
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Manifest Items</p>
+                    <p className="text-[10px] font-bold normal-case tracking-tight text-slate-400">Manifest items</p>
                     <span className="text-[9px] font-bold text-slate-400">{selectedOrder.items.length} Units</span>
                   </div>
                   <div className="space-y-3">
@@ -480,7 +480,7 @@ export default function AdminOrders() {
                         </div>
                         <div className="text-right">
                           <p className="text-xs font-bold text-charcoal-dark">x{item.quantity}</p>
-                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                          <p className="text-[9px] font-bold text-slate-400 normal-case tracking-tight">
                             GHS {(item.quantity * item.price_at_purchase).toFixed(2)}
                           </p>
                         </div>

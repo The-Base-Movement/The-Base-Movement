@@ -135,7 +135,7 @@ export default function SentimentIntelligence() {
                 {projections.length === 0 ? (
                   <div className="text-center py-12">
                     <BarChart3 className="w-8 h-8 text-muted mx-auto mb-3" />
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase">No data yet. Projections appear after 30 days of activity.</p>
+                    <p className="text-[10px] font-bold text-muted-foreground normal-case tracking-tight">No data yet. Projections appear after 30 days of activity.</p>
                   </div>
                 ) : (
                   projections.map((proj) => (
@@ -158,10 +158,10 @@ export default function SentimentIntelligence() {
                         />
                       </div>
                       <div className="flex justify-between items-center mt-2">
-                        <span className="text-[9px] font-bold text-muted-foreground uppercase flex items-center gap-1">
+                        <span className="text-[9px] font-bold text-muted-foreground normal-case tracking-tight flex items-center gap-1">
                           <Zap className="w-3 h-3" /> +{proj.mobilization_velocity}/day
                         </span>
-                        <span className="text-[9px] font-bold text-muted-foreground uppercase">
+                        <span className="text-[9px] font-bold text-muted-foreground normal-case tracking-tight">
                           Confidence: {(proj.confidence_score * 100).toFixed(0)}%
                         </span>
                       </div>

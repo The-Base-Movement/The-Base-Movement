@@ -256,12 +256,12 @@ export default function MembersList() {
 
   const handleBulkDelete = async () => {
     if (!adminService.can('DELETE_MEMBER', 'MEMBERS')) {
-      toast({ title: "PERMISSION DENIED", description: "You lack the authority for member removal.", variant: "destructive" })
+      toast({ title: "Permission denied", description: "You lack the authority for member removal.", variant: "destructive" })
       return
     }
 
     if (window.confirm(`Are you sure you want to permanently remove ${selectedIds.size} records from the database? This cannot be undone.`)) {
-      toast({ title: "REMOVING RECORDS", description: "Processing secure deletion..." })
+      toast({ title: "Removing records", description: "Processing secure deletion..." })
       
       let successCount = 0
       for (const id of selectedIds) {
@@ -439,7 +439,7 @@ export default function MembersList() {
         {selectedIds.size > 0 && (
           <div className="px-6 py-3 bg-on-surface text-white flex items-center justify-between animate-in slide-in-from-top-2 duration-300">
             <div className="flex items-center gap-4">
-              <p className="text-[10px] font-bold tracking-wider text-white/60">
+              <p className="text-[10px] font-bold tracking-tight text-white/60">
                 {selectedIds.size} members selected
               </p>
               <div className="h-4 w-px bg-white/20" />
@@ -482,14 +482,14 @@ export default function MembersList() {
                     />
                   </th>
                   <th className="px-6 py-4">
-                    <button className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/80 tracking-wider group">
+                    <button className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/80 tracking-tight group">
                       Member details <ArrowUpDown className="w-3 h-3 group-hover:text-on-surface transition-colors" />
                     </button>
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-wider">Contact info</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-wider">Location details</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-wider text-right">Actions</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Contact info</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Location details</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Status</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -649,7 +649,7 @@ export default function MembersList() {
                           size="icon" 
                           className="w-10 h-10 text-muted-foreground/80 hover:text-destructive hover:bg-destructive/10 transition-all active:scale-95"
                           title="Administrative Controls"
-                          onClick={() => toast({ title: "ADMIN CONTROLS", description: `Opening secure vault for ${member.name}...` })}
+                          onClick={() => toast({ title: "Admin controls", description: `Opening secure vault for ${member.name}...` })}
                         >
                           <MoreHorizontal className="w-5 h-5" />
                         </Button>

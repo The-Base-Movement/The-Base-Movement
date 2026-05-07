@@ -447,7 +447,7 @@ export default function AdminStore() {
                           </div>
                           <div className="flex flex-col">
                             <span className="text-xs font-bold text-on-surface tracking-tight">{product.name}</span>
-                            <span className="text-[9px] font-bold text-muted-foreground/80 mt-0.5 uppercase">#ITM-{product.id.substring(0, 6)}</span>
+                            <span className="text-[9px] font-bold text-muted-foreground/80 mt-0.5 normal-case">#ITM-{product.id.substring(0, 6)}</span>
                           </div>
                         </div>
                       </td>
@@ -524,7 +524,7 @@ export default function AdminStore() {
                       </div>
                       <div className="space-y-1">
                         <h4 className="text-sm font-bold text-on-surface tracking-tight">{product.name}</h4>
-                        <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">#ITM-{product.id.substring(0, 6)}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight normal-case">#ITM-{product.id.substring(0, 6)}</p>
                       </div>
                     </div>
                     <div className={cn(
@@ -683,7 +683,7 @@ export default function AdminStore() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-sm font-bold text-on-surface tracking-tight">{req.region}</h4>
-                      <p className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">{req.constituency || 'Regional HQ'}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-tight">{req.constituency || 'Regional HQ'}</p>
                     </div>
                     <div className={cn(
                       "px-2 py-0.5 text-[9px] font-bold tracking-tight rounded-full",
@@ -694,7 +694,7 @@ export default function AdminStore() {
                   </div>
 
                   <div className="space-y-3">
-                    <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest">Requested Items</p>
+                    <p className="text-[9px] font-bold text-muted-foreground/80 normal-case tracking-tight">Requested items</p>
                     <div className="p-4 bg-muted/10 rounded-sm border border-border/40 space-y-2">
                       {req.items.map(item => (
                         <div key={item.id} className="flex justify-between items-center">
@@ -707,7 +707,7 @@ export default function AdminStore() {
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest">Status</p>
+                      <p className="text-[9px] font-bold text-muted-foreground/80 normal-case tracking-tight">Status</p>
                       <div className={cn(
                         "px-2.5 py-1 text-[10px] font-bold tracking-tight border rounded-md",
                         req.status === 'Pending' ? "bg-accent/10 text-accent border-accent/20" : "bg-primary/10 text-primary border-primary/20"
@@ -716,7 +716,7 @@ export default function AdminStore() {
                       </div>
                     </div>
                     <div className="text-right space-y-1">
-                      <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest">Date</p>
+                      <p className="text-[9px] font-bold text-muted-foreground/80 normal-case tracking-tight">Date</p>
                       <p className="text-xs font-bold text-on-surface">{new Date(req.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
