@@ -247,7 +247,6 @@ export default function RegistrationFormPreview() {
                 <div className="h-8 border-b-2 border-stone-100" />
               </div>
             </div>
-            </div>
             <div className="grid grid-cols-2 gap-12">
               <div className="space-y-2">
                 <p className="text-[10px] font-bold tracking-tight text-stone-500">Phone contact</p>

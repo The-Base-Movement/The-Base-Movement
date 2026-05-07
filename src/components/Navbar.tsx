@@ -93,6 +93,12 @@ export default function Navbar() {
             The Plan
           </Link>
           <Link 
+            to={isLoggedIn ? "/dashboard/chapters" : "/chapters"} 
+            className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/chapters' : '/chapters') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
+          >
+            Chapters
+          </Link>
+          <Link 
             to={isLoggedIn ? "/dashboard/store" : "/store"} 
             className={`transition-colors duration-200 ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
           >
@@ -184,6 +190,7 @@ export default function Navbar() {
           <Link to="/blog" className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive('/blog') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Updates</Link>
           <Link to={isLoggedIn ? "/dashboard/polls" : "/polls"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/polls' : '/polls') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Polls</Link>
           <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>The Plan</Link>
+          <Link to={isLoggedIn ? "/dashboard/chapters" : "/chapters"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/chapters' : '/chapters') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Chapters</Link>
           <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Supplies</Link>
           <Link to={isLoggedIn ? "/dashboard/donate" : "/donate"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Donate</Link>
           <Link to={isLoggedIn ? "/dashboard/contact" : "/contact"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Contact</Link>

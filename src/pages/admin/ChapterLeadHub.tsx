@@ -37,7 +37,7 @@ export default function ChapterLeadHub() {
 
         const [eventsData, ledgerData] = await Promise.all([
           adminService.getFieldEvents(chapter),
-          adminService.getMobilizationLedger(chapter)
+          adminService.getChapterMobilizationLedger(chapter)
         ])
         setEvents(eventsData)
         setLedger(ledgerData)

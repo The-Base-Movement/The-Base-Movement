@@ -1,12 +1,21 @@
 import { useState } from 'react'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
-import { MapPin, Search, Plus, Filter, Building2, Send } from 'lucide-react'
+import { MapPin, Search, Plus, Building2, Send, Globe } from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '@/components/ui/neon-button'
+import { cn } from '@/lib/utils'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ChapterCard } from '@/components/ChapterCard'
 import { useChapters } from '@/context/ChaptersContext'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import {
   Dialog,
   DialogContent,
@@ -17,6 +26,14 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Filter } from 'lucide-react'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 // Flag mapping for diaspora chapters
 const countryFlags: Record<string, string> = {
@@ -91,7 +108,6 @@ export default function Chapters() {
     e.preventDefault();
     e.stopPropagation();
     setRequestSent(prev => ({ ...prev, [chapterId]: true }));
-    // In a real app, this would send an API request to be approved by a leader
   }
 
   const handleSubmitRequest = async (e: React.FormEvent) => {
@@ -101,7 +117,7 @@ export default function Chapters() {
     try {
       const success = await adminService.submitChapterApplication({
         proposed_chapter_name: chapterLocation,
-        region: 'National', // Default or extracted from location
+        region: 'National',
         constituency: 'To be assigned',
         vision_statement: chapterDescription,
         experience_summary: 'Submitted via Chapter Request Hub'
@@ -132,113 +148,225 @@ export default function Chapters() {
     c.country.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
-    <div className="min-h-screen bg-stone-50/50 pb-20">
-      {/* Dynamic Header */}
-      <div className="bg-white border-b border-stone-200 sticky top-0 z-30">
-        <div className="max-w-[1280px] mx-auto px-8 py-6">
-          <Breadcrumbs />
-          <div className="mt-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-                <h1 className="text-stone-900 mb-4">
-                  Movement Chapters
-                </h1>
-                <BrandLine />
-              <p className="text-stone-500 max-w-xl">
-                Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {chapters.length}+ regional hubs.
-              </p>
+  // Pagination Logic
+  const itemsPerPage = 12;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filteredChapters.length / itemsPerPage);
+  const paginatedChapters = filteredChapters.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Reset to first page when filtering
+  useState(() => {
+    setCurrentPage(1);
+  });
+
+  const FilterSection = ({ isMobile = false }: { isMobile?: boolean }) => (
+    <div className={cn("space-y-8", isMobile && "pb-20")}>
+      <div className={cn("bg-white p-6 shadow-sm", !isMobile && "border border-stone-200")}>
+        <h3 className="text-[11px] font-bold text-stone-400 normal-case tracking-tight mb-6">Chapter Filters</h3>
+        
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <p className="text-[11px] font-bold tracking-tight text-stone-500">Search Chapters</p>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+              <input 
+                type="text"
+                placeholder="City, region, country..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full h-11 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-none text-xs focus:ring-1 focus:ring-brand-green outline-none transition-all font-bold tracking-tight"
+              />
             </div>
-            <div className="flex gap-3">
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-[11px] font-bold tracking-tight text-stone-500">Region Selection</p>
+            <div className="flex flex-col gap-2">
               <Button 
-                onClick={() => setIsRequestModalOpen(true)}
-                className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-semibold tracking-tight text-xs h-12 px-6 rounded-none"
+                variant={activeTab === 'ghana' ? 'solid' : 'outline'}
+                onClick={() => setActiveTab('ghana')}
+                className={cn(
+                  "w-full h-12 justify-between px-4 text-[11px] font-bold tracking-tight border rounded-none transition-all",
+                  activeTab === 'ghana' ? 'bg-on-surface text-white hover:bg-on-surface/90' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
+                )}
               >
-                <Plus className="w-4 h-4 mr-2" /> Request a Chapter
+                Ghana Regional
+                <Building2 className={cn("w-4 h-4", activeTab === 'ghana' ? "text-white" : "text-stone-300")} />
+              </Button>
+              <Button 
+                variant={activeTab === 'diaspora' ? 'solid' : 'outline'}
+                onClick={() => setActiveTab('diaspora')}
+                className={cn(
+                  "w-full h-12 justify-between px-4 text-[11px] font-bold tracking-tight border rounded-none transition-all",
+                  activeTab === 'diaspora' ? 'bg-on-surface text-white hover:bg-on-surface/90' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
+                )}
+              >
+                Global Diaspora
+                <Globe className={cn("w-4 h-4", activeTab === 'diaspora' ? "text-white" : "text-stone-300")} />
               </Button>
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center border-t border-stone-100 pt-6">
-            <div className="flex bg-stone-100 p-1 rounded-none w-full sm:w-auto">
-              <button 
-                onClick={() => setActiveTab('ghana')}
-                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-tight rounded-none transition-all ${activeTab === 'ghana' ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
-              >
-                Ghana Regional
-              </button>
-              <button 
-                onClick={() => setActiveTab('diaspora')}
-                className={`flex-1 sm:flex-none px-6 py-2 text-[10px] font-semibold tracking-tight rounded-none transition-all ${activeTab === 'diaspora' ? 'bg-white text-[var(--brand-green)] shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
-              >
-                Global Diaspora
-              </button>
-            </div>
-            
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-              <input 
-                type="text"
-                placeholder="Search by city, region or country..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-11 pl-11 pr-4 bg-stone-100 border-none rounded-none text-sm focus:ring-1 focus:ring-brand-green transition-all"
-              />
-            </div>
-            <Button variant="default" className="h-11 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none">
-              <Filter className="w-4 h-4 mr-2" /> Filter
+          <div className="pt-4 border-t border-stone-100">
+            <Button 
+              onClick={() => setIsRequestModalOpen(true)}
+              className="w-full bg-brand-green hover:!bg-white text-white hover:!text-emerald-600 border border-transparent hover:!border-emerald-600 font-bold tracking-tight text-[11px] h-12 px-6 rounded-none shadow-sm normal-case transition-all duration-300"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Request a Chapter
             </Button>
+            <p className="text-[10px] text-stone-400 font-bold tracking-tight mt-3 text-center italic">
+              Don't see your region? Propose a new hub.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-charcoal-dark p-6 text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--brand-green)]/10 -mr-12 -mt-12 blur-2xl"></div>
+        <div className="relative z-10 space-y-4">
+          <div>
+            <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-tight normal-case">Global Network</p>
+            <p className="text-3xl font-meta font-bold tracking-tight mt-1">{chapters.length}</p>
+            <p className="text-[10px] text-stone-400 font-bold tracking-tight">Active Chapters</p>
+          </div>
+          <div className="h-px bg-white/10" />
+          <div>
+            <p className="text-warm-gold text-[10px] font-bold tracking-tight normal-case">Global Presence</p>
+            <p className="text-3xl font-meta font-bold tracking-tight mt-1">{new Set(chapters.map(c => c.country)).size}</p>
+            <p className="text-[10px] text-stone-400 font-bold tracking-tight">Active Countries</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-stone-50/50 pb-20">
+      <div className="bg-white border-b border-stone-200">
+        <div className="max-w-[1280px] mx-auto px-8 py-8">
+          <Breadcrumbs />
+          <div className="mt-4">
+            <h1 className="text-stone-900 mb-4">Movement Chapters</h1>
+            <BrandLine />
+            <p className="text-stone-500 max-w-2xl mt-4 leading-relaxed font-bold tracking-tight">
+              Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {chapters.length}+ regional hubs.
+            </p>
           </div>
         </div>
       </div>
 
       <main className="max-w-[1280px] mx-auto px-8 mt-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredChapters.map((chapter) => (
-            <ChapterCard 
-              key={chapter.id} 
-              chapter={chapter} 
-              requestSent={requestSent} 
-              countryFlags={countryFlags} 
-              handleJoinRequest={handleJoinRequest} 
-            />
-          ))}
+        <div className="lg:hidden mb-8 flex gap-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="flex-1 h-12 gap-2 font-bold tracking-tight text-xs border-stone-200">
+                <Filter className="w-4 h-4" />
+                Filter & Search
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] p-0 border-r-0">
+              <SheetHeader className="p-6 border-b border-stone-100">
+                <SheetTitle className="font-meta font-bold tracking-tight text-lg">Filters</SheetTitle>
+              </SheetHeader>
+              <div className="overflow-y-auto h-full p-6">
+                <FilterSection isMobile />
+              </div>
+            </SheetContent>
+          </Sheet>
+          
+          <Button 
+            onClick={() => setIsRequestModalOpen(true)}
+            className="flex-1 bg-brand-green text-white font-bold text-xs h-12 rounded-none"
+          >
+            <Plus className="w-4 h-4 mr-2" /> Request
+          </Button>
         </div>
 
-        {/* Global Stats Footer */}
-        <div className="mt-20 bg-charcoal-dark p-12 rounded-none text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--brand-green)]/10 rounded-none -mr-32 -mt-32 blur-3xl"></div>
-          <div className="relative z-10 grid md:grid-cols-3 gap-12 text-center md:text-left">
-            <div>
-              <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-tight mb-4">Total chapters</p>
-              <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{chapters.length}</p>
+        <div className="flex flex-col lg:flex-row gap-12">
+          <aside className="hidden lg:block lg:w-[320px] shrink-0 lg:sticky lg:top-8 lg:self-start">
+            <FilterSection />
+          </aside>
+
+          <div className="flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {paginatedChapters.map((chapter) => (
+                <ChapterCard 
+                  key={chapter.id} 
+                  chapter={chapter} 
+                  requestSent={requestSent} 
+                  countryFlags={countryFlags} 
+                  handleJoinRequest={handleJoinRequest} 
+                />
+              ))}
             </div>
-            <div>
-              <p className="text-warm-gold text-[10px] font-bold tracking-tight mb-4">Countries represented</p>
-              <p className="text-5xl font-meta font-bold tracking-tighter leading-none mb-0">{new Set(chapters.map(c => c.country)).size}</p>
-            </div>
-            <div className="flex flex-col justify-center">
-              <p className="text-slate-400 text-sm leading-relaxed mb-6 italic">
-                "Our strength lies in our unity across borders. Together, we build the foundations of a new Ghana."
-              </p>
-              <div className="flex gap-2">
-                <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
+
+            {totalPages > 1 && (
+              <div className="mt-12 pt-12 border-t border-stone-100">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        className={cn("cursor-pointer", currentPage === 1 && "opacity-30 pointer-events-none")}
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <PaginationItem key={i}>
+                        <PaginationLink 
+                          isActive={currentPage === i + 1}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className="cursor-pointer font-bold tracking-tight"
+                        >
+                          {i + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        className={cn("cursor-pointer", currentPage === totalPages && "opacity-30 pointer-events-none")}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
               </div>
+            )}
+
+            {filteredChapters.length === 0 && (
+              <div className="py-20 text-center border-2 border-dashed border-stone-200">
+                <Building2 className="w-12 h-12 text-stone-200 mx-auto mb-4" />
+                <p className="text-stone-400 font-bold tracking-tight">No strategic hubs found matching your query.</p>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setSearchTerm('')}
+                  className="mt-4 text-brand-green font-bold text-xs"
+                >
+                  Clear search parameters
+                </Button>
+              </div>
+            )}
+
+            <div className="mt-20 border-l-4 border-brand-green pl-8 py-4">
+              <p className="text-stone-600 text-lg leading-relaxed italic max-w-2xl">
+                "Our strength lies in our unity across borders. Together, we build the foundations of a new Ghana. Every chapter is a pillar of our collective destiny."
+              </p>
+              <div className="mt-6 h-1 w-24 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]" />
             </div>
           </div>
         </div>
       </main>
 
-      {/* Request Chapter Modal */}
       <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
         <DialogContent className="sm:max-w-[500px] border-none rounded-none p-0 overflow-hidden bg-white">
           <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
             <div className="flex items-center gap-3 mb-2">
               <Building2 className="w-5 h-5 text-[var(--brand-green)]" />
-              <DialogTitle className="text-xl font-bold tracking-tight font-meta">Request a chapter</DialogTitle>
+              <DialogTitle className="text-xl font-bold tracking-tight font-meta normal-case">Request a chapter</DialogTitle>
             </div>
-            <DialogDescription className="text-stone-400 text-xs">
+            <DialogDescription className="text-stone-400 text-xs font-bold tracking-tight">
               Propose a new chapter for your region. Requests are reviewed by the National Executive Committee for strategic alignment and leadership verification.
             </DialogDescription>
           </DialogHeader>

@@ -118,7 +118,7 @@ export default function App() {
                 <Route path="/store/summary" element={<OrderSummary />} />
                 <Route path="/impact" element={<Impact />} />
                 <Route path="/polls" element={<Polls />} />
-                <Route path="/chapters" element={<Navigate to="/dashboard/chapters" replace />} />
+                <Route path="/chapters" element={<Chapters />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/press" element={<Press />} />

@@ -370,37 +370,7 @@ class AdminService {
     return true
   }
 
-  async getMemberDonations(memberPhone: string): Promise<DonationRecord[]> {
-    const { data, error } = await supabase
-      .from('donations')
-      .select('*, donation_campaigns(title)')
-      .eq('phone', memberPhone)
-      .order('created_at', { ascending: false });
 
-    if (error) {
-      console.warn('[DATABASE] Failed to fetch donation history:', error);
-      return [];
-    }
-
-    interface DBDonation {
-      id: string
-      created_at: string
-      amount: number
-      payment_method: string
-      status: 'Pending' | 'Verified' | 'Rejected'
-      donation_campaigns: { title: string }
-    }
-
-    return (data || []).map((d: DBDonation) => ({
-      id: d.id.substring(0, 8).toUpperCase(),
-      date: new Date(d.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      amount: `GHS ${Number(d.amount).toFixed(2)}`,
-      method: d.payment_method || 'MoMo',
-      status: d.status,
-      reference: `#TB-${d.id.substring(0, 4).toUpperCase()}`,
-      campaignTitle: d.donation_campaigns?.title
-    }));
-  }
 
   async submitDonation(donationData: {
     fullName: string
@@ -457,9 +427,7 @@ class AdminService {
     return pollService.getPollStats()
   }
 
-  async getGhanaRegions() {
-    return pollService.getGhanaRegions()
-  }
+
 
   // --- Store Operations ---
 
@@ -737,6 +705,10 @@ class AdminService {
       await this.logAction('DONATION_VERIFY', `DONATIONS/${donationId}`, status === 'Verified' ? 'Success' : 'Warning')
     }
     return success
+  }
+
+  subscribeToPublicDonations(callback: (donation: DonationDetail) => void) {
+    return donationService.subscribeToPublicDonations(callback)
   }
 
   async getAdminData(userId: string): Promise<AdminUser | null> {
@@ -1068,6 +1040,20 @@ class AdminService {
 
   // ─── ORDER LIFECYCLE ENGINE ──────────────────────────────────────────────────
 
+  async getPublicDonationFeed(limit?: number): Promise<DonationDetail[]> {
+    return donationService.getPublicDonationFeed(limit)
+  }
+
+  async getMobilizationLedger(limit?: number) {
+    return donationService.getMobilizationLedger(limit)
+  }
+
+  async getMemberDonations(phone: string): Promise<DonationDetail[]> {
+    return donationService.getMemberDonations(phone)
+  }
+
+
+
   async getOrders(limit?: number): Promise<Order[]> {
     return logisticsService.getOrders(limit)
   }
@@ -1118,7 +1104,7 @@ class AdminService {
     return success
   }
 
-  async getMobilizationLedger(chapterName?: string): Promise<MobilizationLedger[]> {
+  async getChapterMobilizationLedger(chapterName?: string): Promise<MobilizationLedger[]> {
     return gamificationService.getMobilizationLedger(chapterName)
   }
 

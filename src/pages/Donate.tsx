@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Heart, Phone, Globe, Check, ArrowDownToLine, Activity, X } from 'lucide-react'
+import { Heart, Phone, Globe, Check, ArrowDownToLine, Activity, X, ArrowRight, Download, Search } from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { LiveContributionFeed } from '@/components/LiveContributionFeed'
 import { Button } from '@/components/ui/neon-button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import type { DonationRecord, DonationCampaign } from '@/types/admin'
+import type { DonationRecord, DonationDetail, DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
 
 export default function Donate() {
@@ -20,7 +21,50 @@ export default function Donate() {
   const [loading, setLoading] = useState(true)
   const [countriesLoading, setCountriesLoading] = useState(true)
   const [globalStats, setGlobalStats] = useState({ totalMembers: 0, totalRaised: 0 })
-  const [publicHistory, setPublicHistory] = useState<DonationRecord[]>([])
+  const [publicHistory, setPublicHistory] = useState<DonationDetail[]>([])
+  const [personalHistory, setPersonalHistory] = useState<DonationDetail[]>([])
+  const [spendingHistory, setSpendingHistory] = useState<{ id: string, chapter: string, type: string, amount: string, description: string, category: string, date: string }[]>([])
+  const [historyTab, setHistoryTab] = useState<'contributions' | 'spending'>('contributions')
+  const [contributionFilter, setContributionFilter] = useState<'all' | 'me'>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const handleDownload = () => {
+    const dataToExport = contributionFilter === 'all' ? publicHistory : personalHistory
+    const filteredData = dataToExport.filter(item => 
+      item.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      item.amount.includes(searchQuery)
+    )
+
+    if (filteredData.length === 0) {
+      toast.error('No verified data found for export.')
+      return
+    }
+
+    const headers = ['Date', 'Contributor', 'Campaign', 'Amount', 'Method', 'Reference', 'Status']
+    const csvContent = [
+      headers.join(','),
+      ...filteredData.map(item => [
+        item.date,
+        `"${item.fullName}"`,
+        `"${item.campaignTitle || 'Strategic Fund'}"`,
+        `"${item.amount}"`,
+        item.method,
+        item.reference,
+        item.status
+      ].join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `TheBase_Contributions_${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    toast.success('Strategic ledger exported successfully.')
+  }
 
   // Auth & Pre-fill states (Initialized directly to avoid cascading renders)
   const [isLoggedIn] = useState(() => !!localStorage.getItem('userName'))
@@ -45,29 +89,38 @@ export default function Donate() {
       setLoading(true)
       setCountriesLoading(true)
       try {
-        const [activeData, pastData, countriesData, publicHistoryData, statsData] = await Promise.all([
+        const [activeData, pastData, countriesData, publicHistoryData, statsData, ledgerData] = await Promise.all([
           adminService.getDonationCampaigns('Active'),
           adminService.getDonationCampaigns('Closed'),
           adminService.getCountries(),
-          adminService.getPublicDonationFeed(10),
-          adminService.getDonationStats()
+          adminService.getPublicDonationFeed(20),
+          adminService.getDonationStats(),
+          adminService.getMobilizationLedger(20)
         ])
         setCampaigns(activeData)
         setPastCampaigns(pastData)
         setCountries(countriesData)
         setPublicHistory(publicHistoryData.map(d => ({
-          id: d.id,
+          ...d,
           date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          amount: `GHS ${Number(d.amount).toLocaleString()}`,
-          method: d.method,
-          status: 'Verified',
-          fullName: d.fullName,
-          campaignTitle: d.campaignTitle
+          amount: `GHS ${Number(d.amount).toLocaleString()}`
         })))
+        setSpendingHistory(ledgerData)
         setGlobalStats({ 
           totalMembers: statsData.totalContributions, 
           totalRaised: statsData.approvedAmount 
         })
+
+        // Fetch personal history if logged in
+        const savedPhone = localStorage.getItem('userPhone')
+        if (savedPhone) {
+          const personalData = await adminService.getMemberDonations(savedPhone)
+          setPersonalHistory(personalData.map(d => ({
+            ...d,
+            date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            amount: `GHS ${Number(d.amount).toLocaleString()}`
+          })))
+        }
         
         // Auto-select first active campaign if none selected
         if (activeData.length > 0) {
@@ -93,6 +146,34 @@ export default function Donate() {
       }
     }
     fetchData()
+
+    // Real-time subscription for global feed synchronization
+    const subscription = adminService.subscribeToPublicDonations((newDonation) => {
+      setPublicHistory(prev => {
+        // Prevent duplicates
+        if (prev.some(d => d.id === newDonation.id)) return prev;
+        
+        const formatted = {
+          ...newDonation,
+          date: new Date(newDonation.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          amount: `GHS ${Number(newDonation.amount).toLocaleString()}`
+        };
+        return [formatted, ...prev].slice(0, 50); // Keep last 50 for performance
+      });
+      
+      setGlobalStats(prev => ({
+        totalMembers: prev.totalMembers + 1,
+        totalRaised: prev.totalRaised + Number(newDonation.amount)
+      }));
+    });
+
+    return () => {
+      // Supabase subscription cleanup is handled inside the service if it returns a channel
+      // But here we just assume it's a standard subscription object
+      if (subscription && (subscription as any).unsubscribe) {
+        (subscription as any).unsubscribe();
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -601,112 +682,252 @@ export default function Donate() {
                 </div>
                 <div className="flex gap-4">
                   <div className="px-5 py-3 bg-white border border-border/60 text-center rounded-sm shadow-sm">
-                    <p className="text-[8px] font-bold text-muted-foreground/40 tracking-tight">Aggregate support</p>
+                    <p className="text-[8px] font-bold text-muted-foreground/40 tracking-tight">Movement reserves</p>
                     <p className="text-sm font-bold text-on-surface tracking-tight font-meta mt-1">GHS {globalStats.totalRaised.toLocaleString()}</p>
                   </div>
                   <div className="px-5 py-3 bg-primary/10 border border-primary/20 text-center rounded-sm shadow-sm">
-                    <p className="text-[8px] font-bold text-primary tracking-tight">Contributors</p>
+                    <p className="text-[8px] font-bold text-primary tracking-tight">Active patriots</p>
                     <p className="text-sm font-bold text-primary tracking-tight font-meta mt-1">{globalStats.totalMembers}</p>
                   </div>
                 </div>
               </div>
 
-              <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
+              {/* Advanced Controls & Filters */}
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-2 bg-muted/20 border-y border-border/40">
+                <div className="flex bg-white/50 p-1 rounded-sm border border-border/20 shadow-inner">
+                  <button 
+                    onClick={() => setHistoryTab('contributions')}
+                    className={cn(
+                      "px-8 py-2.5 text-[9px] font-bold tracking-tight rounded-sm transition-all",
+                      historyTab === 'contributions' ? "bg-primary text-white shadow-md" : "text-muted-foreground/60 hover:text-on-surface"
+                    )}
+                  >
+                    Mobilization History
+                  </button>
+                  <button 
+                    onClick={() => setHistoryTab('spending')}
+                    className={cn(
+                      "px-8 py-2.5 text-[9px] font-bold tracking-tight rounded-sm transition-all",
+                      historyTab === 'spending' ? "bg-primary text-white shadow-md" : "text-muted-foreground/60 hover:text-on-surface"
+                    )}
+                  >
+                    Spending & Allocation
+                  </button>
+                </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                    <div className="relative flex-1 max-w-sm">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                      <input 
+                        type="text"
+                        placeholder="Search by name or amount..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full h-10 pl-11 pr-4 bg-white border border-border/40 rounded-sm text-[10px] font-bold tracking-tight focus:border-primary outline-none transition-all"
+                      />
+                    </div>
+                    {historyTab === 'contributions' && (
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => setContributionFilter('all')}
+                          className={cn(
+                            "px-6 py-2 text-[8px] font-bold tracking-tight border rounded-sm transition-all",
+                            contributionFilter === 'all' ? "bg-on-surface text-white border-on-surface" : "bg-white text-muted-foreground/40 border-border/40"
+                          )}
+                        >
+                          All Contributions
+                        </button>
+                        <button 
+                          onClick={() => setContributionFilter('me')}
+                          className={cn(
+                            "px-6 py-2 text-[8px] font-bold tracking-tight border rounded-sm transition-all",
+                            contributionFilter === 'me' ? "bg-on-surface text-white border-on-surface" : "bg-white text-muted-foreground/40 border-border/40"
+                          )}
+                        >
+                          Only Me
+                        </button>
+                      </div>
+                    )}
+                  </div>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="lg:col-span-1">
+                  <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white h-full">
+                    <div className="p-8">
+                      <LiveContributionFeed />
+                    </div>
+                  </Card>
+                </div>
+                
+                <div className="lg:col-span-3">
+                  <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white h-full">
                 {/* Desktop Table View */}
                 <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-muted/30 border-b border-border/40">
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Deployment details</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Capital</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Channel</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Verification</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight text-right">Audit</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Deployment details</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Capital</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Channel</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Verification</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case text-right">Audit</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/40">
                       {loading ? (
                         <tr>
                           <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
-                            Synchronizing deployment ledger...
+                            Synchronizing strategic ledger...
                           </td>
                         </tr>
-                      ) : publicHistory.length > 0 ? (
-                        publicHistory.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-muted/30 transition-colors group">
-                          <td className="p-6">
-                            <p className="text-[10px] font-bold text-on-surface tracking-tight uppercase">{item.fullName}</p>
-                            <p className="text-[10px] text-primary font-bold tracking-tight mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
-                            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
-                          </td>
-                          <td className="p-6">
-                            <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
-                          </td>
-                          <td className="p-6">
-                            <div className="flex items-center gap-2">
-                              <span className="w-2 h-2 bg-muted/40 rounded-full"></span>
-                              <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.method}</p>
-                            </div>
-                          </td>
-                          <td className="p-6">
-                            <span className={cn(
-                              "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm shadow-sm",
-                              item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
-                            )}>
-                              <div className={cn("w-1.5 h-1.5 rounded-full", item.status === 'Verified' ? "bg-primary" : "bg-accent")}></div>
-                              {item.status}
-                            </span>
-                          </td>
-                          <td className="p-6 text-right">
-                            <Button variant="ghost" size="sm" className="text-muted-foreground/40 hover:text-primary transition-all rounded-sm active:scale-95">
-                              <ArrowDownToLine className="w-4 h-4" />
-                            </Button>
-                          </td>
-                        </tr>
-                        ))
+                      ) : historyTab === 'contributions' ? (
+                        (() => {
+                          const data = contributionFilter === 'all' ? publicHistory : personalHistory
+                          const filtered = data.filter(item => 
+                            item.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            item.amount.includes(searchQuery)
+                          )
+                          return filtered.length > 0 ? (
+                            filtered.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-muted/30 transition-colors group">
+                            <td className="p-6">
+                              <p className="text-[10px] font-bold text-on-surface tracking-tight normal-case">
+                                {contributionFilter === 'all' ? item.fullName : 'Verified Contribution'}
+                              </p>
+                              <p className="text-[10px] text-primary font-bold tracking-tight mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
+                              <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
+                            </td>
+                            <td className="p-6">
+                              <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
+                            </td>
+                            <td className="p-6">
+                              <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.method || 'Standard MoMo'}</p>
+                            </td>
+                            <td className="p-6">
+                              <span className="inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
+                                Verified
+                              </span>
+                            </td>
+                            <td className="p-6 text-right">
+                              <ArrowRight className="w-4 h-4 text-border/40 group-hover:text-primary transition-colors ml-auto" />
+                            </td>
+                          </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
+                              No verified records matching your query.
+                            </td>
+                          </tr>
+                        )
+                        })()
                       ) : (
-                        <tr>
-                          <td colSpan={5} className="p-16 text-center">
-                            <Activity className="w-8 h-8 text-muted-foreground/20 mx-auto mb-4" />
-                            <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">No deployment history detected.</p>
-                          </td>
-                        </tr>
+                        (() => {
+                          const filtered = spendingHistory.filter(item => 
+                            item.chapter.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            item.amount.includes(searchQuery)
+                          )
+                          return filtered.length > 0 ? (
+                            filtered.map((item, idx) => (
+                              <tr key={idx} className="hover:bg-muted/30 transition-colors group">
+                                <td className="p-6">
+                                  <p className="text-[10px] font-bold text-on-surface tracking-tight normal-case">{item.chapter}</p>
+                                  <p className="text-[10px] text-accent font-bold tracking-tight mt-1">{item.category}</p>
+                                  <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
+                                </td>
+                                <td className="p-6">
+                                  <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
+                                </td>
+                                <td className="p-6">
+                                  <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.description}</p>
+                                </td>
+                                <td className="p-6">
+                                  <span className={cn(
+                                    "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm",
+                                    item.type === 'Allocation' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
+                                  )}>
+                                    {item.type}
+                                  </span>
+                                </td>
+                                <td className="p-6 text-right">
+                                  <ArrowRight className="w-4 h-4 text-border/40 group-hover:text-primary transition-colors ml-auto" />
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
+                                No allocation records matching your query.
+                              </td>
+                            </tr>
+                          )
+                        })()
                       )}
                     </tbody>
                   </table>
+                  
+                  <div className="p-8 bg-muted/10 border-t border-border/40 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight">
+                        Showing {historyTab === 'contributions' ? (contributionFilter === 'all' ? publicHistory.length : personalHistory.length) : spendingHistory.length} ledger entries
+                      </p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="h-12 px-10 text-[10px] font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                      onClick={handleDownload}
+                      disabled={!isLoggedIn}
+                    >
+                      <Download className="w-4 h-4 mr-2" /> Download History
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Mobile Card View */}
                 <div className="sm:hidden divide-y divide-border/40">
-                  {publicHistory.map((item, idx) => (
-                    <div key={idx} className="p-8 bg-white space-y-6">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-bold text-on-surface tracking-tight uppercase">{item.fullName}</p>
-                          <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
+                  {(() => {
+                    const data = contributionFilter === 'all' ? publicHistory : personalHistory
+                    const filtered = data.filter(item => 
+                      item.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                      item.amount.includes(searchQuery)
+                    )
+                    return filtered.length > 0 ? (
+                      filtered.map((item, idx) => (
+                        <div key={idx} className="p-8 bg-white space-y-6">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="text-sm font-bold text-on-surface tracking-tight normal-case">
+                                {contributionFilter === 'all' ? item.fullName : 'Verified Contribution'}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
+                            </div>
+                            <span className="px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
+                              Verified
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-end">
+                            <div>
+                              <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Capital deployment</p>
+                              <p className="text-xl font-bold text-on-surface font-meta">{item.amount}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Channel</p>
+                              <p className="text-[10px] font-bold text-on-surface tracking-tight">{item.method}</p>
+                            </div>
+                          </div>
+                          <Button variant="outline" className="w-full h-12 border-border/60 text-muted-foreground/40 text-[10px] font-bold tracking-tight rounded-sm hover:bg-on-surface hover:text-white transition-all shadow-sm">
+                            <ArrowDownToLine className="w-4 h-4 mr-2" /> Synchronize proof
+                          </Button>
                         </div>
-                        <span className={cn(
-                          "px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm",
-                          item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
-                        )}>
-                          {item.status}
-                        </span>
+                      ))
+                    ) : (
+                      <div className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
+                        No verified records matching your query.
                       </div>
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Capital deployment</p>
-                          <p className="text-xl font-bold text-on-surface font-meta">{item.amount}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Channel</p>
-                          <p className="text-[10px] font-bold text-on-surface tracking-tight">{item.method}</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" className="w-full h-12 border-border/60 text-muted-foreground/40 text-[10px] font-bold tracking-tight rounded-sm hover:bg-on-surface hover:text-white transition-all shadow-sm">
-                        <ArrowDownToLine className="w-4 h-4 mr-2" /> Synchronize proof
-                      </Button>
-                    </div>
-                  ))}
+                    )
+                  })()}
                 </div>
 
                  <div className="p-6 bg-muted/30 border-t border-border/40 flex justify-between items-center">
@@ -718,7 +939,9 @@ export default function Donate() {
                        Full operational audit
                      </button>
                   </div>
-              </Card>
+                  </div>
+                </div>
+              </div>
             </section>
 
              {/* History Modal */}
@@ -746,17 +969,17 @@ export default function Donate() {
                        <table className="w-full text-left border-collapse">
                          <thead>
                            <tr className="bg-muted/30 border-b border-border/40">
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Contributor</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Capital</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Cell</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight text-right">Verification</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Contributor</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Capital</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Cell</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case text-right">Verification</th>
                            </tr>
                          </thead>
                          <tbody className="divide-y divide-border/40">
                            {publicHistory.map((item, idx) => (
                              <tr key={idx} className="hover:bg-muted/10 transition-colors group">
                                <td className="p-6">
-                                 <p className="text-xs font-bold text-on-surface tracking-tight uppercase">{item.fullName}</p>
+                                 <p className="text-xs font-bold text-on-surface tracking-tight normal-case">{item.fullName}</p>
                                  <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
                                </td>
                                <td className="p-6">

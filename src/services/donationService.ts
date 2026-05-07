@@ -63,6 +63,37 @@ class DonationService {
     }))
   }
 
+  async getMobilizationLedger(limit: number = 20): Promise<{
+    id: string
+    chapter: string
+    type: 'Allocation' | 'Expenditure'
+    amount: string
+    description: string
+    category: string
+    date: string
+  }[]> {
+    const { data, error } = await supabase
+      .from('mobilization_ledger')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(limit)
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch mobilization ledger:', error)
+      return []
+    }
+
+    return (data || []).map(d => ({
+      id: d.id.substring(0, 8).toUpperCase(),
+      chapter: d.chapter,
+      type: d.transaction_type,
+      amount: `GHS ${Number(d.amount).toLocaleString()}`,
+      description: d.description,
+      category: d.category,
+      date: new Date(d.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    }))
+  }
+
   async getPendingDonations(): Promise<DonationDetail[]> {
     return this.getDonations('Pending')
   }
@@ -142,6 +173,110 @@ class DonationService {
       campaignId: '',
       memberId: ''
     }))
+  }
+
+  async getMemberDonations(phone: string): Promise<DonationDetail[]> {
+    const { data, error } = await supabase
+      .from('donations')
+      .select('*, donation_campaigns(title)')
+      .eq('phone', phone)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch member donations:', error)
+      return []
+    }
+
+    return (data || []).map(d => ({
+      id: d.id,
+      date: d.created_at,
+      amount: d.amount.toString(),
+      method: d.payment_method,
+      status: d.status,
+      reference: d.id.substring(0, 8),
+      campaignTitle: d.donation_campaigns?.title,
+      fullName: d.full_name,
+      phone: d.phone,
+      country: d.country,
+      receiptUrl: d.receipt_url,
+      campaignId: d.campaign_id,
+      memberId: d.member_id
+    }))
+  }
+
+  subscribeToPublicDonations(callback: (donation: DonationDetail) => void) {
+    return supabase
+      .channel('public_donations')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'donations',
+          filter: 'status=eq.Verified'
+        },
+        async (payload) => {
+          const { data, error } = await supabase
+            .from('donations')
+            .select('*, donation_campaigns(title)')
+            .eq('id', payload.new.id)
+            .single()
+
+          if (!error && data) {
+            callback({
+              id: data.id,
+              date: data.created_at,
+              amount: data.amount.toString(),
+              method: data.payment_method,
+              status: data.status,
+              reference: data.id.substring(0, 8),
+              campaignTitle: data.donation_campaigns?.title,
+              fullName: data.show_on_dashboard ? data.full_name : 'Anonymous Patriot',
+              phone: '',
+              country: '',
+              receiptUrl: '',
+              campaignId: '',
+              memberId: ''
+            })
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'donations',
+          filter: 'status=eq.Verified'
+        },
+        async (payload) => {
+          // If a donation was updated to 'Verified'
+          const { data, error } = await supabase
+            .from('donations')
+            .select('*, donation_campaigns(title)')
+            .eq('id', payload.new.id)
+            .single()
+
+          if (!error && data) {
+            callback({
+              id: data.id,
+              date: data.created_at,
+              amount: data.amount.toString(),
+              method: data.payment_method,
+              status: data.status,
+              reference: data.id.substring(0, 8),
+              campaignTitle: data.donation_campaigns?.title,
+              fullName: data.show_on_dashboard ? data.full_name : 'Anonymous Patriot',
+              phone: '',
+              country: '',
+              receiptUrl: '',
+              campaignId: '',
+              memberId: ''
+            })
+          }
+        }
+      )
+      .subscribe()
   }
 }
 
