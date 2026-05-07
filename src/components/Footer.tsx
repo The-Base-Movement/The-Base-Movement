@@ -67,6 +67,7 @@ export default function Footer() {
                 <Link className="hover:text-primary transition-colors" to="/our-agenda">The plan</Link>
                 <Link className="hover:text-primary transition-colors" to="/impact">Impact</Link>
                 <Link className="hover:text-primary transition-colors" to="/chapters">Chapters</Link>
+                <Link className="hover:text-primary transition-colors" to="/polls">Polls</Link>
               </div>
             </div>
             
@@ -76,6 +77,7 @@ export default function Footer() {
                 <Link className="hover:text-primary transition-colors" to="/contact">Contact</Link>
                 <Link className="hover:text-primary transition-colors" to="/press">Press</Link>
                 <Link className="hover:text-primary transition-colors" to="/privacy">Privacy</Link>
+                <Link className="hover:text-primary transition-colors" to="/terms">Terms of service</Link>
               </div>
             </div>
 
