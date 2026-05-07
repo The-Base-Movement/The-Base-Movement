@@ -19,6 +19,8 @@ export default function Donate() {
   const [countries, setCountries] = useState<{ id: string | number; name: string; dialing_code: string; is_diaspora: boolean }[]>([])
   const [loading, setLoading] = useState(true)
   const [countriesLoading, setCountriesLoading] = useState(true)
+  const [globalStats, setGlobalStats] = useState({ totalMembers: 0, totalRaised: 0 })
+  const [publicHistory, setPublicHistory] = useState<DonationRecord[]>([])
 
   // Auth & Pre-fill states (Initialized directly to avoid cascading renders)
   const [isLoggedIn] = useState(() => !!localStorage.getItem('userName'))
@@ -43,14 +45,29 @@ export default function Donate() {
       setLoading(true)
       setCountriesLoading(true)
       try {
-        const [activeData, pastData, countriesData] = await Promise.all([
+        const [activeData, pastData, countriesData, publicHistoryData, statsData] = await Promise.all([
           adminService.getDonationCampaigns('Active'),
           adminService.getDonationCampaigns('Closed'),
-          adminService.getCountries()
+          adminService.getCountries(),
+          adminService.getPublicDonationFeed(10),
+          adminService.getDonationStats()
         ])
         setCampaigns(activeData)
         setPastCampaigns(pastData)
         setCountries(countriesData)
+        setPublicHistory(publicHistoryData.map(d => ({
+          id: d.id,
+          date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          amount: `GHS ${Number(d.amount).toLocaleString()}`,
+          method: d.method,
+          status: 'Verified',
+          fullName: d.fullName,
+          campaignTitle: d.campaignTitle
+        })))
+        setGlobalStats({ 
+          totalMembers: statsData.totalContributions, 
+          totalRaised: statsData.approvedAmount 
+        })
         
         // Auto-select first active campaign if none selected
         if (activeData.length > 0) {
@@ -580,16 +597,16 @@ export default function Donate() {
                     <Activity className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
                     Capital deployment history
                   </h2>
-                  <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mt-2">Immutable record of your personal impact.</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mt-2">Live immutable record of member mobilization.</p>
                 </div>
                 <div className="flex gap-4">
                   <div className="px-5 py-3 bg-white border border-border/60 text-center rounded-sm shadow-sm">
                     <p className="text-[8px] font-bold text-muted-foreground/40 tracking-tight">Aggregate support</p>
-                    <p className="text-sm font-bold text-on-surface tracking-tight font-meta mt-1">GHS 1,250</p>
+                    <p className="text-sm font-bold text-on-surface tracking-tight font-meta mt-1">GHS {globalStats.totalRaised.toLocaleString()}</p>
                   </div>
                   <div className="px-5 py-3 bg-primary/10 border border-primary/20 text-center rounded-sm shadow-sm">
-                    <p className="text-[8px] font-bold text-primary tracking-tight">Mobilization XP</p>
-                    <p className="text-sm font-bold text-primary tracking-tight font-meta mt-1">125 Units</p>
+                    <p className="text-[8px] font-bold text-primary tracking-tight">Contributors</p>
+                    <p className="text-sm font-bold text-primary tracking-tight font-meta mt-1">{globalStats.totalMembers}</p>
                   </div>
                 </div>
               </div>
@@ -614,13 +631,13 @@ export default function Donate() {
                             Synchronizing deployment ledger...
                           </td>
                         </tr>
-                      ) : contributions.length > 0 ? (
-                        contributions.map((item, idx) => (
+                      ) : publicHistory.length > 0 ? (
+                        publicHistory.map((item, idx) => (
                         <tr key={idx} className="hover:bg-muted/30 transition-colors group">
                           <td className="p-6">
-                            <p className="text-xs font-bold text-on-surface tracking-tight">{item.date}</p>
+                            <p className="text-[10px] font-bold text-on-surface tracking-tight uppercase">{item.fullName}</p>
                             <p className="text-[10px] text-primary font-bold tracking-tight mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
-                            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">TX-{item.id.toLowerCase()}</p>
+                            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
                           </td>
                           <td className="p-6">
                             <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
@@ -661,12 +678,12 @@ export default function Donate() {
 
                 {/* Mobile Card View */}
                 <div className="sm:hidden divide-y divide-border/40">
-                  {contributions.map((item, idx) => (
+                  {publicHistory.map((item, idx) => (
                     <div key={idx} className="p-8 bg-white space-y-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-bold text-on-surface tracking-tight">{item.date}</p>
-                          <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight mt-1">TX-{item.id.toLowerCase()}</p>
+                          <p className="text-sm font-bold text-on-surface tracking-tight uppercase">{item.fullName}</p>
+                          <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
                         </div>
                         <span className={cn(
                           "px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm",
@@ -725,35 +742,32 @@ export default function Donate() {
                    </div>
 
                    <div className="flex-1 overflow-y-auto p-0">
-                     {contributions.length > 0 ? (
+                     {publicHistory.length > 0 ? (
                        <table className="w-full text-left border-collapse">
                          <thead>
                            <tr className="bg-muted/30 border-b border-border/40">
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Deployment details</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Contributor</th>
                              <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Capital</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Channel</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Verification</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight">Cell</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight text-right">Verification</th>
                            </tr>
                          </thead>
                          <tbody className="divide-y divide-border/40">
-                           {contributions.map((item, idx) => (
+                           {publicHistory.map((item, idx) => (
                              <tr key={idx} className="hover:bg-muted/10 transition-colors group">
                                <td className="p-6">
-                                 <p className="text-xs font-bold text-on-surface tracking-tight">{item.date}</p>
-                                 <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight mt-1">TX-{item.id.toLowerCase()}</p>
+                                 <p className="text-xs font-bold text-on-surface tracking-tight uppercase">{item.fullName}</p>
+                                 <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
                                </td>
                                <td className="p-6">
                                  <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
                                </td>
                                <td className="p-6">
-                                 <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.method}</p>
+                                 <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.campaignTitle || 'Strategic Fund'}</p>
                                </td>
-                               <td className="p-6">
-                                 <span className={cn(
-                                   "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm",
-                                   item.status === 'Verified' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
-                                 )}>
-                                   {item.status}
+                               <td className="p-6 text-right">
+                                 <span className="inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
+                                   Verified
                                  </span>
                                </td>
                              </tr>

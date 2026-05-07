@@ -102,6 +102,47 @@ class DonationService {
 
     return true
   }
+
+  async getPublicDonationFeed(limit: number = 10): Promise<DonationDetail[]> {
+    const { data, error } = await supabase
+      .from('donations')
+      .select('*, donation_campaigns(title)')
+      .eq('status', 'Verified')
+      .order('created_at', { ascending: false })
+      .limit(limit)
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch public donation feed:', error)
+      return []
+    }
+
+    interface DBDonation {
+      id: string
+      created_at: string
+      amount: number
+      payment_method: string
+      status: 'Verified'
+      full_name: string
+      show_on_dashboard: boolean
+      donation_campaigns: { title: string }
+    }
+
+    return (data || []).map((d: DBDonation) => ({
+      id: d.id,
+      date: d.created_at,
+      amount: d.amount.toString(),
+      method: d.payment_method,
+      status: d.status,
+      reference: d.id.substring(0, 8),
+      campaignTitle: d.donation_campaigns?.title,
+      fullName: d.show_on_dashboard ? d.full_name : 'Anonymous Patriot',
+      phone: '', // Redacted for public feed
+      country: '', 
+      receiptUrl: '',
+      campaignId: '',
+      memberId: ''
+    }))
+  }
 }
 
 export const donationService = DonationService.getInstance()
