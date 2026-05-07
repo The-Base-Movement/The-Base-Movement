@@ -149,7 +149,7 @@ export default function Donate() {
     fetchData()
 
     // Real-time subscription for global feed synchronization
-    const subscription = adminService.subscribeToPublicDonations((newDonation) => {
+    const subscription: RealtimeChannel = adminService.subscribeToPublicDonations((newDonation) => {
       setPublicHistory(prev => {
         // Prevent duplicates
         if (prev.some(d => d.id === newDonation.id)) return prev;

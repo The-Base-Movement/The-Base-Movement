@@ -1,4 +1,4 @@
-import { FileText, Scale, Info, CheckCircle } from 'lucide-react'
+import { Scale, Info, CheckCircle } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Helmet } from 'react-helmet-async'
 

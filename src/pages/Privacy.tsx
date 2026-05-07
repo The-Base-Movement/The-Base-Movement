@@ -1,4 +1,4 @@
-import { Shield, Lock, Eye, Server } from 'lucide-react'
+import { Lock, Eye, Server } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Helmet } from 'react-helmet-async'
 
