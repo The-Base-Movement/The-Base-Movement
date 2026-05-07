@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import type { DonationRecord, DonationDetail, DonationCampaign } from '@/types/admin'
+import type { RealtimeChannel } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 
 export default function Donate() {
@@ -168,10 +169,8 @@ export default function Donate() {
     });
 
     return () => {
-      // Supabase subscription cleanup is handled inside the service if it returns a channel
-      // But here we just assume it's a standard subscription object
-      if (subscription && (subscription as any).unsubscribe) {
-        (subscription as any).unsubscribe();
+      if (subscription) {
+        subscription.unsubscribe()
       }
     }
   }, [])
@@ -939,10 +938,10 @@ export default function Donate() {
                        Full operational audit
                      </button>
                   </div>
-                  </div>
-                </div>
+                </Card>
               </div>
-            </section>
+            </div>
+          </section>
 
              {/* History Modal */}
              {isHistoryModalOpen && (

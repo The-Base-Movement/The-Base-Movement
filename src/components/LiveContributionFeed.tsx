@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, Globe, Shield, Activity } from 'lucide-react'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/types/admin'
-import type { RealtimeChannel } from '@supabase/supabase-js'
+
 
 
 export function LiveContributionFeed() {
@@ -27,7 +27,7 @@ export function LiveContributionFeed() {
     fetchRecentDonations()
 
     // Subscribe to real-time updates via central service
-    const subscription: RealtimeChannel = adminService.subscribeToPublicDonations((newDonation) => {
+    const subscription = adminService.subscribeToPublicDonations((newDonation) => {
       setDonations(prev => {
         // Prevent duplicates in case of race conditions
         if (prev.some(d => d.id === newDonation.id)) return prev
