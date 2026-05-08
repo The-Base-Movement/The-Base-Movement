@@ -41,7 +41,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
             <img src={settings.logo_url} alt="Logo" className="w-full h-full object-contain"  decoding="async" loading="lazy" />
           </div>
           <div>
-            <h4 className="text-white font-bold text-[10px] sm:text-xs leading-none">The Base Movement</h4>
+            <h4 className="text-white font-bold text-micro sm:text-xs leading-none">The Base Movement</h4>
             <p className="text-white/80 text-[6px] sm:text-[7px] font-medium mt-1">Ghana First, jobs for the youth!</p>
           </div>
         </div>
@@ -80,50 +80,50 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         {/* Member Details - Center-aligned with photo */}
         <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0 pr-20 sm:pr-24">
           <div>
-            <h5 className="text-[hsl(var(--foreground))] font-bold text-[10px] sm:text-xl tracking-tight leading-normal truncate pb-[2px]" title={userName || 'Member Name'}>{userName || 'Member Name'}</h5>
+            <h5 className="text-[hsl(var(--foreground))] font-bold text-micro sm:text-xl tracking-tight leading-normal truncate pb-[2px]" title={userName || 'Member Name'}>{userName || 'Member Name'}</h5>
             <div className="h-0.5 w-6 sm:w-12 bg-primary mt-0.5"></div>
           </div>
 
           <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-on-surface">
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Reg. no.</span>
-              <span className="text-[8px] sm:text-[11px] font-bold text-primary tracking-tight whitespace-nowrap overflow-hidden truncate pb-[1px]">{userRegNo || 'DI-XXXXXX'}</span>
+              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Reg. no.</span>
+              <span className="text-[8px] sm:text-tiny font-bold text-primary tracking-tight whitespace-nowrap overflow-hidden truncate pb-[1px]">{userRegNo || 'DI-XXXXXX'}</span>
             </div>
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Gender</span>
-              <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{gender || 'Not Specified'}</span>
+              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Gender</span>
+              <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{gender || 'Not Specified'}</span>
             </div>
             
             {(!country || country === 'Ghana') ? (
               <>
                 <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Region</span>
-                  <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{region || 'Not Specified'}</span>
+                  <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Region</span>
+                  <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{region || 'Not Specified'}</span>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Const.</span>
-                  <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{constituency || 'Not Specified'}</span>
+                  <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Const.</span>
+                  <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{constituency || 'Not Specified'}</span>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-1 sm:gap-1.5">
-                <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Country</span>
-                <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{country || 'Not Specified'}</span>
+                <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Country</span>
+                <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{country || 'Not Specified'}</span>
               </div>
             )}
 
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Chapter</span>
-              <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{chapter || 'Not Specified'}</span>
+              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Chapter</span>
+              <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{chapter || 'Not Specified'}</span>
             </div>
 
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Joined</span>
-              <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{joinedDate || '30 Apr 2026'}</span>
+              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Joined</span>
+              <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{joinedDate || '30 Apr 2026'}</span>
             </div>
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Status</span>
-              <span className="text-[8px] sm:text-[10px] font-bold text-primary whitespace-nowrap overflow-hidden truncate pb-[1px]">{status || 'Verified'}</span>
+              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Status</span>
+              <span className="text-[8px] sm:text-micro font-bold text-primary whitespace-nowrap overflow-hidden truncate pb-[1px]">{status || 'Verified'}</span>
             </div>
           </div>
         </div>

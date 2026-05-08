@@ -20,7 +20,7 @@ export default function NotFound() {
           <Search className="w-10 h-10 text-brand-green group-hover:scale-110 transition-transform" />
         </div>
 
-        <p className="font-meta text-brand-green tracking-tight text-[12px] font-bold mb-4">Error 404</p>
+        <p className="font-meta text-brand-green tracking-tight text-xs font-bold mb-4">Error 404</p>
         <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight text-charcoal-dark mb-6">
           Path not found <span className="text-brand-green">.</span>
         </h1>
@@ -48,7 +48,7 @@ export default function NotFound() {
 
       {/* Movement Motto */}
       <div className="mt-20 text-center">
-        <p className="text-[10px] font-bold text-slate-300 tracking-tight mb-0">Ghana first • Collective progress</p>
+        <p className="text-micro font-bold text-slate-300 tracking-tight mb-0">Ghana first • Collective progress</p>
       </div>
     </main>
   )

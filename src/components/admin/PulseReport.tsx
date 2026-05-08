@@ -25,7 +25,7 @@ export function PulseReport() {
           <Activity className="w-5 h-5 text-destructive" />
           Movement pulse report
         </h3>
-        <span className="text-[10px] font-bold text-muted-foreground/40 tracking-tight border border-border/10 px-2 py-1 bg-muted/5 rounded-lg">
+        <span className="text-micro font-bold text-muted-foreground/40 tracking-tight border border-border/10 px-2 py-1 bg-muted/5 rounded-lg">
           Last updated: {new Date().toLocaleDateString()}
         </span>
       </div>
@@ -34,44 +34,44 @@ export function PulseReport() {
         <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-sm">
           <div className="flex items-center justify-between mb-4">
             <TrendingUp className="w-4 h-4 text-muted-foreground/40 group-hover:text-destructive" />
-            <span className="text-[10px] font-bold text-primary tracking-tight">+{pulse.nationalGrowth}%</span>
+            <span className="text-micro font-bold text-primary tracking-tight">+{pulse.nationalGrowth}%</span>
           </div>
           <div className="text-3xl font-bold text-on-surface leading-none mb-1 tracking-tight">{pulse.nationalGrowth}%</div>
-          <div className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">National growth wave</div>
+          <div className="text-micro font-bold text-muted-foreground/40 tracking-tight">National growth wave</div>
         </div>
 
         <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-sm">
           <div className="flex items-center justify-between mb-4">
             <Users className="w-4 h-4 text-muted-foreground/40 group-hover:text-destructive" />
-            <span className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Live</span>
+            <span className="text-micro font-bold text-muted-foreground/40 tracking-tight">Live</span>
           </div>
           <div className="text-3xl font-bold text-on-surface leading-none mb-1 tracking-tight">{pulse.activeChapters}</div>
-          <div className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Active chapters</div>
+          <div className="text-micro font-bold text-muted-foreground/40 tracking-tight">Active chapters</div>
         </div>
 
         <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-sm">
           <div className="flex items-center justify-between mb-4">
             <MapIcon className="w-4 h-4 text-muted-foreground/40 group-hover:text-destructive" />
-            <span className="text-[10px] font-bold text-accent tracking-tight">Peak</span>
+            <span className="text-micro font-bold text-accent tracking-tight">Peak</span>
           </div>
           <div className="text-xl font-bold text-on-surface leading-none mb-1 truncate tracking-tight">{pulse.topPerformingRegion}</div>
-          <div className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Top performing region</div>
+          <div className="text-micro font-bold text-muted-foreground/40 tracking-tight">Top performing region</div>
         </div>
 
         <div className="bg-white border border-border/40 p-6 shadow-sm hover:border-destructive transition-all group rounded-sm">
           <div className="flex items-center justify-between mb-4">
             <ShieldCheck className="w-4 h-4 text-muted-foreground/40 group-hover:text-destructive" />
-            <span className="text-[10px] font-bold text-primary tracking-tight">{pulse.logisticsHealth}%</span>
+            <span className="text-micro font-bold text-primary tracking-tight">{pulse.logisticsHealth}%</span>
           </div>
           <div className="text-3xl font-bold text-on-surface leading-none mb-1 tracking-tight">{pulse.logisticsHealth}%</div>
-          <div className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Logistics health</div>
+          <div className="text-micro font-bold text-muted-foreground/40 tracking-tight">Logistics health</div>
         </div>
       </div>
 
       <div className="bg-white border border-border/40 shadow-sm overflow-hidden rounded-sm">
         <div className="p-4 bg-muted/5 border-b border-border/10 flex items-center justify-between">
-          <span className="text-[10px] font-bold tracking-tight text-on-surface/60">Regional activation matrix</span>
-          <span className="text-[10px] font-bold text-muted-foreground/40">Fidelity: High</span>
+          <span className="text-micro font-bold tracking-tight text-on-surface/60">Regional activation matrix</span>
+          <span className="text-micro font-bold text-muted-foreground/40">Fidelity: High</span>
         </div>
         <div className="divide-y divide-border/10">
           {pulse.regionalPulse.map((region) => (
@@ -86,7 +86,7 @@ export function PulseReport() {
               
               <div className="flex items-center gap-8">
                 <div className="hidden md:block">
-                  <div className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Activity index</div>
+                  <div className="text-micro font-bold text-muted-foreground/40 tracking-tight mb-1">Activity index</div>
                   <div className="flex items-center gap-3">
                     <div className="w-32 h-1.5 bg-muted/10 rounded-full overflow-hidden">
                       <div 
@@ -97,14 +97,14 @@ export function PulseReport() {
                         style={{ width: `${region.activity}%` }}
                       />
                     </div>
-                    <span className="text-[10px] font-bold text-on-surface/60 tracking-tight">{region.activity}%</span>
+                    <span className="text-micro font-bold text-on-surface/60 tracking-tight">{region.activity}%</span>
                   </div>
                 </div>
 
                 <div className="text-right w-24">
-                  <div className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Weekly growth</div>
+                  <div className="text-micro font-bold text-muted-foreground/40 tracking-tight mb-1">Weekly growth</div>
                   <div className={cn(
-                    "text-[10px] font-bold tracking-tight",
+                    "text-micro font-bold tracking-tight",
                     region.growth > 0 ? "text-primary" : "text-muted-foreground/40"
                   )}>
                     +{region.growth}%

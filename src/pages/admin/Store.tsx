@@ -256,7 +256,7 @@ export default function AdminStore() {
             <button 
               onClick={() => setActiveTab('inventory')}
               className={cn(
-                "px-5 py-2 text-[10px] font-bold rounded-sm transition-all",
+                "px-5 py-2 text-micro font-bold rounded-sm transition-all",
                 activeTab === 'inventory' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
@@ -265,7 +265,7 @@ export default function AdminStore() {
             <button 
               onClick={() => setActiveTab('requests')}
               className={cn(
-                "px-5 py-2 text-[10px] font-bold rounded-sm transition-all",
+                "px-5 py-2 text-micro font-bold rounded-sm transition-all",
                 activeTab === 'requests' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
@@ -274,7 +274,7 @@ export default function AdminStore() {
             <button 
               onClick={() => setActiveTab('audit')}
               className={cn(
-                "px-5 py-2 text-[10px] font-bold rounded-sm transition-all",
+                "px-5 py-2 text-micro font-bold rounded-sm transition-all",
                 activeTab === 'audit' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
@@ -286,7 +286,7 @@ export default function AdminStore() {
               variant="primary"
               size="lg"
               onClick={() => handleOpenModal()}
-              className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               <Plus className="w-4 h-4 mr-2" /> Establish Asset
             </Button>
@@ -316,7 +316,7 @@ export default function AdminStore() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="h-10 px-8 text-[10px] font-bold tracking-tight border-brand-red/40 text-brand-red hover:bg-brand-red/5 transition-all shadow-sm rounded-sm active:scale-95"
+                className="h-10 px-8 text-micro font-bold tracking-tight border-brand-red/40 text-brand-red hover:bg-brand-red/5 transition-all shadow-sm rounded-sm active:scale-95"
               >
                 Scan Alerts
               </Button>
@@ -328,25 +328,25 @@ export default function AdminStore() {
             <Card className="rounded-sm border-border/60 shadow-sm bg-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Stock value</span>
+                  <span className="text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">Stock value</span>
                   <TrendingUp className="w-4 h-4 text-primary/20" />
                 </div>
                 <p className="text-3xl font-bold text-on-surface mb-1">
                   GHS {products.reduce((acc, p) => acc + (parseFloat(p.price.replace(/[^0-9.-]+/g, '')) * p.stock), 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                 </p>
-                <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Movement asset valuation</p>
+                <p className="text-micro text-muted-foreground/40 font-bold tracking-tight">Movement asset valuation</p>
               </CardContent>
             </Card>
 
             <Card className="rounded-sm border-border/60 shadow-sm bg-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Active requests</span>
+                  <span className="text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">Active requests</span>
                   <Truck className="w-4 h-4 text-primary/20" />
                 </div>
                 <p className="text-3xl font-bold text-on-surface mb-1">{requests.filter(r => r.status === 'Pending').length}</p>
                 <p className={cn(
-                  "text-[9px] font-bold tracking-tight",
+                  "text-micro font-bold tracking-tight",
                   requests.filter(r => r.status === 'Pending').length > 0 ? "text-accent" : "text-muted-foreground/40"
                 )}>
                   {requests.filter(r => r.status === 'Pending').length > 0 ? 'Pending HQ approval' : 'All requests processed'}
@@ -357,11 +357,11 @@ export default function AdminStore() {
             <Card className="rounded-sm border-border/60 shadow-sm bg-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Stock units</span>
+                  <span className="text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">Stock units</span>
                   <Package className="w-4 h-4 text-muted-foreground/10" />
                 </div>
                 <p className="text-3xl font-bold text-on-surface mb-1">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</p>
-                <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Across {products.length} catalog items</p>
+                <p className="text-micro text-muted-foreground/40 font-bold tracking-tight">Across {products.length} catalog items</p>
               </CardContent>
             </Card>
 
@@ -372,7 +372,7 @@ export default function AdminStore() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className={cn(
-                    "text-[10px] font-bold uppercase tracking-widest",
+                    "text-micro font-bold uppercase tracking-widest",
                     lowStockItems.length > 0 ? "text-destructive" : "text-muted-foreground/80"
                   )}>Inventory alerts</span>
                   <AlertTriangle className={cn("w-4 h-4", lowStockItems.length > 0 ? "text-destructive/20" : "text-muted-foreground/10")} />
@@ -382,7 +382,7 @@ export default function AdminStore() {
                   lowStockItems.length > 0 ? "text-destructive" : "text-on-surface"
                 )}>{lowStockItems.length}</p>
                 <p className={cn(
-                  "text-[9px] font-bold tracking-tight",
+                  "text-micro font-bold tracking-tight",
                   lowStockItems.length > 0 ? "text-destructive/60" : "text-muted-foreground/40"
                 )}>
                   {lowStockItems.length > 0 ? "Replenishment required" : "Supply chain stable"}
@@ -406,7 +406,7 @@ export default function AdminStore() {
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
                     className={cn(
-                      "px-4 py-1.5 text-[10px] font-bold tracking-tight transition-all",
+                      "px-4 py-1.5 text-micro font-bold tracking-tight transition-all",
                       activeCategory === cat ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
                     )}
                   >
@@ -432,15 +432,15 @@ export default function AdminStore() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-border/40 bg-muted/30">
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Product</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Category</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('price')}>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Product</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Category</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('price')}>
                       <div className="flex items-center gap-1">Price <ArrowUpDown className="w-3 h-3" /></div>
                     </th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight text-center cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('stock')}>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight text-center cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('stock')}>
                       <div className="flex items-center justify-center gap-1">In stock <ArrowUpDown className="w-3 h-3" /></div>
                     </th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('status')}>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('status')}>
                       <div className="flex items-center gap-1">Status <ArrowUpDown className="w-3 h-3" /></div>
                     </th>
                     <th className="px-6 py-4 text-right"></th>
@@ -460,7 +460,7 @@ export default function AdminStore() {
                           </div>
                           <div className="flex flex-col">
                             <span className="text-xs font-bold text-on-surface tracking-tight">{product.name}</span>
-                            <span className="text-[9px] font-bold text-muted-foreground/80 mt-0.5 normal-case">#ITM-{product.id.substring(0, 6)}</span>
+                            <span className="text-micro font-bold text-muted-foreground/80 mt-0.5 normal-case">#ITM-{product.id.substring(0, 6)}</span>
                           </div>
                         </div>
                       </td>
@@ -482,7 +482,7 @@ export default function AdminStore() {
                         <div className="flex items-center gap-2">
                           <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: product.color }} />
                           <span className={cn(
-                              "px-2.5 py-1 text-[10px] font-bold tracking-tight border rounded-md",
+                              "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-md",
                               product.status === 'Critical' 
                                 ? "bg-destructive/10 text-destructive border-destructive/20" 
                                 : product.status === 'Low Stock'
@@ -537,11 +537,11 @@ export default function AdminStore() {
                       </div>
                       <div className="space-y-1">
                         <h4 className="text-sm font-bold text-on-surface tracking-tight">{product.name}</h4>
-                        <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight normal-case">#ITM-{product.id.substring(0, 6)}</p>
+                        <p className="text-micro font-bold text-muted-foreground/80 tracking-tight normal-case">#ITM-{product.id.substring(0, 6)}</p>
                       </div>
                     </div>
                     <div className={cn(
-                      "px-2.5 py-1 text-[9px] font-bold tracking-tight border rounded-full",
+                      "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-full",
                       product.status === 'Critical' ? "bg-destructive/10 text-destructive border-destructive/20" :
                       product.status === 'Low Stock' ? "bg-accent/10 text-accent border-accent/20" :
                       "bg-primary/10 text-primary border-primary/20"
@@ -552,11 +552,11 @@ export default function AdminStore() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-muted/10 rounded-sm border border-border/40">
-                      <p className="text-[9px] font-bold text-muted-foreground/80 tracking-tight mb-1">Price</p>
+                      <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-1">Price</p>
                       <p className="text-sm font-bold text-on-surface">{product.price}</p>
                     </div>
                     <div className="p-4 bg-muted/10 rounded-sm border border-border/40">
-                      <p className="text-[9px] font-bold text-muted-foreground/80 tracking-tight mb-1">Stock</p>
+                      <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-1">Stock</p>
                       <p className={cn(
                         "text-sm font-bold",
                         product.stock < 50 ? "text-accent" : "text-on-surface"
@@ -567,7 +567,7 @@ export default function AdminStore() {
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
                       variant="outline" 
-                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-micro font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       onClick={() => handleOpenModal(product)}
                     >
                       <Edit3 className="w-4 h-4 mr-2" /> Edit Asset
@@ -589,18 +589,18 @@ export default function AdminStore() {
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]" />
-                <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Stable: {products.filter(p => p.status === 'Stable').length}</span>
+                <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Stable: {products.filter(p => p.status === 'Stable').length}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_8px_rgba(var(--accent-rgb),0.4)]" />
-                <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Low stock: {products.filter(p => p.status === 'Low Stock').length}</span>
+                <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Low stock: {products.filter(p => p.status === 'Low Stock').length}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-destructive shadow-[0_0_8px_rgba(var(--destructive-rgb),0.4)]" />
-                <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Critical: {products.filter(p => p.status === 'Critical').length}</span>
+                <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Critical: {products.filter(p => p.status === 'Critical').length}</span>
               </div>
             </div>
-            <div className="text-[10px] font-bold text-muted-foreground/80 italic">
+            <div className="text-micro font-bold text-muted-foreground/80 italic">
               Showing {sortedAndFilteredProducts.length} movement assets in the current view
             </div>
           </CardFooter>
@@ -619,12 +619,12 @@ export default function AdminStore() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-border/40 bg-muted/30">
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Region</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Items</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Requested</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Priority</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Status</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight text-right">Action</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Region</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Items</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Requested</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Priority</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Status</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
@@ -633,13 +633,13 @@ export default function AdminStore() {
                       <td className="px-6 py-5">
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-on-surface tracking-tight">{req.region}</span>
-                          <span className="text-[9px] font-bold text-muted-foreground/80 mt-0.5">{req.constituency || 'Regional HQ'}</span>
+                          <span className="text-micro font-bold text-muted-foreground/80 mt-0.5">{req.constituency || 'Regional HQ'}</span>
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex flex-col gap-1">
                           {req.items.map(item => (
-                            <span key={item.id} className="text-[10px] font-bold text-on-surface/80">
+                            <span key={item.id} className="text-micro font-bold text-on-surface/80">
                               {item.quantity}x {item.productName || 'Unknown Product'}
                             </span>
                           ))}
@@ -652,7 +652,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
-                          "px-2 py-0.5 text-[10px] font-bold tracking-tight rounded-full",
+                          "px-2 py-0.5 text-micro font-bold tracking-tight rounded-full",
                           req.priority === 'Urgent' ? "bg-destructive/10 text-destructive" : req.priority === 'High' ? "bg-accent/10 text-accent" : "bg-muted/10 text-on-surface/80"
                         )}>
                           {req.priority}
@@ -660,7 +660,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
-                          "px-2.5 py-1 text-[10px] font-bold tracking-tight border rounded-md",
+                          "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-md",
                           req.status === 'Pending' ? "bg-accent/10 text-accent border-accent/20" :
                           req.status === 'Approved' ? "bg-blue-50 text-blue-700 border-blue-100" :
                           req.status === 'Dispatched' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
@@ -672,7 +672,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5 text-right">
                         <Select onValueChange={(v: ResourceRequest['status']) => handleStatusUpdate(req.id, v)}>
-                          <SelectTrigger className="w-32 h-8 text-[10px] font-bold tracking-tight rounded-sm border-border/60">
+                          <SelectTrigger className="w-32 h-8 text-micro font-bold tracking-tight rounded-sm border-border/60">
                             <SelectValue placeholder="Update Status" />
                           </SelectTrigger>
                           <SelectContent className="rounded-sm">
@@ -696,10 +696,10 @@ export default function AdminStore() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-sm font-bold text-on-surface tracking-tight">{req.region}</h4>
-                      <p className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-tight">{req.constituency || 'Regional HQ'}</p>
+                      <p className="text-micro font-bold text-muted-foreground/80 normal-case tracking-tight">{req.constituency || 'Regional HQ'}</p>
                     </div>
                     <div className={cn(
-                      "px-2 py-0.5 text-[9px] font-bold tracking-tight rounded-full",
+                      "px-2 py-0.5 text-micro font-bold tracking-tight rounded-full",
                       req.priority === 'Urgent' ? "bg-brand-red/10 text-brand-red" : "bg-muted/10 text-on-surface/80"
                     )}>
                       {req.priority}
@@ -707,11 +707,11 @@ export default function AdminStore() {
                   </div>
 
                   <div className="space-y-3">
-                    <p className="text-[9px] font-bold text-muted-foreground/80 normal-case tracking-tight">Requested items</p>
+                    <p className="text-micro font-bold text-muted-foreground/80 normal-case tracking-tight">Requested items</p>
                     <div className="p-4 bg-muted/10 rounded-sm border border-border/40 space-y-2">
                       {req.items.map(item => (
                         <div key={item.id} className="flex justify-between items-center">
-                          <span className="text-[11px] font-bold text-on-surface">{item.productName}</span>
+                          <span className="text-tiny font-bold text-on-surface">{item.productName}</span>
                           <span className="text-xs font-bold text-muted-foreground/80">x{item.quantity}</span>
                         </div>
                       ))}
@@ -720,16 +720,16 @@ export default function AdminStore() {
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-[9px] font-bold text-muted-foreground/80 normal-case tracking-tight">Status</p>
+                      <p className="text-micro font-bold text-muted-foreground/80 normal-case tracking-tight">Status</p>
                       <div className={cn(
-                        "px-2.5 py-1 text-[10px] font-bold tracking-tight border rounded-md",
+                        "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-md",
                         req.status === 'Pending' ? "bg-accent/10 text-accent border-accent/20" : "bg-primary/10 text-primary border-primary/20"
                       )}>
                         {req.status}
                       </div>
                     </div>
                     <div className="text-right space-y-1">
-                      <p className="text-[9px] font-bold text-muted-foreground/80 normal-case tracking-tight">Date</p>
+                      <p className="text-micro font-bold text-muted-foreground/80 normal-case tracking-tight">Date</p>
                       <p className="text-xs font-bold text-on-surface">{new Date(req.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
@@ -772,7 +772,7 @@ export default function AdminStore() {
               <Button
                 variant="outline"
                 size="lg"
-                className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 disabled={auditLogs.length === 0}
                 onClick={() => {
                   try {
@@ -811,11 +811,11 @@ export default function AdminStore() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-border/40 bg-muted/30">
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Timestamp</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Action</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Resource</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Change</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Location</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Timestamp</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Action</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Resource</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Change</th>
+                    <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Location</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
@@ -824,14 +824,14 @@ export default function AdminStore() {
                       <td className="px-6 py-5 whitespace-nowrap">
                         <div className="flex items-center gap-2 text-muted-foreground/80">
                           <Clock className="w-3 h-3" />
-                          <span className="text-[10px] font-bold">
+                          <span className="text-micro font-bold">
                             {new Date(log.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
-                          "px-2 py-0.5 text-[10px] font-bold tracking-tight border rounded-md",
+                          "px-2 py-0.5 text-micro font-bold tracking-tight border rounded-md",
                           log.action === 'DISPATCHED' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
                           log.action === 'REPLENISHED' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
                           "bg-muted/10 text-on-surface/80 border-border/40"
@@ -853,7 +853,7 @@ export default function AdminStore() {
                         </span>
                       </td>
                       <td className="px-6 py-5">
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/80">
+                        <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/80">
                           <span>{log.sourceLocation}</span>
                           <ArrowRight className="w-3 h-3" />
                           <span>{log.destinationLocation || 'Internal'}</span>
@@ -872,12 +872,12 @@ export default function AdminStore() {
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2 text-muted-foreground/80">
                       <Clock className="w-3 h-3" />
-                      <span className="text-[9px] font-bold">
+                      <span className="text-micro font-bold">
                         {new Date(log.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                       </span>
                     </div>
                     <div className={cn(
-                      "px-2 py-0.5 text-[9px] font-bold tracking-tight border rounded-md",
+                      "px-2 py-0.5 text-micro font-bold tracking-tight border rounded-md",
                       log.action === 'DISPATCHED' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
                       log.action === 'REPLENISHED' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
                       "bg-muted/5 text-on-surface/80 border-border/40"
@@ -889,7 +889,7 @@ export default function AdminStore() {
                   <div className="flex justify-between items-end">
                     <div>
                       <h4 className="text-sm font-bold text-on-surface tracking-tight">{log.productName || 'Unknown Asset'}</h4>
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/80 mt-2">
+                      <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/80 mt-2">
                         <MapPin className="w-3 h-3" />
                         <span>{log.sourceLocation}</span>
                         <ArrowRight className="w-2.5 h-2.5" />
@@ -936,13 +936,13 @@ export default function AdminStore() {
                   <Box className="w-4 h-4 text-on-surface" />
                   Fulfillment intelligence
                 </div>
-                <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Live metrics</span>
+                <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Live metrics</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-2">
-                  <div className="flex justify-between text-[10px] font-bold tracking-tight">
+                  <div className="flex justify-between text-micro font-bold tracking-tight">
                     <span className="text-muted-foreground/80">Delivered</span>
                     <span className="text-emerald-600">{deliveredPct}%</span>
                   </div>
@@ -951,7 +951,7 @@ export default function AdminStore() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-[10px] font-bold tracking-tight">
+                  <div className="flex justify-between text-micro font-bold tracking-tight">
                     <span className="text-muted-foreground/80">In progress</span>
                     <span className="text-amber-600">{processingPct}%</span>
                   </div>
@@ -960,7 +960,7 @@ export default function AdminStore() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-[10px] font-bold tracking-tight">
+                  <div className="flex justify-between text-micro font-bold tracking-tight">
                     <span className="text-muted-foreground/80">Rejected</span>
                     <span className="text-red-600">{rejectedPct}%</span>
                   </div>
@@ -975,7 +975,7 @@ export default function AdminStore() {
       })()}
 
       <div className="pt-8 mt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4 pb-12">
-        <p className="text-[10px] font-bold text-muted-foreground/80">© 2026 The Base Movement</p>
+        <p className="text-micro font-bold text-muted-foreground/80">© 2026 The Base Movement</p>
       </div>
     </>
   )}
@@ -1006,7 +1006,7 @@ export default function AdminStore() {
 
           <div className="grid gap-6 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right text-[10px] font-bold tracking-tight">Name</Label>
+              <Label className="text-right text-micro font-bold tracking-tight">Name</Label>
               <Input 
                 value={selectedProduct?.name || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, name: e.target.value }))}
@@ -1014,7 +1014,7 @@ export default function AdminStore() {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right text-[10px] font-bold tracking-tight">Category</Label>
+              <Label className="text-right text-micro font-bold tracking-tight">Category</Label>
               <Select 
                 value={selectedProduct?.category} 
                 onValueChange={v => setSelectedProduct(prev => ({ ...prev!, category: v }))}
@@ -1032,7 +1032,7 @@ export default function AdminStore() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid grid-cols-2 items-center gap-4">
-                <Label className="text-right text-[10px] font-bold tracking-tight">Price</Label>
+                <Label className="text-right text-micro font-bold tracking-tight">Price</Label>
                 <Input 
                   value={selectedProduct?.price || ''} 
                   onChange={e => setSelectedProduct(prev => ({ ...prev!, price: e.target.value }))}
@@ -1040,7 +1040,7 @@ export default function AdminStore() {
                 />
               </div>
               <div className="grid grid-cols-2 items-center gap-4">
-                <Label className="text-right text-[10px] font-bold tracking-tight">Stock</Label>
+                <Label className="text-right text-micro font-bold tracking-tight">Stock</Label>
                 <Input 
                   type="number"
                   value={selectedProduct?.stock || 0} 
@@ -1050,7 +1050,7 @@ export default function AdminStore() {
               </div>
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
-              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Summary</Label>
+              <Label className="text-right text-micro font-bold tracking-tight mt-3">Summary</Label>
               <textarea 
                 value={selectedProduct?.description || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, description: e.target.value }))}
@@ -1059,7 +1059,7 @@ export default function AdminStore() {
               />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
-              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Full details</Label>
+              <Label className="text-right text-micro font-bold tracking-tight mt-3">Full details</Label>
               <textarea 
                 value={selectedProduct?.longDescription || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, longDescription: e.target.value }))}
@@ -1068,7 +1068,7 @@ export default function AdminStore() {
               />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
-              <Label className="text-right text-[10px] font-bold tracking-tight mt-3">Product gallery</Label>
+              <Label className="text-right text-micro font-bold tracking-tight mt-3">Product gallery</Label>
               <div className="col-span-3 space-y-4">
                 {/* Image Grid */}
                 <div className="grid grid-cols-4 gap-2">
@@ -1104,7 +1104,7 @@ export default function AdminStore() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                   <Label className="text-[9px] font-bold text-muted-foreground/80 capitalize tracking-tight">Icon fallback</Label>
+                   <Label className="text-micro font-bold text-muted-foreground/80 capitalize tracking-tight">Icon fallback</Label>
                    <Input 
                     value={selectedProduct?.image?.startsWith('http') ? '' : (selectedProduct?.image || '')} 
                     onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}
@@ -1117,13 +1117,13 @@ export default function AdminStore() {
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-[10px] font-bold capitalize tracking-tight h-11 px-8 hover:bg-muted/10 transition-all active:scale-95">
+            <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-sm text-micro font-bold capitalize tracking-tight h-11 px-8 hover:bg-muted/10 transition-all active:scale-95">
               Cancel
             </Button>
             <Button 
               onClick={handleSave} 
               disabled={isSaving}
-              className="rounded-sm text-[10px] font-bold capitalize tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-11 px-10 min-w-[160px] shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-micro font-bold capitalize tracking-tight bg-on-surface text-white hover:bg-on-surface/90 h-11 px-10 min-w-[160px] shadow-lg transition-all hover:scale-[1.02] active:scale-95"
             >
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm changes'}
             </Button>
@@ -1145,12 +1145,12 @@ export default function AdminStore() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
-            <AlertDialogCancel className="rounded-sm text-[10px] font-bold tracking-tight h-10 px-6 border-border/60">
+            <AlertDialogCancel className="rounded-sm text-micro font-bold tracking-tight h-10 px-6 border-border/60">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDelete}
-              className="rounded-sm text-[10px] font-bold tracking-tight bg-red-600 text-white hover:bg-red-700 h-10 px-8 active:scale-95"
+              className="rounded-sm text-micro font-bold tracking-tight bg-red-600 text-white hover:bg-red-700 h-10 px-8 active:scale-95"
             >
               Confirm removal
             </AlertDialogAction>

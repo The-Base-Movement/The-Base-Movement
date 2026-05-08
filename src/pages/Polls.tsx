@@ -123,17 +123,17 @@ export default function Polls() {
                 <Vote className="w-24 h-24 text-[var(--brand-green)]" />
               </div>
               <div className="relative z-10">
-                <p className="text-warm-gold text-[10px] font-bold tracking-tight mb-4">Movement voice</p>
+                <p className="text-warm-gold text-micro font-bold tracking-tight mb-4">Movement voice</p>
                 <p className="text-stone-300 mb-6 leading-relaxed">
                   Poll results are presented to the National Steering Committee every month to influence movement strategy.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/5 p-4 border border-white/10">
-                    <p className="text-[10px] font-bold text-white/40 tracking-tight mb-1">Total votes</p>
+                    <p className="text-micro font-bold text-white/40 tracking-tight mb-1">Total votes</p>
                     <h3 className="text-white mb-0">{polls.reduce((acc, p) => acc + p.totalVotes, 0).toLocaleString()}</h3>
                   </div>
                   <div className="bg-white/5 p-4 border border-white/10">
-                    <p className="text-[10px] font-bold text-white/40 tracking-tight mb-1">Active polls</p>
+                    <p className="text-micro font-bold text-white/40 tracking-tight mb-1">Active polls</p>
                     <h3 className="text-white mb-0">{activePolls.length}</h3>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ export default function Polls() {
                 {closedPolls.map(poll => (
                   <div key={poll.id} className="group pb-6 border-b border-stone-50 last:border-0 last:pb-0">
                     <div className="flex justify-between items-center mb-2">
-                      <p className="text-[10px] font-bold text-red-500 bg-red-500/5 px-2 py-1 rounded-none tracking-tight mb-0">
+                      <p className="text-micro font-bold text-red-500 bg-red-500/5 px-2 py-1 rounded-none tracking-tight mb-0">
                         {poll.category} • Closed
                       </p>
                     </div>
@@ -176,7 +176,7 @@ export default function Polls() {
                               <div key={option.id} className="space-y-1">
                                 <div className="flex justify-between items-center px-3 py-2 bg-stone-50 border border-stone-100 relative z-10 overflow-hidden">
                                   <span className="text-xs font-medium text-stone-600 truncate mr-2">{option.label}</span>
-                                  <span className="text-[9px] font-bold text-stone-400 shrink-0 tracking-tight">{percentage}%</span>
+                                  <span className="text-micro font-bold text-stone-400 shrink-0 tracking-tight">{percentage}%</span>
                                   <div 
                                     className="absolute inset-0 -z-10"
                                     style={{ 
@@ -193,7 +193,7 @@ export default function Polls() {
                     )}
 
                     <div className="flex items-center justify-between mt-4">
-                      <p className="text-[11px] font-bold text-stone-400 mb-0 tracking-tight">{poll.totalVotes.toLocaleString()} responses</p>
+                      <p className="text-tiny font-bold text-stone-400 mb-0 tracking-tight">{poll.totalVotes.toLocaleString()} responses</p>
                       <Button 
                         variant="link"
                         onClick={() => toggleResults(poll.id)}

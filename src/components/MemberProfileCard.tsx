@@ -31,7 +31,7 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
                 >
                   {member.name}
                 </h3>
-                <p className="text-[10px] font-bold text-slate-400 tracking-tight mt-0.5 mb-0">{member.profession}</p>
+                <p className="text-micro font-bold text-slate-400 tracking-tight mt-0.5 mb-0">{member.profession}</p>
               </div>
             </div>
             <div className="flex flex-col items-end shrink-0">
@@ -44,18 +44,18 @@ export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCa
           <div className="mt-6 pt-6 border-t border-slate-50 space-y-3">
             <div className="flex items-center gap-2 text-slate-500">
               <MapPin className="w-3 h-3 text-primary" />
-              <span className="text-[10px] font-bold tracking-tight truncate">
+              <span className="text-micro font-bold tracking-tight truncate">
                 {member.platform === 'GHANA' ? `${member.constituency}, ${member.region}` : member.country}
               </span>
             </div>
             <div className="flex items-center gap-2 text-slate-500">
               <Globe className="w-3 h-3 text-accent" />
-              <span className="text-[10px] font-bold tracking-tight">{member.platform} platform</span>
+              <span className="text-micro font-bold tracking-tight">{member.platform} platform</span>
             </div>
           </div>
 
           <div className="mt-6">
-            <button className="w-full py-2.5 bg-slate-50 group-hover:bg-primary group-hover:text-white text-[9px] font-bold tracking-tight rounded-none transition-all">
+            <button className="w-full py-2.5 bg-slate-50 group-hover:bg-primary group-hover:text-white text-micro font-bold tracking-tight rounded-none transition-all">
               View profile
             </button>
           </div>

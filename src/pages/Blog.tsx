@@ -48,7 +48,7 @@ export default function Blog() {
       {/* Hero */}
       <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-[var(--brand-green)]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="font-meta text-warm-gold tracking-tight text-[12px] mb-3">The Base Insights</p>
+          <p className="font-meta text-warm-gold tracking-tight text-xs mb-3">The Base Insights</p>
           <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight mb-4 max-w-2xl">
             Ideas, analysis & movement news
           </h1>
@@ -78,7 +78,7 @@ export default function Blog() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
             <Loader2 className="w-8 h-8 text-brand-green animate-spin" />
-            <p className="text-[10px] font-bold tracking-tight text-stone-400">Loading insights...</p>
+            <p className="text-micro font-bold tracking-tight text-stone-400">Loading insights...</p>
           </div>
         ) : posts.length === 0 ? (
           <div className="py-32 text-center">
@@ -101,13 +101,13 @@ export default function Blog() {
                       <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
                         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
                         <img src="/logo.png" alt="The Base" className="w-16 h-16 opacity-20 mb-4 grayscale" />
-                        <span className="text-[10px] font-bold text-white/20 tracking-tight">The Base Editorial</span>
+                        <span className="text-micro font-bold text-white/20 tracking-tight">The Base Editorial</span>
                       </div>
                     )}
                   </div>
                   <div className="p-10 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-4">
-                      <span className={`px-2.5 py-1 rounded-sm text-[10px] font-bold tracking-tight border transition-all duration-300 ${
+                      <span className={`px-2.5 py-1 rounded-sm text-micro font-bold tracking-tight border transition-all duration-300 ${
                         featured.category === 'Impact' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' :
                         featured.category === 'Diaspora' ? 'bg-purple-50 text-purple-700 border-purple-100' :
                         featured.category === 'Digital Strategy' ? 'bg-sky-50 text-sky-700 border-sky-100' :
@@ -128,7 +128,7 @@ export default function Blog() {
                     </Link>
                     <p className="text-slate-500 text-sm leading-relaxed mb-6">{featured.excerpt}</p>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="text-[10px] font-medium text-stone-400 tracking-tight">
+                      <div className="text-micro font-medium text-stone-400 tracking-tight">
                         {featured.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : featured.authorName} <span className="mx-2 opacity-50">|</span> {featured.readTime}
                       </div>
                       <Button asChild variant="link" className="p-0 h-auto text-brand-green">
@@ -172,7 +172,7 @@ export default function Blog() {
                             className="w-full flex items-center justify-between p-3 text-xs font-bold tracking-tight text-slate-600 hover:bg-slate-50 hover:text-brand-green transition-all group"
                           >
                             {cat}
-                            <span className="text-[10px] text-slate-300 font-meta group-hover:text-brand-green transition-colors">
+                            <span className="text-micro text-slate-300 font-meta group-hover:text-brand-green transition-colors">
                               {posts.filter(p => p.category === cat).length} Posts
                             </span>
                           </button>
@@ -205,7 +205,7 @@ export default function Blog() {
 
         {/* CTA */}
         <section className="mt-20 py-16 px-12 bg-charcoal-dark text-white text-center border-l-4 border-brand-green">
-          <p className="font-meta text-warm-gold tracking-tight text-[12px] mb-3">Join the conversation</p>
+          <p className="font-meta text-warm-gold tracking-tight text-xs mb-3">Join the conversation</p>
           <h2 className="font-meta font-bold text-3xl tracking-tight mb-4">Become a member. Shape the narrative.</h2>
           <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">
             Registered members get early access to analysis, policy briefs and updates directly from our research desk.

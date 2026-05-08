@@ -66,7 +66,7 @@ export function ReviewSection() {
             <span className="text-stone-400 text-xs font-medium ml-2">{reviews.length} total reviews</span>
           </div>
         </div>
-        <Button className="bg-charcoal-dark hover:bg-charcoal-dark/90 text-white font-bold tracking-tight text-[10px] h-12 px-10 rounded-none">
+        <Button className="bg-charcoal-dark hover:bg-charcoal-dark/90 text-white font-bold tracking-tight text-micro h-12 px-10 rounded-none">
           Write a review
         </Button>
       </div>
@@ -78,7 +78,7 @@ export function ReviewSection() {
             <h3 className="text-sm font-bold text-stone-900 tracking-tight mb-6">Share your feedback</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-stone-400 tracking-tight">Rating</label>
+                <label className="text-micro font-bold text-stone-400 tracking-tight">Rating</label>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <button 
@@ -93,7 +93,7 @@ export function ReviewSection() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-stone-400 tracking-tight">Your review</label>
+                <label className="text-micro font-bold text-stone-400 tracking-tight">Your review</label>
                 <textarea
                   value={newReview}
                   onChange={(e) => setNewReview(e.target.value)}
@@ -104,7 +104,7 @@ export function ReviewSection() {
               <Button 
                 type="submit"
                 disabled={!newReview.trim()}
-                className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-[10px] h-12 rounded-none"
+                className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-micro h-12 rounded-none"
               >
                 Submit review
               </Button>
@@ -124,11 +124,11 @@ export function ReviewSection() {
                   <div>
                     <h4 className="text-sm font-bold text-stone-900 mb-0 tracking-tight">{review.author}</h4>
                     {review.verified && (
-                      <span className="text-[9px] font-bold text-emerald-600 tracking-tight">Verified purchase</span>
+                      <span className="text-micro font-bold text-emerald-600 tracking-tight">Verified purchase</span>
                     )}
                   </div>
                 </div>
-                <span className="text-[10px] font-bold text-stone-400 tracking-tight">{review.date}</span>
+                <span className="text-micro font-bold text-stone-400 tracking-tight">{review.date}</span>
               </div>
               
               <div className="flex mb-4">
@@ -141,7 +141,7 @@ export function ReviewSection() {
                 {review.content}
               </p>
 
-              <button className="flex items-center gap-2 text-[10px] font-bold text-stone-400 tracking-tight hover:text-[var(--brand-green)] transition-colors">
+              <button className="flex items-center gap-2 text-micro font-bold text-stone-400 tracking-tight hover:text-[var(--brand-green)] transition-colors">
                 <ThumbsUp className="w-3.5 h-3.5" /> Helpful
               </button>
             </div>

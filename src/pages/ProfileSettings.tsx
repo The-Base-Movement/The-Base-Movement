@@ -309,7 +309,7 @@ export default function ProfileSettings() {
         <div className="xl:col-span-5 space-y-8">
           
           <div className="bg-white border border-slate-200 p-2 shadow-2xl relative group">
-            <h3 className="font-meta font-bold text-[10px] text-slate-400 tracking-tight mb-4 pl-2">Membership card preview</h3>
+            <h3 className="font-meta font-bold text-micro text-slate-400 tracking-tight mb-4 pl-2">Membership card preview</h3>
             
             {/* The Membership Card Component */}
             <div ref={cardRef}>
@@ -337,14 +337,14 @@ export default function ProfileSettings() {
           <div className="grid grid-cols-2 gap-2 sm:gap-4">
             <button 
               onClick={handlePrint}
-              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-warm-gold text-charcoal-dark font-meta font-bold tracking-tight text-[9px] sm:text-[10px] hover:opacity-90 transition-all shadow-md leading-tight"
+              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-warm-gold text-charcoal-dark font-meta font-bold tracking-tight text-micro sm:text-micro hover:opacity-90 transition-all shadow-md leading-tight"
             >
               <span className="material-symbols-outlined text-[16px] sm:text-[18px]">print</span>
               Print card
             </button>
             <button 
               onClick={handleDownload}
-              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-white border border-slate-200 text-charcoal-dark font-meta font-bold tracking-tight text-[9px] sm:text-[10px] hover:bg-slate-50 transition-all shadow-sm leading-tight"
+              className="flex items-center justify-center gap-1 sm:gap-3 px-1 sm:px-6 py-4 bg-white border border-slate-200 text-charcoal-dark font-meta font-bold tracking-tight text-micro sm:text-micro hover:bg-slate-50 transition-all shadow-sm leading-tight"
             >
               <span className="material-symbols-outlined text-[16px] sm:text-[18px]">download</span>
               Download PDF
@@ -353,12 +353,12 @@ export default function ProfileSettings() {
 
 
           <div className="bg-white border border-slate-200 p-8 shadow-sm">
-            <h4 className="font-meta font-bold text-[10px] text-slate-400 tracking-tight mb-4">Membership verification</h4>
+            <h4 className="font-meta font-bold text-micro text-slate-400 tracking-tight mb-4">Membership verification</h4>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-[var(--brand-green)] animate-pulse"></div>
               <p className="text-xs font-bold text-charcoal-dark font-meta tracking-tight">Status: Active & Verified</p>
             </div>
-            <p className="text-[11px] sm:text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
+            <p className="text-tiny sm:text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
               Your digital card is real-time verifiable. Use the QR code to present your credentials at official movement events.
             </p>
           </div>
@@ -366,12 +366,12 @@ export default function ProfileSettings() {
           {/* Phase 14: Voter Registration Pipeline */}
           <div className="bg-white border border-stone-200 p-8 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-meta font-bold text-[10px] text-stone-400 flex items-center gap-2 tracking-tight">
+              <h4 className="font-meta font-bold text-micro text-stone-400 flex items-center gap-2 tracking-tight">
                 <span className="material-symbols-outlined text-[14px]">how_to_vote</span> Election readiness
               </h4>
               <span className="px-2 py-0.5 bg-orange-100 text-orange-600 text-[8px] font-bold tracking-tight">Unverified</span>
             </div>
-            <p className="text-[11px] text-stone-500 mb-4 leading-relaxed">
+            <p className="text-tiny text-stone-500 mb-4 leading-relaxed">
               Verify your official voter registration to unlock the Patriot Ground Game badge. Your polling station data secures our election day logistics.
             </p>
             <div className="space-y-3">
@@ -382,7 +382,7 @@ export default function ProfileSettings() {
               />
               <button 
                 type="button"
-                className="w-full py-2.5 bg-stone-900 text-white font-meta font-bold tracking-tight text-[9px] hover:bg-[var(--brand-green)] transition-colors"
+                className="w-full py-2.5 bg-stone-900 text-white font-meta font-bold tracking-tight text-micro hover:bg-[var(--brand-green)] transition-colors"
               >
                 Submit voter ID
               </button>
@@ -399,12 +399,12 @@ export default function ProfileSettings() {
                   <span className="w-6 h-6 bg-slate-100 flex items-center justify-center text-[14px] shrink-0">01</span>
                   Personal information
                 </h3>
-                <p className="text-[10px] text-slate-400 font-meta italic tracking-tight">Official records</p>
+                <p className="text-micro text-slate-400 font-meta italic tracking-tight">Official records</p>
               </div>
 
               <div className="flex-columns gap-x-12 gap-y-10">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">
                     Full Name <span className="text-[var(--brand-red)]">*</span>
                   </label>
                   <input
@@ -417,7 +417,7 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Email address</label>
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Email address</label>
                   <input
                     type="email"
                     value={form.email}
@@ -428,7 +428,7 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Phone number</label>
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Phone number</label>
                   <div className="flex gap-2">
                     <div className="relative">
                       <select
@@ -454,7 +454,7 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Gender & age group</label>
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Gender & age group</label>
                   <div className="relative">
                     <select
                       value={form.gender}
@@ -473,7 +473,7 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Profession</label>
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Profession</label>
                   <input
                     value={form.profession}
                     onChange={e => handleChange('profession', e.target.value)}
@@ -483,7 +483,7 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Assigned chapter</label>
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Assigned chapter</label>
                   <div className="relative">
                     <select
                       value={form.chapter}
@@ -502,7 +502,7 @@ export default function ProfileSettings() {
                 {userPlatform === 'GHANA' ? (
                   <>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Region</label>
+                      <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Region</label>
                       <div className="relative">
                         <select
                           value={form.region}
@@ -522,7 +522,7 @@ export default function ProfileSettings() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Constituency</label>
+                      <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Constituency</label>
                       <div className="relative">
                         <select
                           value={form.constituency}
@@ -544,7 +544,7 @@ export default function ProfileSettings() {
                 ) : (
                   <div className="space-y-4 md:col-span-2 md:grid md:grid-cols-2 md:gap-8 md:space-y-0">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Country of residence</label>
+                      <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Country of residence</label>
                       <div className="relative">
                         <select
                           value={form.country}
@@ -573,7 +573,7 @@ export default function ProfileSettings() {
                     {form.country === 'Ghana' && (
                       <>
                         <div className="space-y-2">
-                          <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Region</label>
+                          <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Region</label>
                           <div className="relative">
                             <select
                               value={form.region}
@@ -593,7 +593,7 @@ export default function ProfileSettings() {
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Constituency</label>
+                          <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Constituency</label>
                           <div className="relative">
                             <select
                               value={form.constituency}
@@ -620,7 +620,7 @@ export default function ProfileSettings() {
                 )}
 
                 <div className="md:col-span-2 space-y-4 pt-4">
-                  <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">Short bio</label>
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Short bio</label>
                   <textarea
                     rows={4}
                     value={form.bio}
@@ -638,13 +638,13 @@ export default function ProfileSettings() {
                   <span className="w-6 h-6 bg-slate-100 flex items-center justify-center text-[14px] shrink-0">02</span>
                   Performance preferences
                 </h3>
-                <p className="text-[10px] text-slate-400 font-meta italic tracking-tight">App experience</p>
+                <p className="text-micro text-slate-400 font-meta italic tracking-tight">App experience</p>
               </div>
 
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">
+                    <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">
                       Low-bandwidth mode
                     </label>
                     <p className="text-xs text-slate-500 font-body-md max-w-md">
@@ -669,7 +669,7 @@ export default function ProfileSettings() {
               </button>
 
               {saved && (
-                <div className="flex items-center gap-3 text-[var(--brand-green)] text-[10px] font-meta font-bold tracking-tight animate-in fade-in slide-in-from-left-2 duration-500">
+                <div className="flex items-center gap-3 text-[var(--brand-green)] text-micro font-meta font-bold tracking-tight animate-in fade-in slide-in-from-left-2 duration-500">
                   <span className="material-symbols-outlined text-[20px]">verified</span>
                   Information synchronized
                 </div>
@@ -684,11 +684,11 @@ export default function ProfileSettings() {
                     <span className="material-symbols-outlined text-[18px]">warning</span>
                     Danger zone
                   </h4>
-                  <p className="text-[12px] sm:text-xs text-slate-500 font-body-md max-w-md">Deactivating your account will permanently delete all your contribution history and movement records. This action cannot be undone.</p>
+                  <p className="text-xs sm:text-xs text-slate-500 font-body-md max-w-md">Deactivating your account will permanently delete all your contribution history and movement records. This action cannot be undone.</p>
                 </div>
                 <button
                   type="button"
-                  className="w-full lg:w-auto px-8 py-3.5 border-2 border-red-200 text-[var(--brand-red)] text-[10px] font-meta font-bold tracking-tight hover:bg-[var(--brand-red)] hover:text-white transition-all shadow-sm"
+                  className="w-full lg:w-auto px-8 py-3.5 border-2 border-red-200 text-[var(--brand-red)] text-micro font-meta font-bold tracking-tight hover:bg-[var(--brand-red)] hover:text-white transition-all shadow-sm"
                 >
                   Deactivate membership
                 </button>

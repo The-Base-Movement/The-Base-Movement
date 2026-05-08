@@ -64,7 +64,7 @@ export default function ChapterLeadHub() {
     return (
       <div className="h-full w-full flex flex-col items-center justify-center py-20 space-y-4">
         <Activity className="w-12 h-12 text-muted-foreground/20 animate-pulse" />
-        <p className="text-[10px] font-bold normal-case text-muted-foreground/40">Synchronizing chapter hub...</p>
+        <p className="text-micro font-bold normal-case text-muted-foreground/40">Synchronizing chapter hub...</p>
       </div>
     )
   }
@@ -85,14 +85,14 @@ export default function ChapterLeadHub() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-bold capitalize tracking-tight hover:bg-stone-100 h-10 transition-all active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-8 font-bold capitalize tracking-tight hover:bg-stone-100 h-10 transition-all active:scale-95"
           >
             <BarChart3 className="w-4 h-4 mr-2" /> Local operational metrics
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
+            className="rounded-sm text-micro font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> New Field Event
           </Button>
@@ -111,7 +111,7 @@ export default function ChapterLeadHub() {
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-[9px] font-bold normal-case text-muted-foreground/40 mb-1">{stat.label}</p>
+                  <p className="text-micro font-bold normal-case text-muted-foreground/40 mb-1">{stat.label}</p>
                   <h3 className="text-2xl font-bold font-meta text-on-surface tracking-tighter">{stat.value}</h3>
                 </div>
                 <div className={cn("w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110 rounded-sm", stat.bg)}>
@@ -133,7 +133,7 @@ export default function ChapterLeadHub() {
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
-                <input type="text" placeholder="Filter events..." className="pl-9 pr-4 py-2 bg-muted/5 border-none text-[10px] font-bold normal-case rounded-sm focus:ring-1 focus:ring-on-surface w-48 shadow-inner" />
+                <input type="text" placeholder="Filter events..." className="pl-9 pr-4 py-2 bg-muted/5 border-none text-micro font-bold normal-case rounded-sm focus:ring-1 focus:ring-on-surface w-48 shadow-inner" />
               </div>
             </div>
           </div>
@@ -150,7 +150,7 @@ export default function ChapterLeadHub() {
                 </div>
                 <CardHeader className="p-6 pb-2">
                   <div className="flex justify-between items-start mb-2">
-                    <span className="text-[9px] font-bold normal-case text-muted-foreground/40">{event.type}</span>
+                    <span className="text-micro font-bold normal-case text-muted-foreground/40">{event.type}</span>
                     <div className={cn(
                       "px-2 py-0.5 text-[8px] font-bold normal-case border rounded-full",
                       event.status === 'Completed' ? "bg-primary/10 text-primary border-primary/20" :
@@ -168,11 +168,11 @@ export default function ChapterLeadHub() {
                   <div className="flex items-center gap-4 text-muted-foreground/80">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold normal-case">{new Date(event.date).toLocaleDateString()}</span>
+                      <span className="text-micro font-bold normal-case">{new Date(event.date).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <MapPin className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold normal-case truncate max-w-[120px]">{event.location}</span>
+                      <span className="text-micro font-bold normal-case truncate max-w-[120px]">{event.location}</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between pt-4 border-t border-border/10">
@@ -188,7 +188,7 @@ export default function ChapterLeadHub() {
                     </div>
                     <Button 
                       variant="ghost" 
-                      className="h-9 px-4 text-[9px] font-bold capitalize tracking-tight hover:bg-muted/5 group-hover:text-destructive rounded-sm active:scale-95"
+                      className="h-9 px-4 text-micro font-bold capitalize tracking-tight hover:bg-muted/5 group-hover:text-destructive rounded-sm active:scale-95"
                     >
                       Logistics Hub <ChevronRight className="w-3.5 h-3.5 ml-2" />
                     </Button>
@@ -198,7 +198,7 @@ export default function ChapterLeadHub() {
             )) : (
               <div className="col-span-2 border-2 border-dashed border-border/60 rounded-sm p-12 flex flex-col items-center justify-center text-muted-foreground/40 bg-muted/5">
                 <Calendar className="w-12 h-12 mb-4 opacity-20" />
-                <p className="text-[10px] font-bold normal-case">No field operations scheduled.</p>
+                <p className="text-micro font-bold normal-case">No field operations scheduled.</p>
               </div>
             )}
           </div>
@@ -214,7 +214,7 @@ export default function ChapterLeadHub() {
               </CardTitle>
               <Activity className="w-4 h-4 text-white/20" />
             </div>
-            <CardDescription className="text-white/40 text-[10px] font-bold normal-case">Real-time mobilization expenditures.</CardDescription>
+            <CardDescription className="text-white/40 text-micro font-bold normal-case">Real-time mobilization expenditures.</CardDescription>
           </CardHeader>
           <CardContent className="p-0 flex-1 overflow-y-auto max-h-[600px] sidebar-scroll relative z-10">
             {ledger.length > 0 ? ledger.map((item, i) => (
@@ -224,7 +224,7 @@ export default function ChapterLeadHub() {
               )}>
                 <div className="flex justify-between items-start mb-2">
                   <div className="space-y-1">
-                    <p className="text-[9px] font-bold normal-case text-accent opacity-70">{item.category}</p>
+                    <p className="text-micro font-bold normal-case text-accent opacity-70">{item.category}</p>
                     <p className="text-xs font-bold leading-tight">{item.description}</p>
                   </div>
                   <div className="text-right">
@@ -241,18 +241,18 @@ export default function ChapterLeadHub() {
             )) : (
               <div className="p-12 text-center text-white/20">
                 <TrendingUp className="w-12 h-12 mx-auto mb-4 opacity-10" />
-                <p className="text-[10px] font-bold normal-case">Ledger manifest empty.</p>
+                <p className="text-micro font-bold normal-case">Ledger manifest empty.</p>
               </div>
             )}
           </CardContent>
           <div className="p-8 mt-auto border-t border-white/5 bg-white/5 relative z-10">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-[9px] font-bold normal-case text-white/40">Total allocation</span>
+              <span className="text-micro font-bold normal-case text-white/40">Total allocation</span>
               <span className="text-lg font-bold font-meta text-primary">GH₵{ledger.filter(l => l.transaction_type === 'Allocation').reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
             </div>
             <Button 
               variant="outline" 
-              className="w-full h-12 border-white/20 text-white font-bold text-[10px] capitalize tracking-tight hover:bg-white/10 rounded-sm transition-all active:scale-95"
+              className="w-full h-12 border-white/20 text-white font-bold text-micro capitalize tracking-tight hover:bg-white/10 rounded-sm transition-all active:scale-95"
             >
               Request Additional Funds
             </Button>

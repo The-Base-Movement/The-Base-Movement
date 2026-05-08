@@ -135,7 +135,7 @@ export default function NewBroadcast() {
           <Button 
             variant="outline"
             onClick={() => navigate('/admin/broadcasts')}
-            className="rounded-sm text-[10px] font-bold tracking-tight h-11 px-8 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight h-11 px-8 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Intelligence
           </Button>
@@ -157,7 +157,7 @@ export default function NewBroadcast() {
         <CardContent className="p-8 space-y-8">
           {/* Title */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Broadcast title</label>
+            <label className="text-micro font-bold normal-case text-muted-foreground/40">Broadcast title</label>
             <Input 
               placeholder="e.g. National registration wave" 
               className="rounded-sm border-border/40 h-12 text-sm font-bold placeholder:font-normal shadow-sm bg-muted/5 focus:bg-background transition-colors"
@@ -169,31 +169,31 @@ export default function NewBroadcast() {
           {/* Channel, Target & Priority Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Delivery channel</label>
+              <label className="text-micro font-bold normal-case text-muted-foreground/40">Delivery channel</label>
               <Select 
                 value={newBroadcast.channel}
                 onValueChange={(v: 'SMS' | 'Email' | 'Push' | 'In-app') => setNewBroadcast({...newBroadcast, channel: v})}
               >
-                <SelectTrigger className="rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
+                <SelectTrigger className="rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5">
                   <SelectValue placeholder="Select channel" />
                 </SelectTrigger>
                 <SelectContent className="rounded-sm border-border/40">
-                  <SelectItem value="In-app" className="text-[10px] font-bold normal-case">
+                  <SelectItem value="In-app" className="text-micro font-bold normal-case">
                     <div className="flex items-center gap-2">
                       <MessageSquare className="w-3.5 h-3.5" /> In-app message
                     </div>
                   </SelectItem>
-                  <SelectItem value="Push" className="text-[10px] font-bold normal-case">
+                  <SelectItem value="Push" className="text-micro font-bold normal-case">
                     <div className="flex items-center gap-2">
                       <Megaphone className="w-3.5 h-3.5" /> Push notification
                     </div>
                   </SelectItem>
-                  <SelectItem value="SMS" className="text-[10px] font-bold normal-case">
+                  <SelectItem value="SMS" className="text-micro font-bold normal-case">
                     <div className="flex items-center gap-2">
                       <Smartphone className="w-3.5 h-3.5" /> SMS broadcast
                     </div>
                   </SelectItem>
-                  <SelectItem value="Email" className="text-[10px] font-bold normal-case">
+                  <SelectItem value="Email" className="text-micro font-bold normal-case">
                     <div className="flex items-center gap-2">
                       <Mail className="w-3.5 h-3.5" /> Email dispatch
                     </div>
@@ -203,7 +203,7 @@ export default function NewBroadcast() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Target segment</label>
+              <label className="text-micro font-bold normal-case text-muted-foreground/40">Target segment</label>
               <Select 
                 value={newBroadcast.target_type}
                 onValueChange={(v: 'ALL' | 'REGION' | 'CONSTITUENCY') => {
@@ -214,33 +214,33 @@ export default function NewBroadcast() {
                   })
                 }}
               >
-                <SelectTrigger className="rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
+                <SelectTrigger className="rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5">
                   <SelectValue placeholder="Select target" />
                 </SelectTrigger>
                 <SelectContent className="rounded-sm border-border/40">
-                  <SelectItem value="ALL" className="text-[10px] font-bold normal-case">National (all)</SelectItem>
-                  <SelectItem value="REGION" className="text-[10px] font-bold normal-case">Regional</SelectItem>
-                  <SelectItem value="CONSTITUENCY" className="text-[10px] font-bold normal-case">Constituency</SelectItem>
+                  <SelectItem value="ALL" className="text-micro font-bold normal-case">National (all)</SelectItem>
+                  <SelectItem value="REGION" className="text-micro font-bold normal-case">Regional</SelectItem>
+                  <SelectItem value="CONSTITUENCY" className="text-micro font-bold normal-case">Constituency</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Priority level</label>
+              <label className="text-micro font-bold normal-case text-muted-foreground/40">Priority level</label>
               <Select 
                 value={newBroadcast.priority}
                 onValueChange={(v: 'Normal' | 'High' | 'Urgent') => setNewBroadcast({...newBroadcast, priority: v})}
               >
                 <SelectTrigger className={cn(
-                  "rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5",
+                  "rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5",
                   newBroadcast.priority === 'Urgent' ? "text-destructive border-destructive/20 bg-destructive/5" : ""
                 )}>
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent className="rounded-sm border-border/40">
-                  <SelectItem value="Normal" className="text-[10px] font-bold normal-case">Normal</SelectItem>
-                  <SelectItem value="High" className="text-[10px] font-bold normal-case text-orange-600">High priority</SelectItem>
-                  <SelectItem value="Urgent" className="text-[10px] font-bold normal-case text-destructive">Urgent (Level Red)</SelectItem>
+                  <SelectItem value="Normal" className="text-micro font-bold normal-case">Normal</SelectItem>
+                  <SelectItem value="High" className="text-micro font-bold normal-case text-orange-600">High priority</SelectItem>
+                  <SelectItem value="Urgent" className="text-micro font-bold normal-case text-destructive">Urgent (Level Red)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -250,7 +250,7 @@ export default function NewBroadcast() {
           {newBroadcast.target_type !== 'ALL' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-top-2">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Select region</label>
+                <label className="text-micro font-bold normal-case text-muted-foreground/40">Select region</label>
                 <Select 
                   value={fullRegions.find(r => r.name === newBroadcast.target_value)?.name || ""}
                   onValueChange={(v) => {
@@ -261,12 +261,12 @@ export default function NewBroadcast() {
                     }
                   }}
                 >
-                  <SelectTrigger className="rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
+                  <SelectTrigger className="rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5">
                     <SelectValue placeholder="Select region" />
                   </SelectTrigger>
                   <SelectContent className="rounded-sm border-border/40">
                     {(fullRegions || []).map((r: Region) => (
-                      <SelectItem key={`region-${r.id}`} value={r.name} className="text-[10px] font-bold normal-case">{r.name}</SelectItem>
+                      <SelectItem key={`region-${r.id}`} value={r.name} className="text-micro font-bold normal-case">{r.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -274,7 +274,7 @@ export default function NewBroadcast() {
 
               {newBroadcast.target_type === 'CONSTITUENCY' && (
                 <div className="space-y-2 animate-in slide-in-from-top-2">
-                  <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Select constituency</label>
+                  <label className="text-micro font-bold normal-case text-muted-foreground/40">Select constituency</label>
                   <Select 
                     disabled={!selectedRegionId}
                     onValueChange={(v) => {
@@ -293,15 +293,15 @@ export default function NewBroadcast() {
                       }
                     }}
                   >
-                    <SelectTrigger className="rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
+                    <SelectTrigger className="rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5">
                       <SelectValue placeholder={!selectedRegionId ? "Select region first" : "Select constituency"} />
                     </SelectTrigger>
                     <SelectContent className="rounded-sm border-border/40">
-                      <SelectItem value="ALL_IN_REGION" className="text-[10px] font-bold normal-case italic text-muted-foreground/40">All in Region</SelectItem>
+                      <SelectItem value="ALL_IN_REGION" className="text-micro font-bold normal-case italic text-muted-foreground/40">All in Region</SelectItem>
                       {(allConstituencies || [])
                         .filter(c => c.region_id === selectedRegionId)
                         .map((c, idx) => (
-                          <SelectItem key={`const-${idx}-${c.name}`} value={c.name} className="text-[10px] font-bold normal-case">{c.name}</SelectItem>
+                          <SelectItem key={`const-${idx}-${c.name}`} value={c.name} className="text-micro font-bold normal-case">{c.name}</SelectItem>
                         ))
                       }
                     </SelectContent>
@@ -314,10 +314,10 @@ export default function NewBroadcast() {
           {/* Content with TinyMCE */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Broadcast message (Rich Content)</label>
+              <label className="text-micro font-bold normal-case text-muted-foreground/40">Broadcast message (Rich Content)</label>
               <div className="flex items-center gap-2">
                 <span className={cn(
-                  "text-[10px] font-bold",
+                  "text-micro font-bold",
                   newBroadcast.content.length > MAX_CHARACTERS * 0.9 ? "text-destructive" : "text-muted-foreground/40"
                 )}>
                   {newBroadcast.content.length} / {MAX_CHARACTERS}
@@ -362,7 +362,7 @@ export default function NewBroadcast() {
             <Button 
               variant="outline" 
               onClick={() => navigate('/admin/broadcasts')}
-              className="rounded-sm h-12 px-10 text-[10px] font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+              className="rounded-sm h-12 px-10 text-micro font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Abort Transmission
             </Button>
@@ -370,7 +370,7 @@ export default function NewBroadcast() {
               variant="primary"
               disabled={isSending}
               onClick={handleSend}
-              className="rounded-sm h-12 px-12 text-[10px] font-bold tracking-tight min-w-[200px] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm h-12 px-12 text-micro font-bold tracking-tight min-w-[200px] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               {isSending ? (
                 <>
@@ -392,8 +392,8 @@ export default function NewBroadcast() {
           {getChannelIcon(newBroadcast.channel)}
         </div>
         <div>
-          <p className="text-[10px] font-bold normal-case text-on-surface">Broadcast preview</p>
-          <p className="text-[10px] leading-relaxed">
+          <p className="text-micro font-bold normal-case text-on-surface">Broadcast preview</p>
+          <p className="text-micro leading-relaxed">
             Sending to {newBroadcast.target_type === 'ALL' ? 'all movement members' : `targeted ${newBroadcast.target_type.toLowerCase()} segments`} via {newBroadcast.channel}. 
             Estimated delivery to ~42,500 members. Rich content is supported on {newBroadcast.channel === 'SMS' ? 'Smartphone links' : 'this channel'}.
           </p>

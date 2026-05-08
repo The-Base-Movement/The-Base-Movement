@@ -125,6 +125,8 @@ module.exports = {
         "body-lg": ["Work Sans"]
       },
       fontSize: {
+        "micro": ["var(--fs-micro)", {"lineHeight": "1.4", "fontWeight": "700"}],
+        "tiny": ["var(--fs-tiny)", {"lineHeight": "1.4", "fontWeight": "700"}],
         "body-md": ["var(--p-size)", {"lineHeight": "1.6", "fontWeight": "400"}],
         "meta": ["var(--fs-sm)", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
         "h3": ["var(--h3-size)", {"lineHeight": "1.3", "fontWeight": "600"}],

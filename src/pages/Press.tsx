@@ -36,7 +36,7 @@ export default function Press() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10">
           <Breadcrumbs />
-          <p className="font-meta text-warm-gold tracking-tight text-[12px] mb-3 mt-6">Media & communications</p>
+          <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">Media & communications</p>
           <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight mb-4">
             Press <span className="text-brand-green">center</span>
           </h1>
@@ -61,16 +61,16 @@ export default function Press() {
                 {loading ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-4 text-stone-300">
                     <Loader2 className="w-8 h-8 animate-spin" />
-                    <p className="text-[10px] font-bold tracking-tight">Scanning dispatch desk...</p>
+                    <p className="text-micro font-bold tracking-tight">Scanning dispatch desk...</p>
                   </div>
                 ) : releases.length > 0 ? (
                   releases.map((pr) => (
                     <div key={pr.id} className="bg-white p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
                       <div className="flex items-center gap-3 mb-4">
-                        <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-[10px] font-bold tracking-tight rounded-sm">
+                        <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-micro font-bold tracking-tight rounded-sm">
                           {pr.category}
                         </span>
-                        <span className="text-[11px] text-slate-400 font-medium tracking-tight">
+                        <span className="text-tiny text-slate-400 font-medium tracking-tight">
                           {new Date(pr.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </span>
                       </div>
@@ -109,11 +109,11 @@ export default function Press() {
               </p>
               <div className="space-y-4">
                 <div>
-                  <p className="text-[10px] font-bold tracking-tight text-slate-500 mb-1">General press</p>
+                  <p className="text-micro font-bold tracking-tight text-slate-500 mb-1">General press</p>
                   <p className="text-sm font-bold">press@thebasemovement.org</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold tracking-tight text-slate-500 mb-1">Global diaspora</p>
+                  <p className="text-micro font-bold tracking-tight text-slate-500 mb-1">Global diaspora</p>
                   <p className="text-sm font-bold">diaspora.media@thebasemovement.org</p>
                 </div>
               </div>
@@ -175,10 +175,10 @@ export default function Press() {
             <div className="p-8 border-b border-slate-100 flex justify-between items-start bg-stone-50/50">
               <div className="pr-8">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-[10px] font-bold tracking-tight rounded-sm">
+                  <span className="bg-brand-green/10 text-brand-green border border-brand-green/20 px-2 py-0.5 text-micro font-bold tracking-tight rounded-sm">
                     {selectedRelease.category}
                   </span>
-                  <span className="text-[11px] text-slate-400 font-medium tracking-tight">
+                  <span className="text-tiny text-slate-400 font-medium tracking-tight">
                     {new Date(selectedRelease.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </span>
                 </div>

@@ -206,7 +206,7 @@ export default function AdminEditAuthor() {
                       type="button" 
                       variant="ghost" 
                       onClick={clearMemberSelection}
-                      className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/5 text-[10px] font-bold capitalize tracking-tight"
+                      className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/5 text-micro font-bold capitalize tracking-tight"
                     >
                       <X className="w-3 h-3 mr-1" /> Reset selection
                     </Button>
@@ -251,9 +251,9 @@ export default function AdminEditAuthor() {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-bold text-on-surface truncate">{member.name}</p>
-                                <p className="text-[10px] text-muted-foreground/60 truncate">{member.id} • {member.region} • {member.profession}</p>
+                                <p className="text-micro text-muted-foreground/60 truncate">{member.id} • {member.region} • {member.profession}</p>
                               </div>
-                              <div className="text-[10px] font-bold capitalize tracking-tight text-primary opacity-0 group-hover:opacity-100 transition-opacity">Select</div>
+                              <div className="text-micro font-bold capitalize tracking-tight text-primary opacity-0 group-hover:opacity-100 transition-opacity">Select</div>
                             </button>
                           ))}
                         </div>
@@ -272,13 +272,13 @@ export default function AdminEditAuthor() {
                     <div className="flex-1">
                       <p className="text-sm font-bold text-on-surface flex items-center gap-2">
                         {selectedMember.name}
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-[9px] capitalize font-bold tracking-tight">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-micro capitalize font-bold tracking-tight">
                           <Check className="w-2 h-2" /> Identified
                         </span>
                       </p>
-                      <p className="text-[10px] text-muted-foreground/80">{selectedMember.id} • {selectedMember.phone}</p>
+                      <p className="text-micro text-muted-foreground/80">{selectedMember.id} • {selectedMember.phone}</p>
                     </div>
-                    <p className="text-[10px] font-bold text-muted-foreground/40 italic">Personnel data successfully mapped.</p>
+                    <p className="text-micro font-bold text-muted-foreground/40 italic">Personnel data successfully mapped.</p>
                   </div>
                 )}
               </div>
@@ -309,7 +309,7 @@ export default function AdminEditAuthor() {
                     className="border-border/60 focus-visible:ring-on-surface bg-muted/5"
                     required
                   />
-                  <p className="text-[10px] text-muted-foreground/80">Used for URL generation. Must be unique.</p>
+                  <p className="text-micro text-muted-foreground/80">Used for URL generation. Must be unique.</p>
                 </div>
               </div>
 
@@ -340,7 +340,7 @@ export default function AdminEditAuthor() {
                   ) : (
                     <div className="text-center text-muted-foreground/40 p-4">
                       <ImageIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <span className="text-[10px] capitalize tracking-tight font-bold">No Image</span>
+                      <span className="text-micro capitalize tracking-tight font-bold">No Image</span>
                     </div>
                   )}
                   {isUploading && (
@@ -405,7 +405,7 @@ export default function AdminEditAuthor() {
               type="button" 
               variant="outline" 
               onClick={() => navigate('/admin/authors')}
-              className="border-border/40 hover:bg-stone-50 transition-all rounded-sm text-[10px] font-bold capitalize tracking-tight h-12 px-8"
+              className="border-border/40 hover:bg-stone-50 transition-all rounded-sm text-micro font-bold capitalize tracking-tight h-12 px-8"
             >
               Cancel
             </Button>
@@ -413,7 +413,7 @@ export default function AdminEditAuthor() {
               type="submit" 
               variant="primary"
               disabled={isSaving}
-              className="px-10 h-12 rounded-sm shadow-lg shadow-brand-green/20 text-[10px] font-bold capitalize tracking-tight"
+              className="px-10 h-12 rounded-sm shadow-lg shadow-brand-green/20 text-micro font-bold capitalize tracking-tight"
             >
               {isSaving ? (
                 <>

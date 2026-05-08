@@ -72,7 +72,7 @@ export default function FeedbackHub() {
           <div className="mt-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="flex h-2 w-2 rounded-full bg-[var(--brand-red)] animate-ping"></span>
-              <span className="text-[10px] font-bold text-[var(--brand-red)] tracking-tight">Direct line to HQ</span>
+              <span className="text-micro font-bold text-[var(--brand-red)] tracking-tight">Direct line to HQ</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-stone-900 flex items-center gap-3 mb-0 tracking-tight italic font-meta">
               Feedback <span className="text-stone-400">hub</span>
@@ -90,7 +90,7 @@ export default function FeedbackHub() {
             
             {/* Category Selection */}
             <div className="space-y-4">
-              <label className="text-[10px] font-bold text-stone-900 flex items-center gap-2 tracking-tight">
+              <label className="text-micro font-bold text-stone-900 flex items-center gap-2 tracking-tight">
                 <Target className="w-4 h-4 text-[var(--brand-red)]" /> Strategic category
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -107,7 +107,7 @@ export default function FeedbackHub() {
                     )}
                   >
                     <span className={cn(
-                      "text-[10px] font-bold block tracking-tight",
+                      "text-micro font-bold block tracking-tight",
                       category === cat ? "text-[var(--brand-red)]" : "text-stone-500"
                     )}>
                       {cat}
@@ -119,12 +119,12 @@ export default function FeedbackHub() {
 
             {/* Feedback Textarea */}
             <div className="space-y-4">
-              <label className="text-[10px] font-bold text-stone-900 flex items-center justify-between tracking-tight">
+              <label className="text-micro font-bold text-stone-900 flex items-center justify-between tracking-tight">
                 <span className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-[var(--brand-red)]" /> Raw intelligence report
                 </span>
                 <span className={cn(
-                  "text-[9px] text-stone-400",
+                  "text-micro text-stone-400",
                   feedback.length > 500 ? "text-red-500 animate-pulse" : ""
                 )}>
                   {feedback.length}/500 chars
@@ -138,20 +138,20 @@ export default function FeedbackHub() {
                   className="w-full h-48 p-6 bg-stone-50 border border-stone-200 focus:border-[var(--brand-red)] focus:ring-0 text-stone-900 resize-none font-medium text-sm leading-relaxed"
                   required
                 />
-                <div className="absolute bottom-4 right-4 flex items-center gap-2 text-[9px] font-bold text-stone-400 bg-white/80 px-2 py-1 tracking-tight">
+                <div className="absolute bottom-4 right-4 flex items-center gap-2 text-micro font-bold text-stone-400 bg-white/80 px-2 py-1 tracking-tight">
                   <Brain className="w-3 h-3 text-[var(--brand-red)]" /> Secure channel
                 </div>
               </div>
             </div>
 
             <div className="pt-6 border-t border-stone-100 flex justify-between items-center">
-              <p className="text-[9px] font-bold text-stone-400 tracking-tight max-w-[200px] leading-tight">
+              <p className="text-micro font-bold text-stone-400 tracking-tight max-w-[200px] leading-tight">
                 All transmissions are securely logged and analyzed by the National Steering Committee.
               </p>
               <Button 
                 type="submit" 
                 disabled={submitting || !feedback.trim()}
-                className="bg-[var(--brand-red)] text-white hover:bg-red-700 h-14 px-8 rounded-none text-[11px] font-bold tracking-tight shadow-xl group"
+                className="bg-[var(--brand-red)] text-white hover:bg-red-700 h-14 px-8 rounded-none text-tiny font-bold tracking-tight shadow-xl group"
               >
                 {submitting ? 'Transmitting...' : 'Dispatch intelligence'}
                 {!submitting && <Send className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" />}

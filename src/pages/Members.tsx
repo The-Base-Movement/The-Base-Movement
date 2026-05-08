@@ -167,8 +167,8 @@ export default function Members() {
                   className="w-full lg:w-auto"
                 >
                   <TabsList className="bg-slate-50 p-1 h-12 w-full lg:w-auto">
-                    <TabsTrigger value="GHANA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-tight data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Ghana</TabsTrigger>
-                    <TabsTrigger value="DIASPORA" className="flex-1 lg:px-8 font-bold text-[10px] tracking-tight data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Diaspora</TabsTrigger>
+                    <TabsTrigger value="GHANA" className="flex-1 lg:px-8 font-bold text-micro tracking-tight data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Ghana</TabsTrigger>
+                    <TabsTrigger value="DIASPORA" className="flex-1 lg:px-8 font-bold text-micro tracking-tight data-[state=active]:bg-white data-[state=active]:text-[var(--brand-green)] data-[state=active]:shadow-sm rounded-none">Diaspora</TabsTrigger>
                   </TabsList>
                 </Tabs>
 
@@ -185,7 +185,7 @@ export default function Members() {
                 <div className="flex items-center gap-2 w-full lg:w-auto bg-slate-50 p-1 rounded-none">
                   <button 
                     onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                    className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-tight text-slate-500 hover:text-[var(--brand-green)] transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 text-micro font-bold tracking-tight text-slate-500 hover:text-[var(--brand-green)] transition-colors"
                   >
                     <ArrowUpDown className="w-3 h-3" />
                     Sort {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
@@ -197,13 +197,13 @@ export default function Members() {
               <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-50">
                 <div className="flex items-center gap-2 text-slate-400 mr-2">
                   <Filter className="w-3 h-3" />
-                  <span className="text-[10px] font-bold tracking-tight">Filter by:</span>
+                  <span className="text-micro font-bold tracking-tight">Filter by:</span>
                 </div>
 
                 {activePlatform === 'GHANA' ? (
                   <>
                     <Select value={selectedRegion} onValueChange={(val) => { setSelectedRegion(val); setSelectedConstituency('all'); }}>
-                      <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-[10px] font-bold tracking-tight rounded-none h-10">
+                      <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-micro font-bold tracking-tight rounded-none h-10">
                         <SelectValue placeholder="All regions" />
                       </SelectTrigger>
                       <SelectContent>
@@ -213,7 +213,7 @@ export default function Members() {
                     </Select>
 
                     <Select value={selectedConstituency} onValueChange={setSelectedConstituency} disabled={selectedRegion === 'all'}>
-                      <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-bold tracking-tight rounded-none h-10">
+                      <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-micro font-bold tracking-tight rounded-none h-10">
                         <SelectValue placeholder="All constituencies" />
                       </SelectTrigger>
                       <SelectContent>
@@ -224,7 +224,7 @@ export default function Members() {
                   </>
                 ) : (
                   <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                    <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-bold tracking-tight rounded-none h-10">
+                    <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-micro font-bold tracking-tight rounded-none h-10">
                       <SelectValue placeholder="All countries" />
                     </SelectTrigger>
                     <SelectContent>
@@ -235,7 +235,7 @@ export default function Members() {
                 )}
 
                 <Select value={selectedProfession} onValueChange={setSelectedProfession}>
-                  <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-[10px] font-bold tracking-tight rounded-none h-10">
+                  <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-micro font-bold tracking-tight rounded-none h-10">
                     <SelectValue placeholder="All professions" />
                   </SelectTrigger>
                   <SelectContent>
@@ -253,7 +253,7 @@ export default function Members() {
                       setSelectedCountry('all');
                       setSelectedProfession('all');
                     }}
-                    className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-tight text-red-500 hover:bg-red-50 rounded-none transition-all ml-auto"
+                    className="flex items-center gap-2 px-4 py-2 text-micro font-bold tracking-tight text-red-500 hover:bg-red-50 rounded-none transition-all ml-auto"
                   >
                     <X className="w-3 h-3" />
                     Clear filters
@@ -280,7 +280,7 @@ export default function Members() {
                     <Users className="w-10 h-10 text-muted-foreground/20" />
                   </div>
                   <h3 className="text-on-surface font-meta font-bold tracking-tight">No members found</h3>
-                  <p className="text-muted-foreground/60 max-w-sm mt-2 font-bold text-[11px] tracking-tight">We couldn't find any members matching your current filters. Try adjusting your search criteria.</p>
+                  <p className="text-muted-foreground/60 max-w-sm mt-2 font-bold text-tiny tracking-tight">We couldn't find any members matching your current filters. Try adjusting your search criteria.</p>
                   <button 
                     onClick={() => {
                       setSearch('');
@@ -289,7 +289,7 @@ export default function Members() {
                       setSelectedCountry('all');
                       setSelectedProfession('all');
                     }}
-                    className="mt-8 text-[var(--brand-green)] font-bold text-[10px] tracking-tight hover:underline"
+                    className="mt-8 text-[var(--brand-green)] font-bold text-micro tracking-tight hover:underline"
                   >
                     Reset all filters
                   </button>
@@ -314,8 +314,8 @@ export default function Members() {
                 </div>
                 <DialogTitle className="text-white mb-1 font-meta font-bold tracking-tight">{selectedMember?.name}</DialogTitle>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-primary tracking-tight uppercase">{selectedMember?.profession}</span>
-                  <span className="text-[10px] font-bold bg-primary/20 text-primary px-3 py-1 rounded-sm tracking-tight">
+                  <span className="text-micro font-bold text-primary tracking-tight uppercase">{selectedMember?.profession}</span>
+                  <span className="text-micro font-bold bg-primary/20 text-primary px-3 py-1 rounded-sm tracking-tight">
                     {selectedMember?.status === 'Active' || selectedMember?.status === 'Approved' || !selectedMember?.status ? 'VERIFIED' : 'PENDING'}
                   </span>
                 </div>
@@ -328,14 +328,14 @@ export default function Members() {
             {/* Membership Info */}
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-1">
-                <p className="text-[9px] font-bold text-slate-400 tracking-tight">Platform</p>
+                <p className="text-micro font-bold text-slate-400 tracking-tight">Platform</p>
                 <div className="flex items-center gap-2">
                   <Globe className="w-3 h-3 text-primary" />
                   <p className="text-xs font-bold text-charcoal-dark mb-0">{selectedMember?.platform}</p>
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-[9px] font-bold text-slate-400 tracking-tight mb-0">Joined date</p>
+                <p className="text-micro font-bold text-slate-400 tracking-tight mb-0">Joined date</p>
                 <div className="flex items-center gap-2">
                   <Users className="w-3 h-3 text-accent" />
                   <p className="text-xs font-bold text-charcoal-dark mb-0">Oct 2024</p>
@@ -345,7 +345,7 @@ export default function Members() {
 
             <div className="space-y-4">
               <div className="space-y-1">
-                <p className="text-[9px] font-bold text-slate-400 tracking-tight">Location</p>
+                <p className="text-micro font-bold text-slate-400 tracking-tight">Location</p>
                 <div className="flex items-center gap-2 bg-slate-50 p-3 rounded-none border border-slate-100">
                   <MapPin className="w-4 h-4 text-primary" />
                   <p className="text-xs font-bold text-charcoal-dark mb-0">
@@ -357,7 +357,7 @@ export default function Members() {
               </div>
 
               <div className="space-y-1">
-                <p className="text-[9px] font-bold text-slate-400 tracking-tight">Member bio</p>
+                <p className="text-micro font-bold text-slate-400 tracking-tight">Member bio</p>
                 <p className="text-xs text-slate-600 leading-relaxed font-medium">
                   Committed to the growth and prosperity of Ghana. Active participant in community development projects and movement initiatives.
                 </p>
@@ -367,14 +367,14 @@ export default function Members() {
             <div className="pt-6 border-t border-slate-100 flex gap-4">
               <Button 
                 variant="primary"
-                className="flex-1 py-6 text-[10px] shadow-lg shadow-primary/20"
+                className="flex-1 py-6 text-micro shadow-lg shadow-primary/20"
               >
                 Send message
               </Button>
               <Button 
                 variant="ghost"
                 onClick={() => setSelectedMember(null)}
-                className="flex-1 py-6 text-[10px]"
+                className="flex-1 py-6 text-micro"
               >
                 Close
               </Button>

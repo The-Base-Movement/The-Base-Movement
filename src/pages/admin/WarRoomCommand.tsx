@@ -62,7 +62,7 @@ export default function WarRoomCommand() {
       <div className="min-h-screen flex items-center justify-center bg-on-surface">
         <div className="flex flex-col items-center gap-4">
           <Siren className="w-12 h-12 text-destructive animate-spin" />
-          <p className="text-[10px] font-bold normal-case text-destructive animate-pulse">Initializing war room protocols...</p>
+          <p className="text-micro font-bold normal-case text-destructive animate-pulse">Initializing war room protocols...</p>
         </div>
       </div>
     )
@@ -86,7 +86,7 @@ export default function WarRoomCommand() {
         <Card className="rounded-sm border-border/40 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center justify-between">
             <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
-              <p className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-0">Operational readiness</p>
+              <p className="text-micro font-bold normal-case text-muted-foreground/40 mb-0">Operational readiness</p>
               <h3 className="text-3xl font-bold text-destructive tracking-tight m-0">Level 2</h3>
             </div>
             <Zap className="w-8 h-8 text-accent" />
@@ -105,7 +105,7 @@ export default function WarRoomCommand() {
                   <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2 m-0">
                     <AlertTriangle className="w-4 h-4 text-orange-500" /> Active crisis incidents
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-0">Localized resistance and PR threats</CardDescription>
+                  <CardDescription className="text-micro font-bold normal-case text-muted-foreground/40 mb-0">Localized resistance and PR threats</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -114,26 +114,26 @@ export default function WarRoomCommand() {
                 {incidents.length === 0 ? (
                   <div className="p-12 text-center">
                     <CheckCircle2 className="w-8 h-8 text-primary mx-auto mb-3" />
-                    <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">No active incidents. All sectors secure.</p>
+                    <p className="text-micro font-bold text-muted-foreground/40 normal-case">No active incidents. All sectors secure.</p>
                   </div>
                 ) : (
                   incidents.map((incident) => (
                     <div key={incident.id} className="p-6 hover:bg-muted/10 transition-colors flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex items-center gap-3">
-                          <span className={cn("px-3 py-1 text-[9px] font-bold normal-case rounded-full", getSeverityColor(incident.severity))}>
+                          <span className={cn("px-3 py-1 text-micro font-bold normal-case rounded-full", getSeverityColor(incident.severity))}>
                             {incident.severity.toLowerCase()}
                           </span>
-                          <span className="text-[10px] font-bold text-on-surface/80 normal-case">{incident.region}</span>
+                          <span className="text-micro font-bold text-on-surface/80 normal-case">{incident.region}</span>
                         </div>
-                        <span className="text-[9px] font-bold text-muted-foreground/40 shrink-0">{format(new Date(incident.created_at), 'MMM dd, HH:mm')}</span>
+                        <span className="text-micro font-bold text-muted-foreground/40 shrink-0">{format(new Date(incident.created_at), 'MMM dd, HH:mm')}</span>
                       </div>
                       <h3 className="text-sm font-bold text-on-surface normal-case m-0">{incident.incident_type.replace('_', ' ').toLowerCase()}</h3>
                       <p className="text-sm text-on-surface/80 font-medium leading-relaxed mb-0 prose-standard">{incident.description}</p>
                       
                       <div className="flex items-center justify-between pt-4 border-t border-border/40">
                         <span className={cn(
-                          "text-[9px] font-bold normal-case px-2 py-1 rounded-full",
+                          "text-micro font-bold normal-case px-2 py-1 rounded-full",
                           incident.status === 'INVESTIGATING' ? 'bg-orange-100 text-orange-600' : 
                           incident.status === 'CONTAINED' ? 'bg-blue-100 text-blue-600' : 'bg-primary/10 text-primary'
                         )}>
@@ -142,7 +142,7 @@ export default function WarRoomCommand() {
                         <Button 
                           variant="primary"
                           size="sm"
-                          className="h-11 px-10 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                          className="h-11 px-10 rounded-sm text-micro font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                         >
                           Update Status
                         </Button>
@@ -169,13 +169,13 @@ export default function WarRoomCommand() {
               <div className="divide-y divide-white/10">
                 {narratives.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-[10px] font-bold text-white/40 normal-case">No active media campaigns.</p>
+                    <p className="text-micro font-bold text-white/40 normal-case">No active media campaigns.</p>
                   </div>
                 ) : (
                   narratives.map((nar) => (
                     <div key={nar.id} className="p-6 hover:bg-white/5 transition-colors flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-bold text-blue-400 normal-case">{nar.target_platform}</span>
+                        <span className="text-micro font-bold text-blue-400 normal-case">{nar.target_platform}</span>
                         <span className={cn(
                           "text-[8px] font-bold normal-case px-2 py-0.5 rounded-full",
                           nar.dispatch_status === 'DEPLOYED' ? "bg-emerald-900/50 text-emerald-400" : "bg-orange-900/50 text-orange-400"
@@ -185,11 +185,11 @@ export default function WarRoomCommand() {
                       </div>
                       <p className="text-sm text-white/80 m-0 leading-relaxed">"{nar.approved_messaging}"</p>
                       <div className="flex items-center justify-between pt-2">
-                        <p className="text-[9px] font-bold text-white/40 normal-case mb-0">{nar.hashtags}</p>
+                        <p className="text-micro font-bold text-white/40 normal-case mb-0">{nar.hashtags}</p>
                         {nar.dispatch_status === 'PENDING' && (
                           <Button 
                             variant="primary"
-                            className="h-12 px-10 rounded-sm text-[10px] font-bold tracking-tight bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-900/40 border-0 transition-all hover:scale-[1.02] active:scale-95"
+                            className="h-12 px-10 rounded-sm text-micro font-bold tracking-tight bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-900/40 border-0 transition-all hover:scale-[1.02] active:scale-95"
                           >
                             <Send className="w-4 h-4 mr-2" /> Dispatch Strike
                           </Button>
@@ -217,7 +217,7 @@ export default function WarRoomCommand() {
               <div className="divide-y divide-border/40 max-h-[800px] overflow-y-auto">
                 {directives.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">No active directives.</p>
+                    <p className="text-micro font-bold text-muted-foreground/40 normal-case">No active directives.</p>
                   </div>
                 ) : (
                   directives.map((dir) => (
@@ -232,10 +232,10 @@ export default function WarRoomCommand() {
                         )}>
                           {dir.priority.toLowerCase()}
                         </span>
-                        <span className="text-[9px] font-bold text-muted-foreground/40 shrink-0">{dir.target_region}</span>
+                        <span className="text-micro font-bold text-muted-foreground/40 shrink-0">{dir.target_region}</span>
                       </div>
                       <h4 className="text-xs font-bold text-on-surface normal-case m-0">{dir.title}</h4>
-                      <p className="text-[10px] text-muted-foreground/80 font-medium m-0">{dir.action_type.replace('_', ' ').toLowerCase()}</p>
+                      <p className="text-micro text-muted-foreground/80 font-medium m-0">{dir.action_type.replace('_', ' ').toLowerCase()}</p>
                       
                       <div className="flex justify-between items-center pt-2">
                         <span className={cn(

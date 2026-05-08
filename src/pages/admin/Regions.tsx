@@ -63,7 +63,7 @@ export default function AdminRegions() {
           <Button 
             variant="primary" 
             size="lg"
-            className="rounded-sm text-[10px] font-bold capitalize tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold capitalize tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Define New Region
           </Button>
@@ -78,7 +78,7 @@ export default function AdminRegions() {
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[9px] font-bold normal-case opacity-60">Regions</p>
+              <p className="text-micro font-bold normal-case opacity-60">Regions</p>
               <p className="text-2xl font-bold tracking-tight">16</p>
             </div>
           </CardContent>
@@ -90,7 +90,7 @@ export default function AdminRegions() {
               <MapPin className="w-5 h-5 text-destructive" />
             </div>
             <div>
-              <p className="text-[9px] font-bold normal-case text-muted-foreground/80">Constituencies</p>
+              <p className="text-micro font-bold normal-case text-muted-foreground/80">Constituencies</p>
               <p className="text-2xl font-bold tracking-tight text-on-surface">{totalConstituencies}</p>
             </div>
           </CardContent>
@@ -101,7 +101,7 @@ export default function AdminRegions() {
               <MapPin className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-[9px] font-bold normal-case text-muted-foreground/80">Avg. per region</p>
+              <p className="text-micro font-bold normal-case text-muted-foreground/80">Avg. per region</p>
               <p className="text-2xl font-bold tracking-tight text-on-surface">
                 {Math.round(totalConstituencies / 16)}
               </p>
@@ -168,7 +168,7 @@ export default function AdminRegions() {
                       <p className="text-sm font-bold tracking-tight text-on-surface">
                         {region.name}
                       </p>
-                      <p className="text-[10px] text-muted-foreground/80 font-bold tracking-tight">
+                      <p className="text-micro text-muted-foreground/80 font-bold tracking-tight">
                         {region.constituencies.length} constituencies
                       </p>
                     </div>
@@ -214,7 +214,7 @@ export default function AdminRegions() {
                       </div>
                       <Button
                         variant="outline"
-                        className="h-10 px-8 text-[10px] font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                        className="h-10 px-8 text-micro font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                       >
                         <Plus className="w-4 h-4 mr-2" /> Define Constituency
                       </Button>
@@ -227,7 +227,7 @@ export default function AdminRegions() {
                           key={con}
                           className="group flex items-center justify-between gap-1 px-3 py-2 bg-white border border-border/40 hover:border-on-surface/40 transition-colors rounded-sm"
                         >
-                          <span className="text-[10px] font-bold tracking-tight text-on-surface/80 group-hover:text-on-surface truncate">
+                          <span className="text-micro font-bold tracking-tight text-on-surface/80 group-hover:text-on-surface truncate">
                             {con}
                           </span>
                           <Button
@@ -241,7 +241,7 @@ export default function AdminRegions() {
                         </div>
                       ))}
                       {visibleConstituencies.length === 0 && (
-                        <p className="col-span-full text-center text-[10px] text-muted-foreground/60 font-bold tracking-tight py-4">
+                        <p className="col-span-full text-center text-micro text-muted-foreground/60 font-bold tracking-tight py-4">
                           No match found.
                         </p>
                       )}

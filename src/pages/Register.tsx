@@ -307,7 +307,7 @@ export default function Register() {
           <div className="space-y-8">
             <div className="bg-white border border-border/60 p-2 shadow-2xl relative">
               <div className="border-b border-border/40 pb-3 mb-4 px-4 pt-2">
-                <h3 className="font-meta font-bold text-[10px] text-muted-foreground/80 tracking-tight">Official membership card</h3>
+                <h3 className="font-meta font-bold text-micro text-muted-foreground/80 tracking-tight">Official membership card</h3>
               </div>
               
               <div className="max-w-md mx-auto py-4">
@@ -335,14 +335,14 @@ export default function Register() {
                   <div className="flex items-center gap-3">
                     <button 
                       onClick={() => window.print()}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-on-surface font-meta font-bold tracking-tight text-[10px] hover:opacity-90 transition-all shadow-md"
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-on-surface font-meta font-bold tracking-tight text-micro hover:opacity-90 transition-all shadow-md"
                     >
                       <span className="material-symbols-outlined text-[18px]">print</span>
                       Print card
                     </button>
                     <button 
                       onClick={() => setSubmitted(false)}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-border/60 text-on-surface font-meta font-bold tracking-tight text-[10px] hover:bg-muted/30 transition-all shadow-sm"
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-border/60 text-on-surface font-meta font-bold tracking-tight text-micro hover:bg-muted/30 transition-all shadow-sm"
                     >
                       <ArrowLeft className="w-4 h-4" /> Edit info
                     </button>
@@ -353,7 +353,7 @@ export default function Register() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white border border-border/60 p-8 shadow-sm">
-                <h4 className="font-meta font-bold text-[10px] text-muted-foreground/80 tracking-tight mb-4">Membership verification</h4>
+                <h4 className="font-meta font-bold text-micro text-muted-foreground/80 tracking-tight mb-4">Membership verification</h4>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
                   <p className="text-xs font-bold text-on-surface font-meta tracking-tight">Status: Verified</p>
@@ -365,7 +365,7 @@ export default function Register() {
 
                 <div className="bg-primary text-white p-8 flex flex-col justify-between">
                 <div>
-                  <h4 className="font-meta font-bold text-[10px] text-white/90 tracking-tight mb-4">Next step</h4>
+                  <h4 className="font-meta font-bold text-micro text-white/90 tracking-tight mb-4">Next step</h4>
                   <p className="text-sm font-bold font-meta leading-tight mb-4">Access your portal to join a chapter.</p>
                 </div>
                 <button
@@ -410,7 +410,7 @@ export default function Register() {
                   <div className="w-20 h-20 bg-brand-green/5 flex items-center justify-center group-hover:bg-brand-green/10 transition-colors">
                     <FileText className="w-10 h-10 text-brand-green" />
                   </div>
-                  <div className="text-[10px] font-bold text-brand-green bg-brand-green/10 px-3 py-1 tracking-tight">In-country</div>
+                  <div className="text-micro font-bold text-brand-green bg-brand-green/10 px-3 py-1 tracking-tight">In-country</div>
                 </div>
                 
                 <div className="space-y-4">
@@ -438,7 +438,7 @@ export default function Register() {
                       <Link 
                         to="/register/preview?platform=GHANA" 
                         onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-brand-green/60 hover:text-brand-green hover:underline transition-all"
+                        className="inline-flex items-center gap-2 text-micro font-bold tracking-tight text-brand-green/60 hover:text-brand-green hover:underline transition-all"
                       >
                         <Download className="w-3 h-3" />
                         Download paper form (Ghana)
@@ -449,7 +449,7 @@ export default function Register() {
               </div>
 
               <div className="mt-10 pt-6 border-t border-border/40 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[11px] font-bold tracking-tight text-brand-green">
+                <div className="flex items-center gap-2 text-tiny font-bold tracking-tight text-brand-green">
                   Select membership <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
                 <div className="text-on-surface/5 group-hover:text-brand-green/20 transition-colors">
@@ -475,7 +475,7 @@ export default function Register() {
                   <div className="w-20 h-20 bg-brand-gold/5 flex items-center justify-center group-hover:bg-brand-gold/10 transition-colors">
                     <User className="w-10 h-10 text-brand-gold" />
                   </div>
-                  <div className="text-[10px] font-bold text-brand-gold bg-brand-gold/10 px-3 py-1 tracking-tight">Global community</div>
+                  <div className="text-micro font-bold text-brand-gold bg-brand-gold/10 px-3 py-1 tracking-tight">Global community</div>
                 </div>
                 
                 <div className="space-y-4">
@@ -503,7 +503,7 @@ export default function Register() {
                       <Link 
                         to="/register/preview?platform=DIASPORA" 
                         onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-2 text-[10px] font-bold tracking-tight text-brand-gold/60 hover:text-brand-gold hover:underline transition-all"
+                        className="inline-flex items-center gap-2 text-micro font-bold tracking-tight text-brand-gold/60 hover:text-brand-gold hover:underline transition-all"
                       >
                         <Download className="w-3 h-3" />
                         Download paper form (Diaspora)
@@ -514,7 +514,7 @@ export default function Register() {
               </div>
 
               <div className="mt-10 pt-6 border-t border-border/40 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[11px] font-bold tracking-tight text-brand-gold">
+                <div className="flex items-center gap-2 text-tiny font-bold tracking-tight text-brand-gold">
                   Select membership <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </div>
                 <div className="text-on-surface/5 group-hover:text-brand-gold/20 transition-colors">
@@ -548,7 +548,7 @@ export default function Register() {
           <h2 className="text-muted-foreground mb-8">Official Registration Form</h2>
           <button
             onClick={() => setStep('choice')}
-            className="inline-flex items-center gap-2 px-6 py-2 border border-border/60 text-[10px] font-bold text-muted-foreground tracking-tight hover:bg-muted/30 transition-all font-meta"
+            className="inline-flex items-center gap-2 px-6 py-2 border border-border/60 text-micro font-bold text-muted-foreground tracking-tight hover:bg-muted/30 transition-all font-meta"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to registration options
           </button>
@@ -558,7 +558,7 @@ export default function Register() {
       <div className="max-w-6xl mx-auto py-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-3 space-y-2 sticky top-8">
-            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-6 pl-4">Registration progress</p>
+            <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-6 pl-4">Registration progress</p>
             <div className="space-y-1">
               {[
                 { step: 1, label: 'Primary details' },
@@ -578,7 +578,7 @@ export default function Register() {
             </div>
 
             <div className="mt-12 pl-4 pt-8 border-t border-border/60">
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-1">Need assistance?</p>
+              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-1">Need assistance?</p>
               <a href="mailto:info@thebasemovement.com" className="text-xs font-meta font-medium text-muted-foreground hover:text-primary transition-colors">
                 info@thebasemovement.com
               </a>
@@ -726,7 +726,7 @@ export default function Register() {
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </Button>
                     </div>
-                    <p className="text-[10px] text-muted-foreground/80 font-meta leading-relaxed">
+                    <p className="text-micro text-muted-foreground/80 font-meta leading-relaxed">
                       Avoid weak passwords like <span className="text-on-surface font-bold">"password123"</span> or <span className="text-on-surface font-bold">"ghana2024"</span>. Use a mix of letters, numbers, and symbols.
                     </p>
                   </div>
@@ -825,7 +825,7 @@ export default function Register() {
                       <div className="border-2 border-dashed p-12 text-center bg-muted/30 relative">
                         <input type="file" accept="image/*" onChange={handlePhotoUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
                         <Upload className="mx-auto mb-4 text-muted-foreground/40" />
-                        <p className="text-[10px] font-bold text-muted-foreground">Upload photo</p>
+                        <p className="text-micro font-bold text-muted-foreground">Upload photo</p>
                       </div>
                     ) : (
                       <div className="relative h-[400px] bg-on-surface">

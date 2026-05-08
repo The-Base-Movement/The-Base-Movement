@@ -438,7 +438,7 @@ export default function AdminBlogs() {
                   <div className="flex items-center justify-between">
                     <Label className="text-sm font-bold text-on-surface/80">Publication Status</Label>
                     {!canPublish && (
-                      <Badge variant="outline" className="text-[9px] font-bold text-amber-600 border-amber-200 bg-amber-50 rounded-sm">
+                      <Badge variant="outline" className="text-micro font-bold text-amber-600 border-amber-200 bg-amber-50 rounded-sm">
                         Authorization Required
                       </Badge>
                     )}
@@ -456,7 +456,7 @@ export default function AdminBlogs() {
                       <SelectItem value="Published" disabled={!canPublish}>Authorize & Publish</SelectItem>
                     </SelectContent>
                   </Select>
-                  <p className="text-[10px] font-medium text-muted-foreground/40 leading-tight">
+                  <p className="text-micro font-medium text-muted-foreground/40 leading-tight">
                     {canPublish 
                       ? "Control the visibility of this intelligence across the movement's platforms."
                       : "Submit this intelligence for review. Senior Editorial personnel will verify before deployment."}
@@ -503,7 +503,7 @@ export default function AdminBlogs() {
                       />
                       <Label 
                         htmlFor="blog-image-upload" 
-                        className="text-[10px] font-bold text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
+                        className="text-micro font-bold text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
                       >
                         <Upload className="w-3 h-3" />
                         Upload image
@@ -575,7 +575,7 @@ export default function AdminBlogs() {
                       />
                       <Label 
                         htmlFor="author-image-upload" 
-                        className="text-[10px] font-bold text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
+                        className="text-micro font-bold text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1.5 transition-colors tracking-wide"
                       >
                         <Upload className="w-3 h-3" />
                         Upload photo
@@ -642,7 +642,7 @@ export default function AdminBlogs() {
                 type="submit" 
                 disabled={isLoading}
                 variant="primary"
-                className="w-full h-14 rounded-sm text-[11px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
+                className="w-full h-14 rounded-sm text-tiny font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
               >
                 {isLoading ? 'Processing...' : (
                   formData.status === 'Published' 
@@ -656,7 +656,7 @@ export default function AdminBlogs() {
                 type="button" 
                 variant="outline" 
                 onClick={() => setCurrentView('list')}
-                className="w-full h-12 rounded-sm text-[10px] font-bold tracking-tight text-muted-foreground/80 hover:text-red-500 border-border/40 hover:bg-red-50 transition-all shadow-sm active:scale-95"
+                className="w-full h-12 rounded-sm text-micro font-bold tracking-tight text-muted-foreground/80 hover:text-red-500 border-border/40 hover:bg-red-50 transition-all shadow-sm active:scale-95"
               >
                 Abort & Discard
               </Button>
@@ -685,7 +685,7 @@ export default function AdminBlogs() {
           <Button 
             onClick={() => handleEditPost(viewPost)}
             variant="primary"
-            className="h-12 px-10 text-[10px] font-bold tracking-tight flex items-center gap-2 rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="h-12 px-10 text-micro font-bold tracking-tight flex items-center gap-2 rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Edit2 className="w-4 h-4 mr-2" /> Edit post
           </Button>
@@ -742,7 +742,7 @@ export default function AdminBlogs() {
             onClick={() => handleEditPost()}
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Create new post
           </Button>
@@ -759,7 +759,7 @@ export default function AdminBlogs() {
             </div>
             <CardContent className="p-6 space-y-6">
               <div className="space-y-3">
-                <Label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Search feed</Label>
+                <Label className="text-micro font-bold text-stone-500 uppercase tracking-widest">Search feed</Label>
                 <div className="relative group">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-300 group-focus-within:text-on-surface transition-colors" />
                   <input 
@@ -773,7 +773,7 @@ export default function AdminBlogs() {
               </div>
 
               <div className="space-y-3 pt-6 border-t border-stone-50">
-                <Label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Status</Label>
+                <Label className="text-micro font-bold text-stone-500 uppercase tracking-widest">Status</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="h-10 w-full bg-white border-stone-200 text-xs font-bold rounded-sm focus:ring-0 focus:border-on-surface">
                     <SelectValue placeholder="Status" />
@@ -788,7 +788,7 @@ export default function AdminBlogs() {
               </div>
 
               <div className="space-y-3 pt-6 border-t border-stone-50">
-                <Label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Category</Label>
+                <Label className="text-micro font-bold text-stone-500 uppercase tracking-widest">Category</Label>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="h-10 w-full bg-white border-stone-200 text-xs font-bold rounded-sm focus:ring-0 focus:border-on-surface">
                     <SelectValue placeholder="Category" />
@@ -809,7 +809,7 @@ export default function AdminBlogs() {
 
           {/* Content Telemetry Card */}
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-on-surface text-white p-6">
-             <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">Content telemetry</p>
+             <p className="text-micro font-bold text-white/40 uppercase tracking-widest mb-4">Content telemetry</p>
              <div className="space-y-4">
                 <div className="flex justify-between items-end">
                    <span className="text-xs font-bold">Total Articles</span>
@@ -846,7 +846,7 @@ export default function AdminBlogs() {
                 <Button 
                   variant="outline" 
                   onClick={() => setSearchQuery('')}
-                  className="mt-6 rounded-sm border-border/40 font-bold text-[10px] tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                  className="mt-6 rounded-sm border-border/40 font-bold text-micro tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 >
                   Clear search
                 </Button>
@@ -863,13 +863,13 @@ export default function AdminBlogs() {
                       loading="lazy" 
                     />
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-[10px] font-bold tracking-tight rounded-full border-none shadow-sm px-3">
+                      <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-micro font-bold tracking-tight rounded-full border-none shadow-sm px-3">
                         {post.category}
                       </Badge>
                     </div>
                     <div className="absolute top-4 right-12">
                       <Badge className={cn(
-                        "backdrop-blur-sm text-[10px] font-bold tracking-tight rounded-full border-none shadow-sm px-3",
+                        "backdrop-blur-sm text-micro font-bold tracking-tight rounded-full border-none shadow-sm px-3",
                         post.status === 'Published' ? "bg-brand-green text-white" : 
                         post.status === 'Pending Verification' ? "bg-brand-gold text-on-surface" :
                         "bg-amber-500/80 text-white"
@@ -917,12 +917,12 @@ export default function AdminBlogs() {
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1.5 text-muted-foreground/40">
                           <Calendar className="w-3.5 h-3.5" />
-                          <span className="text-[11px] font-semibold">{new Date(post.publishedAt).toLocaleDateString()}</span>
+                          <span className="text-tiny font-semibold">{new Date(post.publishedAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5 text-muted-foreground/40">
                         <Clock className="w-3.5 h-3.5" />
-                        <span className="text-[11px] font-semibold">{post.readTime}</span>
+                        <span className="text-tiny font-semibold">{post.readTime}</span>
                       </div>
                     </div>
                   </CardContent>

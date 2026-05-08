@@ -70,7 +70,7 @@ export function LiveContributionFeed() {
         </div>
         <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
           <Globe className="w-3 h-3 text-primary" />
-          <span className="text-[9px] font-bold text-primary tracking-tight normal-case">Live Uplink Active</span>
+          <span className="text-micro font-bold text-primary tracking-tight normal-case">Live Uplink Active</span>
         </div>
       </div>
 
@@ -103,10 +103,10 @@ export function LiveContributionFeed() {
                       )}
                     </div>
                     <div>
-                      <p className="text-[12px] font-bold text-on-surface tracking-tight normal-case leading-tight">
+                      <p className="text-xs font-bold text-on-surface tracking-tight normal-case leading-tight">
                         {donation.fullName}
                       </p>
-                      <p className="text-[10px] text-muted-foreground/60 font-bold tracking-tight mt-1 normal-case">
+                      <p className="text-micro text-muted-foreground/60 font-bold tracking-tight mt-1 normal-case">
                         Mobilizing <span className="text-primary font-meta">{donation.campaignTitle || 'Strategic Fund'}</span>
                       </p>
                     </div>
@@ -116,7 +116,7 @@ export function LiveContributionFeed() {
                     <p className="text-base font-bold text-on-surface font-meta tracking-tight">
                       GH₵ {Number(donation.amount).toLocaleString()}
                     </p>
-                    <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight normal-case mt-1 tabular-nums bg-muted/20 px-2 py-0.5 rounded-full inline-block">
+                    <p className="text-micro text-muted-foreground/40 font-bold tracking-tight normal-case mt-1 tabular-nums bg-muted/20 px-2 py-0.5 rounded-full inline-block">
                       {new Date(donation.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -129,13 +129,13 @@ export function LiveContributionFeed() {
         {donations.length === 0 && (
           <div className="py-20 text-center border border-dashed border-border/40 rounded-sm">
             <Heart className="w-8 h-8 text-muted-foreground/20 mx-auto mb-4" />
-            <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight uppercase">Awaiting mobilization uplink...</p>
+            <p className="text-micro font-bold text-muted-foreground/40 tracking-tight uppercase">Awaiting mobilization uplink...</p>
           </div>
         )}
       </div>
       
       <div className="mt-6 pt-6 border-t border-border/40 flex items-center justify-between">
-        <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case italic">
+        <p className="text-micro font-bold text-muted-foreground/40 tracking-tight normal-case italic">
           * Immutable strategic ledger. Redacted entries respect patriot privacy.
         </p>
         <div className="flex items-center gap-1">

@@ -48,7 +48,7 @@ export function CommentSection() {
       <div className="flex items-center gap-3 mb-10">
         <MessageSquare className="w-6 h-6 text-[var(--brand-green)]" />
         <h2 className="text-xl font-bold text-stone-900 tracking-tight mb-0">Community Discussion</h2>
-        <span className="bg-stone-100 text-stone-500 text-[10px] font-bold px-2 py-0.5 tracking-tight">
+        <span className="bg-stone-100 text-stone-500 text-micro font-bold px-2 py-0.5 tracking-tight">
           {comments.length} comments
         </span>
       </div>
@@ -73,7 +73,7 @@ export function CommentSection() {
             <Button 
               type="submit"
               disabled={!newComment.trim()}
-              className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-[10px] h-10 px-8 rounded-none"
+              className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-micro h-10 px-8 rounded-none"
             >
               Post comment <Send className="w-3 h-3 ml-2" />
             </Button>
@@ -91,14 +91,14 @@ export function CommentSection() {
             <div className="flex-1 space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold text-stone-900 mb-0 tracking-tight">{comment.author}</h4>
-                <span className="text-[10px] font-bold text-stone-400 tracking-tight">{comment.date}</span>
+                <span className="text-micro font-bold text-stone-400 tracking-tight">{comment.date}</span>
               </div>
               <p className="text-sm text-stone-600 leading-relaxed mb-0">
                 {comment.content}
               </p>
               <div className="flex gap-4 pt-2">
-                <button className="text-[9px] font-bold text-stone-400 tracking-tight hover:text-[var(--brand-green)] transition-colors">Reply</button>
-                <button className="text-[9px] font-bold text-stone-400 tracking-tight hover:text-[var(--brand-red)] transition-colors">Flag</button>
+                <button className="text-micro font-bold text-stone-400 tracking-tight hover:text-[var(--brand-green)] transition-colors">Reply</button>
+                <button className="text-micro font-bold text-stone-400 tracking-tight hover:text-[var(--brand-red)] transition-colors">Flag</button>
               </div>
             </div>
           </div>

@@ -69,7 +69,7 @@ export function DeleteConfirmationModal({
 
             {/* Item Preview Card */}
             <div className="bg-muted/5 rounded-sm p-5 border border-border/40 mb-8">
-              <p className="text-[10px] font-bold text-on-surface/40 tracking-tight mb-2">Target item</p>
+              <p className="text-micro font-bold text-on-surface/40 tracking-tight mb-2">Target item</p>
               <p className="text-sm font-bold text-on-surface truncate tracking-tight">{itemName}</p>
             </div>
 
@@ -79,7 +79,7 @@ export function DeleteConfirmationModal({
                 variant="ghost"
                 onClick={onClose}
                 disabled={isLoading}
-                className="flex-1 h-14 rounded-sm text-on-surface/60 font-bold tracking-tight text-[10px] hover:bg-muted/5 hover:text-on-surface transition-all"
+                className="flex-1 h-14 rounded-sm text-on-surface/60 font-bold tracking-tight text-micro hover:bg-muted/5 hover:text-on-surface transition-all"
               >
                 Cancel
               </Button>
@@ -88,7 +88,7 @@ export function DeleteConfirmationModal({
                 onClick={onConfirm}
                 disabled={isLoading}
                 className={cn(
-                  "flex-1 h-14 rounded-sm text-white font-bold tracking-tight text-[10px] shadow-2xl transition-all active:scale-[0.98] gap-3",
+                  "flex-1 h-14 rounded-sm text-white font-bold tracking-tight text-micro shadow-2xl transition-all active:scale-[0.98] gap-3",
                   isPermanent 
                     ? "bg-destructive hover:bg-destructive/90 shadow-destructive/20" 
                     : "bg-on-surface hover:bg-on-surface/90 shadow-on-surface/20"

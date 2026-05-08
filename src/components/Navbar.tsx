@@ -67,7 +67,7 @@ export default function Navbar() {
           </Link>
         </div>
         
-        <div className="hidden md:flex items-center space-x-10 text-[12px] font-bold tracking-tight">
+        <div className="hidden md:flex items-center space-x-10 text-xs font-bold tracking-tight">
           <Link 
             to="/" 
             className={`transition-colors duration-200 ${isActive('/') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`}
@@ -140,18 +140,18 @@ export default function Navbar() {
                 <div className="absolute right-0 mt-3 w-64 bg-white border border-border/40 shadow-2xl rounded-sm py-3 z-50">
                   <div className="px-5 py-3 border-b border-border/10 mb-2">
                     <p className="text-xs font-bold text-on-surface tracking-tight mb-0 leading-none">Member portal</p>
-                    <p className="text-[9px] text-accent font-bold tracking-tight mt-1 mb-0 leading-none">Active patriot</p>
+                    <p className="text-micro text-accent font-bold tracking-tight mt-1 mb-0 leading-none">Active patriot</p>
                   </div>
-                  <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-5 py-3 text-[10px] font-bold tracking-tight text-on-surface hover:bg-muted/5 transition-colors">
+                  <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-5 py-3 text-micro font-bold tracking-tight text-on-surface hover:bg-muted/5 transition-colors">
                     <User className="w-4 h-4 text-primary" /> Dashboard
                   </Link>
-                  <Link to="/settings" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-5 py-3 text-[10px] font-bold tracking-tight text-on-surface hover:bg-muted/5 transition-colors">
+                  <Link to="/settings" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-5 py-3 text-micro font-bold tracking-tight text-on-surface hover:bg-muted/5 transition-colors">
                     <Settings className="w-4 h-4 text-on-surface/20" /> Settings
                   </Link>
                   <div className="border-t border-border/10 mt-2 pt-2">
                     <button 
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full text-left px-5 py-3 text-[10px] font-bold tracking-tight text-destructive hover:bg-destructive/5 transition-colors"
+                      className="flex items-center gap-3 w-full text-left px-5 py-3 text-micro font-bold tracking-tight text-destructive hover:bg-destructive/5 transition-colors"
                     >
                       <LogOut className="w-4 h-4" /> Logout
                     </button>
@@ -186,21 +186,21 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-border/10 shadow-2xl px-6 py-8 space-y-2">
-          <Link to="/" className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive('/') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Home</Link>
-          <Link to="/blog" className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive('/blog') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Updates</Link>
-          <Link to={isLoggedIn ? "/dashboard/polls" : "/polls"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/polls' : '/polls') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Polls</Link>
-          <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>The Plan</Link>
-          <Link to={isLoggedIn ? "/dashboard/chapters" : "/chapters"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/chapters' : '/chapters') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Chapters</Link>
-          <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Supplies</Link>
-          <Link to={isLoggedIn ? "/dashboard/donate" : "/donate"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Donate</Link>
-          <Link to={isLoggedIn ? "/dashboard/contact" : "/contact"} className={`block py-2.5 px-4 rounded-sm text-[12px] font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Contact</Link>
+          <Link to="/" className={`block py-2.5 px-4 rounded-sm text-xs font-bold tracking-tight ${isActive('/') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Home</Link>
+          <Link to="/blog" className={`block py-2.5 px-4 rounded-sm text-xs font-bold tracking-tight ${isActive('/blog') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Updates</Link>
+          <Link to={isLoggedIn ? "/dashboard/polls" : "/polls"} className={`block py-2.5 px-4 rounded-sm text-xs font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/polls' : '/polls') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Polls</Link>
+          <Link to={isLoggedIn ? "/dashboard/agenda" : "/our-agenda"} className={`block py-2.5 px-4 rounded-sm text-xs font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/agenda' : '/our-agenda') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>The Plan</Link>
+          <Link to={isLoggedIn ? "/dashboard/chapters" : "/chapters"} className={`block py-2.5 px-4 rounded-sm text-xs font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/chapters' : '/chapters') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Chapters</Link>
+          <Link to={isLoggedIn ? "/dashboard/store" : "/store"} className={`block py-2.5 px-4 rounded-sm text-xs font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/store' : '/store') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Supplies</Link>
+          <Link to={isLoggedIn ? "/dashboard/donate" : "/donate"} className={`block py-2.5 px-4 rounded-sm text-xs font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/donate' : '/donate') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Donate</Link>
+          <Link to={isLoggedIn ? "/dashboard/contact" : "/contact"} className={`block py-2.5 px-4 rounded-sm text-xs font-bold tracking-tight ${isActive(isLoggedIn ? '/dashboard/contact' : '/contact') ? 'bg-primary/5 text-primary' : 'text-on-surface/60'}`}>Contact</Link>
           
           <div className="pt-8 flex flex-col gap-3 border-t border-border/10 mt-4">
             {isLoggedIn ? (
               <>
-                <Link to="/dashboard" className="flex items-center gap-3 py-3 px-4 bg-primary/5 text-primary rounded-sm text-[10px] font-bold tracking-tight"><User className="w-4 h-4"/> Dashboard</Link>
-                <Link to="/settings" className="flex items-center gap-3 py-3 px-4 text-on-surface/60 rounded-sm text-[10px] font-bold tracking-tight"><Settings className="w-4 h-4"/> Settings</Link>
-                <button onClick={handleLogout} className="flex items-center gap-3 py-3 px-4 text-destructive rounded-sm text-[10px] font-bold tracking-tight text-left"><LogOut className="w-4 h-4"/> Logout</button>
+                <Link to="/dashboard" className="flex items-center gap-3 py-3 px-4 bg-primary/5 text-primary rounded-sm text-micro font-bold tracking-tight"><User className="w-4 h-4"/> Dashboard</Link>
+                <Link to="/settings" className="flex items-center gap-3 py-3 px-4 text-on-surface/60 rounded-sm text-micro font-bold tracking-tight"><Settings className="w-4 h-4"/> Settings</Link>
+                <button onClick={handleLogout} className="flex items-center gap-3 py-3 px-4 text-destructive rounded-sm text-micro font-bold tracking-tight text-left"><LogOut className="w-4 h-4"/> Logout</button>
               </>
             ) : (
               <>

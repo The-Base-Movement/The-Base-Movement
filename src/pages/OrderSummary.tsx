@@ -29,7 +29,7 @@ export default function OrderSummary() {
       <div className="min-h-screen flex items-center justify-center bg-off-white">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 text-[var(--brand-green)] animate-spin" />
-          <p className="text-[10px] font-bold tracking-tight text-stone-400">Retrieving transaction data...</p>
+          <p className="text-micro font-bold tracking-tight text-stone-400">Retrieving transaction data...</p>
         </div>
       </div>
     )
@@ -75,7 +75,7 @@ export default function OrderSummary() {
                 </div>
               </div>
               <h1 className="font-h1 text-h3 mb-1 tracking-tight">Order confirmed</h1>
-              <p className="font-meta text-[10px] opacity-90 tracking-tight">Your support drives the movement forward</p>
+              <p className="font-meta text-micro opacity-90 tracking-tight">Your support drives the movement forward</p>
             </div>
           </div>
 
@@ -84,11 +84,11 @@ export default function OrderSummary() {
             <div className="flex flex-col gap-6 py-6 border-b border-stone-100 mb-8">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-1">Order identifier</p>
+                  <p className="text-micro font-bold text-stone-400 tracking-tight mb-1">Order identifier</p>
                   <p className="font-bold text-stone-900 break-all sm:break-normal">#{orderNumber}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-1 sm:text-right">Date</p>
+                  <p className="text-micro font-bold text-stone-400 tracking-tight mb-1 sm:text-right">Date</p>
                   <p className="font-bold text-stone-900 sm:text-right">{date}</p>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function OrderSummary() {
                       </div>
                       <div>
                         <p className="font-bold text-stone-900 text-sm leading-tight tracking-tight">{item.product_name || 'Official gear'}</p>
-                        <p className="text-[10px] font-bold text-stone-400 tracking-tight mt-1">Quantity: {item.quantity}</p>
+                        <p className="text-micro font-bold text-stone-400 tracking-tight mt-1">Quantity: {item.quantity}</p>
                       </div>
                     </div>
                     <p className="font-bold text-stone-900 text-sm whitespace-nowrap">GHS {Number(item.price_at_purchase * item.quantity).toFixed(2)}</p>
@@ -152,10 +152,10 @@ export default function OrderSummary() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold tracking-tight rounded-sm transition-all duration-300">
+                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-micro font-bold tracking-tight rounded-sm transition-all duration-300">
                   <Printer className="w-4 h-4 mr-2" /> Print invoice
                 </Button>
-                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-[10px] font-bold tracking-tight rounded-sm transition-all duration-300">
+                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-micro font-bold tracking-tight rounded-sm transition-all duration-300">
                   <Share2 className="w-4 h-4 mr-2" /> Share support
                 </Button>
               </div>

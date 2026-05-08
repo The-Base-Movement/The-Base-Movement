@@ -34,7 +34,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
       </div>
       <div className="p-6 flex flex-col flex-1">
         <div className="flex items-center gap-3 mb-3">
-          <span className={`px-2.5 py-1 rounded-sm text-[10px] font-bold tracking-tight border transition-all duration-300 ${
+          <span className={`px-2.5 py-1 rounded-sm text-micro font-bold tracking-tight border transition-all duration-300 ${
             post.category === 'Impact' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' :
             post.category === 'Diaspora' ? 'bg-purple-50 text-purple-700 border-purple-100' :
             post.category === 'Digital Strategy' ? 'bg-sky-50 text-sky-700 border-sky-100' :
@@ -44,7 +44,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
             {post.category}
           </span>
           <span className="text-stone-300 opacity-50 text-xs">|</span>
-          <span className="text-[11px] text-slate-400 font-medium tracking-tight">{formattedDate}</span>
+          <span className="text-tiny text-slate-400 font-medium tracking-tight">{formattedDate}</span>
         </div>
         <Link to={`${baseUrl}/${post.slug}`}>
           <h3 
@@ -56,7 +56,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
         </Link>
         <p className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>
         <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
-          <span className="text-[11px] font-medium text-stone-400 tracking-tight">
+          <span className="text-tiny font-medium text-stone-400 tracking-tight">
             {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName} <span className="mx-1 opacity-50">|</span> {post.readTime}
           </span>
           <Button asChild variant="link" className="p-0 h-auto text-brand-green">

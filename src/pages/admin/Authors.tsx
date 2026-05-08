@@ -101,7 +101,7 @@ export default function AdminAuthors() {
           <Button 
             variant="primary" 
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => window.location.href = '/admin/authors/new'}
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -118,7 +118,7 @@ export default function AdminAuthors() {
               <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
               <Input 
                 placeholder="Search by name or role..." 
-                className="pl-12 h-11 bg-white border-border/60 focus-visible:ring-primary rounded-sm text-[11px] font-bold"
+                className="pl-12 h-11 bg-white border-border/60 focus-visible:ring-primary rounded-sm text-tiny font-bold"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -126,7 +126,7 @@ export default function AdminAuthors() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="h-11 px-4 py-2 text-[10px] font-bold rounded-sm border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent cursor-pointer transition-all"
+              className="h-11 px-4 py-2 text-micro font-bold rounded-sm border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent cursor-pointer transition-all"
             >
               <option value="All Roles">All Roles</option>
               {uniqueRoles.map(role => (
@@ -134,7 +134,7 @@ export default function AdminAuthors() {
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground/60 font-bold bg-white px-5 py-2.5 rounded-sm border border-border/10 shadow-sm">
+          <div className="flex items-center gap-3 text-micro text-muted-foreground/60 font-bold bg-white px-5 py-2.5 rounded-sm border border-border/10 shadow-sm">
             <Shield className="w-4 h-4 text-muted-foreground/40" />
             <span className="normal-case">Authorized personnel:</span> <span className="text-on-surface font-bold ml-1">{authors.length}</span>
           </div>
@@ -142,7 +142,7 @@ export default function AdminAuthors() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-[10px] text-stone-500 capitalize tracking-tight bg-stone-50/80 border-b border-stone-100">
+            <thead className="text-micro text-stone-500 capitalize tracking-tight bg-stone-50/80 border-b border-stone-100">
               <tr>
                 <th className="px-6 py-4 font-bold">Author Profile</th>
                 <th className="px-6 py-4 font-bold">Role & Title</th>
@@ -324,21 +324,21 @@ function AuthorDetailModal({ author, isOpen, onClose }: { author: Author | null,
         <div className="bg-stone-50/80 border-t border-stone-100 px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-12">
             <div className="flex flex-col">
-              <span className="text-[10px] text-stone-400 uppercase font-bold tracking-tighter mb-0.5">Enlisted Date</span>
+              <span className="text-micro text-stone-400 uppercase font-bold tracking-tighter mb-0.5">Enlisted Date</span>
               <span className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
                 <Calendar className="w-3 h-3 text-stone-400" />
                 {format(new Date(author.createdAt), 'MMMM dd, yyyy')}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] text-stone-400 uppercase font-bold tracking-tighter mb-0.5">Current Status</span>
+              <span className="text-micro text-stone-400 uppercase font-bold tracking-tighter mb-0.5">Current Status</span>
               <span className="text-xs font-bold text-green-600 flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 Active Duty
               </span>
             </div>
           </div>
-          <div className="text-[10px] text-stone-300 font-bold uppercase tracking-widest flex items-center gap-2">
+          <div className="text-micro text-stone-300 font-bold uppercase tracking-widest flex items-center gap-2">
             <Shield className="w-3 h-3" />
             Verified Editorial Personnel
           </div>

@@ -178,7 +178,7 @@ export default function AdminOrders() {
             variant="outline"
             size="lg"
             onClick={handleExport}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm h-12 active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-8 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm h-12 active:scale-95"
           >
             <Download className="w-4 h-4 mr-2" /> Export Manifest
           </Button>
@@ -186,7 +186,7 @@ export default function AdminOrders() {
             variant="primary"
             size="lg"
             onClick={() => loadData(true)}
-            className="rounded-sm text-[10px] px-10 h-12 font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro px-10 h-12 font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
             Synchronize
@@ -203,9 +203,9 @@ export default function AdminOrders() {
         )) : statCards.map(s => (
           <Card key={s.label} className="rounded-sm border-border/40 shadow-sm bg-white group hover:shadow-md transition-all duration-300">
             <CardContent className="p-8">
-              <p className="text-[10px] font-bold text-muted-foreground/40 mb-2 tracking-tight">{s.label}</p>
+              <p className="text-micro font-bold text-muted-foreground/40 mb-2 tracking-tight">{s.label}</p>
               <p className={cn('text-4xl font-bold font-meta tracking-tighter mb-1', s.color)}>{s.value}</p>
-              <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">{s.sub}</p>
+              <p className="text-micro text-muted-foreground/40 font-bold tracking-tight">{s.sub}</p>
             </CardContent>
           </Card>
         ))}
@@ -216,7 +216,7 @@ export default function AdminOrders() {
         <div className={cn("min-w-0", selectedOrder ? 'flex-[2]' : 'flex-1')}>
           <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden">
             <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between gap-4 bg-muted/5">
-              <CardTitle className="text-[10px] font-bold text-muted-foreground/40 flex items-center gap-2">
+              <CardTitle className="text-micro font-bold text-muted-foreground/40 flex items-center gap-2">
                 <Package className="w-4 h-4 text-brand-green" /> Order Feed
               </CardTitle>
               <div className="flex items-center gap-4">
@@ -228,7 +228,7 @@ export default function AdminOrders() {
                     placeholder="Search by name, email, or ID..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="pl-9 pr-4 h-9 text-[11px] font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 w-full rounded-sm placeholder:text-muted-foreground/20"
+                    className="pl-9 pr-4 h-9 text-tiny font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 w-full rounded-sm placeholder:text-muted-foreground/20"
                   />
                 </div>
 
@@ -239,7 +239,7 @@ export default function AdminOrders() {
                     <select
                       value={statusFilter}
                       onChange={e => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
-                      className="pl-9 pr-8 h-9 text-[11px] font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 appearance-none rounded-sm cursor-pointer text-muted-foreground/60"
+                      className="pl-9 pr-8 h-9 text-tiny font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 appearance-none rounded-sm cursor-pointer text-muted-foreground/60"
                     >
                       <option value="ALL">All Statuses</option>
                       {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
@@ -254,12 +254,12 @@ export default function AdminOrders() {
               {loading ? (
                 <div className="p-20 text-center">
                   <RefreshCw className="w-8 h-8 animate-spin text-brand-green/20 mx-auto mb-4" />
-                  <p className="text-[10px] font-bold normal-case tracking-tight text-slate-300">Synchronizing order flow...</p>
+                  <p className="text-micro font-bold normal-case tracking-tight text-slate-300">Synchronizing order flow...</p>
                 </div>
               ) : filtered.length === 0 ? (
                 <div className="p-20 text-center">
                   <Package className="w-12 h-12 text-slate-100 mx-auto mb-4" />
-                  <p className="text-[10px] font-bold normal-case tracking-tight text-slate-400">No orders found</p>
+                  <p className="text-micro font-bold normal-case tracking-tight text-slate-400">No orders found</p>
                   <p className="text-xs text-slate-300 mt-2 max-w-xs mx-auto">The merchandise feed is currently idle. Activity will appear as members complete movement-wide purchases.</p>
                 </div>
               ) : (
@@ -269,7 +269,7 @@ export default function AdminOrders() {
                   <thead>
                     <tr className="border-b border-border/10 bg-muted/5">
                       {['Order ID', 'Member', 'Region', 'Amount', 'Payment', 'Status', 'Date', 'Actions'].map(h => (
-                        <th key={h} className="px-6 py-4 text-left text-[10px] font-bold text-muted-foreground/40">{h}</th>
+                        <th key={h} className="px-6 py-4 text-left text-micro font-bold text-muted-foreground/40">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -287,29 +287,29 @@ export default function AdminOrders() {
                           )}
                           onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
                         >
-                          <td className="px-6 py-5 font-mono text-[11px] text-slate-400">
+                          <td className="px-6 py-5 font-mono text-tiny text-slate-400">
                             #{order.id.slice(0, 8).toUpperCase()}
                           </td>
                           <td className="px-6 py-5">
                             <p className="font-bold text-charcoal-dark text-sm">{order.full_name}</p>
-                            <p className="text-[10px] font-medium text-slate-400">{order.email}</p>
+                            <p className="text-micro font-medium text-slate-400">{order.email}</p>
                           </td>
-                          <td className="px-6 py-5 text-[11px] font-bold text-slate-500">
+                          <td className="px-6 py-5 text-tiny font-bold text-slate-500">
                             {order.region_or_state || '-'}
                           </td>
                           <td className="px-6 py-5 font-bold text-charcoal-dark text-sm">
                             GHS {Number(order.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </td>
-                          <td className="px-6 py-5 text-[10px] font-bold text-slate-400 normal-case tracking-tight">
+                          <td className="px-6 py-5 text-micro font-bold text-slate-400 normal-case tracking-tight">
                             {order.payment_method === 'momo' ? 'MoMo' : 'Card'}
                           </td>
                           <td className="px-6 py-5">
-                            <span className={cn('inline-flex items-center gap-1.5 px-3 py-1 text-[9px] font-bold border rounded-full', cfg.bg, cfg.color)}>
+                            <span className={cn('inline-flex items-center gap-1.5 px-3 py-1 text-micro font-bold border rounded-full', cfg.bg, cfg.color)}>
                               <StatusIcon className="w-3 h-3" />
                               {cfg.label}
                             </span>
                           </td>
-                          <td className="px-6 py-5 text-[10px] font-bold text-slate-400">
+                          <td className="px-6 py-5 text-micro font-bold text-slate-400">
                             {new Date(order.created_at).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-5">
@@ -320,7 +320,7 @@ export default function AdminOrders() {
                                   size="sm"
                                   onClick={() => handleStatusAdvance(order)}
                                   disabled={updatingId === order.id}
-                                  className="h-9 px-6 text-[9px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20"
+                                  className="h-9 px-6 text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20"
                                 >
                                   {updatingId === order.id ? '...' : `→ ${nextStatus}`}
                                 </Button>
@@ -358,11 +358,11 @@ export default function AdminOrders() {
                       >
                         <div className="flex justify-between items-start">
                           <div className="space-y-1">
-                            <p className="text-[10px] font-mono font-bold text-muted-foreground/60 tracking-tight normal-case">#{order.id.slice(0, 8)}</p>
+                            <p className="text-micro font-mono font-bold text-muted-foreground/60 tracking-tight normal-case">#{order.id.slice(0, 8)}</p>
                             <h4 className="text-sm font-bold text-on-surface">{order.full_name}</h4>
-                            <p className="text-[10px] font-bold text-muted-foreground/60">{order.region_or_state || 'Unknown Region'}</p>
+                            <p className="text-micro font-bold text-muted-foreground/60">{order.region_or_state || 'Unknown Region'}</p>
                           </div>
-                          <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-bold normal-case border rounded-full', cfg.bg, cfg.color)}>
+                          <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-micro font-bold normal-case border rounded-full', cfg.bg, cfg.color)}>
                             <StatusIcon className="w-2.5 h-2.5" />
                             {cfg.label}
                           </span>
@@ -370,11 +370,11 @@ export default function AdminOrders() {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div className="p-4 bg-white border border-border/40 rounded-sm shadow-sm">
-                            <p className="text-[9px] font-bold text-muted-foreground/60 normal-case tracking-tight mb-1">Value</p>
+                            <p className="text-micro font-bold text-muted-foreground/60 normal-case tracking-tight mb-1">Value</p>
                             <p className="text-sm font-bold text-on-surface">GHS {Number(order.total_amount).toFixed(2)}</p>
                           </div>
                           <div className="p-4 bg-white border border-border/40 rounded-sm shadow-sm">
-                            <p className="text-[9px] font-bold text-muted-foreground/60 normal-case tracking-tight mb-1">Payment</p>
+                            <p className="text-micro font-bold text-muted-foreground/60 normal-case tracking-tight mb-1">Payment</p>
                             <p className="text-sm font-bold text-on-surface capitalize">{order.payment_method}</p>
                           </div>
                         </div>
@@ -382,7 +382,7 @@ export default function AdminOrders() {
                         <div className="flex items-center gap-2 pt-2">
                           <Button
                             variant="outline"
-                            className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-[10px] font-bold capitalize tracking-tight shadow-sm hover:bg-stone-50 transition-all active:scale-95"
+                            className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-micro font-bold capitalize tracking-tight shadow-sm hover:bg-stone-50 transition-all active:scale-95"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedOrder(order);
@@ -393,7 +393,7 @@ export default function AdminOrders() {
                           {nextStatus && (
                             <Button
                               variant="primary"
-                              className="flex-1 h-12 rounded-sm text-[10px] font-bold capitalize tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                              className="flex-1 h-12 rounded-sm text-micro font-bold capitalize tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                               disabled={updatingId === order.id}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -420,7 +420,7 @@ export default function AdminOrders() {
           return (
             <Card className="rounded-sm border-border/40 shadow-xl flex-1 h-fit sticky top-6 bg-white overflow-hidden animate-in slide-in-from-right-4 duration-500">
               <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between bg-muted/5">
-                <CardTitle className="text-[10px] font-bold text-muted-foreground/40">
+                <CardTitle className="text-micro font-bold text-muted-foreground/40">
                   Order Manifest
                 </CardTitle>
                 <button 
@@ -434,10 +434,10 @@ export default function AdminOrders() {
                 {/* ID & Status */}
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[10px] font-bold text-muted-foreground/40 mb-1">Manifest ID</p>
+                    <p className="text-micro font-bold text-muted-foreground/40 mb-1">Manifest ID</p>
                     <p className="font-mono text-xs font-bold text-on-surface">#{selectedOrder.id.toUpperCase()}</p>
                   </div>
-                  <span className={cn('inline-flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-bold border rounded-full', cfg.bg, cfg.color)}>
+                  <span className={cn('inline-flex items-center gap-1.5 px-3 py-1.5 text-micro font-bold border rounded-full', cfg.bg, cfg.color)}>
                     <StatusIcon className="w-3 h-3" />
                     {cfg.label}
                   </span>
@@ -445,7 +445,7 @@ export default function AdminOrders() {
 
                 {/* Patriot */}
                 <div className="flow pt-6 border-t border-border/10" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
-                  <p className="text-[10px] font-bold text-muted-foreground/40">Recipient Details</p>
+                  <p className="text-micro font-bold text-muted-foreground/40">Recipient Details</p>
                   <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                     <p className="font-bold text-base text-on-surface">{selectedOrder.full_name}</p>
                     <p className="text-xs font-medium text-muted-foreground/60">{selectedOrder.email}</p>
@@ -455,7 +455,7 @@ export default function AdminOrders() {
 
                 {/* Shipping */}
                 <div className="flow pt-6 border-t border-border/10" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
-                  <p className="text-[10px] font-bold text-muted-foreground/40">Logistics Destination</p>
+                  <p className="text-micro font-bold text-muted-foreground/40">Logistics Destination</p>
                   <div className="flow text-xs font-medium text-muted-foreground/60 leading-relaxed" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                     <p>{selectedOrder.shipping_address}</p>
                     <p>{selectedOrder.city}, {selectedOrder.region_or_state}</p>
@@ -466,8 +466,8 @@ export default function AdminOrders() {
                 {/* Manifest Items */}
                 <div className="flow pt-6 border-t border-slate-50" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-bold normal-case tracking-tight text-slate-400">Manifest items</p>
-                    <span className="text-[9px] font-bold text-slate-400">{selectedOrder.items.length} Units</span>
+                    <p className="text-micro font-bold normal-case tracking-tight text-slate-400">Manifest items</p>
+                    <span className="text-micro font-bold text-slate-400">{selectedOrder.items.length} Units</span>
                   </div>
                   <div className="flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
                     {selectedOrder.items.map((item, idx) => (
@@ -476,11 +476,11 @@ export default function AdminOrders() {
                           <p className="text-xs font-bold text-charcoal-dark group-hover:text-brand-green transition-colors">
                             {item.product_name || 'Legacy Movement Asset'}
                           </p>
-                          <p className="text-[10px] font-medium text-slate-400">Unit Price: GHS {Number(item.price_at_purchase).toFixed(2)}</p>
+                          <p className="text-micro font-medium text-slate-400">Unit Price: GHS {Number(item.price_at_purchase).toFixed(2)}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-xs font-bold text-charcoal-dark">x{item.quantity}</p>
-                          <p className="text-[9px] font-bold text-slate-400 normal-case tracking-tight">
+                          <p className="text-micro font-bold text-slate-400 normal-case tracking-tight">
                             GHS {(item.quantity * item.price_at_purchase).toFixed(2)}
                           </p>
                         </div>
@@ -500,7 +500,7 @@ export default function AdminOrders() {
                     <span className="font-bold text-on-surface">GHS {Number(selectedOrder.shipping_fee).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between pt-4 border-t border-border/10">
-                    <span className="text-[10px] font-bold text-on-surface">Total Manifest Value</span>
+                    <span className="text-micro font-bold text-on-surface">Total Manifest Value</span>
                     <span className="text-lg font-bold text-brand-green">GHS {Number(selectedOrder.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </div>
                 </div>
@@ -510,7 +510,7 @@ export default function AdminOrders() {
                   {NEXT_STATUS[selectedOrder.status] && (
                     <Button
                       variant="primary"
-                      className="w-full h-14 text-[11px] font-bold tracking-tight rounded-sm shadow-xl shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                      className="w-full h-14 text-tiny font-bold tracking-tight rounded-sm shadow-xl shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                       onClick={() => handleStatusAdvance(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
@@ -520,7 +520,7 @@ export default function AdminOrders() {
                   {selectedOrder.status !== 'Cancelled' && selectedOrder.status !== 'Delivered' && (
                     <Button
                       variant="outline"
-                      className="w-full h-14 text-[10px] font-bold tracking-tight text-brand-red border-border/40 hover:bg-brand-red/10 rounded-sm transition-all active:scale-95"
+                      className="w-full h-14 text-micro font-bold tracking-tight text-brand-red border-border/40 hover:bg-brand-red/10 rounded-sm transition-all active:scale-95"
                       onClick={() => handleCancel(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >

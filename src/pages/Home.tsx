@@ -228,7 +228,7 @@ export default function Home() {
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <span className="text-primary font-bold tracking-tight text-[10px] mb-3 block">Updates</span>
+              <span className="text-primary font-bold tracking-tight text-micro mb-3 block">Updates</span>
               <h2 id="updates-heading" className="text-3xl md:text-h2 font-meta font-bold text-on-surface tracking-tight">Latest updates</h2>
               <BrandLine className="mt-4" />
             </div>
@@ -257,13 +257,13 @@ export default function Home() {
                        decoding="async" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/80">
-                        <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">The Base</span>
+                        <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">The Base</span>
                       </div>
                     )}
                   </div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[10px] font-meta font-bold text-primary tracking-tight">{post.category}</span>
-                    <span className="text-[10px] text-muted-foreground font-meta">
+                    <span className="text-micro font-meta font-bold text-primary tracking-tight">{post.category}</span>
+                    <span className="text-micro text-muted-foreground font-meta">
                       {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                     </span>
                   </div>
@@ -318,7 +318,7 @@ export default function Home() {
                 {/* Trust Row - Pill Badges */}
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   {['Base Ghana', 'Base Diaspora', 'Free Registration'].map((label) => (
-                    <span key={label} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-meta font-bold text-white/80 tracking-tight">
+                    <span key={label} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-micro font-meta font-bold text-white/80 tracking-tight">
                       {label}
                     </span>
                   ))}

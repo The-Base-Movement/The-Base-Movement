@@ -70,7 +70,7 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
                   <h5 className="text-stone-900 leading-tight mb-1">
                     {assignedChapter.name}
                   </h5>
-                  <span className="text-[10px] font-bold text-white bg-[var(--brand-green)] px-2 py-0.5 rounded-none tracking-tight">
+                  <span className="text-micro font-bold text-white bg-[var(--brand-green)] px-2 py-0.5 rounded-none tracking-tight">
                     Assigned
                   </span>
                 </div>
@@ -104,7 +104,7 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
           <div className="mt-10 pt-8 border-t border-stone-100">
             <div className="flex items-center gap-3 text-stone-400">
               <Building2 className="w-4 h-4" />
-              <p className="text-[10px] font-bold tracking-tight mb-0">
+              <p className="text-micro font-bold tracking-tight mb-0">
                 Assigned based on your region: {assignedChapter.region}
               </p>
             </div>

@@ -139,7 +139,7 @@ export default function MediaLibrary() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             onClick={loadFiles}
           >
             Refresh Vault
@@ -157,7 +157,7 @@ export default function MediaLibrary() {
             <Button 
               variant="primary"
               size="lg"
-              className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               asChild
               disabled={isUploading}
             >
@@ -205,7 +205,7 @@ export default function MediaLibrary() {
                     variant={activeFolder === folder.id ? "primary" : "ghost"}
                     onClick={() => setActiveFolder(folder.id)}
                     className={cn(
-                      "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-[10px] font-bold tracking-tight transition-all h-14 active:scale-95",
+                      "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
                       activeFolder === folder.id 
                         ? "shadow-lg shadow-brand-green/20" 
                         : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
@@ -254,7 +254,7 @@ export default function MediaLibrary() {
                   </p>
                   <Button 
                     variant="primary" 
-                    className="mt-6 rounded-sm px-12 h-14 text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                    className="mt-6 rounded-sm px-12 h-14 text-micro font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                     asChild
                   >
                     <label htmlFor="media-upload" className="cursor-pointer">
@@ -301,10 +301,10 @@ export default function MediaLibrary() {
                         </div>
                       </div>
                       <div className="mt-2 px-1">
-                        <p className="text-[10px] font-bold text-on-surface truncate">
+                        <p className="text-micro font-bold text-on-surface truncate">
                           {url.split('/').pop()}
                         </p>
-                        <p className="text-[9px] text-muted-foreground/40 font-medium normal-case mt-0.5">
+                        <p className="text-micro text-muted-foreground/40 font-medium normal-case mt-0.5">
                           {activeFolder.replace('-', ' ')}
                         </p>
                       </div>
@@ -329,14 +329,14 @@ export default function MediaLibrary() {
               </div>
               
               <div className="flex-1 max-w-md space-y-4">
-                <div className="flex justify-between text-[11px] font-bold text-white/40 tracking-tight">
+                <div className="flex justify-between text-tiny font-bold text-white/40 tracking-tight">
                   <span>Capacity utilization</span>
                   <span className="text-primary">12%</span>
                 </div>
                 <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
                   <div className="h-full bg-primary w-[12%] shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" />
                 </div>
-                <div className="flex justify-between text-[10px] font-bold text-white/20 tracking-tight">
+                <div className="flex justify-between text-micro font-bold text-white/20 tracking-tight">
                   <span className="normal-case">0.6 GB consumed</span>
                   <span className="normal-case">5.0 GB limit</span>
                 </div>

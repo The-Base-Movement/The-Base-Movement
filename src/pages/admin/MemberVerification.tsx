@@ -187,7 +187,7 @@ export default function MemberVerification() {
             <div className="hidden md:flex px-4 py-2 bg-accent/5 border border-accent/20 items-center gap-2 rounded-sm shadow-sm">
               <AlertCircle className="w-4 h-4 text-accent" />
               <div className="text-right">
-                <span className="text-[9px] font-bold text-accent tracking-tight block uppercase">Pending</span>
+                <span className="text-micro font-bold text-accent tracking-tight block uppercase">Pending</span>
                 <span className="text-sm font-bold text-on-surface tracking-tight">
                   {pendingCount} review{pendingCount !== 1 ? 's' : ''}
                 </span>
@@ -197,7 +197,7 @@ export default function MemberVerification() {
           <Button
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setShowRegForm(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" /> Establish Identity
@@ -226,7 +226,7 @@ export default function MemberVerification() {
                 <select
                   value={statusFilter}
                   onChange={e => handleFilter(e.target.value as PendingVerification['status'] | 'All')}
-                  className="h-9 pl-9 pr-8 text-[9px] font-bold rounded-sm border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:border-on-surface appearance-none cursor-pointer transition-colors shadow-sm normal-case"
+                  className="h-9 pl-9 pr-8 text-micro font-bold rounded-sm border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:border-on-surface appearance-none cursor-pointer transition-colors shadow-sm normal-case"
                 >
                   {STATUS_OPTIONS.map(s => (
                     <option key={s} value={s}>{s === 'All' ? 'All statuses' : s}</option>
@@ -238,7 +238,7 @@ export default function MemberVerification() {
               {loading ? (
                 <div className="py-24 flex flex-col items-center justify-center gap-4">
                   <Loader2 className="w-8 h-8 text-on-surface animate-spin" />
-                  <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Fetching member identity files...</p>
+                  <p className="text-micro font-bold text-muted-foreground/40 normal-case">Fetching member identity files...</p>
                 </div>
               ) : filtered.length === 0 ? (
                 <div className="py-12 text-center text-muted-foreground/40 text-xs font-bold normal-case">
@@ -281,9 +281,9 @@ export default function MemberVerification() {
                             {member.name}
                           </p>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[9px] font-bold tracking-tight opacity-60">{member.id}</span>
+                            <span className="text-micro font-bold tracking-tight opacity-60">{member.id}</span>
                             <span className="w-1 h-1 bg-current opacity-20 rounded-full" />
-                            <span className="text-[9px] font-bold tracking-tight opacity-60">{member.submitted}</span>
+                            <span className="text-micro font-bold tracking-tight opacity-60">{member.submitted}</span>
                           </div>
                         </div>
                       </div>
@@ -291,11 +291,11 @@ export default function MemberVerification() {
                       {/* Region + status */}
                       <div className="flex items-center gap-6">
                         <div className="text-right hidden sm:block">
-                          <p className="text-[10px] font-bold tracking-tight">{member.region}</p>
-                          <p className="text-[9px] font-bold opacity-60 tracking-tight">{member.constituency}</p>
+                          <p className="text-micro font-bold tracking-tight">{member.region}</p>
+                          <p className="text-micro font-bold opacity-60 tracking-tight">{member.constituency}</p>
                         </div>
                         <div className={cn(
-                          'px-3 py-1 text-[9px] font-bold tracking-tight border rounded',
+                          'px-3 py-1 text-micro font-bold tracking-tight border rounded',
                           selectedMember?.id === member.id
                             ? 'bg-white/10 text-white border-white/20'
                             : statusColor(member.status)
@@ -316,7 +316,7 @@ export default function MemberVerification() {
             {/* Pagination bar */}
             {totalPages > 1 && (
               <div className="px-6 py-4 border-t border-border/10 bg-muted/5 flex items-center justify-between">
-                <p className="text-[9px] font-bold tracking-tight text-muted-foreground/40">
+                <p className="text-micro font-bold tracking-tight text-muted-foreground/40">
                   Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
                 </p>
                 <div className="flex items-center gap-1">
@@ -336,7 +336,7 @@ export default function MemberVerification() {
                       variant={page === safePage ? "primary" : "outline"}
                       onClick={() => setCurrentPage(page)}
                       className={cn(
-                        "w-8 h-8 flex items-center justify-center text-[9px] font-bold transition-all rounded-sm active:scale-95",
+                        "w-8 h-8 flex items-center justify-center text-micro font-bold transition-all rounded-sm active:scale-95",
                         page === safePage
                           ? "shadow-sm shadow-brand-green/20"
                           : "border-border/40 text-on-surface/80 hover:bg-stone-50"
@@ -375,14 +375,14 @@ export default function MemberVerification() {
                 <CardHeader className="p-6 border-b border-white/10 relative z-10">
                   <div className="flex justify-between items-start gap-3">
                     <div className="flex-1 min-w-0">
-                      <span className="text-[12px] font-bold text-white/60 tracking-tight">
+                      <span className="text-xs font-bold text-white/60 tracking-tight">
                         Reviewing · {selectedMember.id}
                       </span>
                       <CardTitle className="text-xl font-bold tracking-tight mt-1 leading-tight">
                         {selectedMember.name}
                       </CardTitle>
                       <div className={cn(
-                        'inline-flex mt-2 px-2 py-0.5 text-[11px] font-bold tracking-tight border rounded',
+                        'inline-flex mt-2 px-2 py-0.5 text-tiny font-bold tracking-tight border rounded',
                         selectedMember.status === 'Approved' && 'bg-primary/20 text-primary border-primary/30',
                         selectedMember.status === 'Rejected' && 'bg-destructive/20 text-destructive border-destructive/30',
                         (selectedMember.status === 'In Review' || selectedMember.status === 'Processing') && 'bg-accent/20 text-accent border-accent/30',
@@ -399,7 +399,7 @@ export default function MemberVerification() {
                     >
                       {selectedMember.photoUrl
                         ? <img src={selectedMember.photoUrl} alt={selectedMember.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                        : <div className="w-full h-full flex items-center justify-center text-[12px] text-white/60 font-bold italic">
+                        : <div className="w-full h-full flex items-center justify-center text-xs text-white/60 font-bold italic">
                             No photo
                           </div>
                       }
@@ -421,7 +421,7 @@ export default function MemberVerification() {
                       { label: 'Education', value: selectedMember.educationLevel },
                     ].map(({ label, value }) => (
                       <div key={label} className="space-y-0.5">
-                        <p className="text-[11px] font-bold text-white/60 tracking-tight">{label}</p>
+                        <p className="text-tiny font-bold text-white/60 tracking-tight">{label}</p>
                         <p className="text-sm font-bold tracking-tight text-white leading-tight">
                           {value || '-'}
                         </p>
@@ -431,20 +431,20 @@ export default function MemberVerification() {
 
                   {/* Contact */}
                   <div className="border-t border-white/10 pt-4 space-y-1">
-                    <p className="text-[11px] font-bold text-white/60 tracking-tight">Phone</p>
+                    <p className="text-tiny font-bold text-white/60 tracking-tight">Phone</p>
                     <p className="text-sm font-bold text-white">{selectedMember.phone || '-'}</p>
                   </div>
 
                   {/* Emergency contact */}
                   <div className="border-t border-white/10 pt-4 space-y-2">
-                    <p className="text-[11px] font-bold text-white/60 tracking-tight mb-2">Emergency contact</p>
+                    <p className="text-tiny font-bold text-white/60 tracking-tight mb-2">Emergency contact</p>
                     <div className="grid grid-cols-2 gap-3">
                       {[
                         { label: 'Name', value: selectedMember.emergencyName },
                         { label: 'Relation', value: selectedMember.emergencyRelationship },
                       ].map(({ label, value }) => (
                         <div key={label} className="space-y-0.5">
-                          <p className="text-[11px] font-bold text-white/40 tracking-tight">{label}</p>
+                          <p className="text-tiny font-bold text-white/40 tracking-tight">{label}</p>
                           <p className="text-sm font-bold tracking-tight text-white">{value || '-'}</p>
                         </div>
                       ))}
@@ -454,7 +454,7 @@ export default function MemberVerification() {
 
                   {/* Verification checklist */}
                   <div className="border-t border-white/10 pt-4 space-y-2">
-                    <h4 className="text-[12px] font-bold tracking-tight text-white/60">Verification steps</h4>
+                    <h4 className="text-xs font-bold tracking-tight text-white/60">Verification steps</h4>
                     {[
                       { label: 'Form submitted', done: true },
                       { label: 'Photo uploaded', done: !!selectedMember.photoUrl },
@@ -468,7 +468,7 @@ export default function MemberVerification() {
                             </div>
                         }
                         <span className={cn(
-                          'text-[12px] font-bold tracking-tight',
+                          'text-xs font-bold tracking-tight',
                           done ? 'text-white' : 'text-muted-foreground/40'
                         )}>{label}</span>
                       </div>
@@ -478,10 +478,10 @@ export default function MemberVerification() {
                   {/* AI Assistant Section */}
                   <div className="border-t border-white/10 pt-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-[12px] font-bold tracking-tight text-white/60">Security assistant</h4>
+                      <h4 className="text-xs font-bold tracking-tight text-white/60">Security assistant</h4>
                       {aiResult && (
                         <span className={cn(
-                          "text-[11px] font-bold px-1.5 py-0.5 tracking-tight rounded",
+                          "text-tiny font-bold px-1.5 py-0.5 tracking-tight rounded",
                           aiResult.flagged ? "bg-destructive text-white" : "bg-primary text-white"
                         )}>
                           {aiResult.confidence}% match
@@ -494,7 +494,7 @@ export default function MemberVerification() {
                         variant="primary"
                         size="sm"
                         onClick={handleAiScan}
-                        className="w-full h-11 text-white text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
+                        className="w-full h-11 text-white text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
                       >
                         <Cpu className="w-4 h-4 mr-2" /> Execute Identity Scan
                       </Button>
@@ -503,7 +503,7 @@ export default function MemberVerification() {
                     {aiAnalyzing && (
                       <div className="p-4 bg-white/5 border border-white/10 flex flex-col items-center gap-3 animate-pulse rounded-sm">
                         <Fingerprint className="w-6 h-6 text-accent animate-bounce" />
-                        <p className="text-[12px] font-bold text-muted-foreground/40 tracking-tight">Analyzing identity...</p>
+                        <p className="text-xs font-bold text-muted-foreground/40 tracking-tight">Analyzing identity...</p>
                       </div>
                     )}
 
@@ -514,12 +514,12 @@ export default function MemberVerification() {
                       )}>
                         <div className="flex flex-wrap gap-2">
                           {aiResult.matches.map(m => (
-                            <span key={m} className="text-[11px] font-bold tracking-tight text-white/60 bg-white/5 px-2 py-1 rounded">
+                            <span key={m} className="text-tiny font-bold tracking-tight text-white/60 bg-white/5 px-2 py-1 rounded">
                               {m}
                             </span>
                           ))}
                         </div>
-                        <p className="text-[12px] text-white/40 mt-3 italic tracking-tight">
+                        <p className="text-xs text-white/40 mt-3 italic tracking-tight">
                           * Neural scan of official records completed.
                         </p>
                       </div>
@@ -532,14 +532,14 @@ export default function MemberVerification() {
                       <Button
                         variant="outline"
                         onClick={() => handleVerdict(false)}
-                        className="h-11 border-brand-red/40 text-brand-red hover:bg-brand-red/10 transition-all text-[10px] font-bold tracking-tight rounded-sm active:scale-95"
+                        className="h-11 border-brand-red/40 text-brand-red hover:bg-brand-red/10 transition-all text-micro font-bold tracking-tight rounded-sm active:scale-95"
                       >
                         <XCircle className="w-4 h-4 mr-2" /> Reject Entry
                       </Button>
                       <Button
                         variant="primary"
                         onClick={() => handleVerdict(true)}
-                        className="h-11 text-white text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
+                        className="h-11 text-white text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
                       >
                         <UserCheck className="w-4 h-4 mr-2" /> Approve Admission
                       </Button>
@@ -547,13 +547,13 @@ export default function MemberVerification() {
                   )}
 
                   {selectedMember.status === 'Approved' && (
-                    <div className="flex items-center gap-2 p-3 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-tight rounded-sm">
+                    <div className="flex items-center gap-2 p-3 bg-primary/10 border border-primary/20 text-primary text-micro font-bold tracking-tight rounded-sm">
                       <CheckCircle2 className="w-4 h-4" /> Member approved
                     </div>
                   )}
 
                   {selectedMember.status === 'Rejected' && (
-                    <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold tracking-tight rounded-sm">
+                    <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-micro font-bold tracking-tight rounded-sm">
                       <XCircle className="w-4 h-4" /> Registration rejected
                     </div>
                   )}
@@ -566,7 +566,7 @@ export default function MemberVerification() {
                   <CardContent className="p-4 space-y-2">
                     <Button
                       variant="outline"
-                      className="w-full h-11 text-[10px] font-bold tracking-tight text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
+                      className="w-full h-11 text-micro font-bold tracking-tight text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
                       onClick={() => setShowPhotoFull(true)}
                     >
                       <Eye className="w-4 h-4 mr-2" /> Inspect Biometric Data
@@ -574,7 +574,7 @@ export default function MemberVerification() {
                     {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
                       <Button
                         variant="outline"
-                        className="w-full h-11 text-[10px] font-bold tracking-tight text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
+                        className="w-full h-11 text-micro font-bold tracking-tight text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
                         onClick={() => setViewingVaultRecord(selectedMember)}
                       >
                         <Database className="w-4 h-4 mr-2" /> Open Audit Vault
@@ -587,7 +587,7 @@ export default function MemberVerification() {
           ) : (
             <div className="h-[400px] border-2 border-dashed border-border/40 rounded-sm flex flex-col items-center justify-center text-muted-foreground/40 gap-4 bg-white/50">
               <ShieldCheck className="w-12 h-12 opacity-20" />
-              <p className="text-[10px] font-bold tracking-tight">Select a file to review</p>
+              <p className="text-micro font-bold tracking-tight">Select a file to review</p>
             </div>
           )}
         </div>
@@ -621,7 +621,7 @@ export default function MemberVerification() {
               alt={selectedMember.name}
               className="max-h-[80vh] max-w-full object-contain shadow-2xl"
              decoding="async" loading="lazy" />
-            <p className="text-white/60 text-[10px] font-bold tracking-tight">
+            <p className="text-white/60 text-micro font-bold tracking-tight">
               {selectedMember.name} · {selectedMember.id}
             </p>
             <button
@@ -645,7 +645,7 @@ export default function MemberVerification() {
               <div className="flex justify-between items-start relative z-10">
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
-                    <span className="text-[12px] font-bold text-white/60 tracking-tight">
+                    <span className="text-xs font-bold text-white/60 tracking-tight">
                       Secure vault record
                     </span>
                     <div className={cn(
@@ -674,7 +674,7 @@ export default function MemberVerification() {
               <div className="flex-columns items-start" style={{ '--column-gap': '3rem' } as React.CSSProperties}>
                 <div className="flex-[1.5] flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
                   <section>
-                    <h3 className="text-[12px] font-bold tracking-tight text-on-surface/40 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
+                    <h3 className="text-xs font-bold tracking-tight text-on-surface/40 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
                       <FileText className="w-3.5 h-3.5" /> Identity metadata
                     </h3>
                     <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
@@ -691,7 +691,7 @@ export default function MemberVerification() {
                         { label: 'Age range', value: viewingVaultRecord.ageRange },
                       ].map(f => (
                         <div key={f.label}>
-                          <p className="text-[10px] font-bold text-on-surface/60 tracking-tight">{f.label}</p>
+                          <p className="text-micro font-bold text-on-surface/60 tracking-tight">{f.label}</p>
                           <p className="text-sm font-bold tracking-tight text-on-surface">{f.value || '-'}</p>
                         </div>
                       ))}
@@ -700,33 +700,33 @@ export default function MemberVerification() {
                   </section>
 
                   <section>
-                    <h3 className="text-[12px] font-bold tracking-tight text-on-surface/60 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
+                    <h3 className="text-xs font-bold tracking-tight text-on-surface/60 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
                       <History className="w-3.5 h-3.5" /> Audit history
                     </h3>
                     <div className="space-y-3">
                       <div className="p-4 bg-white border-l-2 border-on-surface shadow-sm rounded-r-xl">
                         <div className="flex justify-between items-start">
                           <p className="text-sm font-bold tracking-tight text-on-surface">Registration submitted</p>
-                          <span className="text-[10px] font-bold text-on-surface-muted">{viewingVaultRecord.submitted}</span>
+                          <span className="text-micro font-bold text-on-surface-muted">{viewingVaultRecord.submitted}</span>
                         </div>
-                        <p className="text-[12px] text-on-surface-muted mt-1 tracking-tight">System generated entry upon form completion.</p>
+                        <p className="text-xs text-on-surface-muted mt-1 tracking-tight">System generated entry upon form completion.</p>
                       </div>
                       {viewingVaultRecord.status === 'Approved' && (
                         <div className="p-4 bg-white border-l-2 border-primary shadow-sm rounded-r-xl">
                           <div className="flex justify-between items-start">
                             <p className="text-sm font-bold tracking-tight text-primary">Verification approved</p>
-                            <span className="text-[10px] font-bold text-on-surface-muted">Just now</span>
+                            <span className="text-micro font-bold text-on-surface-muted">Just now</span>
                           </div>
-                          <p className="text-[12px] text-on-surface-muted mt-1 tracking-tight">Administrator: National HQ</p>
+                          <p className="text-xs text-on-surface-muted mt-1 tracking-tight">Administrator: National HQ</p>
                         </div>
                       )}
                       {viewingVaultRecord.status === 'Rejected' && (
                         <div className="p-4 bg-white border-l-2 border-destructive shadow-sm rounded-r-xl">
                           <div className="flex justify-between items-start">
                             <p className="text-sm font-bold tracking-tight text-destructive">Verification rejected</p>
-                            <span className="text-[10px] font-bold text-on-surface-muted">Just now</span>
+                            <span className="text-micro font-bold text-on-surface-muted">Just now</span>
                           </div>
-                          <p className="text-[12px] text-on-surface-muted mt-1 tracking-tight">Administrator: National HQ</p>
+                          <p className="text-xs text-on-surface-muted mt-1 tracking-tight">Administrator: National HQ</p>
                         </div>
                       )}
                     </div>
@@ -735,7 +735,7 @@ export default function MemberVerification() {
 
                 <div className="flex-1 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
                   <section>
-                    <h3 className="text-[12px] font-bold tracking-tight text-muted-foreground/40 border-b border-border/40 pb-2 mb-4">
+                    <h3 className="text-xs font-bold tracking-tight text-muted-foreground/40 border-b border-border/40 pb-2 mb-4">
                       Captured credentials
                     </h3>
                     <div className="aspect-[3/4] bg-muted/30 overflow-hidden shadow-inner border border-border/60 relative group rounded-sm">
@@ -744,7 +744,7 @@ export default function MemberVerification() {
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/40 gap-2">
                           <EyeOff className="w-8 h-8 opacity-20" />
-                          <p className="text-[11px] font-bold tracking-tight">No biometric data</p>
+                          <p className="text-tiny font-bold tracking-tight">No biometric data</p>
                         </div>
                       )}
                       <div className="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
@@ -754,7 +754,7 @@ export default function MemberVerification() {
                   </section>
                   
                   <div className="p-6 bg-muted/30 border border-border/40 rounded-sm">
-                    <p className="text-[12px] font-bold tracking-tight text-on-surface-muted mb-2 italic">Legal disclaimer</p>
+                    <p className="text-xs font-bold tracking-tight text-on-surface-muted mb-2 italic">Legal disclaimer</p>
                     <p className="text-sm text-on-surface-muted leading-relaxed font-medium italic">
                       This record is persistently stored in the movement's secure audit vault. Metadata cannot be altered after verification completion.
                     </p>

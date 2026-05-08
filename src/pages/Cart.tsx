@@ -55,7 +55,7 @@ export default function Cart() {
                       </p>
                     </div>
                     
-                    <div className="flex flex-wrap gap-4 text-[10px] font-bold text-stone-500 tracking-tight mb-4">
+                    <div className="flex flex-wrap gap-4 text-micro font-bold text-stone-500 tracking-tight mb-4">
                       {item.selectedSize && <span>Size: {item.selectedSize}</span>}
                       {item.selectedColor && <span>Color: {item.selectedColor}</span>}
                     </div>
@@ -79,7 +79,7 @@ export default function Cart() {
 
                       <button 
                         onClick={() => removeFromCart(item.id)}
-                        className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold tracking-tight"
+                        className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-micro font-bold tracking-tight"
                       >
                         <Trash2 className="w-4 h-4" />
                         Remove
@@ -94,7 +94,7 @@ export default function Cart() {
                 className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mt-4 group"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                <span className="font-meta text-[10px] font-bold tracking-tight">Continue shopping</span>
+                <span className="font-meta text-micro font-bold tracking-tight">Continue shopping</span>
               </Link>
             </div>
 
@@ -132,11 +132,11 @@ export default function Cart() {
                 <div className="mt-8 space-y-4">
                   <div className="flex items-center gap-3 text-stone-500">
                     <span className="material-symbols-outlined text-sm">verified_user</span>
-                    <span className="text-[10px] font-bold tracking-tight">100% Secure transaction</span>
+                    <span className="text-micro font-bold tracking-tight">100% Secure transaction</span>
                   </div>
                   <div className="flex items-center gap-3 text-stone-500">
                     <span className="material-symbols-outlined text-sm">local_shipping</span>
-                    <span className="text-[10px] font-bold tracking-tight">Free shipping over GHS 500</span>
+                    <span className="text-micro font-bold tracking-tight">Free shipping over GHS 500</span>
                   </div>
                 </div>
               </div>

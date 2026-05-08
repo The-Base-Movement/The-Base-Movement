@@ -45,7 +45,7 @@ export default function AdminLogin() {
               </div>
               <h1 className="text-2xl font-bold text-on-surface mb-2 font-meta tracking-tight">Admin login</h1>
               <BrandLine className="mb-4" />
-              <p className="text-[10px] text-muted-foreground/60 font-bold capitalize tracking-tight">Authorized personnel only</p>
+              <p className="text-micro text-muted-foreground/60 font-bold capitalize tracking-tight">Authorized personnel only</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleLogin}>
@@ -106,7 +106,7 @@ export default function AdminLogin() {
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-border/40"></span>
                 </div>
-                <div className="relative flex justify-center text-[10px] capitalize tracking-tight font-bold">
+                <div className="relative flex justify-center text-micro capitalize tracking-tight font-bold">
                   <span className="bg-white px-4 text-muted-foreground/40">Or authorized via</span>
                 </div>
               </div>
@@ -146,7 +146,7 @@ export default function AdminLogin() {
             </form>
 
             <div className="text-center mt-6 pt-6 border-t border-border/40">
-              <Link to="/login" className="text-[10px] font-bold capitalize tracking-tight text-muted-foreground/60 hover:text-primary transition-colors">
+              <Link to="/login" className="text-micro font-bold capitalize tracking-tight text-muted-foreground/60 hover:text-primary transition-colors">
                 Member login instead?
               </Link>
             </div>

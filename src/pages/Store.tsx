@@ -87,11 +87,11 @@ export default function Store() {
   const FilterSection = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className={cn("space-y-8", isMobile && "pb-20")}>
       <div className={cn("bg-white p-6 shadow-sm", !isMobile && "border border-stone-200")}>
-        <h3 className="text-[11px] font-bold text-stone-400 normal-case tracking-tight mb-6">Store Filters</h3>
+        <h3 className="text-tiny font-bold text-stone-400 normal-case tracking-tight mb-6">Store Filters</h3>
         
         <div className="space-y-6">
           <div className="space-y-2">
-            <p className="text-[11px] font-bold tracking-tight text-stone-500">Search Supplies</p>
+            <p className="text-tiny font-bold tracking-tight text-stone-500">Search Supplies</p>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
               <input 
@@ -108,7 +108,7 @@ export default function Store() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-[11px] font-bold tracking-tight text-stone-500">Categories</p>
+            <p className="text-tiny font-bold tracking-tight text-stone-500">Categories</p>
             <div className="flex flex-col gap-2">
               {categories.map(category => (
                 <button
@@ -118,7 +118,7 @@ export default function Store() {
                     setCurrentPage(1)
                   }}
                   className={cn(
-                    "w-full h-12 flex items-center justify-between px-4 text-[11px] font-bold tracking-tight border rounded-none transition-all",
+                    "w-full h-12 flex items-center justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
                     activeCategory === category 
                       ? 'bg-on-surface text-white hover:bg-on-surface/90' 
                       : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
@@ -136,9 +136,9 @@ export default function Store() {
       <div className="bg-on-surface p-8 text-white overflow-hidden relative rounded-sm shadow-xl">
         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/20 -mr-12 -mt-12 blur-2xl"></div>
         <div className="relative z-10 space-y-4">
-          <p className="text-accent text-[10px] font-bold tracking-tight uppercase">Movement Impact</p>
+          <p className="text-accent text-micro font-bold tracking-tight uppercase">Movement Impact</p>
           <h4 className="text-white text-lg font-meta font-bold tracking-tight leading-snug m-0">Every purchase builds the base</h4>
-          <p className="text-[10px] text-muted-foreground/60 font-bold tracking-tight leading-relaxed m-0">
+          <p className="text-micro text-muted-foreground/60 font-bold tracking-tight leading-relaxed m-0">
             All profits are reinvested into grassroots organizing and community infrastructure across Ghana's 16 regions.
           </p>
         </div>
@@ -167,23 +167,23 @@ export default function Store() {
       <main className="max-w-[1280px] mx-auto px-8 mt-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 lg:mb-12">
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-red h-12 text-[11px] font-bold tracking-tight rounded-none">
+            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-red h-12 text-tiny font-bold tracking-tight rounded-none">
               <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/wishlist' : '/store/wishlist'}>
                 <Heart className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-red transition-all" />
                 Wishlist
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-brand-red text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                  <span className="absolute -top-2 -right-2 bg-brand-red text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                     {wishlistCount}
                   </span>
                 )}
               </Link>
             </Button>
-            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-green h-12 text-[11px] font-bold tracking-tight rounded-none">
+            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-green h-12 text-tiny font-bold tracking-tight rounded-none">
               <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}>
                 <ShoppingBag className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-green transition-all" />
                 Bag
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-brand-green text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                  <span className="absolute -top-2 -right-2 bg-brand-green text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                     {cartCount}
                   </span>
                 )}
@@ -278,7 +278,7 @@ export default function Store() {
           </div>
           <div>
             <h4 className="text-stone-900 font-bold tracking-tight mb-2">Nationwide Delivery</h4>
-            <p className="text-[11px] text-stone-500 font-bold tracking-tight leading-relaxed">Prompt shipping to all 16 regions of Ghana and international hubs.</p>
+            <p className="text-tiny text-stone-500 font-bold tracking-tight leading-relaxed">Prompt shipping to all 16 regions of Ghana and international hubs.</p>
           </div>
         </div>
         <div className="flex items-start gap-5">
@@ -287,7 +287,7 @@ export default function Store() {
           </div>
           <div>
             <h4 className="text-stone-900 font-bold tracking-tight mb-2">Secure Payment</h4>
-            <p className="text-[11px] text-stone-500 font-bold tracking-tight leading-relaxed">MoMo and Card payments protected by strategic encryption protocols.</p>
+            <p className="text-tiny text-stone-500 font-bold tracking-tight leading-relaxed">MoMo and Card payments protected by strategic encryption protocols.</p>
           </div>
         </div>
         <div className="flex items-start gap-5">
@@ -296,7 +296,7 @@ export default function Store() {
           </div>
           <div>
             <h4 className="text-stone-900 font-bold tracking-tight mb-2">Strategic Impact</h4>
-            <p className="text-[11px] text-stone-500 font-bold tracking-tight leading-relaxed">100% of profits fund grassroots mobilization and regional empowerment.</p>
+            <p className="text-tiny text-stone-500 font-bold tracking-tight leading-relaxed">100% of profits fund grassroots mobilization and regional empowerment.</p>
           </div>
         </div>
       </section>

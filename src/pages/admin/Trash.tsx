@@ -161,7 +161,7 @@ export default function TrashPage() {
             <span className="text-xs font-bold tracking-tight text-on-surface/60 uppercase">Retention protocol</span>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold text-on-surface">30</span>
-              <span className="text-[10px] font-bold text-on-surface/40">Days</span>
+              <span className="text-micro font-bold text-on-surface/40">Days</span>
             </div>
           </div>
           <div className="w-px h-8 bg-stone-200" />
@@ -242,7 +242,7 @@ export default function TrashPage() {
                   <AlertCircle className="w-4 h-4 text-destructive" />
                   <p className="text-xs font-bold text-destructive tracking-tight uppercase">Critical awareness</p>
                 </div>
-                <p className="text-[11px] font-bold text-destructive leading-relaxed">
+                <p className="text-tiny font-bold text-destructive leading-relaxed">
                   Permanent deletion occurs automatically at T-0. Records cannot be recovered once the purge protocol completes.
                 </p>
               </div>
@@ -251,11 +251,11 @@ export default function TrashPage() {
 
           {/* Secondary Intelligence Card */}
           <div className="glass-card p-6 rounded-sm border border-stone-100 bg-stone-50/50 space-y-4 shadow-sm group">
-            <h4 className="text-[10px] font-bold tracking-tight text-on-surface/40 uppercase">Archival Guide</h4>
-            <p className="text-[11px] font-medium text-on-surface/60 leading-relaxed">
+            <h4 className="text-micro font-bold tracking-tight text-on-surface/40 uppercase">Archival Guide</h4>
+            <p className="text-tiny font-medium text-on-surface/60 leading-relaxed">
               Use the vault scanner to locate specific personnel files or media assets slated for removal.
             </p>
-            <Button variant="ghost" className="w-full justify-between h-9 px-0 text-[10px] font-bold tracking-tight text-on-surface hover:bg-transparent group-hover:text-destructive transition-colors">
+            <Button variant="ghost" className="w-full justify-between h-9 px-0 text-micro font-bold tracking-tight text-on-surface hover:bg-transparent group-hover:text-destructive transition-colors">
               Read security protocols <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
@@ -271,7 +271,7 @@ export default function TrashPage() {
               </div>
               <div className="space-y-1 text-center">
                 <p className="text-xs font-bold tracking-tight text-on-surface/20">Syncing vault sectors</p>
-                <p className="text-[10px] font-bold text-on-surface/40">Accessing restricted archival blocks...</p>
+                <p className="text-micro font-bold text-on-surface/40">Accessing restricted archival blocks...</p>
               </div>
             </div>
           ) : filteredItems.length === 0 ? (
@@ -288,7 +288,7 @@ export default function TrashPage() {
               <Button 
                 variant="outline" 
                 onClick={() => setSearchQuery('')}
-                className="h-12 px-10 rounded-sm text-[10px] font-bold tracking-tight border-stone-200 hover:border-destructive/30 hover:bg-destructive/5 transition-all shadow-sm"
+                className="h-12 px-10 rounded-sm text-micro font-bold tracking-tight border-stone-200 hover:border-destructive/30 hover:bg-destructive/5 transition-all shadow-sm"
               >
                 Reset scanner filters
               </Button>
@@ -388,8 +388,8 @@ function TabButton({ active, onClick, icon, label, count }: { active: boolean, o
         {icon}
       </div>
       <div className="text-left flex-1">
-        <p className={cn("text-[11px] font-bold tracking-tight leading-none mb-1", active ? "text-on-surface" : "text-on-surface/60")}>{label}</p>
-        <p className={cn("text-[10px] font-bold tracking-tight", active ? "text-destructive" : "text-on-surface/20")}>{count} Units</p>
+        <p className={cn("text-tiny font-bold tracking-tight leading-none mb-1", active ? "text-on-surface" : "text-on-surface/60")}>{label}</p>
+        <p className={cn("text-micro font-bold tracking-tight", active ? "text-destructive" : "text-on-surface/20")}>{count} Units</p>
       </div>
       {active && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -441,7 +441,7 @@ function TrashCard({
               accent === 'red' ? "bg-destructive" : accent === 'gold' ? "bg-accent" : "bg-primary"
             )} />
             <div className="absolute top-4 left-4">
-              <span className="text-[10px] font-bold tracking-tight text-white bg-on-surface/90 px-3 py-1 rounded-none backdrop-blur-sm border border-white/10 uppercase">
+              <span className="text-micro font-bold tracking-tight text-white bg-on-surface/90 px-3 py-1 rounded-none backdrop-blur-sm border border-white/10 uppercase">
                 {type}
               </span>
             </div>
@@ -451,7 +451,7 @@ function TrashCard({
             <div className="space-y-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-on-surface/30 tracking-tight">{subtitle}</p>
+                  <p className="text-micro font-bold text-on-surface/30 tracking-tight">{subtitle}</p>
                   <h4 className="text-lg font-bold text-on-surface leading-tight tracking-tight">{title}</h4>
                 </div>
                 
@@ -466,13 +466,13 @@ function TrashCard({
                     isExpiringSoon ? "text-white" : "text-on-surface"
                   )}>{daysLeft}</span>
                   <span className={cn(
-                    "text-[9px] font-bold tracking-tight uppercase mt-1",
+                    "text-micro font-bold tracking-tight uppercase mt-1",
                     isExpiringSoon ? "text-white/80" : "text-on-surface/40"
                   )}>Days left</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 text-[10px] font-bold text-on-surface/30">
+              <div className="flex items-center gap-4 text-micro font-bold text-on-surface/30">
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
                   Deleted {new Date(deletedAt).toLocaleDateString()}
@@ -488,7 +488,7 @@ function TrashCard({
               <Button 
                 onClick={onRestore}
                 variant="outline" 
-                className="flex-1 h-12 rounded-sm border-stone-200 text-[10px] font-bold tracking-tight hover:bg-stone-50 hover:text-primary hover:border-primary/30 gap-2 transition-all active:scale-95 group/btn"
+                className="flex-1 h-12 rounded-sm border-stone-200 text-micro font-bold tracking-tight hover:bg-stone-50 hover:text-primary hover:border-primary/30 gap-2 transition-all active:scale-95 group/btn"
               >
                 <RotateCcw className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" />
                 Restore record

@@ -68,12 +68,12 @@ export function ProductCard({ product, onShare }: ProductProps) {
           {/* Status Badge */}
           <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
             {isComingSoon && (
-              <span className="bg-stone-800 text-white text-[11px] font-bold tracking-tight px-2.5 py-1 rounded-sm shadow-lg">
+              <span className="bg-stone-800 text-white text-tiny font-bold tracking-tight px-2.5 py-1 rounded-sm shadow-lg">
                 Coming soon
               </span>
             )}
             {product.category && (
-              <span className={`text-[11px] font-bold tracking-tight px-3 py-1.5 rounded-sm shadow-lg border backdrop-blur-sm transition-all duration-300 ${
+              <span className={`text-tiny font-bold tracking-tight px-3 py-1.5 rounded-sm shadow-lg border backdrop-blur-sm transition-all duration-300 ${
                 product.category === 'Apparel' ? 'bg-brand-green/20 text-brand-green border-brand-green/30' :
                 product.category === 'Accessories' ? 'bg-brand-gold/20 text-[#92400e] border-brand-gold/40' :
                 product.category === 'Limited Edition' ? 'bg-brand-red/20 text-brand-red border-brand-red/30' :
@@ -127,7 +127,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
         <CardContent className="p-6 flex flex-col flex-1">
           <div className="flex items-center gap-1 mb-2">
             <Star className="w-3 h-3 fill-warm-gold text-warm-gold" />
-            <span className="text-[11px] font-bold text-stone-500 tracking-tight uppercase">Rating {product.rating || '4.8'}</span>
+            <span className="text-tiny font-bold text-stone-500 tracking-tight uppercase">Rating {product.rating || '4.8'}</span>
           </div>
 
           <div className="mb-2">
@@ -141,13 +141,13 @@ export function ProductCard({ product, onShare }: ProductProps) {
             </Link>
           </div>
           
-          <p className="text-muted-gray mb-4 line-clamp-2 text-[11px] leading-relaxed font-medium">
+          <p className="text-muted-gray mb-4 line-clamp-2 text-tiny leading-relaxed font-medium">
             {product.description}
           </p>
           
           <div className="mt-auto pt-6 border-t border-stone-100 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-stone-400 uppercase tracking-tight">Investment</span>
+              <span className="text-tiny font-bold text-stone-400 uppercase tracking-tight">Investment</span>
               <span className="text-xl font-bold text-primary font-meta">
                 GH₵{product.price.toString().replace('GHS', '').replace('GH₵', '').trim()}
               </span>
@@ -157,11 +157,11 @@ export function ProductCard({ product, onShare }: ProductProps) {
               <Button 
                 onClick={handleQuickAdd}
                 variant="primary" 
-                className="h-10 text-[11px] font-bold tracking-tight uppercase shadow-lg shadow-primary/10"
+                className="h-10 text-tiny font-bold tracking-tight uppercase shadow-lg shadow-primary/10"
               >
                 Buy now
               </Button>
-              <Button asChild variant="ghost" className="h-10 text-[11px] font-bold tracking-tight uppercase border-stone-200">
+              <Button asChild variant="ghost" className="h-10 text-tiny font-bold tracking-tight uppercase border-stone-200">
                 <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`} className="flex items-center">
                   View Gear <ArrowRight className="w-3.5 h-3.5 ml-2" />
                 </Link>

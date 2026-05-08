@@ -156,7 +156,7 @@ export default function RoadmapManagement() {
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => handleOpenModal()}
           >
             <Plus className="w-4 h-4 mr-2" /> Establish Milestone
@@ -169,9 +169,9 @@ export default function RoadmapManagement() {
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Total Milestones</p>
+              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Total Milestones</p>
               <h3 className="text-2xl font-bold text-on-surface">{milestones.length}</h3>
-              <div className="flex items-center gap-1 text-[9px] font-bold text-primary mt-1">
+              <div className="flex items-center gap-1 text-micro font-bold text-primary mt-1">
                 <Target className="w-3 h-3" /> Movement Trajectory
               </div>
             </div>
@@ -179,35 +179,35 @@ export default function RoadmapManagement() {
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
-            <p className="text-[10px] font-bold tracking-tight text-muted-foreground/80 mb-2">Completion Rate</p>
+            <p className="text-micro font-bold tracking-tight text-muted-foreground/80 mb-2">Completion Rate</p>
             <div className="flex items-end gap-3">
               <h3 className="text-2xl font-bold text-[var(--brand-green)]">
                 {milestones.length ? Math.round((milestones.filter(m => m.status === 'Completed').length / milestones.length) * 100) : 0}%
               </h3>
-              <span className="text-[9px] font-bold text-[var(--brand-green)] bg-[var(--brand-green)]/10 px-1.5 py-0.5 rounded-md mb-1">Achieved</span>
+              <span className="text-micro font-bold text-[var(--brand-green)] bg-[var(--brand-green)]/10 px-1.5 py-0.5 rounded-md mb-1">Achieved</span>
             </div>
-            <p className="text-[10px] text-muted-foreground/80 font-bold tracking-tight mt-2">Verified Objectives</p>
+            <p className="text-micro text-muted-foreground/80 font-bold tracking-tight mt-2">Verified Objectives</p>
           </CardContent>
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Active Operations</p>
+              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Active Operations</p>
               <h3 className="text-2xl font-bold text-[var(--brand-gold)]">
                 {milestones.filter(m => m.status === 'In Progress').length}
               </h3>
-              <p className="text-[10px] font-bold text-muted-foreground/80 mt-1">In Real-time Mobilization</p>
+              <p className="text-micro font-bold text-muted-foreground/80 mt-1">In Real-time Mobilization</p>
             </div>
           </CardContent>
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Upcoming Phases</p>
+              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Upcoming Phases</p>
               <h3 className="text-2xl font-bold text-[var(--brand-red)]">
                 {milestones.filter(m => m.status === 'Upcoming').length}
               </h3>
-              <p className="text-[10px] font-bold text-muted-foreground/80 mt-1">Strategic Pipeline</p>
+              <p className="text-micro font-bold text-muted-foreground/80 mt-1">Strategic Pipeline</p>
             </div>
           </CardContent>
         </Card>
@@ -235,11 +235,11 @@ export default function RoadmapManagement() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-border/40 bg-muted/20">
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Milestone Objective</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Category</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Status</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Target Date</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Priority</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Milestone Objective</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Category</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Status</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Target Date</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Priority</th>
                   <th className="px-6 py-4 text-right"></th>
                 </tr>
               </thead>
@@ -272,7 +272,7 @@ export default function RoadmapManagement() {
                     <td className="px-6 py-5">
                       <div className="flex flex-col max-w-md">
                         <span className="text-xs font-bold text-on-surface tracking-tight">{milestone.title}</span>
-                        <span className="text-[9px] font-bold text-muted-foreground/60 mt-0.5 line-clamp-1">{milestone.description}</span>
+                        <span className="text-micro font-bold text-muted-foreground/60 mt-0.5 line-clamp-1">{milestone.description}</span>
                       </div>
                     </td>
                     <td className="px-6 py-5">
@@ -285,7 +285,7 @@ export default function RoadmapManagement() {
                           style={{ backgroundColor: getStatusColor(milestone.status) }} 
                         />
                         <span className={cn(
-                          "px-2.5 py-1 text-[10px] font-bold tracking-tight border rounded-md capitalize",
+                          "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-md capitalize",
                           milestone.status === 'Completed' ? "bg-[var(--brand-green)]/10 text-[var(--brand-green)] border-[var(--brand-green)]/20" :
                           milestone.status === 'In Progress' ? "bg-[var(--brand-gold)]/10 text-[var(--brand-gold)] border-[var(--brand-gold)]/20" :
                           "bg-[var(--brand-red)]/10 text-[var(--brand-red)] border-[var(--brand-red)]/20"
@@ -295,14 +295,14 @@ export default function RoadmapManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/80">
+                      <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/80">
                         <Calendar className="w-3 h-3" />
                         {new Date(milestone.target_date!).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
                     </td>
                     <td className="px-6 py-5">
                       <span className={cn(
-                        "text-[9px] font-bold normal-case tracking-tight",
+                        "text-micro font-bold normal-case tracking-tight",
                         milestone.importance_level === 'Critical' ? "text-[var(--brand-red)]" : "text-on-surface/40"
                       )}>
                         {milestone.importance_level}
@@ -361,7 +361,7 @@ export default function RoadmapManagement() {
                   {/* Left Column */}
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Objective Title</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Objective Title</label>
                       <Input 
                         required
                         placeholder="e.g. National Logistics Hub" 
@@ -371,7 +371,7 @@ export default function RoadmapManagement() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Strategic Category</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Strategic Category</label>
                       <select
                         value={formData.category}
                         onChange={e => setFormData({...formData, category: e.target.value})}
@@ -385,7 +385,7 @@ export default function RoadmapManagement() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Target Date</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Target Date</label>
                       <Input 
                         required
                         type="date"
@@ -395,7 +395,7 @@ export default function RoadmapManagement() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Target Member Count</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Target Member Count</label>
                       <Input 
                         type="number"
                         placeholder="0" 
@@ -409,7 +409,7 @@ export default function RoadmapManagement() {
                   {/* Right Column */}
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Status</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Status</label>
                       <select
                         value={formData.status}
                         onChange={e => setFormData({...formData, status: e.target.value as Milestone['status']})}
@@ -421,7 +421,7 @@ export default function RoadmapManagement() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Importance Level</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Importance Level</label>
                       <select
                         value={formData.importance_level}
                         onChange={e => setFormData({...formData, importance_level: e.target.value as Milestone['importance_level']})}
@@ -433,7 +433,7 @@ export default function RoadmapManagement() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Objective Description</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Objective Description</label>
                       <textarea
                         required
                         rows={4}
@@ -450,7 +450,7 @@ export default function RoadmapManagement() {
                 <Button 
                   type="button"
                   variant="outline" 
-                  className="flex-1 h-12 text-[10px] font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                  className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                   onClick={() => setShowModal(false)}
                 >
                   Discard
@@ -459,7 +459,7 @@ export default function RoadmapManagement() {
                   type="submit"
                   variant="primary"
                   disabled={isSubmitting}
-                  className="flex-1 h-12 text-[10px] font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   {isSubmitting ? 'Syncing...' : editingMilestone ? 'Commit Changes' : 'Establish Milestone'}
                 </Button>

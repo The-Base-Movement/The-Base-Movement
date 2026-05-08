@@ -77,7 +77,7 @@ export function SystemHealthDashboard() {
             variant="ghost" 
             size="sm" 
             onClick={handleManualRefresh}
-            className="text-[10px] font-bold tracking-tight text-muted-foreground/40 hover:text-on-surface"
+            className="text-micro font-bold tracking-tight text-muted-foreground/40 hover:text-on-surface"
           >
             <RefreshCw className={cn("w-3.5 h-3.5 mr-2", isRefreshing && "animate-spin")} />
             Recalibrate streams
@@ -142,14 +142,14 @@ export function SystemHealthDashboard() {
                   <service.icon className="w-5 h-5" />
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-bold tracking-tight text-primary flex items-center gap-1 justify-end">
+                  <p className="text-micro font-bold tracking-tight text-primary flex items-center gap-1 justify-end">
                     <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
                     {service.status}
                   </p>
                   <p className="text-[8px] font-bold text-muted-foreground/40 mt-0.5">{service.uptime} Uptime</p>
                 </div>
               </div>
-              <h4 className="text-[10px] font-bold tracking-tight text-on-surface mb-1">{service.name}</h4>
+              <h4 className="text-micro font-bold tracking-tight text-on-surface mb-1">{service.name}</h4>
               <div className="flex items-end justify-between">
                 <p className="text-2xl font-bold font-meta tracking-tight text-on-surface">{service.latency}</p>
                 <div className="w-16 h-1 bg-muted/20 overflow-hidden rounded-full">
@@ -177,7 +177,7 @@ export function SystemHealthDashboard() {
               { label: 'Storage Bandwidth', value: 24, color: 'bg-on-surface' },
             ].map((stat) => (
               <div key={stat.label} className="space-y-2">
-                <div className="flex justify-between text-[9px] font-bold tracking-tight">
+                <div className="flex justify-between text-micro font-bold tracking-tight">
                   <span className="text-on-surface/60">{stat.label}</span>
                   <span className="text-on-surface">{stat.value}%</span>
                 </div>
@@ -210,7 +210,7 @@ export function SystemHealthDashboard() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold tracking-tight text-on-surface">Requests per minute</p>
+                  <p className="text-micro font-bold tracking-tight text-on-surface">Requests per minute</p>
                   <p className="text-[8px] font-bold text-muted-foreground/40 mt-1">Normal Operating Range</p>
                 </div>
               </div>
@@ -242,7 +242,7 @@ export function SystemHealthDashboard() {
               <p className="text-white/40 text-xs mt-1">No infrastructure incidents detected in the last 72 hours. All systems optimal.</p>
             </div>
           </div>
-          <Button variant="default" className="h-12 border-white/20 text-white hover:bg-white hover:text-on-surface transition-all rounded-sm text-[10px] font-bold tracking-tight px-8">
+          <Button variant="default" className="h-12 border-white/20 text-white hover:bg-white hover:text-on-surface transition-all rounded-sm text-micro font-bold tracking-tight px-8">
             Access security logs
           </Button>
         </CardContent>

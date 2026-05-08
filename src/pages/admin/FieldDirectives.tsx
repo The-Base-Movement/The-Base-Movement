@@ -103,7 +103,7 @@ export default function FieldDirectives() {
     return (
       <div className="h-full w-full flex flex-col items-center justify-center py-20">
         <Target className="w-12 h-12 text-muted-foreground/20 animate-spin mb-4" />
-        <p className="text-[10px] font-bold text-muted-foreground/40">Establishing tactical feed...</p>
+        <p className="text-micro font-bold text-muted-foreground/40">Establishing tactical feed...</p>
       </div>
     )
   }
@@ -124,7 +124,7 @@ export default function FieldDirectives() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-bold tracking-tight hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 font-bold tracking-tight hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
           >
             <BarChart className="w-4 h-4 mr-2" /> Tactical Analytics
           </Button>
@@ -132,7 +132,7 @@ export default function FieldDirectives() {
             variant="primary"
             size="lg"
             onClick={() => setIsCreating(true)}
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Issue New Directive
           </Button>
@@ -159,7 +159,7 @@ export default function FieldDirectives() {
                     )}>
                       {directive.priority.toLowerCase()} priority
                     </span>
-                    <span className="text-[9px] font-bold normal-case text-muted-foreground/40">{directive.target_type.toLowerCase()}</span>
+                    <span className="text-micro font-bold normal-case text-muted-foreground/40">{directive.target_type.toLowerCase()}</span>
                   </div>
                   <CardTitle className="text-base font-bold tracking-tight text-on-surface leading-tight">
                     {directive.title}
@@ -170,11 +170,11 @@ export default function FieldDirectives() {
                   <div className="flex items-center justify-between pt-4 border-t border-border/10">
                     <div className="flex items-center gap-1.5 text-muted-foreground/40">
                       <Clock className="w-3.5 h-3.5" />
-                      <span className="text-[9px] font-bold normal-case">{directive.deadline ? new Date(directive.deadline).toLocaleDateString() : 'No deadline'}</span>
+                      <span className="text-micro font-bold normal-case">{directive.deadline ? new Date(directive.deadline).toLocaleDateString() : 'No deadline'}</span>
                     </div>
                     <div className="flex items-center gap-1 text-accent">
                       <Shield className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-bold">{directive.points_awarded} pts</span>
+                      <span className="text-micro font-bold">{directive.points_awarded} pts</span>
                     </div>
                   </div>
                 </CardContent>
@@ -182,7 +182,7 @@ export default function FieldDirectives() {
             )) : (
               <div className="border-2 border-dashed border-border/40 p-12 text-center text-muted-foreground/20 rounded-sm">
                 <Target className="w-12 h-12 mx-auto mb-4 opacity-10" />
-                <p className="text-[10px] font-bold normal-case">No active directives.</p>
+                <p className="text-micro font-bold normal-case">No active directives.</p>
               </div>
             )}
           </div>
@@ -196,7 +196,7 @@ export default function FieldDirectives() {
             </h2>
             <Button 
               variant="outline" 
-              className="h-11 px-8 text-[10px] font-bold tracking-tight hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
+              className="h-11 px-8 text-micro font-bold tracking-tight hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
             >
               <Filter className="w-4 h-4 mr-2" /> Filter Feed
             </Button>
@@ -238,7 +238,7 @@ export default function FieldDirectives() {
                         <img src={`https://i.pravatar.cc/100?u=${report.member_id}`} alt="Member" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold normal-case tracking-tight leading-none mb-1">Member #{report.member_id.slice(0, 5)}</p>
+                        <p className="text-micro font-bold normal-case tracking-tight leading-none mb-1">Member #{report.member_id.slice(0, 5)}</p>
                         <p className="text-[8px] font-bold text-muted-foreground/40 normal-case">{new Date(report.created_at).toLocaleTimeString()} - {new Date(report.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
@@ -250,14 +250,14 @@ export default function FieldDirectives() {
                         <Button 
                           variant="outline" 
                           onClick={() => handleVerify(report.id, 'Rejected')}
-                          className="h-12 border-border/40 text-brand-red hover:bg-brand-red/10 rounded-sm text-[10px] font-bold tracking-tight transition-all active:scale-95"
+                          className="h-12 border-border/40 text-brand-red hover:bg-brand-red/10 rounded-sm text-micro font-bold tracking-tight transition-all active:scale-95"
                         >
                           <XCircle className="w-4 h-4 mr-2" /> Reject Report
                         </Button>
                         <Button 
                           variant="primary"
                           onClick={() => handleVerify(report.id, 'Verified')}
-                          className="h-12 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                          className="h-12 rounded-sm text-micro font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                         >
                           <CheckCircle className="w-4 h-4 mr-2" /> Verify Action
                         </Button>
@@ -268,7 +268,7 @@ export default function FieldDirectives() {
             )) : (
               <div className="col-span-2 border-2 border-dashed border-border/40 p-12 flex flex-col items-center justify-center text-muted-foreground/20 rounded-sm">
                 <AlertTriangle className="w-12 h-12 mb-4 opacity-10" />
-                <p className="text-[10px] font-bold normal-case">Situational feed currently quiet.</p>
+                <p className="text-micro font-bold normal-case">Situational feed currently quiet.</p>
               </div>
             )}
           </div>
@@ -283,7 +283,7 @@ export default function FieldDirectives() {
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle className="text-xl font-bold normal-case font-meta">Issue new directive</CardTitle>
-                  <CardDescription className="text-muted-foreground/80 text-[10px] font-bold normal-case mt-1">Deploy tactical objectives to the field.</CardDescription>
+                  <CardDescription className="text-muted-foreground/80 text-micro font-bold normal-case mt-1">Deploy tactical objectives to the field.</CardDescription>
                 </div>
                 <Button variant="ghost" onClick={() => setIsCreating(false)} className="h-8 w-8 p-0 rounded-sm hover:bg-muted/10">
                   <XCircle className="w-5 h-5 text-muted-foreground/40" />
@@ -294,7 +294,7 @@ export default function FieldDirectives() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Directive title</label>
+                    <label className="text-micro font-bold normal-case text-muted-foreground/40">Directive title</label>
                     <input 
                       type="text" 
                       placeholder="e.g. Regional Flyer Blitz" 
@@ -304,7 +304,7 @@ export default function FieldDirectives() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Target level</label>
+                    <label className="text-micro font-bold normal-case text-muted-foreground/40">Target level</label>
                     <select 
                       className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-sm"
                       value={newDirective.target_type}
@@ -317,7 +317,7 @@ export default function FieldDirectives() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Objective description</label>
+                  <label className="text-micro font-bold normal-case text-muted-foreground/40">Objective description</label>
                   <textarea 
                     rows={3} 
                     placeholder="Describe the tactical goal..." 
@@ -328,7 +328,7 @@ export default function FieldDirectives() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Points awarded</label>
+                    <label className="text-micro font-bold normal-case text-muted-foreground/40">Points awarded</label>
                     <input 
                       type="number" 
                       className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-sm"
@@ -337,7 +337,7 @@ export default function FieldDirectives() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Priority</label>
+                    <label className="text-micro font-bold normal-case text-muted-foreground/40">Priority</label>
                     <select 
                       className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-sm"
                       value={newDirective.priority}
@@ -354,14 +354,14 @@ export default function FieldDirectives() {
                 <Button 
                   variant="outline" 
                   onClick={() => setIsCreating(false)} 
-                  className="flex-1 h-12 rounded-sm border-border/40 font-bold text-[10px] tracking-tight hover:bg-stone-50 transition-all active:scale-95"
+                  className="flex-1 h-12 rounded-sm border-border/40 font-bold text-micro tracking-tight hover:bg-stone-50 transition-all active:scale-95"
                   disabled={isSubmitting}
                 >
                   Cancel Directive
                 </Button>
                 <Button 
                   variant="primary"
-                  className="flex-1 h-12 rounded-sm font-bold text-[10px] tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="flex-1 h-12 rounded-sm font-bold text-micro tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                   onClick={handleIssueDirective}
                   disabled={isSubmitting}
                 >

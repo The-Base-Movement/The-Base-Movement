@@ -76,7 +76,7 @@ export default function Contact() {
                   <Mail className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold tracking-tight text-slate-400 mb-1 font-meta">Email</p>
+                  <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">Email</p>
                   <p className="text-charcoal-dark font-medium text-sm md:text-base truncate">{contactEmail}</p>
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default function Contact() {
                   <Phone className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold tracking-tight text-slate-400 mb-1 font-meta">Phone</p>
+                  <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">Phone</p>
                   <p className="text-charcoal-dark font-medium text-sm md:text-base">Contact via email for inquiries</p>
                 </div>
               </div>
@@ -96,7 +96,7 @@ export default function Contact() {
                   <MapPin className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold tracking-tight text-slate-400 mb-1 font-meta">Location</p>
+                  <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">Location</p>
                   <p className="text-charcoal-dark font-medium text-sm md:text-base">Ghana & Global Diaspora</p>
                 </div>
               </div>
@@ -110,7 +110,7 @@ export default function Contact() {
                    decoding="async" loading="lazy" />
                 </div>
                 <div className="p-5 border-t border-slate-100">
-                  <p className="text-[10px] font-meta font-bold text-[var(--brand-green)] tracking-tight">Official headquarters</p>
+                  <p className="text-micro font-meta font-bold text-[var(--brand-green)] tracking-tight">Official headquarters</p>
                   <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
                     Our central hub in Accra, serving as the heart of movement operations and community engagement.
                   </p>
@@ -135,7 +135,7 @@ export default function Contact() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
-                    <label htmlFor="fullName" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">
+                    <label htmlFor="fullName" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">
                       Full name <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <input 
@@ -149,7 +149,7 @@ export default function Contact() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label htmlFor="email" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">Email address</label>
+                      <label htmlFor="email" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">Email address</label>
                       <input 
                         id="email" 
                         type="email" 
@@ -159,7 +159,7 @@ export default function Contact() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="phone" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">Phone number</label>
+                      <label htmlFor="phone" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">Phone number</label>
                       <input 
                         id="phone" 
                         type="text" 
@@ -171,7 +171,7 @@ export default function Contact() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="platform" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">Your platform</label>
+                    <label htmlFor="platform" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">Your platform</label>
                     <select 
                       id="platform" 
                       value={formData.platform}
@@ -186,7 +186,7 @@ export default function Contact() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="message" className="text-[10px] font-bold text-charcoal-dark font-meta tracking-tight">
+                    <label htmlFor="message" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">
                       Message <span className="text-[var(--brand-red)]">*</span>
                     </label>
                     <textarea

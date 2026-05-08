@@ -87,19 +87,19 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
                 </TooltipTrigger>
                 <TooltipContent className="rounded-sm border-border/10 bg-on-surface text-white p-5 shadow-2xl backdrop-blur-xl">
                   <div className="space-y-3">
-                    <p className="text-[10px] font-bold text-destructive tracking-tight">{path.name} region</p>
+                    <p className="text-micro font-bold text-destructive tracking-tight">{path.name} region</p>
                     <div className="flex justify-between gap-8 items-end">
                       <div>
                         <p className="text-2xl font-bold font-meta tracking-tight">
                           {stat ? stat.memberCount.toLocaleString() : '0'}
                         </p>
-                        <p className="text-[9px] font-bold text-white/40 tracking-tight mt-1">Total members</p>
+                        <p className="text-micro font-bold text-white/40 tracking-tight mt-1">Total members</p>
                       </div>
                       <div className="text-right">
                         <p className="text-lg font-bold text-white/80 tracking-tight">
                           {stat ? stat.chapters : '0'}
                         </p>
-                        <p className="text-[9px] font-bold text-white/40 tracking-tight mt-1">Chapters</p>
+                        <p className="text-micro font-bold text-white/40 tracking-tight mt-1">Chapters</p>
                       </div>
                     </div>
                     {stat && (
@@ -120,7 +120,7 @@ export function GhanaGrowthMap({ data, onRegionClick }: GhanaGrowthMapProps) {
 
       {/* Map Legend */}
       <div className="absolute bottom-6 left-6 space-y-3 bg-white/80 backdrop-blur-md p-5 border border-border/10 shadow-xl rounded-sm">
-        <p className="text-[9px] font-bold text-on-surface/40 mb-2 tracking-tight">Expansion density</p>
+        <p className="text-micro font-bold text-on-surface/40 mb-2 tracking-tight">Expansion density</p>
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex gap-1">

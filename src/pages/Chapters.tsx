@@ -162,11 +162,11 @@ export default function Chapters() {
   const FilterSection = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className={cn("space-y-8", isMobile && "pb-20")}>
       <div className={cn("bg-white p-6 shadow-sm", !isMobile && "border border-stone-200")}>
-        <h3 className="text-[11px] font-bold text-stone-400 normal-case tracking-tight mb-6">Chapter Filters</h3>
+        <h3 className="text-tiny font-bold text-stone-400 normal-case tracking-tight mb-6">Chapter Filters</h3>
         
         <div className="space-y-6">
           <div className="space-y-2">
-            <p className="text-[11px] font-bold tracking-tight text-stone-500">Search Chapters</p>
+            <p className="text-tiny font-bold tracking-tight text-stone-500">Search Chapters</p>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
               <input 
@@ -180,13 +180,13 @@ export default function Chapters() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-[11px] font-bold tracking-tight text-stone-500">Region Selection</p>
+            <p className="text-tiny font-bold tracking-tight text-stone-500">Region Selection</p>
             <div className="flex flex-col gap-2">
               <Button 
                 variant={activeTab === 'ghana' ? 'solid' : 'outline'}
                 onClick={() => setActiveTab('ghana')}
                 className={cn(
-                  "w-full h-12 justify-between px-4 text-[11px] font-bold tracking-tight border rounded-none transition-all",
+                  "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
                   activeTab === 'ghana' ? 'bg-on-surface text-white hover:bg-on-surface/90' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
                 )}
               >
@@ -197,7 +197,7 @@ export default function Chapters() {
                 variant={activeTab === 'diaspora' ? 'solid' : 'outline'}
                 onClick={() => setActiveTab('diaspora')}
                 className={cn(
-                  "w-full h-12 justify-between px-4 text-[11px] font-bold tracking-tight border rounded-none transition-all",
+                  "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
                   activeTab === 'diaspora' ? 'bg-on-surface text-white hover:bg-on-surface/90' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
                 )}
               >
@@ -210,11 +210,11 @@ export default function Chapters() {
           <div className="pt-4 border-t border-stone-100">
             <Button 
               onClick={() => setIsRequestModalOpen(true)}
-              className="w-full bg-brand-green hover:!bg-white text-white hover:!text-emerald-600 border border-transparent hover:!border-emerald-600 font-bold tracking-tight text-[11px] h-12 px-6 rounded-none shadow-sm normal-case transition-all duration-300"
+              className="w-full bg-brand-green hover:!bg-white text-white hover:!text-emerald-600 border border-transparent hover:!border-emerald-600 font-bold tracking-tight text-tiny h-12 px-6 rounded-none shadow-sm normal-case transition-all duration-300"
             >
               <Plus className="w-4 h-4 mr-2" /> Request a Chapter
             </Button>
-            <p className="text-[10px] text-stone-400 font-bold tracking-tight mt-3 text-center italic">
+            <p className="text-micro text-stone-400 font-bold tracking-tight mt-3 text-center italic">
               Don't see your region? Propose a new hub.
             </p>
           </div>
@@ -225,15 +225,15 @@ export default function Chapters() {
         <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--brand-green)]/10 -mr-12 -mt-12 blur-2xl"></div>
         <div className="relative z-10 space-y-4">
           <div>
-            <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-tight normal-case">Global Network</p>
+            <p className="text-[var(--brand-green)] text-micro font-bold tracking-tight normal-case">Global Network</p>
             <p className="text-3xl font-meta font-bold tracking-tight mt-1">{chapters.length}</p>
-            <p className="text-[10px] text-stone-400 font-bold tracking-tight">Active Chapters</p>
+            <p className="text-micro text-stone-400 font-bold tracking-tight">Active Chapters</p>
           </div>
           <div className="h-px bg-white/10" />
           <div>
-            <p className="text-warm-gold text-[10px] font-bold tracking-tight normal-case">Global Presence</p>
+            <p className="text-warm-gold text-micro font-bold tracking-tight normal-case">Global Presence</p>
             <p className="text-3xl font-meta font-bold tracking-tight mt-1">{new Set(chapters.map(c => c.country)).size}</p>
-            <p className="text-[10px] text-stone-400 font-bold tracking-tight">Active Countries</p>
+            <p className="text-micro text-stone-400 font-bold tracking-tight">Active Countries</p>
           </div>
         </div>
       </div>
@@ -384,7 +384,7 @@ export default function Chapters() {
           ) : (
             <form onSubmit={handleSubmitRequest} className="p-8 space-y-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 tracking-tight">Chapter location / country</label>
+                <label className="text-micro font-bold text-stone-400 tracking-tight">Chapter location / country</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
                   <Input 
@@ -398,7 +398,7 @@ export default function Chapters() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-stone-400 tracking-tight">Why start a chapter here?</label>
+                <label className="text-micro font-bold text-stone-400 tracking-tight">Why start a chapter here?</label>
                 <Textarea 
                   required
                   placeholder="Describe the local interest and your vision for organizing this hub..."
@@ -413,14 +413,14 @@ export default function Chapters() {
                   type="button" 
                   variant="default" 
                   onClick={() => setIsRequestModalOpen(false)}
-                  className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-[10px] font-bold tracking-tight rounded-none"
+                  className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-micro font-bold tracking-tight rounded-none"
                 >
                   Cancel
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="h-12 bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold text-[10px] tracking-tight rounded-none min-w-[140px]"
+                  className="h-12 bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold text-micro tracking-tight rounded-none min-w-[140px]"
                 >
                   {isSubmitting ? 'Processing...' : 'Submit Request'}
                 </Button>

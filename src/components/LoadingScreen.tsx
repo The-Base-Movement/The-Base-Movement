@@ -14,7 +14,7 @@ export function LoadingScreen() {
             <h2 className="text-xl font-bold text-stone-900 tracking-tight font-meta animate-pulse">
               THE BASE
             </h2>
-            <p className="text-[10px] font-bold text-stone-400 tracking-tight">
+            <p className="text-micro font-bold text-stone-400 tracking-tight">
               Initializing movement assets
             </p>
           </div>

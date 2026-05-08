@@ -63,14 +63,14 @@ export default function MobilizationMetrics() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2" /> Filter metrics
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Download className="w-4 h-4 mr-2" /> Export intelligence
           </Button>
@@ -88,13 +88,13 @@ export default function MobilizationMetrics() {
           <Card key={i} className="rounded-sm border-border/40 shadow-sm bg-white group hover:border-border/60 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">{stat.label}</span>
+                <span className="text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">{stat.label}</span>
                 <div className={cn("w-10 h-10 rounded-sm flex items-center justify-center transition-transform group-hover:scale-110", stat.bg)}>
                   <stat.icon className={cn("w-5 h-5", stat.color)} />
                 </div>
               </div>
               <p className="text-3xl font-bold tracking-tight text-on-surface mb-1">{stat.value}</p>
-              <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight">{stat.sub}</p>
+              <p className="text-micro font-bold text-muted-foreground/40 tracking-tight">{stat.sub}</p>
             </CardContent>
           </Card>
         ))}
@@ -106,7 +106,7 @@ export default function MobilizationMetrics() {
           <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xl font-bold tracking-tight">Regional power rankings</CardTitle>
-              <CardDescription className="text-[10px] font-bold text-muted-foreground/80 mt-1">Aggregated mobilization points by jurisdictional chapter.</CardDescription>
+              <CardDescription className="text-micro font-bold text-muted-foreground/80 mt-1">Aggregated mobilization points by jurisdictional chapter.</CardDescription>
             </div>
             <TrendingUp className="w-6 h-6 text-border/60" />
           </CardHeader>
@@ -116,11 +116,11 @@ export default function MobilizationMetrics() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-muted/30 border-b border-border/10">
-                    <th className="p-6 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Rank</th>
-                    <th className="p-6 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Chapter / region</th>
-                    <th className="p-6 text-[10px] font-bold text-muted-foreground/80 tracking-tight text-center">Members</th>
-                    <th className="p-6 text-[10px] font-bold text-muted-foreground/80 tracking-tight text-center">Achievements</th>
-                    <th className="p-6 text-[10px] font-bold text-muted-foreground/80 tracking-tight text-right">Impact points</th>
+                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight">Rank</th>
+                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight">Chapter / region</th>
+                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight text-center">Members</th>
+                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight text-center">Achievements</th>
+                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight text-right">Impact points</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/5">
@@ -132,7 +132,7 @@ export default function MobilizationMetrics() {
                     ))
                   ) : leaderboard.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="p-20 text-center text-muted-foreground/80 font-bold normal-case text-[10px]">
+                      <td colSpan={5} className="p-20 text-center text-muted-foreground/80 font-bold normal-case text-micro">
                         No regional mobilization data for this period.
                       </td>
                     </tr>
@@ -153,7 +153,7 @@ export default function MobilizationMetrics() {
                         <td className="p-6">
                           <div className="flex flex-col">
                             <span className="text-sm font-bold tracking-tight text-on-surface">{entry.chapter}</span>
-                            <span className="text-[10px] font-bold text-muted-foreground/80 flex items-center gap-1 mt-0.5">
+                            <span className="text-micro font-bold text-muted-foreground/80 flex items-center gap-1 mt-0.5">
                               <MapPin className="w-3 h-3" /> {entry.region}
                             </span>
                           </div>
@@ -192,7 +192,7 @@ export default function MobilizationMetrics() {
                   </div>
                 ))
               ) : leaderboard.length === 0 ? (
-                <div className="p-12 text-center text-muted-foreground/80 font-bold text-[10px]">
+                <div className="p-12 text-center text-muted-foreground/80 font-bold text-micro">
                   No regional mobilization data.
                 </div>
               ) : (
@@ -211,13 +211,13 @@ export default function MobilizationMetrics() {
                         </div>
                         <div>
                           <h4 className="text-sm font-bold text-on-surface tracking-tight">{entry.chapter}</h4>
-                          <p className="text-[10px] font-bold text-muted-foreground/80 flex items-center gap-1 mt-0.5 normal-case tracking-tight">
+                          <p className="text-micro font-bold text-muted-foreground/80 flex items-center gap-1 mt-0.5 normal-case tracking-tight">
                             <MapPin className="w-3 h-3" /> {entry.region}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-bold text-muted-foreground/70 tracking-tight">Points</p>
+                        <p className="text-micro font-bold text-muted-foreground/70 tracking-tight">Points</p>
                         <p className="text-lg font-bold text-on-surface tracking-tighter">{entry.total_mobilization_points.toLocaleString()}</p>
                       </div>
                     </div>
@@ -228,7 +228,7 @@ export default function MobilizationMetrics() {
                           <Users className="w-4 h-4 text-muted-foreground/80" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-bold text-muted-foreground/70">Members</p>
+                          <p className="text-micro font-bold text-muted-foreground/70">Members</p>
                           <p className="text-xs font-bold text-on-surface">{entry.total_patriots}</p>
                         </div>
                       </div>
@@ -237,7 +237,7 @@ export default function MobilizationMetrics() {
                           <Zap className="w-4 h-4 text-accent" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-bold text-muted-foreground/70">Badges</p>
+                          <p className="text-micro font-bold text-muted-foreground/70">Badges</p>
                           <p className="text-xs font-bold text-on-surface">{entry.achievements_unlocked}</p>
                         </div>
                       </div>
@@ -256,7 +256,7 @@ export default function MobilizationMetrics() {
               <CardTitle className="text-xs font-bold tracking-tight flex items-center gap-2 text-on-surface">
                 <Award className="w-4 h-4 text-accent" /> Available milestones
               </CardTitle>
-              <CardDescription className="text-[9px] font-bold text-muted-foreground/80 mt-1">Recognition badges for chapter growth.</CardDescription>
+              <CardDescription className="text-micro font-bold text-muted-foreground/80 mt-1">Recognition badges for chapter growth.</CardDescription>
             </CardHeader>
             <CardContent className="p-4 space-y-3">
               {achievements.map((achievement) => (
@@ -266,11 +266,11 @@ export default function MobilizationMetrics() {
                       <Target className="w-5 h-5 text-accent" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="text-[11px] font-bold leading-none">{achievement.name}</h4>
-                      <p className="text-[10px] text-muted-foreground/80 font-medium leading-tight">{achievement.description}</p>
+                      <h4 className="text-tiny font-bold leading-none">{achievement.name}</h4>
+                      <p className="text-micro text-muted-foreground/80 font-medium leading-tight">{achievement.description}</p>
                       <div className="flex items-center gap-2 pt-1">
-                        <span className="text-[9px] font-bold text-accent">{achievement.points_awarded} points</span>
-                        <span className="text-[9px] font-bold text-muted-foreground/80">• {(achievement.category || 'General').toLowerCase()}</span>
+                        <span className="text-micro font-bold text-accent">{achievement.points_awarded} points</span>
+                        <span className="text-micro font-bold text-muted-foreground/80">• {(achievement.category || 'General').toLowerCase()}</span>
                       </div>
                     </div>
                   </div>
@@ -282,13 +282,13 @@ export default function MobilizationMetrics() {
           {/* ⚡ Movement Pulse */}
           <Card className="rounded-sm border-border/60 shadow-sm bg-background p-8 space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-[10px] font-bold text-muted-foreground/80">Movement velocity</h3>
+              <h3 className="text-micro font-bold text-muted-foreground/80">Movement velocity</h3>
               <Zap className="w-4 h-4 text-accent fill-accent" />
             </div>
             <div className="space-y-6">
                <div className="space-y-2">
                 <div className="flex justify-between items-end">
-                  <span className="text-[9px] font-bold text-on-surface/80">Mobilization efficiency</span>
+                  <span className="text-micro font-bold text-on-surface/80">Mobilization efficiency</span>
                   <span className="text-sm font-bold">87%</span>
                 </div>
                 <div className="h-1.5 bg-muted/30 overflow-hidden rounded-full">
@@ -297,7 +297,7 @@ export default function MobilizationMetrics() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-end">
-                  <span className="text-[9px] font-bold text-on-surface/80">Recruitment conversion</span>
+                  <span className="text-micro font-bold text-on-surface/80">Recruitment conversion</span>
                   <span className="text-sm font-bold">62%</span>
                 </div>
                 <div className="h-1.5 bg-muted/30 overflow-hidden rounded-full">
@@ -306,7 +306,7 @@ export default function MobilizationMetrics() {
               </div>
             </div>
             <div className="pt-4 border-t border-border/10">
-              <p className="text-[9px] font-bold text-muted-foreground/80 leading-relaxed text-center">
+              <p className="text-micro font-bold text-muted-foreground/80 leading-relaxed text-center">
                 Currently tracking activity across 12 active chapters and 4 key regions.
               </p>
             </div>

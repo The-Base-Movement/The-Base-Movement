@@ -173,7 +173,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
       <div className="bg-on-surface p-8 flex items-center justify-between shrink-0">
         <div>
           <h2 className="text-2xl font-bold text-white tracking-tight">Register new member</h2>
-          <p className="text-accent text-[10px] mt-1 tracking-tight font-bold opacity-80">Admin override workflow</p>
+          <p className="text-accent text-micro mt-1 tracking-tight font-bold opacity-80">Admin override workflow</p>
         </div>
         <button 
           onClick={onClose}
@@ -188,7 +188,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Vertical Sidebar Navigation */}
           <div className="lg:col-span-4 space-y-2 sticky top-0 bg-white z-10 pb-4">
-            <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mb-8 pl-4">Registration progress</p>
+            <p className="text-micro font-bold text-muted-foreground/40 tracking-tight mb-8 pl-4">Registration progress</p>
             
             <div className="space-y-2">
               {[
@@ -204,7 +204,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${formStep >= item.step ? 'bg-primary text-white scale-110 shadow-lg shadow-primary/20' : 'bg-muted/10 text-muted-foreground/60'}`}>
                     {formStep > item.step ? <CheckCircle2 className="w-6 h-6" /> : item.step}
                   </div>
-                  <span className={`text-[11px] font-bold tracking-tight ${formStep === item.step ? 'text-on-surface' : ''}`}>
+                  <span className={`text-tiny font-bold tracking-tight ${formStep === item.step ? 'text-on-surface' : ''}`}>
                     {item.label}
                   </span>
                 </div>
@@ -222,7 +222,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   </div>
  
                   <div className="space-y-3">
-                    <label htmlFor="fullName" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                    <label htmlFor="fullName" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                       Full name <span className="text-destructive">*</span>
                     </label>
                     <input
@@ -236,15 +236,15 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold text-on-surface/60 tracking-tight block mb-4">
+                    <label className="text-micro font-bold text-on-surface/60 tracking-tight block mb-4">
                       Select platform <span className="text-destructive">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
-                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-sm font-bold tracking-tight text-[10px] ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
+                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-sm font-bold tracking-tight text-micro ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                         <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
                         Base Ghana
                       </label>
-                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-sm font-bold tracking-tight text-[10px] ${platform === 'DIASPORA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
+                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-sm font-bold tracking-tight text-micro ${platform === 'DIASPORA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                         <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
                         Base Diaspora
                       </label>
@@ -254,7 +254,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   <div className="grid md:grid-cols-2 gap-8">
                     {platform === 'DIASPORA' ? (
                       <div className="space-y-3">
-                        <label htmlFor="selectedCountry" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                        <label htmlFor="selectedCountry" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                           Country of residence <span className="text-destructive">*</span>
                         </label>
                         <select 
@@ -273,14 +273,14 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     ) : null}
 
                     <div className="space-y-3">
-                      <label htmlFor="contactNumber" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                      <label htmlFor="contactNumber" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                         Contact number <span className="text-destructive">*</span>
                       </label>
                       <div className="flex gap-2">
                         <select
                           value={formData.countryCode}
                           onChange={(e) => handleChange('countryCode', e.target.value)}
-                          className="flex items-center px-4 bg-muted/5 border border-border/60 rounded-sm font-bold text-on-surface text-[10px] appearance-none focus:outline-none"
+                          className="flex items-center px-4 bg-muted/5 border border-border/60 rounded-sm font-bold text-on-surface text-micro appearance-none focus:outline-none"
                         >
                           {Array.from(new Set(Object.values(countryCodes))).sort().map((code) => (
                             <option key={code} value={code}>{code}</option>
@@ -300,7 +300,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   </div>
 
                   <div className="space-y-3">
-                    <label htmlFor="password" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                    <label htmlFor="password" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                       Account password <span className="text-destructive">*</span>
                     </label>
                     <div className="relative">
@@ -335,12 +335,12 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
  
                    <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold text-on-surface/60 tracking-tight block mb-4">
+                      <label className="text-micro font-bold text-on-surface/60 tracking-tight block mb-4">
                         Age range <span className="text-destructive">*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {ageRanges.map(range => (
-                          <label key={range} className={`cursor-pointer border p-3 text-center transition-all rounded-sm font-bold tracking-tight text-[9px] ${formData.ageRange === range ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
+                          <label key={range} className={`cursor-pointer border p-3 text-center transition-all rounded-sm font-bold tracking-tight text-micro ${formData.ageRange === range ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                             <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} className="hidden" />
                             {range}
                           </label>
@@ -349,12 +349,12 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     </div>
  
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold text-on-surface/60 tracking-tight block mb-4">
+                      <label className="text-micro font-bold text-on-surface/60 tracking-tight block mb-4">
                         Gender <span className="text-destructive">*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {['Male', 'Female'].map(g => (
-                          <label key={g} className={`cursor-pointer border p-3 text-center transition-all rounded-sm font-bold tracking-tight text-[9px] ${formData.gender === g ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
+                          <label key={g} className={`cursor-pointer border p-3 text-center transition-all rounded-sm font-bold tracking-tight text-micro ${formData.gender === g ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
                             <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} className="hidden" />
                             {g}
                           </label>
@@ -364,7 +364,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   </div>
 
                   <div className="space-y-3">
-                    <label htmlFor="residentialAddress" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                    <label htmlFor="residentialAddress" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                       Residential address <span className="text-destructive">*</span>
                     </label>
                     <input
@@ -381,7 +381,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     {platform === 'GHANA' ? (
                       <>
                         <div className="space-y-3">
-                          <label htmlFor="region" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                          <label htmlFor="region" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                             Region <span className="text-destructive">*</span>
                           </label>
                           <select 
@@ -399,7 +399,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           </select>
                         </div>
                         <div className="space-y-3">
-                          <label htmlFor="constituency" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                          <label htmlFor="constituency" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                             Constituency <span className="text-destructive">*</span>
                           </label>
                           <select 
@@ -420,7 +420,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       </>
                     ) : (
                       <div className="space-y-3">
-                        <label htmlFor="chapter" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                        <label htmlFor="chapter" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                           Assigned chapter <span className="text-destructive">*</span>
                         </label>
                         <input
@@ -445,7 +445,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   </div>
  
                   <div className="space-y-3">
-                    <label htmlFor="emergencyContactName" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                    <label htmlFor="emergencyContactName" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                       Emergency contact name <span className="text-destructive">*</span>
                     </label>
                     <input
@@ -460,7 +460,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
 
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label htmlFor="emergencyRelationship" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                      <label htmlFor="emergencyRelationship" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                         Relationship <span className="text-destructive">*</span>
                       </label>
                       <input
@@ -473,7 +473,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       />
                     </div>
                     <div className="space-y-3">
-                      <label htmlFor="emergencyNumber" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                      <label htmlFor="emergencyNumber" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                         Emergency contact number <span className="text-destructive">*</span>
                       </label>
                       <input
@@ -490,7 +490,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
 
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label htmlFor="profession" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                      <label htmlFor="profession" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                         Profession / occupation <span className="text-destructive">*</span>
                       </label>
                       <input
@@ -503,7 +503,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       />
                     </div>
                     <div className="space-y-3">
-                      <label htmlFor="educationLevel" className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                      <label htmlFor="educationLevel" className="text-micro font-bold text-on-surface/60 tracking-tight block">
                         Education level <span className="text-destructive">*</span>
                       </label>
                       <select 
@@ -532,7 +532,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   </div>
 
                   <div className="space-y-6">
-                    <label className="text-[10px] font-bold text-on-surface/60 tracking-tight block">
+                    <label className="text-micro font-bold text-on-surface/60 tracking-tight block">
                       Passport photo <span className="text-destructive">*</span>
                     </label>
                     
@@ -547,7 +547,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         <div className="w-20 h-20 bg-primary/10 rounded-sm flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all">
                           <Upload className="w-10 h-10 text-primary transition-colors" />
                         </div>
-                        <p className="font-bold text-on-surface/60 tracking-tight text-[10px]">Click to upload passport photo</p>
+                        <p className="font-bold text-on-surface/60 tracking-tight text-micro">Click to upload passport photo</p>
                       </div>
                     ) : (
                       <div className="relative bg-muted/5 p-6 border border-border/40 rounded-sm overflow-hidden">
@@ -582,7 +582,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             <X className="w-6 h-6" />
                           </button>
                         </div>
-                        <p className="text-[10px] text-muted-foreground/40 tracking-tight mt-4 text-center font-bold">Position your face within the frame</p>
+                        <p className="text-micro text-muted-foreground/40 tracking-tight mt-4 text-center font-bold">Position your face within the frame</p>
                       </div>
                     )}
                   </div>
@@ -615,7 +615,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   <button
                     type="button"
                     onClick={goBack}
-                    className="w-1/3 h-16 bg-muted/10 hover:bg-muted/20 text-on-surface font-bold tracking-tight text-[10px] rounded-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                    className="w-1/3 h-16 bg-muted/10 hover:bg-muted/20 text-on-surface font-bold tracking-tight text-micro rounded-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
                   >
                     <ArrowLeft className="w-5 h-5" /> Back
                   </button>
@@ -626,7 +626,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                  <button
                   type="submit"
                   disabled={(formStep === 4 && !agreed) || isSubmitting}
-                  className={`h-16 font-bold tracking-tight text-[10px] rounded-sm flex items-center justify-center gap-4 transition-all flex-1 shadow-2xl active:scale-[0.98] ${((formStep === 4 && !agreed) || isSubmitting) ? 'bg-muted/20 text-muted-foreground/40 cursor-not-allowed' : 'bg-primary text-white hover:shadow-primary/40'}`}
+                  className={`h-16 font-bold tracking-tight text-micro rounded-sm flex items-center justify-center gap-4 transition-all flex-1 shadow-2xl active:scale-[0.98] ${((formStep === 4 && !agreed) || isSubmitting) ? 'bg-muted/20 text-muted-foreground/40 cursor-not-allowed' : 'bg-primary text-white hover:shadow-primary/40'}`}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center gap-3">

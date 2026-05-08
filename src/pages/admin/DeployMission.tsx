@@ -98,7 +98,7 @@ export default function DeployMission() {
   return (
     <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* 🧭 Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-[10px] font-bold capitalize tracking-tight text-muted-foreground/60">
+      <nav className="flex items-center gap-2 text-micro font-bold capitalize tracking-tight text-muted-foreground/60">
         <Link to="/admin/dashboard" className="hover:text-primary transition-colors flex items-center gap-1">
           <LayoutDashboard className="w-3 h-3" /> HQ
         </Link>
@@ -119,7 +119,7 @@ export default function DeployMission() {
           <p className="text-muted-foreground/80 text-sm mt-1">Initiate high-fidelity voter outreach protocols for specific jurisdictional targets.</p>
         </div>
         <Link to="/admin/ground-game">
-          <Button variant="outline" className="rounded-sm text-[10px] font-bold tracking-tight px-8 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95">
+          <Button variant="outline" className="rounded-sm text-micro font-bold tracking-tight px-8 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95">
             <ArrowLeft className="w-4 h-4 mr-2" /> Abort deployment
           </Button>
         </Link>
@@ -134,13 +134,13 @@ export default function DeployMission() {
                 <Flag className="w-4 h-4 text-primary" />
                 <CardTitle className="text-sm font-bold normal-case font-meta">Tactical deployment parameters</CardTitle>
               </div>
-              <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40">Define the operational scope and objectives for this field mission.</CardDescription>
+              <CardDescription className="text-micro font-bold normal-case text-muted-foreground/40">Define the operational scope and objectives for this field mission.</CardDescription>
             </CardHeader>
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
+                    <label className="text-micro font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
                       Mission title <span className="text-primary">*</span>
                     </label>
                     <input 
@@ -156,7 +156,7 @@ export default function DeployMission() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
+                    <label className="text-micro font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
                       Target region <span className="text-primary">*</span>
                     </label>
                     <div className="relative">
@@ -176,7 +176,7 @@ export default function DeployMission() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
+                    <label className="text-micro font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
                       Target constituency <span className="text-primary">*</span>
                     </label>
                     <div className="relative">
@@ -199,7 +199,7 @@ export default function DeployMission() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
+                    <label className="text-micro font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
                       Mission duration (Start) <span className="text-primary">*</span>
                     </label>
                     <div className="relative">
@@ -215,7 +215,7 @@ export default function DeployMission() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
+                    <label className="text-micro font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
                       Mission duration (End) <span className="text-primary">*</span>
                     </label>
                     <div className="relative">
@@ -233,7 +233,7 @@ export default function DeployMission() {
 
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
+                    <label className="text-micro font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
                       Contact goal <span className="text-primary">*</span>
                     </label>
                     <div className="relative">
@@ -251,7 +251,7 @@ export default function DeployMission() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
+                  <label className="text-micro font-bold normal-case text-muted-foreground/60 flex items-center gap-2">
                     Mission objective & field instructions
                   </label>
                   <textarea 
@@ -294,8 +294,8 @@ export default function DeployMission() {
                     <CheckCircle2 className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-[11px] font-bold text-white mb-1">Precise targeting</p>
-                    <p className="text-[10px] text-white/40 leading-relaxed font-medium">Ensure the target constituency aligns with the movement's current strategic priority areas.</p>
+                    <p className="text-tiny font-bold text-white mb-1">Precise targeting</p>
+                    <p className="text-micro text-white/40 leading-relaxed font-medium">Ensure the target constituency aligns with the movement's current strategic priority areas.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -303,8 +303,8 @@ export default function DeployMission() {
                     <CheckCircle2 className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-[11px] font-bold text-white mb-1">Clear objectives</p>
-                    <p className="text-[10px] text-white/40 leading-relaxed font-medium">Field agents perform best with clear, concise mission objectives and measurable contact goals.</p>
+                    <p className="text-tiny font-bold text-white mb-1">Clear objectives</p>
+                    <p className="text-micro text-white/40 leading-relaxed font-medium">Field agents perform best with clear, concise mission objectives and measurable contact goals.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -312,8 +312,8 @@ export default function DeployMission() {
                     <CheckCircle2 className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-[11px] font-bold text-white mb-1">Data integrity</p>
-                    <p className="text-[10px] text-white/40 leading-relaxed font-medium">All field interactions must be logged in real-time through the canvasser clipboard protocol.</p>
+                    <p className="text-tiny font-bold text-white mb-1">Data integrity</p>
+                    <p className="text-micro text-white/40 leading-relaxed font-medium">All field interactions must be logged in real-time through the canvasser clipboard protocol.</p>
                   </div>
                 </div>
               </div>
@@ -323,7 +323,7 @@ export default function DeployMission() {
                   <AlertCircle className="w-5 h-5 text-primary" />
                   <p className="text-xs font-bold capitalize tracking-tight text-white">System Alert</p>
                 </div>
-                <p className="text-[10px] text-white/60 leading-relaxed font-bold normal-case">
+                <p className="text-micro text-white/60 leading-relaxed font-bold normal-case">
                   Deployment protocols are irreversible once initiated. Ensure all tactical parameters have been verified by regional chapter leadership.
                 </p>
               </div>

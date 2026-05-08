@@ -135,7 +135,7 @@ export default function Impact() {
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <div>
                 <h2 className="text-charcoal-dark mb-0">Full Activity Log</h2>
-                <p className="text-[10px] font-bold text-slate-400 mt-1 mb-0 tracking-tight">Verified movement contributions</p>
+                <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">Verified movement contributions</p>
               </div>
               <button 
                 onClick={() => setShowFullActivity(false)}
@@ -154,12 +154,12 @@ export default function Impact() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-charcoal-dark mb-0">{item.fullName}</p>
-                        <p className="text-[11px] font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
+                        <p className="text-tiny font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold text-brand-green">GHS {item.amount}</p>
-                      <p className="text-[10px] font-semibold text-slate-300">Verified</p>
+                      <p className="text-micro font-semibold text-slate-300">Verified</p>
                     </div>
                   </div>
                 ))
@@ -188,7 +188,7 @@ export default function Impact() {
         <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-stone-900/50" />
         
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-bold tracking-tight rounded-none mb-6 ring-1 ring-brand-green/20">
+          <span className="inline-flex items-center gap-2 px-3 py-1 bg-brand-green/10 text-brand-green text-micro font-bold tracking-tight rounded-none mb-6 ring-1 ring-brand-green/20">
             <span className="w-1 h-1 bg-brand-green rounded-full animate-pulse" />
             Live Movement Metrics
           </span>
@@ -225,7 +225,7 @@ export default function Impact() {
                   ) : (
                     <>
                       <div className="flex justify-between items-start mb-4">
-                        <p className="text-[9px] font-bold text-slate-400 tracking-tight mb-0">{stat.status}</p>
+                        <p className="text-micro font-bold text-slate-400 tracking-tight mb-0">{stat.status}</p>
                         <ArrowUpRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-brand-green transition-colors" />
                       </div>
                       <div className="flex justify-between items-end mb-4">
@@ -235,12 +235,12 @@ export default function Impact() {
                         >
                           <Icon className="w-6 h-6" style={{ color: stat.color }} />
                         </div>
-                        <span className="text-[10px] font-semibold text-brand-green bg-brand-green/10 px-2 py-1 rounded-none flex items-center gap-1">
+                        <span className="text-micro font-semibold text-brand-green bg-brand-green/10 px-2 py-1 rounded-none flex items-center gap-1">
                           {stat.trend} <ArrowUpRight className="w-3 h-3" />
                         </span>
                       </div>
                       <h3 className="text-charcoal-dark leading-tight mb-0">{stat.value}</h3>
-                      <p className="text-[10px] font-bold text-slate-400 mt-1 mb-0 tracking-tight">{stat.label}</p>
+                      <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">{stat.label}</p>
                     </>
                   )}
                 </CardContent>
@@ -258,11 +258,11 @@ export default function Impact() {
                     <Activity className="w-5 h-5 text-brand-green" />
                     Campaign progress
                   </h2>
-                  <p className="text-[10px] font-bold text-slate-400 mt-1 mb-0 tracking-tight">National Organizing Fund</p>
+                  <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">National Organizing Fund</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-charcoal-dark mb-0">GHS {stats.raised.toLocaleString()} <span className="text-slate-300">/ {stats.goal.toLocaleString()}</span></p>
-                  <p className="text-[10px] font-bold text-brand-green mt-1 mb-0 tracking-tight">
+                  <p className="text-micro font-bold text-brand-green mt-1 mb-0 tracking-tight">
                     {Math.round((stats.raised / stats.goal) * 100) >= 1 ? `${Math.round((stats.raised / stats.goal) * 100)}% achieved towards goal` : 'Early momentum toward goal'}
                   </p>
                 </div>
@@ -291,15 +291,15 @@ export default function Impact() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="p-4 bg-slate-50/50 rounded-sm border border-slate-100">
-                  <p className="text-[10px] font-bold text-slate-400 tracking-tight mb-1">Average donation</p>
+                  <p className="text-micro font-bold text-slate-400 tracking-tight mb-1">Average donation</p>
                   <p className="text-lg font-bold text-charcoal-dark mb-0">{stats.avgDonation}</p>
                 </div>
                 <div className="p-4 bg-slate-50/50 rounded-sm border border-slate-100">
-                  <p className="text-[10px] font-bold text-slate-400 tracking-tight mb-1">Total contributors</p>
+                  <p className="text-micro font-bold text-slate-400 tracking-tight mb-1">Total contributors</p>
                   <p className="text-lg font-bold text-charcoal-dark mb-0">{stats.totalContributors.toLocaleString()}</p>
                 </div>
                 <div className="p-4 bg-slate-50/50 rounded-sm border border-slate-100">
-                  <p className="text-[10px] font-bold text-slate-400 tracking-tight mb-1">Last update</p>
+                  <p className="text-micro font-bold text-slate-400 tracking-tight mb-1">Last update</p>
                   <p className="text-lg font-bold text-charcoal-dark mb-0">Just now</p>
                 </div>
               </div>
@@ -313,7 +313,7 @@ export default function Impact() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {regions.map(region => (
                   <div key={region.name} className="p-4 border border-slate-100 rounded-sm hover:border-brand-green/30 transition-all cursor-default bg-slate-50/30">
-                    <p className="text-[10px] font-bold text-charcoal-dark tracking-tight">{region.name}</p>
+                    <p className="text-micro font-bold text-charcoal-dark tracking-tight">{region.name}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
                         <div 
@@ -322,7 +322,7 @@ export default function Impact() {
                         ></div>
                       </div>
                       <span className={cn(
-                        "text-[11px] font-bold",
+                        "text-tiny font-bold",
                         region.engagement > 0 ? "text-brand-green" : "text-slate-300"
                       )}>{region.engagement}%</span>
                     </div>
@@ -351,7 +351,7 @@ export default function Impact() {
                           setShowDatePicker(false);
                         }}
                         className={cn(
-                          "flex-1 h-8 px-0 text-[10px] font-bold capitalize transition-all rounded-sm",
+                          "flex-1 h-8 px-0 text-micro font-bold capitalize transition-all rounded-sm",
                           activeFilter === t 
                             ? "bg-white text-brand-green shadow-md scale-[1.02]" 
                             : "text-slate-400 hover:text-slate-600 hover:bg-white/50"
@@ -406,7 +406,7 @@ export default function Impact() {
                         setActiveFilter('custom');
                         setShowDatePicker(false);
                       }}
-                      className="w-full mt-4 text-[9px] h-10 !text-white"
+                      className="w-full mt-4 text-micro h-10 !text-white"
                     >
                       Apply Filter
                     </Button>
@@ -422,7 +422,7 @@ export default function Impact() {
                       Showing results for:<br/>
                       <span className="text-brand-green font-bold">{dateRange.start || '...'}</span> to <span className="text-brand-green font-bold">{dateRange.end || '...'}</span>
                     </p>
-                    <p className="text-[10px] font-bold text-slate-300 mt-4 mb-0 tracking-tight text-center">No records found for this specific range.</p>
+                    <p className="text-micro font-bold text-slate-300 mt-4 mb-0 tracking-tight text-center">No records found for this specific range.</p>
                   </div>
                 ) : Object.values(contributions).flat().length > 0 ? (
                   Object.values(contributions).flat().map((item, idx) => (
@@ -433,19 +433,19 @@ export default function Impact() {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-charcoal-dark mb-0">{item.fullName}</p>
-                          <p className="text-[11px] font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
+                          <p className="text-tiny font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-bold text-brand-green">GHS {item.amount}</p>
-                        <p className="text-[10px] font-semibold text-slate-300">Verified</p>
+                        <p className="text-micro font-semibold text-slate-300">Verified</p>
                       </div>
                     </div>
                   ))
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center py-12 bg-slate-50/30 rounded-none border border-dashed border-slate-200">
                     <Activity className="w-8 h-8 text-slate-200 mb-3" />
-                    <p className="text-[10px] font-bold text-slate-400 tracking-tight text-center">No activity recorded yet</p>
+                    <p className="text-micro font-bold text-slate-400 tracking-tight text-center">No activity recorded yet</p>
                     <p className="text-micro text-slate-300 mt-2 text-center px-4">Actions will appear here as they are verified</p>
                   </div>
                 )}
@@ -454,7 +454,7 @@ export default function Impact() {
                 <Button 
                   variant="ghost"
                   onClick={() => setShowFullActivity(true)}
-                  className="w-full h-12 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green group text-[10px] font-bold tracking-tight border border-transparent transition-all rounded-sm"
+                  className="w-full h-12 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green group text-micro font-bold tracking-tight border border-transparent transition-all rounded-sm"
                 >
                   View full activity log
                   <ArrowUpRight className="w-3.5 h-3.5 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

@@ -67,7 +67,7 @@ export default function Login() {
                 className="w-full form-understate p-4 text-charcoal-dark text-sm"
                 required
               />
-              <p className="text-[10px] text-slate-500 font-meta tracking-wide mt-1">
+              <p className="text-micro text-slate-500 font-meta tracking-wide mt-1">
                 Enter your email address associated with your membership
               </p>
             </div>

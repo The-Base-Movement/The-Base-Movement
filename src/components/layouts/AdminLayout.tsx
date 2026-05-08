@@ -255,7 +255,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
                 <p className="text-white font-bold text-xl leading-none mb-0 tracking-tight">The Base</p>
-                <p className="text-[var(--brand-gold)] text-[10px] font-bold tracking-tight mt-1.5 leading-none">Admin Command Center</p>
+                <p className="text-[var(--brand-gold)] text-micro font-bold tracking-tight mt-1.5 leading-none">Admin Command Center</p>
               </div>
 
             </Link>
@@ -276,7 +276,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             >
               <Zap className="w-4 h-4 text-[var(--brand-gold)] group-hover:scale-110 transition-transform shrink-0" />
               <span className={cn(
-                "text-[10px] font-bold tracking-tight transition-all duration-300 text-stone-100 group-hover:text-white",
+                "text-micro font-bold tracking-tight transition-all duration-300 text-stone-100 group-hover:text-white",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0 hidden"
               )}>
                 View live site
@@ -345,7 +345,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           )}
 
                           <span className={cn(
-                            "text-[11px] font-bold tracking-tight whitespace-nowrap transition-all duration-300",
+                            "text-tiny font-bold tracking-tight whitespace-nowrap transition-all duration-300",
                             isSidebarOpen ? "opacity-100" : "opacity-0"
                           )}>
                             {item.label}
@@ -376,7 +376,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             >
               <LogOut className="w-5 h-5 group-hover:text-[var(--brand-gold)] shrink-0 transition-colors" />
               <span className={cn(
-                "text-[11px] font-bold tracking-tight whitespace-nowrap transition-all duration-300",
+                "text-tiny font-bold tracking-tight whitespace-nowrap transition-all duration-300",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0"
               )}>
                 Sign out
@@ -422,7 +422,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   />
                   <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-border/40 shadow-2xl rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="p-2 border-b border-border/10 bg-muted/5 flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-muted-foreground/60 tracking-tight px-2">
+                      <span className="text-micro font-bold text-muted-foreground/60 tracking-tight px-2">
                         Global Search results
                       </span>
                       {isSearching && (
@@ -459,23 +459,23 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                               {result.type === 'Author' && <PenTool className="w-4 h-4" />}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[11px] font-bold text-on-surface truncate leading-none mb-1">
+                              <p className="text-tiny font-bold text-on-surface truncate leading-none mb-1">
                                 {result.title}
                               </p>
                               {result.subtitle && (
-                                <p className="text-[9px] font-bold text-muted-foreground/60 truncate leading-none">
+                                <p className="text-micro font-bold text-muted-foreground/60 truncate leading-none">
                                   {result.subtitle}
                                 </p>
                               )}
                             </div>
-                            <div className="text-[8px] font-bold tracking-tight text-muted-foreground/30 px-1.5 py-0.5 border border-border/10 rounded">
+                            <div className="text-micro font-bold tracking-tight text-muted-foreground/30 px-1.5 py-0.5 border border-border/10 rounded">
                               {result.type}
                             </div>
                           </Link>
                         ))
                       ) : !isSearching ? (
                         <div className="py-8 px-4 text-center">
-                          <p className="text-[10px] font-bold text-muted-foreground/40 italic">
+                          <p className="text-micro font-bold text-muted-foreground/40 italic">
                             No mobilization records found for "{searchQuery}"
                           </p>
                         </div>
@@ -483,8 +483,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     </div>
 
                     <div className="p-3 bg-muted/5 border-t border-border/10 flex items-center justify-center">
-                      <span className="text-[9px] font-bold text-muted-foreground/40 tracking-tight">
-                        Press <kbd className="px-1.5 py-0.5 bg-white border border-border/40 rounded text-[8px] mx-1">ESC</kbd> to dismiss
+                      <span className="text-micro font-bold text-muted-foreground/40 tracking-tight">
+                        Press <kbd className="px-1.5 py-0.5 bg-white border border-border/40 rounded text-micro mx-1">ESC</kbd> to dismiss
                       </span>
                     </div>
                   </div>
@@ -502,7 +502,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   {/* Pulse effect */}
                   <span className="absolute top-2 right-2 w-4 h-4 bg-[var(--brand-red)] rounded-full animate-ping opacity-75" />
                   {/* Luminous Numeric Badge */}
-                  <span className="absolute top-2 right-2 min-w-[16px] h-4 px-1 bg-[var(--brand-red)] rounded-full border-2 border-white shadow-[0_0_8px_rgba(206,17,38,0.8)] flex items-center justify-center text-[8px] font-black text-white">
+                  <span className="absolute top-2 right-2 min-w-[16px] h-4 px-1 bg-[var(--brand-red)] rounded-full border-2 border-white shadow-[0_0_8px_rgba(206,17,38,0.8)] flex items-center justify-center text-micro font-black text-white">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 </>
@@ -516,8 +516,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-muted/30 rounded-lg transition-colors cursor-pointer group">
                   <div className="text-right hidden sm:block pt-3">
-                    <p className="text-[11px] font-bold text-on-surface leading-none">{user?.name}</p>
-                    <p className="text-[9px] font-bold text-muted-foreground/80 mt-1 leading-none tracking-tight">
+                    <p className="text-tiny font-bold text-on-surface leading-none">{user?.name}</p>
+                    <p className="text-micro font-bold text-muted-foreground/80 mt-1 leading-none tracking-tight">
                       {user?.role === 'FOUNDER' 
                         ? 'Movement Founder' 
                         : user?.role === 'ORGANIZER'
@@ -531,7 +531,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                                 : 'Staff Verifier'}
                     </p>
                   </div>
-                  <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-[10px] rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all overflow-hidden">
+                  <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-micro rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all overflow-hidden">
                     {avatarUrl ? (
                       <img src={avatarUrl} alt={user?.name || ''} className="w-full h-full object-cover"  decoding="async" />
                     ) : (

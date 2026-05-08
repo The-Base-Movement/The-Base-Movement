@@ -175,7 +175,7 @@ export default function Checkout() {
             className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mb-4 group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-meta text-[10px] font-bold tracking-tight">Back to bag</span>
+            <span className="font-meta text-micro font-bold tracking-tight">Back to bag</span>
           </Link>
           <h1 className="font-h1 text-2xl sm:text-h2 text-stone-900 flex items-center gap-3">
             <CheckCircle className="w-8 h-8 text-[var(--brand-green)] shrink-0" />
@@ -197,7 +197,7 @@ export default function Checkout() {
 
               <div className="grid sm:grid-cols-2 gap-6">
                 <div className="sm:col-span-2">
-                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Full name</label>
+                  <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Full name</label>
                   <input
                     type="text"
                     name="fullName"
@@ -209,7 +209,7 @@ export default function Checkout() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Email address</label>
+                  <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Email address</label>
                   <input
                     type="email"
                     name="email"
@@ -221,7 +221,7 @@ export default function Checkout() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Phone number</label>
+                  <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Phone number</label>
                   <input
                     type="tel"
                     name="phone"
@@ -233,7 +233,7 @@ export default function Checkout() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Shipping address</label>
+                  <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Shipping address</label>
                   <input
                     type="text"
                     name="address"
@@ -245,7 +245,7 @@ export default function Checkout() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Country</label>
+                  <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Country</label>
                   <select
                     name="country"
                     value={formData.country}
@@ -260,7 +260,7 @@ export default function Checkout() {
                 </div>
                 {isDiaspora ? (
                   <div>
-                    <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">State / Province</label>
+                    <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">State / Province</label>
                     <input
                       type="text"
                       name="stateProvince"
@@ -272,7 +272,7 @@ export default function Checkout() {
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">Region</label>
+                    <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Region</label>
                     <select
                       name="region"
                       value={formData.region}
@@ -313,7 +313,7 @@ export default function Checkout() {
                   </div>
                   <div>
                     <p className="font-bold text-stone-900 text-sm">Mobile money</p>
-                    <p className="text-[10px] text-stone-500 tracking-tight">MTN, Telecel, AT money</p>
+                    <p className="text-micro text-stone-500 tracking-tight">MTN, Telecel, AT money</p>
                   </div>
                 </button>
 
@@ -331,14 +331,14 @@ export default function Checkout() {
                   </div>
                   <div>
                     <p className="font-bold text-stone-900 text-sm">Credit / debit card</p>
-                    <p className="text-[10px] text-stone-500 tracking-tight">Visa, Mastercard, AMEX</p>
+                    <p className="text-micro text-stone-500 tracking-tight">Visa, Mastercard, AMEX</p>
                   </div>
                 </button>
               </div>
 
               {paymentMethod === 'momo' && (
                 <div className="mt-8 p-6 bg-stone-50 border border-stone-100 rounded-sm">
-                  <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-4">Select network</label>
+                  <label className="block text-micro font-bold text-stone-900 tracking-tight mb-4">Select network</label>
                   <div className="flex flex-wrap gap-4">
                     {['MTN', 'Telecel', 'AT Money'].map(network => (
                       <label key={network} className="flex items-center gap-2 cursor-pointer group">
@@ -348,7 +348,7 @@ export default function Checkout() {
                     ))}
                   </div>
                   <div className="mt-6">
-                    <label className="block text-[10px] font-bold text-stone-900 tracking-tight mb-2">MoMo number</label>
+                    <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">MoMo number</label>
                     <input
                       type="tel"
                       className="w-full h-12 bg-white border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
@@ -370,7 +370,7 @@ export default function Checkout() {
                   <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="flex justify-between items-start gap-4">
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-stone-900 line-clamp-1">{item.name}</p>
-                      <p className="text-[10px] text-stone-500 tracking-tight">Qty: {item.quantity} | {item.selectedSize}</p>
+                      <p className="text-micro text-stone-500 tracking-tight">Qty: {item.quantity} | {item.selectedSize}</p>
                     </div>
                     <p className="text-xs font-bold text-stone-900">
                       GHS {(item.quantity * (typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price)).toFixed(2)}
@@ -400,11 +400,11 @@ export default function Checkout() {
                           onChange={(e) => setUsePoints(e.target.checked)}
                           className="w-4 h-4 rounded border-stone-300 text-[var(--brand-green)] focus:ring-[var(--brand-green)]"
                         />
-                        <label htmlFor="usePoints" className="text-[10px] font-bold text-stone-900 tracking-tight cursor-pointer">
+                        <label htmlFor="usePoints" className="text-micro font-bold text-stone-900 tracking-tight cursor-pointer">
                           Redeem Points
                         </label>
                       </div>
-                      <span className="text-[10px] font-bold text-[var(--brand-green)] tracking-tight">
+                      <span className="text-micro font-bold text-[var(--brand-green)] tracking-tight">
                         {userPoints.toLocaleString()} Available
                       </span>
                     </div>
@@ -434,11 +434,11 @@ export default function Checkout() {
               <div className="mt-8 space-y-4">
                 <div className="flex items-center gap-3 text-stone-500">
                   <ShieldCheck className="w-4 h-4" />
-                  <span className="text-[10px] font-bold tracking-tight">Encrypted checkout</span>
+                  <span className="text-micro font-bold tracking-tight">Encrypted checkout</span>
                 </div>
                 <div className="flex items-center gap-3 text-stone-500">
                   <Globe className="w-4 h-4" />
-                  <span className="text-[10px] font-bold tracking-tight">Worldwide shipping</span>
+                  <span className="text-micro font-bold tracking-tight">Worldwide shipping</span>
                 </div>
               </div>
             </div>

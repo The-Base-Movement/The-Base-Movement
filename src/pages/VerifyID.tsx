@@ -54,7 +54,7 @@ export default function VerifyID() {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 border-4 border-border/60 border-t-destructive rounded-full animate-spin mx-auto" />
-          <p className="text-[10px] font-bold tracking-tight text-muted-foreground/80">Verifying identity...</p>
+          <p className="text-micro font-bold tracking-tight text-muted-foreground/80">Verifying identity...</p>
         </div>
       </div>
     )
@@ -69,7 +69,7 @@ export default function VerifyID() {
             <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain"  decoding="async" loading="lazy" />
           </div>
           <h1 className="text-xl font-bold font-meta tracking-tight">The Base Movement</h1>
-          <p className="text-[9px] font-bold text-muted-foreground/80 tracking-tight">Official verification portal</p>
+          <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Official verification portal</p>
         </div>
 
         {error ? (
@@ -85,7 +85,7 @@ export default function VerifyID() {
               </div>
               <div className="pt-4">
                 <Link to="/">
-                  <Button className="w-full h-12 bg-stone-950 text-white text-[10px] font-bold tracking-tight rounded-none">
+                  <Button className="w-full h-12 bg-stone-950 text-white text-micro font-bold tracking-tight rounded-none">
                     Return to home
                   </Button>
                 </Link>
@@ -109,10 +109,10 @@ export default function VerifyID() {
               </div>
               <div className="flex items-center justify-center gap-2 mb-2">
                 <CheckCircle2 className="w-5 h-5 text-primary" />
-                <span className="text-[10px] font-bold tracking-tight text-primary">Identity verified</span>
+                <span className="text-micro font-bold tracking-tight text-primary">Identity verified</span>
               </div>
               <h2 className="text-2xl font-bold font-meta tracking-tight text-on-surface">{member.full_name}</h2>
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mt-1">{member.id}</p>
+              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mt-1">{member.id}</p>
             </CardHeader>
             <CardContent className="p-8 space-y-6">
               <div className="grid grid-cols-2 gap-6">
@@ -126,7 +126,7 @@ export default function VerifyID() {
                   <p className="text-[8px] font-bold tracking-tight text-muted-foreground/80 flex items-center gap-1 justify-end">
                     <Activity className="w-3 h-3" /> Status
                   </p>
-                  <span className="text-[10px] font-bold px-2 py-0.5 bg-primary/10 text-primary border border-primary/20">
+                  <span className="text-micro font-bold px-2 py-0.5 bg-primary/10 text-primary border border-primary/20">
                     {member.type}
                   </span>
                 </div>
@@ -149,7 +149,7 @@ export default function VerifyID() {
               <div className="pt-6 border-t border-border/40">
                 <div className="p-4 bg-background border border-border/40 flex items-start gap-3">
                   <AlertTriangle className="w-4 h-4 text-muted-foreground/80 mt-0.5" />
-                  <p className="text-[9px] text-stone-500 leading-relaxed font-bold tracking-tight">
+                  <p className="text-micro text-stone-500 leading-relaxed font-bold tracking-tight">
                     This verification is for official use only. Access to this data is logged and monitored for security purposes.
                   </p>
                 </div>

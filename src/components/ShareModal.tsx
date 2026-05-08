@@ -82,7 +82,7 @@ const shareOptions = [
         <div className="p-8 space-y-6">
           {/* Copy Link Section */}
           <div className="space-y-3">
-            <p className="text-[10px] font-bold text-stone-400 text-center tracking-tight">Your personal invite link:</p>
+            <p className="text-micro font-bold text-stone-400 text-center tracking-tight">Your personal invite link:</p>
             <div className="space-y-2">
               <div className="w-full p-4 bg-stone-50 border border-stone-100 text-stone-600 text-sm font-medium break-all text-center">
                 {url}
@@ -110,7 +110,7 @@ const shareOptions = [
              <div className="absolute inset-0 flex items-center" aria-hidden="true">
               <div className="w-full border-t border-stone-100"></div>
             </div>
-            <div className="relative flex justify-center text-[10px] font-bold tracking-tight">
+            <div className="relative flex justify-center text-micro font-bold tracking-tight">
               <span className="bg-white px-4 text-stone-400">Or share directly</span>
             </div>
           </div>

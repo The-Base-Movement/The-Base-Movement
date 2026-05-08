@@ -54,7 +54,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
             </div>
             
             <div className={cn(
-              "px-3 py-1 text-[10px] font-bold tracking-tight normal-case",
+              "px-3 py-1 text-micro font-bold tracking-tight normal-case",
               isRequestPending 
                 ? "bg-amber-50 text-amber-600 border border-amber-100"
                 : isActive
@@ -71,7 +71,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
               {chapter.name}
             </h3>
             <div className="flex items-center gap-2 text-stone-400">
-              <p className="text-[11px] font-bold tracking-tight normal-case">
+              <p className="text-tiny font-bold tracking-tight normal-case">
                 {chapter.city_or_region} • {chapter.country}
               </p>
             </div>
@@ -80,17 +80,17 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
           {/* Stats Bar */}
           <div className="grid grid-cols-2 gap-4 py-6 border-y border-stone-50 mt-auto">
             <div>
-              <p className="text-[10px] font-bold text-stone-400 normal-case tracking-tight mb-1">Active members</p>
+              <p className="text-micro font-bold text-stone-400 normal-case tracking-tight mb-1">Active members</p>
               <div className="flex items-center gap-2">
                 <Users className="w-3.5 h-3.5 text-[var(--brand-green)]" />
                 <span className="text-lg font-bold text-stone-900 font-meta tracking-tight">{chapter.member_count}</span>
               </div>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-stone-400 normal-case tracking-tight mb-1">Status</p>
+              <p className="text-micro font-bold text-stone-400 normal-case tracking-tight mb-1">Status</p>
               <div className="flex items-center gap-2">
                 <Zap className="w-3.5 h-3.5 text-warm-gold" />
-                <span className="text-[11px] font-bold text-stone-900 normal-case tracking-tight">Active Hub</span>
+                <span className="text-tiny font-bold text-stone-900 normal-case tracking-tight">Active Hub</span>
               </div>
             </div>
           </div>
@@ -105,7 +105,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
                   e.stopPropagation()
                   handleJoinRequest(e, chapter.id)
                 }}
-                className="w-full h-14 bg-on-surface text-white hover:!bg-white hover:!text-emerald-600 border border-transparent hover:!border-emerald-600 transition-all duration-300 flex items-center justify-center gap-3 text-[11px] font-bold tracking-tight normal-case rounded-none"
+                className="w-full h-14 bg-on-surface text-white hover:!bg-white hover:!text-emerald-600 border border-transparent hover:!border-emerald-600 transition-all duration-300 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none"
               >
                 Join Chapter <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
@@ -113,7 +113,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
               <Button
                 variant="outline"
                 className={cn(
-                  "w-full h-14 border transition-all duration-500 flex items-center justify-center gap-3 text-[11px] font-bold tracking-tight normal-case rounded-none",
+                  "w-full h-14 border transition-all duration-500 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none",
                   isRequestPending
                     ? "border-amber-200 bg-amber-50 text-amber-600 cursor-default"
                     : "border-stone-100 text-stone-400 group-hover:border-emerald-600/20 group-hover:!text-emerald-600 group-hover:bg-emerald-50/30"

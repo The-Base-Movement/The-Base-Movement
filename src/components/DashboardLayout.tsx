@@ -333,13 +333,13 @@ export default function DashboardLayout() {
                   <DropdownMenuItem asChild className="cursor-pointer p-3 focus:bg-primary/5 transition-colors group">
                     <Link to="/dashboard/settings" className="flex items-center gap-3 w-full">
                       <UserIcon className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-                      <span className="text-[11px] font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Member Profile</span>
+                      <span className="text-tiny font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Member Profile</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="cursor-pointer p-3 focus:bg-primary/5 transition-colors group">
                     <Link to="/dashboard/settings?tab=security" className="flex items-center gap-3 w-full">
                       <SettingsIcon className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-                      <span className="text-[11px] font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Security Settings</span>
+                      <span className="text-tiny font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Security Settings</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-border/10" />
@@ -349,7 +349,7 @@ export default function DashboardLayout() {
                   >
                     <div className="flex items-center gap-3 w-full">
                       <LogOut className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-                      <span className="text-[11px] font-bold tracking-tight">Sign out of Base</span>
+                      <span className="text-tiny font-bold tracking-tight">Sign out of Base</span>
                     </div>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

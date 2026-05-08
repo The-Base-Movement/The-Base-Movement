@@ -191,7 +191,7 @@ export default function Dashboard() {
       <div className="mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 mb-6 backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
-          <span className="text-[10px] font-bold text-primary tracking-tight">National infrastructure stabilized</span>
+          <span className="text-micro font-bold text-primary tracking-tight">National infrastructure stabilized</span>
         </div>
         <h1 className="tracking-tighter mb-4 text-on-surface">Operational Dashboard</h1>
         <BrandLine />
@@ -232,7 +232,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-bold tracking-tight m-0">{fieldActions.length}</h3>
               <span className="text-tiny font-bold text-on-surface/20">In area</span>
             </div>
-            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">No community actions detected yet.</p>
+            <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">No community actions detected yet.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -243,7 +243,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-bold tracking-tight m-0">{totalPoints}</h3>
               <span className="text-tiny font-bold text-on-surface/20">Earned</span>
             </div>
-            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">Participate to earn your first points.</p>
+            <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">Participate to earn your first points.</p>
           </div>
           <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -254,7 +254,7 @@ export default function Dashboard() {
               <h3 className="text-3xl font-bold tracking-tight m-0">{achievements.length}</h3>
               <span className="text-tiny font-bold text-on-surface/20">Unlocked</span>
             </div>
-            <p className="text-[11px] text-on-surface/30 mt-4 font-medium italic">Complete actions to earn badges.</p>
+            <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">Complete actions to earn badges.</p>
           </div>
         </div>
       </section>
@@ -275,7 +275,7 @@ export default function Dashboard() {
             )}
             <div className="flex items-center gap-2 px-3 py-1 bg-destructive/10 border border-destructive/20 rounded-full">
               <span className="flex h-1.5 w-1.5 rounded-full bg-destructive animate-pulse"></span>
-              <span className="text-[9px] font-bold tracking-tight text-destructive">National Activity</span>
+              <span className="text-micro font-bold tracking-tight text-destructive">National Activity</span>
             </div>
           </div>
         </div>
@@ -314,7 +314,7 @@ export default function Dashboard() {
                 <div className="w-full md:w-32 bg-on-surface flex flex-col items-center justify-center p-6 text-white border-b md:border-b-0 md:border-r border-white/5">
                   <span className="text-tiny font-bold tracking-tight text-white/40 mb-1">{format(new Date(action.start_time), 'MMM')}</span>
                   <span className="text-3xl font-bold italic tracking-tighter">{format(new Date(action.start_time), 'dd')}</span>
-                  <span className="text-[9px] font-bold tracking-tight text-destructive mt-2">{format(new Date(action.start_time), 'HH:mm')}</span>
+                  <span className="text-micro font-bold tracking-tight text-destructive mt-2">{format(new Date(action.start_time), 'HH:mm')}</span>
                 </div>
                 <div className="flex-1 p-6 relative">
                   <div className="flex items-center gap-2 mb-3">
@@ -330,23 +330,23 @@ export default function Dashboard() {
                   <div className="flex items-center gap-4 text-on-surface/40 mb-6">
                     <div className="flex items-center gap-1.5">
                       <MapPin className="w-3 h-3" />
-                      <span className="text-[9px] font-bold tracking-tight truncate max-w-[120px]">{action.location_name}</span>
+                      <span className="text-micro font-bold tracking-tight truncate max-w-[120px]">{action.location_name}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Users className="w-3 h-3" />
-                      <span className="text-[9px] font-bold tracking-tight">{action.target_attendance} Target</span>
+                      <span className="text-micro font-bold tracking-tight">{action.target_attendance} Target</span>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/10">
                     <div className="flex items-center gap-2">
                       <Navigation className="w-3.5 h-3.5 text-on-surface/10" />
-                      <span className="text-[9px] font-bold text-on-surface/20 tracking-tight">{action.geofence_radius_meters}m radius</span>
+                      <span className="text-micro font-bold text-on-surface/20 tracking-tight">{action.geofence_radius_meters}m radius</span>
                     </div>
                     <Button 
                       variant="solid"
                       onClick={() => handleCheckIn(action)}
-                      className="h-9 px-6 text-[9px] font-bold tracking-tight shadow-xl"
+                      className="h-9 px-6 text-micro font-bold tracking-tight shadow-xl"
                       disabled={checkingIn === action.id}
                     >
                       {checkingIn === action.id ? 'Signaling...' : 'Field check-in'}
@@ -500,7 +500,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="font-bold tracking-tighter text-on-surface text-sm mb-0.5 leading-none">Verified civic member</p>
-                <p className="text-[11px] font-bold text-on-surface/30 mb-0 leading-none">Authenticated for official voting and policy contribution.</p>
+                <p className="text-tiny font-bold text-on-surface/30 mb-0 leading-none">Authenticated for official voting and policy contribution.</p>
               </div>
             </div>
           </div>

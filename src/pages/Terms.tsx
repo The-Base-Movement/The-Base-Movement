@@ -15,7 +15,7 @@ export default function Terms() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10">
           <Breadcrumbs />
-          <p className="font-meta text-warm-gold tracking-tight text-[12px] mb-3 mt-6">Member Governance</p>
+          <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">Member Governance</p>
           <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight mb-4">
             Terms of <span className="text-brand-green">service</span>
           </h1>

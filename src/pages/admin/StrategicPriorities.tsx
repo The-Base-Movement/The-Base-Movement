@@ -131,7 +131,7 @@ export default function StrategicPriorities() {
     return (
       <div className="h-full w-full flex flex-col items-center justify-center py-20">
         <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-        <p className="text-[10px] font-bold tracking-tight text-muted-foreground/40">Synchronizing tactical priorities...</p>
+        <p className="text-micro font-bold tracking-tight text-muted-foreground/40">Synchronizing tactical priorities...</p>
       </div>
     )
   }
@@ -163,7 +163,7 @@ export default function StrategicPriorities() {
               })
               setIsCreating(true)
             }}
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Establish Priority
           </Button>
@@ -184,7 +184,7 @@ export default function StrategicPriorities() {
                 <stat.icon className={cn("w-6 h-6", stat.color)} />
               </div>
               <div className="flex-1 flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-                <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">{stat.label}</p>
+                <p className="text-micro font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">{stat.label}</p>
                 <p className="text-2xl font-bold text-on-surface leading-tight m-0">{stat.value}</p>
               </div>
             </CardContent>
@@ -201,12 +201,12 @@ export default function StrategicPriorities() {
             </div>
             <CardContent className="p-6 space-y-6">
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Search priorities</label>
+                <label className="text-micro font-bold text-stone-500 uppercase tracking-widest">Search priorities</label>
                 <div className="relative group">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
                   <input 
                     placeholder="Keywords..." 
-                    className="w-full pl-11 pr-4 h-11 bg-white border border-border/60 focus:ring-1 focus:ring-primary focus:border-transparent rounded-sm text-[11px] font-bold outline-none"
+                    className="w-full pl-11 pr-4 h-11 bg-white border border-border/60 focus:ring-1 focus:ring-primary focus:border-transparent rounded-sm text-tiny font-bold outline-none"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -214,16 +214,16 @@ export default function StrategicPriorities() {
               </div>
 
               <div className="pt-6 border-t border-border/10 space-y-4">
-                <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                <div className="flex items-center justify-between text-micro font-bold text-muted-foreground/60 uppercase tracking-widest">
                   <span>Intelligence Summary</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
-                    <span className="text-[10px] font-bold text-on-surface/60">Total Active</span>
+                    <span className="text-micro font-bold text-on-surface/60">Total Active</span>
                     <span className="text-xs font-bold text-primary">{campaigns.filter(c => c.status === 'Active').length}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
-                    <span className="text-[10px] font-bold text-on-surface/60">Success Rate</span>
+                    <span className="text-micro font-bold text-on-surface/60">Success Rate</span>
                     <span className="text-xs font-bold text-accent">
                       {campaigns.length > 0 ? (campaigns.filter(c => (c.raisedAmount / c.targetAmount) >= 1).length / campaigns.length * 100).toFixed(0) : 0}%
                     </span>
@@ -234,11 +234,11 @@ export default function StrategicPriorities() {
           </Card>
 
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-on-surface text-white p-6 group">
-            <h4 className="text-[10px] font-bold tracking-tight text-white/40 uppercase mb-4">Tactical Awareness</h4>
-            <p className="text-[11px] font-medium text-white/60 leading-relaxed">
+            <h4 className="text-micro font-bold tracking-tight text-white/40 uppercase mb-4">Tactical Awareness</h4>
+            <p className="text-tiny font-medium text-white/60 leading-relaxed">
               Establishing strategic priorities allows the movement to synchronize resource allocation across multiple regional cells.
             </p>
-            <Button variant="ghost" className="w-full justify-between h-9 mt-4 px-0 text-[10px] font-bold tracking-tight text-white hover:bg-transparent group-hover:text-primary transition-colors">
+            <Button variant="ghost" className="w-full justify-between h-9 mt-4 px-0 text-micro font-bold tracking-tight text-white hover:bg-transparent group-hover:text-primary transition-colors">
               Operational Handbook <TrendingUp className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Card>
@@ -255,7 +255,7 @@ export default function StrategicPriorities() {
                 <Button 
                   variant="outline" 
                   onClick={() => setSearchQuery('')}
-                  className="mt-6 rounded-sm border-border/40 font-bold text-[10px] tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                  className="mt-6 rounded-sm border-border/40 font-bold text-micro tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 >
                   Reset Filter
                 </Button>
@@ -273,7 +273,7 @@ export default function StrategicPriorities() {
                     )}
                     <div className="absolute top-4 right-4">
                       <span className={cn(
-                        "px-3 py-1 text-[9px] font-bold tracking-tight rounded-full border shadow-sm backdrop-blur-md",
+                        "px-3 py-1 text-micro font-bold tracking-tight rounded-full border shadow-sm backdrop-blur-md",
                         campaign.status === 'Active' ? "bg-primary text-white border-primary/20" : "bg-white text-on-surface border-border/60"
                       )}>
                         {campaign.status}
@@ -289,7 +289,7 @@ export default function StrategicPriorities() {
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <div className="flex justify-between items-end">
-                          <span className="text-[10px] font-bold text-muted-foreground/40 normal-case">Progress</span>
+                          <span className="text-micro font-bold text-muted-foreground/40 normal-case">Progress</span>
                           <span className="text-sm font-bold text-on-surface">{((campaign.raisedAmount / campaign.targetAmount) * 100).toFixed(0)}%</span>
                         </div>
                         <div className="h-1.5 bg-muted rounded-full overflow-hidden">
@@ -298,14 +298,14 @@ export default function StrategicPriorities() {
                             style={{ width: `${Math.min((campaign.raisedAmount / campaign.targetAmount) * 100, 100)}%` }}
                           />
                         </div>
-                        <div className="flex justify-between text-[10px] font-bold tracking-tight">
+                        <div className="flex justify-between text-micro font-bold tracking-tight">
                           <span className="text-primary">${campaign.raisedAmount.toLocaleString()}</span>
                           <span className="text-muted-foreground/40 normal-case">of ${campaign.targetAmount.toLocaleString()}</span>
                         </div>
                       </div>
 
                       <div className="flex items-center justify-between pt-4 border-t border-border/10">
-                        <div className="flex items-center gap-2 text-[9px] font-bold text-muted-foreground/60 uppercase">
+                        <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/60 uppercase">
                           <Calendar className="w-3 h-3" />
                           <span>Ends: {new Date(campaign.endDate).toLocaleDateString()}</span>
                         </div>
@@ -357,7 +357,7 @@ export default function StrategicPriorities() {
                   <CardTitle className="text-xl font-bold tracking-tight font-meta">
                     {isCreating ? 'Deploy New Priority' : 'Adjust Strategic Protocol'}
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground/80 text-[10px] font-bold tracking-tight mt-1">
+                  <CardDescription className="text-muted-foreground/80 text-micro font-bold tracking-tight mt-1">
                     Defining critical resource allocation for the movement.
                   </CardDescription>
                 </div>
@@ -370,7 +370,7 @@ export default function StrategicPriorities() {
               <CardContent className="p-8 space-y-6 max-h-[60vh] overflow-y-auto">
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold tracking-tight text-muted-foreground/40">Priority Title</label>
+                    <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Priority Title</label>
                     <input 
                       type="text" 
                       required
@@ -382,7 +382,7 @@ export default function StrategicPriorities() {
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold tracking-tight text-muted-foreground/40">Mission Description</label>
+                    <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Mission Description</label>
                     <textarea 
                       rows={3} 
                       required
@@ -395,7 +395,7 @@ export default function StrategicPriorities() {
 
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold tracking-tight text-muted-foreground/40">Target Capital (GHS)</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Target Capital (GHS)</label>
                       <input 
                         type="number" 
                         required
@@ -405,7 +405,7 @@ export default function StrategicPriorities() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold tracking-tight text-muted-foreground/40">Mission Deadline</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Mission Deadline</label>
                       <input 
                         type="date" 
                         required
@@ -418,7 +418,7 @@ export default function StrategicPriorities() {
 
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold tracking-tight text-muted-foreground/40">Status</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Status</label>
                       <select 
                         className="w-full h-12 bg-muted/5 border-b border-border/60 text-sm font-bold px-4 focus:border-on-surface outline-none appearance-none transition-all"
                         value={formData.status}
@@ -429,7 +429,7 @@ export default function StrategicPriorities() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold tracking-tight text-muted-foreground/40">Visual URL (Optional)</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Visual URL (Optional)</label>
                       <input 
                         type="url" 
                         placeholder="https://..." 
@@ -446,7 +446,7 @@ export default function StrategicPriorities() {
                   type="button"
                   variant="outline" 
                   onClick={() => { setIsCreating(false); setEditingCampaign(null); }} 
-                  className="flex-1 h-12 rounded-sm border-border/40 font-bold text-[10px] tracking-tight hover:bg-stone-50 transition-all active:scale-95"
+                  className="flex-1 h-12 rounded-sm border-border/40 font-bold text-micro tracking-tight hover:bg-stone-50 transition-all active:scale-95"
                   disabled={isSubmitting}
                 >
                   Abort Mission
@@ -454,7 +454,7 @@ export default function StrategicPriorities() {
                 <Button 
                   type="submit"
                   variant="primary"
-                  className="flex-1 h-12 rounded-sm font-bold text-[10px] tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="flex-1 h-12 rounded-sm font-bold text-micro tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Clock className="w-4 h-4 mr-2" />}

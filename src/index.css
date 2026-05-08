@@ -94,29 +94,36 @@
     --brand-gold-rgb: 218, 165, 32;
     --brand-red-rgb: 206, 17, 38;
 
-    /* Authoritative Font Scale */
-    --fs-micro: 11px;
-    --fs-tiny: 12px;
-    --fs-xs: 13px;
-    --fs-sm: 14px;
-    --fs-base: 16px;
-    --fs-lg: 18px;
-    --fs-xl: 20px;
-    --fs-2xl: 24px;
-    --fs-3xl: 30px;
-    --fs-4xl: 36px;
+    /* Authoritative Font Scale - Optimized for High-Resolution Reading */
+    --fs-micro: 12px;
+    --fs-tiny: 13px;
+    --fs-xs: 14px;
+    --fs-sm: 16px;
+    --fs-base: 18px;
+    --fs-lg: 22px;
+    --fs-xl: 28px;
+    --fs-2xl: 36px;
+    --fs-3xl: 48px;
+    --fs-4xl: 64px;
     
     /* Typography Management Defaults (Sync with BrandingContext) */
     --font-scale: 1.0;
     --font-heading-scale: 1.0;
     
-    --h1-size: clamp(calc(1.75rem * var(--font-heading-scale)), calc(4.5vw * var(--font-heading-scale)), calc(3.5rem * var(--font-heading-scale)));
-    --h2-size: clamp(calc(1.5rem * var(--font-heading-scale)), calc(3.5vw * var(--font-heading-scale)), calc(2.75rem * var(--font-heading-scale)));
-    --h3-size: clamp(calc(1.25rem * var(--font-heading-scale)), calc(2.5vw * var(--font-heading-scale)), calc(2rem * var(--font-heading-scale)));
-    --h4-size: clamp(calc(1.1rem * var(--font-heading-scale)), calc(2vw * var(--font-heading-scale)), calc(1.5rem * var(--font-heading-scale)));
-    --h5-size: clamp(calc(1rem * var(--font-heading-scale)), calc(1.5vw * var(--font-heading-scale)), calc(1.25rem * var(--font-heading-scale)));
-    --h6-size: clamp(calc(0.875rem * var(--font-heading-scale)), calc(1.2vw * var(--font-heading-scale)), calc(1.1rem * var(--font-heading-scale)));
-    --p-size: clamp(calc(0.875rem * var(--font-scale)), calc(0.5vw + 0.75rem), calc(1.125rem * var(--font-scale)));
+    --h1-size: clamp(calc(2.25rem * var(--font-heading-scale)), calc(5vw * var(--font-heading-scale)), calc(4.5rem * var(--font-heading-scale)));
+    --h2-size: clamp(calc(1.75rem * var(--font-heading-scale)), calc(4vw * var(--font-heading-scale)), calc(3.5rem * var(--font-heading-scale)));
+    --h3-size: clamp(calc(1.5rem * var(--font-heading-scale)), calc(3vw * var(--font-heading-scale)), calc(2.75rem * var(--font-heading-scale)));
+    --h4-size: clamp(calc(1.25rem * var(--font-heading-scale)), calc(2.5vw * var(--font-heading-scale)), calc(2rem * var(--font-heading-scale)));
+    --h5-size: clamp(calc(1.1rem * var(--font-heading-scale)), calc(2vw * var(--font-heading-scale)), calc(1.5rem * var(--font-heading-scale)));
+    --h6-size: clamp(calc(1rem * var(--font-heading-scale)), calc(1.5vw * var(--font-heading-scale)), calc(1.25rem * var(--font-heading-scale)));
+    --p-size: clamp(calc(1rem * var(--font-scale)), calc(0.6vw + 0.85rem), calc(1.25rem * var(--font-scale)));
+  }
+
+  @media (min-width: 1280px) {
+    :root {
+      --font-scale: 1.1;
+      --font-heading-scale: 1.15;
+    }
   }
 }
 
@@ -184,6 +191,14 @@
   /* Management Controlled Muted Text Utilities */
   .text-muted-foreground { color: hsl(var(--muted-foreground)); }
   .text-on-surface-muted { color: hsl(var(--on-surface-muted)); }
+
+  /* Tailwind Utility Mapping to Authoritative Scale */
+  .text-xs { font-size: var(--fs-xs) !important; }
+  .text-sm { font-size: var(--fs-sm) !important; }
+  .text-base { font-size: var(--fs-base) !important; }
+  .text-lg { font-size: var(--fs-lg) !important; }
+  .text-xl { font-size: var(--fs-xl) !important; }
+  .text-2xl { font-size: var(--fs-2xl) !important; }
 }
 
 /* Material Symbols configuration */

@@ -40,13 +40,13 @@ export default function ChapterDetails() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <span className={`px-3 py-0.5 rounded-none text-[9px] font-bold tracking-tight ${
+                <span className={`px-3 py-0.5 rounded-none text-micro font-bold tracking-tight ${
                   chapter.status === 'Active' || chapter.status === 'Member' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
                 }`}>
                   {chapter.status}
                 </span>
                 <span className="text-stone-300">|</span>
-                <span className="text-[10px] font-bold text-stone-400 tracking-tight">Verified chapter</span>
+                <span className="text-micro font-bold text-stone-400 tracking-tight">Verified chapter</span>
               </div>
               <h1 className="text-4xl font-bold text-stone-900 tracking-tighter font-meta">
                 {chapter.name}
@@ -104,11 +104,11 @@ export default function ChapterDetails() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
                 <div className="p-6 bg-stone-50 border border-stone-100 rounded-none">
-                  <h4 className="text-[10px] font-bold text-stone-400 tracking-tight mb-2">Local focus</h4>
+                  <h4 className="text-micro font-bold text-stone-400 tracking-tight mb-2">Local focus</h4>
                   <p className="text-sm font-bold text-stone-800">Youth Empowerment & Civic Literacy</p>
                 </div>
                 <div className="p-6 bg-stone-50 border border-stone-100 rounded-none">
-                  <h4 className="text-[10px] font-bold text-stone-400 tracking-tight mb-2">Meeting schedule</h4>
+                  <h4 className="text-micro font-bold text-stone-400 tracking-tight mb-2">Meeting schedule</h4>
                   <p className="text-sm font-bold text-stone-800">Every First Saturday of the Month</p>
                 </div>
               </div>
@@ -122,7 +122,7 @@ export default function ChapterDetails() {
                   <Calendar className="w-5 h-5 text-[var(--brand-green)]" />
                   Recent Activities
                 </h2>
-                <button className="text-[10px] font-bold text-[var(--brand-green)] tracking-tight hover:underline">View all</button>
+                <button className="text-micro font-bold text-[var(--brand-green)] tracking-tight hover:underline">View all</button>
               </div>
               
               <div className="space-y-4">
@@ -134,7 +134,7 @@ export default function ChapterDetails() {
                   <div key={i} className="bg-white border border-stone-200 p-6 rounded-none flex items-center justify-between group hover:border-[var(--brand-green)] transition-colors">
                     <div className="flex items-center gap-6">
                       <div className="w-12 h-12 bg-stone-50 flex flex-col items-center justify-center text-stone-400 font-meta">
-                        <span className="text-[10px] font-bold">{activity.date.split(' ')[0]}</span>
+                        <span className="text-micro font-bold">{activity.date.split(' ')[0]}</span>
                         <span className="text-lg font-bold leading-none">{activity.date.split(' ')[1].replace(',', '')}</span>
                       </div>
                       <div>
@@ -164,7 +164,7 @@ export default function ChapterDetails() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-stone-900">Dr. Samuel Appiah</p>
-                    <p className="text-[10px] text-stone-400 tracking-tight">Regional coordinator</p>
+                    <p className="text-micro text-stone-400 tracking-tight">Regional coordinator</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -173,7 +173,7 @@ export default function ChapterDetails() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-stone-900">Sarah Mensah</p>
-                    <p className="text-[10px] text-stone-400 tracking-tight">Chapter secretary</p>
+                    <p className="text-micro text-stone-400 tracking-tight">Chapter secretary</p>
                   </div>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export default function ChapterDetails() {
               <ShieldCheck className="w-24 h-24 text-[var(--brand-green)]" />
             </div>
             <div className="relative z-10">
-              <h3 className="text-warm-gold text-[10px] font-bold tracking-tight mb-4">Official verification</h3>
+              <h3 className="text-warm-gold text-micro font-bold tracking-tight mb-4">Official verification</h3>
               <p className="text-sm leading-relaxed text-stone-300 mb-6">
                 This chapter is officially recognized and verified by The Base National Headquarters. All activities are coordinated with the central movement agenda.
               </p>

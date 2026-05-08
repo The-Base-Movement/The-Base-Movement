@@ -66,7 +66,7 @@ export default function SentimentIntelligence() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-border/40 border-t-destructive animate-spin" />
-          <p className="text-[10px] font-bold normal-case text-primary">Initializing AI intelligence core...</p>
+          <p className="text-micro font-bold normal-case text-primary">Initializing AI intelligence core...</p>
         </div>
       </div>
     )
@@ -87,7 +87,7 @@ export default function SentimentIntelligence() {
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4 px-6 py-3 bg-white border border-border/40 rounded-sm shadow-sm">
             <div className="text-right flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
-              <span className="text-[9px] font-bold text-muted-foreground/40 block normal-case mb-0">National average</span>
+              <span className="text-micro font-bold text-muted-foreground/40 block normal-case mb-0">National average</span>
               <span className={cn(
                 "text-lg font-bold tracking-tight m-0",
                 nationalScore >= 0 ? "text-primary" : "text-brand-red"
@@ -101,7 +101,7 @@ export default function SentimentIntelligence() {
             <Button 
               variant="primary"
               size="lg"
-              className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={() => toast({ title: "Analysis started", description: "Aggregating regional sentiment data..." })}
             >
               <Activity className="w-4 h-4 mr-2" /> Run AI Analysis
@@ -109,7 +109,7 @@ export default function SentimentIntelligence() {
             <Button 
               variant="outline" 
               size="lg"
-              className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+              className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
               onClick={() => toast({ title: "Report exported", description: "Your intelligence briefing is ready for download." })}
             >
               <BarChart3 className="w-4 h-4 mr-2" /> Export Briefing
@@ -125,7 +125,7 @@ export default function SentimentIntelligence() {
               <div className="flex items-center justify-between">
                 <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                   <CardTitle className="text-xs font-bold text-on-surface m-0">Impact forecasts</CardTitle>
-                  <CardDescription className="text-[10px] font-bold text-muted-foreground/40 m-0">30-day mobilization projections</CardDescription>
+                  <CardDescription className="text-micro font-bold text-muted-foreground/40 m-0">30-day mobilization projections</CardDescription>
                 </div>
                 <Target className="w-4 h-4 text-muted-foreground" />
               </div>
@@ -135,15 +135,15 @@ export default function SentimentIntelligence() {
                 {projections.length === 0 ? (
                   <div className="text-center py-12">
                     <BarChart3 className="w-8 h-8 text-muted mx-auto mb-3" />
-                    <p className="text-[10px] font-bold text-muted-foreground normal-case tracking-tight">No data yet. Projections appear after 30 days of activity.</p>
+                    <p className="text-micro font-bold text-muted-foreground normal-case tracking-tight">No data yet. Projections appear after 30 days of activity.</p>
                   </div>
                 ) : (
                   projections.map((proj) => (
                     <div key={proj.id} className="relative flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
                       <div className="flex justify-between items-end">
-                        <h4 className="text-[11px] font-bold text-on-surface m-0">{proj.region}</h4>
+                        <h4 className="text-tiny font-bold text-on-surface m-0">{proj.region}</h4>
                         <div className="text-right">
-                          <span className="text-[10px] font-bold text-muted-foreground/40">Projected reach</span>
+                          <span className="text-micro font-bold text-muted-foreground/40">Projected reach</span>
                           <p className="text-sm font-bold text-brand-red m-0">{proj.projected_reach_30d.toLocaleString()}</p>
                         </div>
                       </div>
@@ -158,10 +158,10 @@ export default function SentimentIntelligence() {
                         />
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-bold text-muted-foreground normal-case tracking-tight flex items-center gap-1">
+                        <span className="text-micro font-bold text-muted-foreground normal-case tracking-tight flex items-center gap-1">
                           <Zap className="w-3 h-3" /> +{proj.mobilization_velocity}/day
                         </span>
-                        <span className="text-[9px] font-bold text-muted-foreground normal-case tracking-tight">
+                        <span className="text-micro font-bold text-muted-foreground normal-case tracking-tight">
                           Confidence: {(proj.confidence_score * 100).toFixed(0)}%
                         </span>
                       </div>
@@ -185,14 +185,14 @@ export default function SentimentIntelligence() {
               <div className="divide-y divide-white/10 max-h-[400px] overflow-y-auto sidebar-scroll">
                 {sentimentMetrics.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-[10px] font-bold text-muted-foreground/80 normal-case mb-0">No regional data available yet.</p>
+                    <p className="text-micro font-bold text-muted-foreground/80 normal-case mb-0">No regional data available yet.</p>
                   </div>
                 ) : (
                   sentimentMetrics.map(t => (
                     <div key={t.id} className="p-5 flex items-center justify-between hover:bg-white/5 transition-colors">
-                      <span className="text-[10px] font-bold normal-case">{t.region}</span>
+                      <span className="text-micro font-bold normal-case">{t.region}</span>
                       <div className="flex items-center gap-6">
-                        <div className="flex gap-2 text-[9px] font-bold text-white/40">
+                        <div className="flex gap-2 text-micro font-bold text-white/40">
                           <span className="text-primary">{t.positive_count}</span>
                           <span className="text-white/20">/</span>
                           <span className="text-white/40">{t.neutral_count}</span>
@@ -200,7 +200,7 @@ export default function SentimentIntelligence() {
                           <span className="text-brand-red">{t.negative_count}</span>
                         </div>
                         <span className={cn(
-                          "px-2 py-0.5 text-[9px] font-bold normal-case rounded-full min-w-[70px] text-center",
+                          "px-2 py-0.5 text-micro font-bold normal-case rounded-full min-w-[70px] text-center",
                           getSentimentColor(t.avg_sentiment)
                         )}>
                           {getSentimentLabel(t.avg_sentiment).toLowerCase()}
@@ -221,7 +221,7 @@ export default function SentimentIntelligence() {
               <div className="flex items-center justify-between">
                 <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                   <CardTitle className="text-xs font-bold normal-case font-meta m-0">Live feedback</CardTitle>
-                  <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/80 m-0">Direct member sentiment</CardDescription>
+                  <CardDescription className="text-micro font-bold normal-case text-muted-foreground/80 m-0">Direct member sentiment</CardDescription>
                 </div>
                 <MessageSquare className="w-4 h-4 text-muted-foreground/80" />
               </div>
@@ -230,7 +230,7 @@ export default function SentimentIntelligence() {
               <div className="divide-y divide-border/40 max-h-[850px] overflow-y-auto">
                 {feedback.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-[10px] font-bold text-muted-foreground/80 normal-case mb-0">No feedback intercepted</p>
+                    <p className="text-micro font-bold text-muted-foreground/80 normal-case mb-0">No feedback intercepted</p>
                   </div>
                 ) : (
                   feedback.map((item) => (
@@ -242,14 +242,14 @@ export default function SentimentIntelligence() {
                         )}>
                           {item.category.toLowerCase()}
                         </span>
-                        <span className="text-[9px] font-bold text-muted-foreground/40">{format(new Date(item.created_at), 'HH:mm')}</span>
+                        <span className="text-micro font-bold text-muted-foreground/40">{format(new Date(item.created_at), 'HH:mm')}</span>
                       </div>
                       <p className="text-[13px] text-on-surface/90 m-0 leading-relaxed font-medium">
                         {item.feedback_text || (item as MemberFeedback & { content?: string; text?: string }).content || (item as MemberFeedback & { content?: string; text?: string }).text || "Sentiment intercept recorded without textual content."}
                       </p>
                       <div className="flex items-center gap-2 pt-1">
                         <Map className="w-3 h-3 text-muted-foreground/20" />
-                        <span className="text-[9px] font-bold text-muted-foreground/40 normal-case">{item.region}</span>
+                        <span className="text-micro font-bold text-muted-foreground/40 normal-case">{item.region}</span>
                       </div>
                     </div>
                   ))

@@ -249,7 +249,7 @@ export default function Donate() {
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
-            <span className="text-[10px] font-bold text-white/90 tracking-tight">Financial Mobilization Unit</span>
+            <span className="text-micro font-bold text-white/90 tracking-tight">Financial Mobilization Unit</span>
           </div>
           <h1 className="mb-4 tracking-tight font-meta">
             Support the <span className="text-primary drop-shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.3)]">Movement</span>
@@ -279,7 +279,7 @@ export default function Donate() {
                     ].map((s) => (
                       <div key={s.step} className="flex flex-col items-center group cursor-pointer" onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
                         <div className={cn(
-                          "w-7 h-7 flex items-center justify-center text-[10px] font-bold transition-all border",
+                          "w-7 h-7 flex items-center justify-center text-micro font-bold transition-all border",
                           activeStep === s.step 
                             ? `${s.color} border-transparent ${s.text} shadow-lg shadow-black/10 scale-110` 
                             : "bg-white border-border/60 text-muted-foreground/80 group-hover:border-on-surface group-hover:text-on-surface"
@@ -324,7 +324,7 @@ export default function Donate() {
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                 <div>
                   <h2 className="text-2xl font-bold text-on-surface tracking-tight font-meta">Strategic Priorities</h2>
-                  <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mt-2">Deploy your capital to critical movement cells.</p>
+                  <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mt-2">Deploy your capital to critical movement cells.</p>
                 </div>
               </div>
               
@@ -338,17 +338,17 @@ export default function Donate() {
                     <div className="aspect-[16/10] bg-muted/50 overflow-hidden relative">
                       {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover grayscale-[50%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"  decoding="async" loading="lazy" />}
                       <div className="absolute top-4 right-4">
-                        <span className="bg-primary text-white text-[9px] font-bold tracking-tight px-3 py-1 shadow-xl">In mobilization</span>
+                        <span className="bg-primary text-white text-micro font-bold tracking-tight px-3 py-1 shadow-xl">In mobilization</span>
                       </div>
                     </div>
                     <CardContent className="p-8 flex flex-col flex-1">
                       <h3 className="font-bold text-on-surface font-meta text-base mb-3 group-hover:text-primary transition-colors tracking-tight">{c.title}</h3>
-                      <p className="text-[11px] font-bold text-muted-foreground/90 mb-8 line-clamp-2 leading-relaxed normal-case">{c.description}</p>
+                      <p className="text-tiny font-bold text-muted-foreground/90 mb-8 line-clamp-2 leading-relaxed normal-case">{c.description}</p>
                       
                       <div className="mt-auto space-y-6">
                         <div>
                           <div className="flex justify-between items-end mb-2">
-                             <span className="text-[9px] font-bold text-muted-foreground/80 tracking-tight">Strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
+                             <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
                             <span className="text-xs font-bold font-meta text-on-surface">GHS {c.raisedAmount.toLocaleString()}</span>
                           </div>
                           <div className="h-1.5 w-full bg-muted/10 overflow-hidden rounded-full border border-border/5">
@@ -365,7 +365,7 @@ export default function Donate() {
                             setFormData(prev => ({ ...prev, campaignId: c.id }))
                             document.getElementById('donor-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                           }}
-                          className="w-full h-12 rounded-sm text-[10px] font-bold tracking-tight border-border/60 hover:bg-on-surface hover:text-white transition-all shadow-sm active:scale-95"
+                          className="w-full h-12 rounded-sm text-micro font-bold tracking-tight border-border/60 hover:bg-on-surface hover:text-white transition-all shadow-sm active:scale-95"
                         >
                           Direct Capital <ArrowDownToLine className="w-4 h-4 ml-2 rotate-[-90deg]" />
                         </Button>
@@ -383,27 +383,27 @@ export default function Donate() {
                 </div>
                 
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-7 h-7 bg-destructive text-white flex items-center justify-center font-meta font-bold text-[10px]">01</span>
+                  <span className="w-7 h-7 bg-destructive text-white flex items-center justify-center font-meta font-bold text-micro">01</span>
                   <h3 className="font-bold text-white font-meta tracking-tight text-lg">Capital Transfer</h3>
                 </div>
                 
                 <div className="space-y-8 flex-1">
                   <div>
-                    <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">Account Holder</p>
+                    <p className="text-micro font-bold tracking-tight text-white/40 font-meta mb-2">Account Holder</p>
                     <p className="font-bold text-primary text-xl tracking-tight leading-none">Paul Kofi Agyekum</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">MoMo Identifier</p>
+                    <p className="text-micro font-bold tracking-tight text-white/40 font-meta mb-2">MoMo Identifier</p>
                     <p className="font-bold font-meta tracking-tight text-white text-xl">+233 538 873 569</p>
                   </div>
                   <div className="grid grid-cols-1 gap-6 pt-8 border-t border-white/10">
                     <div>
-                      <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">Network Hub</p>
-                      <p className="text-white/90 font-bold font-meta text-[11px]">MTN Mobile Money</p>
+                      <p className="text-micro font-bold tracking-tight text-white/40 font-meta mb-2">Network Hub</p>
+                      <p className="text-white/90 font-bold font-meta text-tiny">MTN Mobile Money</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">Deployment Reference</p>
-                      <p className="text-accent font-bold font-meta text-[11px] italic border-b border-accent/30 pb-1">"THE BASE"</p>
+                      <p className="text-micro font-bold tracking-tight text-white/40 font-meta mb-2">Deployment Reference</p>
+                      <p className="text-accent font-bold font-meta text-tiny italic border-b border-accent/30 pb-1">"THE BASE"</p>
                     </div>
                   </div>
                 </div>
@@ -412,7 +412,7 @@ export default function Donate() {
                   <div className="text-primary mt-0.5">
                     <Check className="w-4 h-4" />
                   </div>
-                  <p className="text-[10px] text-white/40 leading-relaxed font-bold tracking-tight">
+                  <p className="text-micro text-white/40 leading-relaxed font-bold tracking-tight">
                     Complete transfer protocol first, then capture receipt for verification.
                   </p>
                 </div>
@@ -421,13 +421,13 @@ export default function Donate() {
               {/* Column 2: Donation Form */}
               <div id="donor-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px] rounded-sm">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-7 h-7 bg-accent text-white flex items-center justify-center font-meta font-bold text-[10px]">02</span>
+                  <span className="w-7 h-7 bg-accent text-white flex items-center justify-center font-meta font-bold text-micro">02</span>
                   <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg">Contributor profile</h3>
                 </div>
 
                 <form onSubmit={handleSubmit} id="donationForm" className="space-y-6 flex-1">
                   <div className="space-y-2">
-                    <label htmlFor="fullName" className="text-[10px] font-bold text-muted-foreground/80 font-meta tracking-tight">
+                    <label htmlFor="fullName" className="text-micro font-bold text-muted-foreground/80 font-meta tracking-tight">
                       Identification <span className="text-destructive">*</span>
                     </label>
                     <input 
@@ -442,7 +442,7 @@ export default function Donate() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="phone" className="text-[10px] font-bold text-muted-foreground/80 font-meta tracking-tight">
+                    <label htmlFor="phone" className="text-micro font-bold text-muted-foreground/80 font-meta tracking-tight">
                       Contact line <span className="text-destructive">*</span>
                     </label>
                     <input 
@@ -458,7 +458,7 @@ export default function Donate() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label htmlFor="amount" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
+                      <label htmlFor="amount" className="text-micro font-bold text-muted-foreground/40 font-meta tracking-tight">
                         Amount (GHS) <span className="text-destructive">*</span>
                       </label>
                       <input 
@@ -473,7 +473,7 @@ export default function Donate() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="country" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
+                      <label htmlFor="country" className="text-micro font-bold text-muted-foreground/40 font-meta tracking-tight">
                         Jurisdiction <span className="text-destructive">*</span>
                       </label>
                       <select 
@@ -504,7 +504,7 @@ export default function Donate() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="campaign" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
+                    <label htmlFor="campaign" className="text-micro font-bold text-muted-foreground/40 font-meta tracking-tight">
                       Target cell <span className="text-destructive">*</span>
                     </label>
                     <select 
@@ -522,7 +522,7 @@ export default function Donate() {
                   </div>
 
                   <div className="bg-muted/10 border border-border/40 p-6 rounded-sm space-y-4">
-                    <p className="text-[9px] font-bold font-meta tracking-tight text-muted-foreground/40">Patriot tracking</p>
+                    <p className="text-micro font-bold font-meta tracking-tight text-muted-foreground/40">Patriot tracking</p>
                     <input id="membership" placeholder="ID Number (Optional)" className="w-full bg-white border border-border/40 p-4 text-sm font-bold placeholder-muted-foreground/20 focus:outline-none focus:border-on-surface transition-all rounded-sm" />
                   </div>
                 </form>
@@ -531,7 +531,7 @@ export default function Donate() {
               {/* Column 3: Link Membership */}
               <div id="link-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col rounded-sm scroll-mt-[180px]">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-7 h-7 bg-on-surface text-white flex items-center justify-center font-meta font-bold text-[10px]">03</span>
+                  <span className="w-7 h-7 bg-on-surface text-white flex items-center justify-center font-meta font-bold text-micro">03</span>
                   <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg">
                     {isLoggedIn ? 'Patriot profile' : 'Link patriot'}
                   </h3>
@@ -541,18 +541,18 @@ export default function Donate() {
                     <div className="bg-muted/10 border border-border/40 p-6 rounded-sm space-y-6">
                       <div className="flex items-center gap-3">
                         <Activity className="w-4 h-4 text-primary" />
-                        <h4 className="font-bold text-on-surface font-meta tracking-tight text-[11px]">
+                        <h4 className="font-bold text-on-surface font-meta tracking-tight text-tiny">
                           {isLoggedIn ? 'Active session' : 'Movement ID'} <span className="text-muted-foreground/80 font-bold tracking-tight">Active Mobilization</span>
                         </h4>
                       </div>
-                      <p className="text-[10px] text-muted-foreground/60 font-bold leading-relaxed tracking-tight">
+                      <p className="text-micro text-muted-foreground/60 font-bold leading-relaxed tracking-tight">
                         {isLoggedIn 
                           ? 'Automatic recognition active. This deployment will be linked to your patriot profile.'
                           : 'Enter your movement identification number to synchronize this capital with your profile.'
                         }
                       </p>
                       <div className="space-y-2">
-                        <label htmlFor="membershipNumber" className="text-[9px] font-bold text-muted-foreground/40 font-meta tracking-tight">
+                        <label htmlFor="membershipNumber" className="text-micro font-bold text-muted-foreground/40 font-meta tracking-tight">
                           Movement ID
                         </label>
                         <input 
@@ -575,7 +575,7 @@ export default function Donate() {
                           />
                           <Check className="absolute h-3 w-3 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" />
                         </div>
-                        <span className="text-[10px] text-muted-foreground/80 font-bold tracking-tight group-hover:text-on-surface transition-colors">Publish to personal dossier</span>
+                        <span className="text-micro text-muted-foreground/80 font-bold tracking-tight group-hover:text-on-surface transition-colors">Publish to personal dossier</span>
                       </label>
                     </div>
                 </div>
@@ -584,7 +584,7 @@ export default function Donate() {
               {/* Column 4: Upload Receipt */}
               <div id="receipt-section" className="bg-white border border-border/60 shadow-sm p-8 md:p-10 flex flex-col rounded-sm scroll-mt-[180px]">
                 <div className="flex items-center gap-4 mb-10">
-                  <span className="w-7 h-7 bg-primary text-white flex items-center justify-center font-meta font-bold text-[10px]">04</span>
+                  <span className="w-7 h-7 bg-primary text-white flex items-center justify-center font-meta font-bold text-micro">04</span>
                   <h3 className="font-bold text-on-surface font-meta tracking-tight text-lg">Audit trail</h3>
                 </div>
 
@@ -602,16 +602,16 @@ export default function Donate() {
                       <div className="w-14 h-14 bg-white shadow-sm border border-border/10 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 rounded-sm">
                         <ArrowDownToLine className="w-6 h-6 text-muted-foreground/40 group-hover:text-primary transition-colors" />
                       </div>
-                      <p className="text-[10px] text-on-surface font-bold tracking-tight mb-1 font-meta">Synchronize receipt</p>
-                      <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">JPG, PNG, or PDF</p>
+                      <p className="text-micro text-on-surface font-bold tracking-tight mb-1 font-meta">Synchronize receipt</p>
+                      <p className="text-micro text-muted-foreground/40 font-bold tracking-tight">JPG, PNG, or PDF</p>
                     </div>
 
                     <div className="bg-muted/10 p-5 border border-border/40 rounded-sm">
                       <div className="flex items-center gap-3 mb-3">
                         <Globe className="w-4 h-4 text-primary" />
-                        <h4 className="font-bold text-on-surface font-meta tracking-tight text-[10px]">Global diaspora portal</h4>
+                        <h4 className="font-bold text-on-surface font-meta tracking-tight text-micro">Global diaspora portal</h4>
                       </div>
-                      <p className="text-[10px] text-muted-foreground/60 leading-relaxed font-bold tracking-tight">
+                      <p className="text-micro text-muted-foreground/60 leading-relaxed font-bold tracking-tight">
                         Use deployment code <span className="text-primary font-bold">THEBASEM</span> on TapTap for resource scaling bonus.
                       </p>
                     </div>
@@ -623,7 +623,7 @@ export default function Donate() {
                       className="w-full py-8 flex items-center justify-center gap-3 rounded-sm shadow-lg shadow-brand-green/20"
                     >
                       <Heart className="w-5 h-5" />
-                      <span className="text-[10px] font-bold tracking-tight">Authorize Contribution</span>
+                      <span className="text-micro font-bold tracking-tight">Authorize Contribution</span>
                     </Button>
                 </div>
               </div>
@@ -639,7 +639,7 @@ export default function Donate() {
                       <Check className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.4)]" />
                       Strategic victories
                     </h2>
-                    <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mt-2">Historical proof of patriot mobilization success.</p>
+                    <p className="text-micro font-bold text-muted-foreground/40 tracking-tight mt-2">Historical proof of patriot mobilization success.</p>
                   </div>
                 </div>
                 
@@ -655,7 +655,7 @@ export default function Donate() {
                         {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />}
                       </div>
                       <h4 className="font-bold text-on-surface font-meta text-xs mb-2 tracking-tight">{c.title}</h4>
-                      <p className="text-[10px] font-bold text-muted-foreground/40 mb-6 line-clamp-2 leading-relaxed">{c.description}</p>
+                      <p className="text-micro font-bold text-muted-foreground/40 mb-6 line-clamp-2 leading-relaxed">{c.description}</p>
                       <div className="mt-auto pt-4 border-t border-border/40 flex justify-between items-center">
                         <div>
                           <p className="text-[8px] font-bold text-muted-foreground/40 tracking-tight">Total impact</p>
@@ -677,7 +677,7 @@ export default function Donate() {
                     <Activity className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
                     Capital deployment history
                   </h2>
-                  <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mt-2">Live immutable record of member mobilization.</p>
+                  <p className="text-micro font-bold text-muted-foreground/40 tracking-tight mt-2">Live immutable record of member mobilization.</p>
                 </div>
                 <div className="flex gap-4">
                   <div className="px-5 py-3 bg-white border border-border/60 text-center rounded-sm shadow-sm">
@@ -697,7 +697,7 @@ export default function Donate() {
                   <button 
                     onClick={() => setHistoryTab('contributions')}
                     className={cn(
-                      "px-8 py-2.5 text-[9px] font-bold tracking-tight rounded-sm transition-all",
+                      "px-8 py-2.5 text-micro font-bold tracking-tight rounded-sm transition-all",
                       historyTab === 'contributions' ? "bg-primary text-white shadow-md" : "text-muted-foreground/90 hover:text-on-surface"
                     )}
                   >
@@ -706,7 +706,7 @@ export default function Donate() {
                   <button 
                     onClick={() => setHistoryTab('spending')}
                     className={cn(
-                      "px-8 py-2.5 text-[9px] font-bold tracking-tight rounded-sm transition-all",
+                      "px-8 py-2.5 text-micro font-bold tracking-tight rounded-sm transition-all",
                       historyTab === 'spending' ? "bg-primary text-white shadow-md" : "text-muted-foreground/90 hover:text-on-surface"
                     )}
                   >
@@ -722,7 +722,7 @@ export default function Donate() {
                         placeholder="Search by name or amount..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-10 pl-11 pr-4 bg-white border border-border/40 rounded-sm text-[10px] font-bold tracking-tight focus:border-primary outline-none transition-all"
+                        className="w-full h-10 pl-11 pr-4 bg-white border border-border/40 rounded-sm text-micro font-bold tracking-tight focus:border-primary outline-none transition-all"
                       />
                     </div>
                     {historyTab === 'contributions' && (
@@ -766,17 +766,17 @@ export default function Donate() {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-muted/30 border-b border-border/40">
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Deployment details</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Capital</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Channel</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Verification</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case text-right">Audit</th>
+                        <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight normal-case">Deployment details</th>
+                        <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight normal-case">Capital</th>
+                        <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight normal-case">Channel</th>
+                        <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight normal-case">Verification</th>
+                        <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight normal-case text-right">Audit</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/40">
                       {loading ? (
                         <tr>
-                          <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
+                          <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-micro font-bold tracking-tight italic">
                             Synchronizing strategic ledger...
                           </td>
                         </tr>
@@ -791,20 +791,20 @@ export default function Donate() {
                             filtered.map((item, idx) => (
                           <tr key={idx} className="hover:bg-muted/30 transition-colors group">
                             <td className="p-6">
-                              <p className="text-[10px] font-bold text-on-surface tracking-tight normal-case">
+                              <p className="text-micro font-bold text-on-surface tracking-tight normal-case">
                                 {contributionFilter === 'all' ? item.fullName : 'Verified Contribution'}
                               </p>
-                              <p className="text-[10px] text-primary font-bold tracking-tight mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
-                              <p className="text-[9px] text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
+                              <p className="text-micro text-primary font-bold tracking-tight mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
+                              <p className="text-micro text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
                             </td>
                             <td className="p-6">
                               <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
                             </td>
                             <td className="p-6">
-                               <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">{item.method || 'Standard MoMo'}</p>
+                               <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">{item.method || 'Standard MoMo'}</p>
                             </td>
                             <td className="p-6">
-                              <span className="inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
+                              <span className="inline-flex items-center gap-2 px-3 py-1 text-micro font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
                                 Verified
                               </span>
                             </td>
@@ -815,7 +815,7 @@ export default function Donate() {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
+                            <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-micro font-bold tracking-tight italic">
                               No verified records matching your query.
                             </td>
                           </tr>
@@ -832,19 +832,19 @@ export default function Donate() {
                             filtered.map((item, idx) => (
                               <tr key={idx} className="hover:bg-muted/30 transition-colors group">
                                 <td className="p-6">
-                                  <p className="text-[10px] font-bold text-on-surface tracking-tight normal-case">{item.chapter}</p>
-                                  <p className="text-[10px] text-accent font-bold tracking-tight mt-1">{item.category}</p>
-                                  <p className="text-[9px] text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
+                                  <p className="text-micro font-bold text-on-surface tracking-tight normal-case">{item.chapter}</p>
+                                  <p className="text-micro text-accent font-bold tracking-tight mt-1">{item.category}</p>
+                                  <p className="text-micro text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
                                 </td>
                                 <td className="p-6">
                                   <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
                                 </td>
                                 <td className="p-6">
-                                   <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">{item.description}</p>
+                                   <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">{item.description}</p>
                                 </td>
                                 <td className="p-6">
                                   <span className={cn(
-                                    "inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm",
+                                    "inline-flex items-center gap-2 px-3 py-1 text-micro font-bold tracking-tight rounded-sm",
                                     item.type === 'Allocation' ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
                                   )}>
                                     {item.type}
@@ -857,7 +857,7 @@ export default function Donate() {
                             ))
                           ) : (
                             <tr>
-                              <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
+                              <td colSpan={5} className="p-12 text-center text-muted-foreground/40 text-micro font-bold tracking-tight italic">
                                 No allocation records matching your query.
                               </td>
                             </tr>
@@ -869,13 +869,13 @@ export default function Donate() {
                   
                   <div className="p-8 bg-muted/10 border-t border-border/40 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight">
+                      <p className="text-micro font-bold text-muted-foreground/40 tracking-tight">
                         Showing {historyTab === 'contributions' ? (contributionFilter === 'all' ? publicHistory.length : personalHistory.length) : spendingHistory.length} ledger entries
                       </p>
                     </div>
                     <Button 
                       variant="outline" 
-                      className="h-12 px-10 text-[10px] font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="h-12 px-10 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 disabled:opacity-30 disabled:cursor-not-allowed"
                       onClick={handleDownload}
                       disabled={!isLoggedIn}
                     >
@@ -900,29 +900,29 @@ export default function Donate() {
                               <p className="text-sm font-bold text-on-surface tracking-tight normal-case">
                                 {contributionFilter === 'all' ? item.fullName : 'Verified Contribution'}
                               </p>
-                              <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
+                              <p className="text-micro text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
                             </div>
-                            <span className="px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
+                            <span className="px-3 py-1 text-micro font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
                               Verified
                             </span>
                           </div>
                           <div className="flex justify-between items-end">
                             <div>
-                              <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Capital deployment</p>
+                              <p className="text-micro font-bold text-muted-foreground/40 tracking-tight mb-1">Capital deployment</p>
                               <p className="text-xl font-bold text-on-surface font-meta">{item.amount}</p>
                             </div>
                             <div className="text-right">
-                              <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight mb-1">Channel</p>
-                              <p className="text-[10px] font-bold text-on-surface tracking-tight">{item.method}</p>
+                              <p className="text-micro font-bold text-muted-foreground/40 tracking-tight mb-1">Channel</p>
+                              <p className="text-micro font-bold text-on-surface tracking-tight">{item.method}</p>
                             </div>
                           </div>
-                          <Button variant="outline" className="w-full h-12 border-border/60 text-muted-foreground/40 text-[10px] font-bold tracking-tight rounded-sm hover:bg-on-surface hover:text-white transition-all shadow-sm">
+                          <Button variant="outline" className="w-full h-12 border-border/60 text-muted-foreground/40 text-micro font-bold tracking-tight rounded-sm hover:bg-on-surface hover:text-white transition-all shadow-sm">
                             <ArrowDownToLine className="w-4 h-4 mr-2" /> Synchronize proof
                           </Button>
                         </div>
                       ))
                     ) : (
-                      <div className="p-12 text-center text-muted-foreground/40 text-[10px] font-bold tracking-tight italic">
+                      <div className="p-12 text-center text-muted-foreground/40 text-micro font-bold tracking-tight italic">
                         No verified records matching your query.
                       </div>
                     )
@@ -930,10 +930,10 @@ export default function Donate() {
                 </div>
 
                  <div className="p-6 bg-muted/30 border-t border-border/40 flex justify-between items-center">
-                    <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Live mobilization ledger</p>
+                    <p className="text-micro font-bold text-muted-foreground/40 tracking-tight">Live mobilization ledger</p>
                     <button 
                        onClick={() => setIsHistoryModalOpen(true)}
-                       className="text-[10px] font-bold text-primary tracking-tight hover:text-on-surface transition-all border-b border-primary/30 pb-1"
+                       className="text-micro font-bold text-primary tracking-tight hover:text-on-surface transition-all border-b border-primary/30 pb-1"
                      >
                        Full operational audit
                      </button>
@@ -968,10 +968,10 @@ export default function Donate() {
                        <table className="w-full text-left border-collapse">
                          <thead>
                            <tr className="bg-muted/30 border-b border-border/40">
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Contributor</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Capital</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Cell</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case text-right">Verification</th>
+                             <th className="p-6 text-micro font-bold text-muted-foreground/40 tracking-tight normal-case">Contributor</th>
+                             <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight normal-case">Capital</th>
+                             <th className="p-6 text-micro font-bold text-muted-foreground/40 tracking-tight normal-case">Cell</th>
+                             <th className="p-6 text-micro font-bold text-muted-foreground/40 tracking-tight normal-case text-right">Verification</th>
                            </tr>
                          </thead>
                          <tbody className="divide-y divide-border/40">
@@ -979,16 +979,16 @@ export default function Donate() {
                              <tr key={idx} className="hover:bg-muted/10 transition-colors group">
                                <td className="p-6">
                                  <p className="text-xs font-bold text-on-surface tracking-tight normal-case">{item.fullName}</p>
-                                 <p className="text-[9px] text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
+                                 <p className="text-micro text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
                                </td>
                                <td className="p-6">
                                  <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
                                </td>
                                <td className="p-6">
-                                 <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.campaignTitle || 'Strategic Fund'}</p>
+                                 <p className="text-micro font-bold text-muted-foreground/60 tracking-tight">{item.campaignTitle || 'Strategic Fund'}</p>
                                </td>
                                <td className="p-6 text-right">
-                                 <span className="inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
+                                 <span className="inline-flex items-center gap-2 px-3 py-1 text-micro font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
                                    Verified
                                  </span>
                                </td>
@@ -1002,7 +1002,7 @@ export default function Donate() {
                            <Activity className="w-8 h-8 text-muted-foreground/20" />
                          </div>
                          <h4 className="text-xl font-bold text-on-surface mb-3 font-meta tracking-tight">Deployment records inactive</h4>
-                         <p className="text-[11px] text-muted-foreground/60 max-w-sm mx-auto mb-8 font-bold tracking-tight leading-relaxed">
+                         <p className="text-tiny text-muted-foreground/60 max-w-sm mx-auto mb-8 font-bold tracking-tight leading-relaxed">
                            No capital deployment detected for this session. Support the movement cells to build a technically robust Ghana.
                          </p>
                        </div>
@@ -1010,7 +1010,7 @@ export default function Donate() {
                    </div>
 
                    <div className="p-8 border-t border-border/40 flex items-center justify-between bg-muted/10 sticky bottom-0 z-10">
-                     <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/40 tracking-tight">
+                     <div className="flex items-center gap-3 text-micro font-bold text-muted-foreground/40 tracking-tight">
                        <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_var(--brand-green-full)]"></span>
                        {contributions.length} deployment records secured
                      </div>
@@ -1018,7 +1018,7 @@ export default function Donate() {
                        <Button 
                          variant="outline"
                          onClick={() => setIsHistoryModalOpen(false)}
-                         className="px-6 h-12 border-border/60 text-muted-foreground/40 font-bold text-[10px] tracking-tight rounded-sm hover:bg-white transition-all flex items-center gap-2"
+                         className="px-6 h-12 border-border/60 text-muted-foreground/40 font-bold text-micro tracking-tight rounded-sm hover:bg-white transition-all flex items-center gap-2"
                        >
                          <ArrowDownToLine className="w-4 h-4" /> Download audit
                        </Button>
@@ -1027,7 +1027,7 @@ export default function Donate() {
                            setIsHistoryModalOpen(false)
                            document.getElementById('payment-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                          }}
-                         className="px-8 h-12 bg-on-surface text-white font-bold text-[10px] tracking-tight rounded-sm hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-black/10"
+                         className="px-8 h-12 bg-on-surface text-white font-bold text-micro tracking-tight rounded-sm hover:opacity-90 transition-all flex items-center gap-2 shadow-lg shadow-black/10"
                        >
                          <Heart className="w-4 h-4 text-primary" /> Contribute
                        </Button>

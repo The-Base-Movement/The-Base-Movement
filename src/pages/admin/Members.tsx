@@ -337,7 +337,7 @@ export default function MembersList() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-10 border-border/40 h-12 shadow-sm transition-all active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-10 border-border/40 h-12 shadow-sm transition-all active:scale-95"
             onClick={handleExport}
             disabled={isExporting || members.length === 0}
           >
@@ -348,7 +348,7 @@ export default function MembersList() {
             variant="primary" 
             size="lg"
             onClick={handleAddMember}
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" />
             Establish Identity
@@ -370,7 +370,7 @@ export default function MembersList() {
                 <stat.icon className={cn("w-6 h-6", stat.color)} />
               </div>
               <div className="flex-1 flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-                <p className="text-[10px] font-bold text-muted-foreground/80 m-0 tracking-tight">{stat.label}</p>
+                <p className="text-micro font-bold text-muted-foreground/80 m-0 tracking-tight">{stat.label}</p>
                 {isLoading ? (
                   <div className="h-7 w-16 bg-muted/20 animate-pulse rounded-sm mt-1" />
                 ) : (
@@ -405,18 +405,18 @@ export default function MembersList() {
               <div className="h-8 w-px bg-border/40 mx-2 hidden md:block" />
               
               <div className="flex flex-col w-full md:w-auto">
-                <span className="text-[9px] font-bold text-muted-foreground/80 px-2 md:hidden mb-1">Quick Filters</span>
+                <span className="text-micro font-bold text-muted-foreground/80 px-2 md:hidden mb-1">Quick Filters</span>
                 <div className="flex flex-row gap-2">
                   <Button 
                     variant="ghost" 
-                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-[10px] font-bold tracking-tight text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
+                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-micro font-bold tracking-tight text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
                   >
                     <MapPin className="w-4 h-4 mr-2 text-muted-foreground/40" /> Origins
                   </Button>
                   
                   <Button 
                     variant="ghost" 
-                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-[10px] font-bold tracking-tight text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
+                    className="flex-1 md:flex-none h-10 px-6 rounded-sm text-micro font-bold tracking-tight text-on-surface/60 hover:text-on-surface hover:bg-stone-50 transition-all border border-border/40 md:border-none active:scale-95"
                   >
                     <ShieldCheck className="w-4 h-4 mr-2 text-muted-foreground/40" /> Statuses
                   </Button>
@@ -426,7 +426,7 @@ export default function MembersList() {
               {(searchTerm !== '') && (
                 <Button 
                   variant="ghost" 
-                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-[10px] font-bold tracking-tight transition-all active:scale-95"
+                  className="h-10 px-4 rounded-sm text-destructive hover:bg-destructive/10 text-micro font-bold tracking-tight transition-all active:scale-95"
                   onClick={() => {
                     setSearchTerm('')
                     setCurrentPage(1)
@@ -445,7 +445,7 @@ export default function MembersList() {
         {selectedIds.size > 0 && (
           <div className="px-6 py-3 bg-on-surface text-white flex items-center justify-between animate-in slide-in-from-top-2 duration-300">
             <div className="flex items-center gap-4">
-              <p className="text-[10px] font-bold tracking-tight text-white/90">
+              <p className="text-micro font-bold tracking-tight text-white/90">
                 {selectedIds.size} members selected
               </p>
               <div className="h-4 w-px bg-white/20" />
@@ -453,17 +453,17 @@ export default function MembersList() {
                 <Button 
                   variant="ghost" 
                   onClick={handleBulkVerify}
-                  className="h-10 px-6 text-[10px] font-bold tracking-tight text-white hover:bg-white/10 active:scale-95"
+                  className="h-10 px-6 text-micro font-bold tracking-tight text-white hover:bg-white/10 active:scale-95"
                 >
                   <UserCheck className="w-4 h-4 mr-2 text-primary" /> Verify
                 </Button>
-                <Button variant="ghost" className="h-9 px-4 text-[10px] font-bold tracking-tight text-white hover:bg-white/10">
+                <Button variant="ghost" className="h-9 px-4 text-micro font-bold tracking-tight text-white hover:bg-white/10">
                   <Globe2 className="w-4 h-4 mr-2 text-primary" /> Assign
                 </Button>
                 <Button 
                   variant="ghost" 
                   onClick={handleBulkDelete}
-                  className="h-10 px-6 text-[10px] font-bold tracking-tight text-red-400 hover:bg-red-500/10 active:scale-95"
+                  className="h-10 px-6 text-micro font-bold tracking-tight text-red-400 hover:bg-red-500/10 active:scale-95"
                 >
                   <Trash2 className="w-4 h-4 mr-2" /> Purge
                 </Button>
@@ -488,14 +488,14 @@ export default function MembersList() {
                     />
                   </th>
                   <th className="px-6 py-4">
-                    <button className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/80 tracking-tight group">
+                    <button className="flex items-center gap-2 text-micro font-bold text-muted-foreground/80 tracking-tight group">
                       Member details <ArrowUpDown className="w-3 h-3 group-hover:text-on-surface transition-colors" />
                     </button>
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Contact info</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Location details</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight">Status</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-muted-foreground/80 tracking-tight text-right">Actions</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Contact info</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Location details</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Status</th>
+                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -530,7 +530,7 @@ export default function MembersList() {
                           <Button 
                             variant="primary"
                             size="lg"
-                            className="mt-6 rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                            className="mt-6 rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                             onClick={handleAddMember}
                           >
                             <Plus className="w-4 h-4 mr-2" />
@@ -552,7 +552,7 @@ export default function MembersList() {
                               setSearchTerm('')
                               setCurrentPage(1)
                             }}
-                            className="mt-6 h-11 px-10 rounded-sm text-[10px] tracking-tight font-bold border-border/40 transition-all active:scale-95"
+                            className="mt-6 h-11 px-10 rounded-sm text-micro tracking-tight font-bold border-border/40 transition-all active:scale-95"
                           >
                             <RotateCcw className="w-4 h-4 mr-2" /> Clear filters
                           </Button>
@@ -583,7 +583,7 @@ export default function MembersList() {
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-on-surface leading-tight group-hover:text-destructive transition-colors">{member.name}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">ID: {member.id.substring(0, 8)}</p>
+                            <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">ID: {member.id.substring(0, 8)}</p>
                           </div>
                         </div>
                       </div>
@@ -601,12 +601,12 @@ export default function MembersList() {
                     <td className="px-6 py-5">
                       <div>
                         <p className="text-xs font-bold text-on-surface">{member.region}</p>
-                        <p className="text-[10px] font-medium text-muted-foreground/80 tracking-tight mt-0.5">{member.constituency}</p>
+                        <p className="text-micro font-medium text-muted-foreground/80 tracking-tight mt-0.5">{member.constituency}</p>
                       </div>
                     </td>
                     <td className="px-6 py-5">
                       <span className={cn(
-                        "px-3 py-1 text-[9px] font-bold tracking-tight rounded-full border inline-flex items-center gap-1.5",
+                        "px-3 py-1 text-micro font-bold tracking-tight rounded-full border inline-flex items-center gap-1.5",
                         member.status === 'Active' 
                           ? "bg-primary/10 text-primary border-primary/20" 
                           : member.status === 'Pending'
@@ -672,11 +672,11 @@ export default function MembersList() {
           <div className="px-6 py-5 border-t border-border/40 bg-muted/5 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="min-w-[140px]">
               {filteredMembers.length > 0 ? (
-                <p className="text-[10px] font-medium text-muted-foreground/80">
+                <p className="text-micro font-medium text-muted-foreground/80">
                   Showing {startIndex + 1}–{Math.min(startIndex + itemsPerPage, filteredMembers.length)} of {filteredMembers.length} records
                 </p>
               ) : (
-                <p className="text-[10px] font-medium text-muted-foreground/80">
+                <p className="text-micro font-medium text-muted-foreground/80">
                   No records found
                 </p>
               )}
@@ -684,7 +684,7 @@ export default function MembersList() {
             <div className="flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="h-11 px-8 text-[10px] font-bold tracking-tight rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95" 
+                className="h-11 px-8 text-micro font-bold tracking-tight rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95" 
                 disabled={currentPage === 1}
                 onClick={handlePrevPage}
               >
@@ -697,7 +697,7 @@ export default function MembersList() {
               </div>
               <Button 
                 variant="outline" 
-                className="h-11 px-8 text-[10px] font-bold tracking-tight rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95"
+                className="h-11 px-8 text-micro font-bold tracking-tight rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95"
                 disabled={currentPage >= totalPages || totalPages === 0}
                 onClick={handleNextPage}
               >
@@ -749,7 +749,7 @@ export default function MembersList() {
               <div className="grid grid-cols-2 gap-4">
                 <Button 
                   onClick={handlePrint}
-                  className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-bold tracking-tight text-[10px] shadow-lg rounded-none transition-all active:scale-95"
+                  className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-bold tracking-tight text-micro shadow-lg rounded-none transition-all active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">print</span>
                   Print card
@@ -757,7 +757,7 @@ export default function MembersList() {
                 <Button 
                   variant="primary"
                   onClick={handleDownload}
-                  className="h-14 flex-1 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="h-14 flex-1 rounded-sm text-micro font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[18px] mr-2">download</span>
                   Download PDF
@@ -779,7 +779,7 @@ export default function MembersList() {
               </div>
               <div>
                 <h2 className="text-xl font-bold tracking-tight font-meta">Audit history</h2>
-                <p className="text-[10px] font-medium text-muted-foreground/80 mt-1">
+                <p className="text-micro font-medium text-muted-foreground/80 mt-1">
                   Full chain of custody for {auditTargetMember}
                 </p>
               </div>
@@ -801,13 +801,13 @@ export default function MembersList() {
                           <FileText className="w-4 h-4 text-muted-foreground/80" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold tracking-tight text-muted-foreground/80">
+                          <p className="text-micro font-bold tracking-tight text-muted-foreground/80">
                             {new Date(log.timestamp).toLocaleString()}
                           </p>
                           <h4 className="text-sm font-bold text-on-surface mt-1 tracking-tight">{log.action}</h4>
                           <p className="text-xs text-muted-foreground/80 font-medium mt-1">Processed by: {log.adminName}</p>
                           {log.details && (
-                            <div className="mt-3 p-3 bg-muted/30 text-[10px] font-mono text-on-surface/80 break-all border-l-2 border-border/60">
+                            <div className="mt-3 p-3 bg-muted/30 text-micro font-mono text-on-surface/80 break-all border-l-2 border-border/60">
                               {JSON.stringify(log.details, null, 2)}
                             </div>
                           )}
@@ -829,7 +829,7 @@ export default function MembersList() {
           <div className="p-6 border-t border-border/40 bg-stone-50/50 flex justify-end">
             <Button 
               onClick={() => setIsAuditModalOpen(false)}
-              className="bg-on-surface text-white text-[10px] font-bold tracking-tight rounded-sm h-11 px-8 shadow-md transition-all active:scale-95"
+              className="bg-on-surface text-white text-micro font-bold tracking-tight rounded-sm h-11 px-8 shadow-md transition-all active:scale-95"
             >
               Close history
             </Button>

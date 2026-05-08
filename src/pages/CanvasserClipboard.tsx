@@ -96,7 +96,7 @@ export default function CanvasserClipboard() {
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <div className="flex flex-col items-center gap-4">
           <ClipboardList className="w-12 h-12 text-[var(--brand-green)] animate-bounce" />
-          <p className="text-[10px] font-bold tracking-tight text-[var(--brand-green)]">Loading canvassing protocols...</p>
+          <p className="text-micro font-bold tracking-tight text-[var(--brand-green)]">Loading canvassing protocols...</p>
         </div>
       </div>
     )
@@ -110,7 +110,7 @@ export default function CanvasserClipboard() {
           <div className="mt-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="flex h-2 w-2 rounded-full bg-[var(--brand-green)] animate-ping"></span>
-              <span className="text-[10px] font-bold tracking-tight text-[var(--brand-green)]">Operation ground game</span>
+              <span className="text-micro font-bold tracking-tight text-[var(--brand-green)]">Operation ground game</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-stone-900 flex items-center gap-3 mb-0 tracking-tight italic font-meta">
               Digital <span className="text-stone-400">clipboard</span>
@@ -126,11 +126,11 @@ export default function CanvasserClipboard() {
         
         {!selectedCampaign ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-            <h2 className="text-[11px] font-bold tracking-tight text-stone-400">Select active campaign</h2>
+            <h2 className="text-tiny font-bold tracking-tight text-stone-400">Select active campaign</h2>
             {activeCampaigns.length === 0 ? (
               <div className="bg-white border border-stone-200 p-12 text-center shadow-sm">
                 <AlertCircle className="w-8 h-8 text-stone-300 mx-auto mb-3" />
-                <p className="text-[10px] font-bold text-stone-400 tracking-tight">No active canvassing missions in your sector.</p>
+                <p className="text-micro font-bold text-stone-400 tracking-tight">No active canvassing missions in your sector.</p>
               </div>
             ) : (
               activeCampaigns.map(camp => (
@@ -142,10 +142,10 @@ export default function CanvasserClipboard() {
                   <div className="text-left">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="bg-emerald-100 text-emerald-600 px-2 py-0.5 text-[8px] font-bold tracking-tight">Active</span>
-                      <span className="text-[9px] font-bold text-stone-500 tracking-tight">{camp.target_constituency}</span>
+                      <span className="text-micro font-bold text-stone-500 tracking-tight">{camp.target_constituency}</span>
                     </div>
                     <h3 className="text-sm font-bold text-stone-900 tracking-tight mb-1">{camp.title}</h3>
-                    <p className="text-[11px] text-stone-500 line-clamp-1">{camp.description}</p>
+                    <p className="text-tiny text-stone-500 line-clamp-1">{camp.description}</p>
                   </div>
                   <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-[var(--brand-green)] group-hover:translate-x-1 transition-all" />
                 </button>
@@ -162,19 +162,19 @@ export default function CanvasserClipboard() {
               <div className="relative z-10">
                 <button 
                   onClick={() => setSelectedCampaign(null)}
-                  className="text-[9px] font-bold text-stone-400 hover:text-white tracking-tight mb-4 flex items-center gap-1"
+                  className="text-micro font-bold text-stone-400 hover:text-white tracking-tight mb-4 flex items-center gap-1"
                 >
                   ← Change mission
                 </button>
                 <h2 className="text-lg font-bold tracking-tight mb-1">{selectedCampaign.title}</h2>
-                <p className="text-[11px] text-stone-400">{selectedCampaign.target_constituency}</p>
+                <p className="text-tiny text-stone-400">{selectedCampaign.target_constituency}</p>
               </div>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
               
               <div className="space-y-4">
-                <label className="text-[10px] font-bold tracking-tight text-stone-900 flex items-center gap-2">
+                <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
                   <User className="w-4 h-4 text-[var(--brand-green)]" /> Constituent data
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -197,7 +197,7 @@ export default function CanvasserClipboard() {
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-bold tracking-tight text-stone-900 flex items-center gap-2">
+                <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
                   <FileText className="w-4 h-4 text-[var(--brand-green)]" /> Interaction result
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -220,7 +220,7 @@ export default function CanvasserClipboard() {
                       )}
                     >
                       <span className={cn(
-                        "text-[9px] font-bold tracking-tight block",
+                        "text-micro font-bold tracking-tight block",
                         interactionResult === res.val ? res.color : "text-stone-500"
                       )}>
                         {res.label}
@@ -232,7 +232,7 @@ export default function CanvasserClipboard() {
 
               {interactionResult !== 'NOT_HOME' && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                  <label className="text-[10px] font-bold tracking-tight text-stone-900 flex items-center gap-2">
+                  <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[var(--brand-green)]" /> Key issues raised
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -242,7 +242,7 @@ export default function CanvasserClipboard() {
                         type="button"
                         onClick={() => toggleIssue(issue)}
                         className={cn(
-                          "px-4 py-2 text-[10px] font-bold tracking-tight border transition-all",
+                          "px-4 py-2 text-micro font-bold tracking-tight border transition-all",
                           keyIssues.includes(issue)
                             ? "bg-stone-900 text-white border-stone-900"
                             : "bg-white text-stone-500 border-stone-200 hover:border-stone-300"
@@ -264,15 +264,15 @@ export default function CanvasserClipboard() {
                     className="w-5 h-5 border-2 border-stone-300 text-[var(--brand-green)] focus:ring-[var(--brand-green)] rounded-none" 
                   />
                   <div>
-                    <span className="text-[10px] font-bold tracking-tight text-stone-900 block">Needs follow-up</span>
-                    <span className="text-[9px] text-stone-500 font-medium">Flag for local coordinator</span>
+                    <span className="text-micro font-bold tracking-tight text-stone-900 block">Needs follow-up</span>
+                    <span className="text-micro text-stone-500 font-medium">Flag for local coordinator</span>
                   </div>
                 </label>
 
                 <Button 
                   type="submit" 
                   disabled={submitting || !addressNotes}
-                  className="bg-[var(--brand-green)] text-white hover:bg-green-700 h-12 px-6 rounded-none text-[10px] font-bold tracking-tight shadow-lg"
+                  className="bg-[var(--brand-green)] text-white hover:bg-green-700 h-12 px-6 rounded-none text-micro font-bold tracking-tight shadow-lg"
                 >
                   {submitting ? 'Logging...' : 'Log interaction'}
                 </Button>

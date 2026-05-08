@@ -76,7 +76,7 @@ export default function BlogPost() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-8 h-8 text-[var(--brand-green)] animate-spin" />
-        <p className="text-[10px] font-bold tracking-tight text-stone-400">Loading insight file...</p>
+        <p className="text-micro font-bold tracking-tight text-stone-400">Loading insight file...</p>
       </div>
     )
   }
@@ -128,7 +128,7 @@ export default function BlogPost() {
              <Button 
               onClick={() => handleShare()}
               variant="default" 
-              className="h-10 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-[10px] font-bold tracking-tight"
+              className="h-10 px-4 border-stone-200 text-stone-600 hover:bg-stone-50 rounded-none text-micro font-bold tracking-tight"
              >
               <Share2 className="w-4 h-4 mr-2" /> Share
             </Button>
@@ -142,10 +142,10 @@ export default function BlogPost() {
           {/* Header */}
           <header className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
-              <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-[10px] font-bold tracking-tight">
+              <span className="px-3 py-1 bg-[var(--brand-green)]/10 text-[var(--brand-green)] text-micro font-bold tracking-tight">
                 {post.category}
               </span>
-              <div className="flex items-center gap-4 text-stone-400 text-[10px] font-bold tracking-tight">
+              <div className="flex items-center gap-4 text-stone-400 text-micro font-bold tracking-tight">
                 <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A'}</span>
                 <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {post.readTime}</span>
               </div>
@@ -183,7 +183,7 @@ export default function BlogPost() {
             <aside className="lg:col-span-1 space-y-8 order-2 lg:order-1">
               <div className="sticky top-32 space-y-8">
                 <div className="p-6 border border-stone-100 bg-stone-50/50 space-y-4">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-0">Authored by</p>
+                  <p className="text-micro font-bold text-stone-400 tracking-tight mb-0">Authored by</p>
                   <div className="flex items-center gap-3">
                     <img src={post.authorImage || '/founder.jpg'} 
                       alt={post.authorName} 
@@ -193,7 +193,7 @@ export default function BlogPost() {
                       <p className="text-sm font-bold text-stone-900 leading-none mb-0">
                         {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName}
                       </p>
-                      <p className="text-[9px] text-stone-500 tracking-tight mt-1.5 mb-0 font-medium">
+                      <p className="text-micro text-stone-500 tracking-tight mt-1.5 mb-0 font-medium">
                         {post.authorName?.toUpperCase() === 'ADMIN' ? 'Movement Research' : post.authorRole}
                       </p>
                     </div>
@@ -204,7 +204,7 @@ export default function BlogPost() {
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Share this insight</p>
+                  <p className="text-micro font-bold text-stone-400 tracking-tight">Share this insight</p>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { brandColor: '#1877F2', key: 'facebook', icon: <Facebook className="w-4 h-4" /> },
@@ -236,13 +236,13 @@ export default function BlogPost() {
                 </div>
 
                 <div className="pt-8 border-t border-stone-100 space-y-6">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-0">Explore categories</p>
+                  <p className="text-micro font-bold text-stone-400 tracking-tight mb-0">Explore categories</p>
                   <div className="space-y-2">
                     {['Movement', 'Youth', 'Diaspora', 'Integrity', 'Economy', 'Community'].map((cat) => (
                       <Link 
                         to={`/blog?category=${cat.toLowerCase()}`} 
                         key={cat} 
-                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-[10px] font-bold tracking-tight text-stone-600 hover:text-[var(--brand-green)] transition-all"
+                        className="flex items-center justify-between p-3 bg-stone-50/50 border border-transparent hover:border-stone-200 hover:bg-white text-micro font-bold tracking-tight text-stone-600 hover:text-[var(--brand-green)] transition-all"
                       >
                         {cat}
                         <ChevronRight className="w-3 h-3 text-stone-300" />
@@ -267,7 +267,7 @@ export default function BlogPost() {
               {/* Tags & Footer */}
               <div className="mt-16 pt-8 border-t border-stone-100 flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1.5 bg-stone-100 text-stone-500 text-[10px] font-bold tracking-tight hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors">
+                  <span key={tag} className="px-3 py-1.5 bg-stone-100 text-stone-500 text-micro font-bold tracking-tight hover:bg-[var(--brand-green)]/10 hover:text-[var(--brand-green)] cursor-pointer transition-colors">
                     #{tag}
                   </span>
                 ))}
@@ -298,7 +298,7 @@ export default function BlogPost() {
 
               {/* Related Insights Section */}
               <div className="mt-24">
-                <p className="text-[10px] font-bold text-warm-gold tracking-tight mb-10">Related insights</p>
+                <p className="text-micro font-bold text-warm-gold tracking-tight mb-10">Related insights</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   {relatedPosts.map((related) => (
                     <Link to={`${baseUrl}/${related.slug}`} key={related.id} className="block group">
@@ -314,7 +314,7 @@ export default function BlogPost() {
                           )}
                           <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
                         </div>
-                        <span className="text-[9px] font-bold text-[var(--brand-green)] tracking-tight mb-0">{related.category}</span>
+                        <span className="text-micro font-bold text-[var(--brand-green)] tracking-tight mb-0">{related.category}</span>
                         <h5 className="text-stone-900 mt-2 group-hover:text-[var(--brand-green)] transition-colors leading-tight mb-0">
                           {related.title}
                         </h5>

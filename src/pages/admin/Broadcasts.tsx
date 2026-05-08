@@ -86,7 +86,7 @@ export default function Broadcasts() {
             variant="primary"
             size="lg"
             onClick={() => navigate('/admin/broadcasts/new')}
-            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Create New Broadcast
           </Button>
@@ -102,7 +102,7 @@ export default function Broadcasts() {
               <Megaphone className="w-5 h-5 text-muted-foreground/20 group-hover:text-accent transition-colors" />
             </div>
             <p className="text-4xl font-bold text-on-surface mb-2 tracking-tight transition-transform group-hover:translate-x-1">{broadcasts.length}</p>
-            <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight uppercase">Total deployments</p>
+            <p className="text-micro text-muted-foreground/40 font-bold tracking-tight uppercase">Total deployments</p>
           </CardContent>
         </Card>
 
@@ -113,7 +113,7 @@ export default function Broadcasts() {
               <AlertOctagon className="w-5 h-5 text-destructive/20 group-hover:text-destructive transition-colors" />
             </div>
             <p className="text-4xl font-bold text-destructive mb-2 tracking-tight transition-transform group-hover:translate-x-1">{broadcasts.filter(b => b.priority === 'Urgent').length}</p>
-            <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight uppercase">Critical alerts</p>
+            <p className="text-micro text-muted-foreground/40 font-bold tracking-tight uppercase">Critical alerts</p>
           </CardContent>
         </Card>
 
@@ -124,7 +124,7 @@ export default function Broadcasts() {
               <Users className="w-5 h-5 text-muted-foreground/20 group-hover:text-primary transition-colors" />
             </div>
             <p className="text-4xl font-bold text-on-surface mb-2 tracking-tight transition-transform group-hover:translate-x-1">100%</p>
-            <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight uppercase">Field saturation</p>
+            <p className="text-micro text-muted-foreground/40 font-bold tracking-tight uppercase">Field saturation</p>
           </CardContent>
         </Card>
 
@@ -135,7 +135,7 @@ export default function Broadcasts() {
               <Clock className="w-5 h-5 text-muted-foreground/20 group-hover:text-on-surface transition-colors" />
             </div>
             <p className="text-4xl font-bold text-on-surface mb-2 tracking-tight transition-transform group-hover:translate-x-1">24/7</p>
-            <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight uppercase">Direct HQ connection</p>
+            <p className="text-micro text-muted-foreground/40 font-bold tracking-tight uppercase">Direct HQ connection</p>
           </CardContent>
         </Card>
       </div>
@@ -192,7 +192,7 @@ export default function Broadcasts() {
                           <p className="text-on-surface/80 text-sm leading-relaxed max-w-2xl">
                             {broadcast.content}
                           </p>
-                          <div className="flex items-center gap-4 mt-4 text-[10px] text-muted-foreground/40 font-bold normal-case">
+                          <div className="flex items-center gap-4 mt-4 text-micro text-muted-foreground/40 font-bold normal-case">
                             <span className="flex items-center gap-1.5">
                               <Clock className="w-3 h-3" /> {new Date(broadcast.created_at).toLocaleString()}
                             </span>
@@ -218,7 +218,7 @@ export default function Broadcasts() {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-11 px-8 text-[10px] font-bold tracking-tight hover:bg-stone-50 shadow-sm active:scale-95"
+                          className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-11 px-8 text-micro font-bold tracking-tight hover:bg-stone-50 shadow-sm active:scale-95"
                           onClick={() => fetchMetrics(broadcast.id)}
                         >
                           Refresh operational metrics
@@ -253,12 +253,12 @@ export default function Broadcasts() {
                   <div className="flex items-center justify-between mb-3">
                     <Badge variant="outline" className="text-[8px] font-bold uppercase border-border/40 text-muted-foreground/60">{template.type}</Badge>
                     <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-[10px] font-bold text-primary tracking-tighter uppercase">Use Protocol</span>
+                      <span className="text-micro font-bold text-primary tracking-tighter uppercase">Use Protocol</span>
                       <Plus className="w-3 h-3 text-primary" />
                     </div>
                   </div>
                   <h4 className="font-bold text-sm tracking-tight text-on-surface mb-2 group-hover:text-primary transition-colors">{template.title}</h4>
-                  <p className="text-[11px] font-medium text-muted-foreground/80 leading-relaxed line-clamp-2">
+                  <p className="text-tiny font-medium text-muted-foreground/80 leading-relaxed line-clamp-2">
                     {template.content}
                   </p>
                 </div>
@@ -276,7 +276,7 @@ export default function Broadcasts() {
               </p>
               <Button 
                 variant="outline"
-                className="w-full text-white border-destructive/60 hover:bg-destructive/20 text-[10px] font-bold tracking-tight h-12 rounded-sm transition-all hover:scale-[1.02] shadow-lg shadow-destructive/10 active:scale-95"
+                className="w-full text-white border-destructive/60 hover:bg-destructive/20 text-micro font-bold tracking-tight h-12 rounded-sm transition-all hover:scale-[1.02] shadow-lg shadow-destructive/10 active:scale-95"
               >
                 Trigger Tactical Alert
               </Button>

@@ -131,7 +131,7 @@ export default function ProductDetails() {
           className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-meta text-[10px] font-bold tracking-tight">Back to store</span>
+          <span className="font-meta text-micro font-bold tracking-tight">Back to store</span>
         </Link>
 
         <div className="flex items-center gap-3">
@@ -140,9 +140,9 @@ export default function ProductDetails() {
             className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
           >
             <Heart className="w-4 h-4 text-stone-500 group-hover:text-brand-red transition-all" />
-            <span className="font-meta text-[10px] font-bold tracking-tight text-stone-600 group-hover:text-brand-red">Wishlist</span>
+            <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-red">Wishlist</span>
             {wishlistCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-brand-red text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+              <span className="absolute -top-2 -right-2 bg-brand-red text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                 {wishlistCount}
               </span>
             )}
@@ -152,9 +152,9 @@ export default function ProductDetails() {
             className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
           >
             <ShoppingBag className="w-4 h-4 text-stone-500 group-hover:text-brand-green transition-all" />
-            <span className="font-meta text-[10px] font-bold tracking-tight text-stone-600 group-hover:text-brand-green">Bag</span>
+            <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-green">Bag</span>
             {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-brand-green text-white text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+              <span className="absolute -top-2 -right-2 bg-brand-green text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                 {cartCount}
               </span>
             )}
@@ -201,7 +201,7 @@ export default function ProductDetails() {
         {/* Product Info */}
         <div className="flex flex-col">
           <div className="mb-8">
-            <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-bold tracking-tight rounded-full mb-4">
+            <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-micro font-bold tracking-tight rounded-full mb-4">
               {product.category}
             </span>
             <h1 className="font-h1 text-h2 text-stone-900 mb-4">{product.name}</h1>
@@ -226,7 +226,7 @@ export default function ProductDetails() {
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
               <div>
-                <p className="text-[10px] font-bold text-stone-900 tracking-tight mb-4">Color: {selectedColor}</p>
+                <p className="text-micro font-bold text-stone-900 tracking-tight mb-4">Color: {selectedColor}</p>
                 <div className="flex gap-3">
                   {product.colors.map(color => (
                     <button
@@ -247,10 +247,10 @@ export default function ProductDetails() {
             {product.sizes && product.sizes.length > 0 && (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <p className="text-[10px] font-bold text-stone-900 tracking-tight">Select size</p>
+                  <p className="text-micro font-bold text-stone-900 tracking-tight">Select size</p>
                   <button 
                     onClick={() => setShowSizeGuide(true)}
-                    className="text-[10px] font-bold text-brand-green tracking-tight hover:underline"
+                    className="text-micro font-bold text-brand-green tracking-tight hover:underline"
                   >
                     Size guide
                   </button>
@@ -277,8 +277,8 @@ export default function ProductDetails() {
             {product.customization_allowed && (
               <div className="p-6 bg-stone-50 border-l-4 border-brand-green space-y-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-[10px] font-bold text-stone-900 tracking-tight">Patriot customization</p>
-                  <span className="text-[9px] font-bold text-brand-green bg-brand-green/10 px-2 py-0.5">Free</span>
+                  <p className="text-micro font-bold text-stone-900 tracking-tight">Patriot customization</p>
+                  <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-0.5">Free</span>
                 </div>
                 <div className="relative">
                   <input
@@ -298,10 +298,10 @@ export default function ProductDetails() {
             {/* Regional Availability Check */}
             <div className="p-6 bg-stone-50 border border-stone-200 rounded-sm space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-bold text-stone-900 tracking-tight">Regional fulfillment</p>
+                <p className="text-micro font-bold text-stone-900 tracking-tight">Regional fulfillment</p>
                 <div className="flex items-center gap-1">
                   <div className={cn("w-2 h-2 rounded-full animate-pulse", availability ? (availability.available ? "bg-brand-green" : "bg-brand-red") : "bg-stone-300")} />
-                  <span className="text-[9px] font-bold text-stone-500">Live status</span>
+                  <span className="text-micro font-bold text-stone-500">Live status</span>
                 </div>
               </div>
               
@@ -312,7 +312,7 @@ export default function ProductDetails() {
                     setSelectedRegion(e.target.value)
                     setAvailability(null)
                   }}
-                  className="flex-1 h-10 bg-white border border-stone-200 px-3 text-[10px] font-bold tracking-tight outline-none focus:border-brand-green rounded-sm"
+                  className="flex-1 h-10 bg-white border border-stone-200 px-3 text-micro font-bold tracking-tight outline-none focus:border-brand-green rounded-sm"
                 >
                   {['Greater Accra', 'Ashanti', 'Western', 'Central', 'Eastern', 'Volta', 'Northern', 'Upper East', 'Upper West', 'Bono', 'Bono East', 'Ahafo', 'Savannah', 'North East', 'Oti', 'Western North'].map(r => (
                     <option key={r} value={r}>{r}</option>
@@ -321,7 +321,7 @@ export default function ProductDetails() {
                 <Button 
                   onClick={checkRegionalAvailability}
                   disabled={checkingAvailability}
-                  className="h-10 px-4 bg-stone-900 text-white text-[9px] font-bold tracking-tight rounded-sm hover:bg-brand-green transition-all"
+                  className="h-10 px-4 bg-stone-900 text-white text-micro font-bold tracking-tight rounded-sm hover:bg-brand-green transition-all"
                 >
                   {checkingAvailability ? 'Checking...' : 'Check'}
                 </Button>
@@ -332,7 +332,7 @@ export default function ProductDetails() {
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={cn(
-                    "text-[10px] font-bold leading-relaxed",
+                    "text-micro font-bold leading-relaxed",
                     availability.available ? "text-brand-green" : "text-brand-red"
                   )}
                 >
@@ -344,7 +344,7 @@ export default function ProductDetails() {
             {/* Quantity */}
             <div className="flex items-end gap-8">
               <div className="flex-1">
-                <p className="text-[10px] font-bold text-stone-900 tracking-tight mb-4">Quantity</p>
+                <p className="text-micro font-bold text-stone-900 tracking-tight mb-4">Quantity</p>
                 <div className="flex items-center w-full h-12 border border-stone-200 bg-white rounded-sm overflow-hidden">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -364,12 +364,12 @@ export default function ProductDetails() {
               
               {product.specifications && Object.keys(product.specifications).length > 0 && (
                 <div className="flex-1 hidden md:block">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight mb-4">Quick specs</p>
+                  <p className="text-micro font-bold text-stone-400 tracking-tight mb-4">Quick specs</p>
                   <div className="grid grid-cols-2 gap-2">
                     {Object.entries(product.specifications).slice(0, 2).map(([key, value]) => (
                       <div key={key} className="flex flex-col">
                         <span className="text-[8px] font-bold text-stone-400">{key}</span>
-                        <span className="text-[10px] font-bold text-stone-900 truncate">{value}</span>
+                        <span className="text-micro font-bold text-stone-900 truncate">{value}</span>
                       </div>
                     ))}
                   </div>
@@ -442,16 +442,16 @@ export default function ProductDetails() {
       <section className="mt-24 pt-24 border-t border-stone-200">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
           <div>
-            <span className="text-[10px] font-bold text-brand-green tracking-tight mb-4 block">Voice of the movement</span>
+            <span className="text-micro font-bold text-brand-green tracking-tight mb-4 block">Voice of the movement</span>
             <h2 className="font-h2 text-h3 text-stone-900">Patriot reviews</h2>
           </div>
           <div className="flex items-center gap-6">
             <div className="text-right">
               <p className="text-3xl font-bold text-stone-900">{product.rating || '4.8'}</p>
-              <p className="text-[9px] font-bold text-stone-400 tracking-tight">Average patriot rating</p>
+              <p className="text-micro font-bold text-stone-400 tracking-tight">Average patriot rating</p>
             </div>
             <div className="w-px h-12 bg-stone-200" />
-            <Button className="h-12 bg-brand-green text-white text-[10px] font-bold tracking-tight px-8 rounded-none">
+            <Button className="h-12 bg-brand-green text-white text-micro font-bold tracking-tight px-8 rounded-none">
               Write a review
             </Button>
           </div>
@@ -475,14 +475,14 @@ export default function ProductDetails() {
                 </div>
                 <p className="text-sm text-stone-600 font-medium leading-relaxed italic">"{review.content}"</p>
                 <div className="pt-6 border-t border-stone-50 flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-stone-900 tracking-tight">{review.patriot_name}</span>
-                  <span className="text-[9px] font-bold text-stone-400">{new Date(review.created_at).toLocaleDateString()}</span>
+                  <span className="text-micro font-bold text-stone-900 tracking-tight">{review.patriot_name}</span>
+                  <span className="text-micro font-bold text-stone-400">{new Date(review.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
             ))
           ) : (
             <div className="col-span-full py-16 bg-stone-50 text-center border border-dashed border-stone-200">
-              <p className="text-[10px] font-bold text-stone-400 tracking-tight">Be the first patriot to review this gear.</p>
+              <p className="text-micro font-bold text-stone-400 tracking-tight">Be the first patriot to review this gear.</p>
             </div>
           )}
         </div>
@@ -496,7 +496,7 @@ export default function ProductDetails() {
             <div className="grid gap-4">
               {Object.entries(product.specifications).map(([key, value]) => (
                 <div key={key} className="flex justify-between py-4 border-b border-stone-100">
-                  <span className="text-[10px] font-bold text-stone-400 tracking-tight">{key}</span>
+                  <span className="text-micro font-bold text-stone-400 tracking-tight">{key}</span>
                   <span className="text-xs font-bold text-stone-900">{value}</span>
                 </div>
               ))}
@@ -508,13 +508,13 @@ export default function ProductDetails() {
               Every item in the movement catalog undergoes strict quality control. We ensure that all materials are ethically sourced and designed to withstand the rigors of field mobilization.
             </p>
             <ul className="space-y-4 relative z-10">
-              <li className="flex items-center gap-3 text-[10px] font-bold tracking-tight">
+              <li className="flex items-center gap-3 text-micro font-bold tracking-tight">
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Durable field-ready fabric
               </li>
-              <li className="flex items-center gap-3 text-[10px] font-bold tracking-tight">
+              <li className="flex items-center gap-3 text-micro font-bold tracking-tight">
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Authentic movement branding
               </li>
-              <li className="flex items-center gap-3 text-[10px] font-bold tracking-tight">
+              <li className="flex items-center gap-3 text-micro font-bold tracking-tight">
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Supporting local production
               </li>
             </ul>
@@ -544,7 +544,7 @@ export default function ProductDetails() {
             <div className="bg-brand-green p-6 text-white flex justify-between items-center">
               <div>
                 <h3 className="font-h3 text-lg tracking-tight">Apparel size guide</h3>
-                <p className="text-[10px] opacity-80 tracking-tight">All measurements in inches</p>
+                <p className="text-micro opacity-80 tracking-tight">All measurements in inches</p>
               </div>
               <button 
                 onClick={() => setShowSizeGuide(false)}
@@ -559,10 +559,10 @@ export default function ProductDetails() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b-2 border-stone-100">
-                      <th className="py-4 text-[10px] font-bold text-stone-400 tracking-tight">Size</th>
-                      <th className="py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center">Chest</th>
-                      <th className="py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center">Length</th>
-                      <th className="py-4 text-[10px] font-bold text-stone-400 tracking-tight text-center">Sleeve</th>
+                      <th className="py-4 text-micro font-bold text-stone-400 tracking-tight">Size</th>
+                      <th className="py-4 text-micro font-bold text-stone-400 tracking-tight text-center">Chest</th>
+                      <th className="py-4 text-micro font-bold text-stone-400 tracking-tight text-center">Length</th>
+                      <th className="py-4 text-micro font-bold text-stone-400 tracking-tight text-center">Sleeve</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-50">
@@ -588,7 +588,7 @@ export default function ProductDetails() {
               </p>
               <Button 
                 onClick={() => setShowSizeGuide(false)}
-                className="w-full mt-8 bg-stone-900 hover:bg-stone-800 text-white text-[10px] font-bold tracking-tight rounded-none h-12"
+                className="w-full mt-8 bg-stone-900 hover:bg-stone-800 text-white text-micro font-bold tracking-tight rounded-none h-12"
               >
                 Close guide
               </Button>
