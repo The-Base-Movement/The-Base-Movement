@@ -1,14 +1,15 @@
 import { Lock, Eye, Server } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { Helmet } from 'react-helmet-async'
+import SEO from '@/components/SEO'
 
 export default function Privacy() {
   return (
     <main className="bg-surface-warm font-body-md min-h-screen pb-24">
-      <Helmet>
-        <title>Privacy Policy | The Base Movement</title>
-        <meta name="description" content="How we protect and handle your data at The Base Movement." />
-      </Helmet>
+      <SEO 
+        title="Privacy Policy"
+        description="Our commitment to data sovereignty and the absolute protection of our members' digital footprint."
+        canonical="/privacy"
+      />
 
       {/* Hero */}
       <div className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">

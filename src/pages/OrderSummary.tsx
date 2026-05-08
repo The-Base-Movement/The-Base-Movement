@@ -4,6 +4,7 @@ import { ArrowRight, Printer, Share2, ShoppingBag, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderItem } from '@/types/admin'
+import SEO from '@/components/SEO'
 
 export default function OrderSummary() {
   const location = useLocation()
@@ -27,6 +28,7 @@ export default function OrderSummary() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-off-white">
+        <SEO title="Syncing Order..." noindex />
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 text-[var(--brand-green)] animate-spin" />
           <p className="text-micro font-bold tracking-tight text-stone-400">Retrieving transaction data...</p>
@@ -38,6 +40,7 @@ export default function OrderSummary() {
   if (!order) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-off-white">
+        <SEO title="Order Not Found" noindex />
         <div className="max-w-md w-full p-8 text-center bg-white border border-stone-200">
           <ShoppingBag className="w-12 h-12 text-stone-200 mx-auto mb-4" />
           <h2 className="text-xl font-bold font-meta tracking-tight text-stone-900">Order not found</h2>
@@ -55,6 +58,10 @@ export default function OrderSummary() {
 
   return (
     <div className="bg-off-white min-h-screen">
+      <SEO 
+        title={`Order Confirmed #${orderNumber}`}
+        noindex
+      />
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
         <div className="max-w-3xl mx-auto">
         <div className="bg-white border border-stone-200 rounded-sm shadow-xl overflow-hidden">

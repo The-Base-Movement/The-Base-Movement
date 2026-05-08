@@ -12,6 +12,7 @@ import {
   X 
 } from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
+import SEO from '@/components/SEO'
 import { Button } from '../components/ui/neon-button'
 import { cn } from '@/lib/utils'
 import { donationService } from '@/services/donationService'
@@ -122,6 +123,11 @@ export default function Impact() {
 
   return (
     <main className="bg-stone-50/50 min-h-screen font-meta">
+      <SEO 
+        title="Our Impact"
+        description="Live analytics reflecting our collective momentum across the nation. Every member joined and every contribution made is a direct investment in the Ghana we deserve."
+        canonical="/impact"
+      />
       {/* Full Activity Modal */}
       {showFullActivity && (
         <div 

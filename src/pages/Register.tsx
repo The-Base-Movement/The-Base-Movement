@@ -9,6 +9,7 @@ import { getCroppedImg } from '@/lib/imageUtils'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
+import SEO from '@/components/SEO'
 
 const ageRanges = ['16-25', '26-40', '41-60', '60+']
 // Hardcoded fallbacks removed - now fetching from Supabase
@@ -384,6 +385,11 @@ export default function Register() {
   if (step === 'choice') {
     return (
       <main className="bg-background font-body-md min-h-screen flex flex-col justify-center py-12 px-4">
+        <SEO 
+          title="Join the Movement"
+          description="Register to join The Base Movement. Whether in Ghana or the diaspora, your contribution matters for national development."
+          canonical="/register"
+        />
         <div className="max-w-5xl w-full mx-auto">
           <div className="text-center mb-12">
             <img src={settings.logo_url} alt="The Base" className="h-24 w-auto mx-auto mb-6 object-contain"  decoding="async" />

@@ -4,6 +4,7 @@ import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '../components/ui/neon-button'
 import { adminService } from '../services/adminService'
 import { useBranding } from '@/hooks/useBranding'
+import SEO from '@/components/SEO'
 
 export default function Contact() {
   const { settings } = useBranding()
@@ -44,6 +45,11 @@ export default function Contact() {
 
   return (
     <main className="bg-surface-warm font-body-md min-h-screen pb-24">
+      <SEO 
+        title="Get in Touch"
+        description="Have a question or want to get involved? Reach out to our team. We are a movement of ordinary citizens building an extraordinary nation."
+        canonical="/contact"
+      />
       {/* Header */}
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>

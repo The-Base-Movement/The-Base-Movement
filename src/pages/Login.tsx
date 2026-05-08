@@ -4,6 +4,7 @@ import { Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react'
 import { authService } from '@/services/authService'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
+import SEO from '@/components/SEO'
 
 export default function Login() {
   const { settings } = useBranding()
@@ -42,6 +43,11 @@ export default function Login() {
 
   return (
     <main className="bg-surface-warm font-body-md min-h-screen flex flex-col justify-center py-12">
+      <SEO 
+        title="Member Sign In"
+        description="Secure access to the The Base Movement platform. Manage your membership, connect with your chapter, and participate in feedback."
+        canonical="/login"
+      />
       <div className="max-w-md w-full mx-auto px-4">
         
         <div className="text-center mb-8">

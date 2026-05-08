@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, MapPin, Globe } from 'lucide-react'
 import { adminService, type BlogPost } from '@/services/adminService'
 import { usePerformance } from '@/context/PerformanceContext'
+import SEO from '@/components/SEO'
 import { Button } from '@/components/ui/neon-button'
 import { useBranding } from '@/hooks/useBranding'
 import { BrandLine } from '@/components/ui/BrandLine'
@@ -57,10 +58,36 @@ export default function Home() {
   const { settings } = useBranding()
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 })
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([])
+  const [stats, setStats] = useState({
+    members: 0,
+    chapters: 0,
+    regions: 0,
+    diaspora: 0
+  })
   const { lowBandwidthMode } = usePerformance()
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "The Base Movement",
+    "url": "https://thebasemovement.com",
+    "logo": settings.logo_url,
+    "sameAs": [
+      "https://www.facebook.com/profile.php?id=61579415816496",
+      "https://www.instagram.com/thebasemovementgh",
+      "https://www.tiktok.com/@thebasemovementgh",
+      "https://www.youtube.com/@thebasemovementgh"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "general info",
+      "url": "https://thebasemovement.com/contact"
+    }
+  }
 
   useEffect(() => {
     adminService.getBlogPosts().then(data => setLatestPosts(data.slice(0, 3))).catch(() => {})
+    adminService.getPublicStats().then(setStats).catch(() => {})
   }, [])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -73,6 +100,11 @@ export default function Home() {
 
   return (
     <main className="bg-background font-body-md">
+      <SEO 
+        title="Ghana First, Jobs for the Youth!"
+        canonical="/"
+        jsonLd={organizationSchema}
+      />
       {/* Hero Section */}
       <section 
         aria-labelledby="hero-heading"
@@ -213,12 +245,12 @@ export default function Home() {
             <div className="group">
               <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={355482} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+                <AnimatedCounter target={stats.members} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
               </dd>
               <dt className="text-micro font-bold text-primary tracking-tight normal-case mb-2">
-                Members registered
+                Members registered nationwide
               </dt>
-              <p className="text-[11px] font-medium text-muted-foreground/70 leading-relaxed max-w-[200px]">
+              <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed max-w-[240px]">
                 Verified citizens joined across the movement's national network.
               </p>
             </div>
@@ -227,13 +259,13 @@ export default function Home() {
             <div className="group">
               <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={98} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+                <AnimatedCounter target={stats.chapters} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
               </dd>
               <dt className="text-micro font-bold text-accent tracking-tight normal-case mb-2">
-                Active branches
+                Community branches active in nearly every district
               </dt>
-              <p className="text-[11px] font-medium text-muted-foreground/70 leading-relaxed max-w-[200px]">
-                Community branches established and operating in every district.
+              <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed max-w-[240px]">
+                Local community branches established and operating nationwide.
               </p>
             </div>
 
@@ -241,13 +273,13 @@ export default function Home() {
             <div className="group">
               <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={16} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+                <AnimatedCounter target={stats.regions} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
               </dd>
               <dt className="text-micro font-bold text-destructive tracking-tight normal-case mb-2">
-                Regions represented
+                Movement presence across all 16 regions
               </dt>
-              <p className="text-[11px] font-medium text-muted-foreground/70 leading-relaxed max-w-[200px]">
-                Full movement presence secured across all sixteen administrative regions.
+              <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed max-w-[240px]">
+                Full representation and active coordination across every administrative region.
               </p>
             </div>
 
@@ -255,13 +287,13 @@ export default function Home() {
             <div className="group">
               <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={42000} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+                <AnimatedCounter target={stats.diaspora} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
               </dd>
               <dt className="text-micro font-bold text-on-surface/80 tracking-tight normal-case mb-2">
-                Diaspora supporters
+                Diaspora supporters registered online
               </dt>
-              <p className="text-[11px] font-medium text-muted-foreground/70 leading-relaxed max-w-[200px]">
-                Global Ghanaians committed to supporting national development.
+              <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed max-w-[240px]">
+                Global Ghanaians committed to supporting national development from abroad.
               </p>
             </div>
           </div>
@@ -275,6 +307,7 @@ export default function Home() {
             <div>
               <span className="text-primary font-bold tracking-tight text-micro mb-3 block">Updates</span>
               <h2 id="updates-heading" className="text-3xl md:text-h2 font-meta font-bold text-on-surface tracking-tight">Latest updates</h2>
+              <p className="text-xs text-muted-foreground/60 mt-2">Stories from our communities, branches, and partners.</p>
               <BrandLine className="mt-4" />
             </div>
             <Link to="/blog" className="hidden md:flex items-center gap-2 text-primary font-meta font-bold tracking-tight text-xs hover:underline">

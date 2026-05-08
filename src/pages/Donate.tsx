@@ -10,6 +10,7 @@ import { adminService } from '@/services/adminService'
 import type { DonationRecord, DonationDetail, DonationCampaign } from '@/types/admin'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { toast } from 'sonner'
+import SEO from '@/components/SEO'
 
 export default function Donate() {
   const [submitted, setSubmitted] = useState(false)
@@ -243,6 +244,11 @@ export default function Donate() {
 
   return (
     <main className="bg-background font-body-md min-h-screen pb-24">
+      <SEO 
+        title="Support the Movement"
+        description="Your contributions for the growth and sustainability of The Base Movement. Join citizens in Ghana and across the diaspora working for a more productive future."
+        canonical="/donate"
+      />
       {/* Header */}
       <div className="bg-on-surface text-white pt-32 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--brand-green)_0%,_transparent_70%)]"></div>

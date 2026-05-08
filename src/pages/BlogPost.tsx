@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/neon-button'
 import { CommentSection } from '@/components/CommentSection'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import { Loader2 } from 'lucide-react'
-import { Helmet } from 'react-helmet-async'
+import SEO from '@/components/SEO'
 
 
 export default function BlogPost() {
@@ -84,10 +84,10 @@ export default function BlogPost() {
   if (!post) {
     return (
       <>
-        <Helmet>
-          <title>Insight Not Found | The Base Movement</title>
-          <meta name="robots" content="noindex" />
-        </Helmet>
+        <SEO 
+          title="Insight Not Found"
+          noindex
+        />
         <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-6">
           <div className="w-16 h-16 bg-stone-100 flex items-center justify-center mb-8 rotate-3">
             <Search className="w-8 h-8 text-stone-300" />
@@ -111,16 +111,13 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen bg-white pb-20">
-      <Helmet>
-        <title>{pageTitle} | The Base Movement</title>
-        <meta name="description" content={pageDescription} />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={canonicalUrl} />
-        {post.imageUrl && <meta property="og:image" content={post.imageUrl} />}
-        <link rel="canonical" href={canonicalUrl} />
-      </Helmet>
+      <SEO 
+        title={pageTitle}
+        description={pageDescription}
+        image={post.imageUrl || undefined}
+        canonical={`/blog/${post.slug}`}
+        type="article"
+      />
       <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <Breadcrumbs currentLabel={post.title} />

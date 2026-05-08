@@ -8,6 +8,7 @@ import { adminService } from '@/services/adminService'
 import type { Region } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import SEO from '@/components/SEO'
 
 export default function Checkout() {
   const navigate = useNavigate()
@@ -167,6 +168,12 @@ export default function Checkout() {
 
   return (
     <div className="bg-off-white min-h-screen">
+      <SEO 
+        title="Secure Checkout"
+        description="Finalize your order and equip yourself for the movement."
+        canonical="/store/checkout"
+        noindex
+      />
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
         <Breadcrumbs />
         <header className="mb-12">

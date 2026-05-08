@@ -1,14 +1,15 @@
 import { Scale, Info, CheckCircle } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { Helmet } from 'react-helmet-async'
+import SEO from '@/components/SEO'
 
 export default function Terms() {
   return (
     <main className="bg-surface-warm font-body-md min-h-screen pb-24">
-      <Helmet>
-        <title>Terms of Service | The Base Movement</title>
-        <meta name="description" content="Official terms and membership agreement for The Base Movement." />
-      </Helmet>
+      <SEO 
+        title="Terms of Service"
+        description="Official terms and membership agreement for The Base Movement."
+        canonical="/terms"
+      />
 
       {/* Hero */}
       <div className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">

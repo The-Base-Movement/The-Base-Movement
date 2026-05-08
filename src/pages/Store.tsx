@@ -6,6 +6,7 @@ import { ProductCard } from '@/components/ProductCard'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
 import { BrandLine } from '@/components/ui/BrandLine'
+import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'
@@ -148,6 +149,11 @@ export default function Store() {
 
   return (
     <div className="min-h-screen bg-stone-50/50 pb-20">
+      <SEO 
+        title="Movement Supplies"
+        description="Equip yourself with official movement gear. Every purchase directly funds our grassroots organizing and civic education programs."
+        canonical="/store"
+      />
       <div className="bg-white border-b border-stone-200">
         <div className="max-w-[1280px] mx-auto px-8 py-8">
           <Breadcrumbs />

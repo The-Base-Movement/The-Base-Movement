@@ -10,6 +10,7 @@ import { BrandLine } from '@/components/ui/BrandLine'
 import { authService } from '@/services/authService'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import SEO from '@/components/SEO'
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false)
@@ -36,6 +37,10 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+      <SEO 
+        title="Admin Portal"
+        noindex
+      />
       <div className="max-w-md w-full">
         <Card className="border-border/40 shadow-2xl rounded-sm overflow-hidden bg-white/80 backdrop-blur-xl">
           <CardContent className="p-10">

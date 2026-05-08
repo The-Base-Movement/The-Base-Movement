@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom'
 import { Home, Search, ArrowRight } from 'lucide-react'
 import { Button } from '../components/ui/neon-button'
+import SEO from '@/components/SEO'
 
 export default function NotFound() {
   return (
     <main className="min-h-screen bg-stone-50/50 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <SEO 
+        title="Page Not Found"
+        noindex
+      />
       {/* Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-1 flex">
         <div className="flex-1 bg-brand-red"></div>

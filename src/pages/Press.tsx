@@ -4,6 +4,7 @@ import { Button } from '../components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { adminService } from '@/services/adminService'
 import type { PressRelease, MediaKitAsset } from '@/types/admin'
+import SEO from '@/components/SEO'
 
 
 
@@ -31,6 +32,11 @@ export default function Press() {
   }, [])
   return (
     <main className="bg-stone-50/50 min-h-screen pb-24">
+      <SEO 
+        title="Press Center"
+        description="Authoritative updates, media assets, and official statements from The Base Movement's communication desk."
+        canonical="/press"
+      />
       {/* Hero */}
       <div className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>

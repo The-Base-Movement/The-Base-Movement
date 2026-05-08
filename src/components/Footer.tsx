@@ -41,7 +41,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-on-surface/60 text-sm leading-relaxed font-medium max-w-sm">
-              We are a grassroots movement committed to youth jobs, accountable leadership, and national development. Join citizens across Ghana and the diaspora working for a more productive future.
+              A grassroots movement committed to youth jobs, accountable leadership, and national development for a more productive Ghana.
             </p>
             <div className="flex items-center gap-6 pt-4">
               <a href="https://www.facebook.com/profile.php?id=61579415816496" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform" title="Facebook">

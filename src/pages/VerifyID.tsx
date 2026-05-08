@@ -4,6 +4,7 @@ import { ShieldCheck, AlertTriangle, User, MapPin, Calendar, CheckCircle2, XCirc
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/neon-button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import SEO from '@/components/SEO'
 
 interface VerifiedMember {
   full_name: string
@@ -62,6 +63,10 @@ export default function VerifyID() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
+      <SEO 
+        title="Member Verification"
+        noindex
+      />
       <div className="w-full max-w-md space-y-6">
         {/* Branding */}
         <div className="text-center space-y-2">

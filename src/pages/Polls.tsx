@@ -4,6 +4,7 @@ import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Vote, ArrowRight, Clock, Lock } from 'lucide-react'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
+import SEO from '@/components/SEO'
 import { adminService } from '@/services/adminService'
 import type { Poll, PollOption } from '@/types/admin'
 import { toast } from 'sonner'
@@ -63,7 +64,12 @@ export default function Polls() {
   const closedPolls = polls.filter(p => p.status === 'Closed')
 
   return (
-    <div className="bg-stone-50/50 min-h-screen pb-20">
+    <div className="min-h-screen bg-stone-50/50 pb-20">
+      <SEO 
+        title="Citizen Feedback"
+        description="Your voice shapes the movement. Participate in our regular polls to help prioritize the plan and regional interventions."
+        canonical="/polls"
+      />
       {/* Header */}
       <div className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-8 py-6">

@@ -484,6 +484,35 @@ class AdminService {
 
 
   // --- Analytics ---
+  async getPublicStats(): Promise<{
+    members: number;
+    chapters: number;
+    regions: number;
+    diaspora: number;
+  }> {
+    try {
+      const [membersRes, chaptersRes, regionsRes, diasporaRes] = await Promise.all([
+        supabase.from('users').select('*', { count: 'exact', head: true }),
+        supabase.from('chapters').select('*', { count: 'exact', head: true }),
+        supabase.from('chapters').select('city_or_region'),
+        supabase.from('users').select('*', { count: 'exact', head: true }).neq('country', 'Ghana')
+      ]);
+
+      // Calculate unique regions from chapters
+      const uniqueRegions = new Set((regionsRes.data || []).map(c => c.city_or_region)).size;
+
+      return {
+        members: membersRes.count || 0,
+        chapters: chaptersRes.count || 0,
+        regions: uniqueRegions || 0,
+        diaspora: diasporaRes.count || 0
+      };
+    } catch (error) {
+      console.warn('[ADMIN SERVICE] Failed to fetch public stats:', error);
+      return { members: 0, chapters: 0, regions: 0, diaspora: 0 };
+    }
+  }
+
   async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
     const [usersRes, chaptersRes, ordersRes] = await Promise.all([
       supabase.from('users').select('*', { count: 'exact', head: true }),

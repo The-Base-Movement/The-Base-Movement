@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Heart, ArrowLeft, Trash2, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import SEO from '@/components/SEO'
 
 import { useStore } from '@/hooks/useStore'
 import type { Product } from '@/types/product'
@@ -12,6 +13,12 @@ export default function Wishlist() {
 
   return (
     <div className="bg-off-white min-h-screen">
+      <SEO 
+        title="My Wishlist"
+        description="Curate your favorite movement gear and keep track of limited edition releases."
+        canonical="/store/wishlist"
+        noindex
+      />
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
         <Breadcrumbs />
         

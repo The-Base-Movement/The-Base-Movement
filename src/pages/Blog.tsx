@@ -4,7 +4,7 @@ import { ArrowRight, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
-import { Helmet } from 'react-helmet-async'
+import SEO from '@/components/SEO'
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -38,13 +38,11 @@ export default function Blog() {
 
   return (
     <div className="bg-surface-warm font-body-md min-h-screen">
-      <Helmet>
-        <title>Updates | The Base Movement</title>
-        <meta name="description" content="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement." />
-        <meta property="og:title" content="Updates | The Base Movement" />
-        <meta property="og:description" content="Ideas, analysis and updates from The Base." />
-        <meta property="og:type" content="website" />
-      </Helmet>
+      <SEO 
+        title="Updates & Insights"
+        description="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement."
+        canonical="/blog"
+      />
       {/* Hero */}
       <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-[var(--brand-green)]">
         <div className="max-w-[1280px] mx-auto">

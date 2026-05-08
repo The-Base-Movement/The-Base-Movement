@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { logisticsService } from '@/services/logisticsService'
+import SEO from '@/components/SEO'
 
 export default function ProductDetails() {
   const { slug } = useParams()
@@ -110,6 +111,10 @@ export default function ProductDetails() {
   if (!product) {
     return (
       <div className="bg-off-white min-h-screen">
+        <SEO 
+          title="Product Not Found"
+          noindex
+        />
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12 text-center">
           <h2 className="text-2xl font-bold text-stone-900 mb-4">Product not found</h2>
           <Link to="/store" className="text-brand-green font-bold hover:underline">Back to store</Link>
@@ -123,6 +128,13 @@ export default function ProductDetails() {
 
   return (
     <div className="bg-off-white min-h-screen">
+      <SEO 
+        title={product.name}
+        description={product.description}
+        image={product.image || undefined}
+        canonical={`/store/product/${product.slug}`}
+        type="website"
+      />
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
       <Breadcrumbs />
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">

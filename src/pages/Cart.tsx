@@ -3,6 +3,7 @@ import { ShoppingBag, ArrowLeft, Trash2, Plus, Minus, ArrowRight } from 'lucide-
 import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
+import SEO from '@/components/SEO'
 
 export default function Cart() {
   const { cart, removeFromCart, updateCartQuantity } = useStore()
@@ -16,6 +17,12 @@ export default function Cart() {
 
   return (
     <div className="bg-off-white min-h-screen">
+      <SEO 
+        title="Your Shopping Bag"
+        description="Review your items and proceed to secure checkout."
+        canonical="/store/cart"
+        noindex
+      />
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
         <Breadcrumbs />
         <header className="mb-12">

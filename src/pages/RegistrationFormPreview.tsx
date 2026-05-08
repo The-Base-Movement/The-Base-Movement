@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/neon-button'
 import { Printer, Download, ArrowLeft } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import SEO from '@/components/SEO'
 
 export default function RegistrationFormPreview() {
   const { settings } = useBranding()
@@ -26,6 +27,10 @@ export default function RegistrationFormPreview() {
 
   return (
     <div className="min-h-screen bg-stone-100 py-12 px-4 print:p-0 print:bg-white">
+      <SEO 
+        title="Membership Form Preview"
+        noindex
+      />
       {/* Controls - Hidden on Print */}
       <div className="max-w-[210mm] mx-auto mb-8 flex items-center justify-between print:hidden">
         <Button 

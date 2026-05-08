@@ -4,6 +4,7 @@ import { GraduationCap, Building2, Factory, Construction, Landmark, Sprout, Arro
 import { Button } from '@/components/ui/neon-button'
 import { useBranding } from '@/hooks/useBranding'
 import { BrandLine } from '@/components/ui/BrandLine'
+import SEO from '@/components/SEO'
 
 const agendaPillars = [
   {
@@ -230,6 +231,11 @@ export default function OurAgenda() {
 
   return (
     <main className="bg-surface-warm font-body-md min-h-screen pb-24">
+      <SEO 
+        title="The Plan for Ghana"
+        description="The Six Aims of The Base. A detailed, actionable blueprint to build a stronger, more prosperous nation through patriotism, honesty, and discipline."
+        canonical="/our-agenda"
+      />
       {/* Header */}
       <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>

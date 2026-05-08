@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { MapPin, Search, Plus, Building2, Send, Globe } from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { Button } from '@/components/ui/neon-button'
+import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ChapterCard } from '@/components/ChapterCard'
@@ -241,7 +242,13 @@ export default function Chapters() {
   );
 
   return (
+  return (
     <div className="min-h-screen bg-stone-50/50 pb-20">
+      <SEO 
+        title="Movement Chapters"
+        description="Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of regional hubs."
+        canonical="/chapters"
+      />
       <div className="bg-white border-b border-stone-200">
         <div className="max-w-[1280px] mx-auto px-8 py-8">
           <Breadcrumbs />
