@@ -109,9 +109,9 @@ export default function FieldDirectives() {
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* 🎯 Tactical Header */}
-      <div className="flex-columns items-center">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Target className="w-8 h-8 text-on-surface" />
@@ -234,12 +234,11 @@ export default function FieldDirectives() {
                 </div>
                 <CardContent className="p-6 space-y-4 flex-1 flex flex-col">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
                       <div className="w-8 h-8 bg-muted/10 rounded-full flex items-center justify-center overflow-hidden border border-border/10">
-                        <img src={`https://i.pravatar.cc/100?u=${report.member_id}`} alt="Patriot" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
+                        <img src={`https://i.pravatar.cc/100?u=${report.member_id}`} alt="Member" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold normal-case tracking-tight leading-none mb-1">Patriot #{report.member_id.slice(0, 5)}</p>
+                        <p className="text-[10px] font-bold normal-case tracking-tight leading-none mb-1">Member #{report.member_id.slice(0, 5)}</p>
                         <p className="text-[8px] font-bold text-muted-foreground/40 normal-case">{new Date(report.created_at).toLocaleTimeString()} - {new Date(report.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>

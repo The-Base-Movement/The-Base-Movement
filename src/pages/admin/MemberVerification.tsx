@@ -172,22 +172,22 @@ export default function MemberVerification() {
   return (
     <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
 
-      {/* Page Header */}
-      <div className="flex-columns items-center">
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <ShieldCheck className="w-8 h-8 text-on-surface" />
             Member verification
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm mb-0">Review and approve new member registrations for movement security.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Review and approve new member registrations for movement security.</p>
         </div>
         <div className="flex items-center gap-4">
           {pendingCount > 0 && (
             <div className="hidden md:flex px-4 py-2 bg-accent/5 border border-accent/20 items-center gap-2 rounded-sm shadow-sm">
               <AlertCircle className="w-4 h-4 text-accent" />
               <div className="text-right">
-                <span className="text-[9px] font-bold text-accent tracking-tight block">Pending</span>
+                <span className="text-[9px] font-bold text-accent tracking-tight block uppercase">Pending</span>
                 <span className="text-sm font-bold text-on-surface tracking-tight">
                   {pendingCount} review{pendingCount !== 1 ? 's' : ''}
                 </span>
@@ -238,7 +238,7 @@ export default function MemberVerification() {
               {loading ? (
                 <div className="py-24 flex flex-col items-center justify-center gap-4">
                   <Loader2 className="w-8 h-8 text-on-surface animate-spin" />
-                  <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Fetching identity files...</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Fetching member identity files...</p>
                 </div>
               ) : filtered.length === 0 ? (
                 <div className="py-12 text-center text-muted-foreground/40 text-xs font-bold normal-case">

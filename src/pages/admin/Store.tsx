@@ -240,19 +240,19 @@ export default function AdminStore() {
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Page Header */}
-      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Package className="w-8 h-8 text-on-surface" />
             Logistics and supply
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">Movement inventory, merchandising, and regional distribution infrastructure.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Movement inventory, merchandising, and regional distribution infrastructure.</p>
         </div>
-        <div className="flex items-center gap-4">
-        <div className="flex bg-muted/10 p-1 rounded-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex bg-muted/10 p-1 rounded-sm mr-2">
             <button 
               onClick={() => setActiveTab('inventory')}
               className={cn(
@@ -323,60 +323,73 @@ export default function AdminStore() {
             </div>
           )}
 
-          {/* Store Performance Stats */}
-      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-0">Total stock value</p>
-            <h3 className="text-xl md:text-2xl font-bold text-on-surface m-0">
-              GHS {products.reduce((acc, p) => acc + (parseFloat(p.price.replace(/[^0-9.-]+/g, '')) * p.stock), 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-            </h3>
-            <span className="text-[9px] font-bold text-muted-foreground/80 flex items-center gap-1 mt-1">
-              <TrendingUp className="w-3 h-3" /> Estimated value
-            </span>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-0">Active requests</p>
-            <h3 className="text-xl md:text-2xl font-bold text-on-surface m-0">{requests.filter(r => r.status === 'Pending').length}</h3>
-            <span className={cn(
-              "text-[9px] font-bold mt-1",
-              requests.filter(r => r.status === 'Pending').length > 0 ? "text-accent" : "text-muted-foreground/80"
+          {/* Store Performance Stats - Balanced Grid */}
+          <div className="grid-stats mb-12" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+            <Card className="rounded-sm border-border/60 shadow-sm bg-white">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Stock value</span>
+                  <TrendingUp className="w-4 h-4 text-primary/20" />
+                </div>
+                <p className="text-3xl font-bold text-on-surface mb-1">
+                  GHS {products.reduce((acc, p) => acc + (parseFloat(p.price.replace(/[^0-9.-]+/g, '')) * p.stock), 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                </p>
+                <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Movement asset valuation</p>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-sm border-border/60 shadow-sm bg-white">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Active requests</span>
+                  <Truck className="w-4 h-4 text-primary/20" />
+                </div>
+                <p className="text-3xl font-bold text-on-surface mb-1">{requests.filter(r => r.status === 'Pending').length}</p>
+                <p className={cn(
+                  "text-[9px] font-bold tracking-tight",
+                  requests.filter(r => r.status === 'Pending').length > 0 ? "text-accent" : "text-muted-foreground/40"
+                )}>
+                  {requests.filter(r => r.status === 'Pending').length > 0 ? 'Pending HQ approval' : 'All requests processed'}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-sm border-border/60 shadow-sm bg-white">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Stock units</span>
+                  <Package className="w-4 h-4 text-muted-foreground/10" />
+                </div>
+                <p className="text-3xl font-bold text-on-surface mb-1">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</p>
+                <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Across {products.length} catalog items</p>
+              </CardContent>
+            </Card>
+
+            <Card className={cn(
+              "rounded-sm border-border/60 shadow-sm bg-white",
+              lowStockItems.length > 0 ? "border-destructive/40" : ""
             )}>
-              {requests.filter(r => r.status === 'Pending').length > 0 ? 'Pending approval' : 'No pending'}
-            </span>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-0">Stock items</p>
-            <h3 className="text-xl md:text-2xl font-bold text-on-surface m-0">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
-            <span className="text-[9px] font-bold text-muted-foreground/80 mt-1">Across {products.length} products</span>
-          </CardContent>
-        </Card>
-        <Card className={cn(
-          "rounded-sm border-border/60 shadow-sm",
-          lowStockItems.length > 0 ? "bg-red-50/10 border-red-100" : ""
-        )}>
-          <CardContent className="p-6 flex flex-col gap-1">
-            <p className={cn(
-              "text-[10px] font-bold tracking-tight mb-0",
-              lowStockItems.length > 0 ? "text-destructive" : "text-muted-foreground/80"
-            )}>Stock alerts</p>
-            <h3 className={cn(
-              "text-xl md:text-2xl font-bold m-0",
-              lowStockItems.length > 0 ? "text-destructive" : "text-on-surface"
-            )}>{lowStockItems.length}</h3>
-            <span className={cn(
-              "text-[9px] font-bold flex items-center gap-1 mt-1",
-              lowStockItems.length > 0 ? "text-destructive/60" : "text-muted-foreground/80"
-            )}>
-              <AlertTriangle className="w-3 h-3" /> {lowStockItems.length > 0 ? "Attention" : "All stable"}
-            </span>
-          </CardContent>
-        </Card>
-      </div>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className={cn(
+                    "text-[10px] font-bold uppercase tracking-widest",
+                    lowStockItems.length > 0 ? "text-destructive" : "text-muted-foreground/80"
+                  )}>Inventory alerts</span>
+                  <AlertTriangle className={cn("w-4 h-4", lowStockItems.length > 0 ? "text-destructive/20" : "text-muted-foreground/10")} />
+                </div>
+                <p className={cn(
+                  "text-3xl font-bold mb-1",
+                  lowStockItems.length > 0 ? "text-destructive" : "text-on-surface"
+                )}>{lowStockItems.length}</p>
+                <p className={cn(
+                  "text-[9px] font-bold tracking-tight",
+                  lowStockItems.length > 0 ? "text-destructive/60" : "text-muted-foreground/40"
+                )}>
+                  {lowStockItems.length > 0 ? "Replenishment required" : "Supply chain stable"}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
       {activeTab === 'inventory' ? (
         <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">

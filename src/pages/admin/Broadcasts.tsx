@@ -70,8 +70,9 @@ export default function Broadcasts() {
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex-columns items-center">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Megaphone className="w-8 h-8 text-on-surface" />
@@ -80,59 +81,61 @@ export default function Broadcasts() {
           <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Direct HQ-to-field mobilization and broadcast history.</p>
         </div>
-        <Button 
-          variant="primary"
-          size="lg"
-          onClick={() => navigate('/admin/broadcasts/new')}
-          className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-        >
-          <Plus className="w-4 h-4 mr-2" /> Deploy New Broadcast
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="primary"
+            size="lg"
+            onClick={() => navigate('/admin/broadcasts/new')}
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+          >
+            <Plus className="w-4 h-4 mr-2" /> Deploy New Broadcast
+          </Button>
+        </div>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-accent transition-colors">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <Megaphone className="w-4 h-4 text-muted-foreground/40" />
-              <Badge variant="default" className="text-[10px] font-bold normal-case">Total</Badge>
+      {/* Stats Overview - Balanced Grid */}
+      <div className="grid-stats mb-12" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-accent transition-colors bg-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Total</span>
+              <Megaphone className="w-4 h-4 text-muted-foreground/10" />
             </div>
-            <div className="text-3xl font-bold text-on-surface">{broadcasts.length}</div>
-            <div className="text-[10px] text-muted-foreground/80 font-bold normal-case mt-1">Total broadcasts</div>
+            <p className="text-3xl font-bold text-on-surface mb-1">{broadcasts.length}</p>
+            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Total deployments</p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-destructive transition-colors">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <AlertOctagon className="w-4 h-4 text-destructive" />
-              <Badge variant="default" className="text-[10px] font-bold normal-case border-destructive/20 text-destructive">Urgent</Badge>
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-destructive transition-colors bg-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest text-destructive">Urgent</span>
+              <AlertOctagon className="w-4 h-4 text-destructive/10" />
             </div>
-            <div className="text-3xl font-bold text-destructive">{broadcasts.filter(b => b.priority === 'Urgent').length}</div>
-            <div className="text-[10px] text-muted-foreground/80 font-bold normal-case mt-1">Critical alerts</div>
+            <p className="text-3xl font-bold text-destructive mb-1">{broadcasts.filter(b => b.priority === 'Urgent').length}</p>
+            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Critical alerts</p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-primary transition-colors">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <Users className="w-4 h-4 text-muted-foreground/40" />
-              <Badge variant="default" className="text-[10px] font-bold normal-case">Reach</Badge>
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-primary transition-colors bg-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Reach</span>
+              <Users className="w-4 h-4 text-muted-foreground/10" />
             </div>
-            <div className="text-3xl font-bold text-on-surface">100%</div>
-            <div className="text-[10px] text-muted-foreground/80 font-bold normal-case mt-1">Field saturation</div>
+            <p className="text-3xl font-bold text-on-surface mb-1">100%</p>
+            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Field saturation</p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-on-surface transition-colors">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <Clock className="w-4 h-4 text-muted-foreground/40" />
-              <Badge variant="default" className="text-[10px] font-bold normal-case">Uptime</Badge>
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-on-surface transition-colors bg-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Uptime</span>
+              <Clock className="w-4 h-4 text-muted-foreground/10" />
             </div>
-            <div className="text-3xl font-bold text-on-surface">24/7</div>
-            <div className="text-[10px] text-muted-foreground/80 font-bold normal-case mt-1">Direct connection</div>
+            <p className="text-3xl font-bold text-on-surface mb-1">24/7</p>
+            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Direct HQ connection</p>
           </CardContent>
         </Card>
       </div>

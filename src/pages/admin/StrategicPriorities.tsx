@@ -138,15 +138,15 @@ export default function StrategicPriorities() {
 
   return (
     <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Page Header */}
-      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Target className="w-8 h-8 text-on-surface" />
             Strategic priorities
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Establish movement-wide mobilization goals, financial targets, and operational milestones.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Establish movement-wide mobilization goals, financial targets, and operational milestones.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -170,8 +170,8 @@ export default function StrategicPriorities() {
         </div>
       </div>
 
-      {/* Stats Summary Area */}
-      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+      {/* Mobilization Stats - Balanced Grid */}
+      <div className="grid-stats mb-10" style={{ '--grid-min-width': '240px' } as React.CSSProperties}>
         {[
           { label: 'Active priorities', value: campaigns.filter(c => c.status === 'Active').length, icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
           { label: 'Total Mobilized', value: `$${campaigns.reduce((acc, c) => acc + c.raisedAmount, 0).toLocaleString()}`, icon: DollarSign, color: 'text-primary', bg: 'bg-primary/5' },
@@ -192,32 +192,77 @@ export default function StrategicPriorities() {
         ))}
       </div>
 
-      <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
-        <div className="p-6 border-b border-border/10 bg-muted/5 flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-            <input 
-              placeholder="Filter by priority title or objective..." 
-              className="w-full pl-12 pr-4 h-11 bg-white border border-border/60 focus:ring-1 focus:ring-primary focus:border-transparent rounded-lg text-[11px] font-bold outline-none"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground/60 font-bold bg-white px-5 py-2.5 rounded-lg border border-border/10 shadow-sm">
-            <Target className="w-4 h-4 text-primary" />
-            <span className="normal-case">Active campaigns:</span> <span className="text-on-surface font-bold ml-1">{campaigns.length}</span>
-          </div>
-        </div>
-        <CardContent className="p-8">
-          <div className="grid-responsive" style={{ '--grid-min-width': '340px' } as React.CSSProperties}>
+      <div className="flex flex-col lg:flex-row gap-8 items-start relative">
+        {/* Sticky Filter Sidebar */}
+        <aside className="w-full lg:w-80 sticky lg:top-32 space-y-6 shrink-0 z-30">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
+            <div className="p-4 border-b border-border/10 bg-muted/5">
+              <h3 className="font-bold text-on-surface text-xs normal-case">Tactical filters</h3>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Search priorities</label>
+                <div className="relative group">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
+                  <input 
+                    placeholder="Keywords..." 
+                    className="w-full pl-11 pr-4 h-11 bg-white border border-border/60 focus:ring-1 focus:ring-primary focus:border-transparent rounded-lg text-[11px] font-bold outline-none"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-border/10 space-y-4">
+                <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                  <span>Intelligence Summary</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-lg border border-border/10">
+                    <span className="text-[10px] font-bold text-on-surface/60">Total Active</span>
+                    <span className="text-xs font-bold text-primary">{campaigns.filter(c => c.status === 'Active').length}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-lg border border-border/10">
+                    <span className="text-[10px] font-bold text-on-surface/60">Success Rate</span>
+                    <span className="text-xs font-bold text-accent">
+                      {campaigns.length > 0 ? (campaigns.filter(c => (c.raisedAmount / c.targetAmount) >= 1).length / campaigns.length * 100).toFixed(0) : 0}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-on-surface text-white p-6 group">
+            <h4 className="text-[10px] font-bold tracking-tight text-white/40 uppercase mb-4">Tactical Awareness</h4>
+            <p className="text-[11px] font-medium text-white/60 leading-relaxed">
+              Establishing strategic priorities allows the movement to synchronize resource allocation across multiple regional cells.
+            </p>
+            <Button variant="ghost" className="w-full justify-between h-9 mt-4 px-0 text-[10px] font-bold tracking-tight text-white hover:bg-transparent group-hover:text-primary transition-colors">
+              Operational Handbook <TrendingUp className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Card>
+        </aside>
+
+        {/* Main Priorities Grid */}
+        <div className="flex-1 min-h-[500px]">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {filteredCampaigns.length === 0 ? (
-              <div className="col-span-full py-20 text-center border-2 border-dashed border-border/20 rounded-sm">
-                <Target className="w-12 h-12 text-muted mx-auto mb-4 opacity-20" />
-                <p className="text-sm font-bold text-muted-foreground normal-case">No strategic priorities found matching your query.</p>
+              <div className="col-span-full py-24 text-center border-2 border-dashed border-border/20 rounded-sm bg-white">
+                <Target className="w-12 h-12 text-muted mx-auto mb-4 opacity-10" />
+                <h3 className="text-lg font-bold text-on-surface">No priorities found</h3>
+                <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or establish a new strategic priority.</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSearchQuery('')}
+                  className="mt-6 rounded-sm border-border/40 font-bold text-[10px] tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                >
+                  Reset Filter
+                </Button>
               </div>
             ) : (
               filteredCampaigns.map((campaign) => (
-                <Card key={campaign.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden group hover:shadow-xl hover:border-on-surface/40 transition-all bg-white flex flex-col">
+                <Card key={campaign.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden group hover:border-on-surface/40 transition-all bg-white flex flex-col">
                   <div className="relative h-48 bg-stone-100 overflow-hidden shrink-0 border-b border-border/10">
                     {campaign.imageUrl ? (
                       <img src={campaign.imageUrl} alt={campaign.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" decoding="async" loading="lazy" />
@@ -229,46 +274,46 @@ export default function StrategicPriorities() {
                     <div className="absolute top-4 right-4">
                       <span className={cn(
                         "px-3 py-1 text-[9px] font-bold tracking-tight rounded-full border shadow-sm backdrop-blur-md",
-                        campaign.status === 'Active' ? "bg-primary/90 text-white border-primary" : "bg-muted/90 text-on-surface border-border/60"
+                        campaign.status === 'Active' ? "bg-primary text-white border-primary/20" : "bg-white text-on-surface border-border/60"
                       )}>
                         {campaign.status}
                       </span>
                     </div>
                   </div>
-                  <CardContent className="p-6 flex-1 flex flex-col justify-between flow" style={{ '--flow-space': '1.5rem' } as React.CSSProperties}>
-                    <div className="flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
+                  <CardContent className="p-6 flex-1 flex flex-col justify-between space-y-6">
+                    <div className="space-y-2">
                       <h3 className="text-sm font-bold text-on-surface leading-tight tracking-tight m-0">{campaign.title}</h3>
                       <p className="text-xs text-muted-foreground/80 leading-relaxed m-0 line-clamp-3 font-medium">{campaign.description}</p>
                     </div>
 
-                    <div className="flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
-                      <div className="space-y-3">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
                         <div className="flex justify-between items-end">
-                          <span className="text-[10px] font-bold text-muted-foreground/40 normal-case">Operational Progress</span>
+                          <span className="text-[10px] font-bold text-muted-foreground/40 normal-case">Progress</span>
                           <span className="text-sm font-bold text-on-surface">{((campaign.raisedAmount / campaign.targetAmount) * 100).toFixed(0)}%</span>
                         </div>
-                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-on-surface transition-all duration-1000 ease-out shadow-sm" 
+                            className="h-full bg-primary transition-all duration-1000 ease-out" 
                             style={{ width: `${Math.min((campaign.raisedAmount / campaign.targetAmount) * 100, 100)}%` }}
                           />
                         </div>
-                        <div className="flex justify-between text-[11px] font-bold tracking-tight">
+                        <div className="flex justify-between text-[10px] font-bold tracking-tight">
                           <span className="text-primary">${campaign.raisedAmount.toLocaleString()}</span>
-                          <span className="text-muted-foreground/40 normal-case">of ${campaign.targetAmount.toLocaleString()} target</span>
+                          <span className="text-muted-foreground/40 normal-case">of ${campaign.targetAmount.toLocaleString()}</span>
                         </div>
                       </div>
 
                       <div className="flex items-center justify-between pt-4 border-t border-border/10">
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/60">
-                          <Calendar className="w-3.5 h-3.5" />
-                          <span>Deadline: {new Date(campaign.endDate).toLocaleDateString()}</span>
+                        <div className="flex items-center gap-2 text-[9px] font-bold text-muted-foreground/60 uppercase">
+                          <Calendar className="w-3 h-3" />
+                          <span>Ends: {new Date(campaign.endDate).toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-9 w-9 text-muted-foreground/40 hover:text-on-surface hover:bg-stone-50 rounded-sm active:scale-95 transition-all"
+                            className="h-8 w-8 text-muted-foreground/40 hover:text-on-surface hover:bg-stone-50 rounded-sm transition-all"
                             onClick={() => {
                               setEditingCampaign(campaign)
                               setFormData({
@@ -281,15 +326,15 @@ export default function StrategicPriorities() {
                               })
                             }}
                           >
-                            <Edit2 className="w-4 h-4" />
+                            <Edit2 className="w-3.5 h-3.5" />
                           </Button>
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-9 w-9 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 rounded-sm active:scale-95 transition-all"
+                            className="h-8 w-8 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 rounded-sm transition-all"
                             onClick={() => handleDelete(campaign.id, campaign.title)}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>
@@ -299,8 +344,8 @@ export default function StrategicPriorities() {
               ))
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* 📝 Create/Edit Modal */}
       {(isCreating || editingCampaign) && (

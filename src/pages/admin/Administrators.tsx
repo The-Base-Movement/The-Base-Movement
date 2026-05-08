@@ -175,22 +175,22 @@ export default function Administrators() {
   })
 
   return (
-    <div className="admin-page-container animate-in fade-in duration-700">
-      {/* Page Header */}
-      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Shield className="w-8 h-8 text-on-surface" />
             Administrators
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Authorized personnel with leadership credentials and platform oversight.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Authorized personnel with leadership credentials and platform oversight.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setIsProvisionModalOpen(true)}
           >
             <UserPlus className="w-4 h-4 mr-2" />
@@ -487,7 +487,7 @@ export default function Administrators() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-muted-foreground/40">Patriot ID (Registration Number)</label>
+              <label className="text-[10px] font-bold text-muted-foreground/40">Member ID (Registration Number)</label>
               <Input 
                 placeholder="e.g. PATRIOT-123456" 
                 value={newAdmin.id}

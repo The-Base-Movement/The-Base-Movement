@@ -204,9 +204,9 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Activity className="w-8 h-8 text-on-surface" />
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
           <Button 
             variant="primary" 
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-8 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={handleExport}
             disabled={isExporting}
           >
@@ -235,7 +235,7 @@ export default function AdminDashboard() {
           <Button 
             variant="outline"
             size="lg"
-            className="rounded-sm text-[10px] font-bold tracking-tight px-8 border-border/40 hover:bg-stone-50 h-12 transition-all active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-10 border-border/40 hover:bg-stone-50 h-12 transition-all active:scale-95"
             onClick={handlePlatformLogs}
           >
             System logs
@@ -243,8 +243,8 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* KPI Row */}
-      <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* KPI Row - Balanced Grid */}
+      <dl className="grid-stats mb-8" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
         {isLoading ? (
           <>
             <SkeletonCard />

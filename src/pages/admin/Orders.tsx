@@ -162,23 +162,23 @@ export default function AdminOrders() {
   ] : []
 
   return (
-    <div className="admin-page-container animate-in fade-in duration-700">
-      {/* Header */}
-      <div className="flex-columns items-center">
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Package className="w-10 h-10 text-on-surface" />
             Order Management
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm mb-0">Live merchandise dispatch and fulfillment intelligence.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Live merchandise dispatch and fulfillment intelligence.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
             size="lg"
             onClick={handleExport}
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm h-11 active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm h-12 active:scale-95"
           >
             <Download className="w-4 h-4 mr-2" /> Export Manifest
           </Button>
@@ -186,7 +186,7 @@ export default function AdminOrders() {
             variant="primary"
             size="lg"
             onClick={() => loadData(true)}
-            className="rounded-sm text-[10px] px-8 font-bold tracking-tight shadow-lg shadow-brand-green/20 h-11 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] px-10 h-12 font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
             Synchronize
@@ -194,16 +194,16 @@ export default function AdminOrders() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="flex-columns items-stretch mb-12" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
+      {/* Stats - Balanced Grid */}
+      <div className="grid-stats mb-12" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
         {loading ? Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="rounded-none border-slate-100 animate-pulse bg-white">
+          <Card key={i} className="rounded-sm border-border/40 animate-pulse bg-white shadow-sm">
             <CardContent className="p-8 h-32" />
           </Card>
         )) : statCards.map(s => (
           <Card key={s.label} className="rounded-sm border-border/40 shadow-sm bg-white group hover:shadow-md transition-all duration-300">
             <CardContent className="p-8">
-              <p className="text-[10px] font-bold text-muted-foreground/40 mb-2">{s.label}</p>
+              <p className="text-[10px] font-bold text-muted-foreground/40 mb-2 tracking-tight">{s.label}</p>
               <p className={cn('text-4xl font-bold font-meta tracking-tighter mb-1', s.color)}>{s.value}</p>
               <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">{s.sub}</p>
             </CardContent>
@@ -260,7 +260,7 @@ export default function AdminOrders() {
                 <div className="p-20 text-center">
                   <Package className="w-12 h-12 text-slate-100 mx-auto mb-4" />
                   <p className="text-[10px] font-bold normal-case tracking-tight text-slate-400">No orders found</p>
-                  <p className="text-xs text-slate-300 mt-2 max-w-xs mx-auto">The merchandise feed is currently idle. Activity will appear as patriots complete movement-wide purchases.</p>
+                  <p className="text-xs text-slate-300 mt-2 max-w-xs mx-auto">The merchandise feed is currently idle. Activity will appear as members complete movement-wide purchases.</p>
                 </div>
               ) : (
                 <>
@@ -268,7 +268,7 @@ export default function AdminOrders() {
                 <table className="w-full text-xs hidden md:table">
                   <thead>
                     <tr className="border-b border-border/10 bg-muted/5">
-                      {['Order ID', 'Patriot', 'Region', 'Amount', 'Payment', 'Status', 'Date', 'Actions'].map(h => (
+                      {['Order ID', 'Member', 'Region', 'Amount', 'Payment', 'Status', 'Date', 'Actions'].map(h => (
                         <th key={h} className="px-6 py-4 text-left text-[10px] font-bold text-muted-foreground/40">{h}</th>
                       ))}
                     </tr>

@@ -123,8 +123,8 @@ export default function MediaLibrary() {
   }
 
   return (
-    <div className="animate-in fade-in duration-500 pb-20">
-      {/* Page Header */}
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">

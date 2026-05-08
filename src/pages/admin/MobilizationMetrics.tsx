@@ -48,16 +48,16 @@ export default function MobilizationMetrics() {
   }, [])
 
   return (
-    <div className="admin-page-container animate-in fade-in duration-700">
-      {/* 🏆 Header Section */}
-      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Trophy className="w-8 h-8 text-on-surface" />
             Mobilization metrics
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Performance tracking and impact analytics for regional chapters across the movement's jurisdictional boundaries.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Performance tracking and impact analytics for regional chapters across the movement's jurisdictional boundaries.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -65,7 +65,7 @@ export default function MobilizationMetrics() {
             size="lg"
             className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
-            <Filter className="w-4 h-4 mr-2" /> Filter operational metrics
+            <Filter className="w-4 h-4 mr-2" /> Filter metrics
           </Button>
           <Button 
             variant="primary"
@@ -77,26 +77,24 @@ export default function MobilizationMetrics() {
         </div>
       </div>
 
-      {/* 📊 National Intelligence Summary */}
-      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+      {/* National Intelligence Summary - Balanced Grid */}
+      <div className="grid-stats mb-12" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
         {[
           { label: 'Impact Points', value: pulse?.totalMobilizationPoints?.toLocaleString() || '0', sub: 'Total performance score', icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
           { label: 'Active Chapters', value: pulse?.activeChapters || '0', sub: 'Verified chapters', icon: Shield, color: 'text-blue-500', bg: 'bg-blue-50' },
           { label: 'Top Region', value: pulse?.topPerformingRegion || 'N/A', sub: 'Highest performing area', icon: Trophy, color: 'text-accent', bg: 'bg-accent/10' },
           { label: 'Growth Rate', value: `${pulse?.nationalGrowth || 0}%`, sub: 'Quarterly increase', icon: TrendingUp, color: 'text-orange-500', bg: 'bg-orange-50' },
         ].map((stat, i) => (
-          <Card key={i} className="rounded-sm border-border/40 shadow-sm bg-white overflow-hidden group hover:border-border/60 transition-all backdrop-blur-sm">
-            <CardContent className="p-6 h-full flex flex-col justify-between">
+          <Card key={i} className="rounded-sm border-border/40 shadow-sm bg-white group hover:border-border/60 transition-all duration-300">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">{stat.label}</span>
                 <div className={cn("w-10 h-10 rounded-sm flex items-center justify-center transition-transform group-hover:scale-110", stat.bg)}>
                   <stat.icon className={cn("w-5 h-5", stat.color)} />
                 </div>
               </div>
-              <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-                <p className="text-3xl font-bold tracking-tight text-on-surface m-0">{stat.value}</p>
-                <p className="text-[9px] font-bold text-muted-foreground/40 m-0 normal-case">{stat.sub}</p>
-              </div>
+              <p className="text-3xl font-bold tracking-tight text-on-surface mb-1">{stat.value}</p>
+              <p className="text-[9px] font-bold text-muted-foreground/40 tracking-tight">{stat.sub}</p>
             </CardContent>
           </Card>
         ))}

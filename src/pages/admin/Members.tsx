@@ -322,16 +322,16 @@ export default function MembersList() {
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Page Header */}
-      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Users className="w-8 h-8 text-on-surface" />
-            Patriot directory
+            Member directory
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Movement registration database, identity verification, and regional deployment oversight.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Movement registration database, identity verification, and regional deployment oversight.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -345,7 +345,7 @@ export default function MembersList() {
             {isExporting ? 'Ingesting records...' : 'Export intelligence'}
           </Button>
           <Button 
-            variant="primary"
+            variant="primary" 
             size="lg"
             onClick={handleAddMember}
             className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
@@ -356,10 +356,10 @@ export default function MembersList() {
         </div>
       </div>
 
-      {/* Summary Strip */}
-      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+      {/* Summary Strip - Balanced Grid */}
+      <div className="grid-stats mb-8" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
         {[
-          { label: 'Total patriots', value: stats.total, icon: Users, color: 'text-on-surface/80', bg: 'bg-muted/10' },
+          { label: 'Total members', value: stats.total, icon: Users, color: 'text-on-surface/80', bg: 'bg-muted/10' },
           { label: 'Active status', value: stats.active, icon: CheckCircle2, color: 'text-primary', bg: 'bg-primary/10' },
           { label: 'Pending verification', value: stats.pending, icon: Clock, color: 'text-accent', bg: 'bg-accent/10' },
           { label: 'Regions represented', value: stats.regions, icon: Globe2, color: 'text-primary', bg: 'bg-primary/5' },
@@ -370,7 +370,7 @@ export default function MembersList() {
                 <stat.icon className={cn("w-6 h-6", stat.color)} />
               </div>
               <div className="flex-1 flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-                <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">{stat.label}</p>
+                <p className="text-[10px] font-bold text-muted-foreground/80 m-0 tracking-tight">{stat.label}</p>
                 {isLoading ? (
                   <div className="h-7 w-16 bg-muted/20 animate-pulse rounded-lg mt-1" />
                 ) : (

@@ -179,16 +179,16 @@ export default function ChaptersManagement() {
   }, [filteredChapters, currentPage, itemsPerPage])
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Page Header */}
-      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <MapPin className="w-8 h-8 text-on-surface" />
             Chapters
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">Coordinate regional cells and constituency headquarters across the national movement infrastructure.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Coordinate regional cells and constituency headquarters across the national movement infrastructure.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -204,7 +204,7 @@ export default function ChaptersManagement() {
               variant="primary"
               size="lg"
               onClick={openAddModal}
-              className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
               <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
             </Button>
@@ -212,8 +212,8 @@ export default function ChaptersManagement() {
         </div>
       </div>
 
-      {/* Chapters Overview Stats */}
-      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+      {/* Chapters Overview Stats - Balanced Grid */}
+      <div className="grid-stats mb-10" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
         <Card className="rounded-sm border-border/60 shadow-sm bg-charcoal-dark text-white">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-white/10 flex items-center justify-center rounded-lg">
@@ -231,7 +231,7 @@ export default function ChaptersManagement() {
               <Users className="w-6 h-6 text-on-surface" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
-              <p className="text-[10px] font-bold text-muted-foreground/40 normal-case mb-0">Movement size</p>
+              <p className="text-[10px] font-bold text-muted-foreground/40 normal-case mb-0">Member count</p>
               <h3 className="text-2xl font-bold font-meta text-on-surface m-0">{totalMembers.toLocaleString()}</h3>
             </div>
           </CardContent>

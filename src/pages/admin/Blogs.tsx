@@ -726,10 +726,9 @@ export default function AdminBlogs() {
     )
   }
 
-  return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <FileText className="w-8 h-8 text-on-surface" />
@@ -738,14 +737,16 @@ export default function AdminBlogs() {
           <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Draft and publish strategic articles for the movement feed.</p>
         </div>
-        <Button 
-          onClick={() => handleEditPost()}
-          variant="primary"
-          size="lg"
-          className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-        >
-          <Plus className="w-4 h-4 mr-2" /> Create new post
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            onClick={() => handleEditPost()}
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+          >
+            <Plus className="w-4 h-4 mr-2" /> Create new post
+          </Button>
+        </div>
       </div>
 
 

@@ -413,16 +413,16 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3 font-meta">
-            <Globe className="w-8 h-8 text-stone-900" />
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+            <Globe className="w-8 h-8 text-on-surface" />
             System settings
           </h1>
           <BrandLine className="mt-4" />
-          <p className="text-stone-500 text-sm mt-1">Manage your administrative identity and platform configuration.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Manage your administrative identity and platform configuration.</p>
         </div>
       </div>
 

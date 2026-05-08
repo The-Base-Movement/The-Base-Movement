@@ -134,16 +134,16 @@ export default function PollsManagement() {
   const filteredPolls = polls.filter(p => p.question.toLowerCase().includes(searchQuery.toLowerCase()))
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Page Header */}
-      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <BarChart3 className="w-8 h-8 text-on-surface" />
             Engagement hub
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Manage movement-wide opinion polls, surveys, and live member feedback intercepts.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Manage movement-wide opinion polls, surveys, and live member feedback intercepts.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -157,15 +157,15 @@ export default function PollsManagement() {
         </div>
       </div>
 
-      {/* Engagement Stats */}
-      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+      {/* Engagement Stats - Balanced Grid */}
+      <div className="grid-stats mb-10" style={{ '--grid-min-width': '260px' } as React.CSSProperties}>
         <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               <TrendingUp className="w-6 h-6 text-primary" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">Total engagements</p>
+              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 tracking-tight">Total engagements</p>
               <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.totalEngagements || "..."}<span className="text-[10px] text-primary ml-2">+15.2%</span></h3>
             </div>
           </CardContent>
@@ -173,12 +173,12 @@ export default function PollsManagement() {
         <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-on-surface text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50" />
           <CardContent className="p-6 relative z-10">
-            <p className="text-[10px] font-bold tracking-tight text-white/40 mb-2 uppercase tracking-widest">National sentiment</p>
+            <p className="text-[10px] font-bold tracking-tight text-white/40 mb-2 tracking-tight">National sentiment</p>
             <div className="flex items-end gap-3">
               <h3 className="text-2xl font-bold text-primary m-0">{stats?.nationalSentimentScore || "..."}%</h3>
               <span className="text-[9px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full mb-1">Positive</span>
             </div>
-            <p className="text-[10px] text-white/20 font-bold tracking-tight mt-3 normal-case">Live engagement analysis from field chapters</p>
+            <p className="text-[10px] text-white/20 font-bold tracking-tight mt-3 leading-tight">Live engagement analysis from field chapters</p>
           </CardContent>
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
@@ -187,7 +187,7 @@ export default function PollsManagement() {
               <Clock className="w-6 h-6 text-muted-foreground/40" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">Avg response time</p>
+              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 tracking-tight">Avg response time</p>
               <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.avgResponseTime || "..."}</h3>
             </div>
           </CardContent>
@@ -198,7 +198,7 @@ export default function PollsManagement() {
               <MessageSquare className="w-6 h-6 text-muted-foreground/40" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">Feedback rate</p>
+              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 tracking-tight">Feedback rate</p>
               <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.feedbackRate || "..."}</h3>
             </div>
           </CardContent>
@@ -356,7 +356,7 @@ export default function PollsManagement() {
                       <p className="text-[10px] font-bold text-muted-foreground/80 normal-case tracking-tight">{poll.id}</p>
                     </div>
                     <div className={cn(
-                      "px-2 py-0.5 text-[9px] font-bold normal-case tracking-tighter border rounded-full",
+                      "px-2 py-0.5 text-[9px] font-bold tracking-tight border rounded-full",
                       poll.status === 'Active' ? "bg-primary/10 text-primary border-primary/20" : "bg-accent/10 text-accent border-accent/20"
                     )}>
                       {poll.status}
@@ -385,7 +385,7 @@ export default function PollsManagement() {
                   <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Global engagement</span>
-                        <Badge variant="default" className="px-2 py-0.5 text-[9px] font-bold normal-case tracking-tight border rounded-full">HQ Verified</Badge>
+                        <Badge variant="default" className="px-2 py-0.5 text-[9px] font-bold tracking-tight border rounded-full">HQ Verified</Badge>
                       </div>
                     <div className="space-y-1 text-right">
                       <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Expires</p>
@@ -482,7 +482,7 @@ export default function PollsManagement() {
                   <div className="space-y-6">
                     {/* Question */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Campaign question / topic</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80">Campaign question / topic</label>
                       <Input 
                         required
                         placeholder="e.g. Should we increase regional chapter funding?" 
@@ -495,7 +495,7 @@ export default function PollsManagement() {
                     {/* Target Base & Location */}
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Target Audience Base</label>
+                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80">Target Audience Base</label>
                         <select
                           value={newPoll.targetBase}
                           onChange={e => {
@@ -514,7 +514,7 @@ export default function PollsManagement() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">
+                        <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80">
                           {newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}
                         </label>
                         <select
@@ -549,7 +549,7 @@ export default function PollsManagement() {
 
                     {/* End Date */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 normal-case">Operational title</label>
+                      <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80">Operational title</label>
                       <div className="relative">
                         <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80 pointer-events-none" />
                         <Input 
@@ -564,9 +564,9 @@ export default function PollsManagement() {
 
                   {/* Right Column: Poll Options */}
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 flex justify-between normal-case">
+                    <label className="text-[10px] font-bold tracking-tight text-muted-foreground/80 flex justify-between">
                       Engagement Options
-                      <span className="text-muted-foreground/40 normal-case">Min 2 Required</span>
+                      <span className="text-muted-foreground/40">Min 2 Required</span>
                     </label>
                     <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                       {newPoll.options.map((opt, idx) => (
@@ -652,7 +652,7 @@ export default function PollsManagement() {
             </CardHeader>
             <CardContent className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
               {[
-                { author: 'Ashanti Patriot', region: 'Ashanti', text: 'The new regional chapter meetings have significantly improved communication between constituency leads.' },
+                { author: 'Ashanti Member', region: 'Ashanti', text: 'The new regional chapter meetings have significantly improved communication between constituency leads.' },
                 { author: 'Greater Accra Lead', region: 'Greater Accra', text: 'Requesting more mobilization materials for the upcoming town hall sessions.' },
                 { author: 'Western Member', region: 'Western', text: 'The digital strategy polls are a great way to stay engaged with the leadership.' }
               ].map((fb, idx) => (

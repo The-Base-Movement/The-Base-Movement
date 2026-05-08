@@ -114,8 +114,8 @@ export default function GroundGameCommand() {
     { name: 'Hostile', value: fieldLogs.filter(l => l.interaction_result === 'HOSTILE').length, color: '#ef4444' }
   ].filter(d => d.value > 0)
 
-  return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
@@ -127,23 +127,27 @@ export default function GroundGameCommand() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card className="rounded-sm border-border/60 shadow-sm">
+      {/* KPI Row - Balanced Grid */}
+      <div className="grid-stats mb-12" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+        <Card className="rounded-sm border-border/60 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold text-muted-foreground/80 mb-1">Registered voters</p>
+              <p className="text-[10px] font-bold text-muted-foreground/80 mb-1 tracking-tight uppercase">Registered voters</p>
               <h3 className="text-3xl font-bold text-primary tracking-tight">{verifiedVoters.toLocaleString()}</h3>
+              <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">Verified personnel</p>
             </div>
-            <Vote className="w-8 h-8 text-muted-foreground/20" />
+            <Vote className="w-8 h-8 text-muted-foreground/10" />
           </CardContent>
         </Card>
         
-        <Card className="rounded-sm border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
+              <p className="text-[10px] font-bold text-muted-foreground/80 mb-1 tracking-tight uppercase">Canvassing goal</p>
               <h3 className="text-3xl font-bold text-on-surface tracking-tight">{totalContacts.toLocaleString()} <span className="text-sm font-normal text-muted-foreground/70">doors</span></h3>
+              <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">Active outreach target</p>
             </div>
-            <ClipboardList className="w-8 h-8 text-muted-foreground/20" />
+            <ClipboardList className="w-8 h-8 text-muted-foreground/10" />
           </CardContent>
         </Card>
       </div>

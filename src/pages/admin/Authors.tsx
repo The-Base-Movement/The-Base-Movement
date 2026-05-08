@@ -86,25 +86,26 @@ export default function AdminAuthors() {
   })
 
   return (
-    <div className="admin-page-container animate-in fade-in duration-500">
-      {/* Header Section */}
-      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold tracking-tight text-on-surface mb-0 font-meta">Editorial directory</h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm max-w-xl prose-standard mb-0">
-            Official editorial profiles, biographies, and access credentials for the movement's content creators.
-          </p>
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+            <PenTool className="w-8 h-8 text-on-surface" />
+            Editorial directory
+          </h1>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Official editorial profiles, biographies, and access credentials for the movement's content creators.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="primary"
+            variant="primary" 
             size="lg"
-            className="rounded-sm text-[10px] font-bold capitalize tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => window.location.href = '/admin/authors/new'}
           >
             <Plus className="w-4 h-4 mr-2" />
-            Provision Author
+            Recruit Author
           </Button>
         </div>
       </div>

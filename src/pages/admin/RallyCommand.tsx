@@ -91,11 +91,11 @@ export default function RallyCommand() {
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in duration-700">
-      {/* 🚀 Tactical Header */}
-      <div className="flex-columns items-center">
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Users className="w-8 h-8 text-on-surface" />
             Rally command
           </h1>
@@ -106,14 +106,14 @@ export default function RallyCommand() {
           <Button 
             variant="outline" 
             size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-bold capitalize tracking-tight hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
+            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 font-bold tracking-tight hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2" /> Global Manifest
           </Button>
           <Button 
             variant="primary"
             size="lg"
-            className="rounded-sm text-[10px] font-bold capitalize tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" /> Schedule Action
           </Button>
@@ -220,7 +220,7 @@ export default function RallyCommand() {
                     <table className="w-full text-left">
                       <thead className="bg-muted/10 border-b border-border/40">
                         <tr>
-                          <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Patriot</th>
+                          <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Member</th>
                           <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Signal time</th>
                           <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80">Status</th>
                           <th className="px-6 py-4 text-[9px] font-bold normal-case text-muted-foreground/80 text-right">Actions</th>

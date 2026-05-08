@@ -105,31 +105,33 @@ export default function LeadershipHub() {
   )
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header section */}
-      <div className="flex-columns items-center">
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+    <div className="admin-page-container">
+      {/* Page Header - Standardized */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <ShieldCheck className="w-8 h-8 text-on-surface" />
             Leadership hub
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">Managing the administrative pipeline for local leadership applications.</p>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-1">Managing the administrative pipeline for local leadership applications.</p>
         </div>
-        <Button 
-          variant="primary"
-          size="lg"
-          onClick={handleGenerateReport}
-          disabled={isGenerating}
-          className="rounded-sm text-[10px] font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-        >
-          {isGenerating ? (
-            <Clock className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Download className="w-4 h-4 mr-2" />
-          )}
-          {isGenerating ? 'Compiling Audit...' : 'Export Audit Manifest'}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="primary"
+            size="lg"
+            onClick={handleGenerateReport}
+            disabled={isGenerating}
+            className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+          >
+            {isGenerating ? (
+              <Clock className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 mr-2" />
+            )}
+            {isGenerating ? 'Compiling Audit...' : 'Export Audit Manifest'}
+          </Button>
+        </div>
       </div>
 
       {/* Intelligence & Filtering */}
@@ -154,28 +156,28 @@ export default function LeadershipHub() {
         </div>
       </div>
 
-      {/* Stats Summary */}
-      <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
-        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden">
+      {/* Stats Summary - Balanced Grid */}
+      <div className="grid-stats mb-10" style={{ '--grid-min-width': '240px' } as React.CSSProperties}>
+        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden bg-white">
           <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />
           <CardContent className="p-6">
-            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Growth rate</p>
+            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case tracking-tight">Growth rate</p>
             <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">+12%</h3>
           </CardContent>
         </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden">
+        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden bg-white">
           <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
           <CardContent className="p-6">
-            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Pending requests</p>
+            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case tracking-tight">Pending requests</p>
             <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">
               {applications.filter(a => a.status === 'Pending').length}
             </h3>
           </CardContent>
         </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden col-span-2 md:col-span-1">
+        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden bg-white">
           <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
           <CardContent className="p-6">
-            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">New leaders appointed</p>
+            <p className="text-[10px] font-bold text-muted-foreground/40 normal-case tracking-tight">New leaders appointed</p>
             <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">
               {applications.filter(a => a.status === 'Approved').length}
             </h3>
@@ -235,7 +237,7 @@ export default function LeadershipHub() {
                         </div>
                         <div>
                           <p className="text-[11px] font-bold text-on-surface normal-case">{app.applicant_name}</p>
-                          <p className="text-[9px] text-muted-foreground/40 font-bold normal-case mt-0.5">Patriot ID: {app.applicant_id.substring(0, 8)}</p>
+                          <p className="text-[9px] text-muted-foreground/40 font-bold normal-case mt-0.5">Member ID: {app.applicant_id.substring(0, 8)}</p>
                         </div>
                       </div>
                     </td>
