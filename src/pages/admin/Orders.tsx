@@ -162,16 +162,16 @@ export default function AdminOrders() {
   ] : []
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="admin-page-container animate-in fade-in duration-700">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
+      <div className="flex-columns items-center">
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Package className="w-10 h-10 text-on-surface" />
             Order Management
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Live merchandise dispatch and fulfillment intelligence.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0">Live merchandise dispatch and fulfillment intelligence.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button
@@ -195,7 +195,7 @@ export default function AdminOrders() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
+      <div className="flex-columns items-stretch mb-12" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
         {loading ? Array.from({ length: 4 }).map((_, i) => (
           <Card key={i} className="rounded-none border-slate-100 animate-pulse bg-white">
             <CardContent className="p-8 h-32" />
@@ -211,9 +211,9 @@ export default function AdminOrders() {
         ))}
       </div>
 
-      <div className={cn('grid gap-8', selectedOrder ? 'xl:grid-cols-3' : 'xl:grid-cols-1')}>
+      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
         {/* Orders Table */}
-        <div className={selectedOrder ? 'xl:col-span-2' : ''}>
+        <div className={cn("min-w-0", selectedOrder ? 'flex-[2]' : 'flex-1')}>
           <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden">
             <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between gap-4 bg-muted/5">
               <CardTitle className="text-[10px] font-bold text-muted-foreground/40 flex items-center gap-2">
@@ -418,7 +418,7 @@ export default function AdminOrders() {
           const cfg = STATUS_CONFIG[selectedOrder.status]
           const StatusIcon = cfg.icon
           return (
-            <Card className="rounded-sm border-border/40 shadow-xl xl:col-span-1 h-fit sticky top-6 bg-white overflow-hidden animate-in slide-in-from-right-4 duration-500">
+            <Card className="rounded-sm border-border/40 shadow-xl flex-1 h-fit sticky top-6 bg-white overflow-hidden animate-in slide-in-from-right-4 duration-500">
               <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between bg-muted/5">
                 <CardTitle className="text-[10px] font-bold text-muted-foreground/40">
                   Order Manifest
@@ -430,7 +430,7 @@ export default function AdminOrders() {
                   <X className="w-4 h-4" />
                 </button>
               </CardHeader>
-              <CardContent className="p-8 space-y-8">
+              <CardContent className="p-8 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
                 {/* ID & Status */}
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -444,9 +444,9 @@ export default function AdminOrders() {
                 </div>
 
                 {/* Patriot */}
-                <div className="space-y-4 pt-6 border-t border-border/10">
+                <div className="flow pt-6 border-t border-border/10" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
                   <p className="text-[10px] font-bold text-muted-foreground/40">Recipient Details</p>
-                  <div className="space-y-1">
+                  <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                     <p className="font-bold text-base text-on-surface">{selectedOrder.full_name}</p>
                     <p className="text-xs font-medium text-muted-foreground/60">{selectedOrder.email}</p>
                     <p className="text-xs font-medium text-muted-foreground/60">{selectedOrder.phone}</p>
@@ -454,9 +454,9 @@ export default function AdminOrders() {
                 </div>
 
                 {/* Shipping */}
-                <div className="space-y-4 pt-6 border-t border-border/10">
+                <div className="flow pt-6 border-t border-border/10" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
                   <p className="text-[10px] font-bold text-muted-foreground/40">Logistics Destination</p>
-                  <div className="space-y-1 text-xs font-medium text-muted-foreground/60 leading-relaxed">
+                  <div className="flow text-xs font-medium text-muted-foreground/60 leading-relaxed" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                     <p>{selectedOrder.shipping_address}</p>
                     <p>{selectedOrder.city}, {selectedOrder.region_or_state}</p>
                     <p className="font-bold text-on-surface pt-1">{selectedOrder.country}</p>
@@ -464,15 +464,15 @@ export default function AdminOrders() {
                 </div>
                 
                 {/* Manifest Items */}
-                <div className="space-y-4 pt-6 border-t border-slate-50">
+                <div className="flow pt-6 border-t border-slate-50" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-bold normal-case tracking-tight text-slate-400">Manifest items</p>
                     <span className="text-[9px] font-bold text-slate-400">{selectedOrder.items.length} Units</span>
                   </div>
-                  <div className="space-y-3">
+                  <div className="flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
                     {selectedOrder.items.map((item, idx) => (
                       <div key={idx} className="p-4 bg-slate-50/50 border border-slate-100 flex items-center justify-between group">
-                        <div className="space-y-1">
+                        <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                           <p className="text-xs font-bold text-charcoal-dark group-hover:text-brand-green transition-colors">
                             {item.product_name || 'Legacy Movement Asset'}
                           </p>
@@ -490,7 +490,7 @@ export default function AdminOrders() {
                 </div>
 
                 {/* Totals */}
-                <div className="space-y-3 pt-6 border-t border-border/10">
+                <div className="flow pt-6 border-t border-border/10" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
                   <div className="flex justify-between text-xs font-medium text-muted-foreground/60">
                     <span>Subtotal</span>
                     <span className="font-bold text-on-surface">GHS {Number(selectedOrder.subtotal).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
@@ -506,7 +506,7 @@ export default function AdminOrders() {
                 </div>
 
                 {/* Actions */}
-                <div className="pt-6 space-y-3">
+                <div className="pt-6 flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
                   {NEXT_STATUS[selectedOrder.status] && (
                     <Button
                       variant="primary"

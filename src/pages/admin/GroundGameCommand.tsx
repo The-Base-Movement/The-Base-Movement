@@ -115,48 +115,50 @@ export default function GroundGameCommand() {
   ].filter(d => d.value > 0)
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+    <div className="admin-page-container animate-in fade-in duration-700">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <MapPin className="w-8 h-8 text-on-surface" />
             Ground command
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Election day logistics, voter registration tracking, and canvassing command.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Election day logistics, voter registration tracking, and canvassing command.</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card className="rounded-sm border-border/60 shadow-sm">
+      <div className="flex-columns items-stretch mb-8" style={{ '--column-gap': '1.5rem', '--column-min-width': '24ch' } as React.CSSProperties}>
+        <Card className="rounded-sm border-border/60 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-bold text-muted-foreground/40 mb-1">Registered voters</p>
-              <h3 className="text-3xl font-bold text-primary tracking-tight">{verifiedVoters.toLocaleString()}</h3>
+            <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+              <p className="text-[10px] font-bold text-muted-foreground/40 mb-0">Registered voters</p>
+              <h3 className="text-3xl font-bold text-primary tracking-tight m-0">{verifiedVoters.toLocaleString()}</h3>
             </div>
             <Vote className="w-8 h-8 text-muted-foreground/20" />
           </CardContent>
         </Card>
         
-        <Card className="rounded-sm border-border/60 shadow-sm">
+        <Card className="rounded-sm border-border/60 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-bold text-muted-foreground/40 mb-1">Campaign outreach</p>
-              <h3 className="text-3xl font-bold text-on-surface tracking-tight">{totalContacts.toLocaleString()} <span className="text-sm font-normal text-muted-foreground/40">doors</span></h3>
+            <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+              <p className="text-[10px] font-bold text-muted-foreground/40 mb-0">Campaign outreach</p>
+              <h3 className="text-3xl font-bold text-on-surface tracking-tight m-0">{totalContacts.toLocaleString()} <span className="text-sm font-normal text-muted-foreground/40">doors</span></h3>
             </div>
             <ClipboardList className="w-8 h-8 text-muted-foreground/20" />
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div className="flex-columns items-stretch mb-8" style={{ '--column-gap': '2rem', '--column-breakpoint': '90ch' } as React.CSSProperties}>
         {/* 📈 Registration Velocity Chart */}
-        <Card className="rounded-sm border-border/60 shadow-sm bg-background p-6">
+        <Card className="rounded-sm border-border/60 shadow-sm bg-white p-6 min-h-[350px]">
           <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
-              <Activity className="w-4 h-4 text-primary" /> Registration velocity
-            </CardTitle>
-            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">7-day mobilization trend</CardDescription>
+            <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+              <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2 m-0">
+                <Activity className="w-4 h-4 text-primary" /> Registration velocity
+              </CardTitle>
+              <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-0">7-day mobilization trend</CardDescription>
+            </div>
           </CardHeader>
           <div className="h-[240px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -167,17 +169,17 @@ export default function GroundGameCommand() {
                     <stop offset="95%" stopColor="var(--brand-green)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
                 <XAxis 
                   dataKey="date" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(0,0,0,0.3)' }}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(0,0,0,0.3)' }}
                 />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0A0A0A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}
@@ -191,12 +193,14 @@ export default function GroundGameCommand() {
         </Card>
 
         {/* 🥧 Field Sentiment Distribution */}
-        <Card className="rounded-sm border-border/60 shadow-sm bg-background p-6">
+        <Card className="rounded-sm border-border/60 shadow-sm bg-white p-6 min-h-[350px]">
           <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
-              <PieIcon className="w-4 h-4 text-primary" /> Field sentiment breakdown
-            </CardTitle>
-            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Canvassing interaction intelligence</CardDescription>
+            <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+              <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2 m-0">
+                <PieIcon className="w-4 h-4 text-primary" /> Field sentiment breakdown
+              </CardTitle>
+              <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-0">Canvassing interaction intelligence</CardDescription>
+            </div>
           </CardHeader>
           <div className="h-[240px] w-full flex items-center justify-center">
             {sentimentData.length > 0 ? (
@@ -230,29 +234,25 @@ export default function GroundGameCommand() {
             )}
           </div>
         </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="flex-columns items-start" style={{ '--column-gap': '2rem', '--column-breakpoint': '120ch' } as React.CSSProperties}>
         
         {/* 📋 Active Canvassing Campaigns */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="rounded-sm border-border/60 shadow-sm bg-background overflow-hidden">
-            <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
-                    <ClipboardList className="w-4 h-4 text-primary" /> Active canvassing
-                  </CardTitle>
-                  <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Door-to-door outreach missions</CardDescription>
-                </div>
-                <Button 
-                  variant="primary"
-                  onClick={handleDeployMission}
-                  className="h-12 px-10 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                >
-                  <Crosshair className="w-4 h-4 mr-2" /> Deploy Mission
-                </Button>
+        <div className="flex-[2] min-w-0 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
+          <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
+            <CardHeader className="p-6 border-b border-border/10 bg-muted/5 flex-columns items-center" style={{ '--column-gap': '1rem' } as React.CSSProperties}>
+              <div className="flex-1 flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+                <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2 m-0">
+                  <ClipboardList className="w-4 h-4 text-primary" /> Active canvassing
+                </CardTitle>
+                <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-0">Door-to-door outreach missions</CardDescription>
               </div>
+              <Button 
+                variant="primary"
+                onClick={handleDeployMission}
+                className="h-11 px-8 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+              >
+                <Crosshair className="w-4 h-4 mr-2" /> Deploy Mission
+              </Button>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-border/10">
@@ -263,8 +263,8 @@ export default function GroundGameCommand() {
                   </div>
                 ) : (
                   campaigns.map((campaign) => (
-                    <div key={campaign.id} className="p-6 hover:bg-muted/5 transition-colors">
-                      <div className="flex justify-between items-start mb-4">
+                    <div key={campaign.id} className="p-6 hover:bg-muted/5 transition-colors flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
+                      <div className="flex justify-between items-start gap-4">
                          <div className="flex items-center gap-3">
                           <span className={cn(
                             "px-3 py-1 text-[9px] font-bold normal-case rounded-full",
@@ -274,12 +274,12 @@ export default function GroundGameCommand() {
                           </span>
                           <span className="text-[10px] font-bold text-on-surface/60 normal-case">{campaign.target_constituency}</span>
                         </div>
-                        <span className="text-[9px] font-bold text-muted-foreground/40">Target: {campaign.goal_contacts} doors</span>
+                        <span className="text-[9px] font-bold text-muted-foreground/40 shrink-0">Target: {campaign.goal_contacts} doors</span>
                       </div>
-                      <h3 className="text-sm font-bold text-on-surface normal-case mb-2">{campaign.title}</h3>
-                      <p className="text-sm text-muted-foreground/80 font-medium leading-relaxed mb-4">{campaign.description}</p>
+                      <h3 className="text-sm font-bold text-on-surface normal-case m-0">{campaign.title}</h3>
+                      <p className="text-sm text-muted-foreground/80 font-medium leading-relaxed mb-0 prose-standard">{campaign.description}</p>
                       
-                      <div className="flex items-center gap-2 mt-4">
+                      <div className="flex items-center gap-2 pt-2">
                         <TrendingUp className="w-4 h-4 text-muted-foreground/20" />
                         <div className="h-2 w-full bg-muted/10 rounded-full overflow-hidden">
                           <div className="h-full bg-primary" style={{ width: '45%' }} /> {/* Placeholder progress */}
@@ -295,16 +295,14 @@ export default function GroundGameCommand() {
         </div>
 
         {/* 🚗 GOTV Transport Logistics (Sidebar) */}
-        <div className="lg:col-span-1 space-y-6">
-          <Card className="rounded-sm border-border/60 shadow-sm bg-background overflow-hidden h-full">
+        <div className="flex-1 min-w-0 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
+          <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
-                    <Car className="w-4 h-4 text-primary" /> Transport logistics
-                  </CardTitle>
-                  <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Election day GOTV</CardDescription>
-                </div>
+              <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+                <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2 m-0">
+                  <Car className="w-4 h-4 text-primary" /> Transport logistics
+                </CardTitle>
+                <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mb-0">Election day GOTV</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -315,19 +313,19 @@ export default function GroundGameCommand() {
                   </div>
                 ) : (
                   transportReqs.map((req) => (
-                    <div key={req.id} className="p-5 hover:bg-muted/5 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
+                    <div key={req.id} className="p-5 hover:bg-muted/5 transition-colors flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
+                      <div className="flex justify-between items-start gap-4">
                         <span className={cn(
                           "text-[8px] font-bold normal-case px-2 py-0.5 rounded-full",
                           req.status === 'PENDING' ? "bg-orange-500/10 text-orange-600" : "bg-primary/10 text-primary"
                         )}>
                           {req.status.toLowerCase()}
                         </span>
-                        <span className="text-[9px] font-bold text-muted-foreground/40">
+                        <span className="text-[9px] font-bold text-muted-foreground/40 shrink-0">
                           {format(new Date(req.requested_time), 'HH:mm')}
                         </span>
                       </div>
-                      <div className="space-y-1 mb-3">
+                      <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                         <div className="flex items-center gap-2 text-[10px] font-medium text-on-surface/60">
                           <MapPin className="w-3 h-3 text-muted-foreground/40" />
                           <span className="truncate">{req.pickup_address}</span>
@@ -346,9 +344,9 @@ export default function GroundGameCommand() {
                           <Button 
                             variant="primary"
                             onClick={() => handleDispatchAsset(req.id)}
-                            className="h-11 px-8 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                            className="h-10 px-6 rounded-sm text-[10px] font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                           >
-                            Dispatch Asset
+                            Dispatch
                           </Button>
                         )}
                       </div>
@@ -363,22 +361,20 @@ export default function GroundGameCommand() {
           <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden relative">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
             <CardHeader className="p-6 border-b border-white/10 relative z-10">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xs font-bold normal-case font-meta text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-primary" /> Live field ops
-                </CardTitle>
-              </div>
+              <CardTitle className="text-xs font-bold normal-case font-meta text-white flex items-center gap-2 m-0">
+                <Activity className="w-4 h-4 text-primary" /> Live field ops
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-0 relative z-10">
               <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto sidebar-scroll">
                 {fieldLogs.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-[10px] font-bold text-white/20">Awaiting field intelligence...</p>
+                    <p className="text-[10px] font-bold text-white/20 normal-case mb-0">Awaiting field intelligence...</p>
                   </div>
                 ) : (
                   fieldLogs.map((log) => (
-                    <div key={log.id} className="p-5 hover:bg-white/5 transition-colors">
-                      <div className="flex justify-between items-center mb-2">
+                    <div key={log.id} className="p-5 hover:bg-white/5 transition-colors flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+                      <div className="flex justify-between items-center">
                         <span className={cn(
                           "text-[8px] font-bold normal-case px-2 py-0.5 rounded-full",
                           log.interaction_result === 'STRONG_SUPPORT' ? "bg-primary/20 text-primary" :
@@ -389,9 +385,9 @@ export default function GroundGameCommand() {
                         )}>
                           {log.interaction_result.replace('_', ' ').toLowerCase()}
                         </span>
-                        <span className="text-[9px] font-bold text-white/20">{format(new Date(log.created_at), 'HH:mm')}</span>
+                        <span className="text-[9px] font-bold text-white/20 shrink-0">{format(new Date(log.created_at), 'HH:mm')}</span>
                       </div>
-                      <p className="text-[11px] text-white/80 mb-2">"{log.address_notes || 'No notes provided'}"</p>
+                      <p className="text-[11px] text-white/80 m-0">"{log.address_notes || 'No notes provided'}"</p>
                       <div className="flex items-center gap-2">
                         <MapPin className="w-3 h-3 text-white/20" />
                         <span className="text-[9px] font-bold text-white/40">Sector {log.canvasser_id.substring(0, 4)}</span>
@@ -403,9 +399,8 @@ export default function GroundGameCommand() {
             </CardContent>
           </Card>
         </div>
-
       </div>
-
+      </div>
     </div>
   )
 }

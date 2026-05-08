@@ -123,30 +123,20 @@ export default function MediaLibrary() {
   }
 
   return (
-    <div className="animate-in fade-in duration-500 pb-20">
+    <div className="admin-page-container animate-in fade-in duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <ImageIcon className="w-8 h-8 text-on-surface" />
-            Media library
+            Media vault
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Central repository for movement assets and deployment media.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">Global asset repository for branding, intelligence reports, and tactical communications.</p>
         </div>
-        
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-            onClick={loadFiles}
-          >
-            Refresh Vault
-          </Button>
-
+        <div className="flex items-center gap-4">
           <div className="relative">
-            <input
+            <input 
               type="file"
               id="media-upload"
               className="hidden"
@@ -175,27 +165,37 @@ export default function MediaLibrary() {
       </div>
 
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Mobile Category Dropdown */}
-        <div className="lg:hidden mb-6">
-          <select
-            value={activeFolder}
-            onChange={(e) => setActiveFolder(e.target.value)}
-            className="w-full h-12 bg-white border border-border/60 rounded-sm px-4 text-sm font-bold focus:border-on-surface outline-none shadow-sm"
-          >
-            {folders.map((folder) => (
-              <option key={folder.id} value={folder.id}>
-                {folder.label}
-              </option>
-            ))}
-          </select>
+      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        {/* Mobile Category Navigation (Horizontal Scroll) */}
+        <div className="lg:hidden mb-10 -mx-4 px-4 overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="flex items-center gap-3 w-max pb-4">
+            {folders.map((folder) => {
+              const Icon = folder.icon
+              const isActive = activeFolder === folder.id
+              return (
+                <button
+                  key={folder.id}
+                  onClick={() => setActiveFolder(folder.id)}
+                  className={cn(
+                    "flex items-center gap-2 px-6 py-3 rounded-sm text-[10px] font-bold tracking-tight transition-all border whitespace-nowrap active:scale-95",
+                    isActive 
+                      ? "bg-primary border-transparent text-white shadow-lg shadow-brand-green/20" 
+                      : "bg-white border-border/40 text-on-surface/60 hover:border-on-surface hover:text-on-surface"
+                  )}
+                >
+                  <Icon className={cn("w-3.5 h-3.5", isActive ? "text-white" : "text-muted-foreground/40")} />
+                  {folder.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         {/* Sidebar - Folders (Desktop Only) */}
-        <div className="hidden lg:block space-y-6">
+        <div className="hidden lg:block flow" style={{ '--flow-space': '1.5rem', width: '300px' } as React.CSSProperties}>
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-border/10 bg-muted/5">
-              <h3 className="font-bold text-on-surface text-xs normal-case">Asset categories</h3>
+              <h3 className="font-bold text-on-surface text-xs normal-case mb-0">Asset categories</h3>
             </div>
             <CardContent className="p-2">
               <div className="space-y-1">
@@ -221,7 +221,7 @@ export default function MediaLibrary() {
         </div>
 
         {/* Main Content - File Grid */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="flex-[3] flow" style={{ '--flow-space': '1.5rem' } as React.CSSProperties}>
           <div className="flex items-center gap-4">
             <div className="relative flex-1 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-on-surface transition-colors" />
@@ -263,14 +263,14 @@ export default function MediaLibrary() {
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
                   {filteredFiles.map((url, idx) => (
                     <div key={idx} className="group relative">
                       <div className="aspect-square rounded-sm overflow-hidden bg-muted/5 border border-border/10 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-1">
                         <img src={url} 
                           alt="Media asset" 
                           className="w-full h-full object-cover"
-                         decoding="async" loading="lazy" />
+                          decoding="async" loading="lazy" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button 
                             size="icon" 
@@ -301,10 +301,10 @@ export default function MediaLibrary() {
                         </div>
                       </div>
                       <div className="mt-2 px-1">
-                        <p className="text-[10px] font-bold text-on-surface truncate">
+                        <p className="text-[10px] font-bold text-on-surface truncate mb-0">
                           {url.split('/').pop()}
                         </p>
-                        <p className="text-[9px] text-muted-foreground/40 font-medium normal-case mt-0.5">
+                        <p className="text-[9px] text-muted-foreground/40 font-medium normal-case mt-0.5 mb-0">
                           {activeFolder.replace('-', ' ')}
                         </p>
                       </div>
@@ -316,19 +316,19 @@ export default function MediaLibrary() {
           </Card>
 
           {/* Storage Usage Section (Moved to Bottom) */}
-          <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden p-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden p-8 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
+            <div className="flex-columns items-center justify-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
               <div className="flex items-center gap-6">
                 <div className="w-14 h-14 rounded-sm bg-primary/20 flex items-center justify-center shrink-0">
                   <Filter className="w-7 h-7 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg">Cloud storage intelligence</h4>
-                  <p className="text-xs text-white/60 normal-case mt-1">Real-time usage monitoring for Supabase storage buckets.</p>
+                  <h4 className="font-bold text-lg font-meta tracking-tight">Cloud storage intelligence</h4>
+                  <p className="text-xs text-white/60 normal-case mb-0 font-body-md">Real-time usage monitoring for Supabase storage buckets.</p>
                 </div>
               </div>
               
-              <div className="flex-1 max-w-md space-y-4">
+              <div className="flex-1 max-w-md flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
                 <div className="flex justify-between text-[11px] font-bold text-white/40 tracking-tight">
                   <span>Capacity utilization</span>
                   <span className="text-primary">12%</span>

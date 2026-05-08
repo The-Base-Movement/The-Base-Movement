@@ -236,7 +236,7 @@ export default function OurAgenda() {
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <h1 className="tracking-tighter mb-4">The Plan</h1>
           <BrandLine className="mx-auto" />
-          <p className="text-slate-300 max-w-2xl mx-auto mb-0">
+          <p className="text-slate-300 max-w-2xl mx-auto prose-standard">
             The Six Aims of The Base. A detailed, actionable blueprint to build a stronger, more prosperous nation through patriotism, honesty, and discipline.
           </p>
         </div>
@@ -280,20 +280,20 @@ export default function OurAgenda() {
           </aside>
 
           {/* Main Content */}
-          <div className="lg:w-3/4 space-y-16">
+          <div className="lg:w-3/4 flow" style={{ '--flow-space': '4rem' } as React.CSSProperties}>
             
             {/* Intro Cards */}
-            <section aria-labelledby="agenda-intro-heading" className="grid md:grid-cols-2 gap-8 mb-16">
+            <section aria-labelledby="agenda-intro-heading" className="flex-columns items-stretch" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
               <h2 id="agenda-intro-heading" className="sr-only">Agenda Definitions</h2>
-              <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
-                <h3 className="text-primary tracking-tight mb-4">What is an Aim?</h3>
-                <p className="text-slate-600 leading-relaxed text-sm mb-0">
+              <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
+                <h3 className="text-primary tracking-tight">What is an Aim?</h3>
+                <p className="text-slate-600 leading-relaxed text-sm prose-standard">
                   An Aim is a broad, long-term statement of intent. It describes the desired end state or the overall direction a movement or organisation wishes to pursue. Aims are visionary in nature. They answer the question: "What kind of Ghana are we trying to build?" They are not time-bound or immediately measurable, but they provide the moral compass and purpose that guides all action.
                 </p>
               </div>
-              <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm">
-                <h3 className="text-primary tracking-tight mb-4">What is an Objective?</h3>
-                <p className="text-slate-600 leading-relaxed text-sm mb-0">
+              <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
+                <h3 className="text-primary tracking-tight">What is an Objective?</h3>
+                <p className="text-slate-600 leading-relaxed text-sm prose-standard">
                   An Objective is a specific, actionable, and measurable step taken in pursuit of an Aim. Objectives answer the question: "Exactly what will we do and how?" They are concrete, time-oriented, and directly deliverable. Where an Aim sets the destination, an Objective maps the route. Every objective in this document is derived from one of THE BASE's six core Aims.
                 </p>
               </div>
@@ -318,7 +318,7 @@ export default function OurAgenda() {
                   <h2 id={`pillar-heading-${pillar.id}`} className="mb-0">{pillar.title}</h2>
                 </div>
                 
-                <p className="text-slate-700 leading-relaxed font-medium mb-10 pb-10 border-b border-slate-100">
+                <p className="text-slate-700 leading-relaxed font-medium mb-10 pb-10 border-b border-slate-100 prose-standard">
                   {pillar.summary}
                 </p>
 

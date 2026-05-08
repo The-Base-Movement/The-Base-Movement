@@ -177,11 +177,11 @@ export default function AdminEditAuthor() {
   }
 
   return (
-    <div className="max-w-4xl space-y-8 animate-in fade-in duration-500">
+    <div className="admin-page-container max-w-4xl animate-in fade-in duration-500">
       <Breadcrumbs currentLabel={formData.name} />
       
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex-columns items-center">
         <div className="flex-1">
           <h1 className="text-3xl font-bold tracking-tight text-on-surface font-meta mb-2">
             {isEditing ? 'Edit Editorial Profile' : 'New Editorial Profile'}

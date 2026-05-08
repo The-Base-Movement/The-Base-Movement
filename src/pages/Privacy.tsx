@@ -27,7 +27,7 @@ export default function Privacy() {
 
       <div className="max-w-[1280px] mx-auto px-8 py-16">
         <div className="max-w-4xl">
-          <div className="space-y-12">
+          <div className="flow" style={{ '--flow-space': '3rem' } as React.CSSProperties}>
             
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
               <div className="flex gap-6">
@@ -36,7 +36,7 @@ export default function Privacy() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Data protection</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
                     The Base is committed to protecting your personal information. We collect only the data necessary for membership administration and movement coordination. All information is stored securely and accessed only by authorized personnel. We believe in data sovereignty and ensure that your information remains within the movement's secure infrastructure.
                   </p>
                 </div>
@@ -50,7 +50,7 @@ export default function Privacy() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Information we collect</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
                     We collect your name, contact details, location, and platform preference to connect you with the appropriate chapter and keep you informed about movement activities. This data allows us to provide a tailored experience and ensures that our mobilization efforts are targeted and effective. Optional information helps us understand our membership demographics better.
                   </p>
                 </div>
@@ -64,7 +64,7 @@ export default function Privacy() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Data storage & security</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
                     Your data is stored on secure servers with industrial-grade encryption. We do not sell, rent, or share your personal information with third parties for marketing purposes. Your information is used solely for The Base membership administration, internal communication, and verified movement activities.
                   </p>
                 </div>

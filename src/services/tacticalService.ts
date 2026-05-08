@@ -184,8 +184,8 @@ class TacticalService {
     try {
       const [leaderboardRes, chaptersRes, velocityRes] = await Promise.all([
         supabase.from('movement_leaderboard').select('total_points, region'),
-        supabase.from('chapter_performance_telemetry').select('*'),
-        supabase.from('logistics_velocity_telemetry').select('fulfillment_rate')
+        supabase.from('chapter_performance_operational metrics').select('*'),
+        supabase.from('logistics_velocity_operational metrics').select('fulfillment_rate')
       ])
 
       const leaderboard = leaderboardRes.data || []

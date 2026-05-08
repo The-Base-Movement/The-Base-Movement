@@ -141,16 +141,16 @@ export default function RoadmapManagement() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
+      <div className="flex-columns items-center">
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
             <Flag className="w-8 h-8 text-on-surface" />
             National Strategic Roadmap
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Manage movement objectives, mobilization phases, and strategic timelines.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0">Manage movement objectives, mobilization phases, and strategic timelines.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -165,7 +165,7 @@ export default function RoadmapManagement() {
       </div>
 
       {/* Roadmap Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col gap-1">

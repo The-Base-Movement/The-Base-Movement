@@ -158,16 +158,16 @@ export default function ChaptersManagement() {
   }, [filteredChapters, currentPage, itemsPerPage])
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <MapPin className="w-8 h-8 text-on-surface" />
             Chapters
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Coordinate regional cells and constituency headquarters.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">Coordinate regional cells and constituency headquarters across the national movement infrastructure.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -192,15 +192,15 @@ export default function ChaptersManagement() {
       </div>
 
       {/* Chapters Overview Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white">
+      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+        <Card className="rounded-sm border-border/60 shadow-sm bg-charcoal-dark text-white">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-white/10 flex items-center justify-center rounded-lg">
               <Shield className="w-6 h-6 text-white" />
             </div>
-            <div>
-              <p className="text-[10px] font-bold opacity-80 normal-case">Total chapters</p>
-              <h3 className="text-2xl font-bold font-meta">{chapters.length}</h3>
+            <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
+              <p className="text-[10px] font-bold opacity-80 normal-case mb-0">Total chapters</p>
+              <h3 className="text-2xl font-bold font-meta m-0">{chapters.length}</h3>
             </div>
           </CardContent>
         </Card>
@@ -209,25 +209,22 @@ export default function ChaptersManagement() {
             <div className="w-12 h-12 bg-border/40 flex items-center justify-center rounded-lg">
               <Users className="w-6 h-6 text-on-surface" />
             </div>
-            <div>
-              <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">Movement size</p>
-              <h3 className="text-2xl font-bold font-meta text-on-surface">{totalMembers.toLocaleString()}</h3>
+            <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
+              <p className="text-[10px] font-bold text-muted-foreground/40 normal-case mb-0">Movement size</p>
+              <h3 className="text-2xl font-bold font-meta text-on-surface m-0">{totalMembers.toLocaleString()}</h3>
             </div>
           </CardContent>
         </Card>
-        {regionalStats.slice(0, 3).map((stat, idx) => (
-          <Card key={stat.region} className={cn(
-            "rounded-sm border-border/60 shadow-sm overflow-hidden relative group cursor-pointer",
-            idx === 2 ? "col-span-2 md:col-span-1" : ""
-          )}>
+        {regionalStats.slice(0, 2).map((stat) => (
+          <Card key={stat.region} className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group cursor-pointer">
             <CardContent className="p-6 flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 bg-border/40 flex items-center justify-center transition-colors group-hover:bg-on-surface group-hover:text-white rounded-lg">
+              <div className="w-12 h-12 bg-border/40 flex items-center justify-center transition-colors group-hover:bg-charcoal-dark group-hover:text-white rounded-lg">
                 <MapPin className="w-5 h-5" />
               </div>
-              <div>
-                <p className="text-[10px] font-bold text-muted-foreground/40 group-hover:text-on-surface transition-colors normal-case">{stat.region}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <h3 className="text-xl font-bold font-meta text-on-surface">{stat.memberCount.toLocaleString()}</h3>
+              <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
+                <p className="text-[10px] font-bold text-muted-foreground/40 group-hover:text-on-surface transition-colors normal-case mb-0">{stat.region}</p>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold font-meta text-on-surface m-0">{stat.memberCount.toLocaleString()}</h3>
                   <div className={cn(
                     "px-1.5 py-0.5 text-[8px] font-bold border rounded normal-case",
                     stat.performance === 'High' && "bg-primary/10 text-primary border-primary/20",
@@ -256,7 +253,7 @@ export default function ChaptersManagement() {
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
                 <XAxis 
                   type="number" 
                   dataKey="chapters" 
@@ -264,8 +261,8 @@ export default function ChaptersManagement() {
                   unit="" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
-                  label={{ value: 'Chapter Density', position: 'bottom', offset: 0, fontSize: 10, fill: 'rgba(255,255,255,0.4)' }}
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(0,0,0,0.3)' }}
+                  label={{ value: 'Chapter Density', position: 'bottom', offset: 0, fontSize: 10, fill: 'rgba(0,0,0,0.5)' }}
                 />
                 <YAxis 
                   type="number" 
@@ -274,8 +271,8 @@ export default function ChaptersManagement() {
                   unit="" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
-                  label={{ value: 'Mobilization Strength', angle: -90, position: 'insideLeft', fontSize: 10, fill: 'rgba(255,255,255,0.4)' }}
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(0,0,0,0.3)' }}
+                  label={{ value: 'Mobilization Strength', angle: -90, position: 'insideLeft', fontSize: 10, fill: 'rgba(0,0,0,0.5)' }}
                 />
                 <ZAxis type="number" dataKey="chapters" range={[60, 400]} />
                 <Tooltip 
@@ -348,8 +345,9 @@ export default function ChaptersManagement() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-10 flex flex-col md:flex-row gap-10 items-center justify-center bg-muted/30">
-          <div className="relative w-full max-w-[500px] aspect-[4/5] bg-border/40/50 flex items-center justify-center border border-border/60/50 group overflow-hidden">
+        <CardContent className="p-10 cq-container bg-muted/20">
+          <div className="cq-content-stack items-center justify-center">
+            <div className="relative w-full max-w-[500px] aspect-[4/5] bg-border/20 flex items-center justify-center border border-border/40 group overflow-hidden">
              {/* Abstract SVG Map of Ghana Regions */}
              <svg viewBox="0 0 400 500" className="w-full h-full p-8 opacity-80 group-hover:opacity-100 transition-opacity duration-700">
                 {/* Northern Regions */}
@@ -393,7 +391,8 @@ export default function ChaptersManagement() {
               ))}
             </div>
           </div>
-        </CardContent>
+        </div>
+      </CardContent>
       </Card>
 
       <div className="flex flex-col md:flex-row gap-4">
@@ -409,7 +408,7 @@ export default function ChaptersManagement() {
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending'); setCurrentPage(1); }}
-          className="h-11 px-4 text-[10px] font-bold rounded-sm border border-border/60 bg-white focus:outline-none focus:border-on-surface shadow-sm normal-case"
+          className="h-11 px-4 text-[10px] font-bold rounded-sm border border-border/60 bg-white focus:outline-none focus:border-charcoal-dark shadow-sm normal-case"
         >
           <option value="All">All statuses</option>
           <option value="Active">Active</option>
@@ -418,7 +417,7 @@ export default function ChaptersManagement() {
       </div>
 
       {/* Chapters Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid-responsive" style={{ '--grid-min-width': '38ch' } as React.CSSProperties}>
         {currentChapters.map((chapter) => (
           <Card key={chapter.id} className="rounded-sm border-border/60 shadow-sm hover:shadow-md transition-all group overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-border/10 bg-muted/30">
@@ -437,7 +436,7 @@ export default function ChaptersManagement() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-6 space-y-5">
+            <CardContent className="p-6 flow" style={{ '--flow-space': '1.25rem' } as React.CSSProperties}>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1 group/lead">
                   <p className="text-[9px] font-bold text-muted-foreground/40 normal-case flex items-center gap-1">
@@ -454,35 +453,26 @@ export default function ChaptersManagement() {
                 </div>
               </div>
 
-              <div className="space-y-3 pt-2 border-t border-border/10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-muted-foreground/40" />
-                    <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Ghana</span>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-2 mt-4">
-                  {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => openEditModal(chapter)}
-                        className="h-11 px-0 text-[10px] font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all rounded-sm shadow-sm active:scale-95"
-                      >
-                        Configure Hub
-                      </Button>
-                  )}
-                  {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
-                      <Button 
-                        variant="ghost" 
-                        onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
-                        className="h-11 px-0 text-[10px] font-bold tracking-tight text-muted-foreground/40 hover:text-destructive transition-all rounded-sm border-0 bg-transparent active:scale-95"
-                      >
-                        Decommission <ChevronRight className="w-3.5 h-3.5 ml-1" />
-                      </Button>
-                  )}
-                </div>
+              <div className="grid grid-cols-2 gap-2 pt-4 border-t border-border/10">
+                {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => openEditModal(chapter)}
+                      className="h-11 px-0 text-[10px] font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all rounded-sm shadow-sm active:scale-95"
+                    >
+                      Configure Hub
+                    </Button>
+                )}
+                {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
+                      className="h-11 px-0 text-[10px] font-bold tracking-tight text-muted-foreground/40 hover:text-destructive transition-all rounded-sm border-0 bg-transparent active:scale-95"
+                    >
+                      Decommission <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                    </Button>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -550,7 +540,7 @@ export default function ChaptersManagement() {
       {/* Chapter Editor Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[500px] border-none rounded-none p-0 overflow-hidden bg-white">
-          <DialogHeader className="p-8 bg-on-surface text-white relative">
+          <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
             <div className="absolute top-0 left-0 w-full h-1 bg-on-surface/20"></div>
             <DialogTitle className="text-xl font-bold tracking-tight">
               {editingChapterId ? 'Configure regional hub' : 'Establish new chapter'}
@@ -602,7 +592,7 @@ export default function ChaptersManagement() {
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full h-12 bg-muted/5 border border-border/60 rounded-sm focus:ring-0 focus:border-on-surface px-4 text-sm font-medium shadow-sm outline-none"
+                  className="w-full h-12 bg-muted/5 border border-border/60 rounded-sm focus:ring-0 focus:border-charcoal-dark px-4 text-sm font-medium shadow-sm outline-none"
                 >
                   <option value="Pending">Pending</option>
                   <option value="Active">Active</option>

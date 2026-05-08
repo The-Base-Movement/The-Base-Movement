@@ -647,7 +647,7 @@ class LogisticsService {
   async getLogisticsLatency(): Promise<LogisticsLatency[]> {
     try {
       const { data, error } = await supabase
-        .from('logistics_velocity_telemetry')
+        .from('logistics_velocity_operational metrics')
         .select('region, avg_dispatch_hours, avg_delivery_hours, total_orders')
 
       if (error || !data) return []
@@ -672,7 +672,7 @@ class LogisticsService {
   async getLogisticsVelocity(): Promise<LogisticsVelocity[]> {
     try {
       const { data, error } = await supabase
-        .from('logistics_velocity_telemetry')
+        .from('logistics_velocity_operational metrics')
         .select('*')
       if (error) throw error
       return (data || []) as LogisticsVelocity[]

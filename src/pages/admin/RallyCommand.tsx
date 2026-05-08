@@ -91,16 +91,16 @@ export default function RallyCommand() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="admin-page-container animate-in fade-in duration-700">
       {/* 🚀 Tactical Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex-columns items-center">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
             <Users className="w-8 h-8 text-on-surface" />
             Rally command
           </h1>
           <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Real-time attendance telemetry and geo-fenced verification for field actions.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Real-time attendance operational metrics and geo-fenced verification for field actions.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -168,7 +168,7 @@ export default function RallyCommand() {
         <div className="lg:col-span-2 space-y-8">
           {selectedAction ? (
             <>
-              {/* Live Telemetry Cards */}
+              {/* Live operational metrics Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="rounded-sm border-border/40 shadow-sm bg-white p-6">
                   <div className="flex items-center justify-between mb-4">
@@ -203,7 +203,7 @@ export default function RallyCommand() {
                 <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-xs font-bold normal-case font-meta">Attendance manifest</CardTitle>
-                    <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-1">Verified check-ins via geo-fenced mobile telemetry.</CardDescription>
+                    <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-1">Verified check-ins via geo-fenced mobile operational metrics.</CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <div className="relative">
@@ -308,7 +308,7 @@ export default function RallyCommand() {
             <div className="h-[600px] flex items-center justify-center border-2 border-dashed border-border/40 rounded-sm bg-muted/5">
               <div className="text-center">
                 <AlertCircle className="w-12 h-12 text-muted-foreground/20 mx-auto mb-4" />
-                <p className="text-[10px] font-bold normal-case text-muted-foreground/80">Select a field action to view tactical telemetry</p>
+                <p className="text-[10px] font-bold normal-case text-muted-foreground/80">Select a field action to view tactical operational metrics</p>
               </div>
             </div>
           )}

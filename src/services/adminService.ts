@@ -31,7 +31,7 @@ import type {
   LogisticsVelocity,
   InventoryAlert,
   MemberFeedback,
-  SentimentTelemetry,
+  SentimentIntelligence,
   ImpactProjection,
   RapidResponseDirective,
   CrisisIncident,
@@ -71,7 +71,7 @@ export type {
   DonationCampaign, DonationDetail,
   FieldEvent, MobilizationLedger, RegionalStat, Milestone,
   FieldDirective, FieldReport, ChapterApplication, Achievement,
-  LogisticsVelocity, InventoryAlert, MemberFeedback, SentimentTelemetry,
+  LogisticsVelocity, InventoryAlert, MemberFeedback, SentimentIntelligence,
   ImpactProjection, RapidResponseDirective, CrisisIncident, MediaCounterNarrative,
   VoterRegistration, CanvassingCampaign, CanvasserLog, GOTVTransportRequest,
   FieldAction, RallyAttendance, ChapterLeaderboard, LeaderboardEntry,
@@ -711,6 +711,7 @@ class AdminService {
     return donationService.subscribeToPublicDonations(callback)
   }
 
+
   async getAdminData(userId: string): Promise<AdminUser | null> {
     const { data, error } = await supabase
       .from('admins')
@@ -1178,8 +1179,8 @@ class AdminService {
     return intelligenceService.getMemberFeedback()
   }
 
-  async getSentimentTelemetry(): Promise<SentimentTelemetry[]> {
-    return intelligenceService.getSentimentTelemetry()
+  async getSentimentIntelligence(): Promise<SentimentIntelligence[]> {
+    return intelligenceService.getSentimentIntelligence()
   }
 
   async getImpactProjections(): Promise<ImpactProjection[]> {

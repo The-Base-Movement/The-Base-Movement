@@ -65,14 +65,14 @@ export default function AdminAuthors() {
   })
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="admin-page-container animate-in fade-in duration-500">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight text-stone-900 mb-2 font-meta">Author Directory</h1>
-          <BrandLine className="mb-4" />
-          <p className="text-stone-500 text-sm max-w-xl">
-            Manage the official editorial profiles, biographies, and access credentials for the movement's content creators.
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold tracking-tight text-on-surface mb-0 font-meta">Editorial directory</h1>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm max-w-xl prose-standard mb-0">
+            Official editorial profiles, biographies, and access credentials for the movement's content creators.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -89,14 +89,14 @@ export default function AdminAuthors() {
       </div>
 
       {/* Main Content */}
-      <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
-        <div className="p-6 border-b border-stone-100 bg-stone-50/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
+        <div className="p-6 border-b border-border/10 bg-muted/5 flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
               <Input 
                 placeholder="Search by name or role..." 
-                className="pl-9 bg-white border-stone-200 focus-visible:ring-[var(--brand-red)]"
+                className="pl-12 h-11 bg-white border-border/60 focus-visible:ring-primary rounded-lg text-[11px] font-bold"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -104,7 +104,7 @@ export default function AdminAuthors() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="h-10 px-3 py-2 text-sm font-medium rounded-md border border-stone-200 bg-white text-stone-700 focus:outline-none focus:ring-2 focus:ring-[var(--brand-red)] focus:border-transparent cursor-pointer"
+              className="h-11 px-4 py-2 text-[10px] font-bold rounded-lg border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent cursor-pointer transition-all"
             >
               <option value="All Roles">All Roles</option>
               {uniqueRoles.map(role => (
@@ -112,9 +112,9 @@ export default function AdminAuthors() {
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-2 text-sm text-stone-500 font-medium bg-white px-4 py-2 rounded-lg border border-stone-200 shadow-sm">
-            <Shield className="w-4 h-4 text-stone-400" />
-            Authorized Editorial Personnel: <span className="text-stone-900 font-bold ml-1">{authors.length}</span>
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground/60 font-bold bg-white px-5 py-2.5 rounded-lg border border-border/10 shadow-sm">
+            <Shield className="w-4 h-4 text-muted-foreground/40" />
+            <span className="normal-case">Authorized personnel:</span> <span className="text-on-surface font-bold ml-1">{authors.length}</span>
           </div>
         </div>
 

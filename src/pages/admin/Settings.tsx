@@ -137,7 +137,7 @@ export default function AdminSettings() {
         const settings = await adminService.getSiteSettings()
         setSiteSettings(settings)
       } catch (err) {
-        console.error('[SETTINGS] Failed to synchronize audit telemetry:', err)
+        console.error('[SETTINGS] Failed to synchronize audit operational metrics:', err)
         toast.error('Failed to synchronize administrative audit logs')
       }
     }
@@ -413,22 +413,22 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="admin-page-container animate-in fade-in duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-        <div>
+      <div className="flex-columns items-center">
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-stone-900 tracking-tight flex items-center gap-3 font-meta">
             <Globe className="w-8 h-8 text-stone-900" />
             System settings
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-stone-500 text-sm mt-1">Manage your administrative identity and platform configuration.</p>
+          <BrandLine />
+          <p className="text-stone-500 text-sm mb-0">Manage your administrative identity and platform configuration.</p>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-12">
+      <div className="flex-columns items-start" style={{ '--column-gap': '3rem' } as React.CSSProperties}>
         {/* Settings Navigation */}
-        <div className="w-full lg:w-64 space-y-1">
+        <div className="w-full lg:w-64 flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
             return (
@@ -503,7 +503,7 @@ export default function AdminSettings() {
                   </div>
 
                   {/* Form Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold text-stone-500 normal-case">Full name</Label>
                       <Input 
@@ -564,7 +564,7 @@ export default function AdminSettings() {
                     { role: 'Super Admin', desc: 'Full system sovereignty and configuration rights.', count: 2, icon: Shield, color: 'text-[var(--brand-red)]' },
                     { role: 'Regional Admin', desc: 'Operational oversight within assigned regional boundaries.', count: 16, icon: Globe, color: 'text-stone-900' },
                     { role: 'Chapter Lead', desc: 'Local verification and mobilization management.', count: 124, icon: Users, color: 'text-stone-900' },
-                    { role: 'Audit View', desc: 'Read-only access to financial and telemetry streams.', count: 4, icon: History, color: 'text-stone-500' },
+                    { role: 'Audit View', desc: 'Read-only access to financial and operational metrics streams.', count: 4, icon: History, color: 'text-stone-500' },
                   ].map((item) => (
                     <div key={item.role} className="p-6 flex items-center justify-between hover:bg-stone-50/50 transition-colors">
                       <div className="flex items-center gap-4">
@@ -598,7 +598,7 @@ export default function AdminSettings() {
               <CardContent className="p-8 space-y-10">
                 <div className="space-y-6">
                   <p className="text-[10px] font-bold text-stone-400 normal-case">Interface density</p>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="flex-columns items-stretch" style={{ '--column-gap': '1rem' } as React.CSSProperties}>
                     {['Comfortable', 'Compact', 'High Density'].map((mode) => (
                       <Button 
                         key={mode} 
@@ -658,8 +658,8 @@ export default function AdminSettings() {
                   <CardDescription className="text-[11px] font-medium text-stone-400 mt-1">Configure the movement's primary contact points and newsletter dispatch parameters.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-8">
-                  <div className="max-w-2xl space-y-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="max-w-2xl flow" style={{ '--flow-space': '2.5rem' } as React.CSSProperties}>
+                    <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
                       <div className="space-y-2">
                         <Label className="text-[10px] font-bold text-stone-500 normal-case">Primary contact email</Label>
                         <div className="relative">
@@ -692,7 +692,7 @@ export default function AdminSettings() {
                         <Palette className="w-4 h-4 text-primary" />
                         Movement Palette Control
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
                         {[
                           { key: 'primary_color', label: 'Primary Brand (Green)', desc: 'HSL value for the dominant identity color.' },
                           { key: 'accent_color', label: 'Accent Highlight (Gold)', desc: 'HSL value for secondary emphasis.' },
@@ -723,7 +723,7 @@ export default function AdminSettings() {
                         <FileText className="w-4 h-4 text-primary" />
                         Tactical Typography Orchestration
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="flex-columns items-start" style={{ '--column-gap': '2.5rem' } as React.CSSProperties}>
                         <div className="space-y-4">
                           <div className="flex justify-between items-end">
                             <Label className="text-[10px] font-bold text-stone-500 normal-case">Global font scale</Label>
@@ -787,7 +787,7 @@ export default function AdminSettings() {
                             window.dispatchEvent(new CustomEvent('site_settings_updated'))
                             toast.success('Movement configurations synchronized', { id: toastId })
                           } catch (err: unknown) {
-                            toast.error(err instanceof Error ? err.message : 'Failed to update movement telemetry', { id: toastId })
+                            toast.error(err instanceof Error ? err.message : 'Failed to update movement operational metrics', { id: toastId })
                           } finally {
                             setIsSaving(false)
                           }

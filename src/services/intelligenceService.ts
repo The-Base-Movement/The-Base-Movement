@@ -5,7 +5,7 @@ import type {
   FieldAction, 
   RallyAttendance, 
   MemberFeedback, 
-  SentimentTelemetry, 
+  SentimentIntelligence, 
   ImpactProjection,
   RapidResponseDirective,
   CrisisIncident,
@@ -194,16 +194,16 @@ class IntelligenceService {
     }
   }
 
-  async getSentimentTelemetry(): Promise<SentimentTelemetry[]> {
+  async getSentimentIntelligence(): Promise<SentimentIntelligence[]> {
     try {
       const { data, error } = await supabase
-        .from('national_sentiment_telemetry')
+        .from('national_sentiment_intelligence')
         .select('*')
         .order('avg_sentiment', { ascending: false })
       if (error) throw error
-      return (data || []) as SentimentTelemetry[]
+      return (data || []) as SentimentIntelligence[]
     } catch (error) {
-      console.error('[DATABASE] Failed to fetch sentiment telemetry:', error)
+      console.error('[DATABASE] Failed to fetch sentiment operational metrics:', error)
       return []
     }
   }

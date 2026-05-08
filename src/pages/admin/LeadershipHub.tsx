@@ -105,16 +105,16 @@ export default function LeadershipHub() {
   )
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
+      <div className="flex-columns items-center">
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <ShieldCheck className="w-8 h-8 text-on-surface" />
             Leadership hub
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Managing the administrative pipeline for local leadership applications.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">Managing the administrative pipeline for local leadership applications.</p>
         </div>
         <Button 
           variant="primary"
@@ -155,7 +155,7 @@ export default function LeadershipHub() {
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
         <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />
           <CardContent className="p-6">
@@ -296,7 +296,7 @@ export default function LeadershipHub() {
 
       {/* Vision & Strategy Modal (Simplified here as cards) */}
       {filteredApps.some(a => a.status === 'Pending') && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="flex-columns items-stretch" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
           {filteredApps.filter(a => a.status === 'Pending').slice(0, 2).map(app => (
             <Card key={`detail-${app.id}`} className="rounded-sm border-border/60 shadow-sm bg-muted/30 overflow-hidden">
               <CardHeader className="p-8 pb-4">
@@ -308,7 +308,7 @@ export default function LeadershipHub() {
                 </blockquote>
                 <div className="bg-white border border-border/40 p-4 rounded-lg">
                   <p className="text-[9px] font-bold normal-case text-muted-foreground/40 mb-2">Experience summary</p>
-                  <p className="text-xs text-muted-foreground/80 leading-relaxed">{app.experience_summary}</p>
+                  <p className="text-xs text-muted-foreground/80 leading-relaxed prose-standard">{app.experience_summary}</p>
                 </div>
               </CardContent>
             </Card>

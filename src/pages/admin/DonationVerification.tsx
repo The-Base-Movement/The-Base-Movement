@@ -125,16 +125,16 @@ export default function FinancialAudit() {
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
+      <div className="flex-columns items-center">
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <DollarSign className="w-8 h-8 text-on-surface" />
             Financial audit
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Reviewing contributions, transactions, and campaign funding.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0">Reviewing contributions, transactions, and campaign funding.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -159,7 +159,7 @@ export default function FinancialAudit() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">Total Contributions</p>
@@ -174,14 +174,14 @@ export default function FinancialAudit() {
             <span className="text-[10px] font-bold text-accent/70 mt-1">Awaiting administrative clearance</span>
           </CardContent>
         </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm col-span-2 md:col-span-1">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">Approved Amount</p>
             <h3 className="text-2xl font-bold text-primary">GH₵ {stats.approvedAmount.toLocaleString()}</h3>
             <span className="text-[10px] font-bold text-primary/70 mt-1">Total cleared funds</span>
           </CardContent>
         </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm col-span-2 md:col-span-1">
+        <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
             <p className="text-[11px] font-bold text-muted-foreground/80 tracking-tight">Flagged Transactions</p>
             <h3 className="text-2xl font-bold text-destructive">{stats.flaggedCount.toLocaleString()}</h3>
@@ -190,7 +190,7 @@ export default function FinancialAudit() {
         </Card>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
+      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
         <div className="w-full flex-1 space-y-6">
           {/* Intelligence & Filtering */}
           <div className="bg-white border border-border/60 p-2 rounded-sm flex flex-wrap items-center justify-between gap-4">

@@ -47,10 +47,10 @@ export default function AdminRegions() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex-columns items-center">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
             <MapPin className="w-8 h-8 text-on-surface" />

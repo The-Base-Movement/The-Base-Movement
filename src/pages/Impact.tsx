@@ -121,7 +121,7 @@ export default function Impact() {
   const [showFullActivity, setShowFullActivity] = useState(false)
 
   return (
-    <div className="bg-stone-50/50 min-h-screen font-meta">
+    <main className="bg-stone-50/50 min-h-screen font-meta">
       {/* Full Activity Modal */}
       {showFullActivity && (
         <div 
@@ -198,14 +198,14 @@ export default function Impact() {
           <div className="flex justify-center mb-6">
             <BrandLine />
           </div>
-          <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed">
+          <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed prose-wide">
             Live analytics reflecting our collective momentum across the nation. Every member joined and every contribution made is a direct investment in the Ghana we deserve.
           </p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 -mt-24 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
           {[
             { label: 'Donations received', value: stats.totalDonations, icon: Heart, trend: '+12%', color: '#006B3F', status: 'No new donations yet today' },
             { label: 'Chapters active', value: stats.activeChapters, icon: Target, trend: '+2', color: '#DAA520', status: 'Verified' },
@@ -249,7 +249,7 @@ export default function Impact() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20">
+        <div className="flex-columns items-stretch" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
           <div className="lg:col-span-2 space-y-8">
             <section className="bg-white rounded-none border border-slate-100 p-8 shadow-xl shadow-slate-200/40">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -464,6 +464,6 @@ export default function Impact() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

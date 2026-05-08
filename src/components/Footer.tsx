@@ -129,7 +129,6 @@ export default function Footer() {
         <div className="mt-24 pt-10 border-t border-border/10 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
             <p className="text-tiny text-on-surface/30 mb-0 font-bold tracking-tight">© 2026 The Base Movement. Ghana First.</p>
-            <p className="text-tiny text-on-surface/20 mb-0 font-bold tracking-tight">Engineered for progress by The Base Tech Desk</p>
           </div>
           {/* Continuous Movement Gradient Bar */}
           <div className="w-48 h-2 bg-gradient-to-r from-destructive via-accent to-primary rounded-full shadow-[0_0_10px_rgba(206,17,38,0.1)] overflow-hidden">

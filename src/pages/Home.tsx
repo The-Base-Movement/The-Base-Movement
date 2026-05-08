@@ -98,15 +98,15 @@ export default function Home() {
         )}
 
         <div className="absolute inset-0 z-0 bg-gradient-to-t from-on-surface via-on-surface/60 to-transparent"></div>
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
-          <div className="flex-1 text-center md:text-left">
+        <div className="max-w-[1280px] mx-auto px-8 relative z-10 flex-columns items-center">
+          <div className="flex-1 text-center md:text-left flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
             <h1 id="hero-heading" className="text-5xl md:text-h1 font-meta font-bold mb-4 leading-[1.1] tracking-tighter">
               Ghana First,<br />Jobs for the youth!
             </h1>
             <div className="flex justify-center md:justify-start">
               <BrandLine />
             </div>
-            <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl mb-10 leading-relaxed font-body-md mx-auto md:mx-0">
+            <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl prose-wide leading-relaxed font-body-md mx-auto md:mx-0">
               A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry and innovation.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-3 justify-center md:justify-start">
@@ -132,7 +132,7 @@ export default function Home() {
       <section aria-labelledby="platforms-heading" className="py-24 bg-white">
         <div className="max-w-[1280px] mx-auto px-8">
           <h2 id="platforms-heading" className="sr-only">Our Platforms</h2>
-          <div className="grid md:grid-cols-2 gap-12 md:gap-24">
+          <div className="flex-columns items-stretch" style={{ '--column-gap': '6rem' } as React.CSSProperties}>
             <div className="border-t-[4px] border-primary pt-8 group">
               <h3 className="text-h3 font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight">
                 <MapPin className="text-primary w-8 h-8" /> Base Ghana
@@ -147,11 +147,11 @@ export default function Home() {
               </Button>
             </div>
             
-            <div className="border-t-[4px] border-accent pt-8 group">
-              <h3 className="text-h3 font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight">
+            <div className="border-t-[4px] border-accent pt-8 group flow">
+              <h3 className="text-h3 font-meta font-bold text-on-surface flex items-center gap-3 tracking-tight">
                 <Globe className="text-accent w-8 h-8" /> Base Diaspora
               </h3>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
+              <p className="text-lg text-muted-foreground leading-relaxed font-body-md prose-standard">
                 For Ghanaians and friends of Ghana living abroad. Stay connected and contribute to Ghana's progress from anywhere in the world.
               </p>
               <Button asChild variant="gold" className="w-full sm:w-auto">
@@ -291,7 +291,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-50 pointer-events-none" />
             <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] pointer-events-none" />
             
-            <div className="relative z-10 p-12 md:p-24 flex flex-col items-center text-center">
+            <div className="relative z-10 p-12 md:p-24 flex flex-col items-center text-center flow" style={{ '--flow-space': '3rem' } as React.CSSProperties}>
               {/* Content Column */}
               <div className="max-w-4xl">
                 <span className="text-accent font-meta font-bold tracking-tight text-xs mb-6 block">Ready to build Ghana?</span>

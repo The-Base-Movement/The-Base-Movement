@@ -33,6 +33,11 @@ export function LiveContributionFeed() {
         if (prev.some(d => d.id === newDonation.id)) return prev
         return [newDonation, ...prev.slice(0, 14)]
       })
+
+      // Auto-scroll to top when a new donation arrives
+      if (feedRef.current) {
+        feedRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      }
     })
 
     return () => {
@@ -83,34 +88,35 @@ export function LiveContributionFeed() {
               transition={{ duration: 0.4, ease: "easeOut" }}
               className="group"
             >
-              <div className="p-4 bg-white/40 backdrop-blur-md border border-border/40 hover:border-primary/40 transition-all duration-500 rounded-sm shadow-sm relative overflow-hidden group/item">
-                {/* Background Accent */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 -mr-12 -mt-12 blur-2xl group-hover/item:bg-primary/10 transition-colors"></div>
+              <div className="p-5 bg-white/60 backdrop-blur-xl border border-border/40 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 rounded-sm relative overflow-hidden group/item">
+                {/* Dynamic Energy Accent */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 -mr-16 -mt-16 blur-3xl group-hover/item:bg-primary/20 transition-all duration-700"></div>
+                <div className="absolute bottom-0 left-0 w-16 h-16 bg-accent/5 -ml-8 -mb-8 blur-2xl transition-all"></div>
                 
                 <div className="flex items-center justify-between relative z-10">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-white shadow-sm flex items-center justify-center rounded-sm border border-border/10 group-hover/item:bg-primary/5 group-hover/item:border-primary/20 transition-all">
+                    <div className="w-12 h-12 bg-white shadow-sm flex items-center justify-center rounded-sm border border-border/10 group-hover/item:scale-110 group-hover/item:border-primary/30 transition-all duration-500">
                       {donation.fullName !== 'Anonymous Patriot' ? (
-                        <Globe className="w-5 h-5 text-on-surface/40 group-hover/item:text-primary transition-colors" />
+                        <Globe className="w-6 h-6 text-primary/60 group-hover/item:text-primary transition-colors" />
                       ) : (
-                        <Shield className="w-5 h-5 text-on-surface/40 group-hover/item:text-primary transition-colors" />
+                        <Shield className="w-6 h-6 text-accent/60 group-hover/item:text-accent transition-colors" />
                       )}
                     </div>
                     <div>
-                      <p className="text-[11px] font-bold text-on-surface tracking-tight normal-case leading-tight">
+                      <p className="text-[12px] font-bold text-on-surface tracking-tight normal-case leading-tight">
                         {donation.fullName}
                       </p>
-                      <p className="text-[9px] text-muted-foreground/60 font-bold tracking-tight mt-0.5 normal-case">
-                        Deployed to <span className="text-primary/80">{donation.campaignTitle || 'Strategic Fund'}</span>
+                      <p className="text-[10px] text-muted-foreground/60 font-bold tracking-tight mt-1 normal-case">
+                        Mobilizing <span className="text-primary font-meta">{donation.campaignTitle || 'Strategic Fund'}</span>
                       </p>
                     </div>
                   </div>
                   
                   <div className="text-right">
-                    <p className="text-sm font-bold text-on-surface font-meta tracking-tight">
-                      GHS {Number(donation.amount).toLocaleString()}
+                    <p className="text-base font-bold text-on-surface font-meta tracking-tight">
+                      GH₵ {Number(donation.amount).toLocaleString()}
                     </p>
-                    <p className="text-[8px] text-muted-foreground/40 font-bold tracking-tight normal-case mt-0.5 tabular-nums">
+                    <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight normal-case mt-1 tabular-nums bg-muted/20 px-2 py-0.5 rounded-full inline-block">
                       {new Date(donation.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>

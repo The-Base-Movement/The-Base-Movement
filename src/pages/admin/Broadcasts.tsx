@@ -46,7 +46,7 @@ export default function Broadcasts() {
       // Fetch metrics for recent broadcasts
       bData.slice(0, 5).forEach(b => fetchMetrics(b.id))
     } catch {
-      toast.error("Failed to synchronize mobilization telemetry")
+      toast.error("Failed to synchronize mobilization operational metrics")
     } finally {
       setIsLoading(false)
     }
@@ -70,8 +70,8 @@ export default function Broadcasts() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex-columns items-center">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Megaphone className="w-8 h-8 text-on-surface" />
@@ -218,7 +218,7 @@ export default function Broadcasts() {
                           className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-11 px-8 text-[10px] font-bold tracking-tight hover:bg-stone-50 shadow-sm active:scale-95"
                           onClick={() => fetchMetrics(broadcast.id)}
                         >
-                          Refresh Telemetry
+                          Refresh operational metrics
                         </Button>
                       </div>
                     </div>

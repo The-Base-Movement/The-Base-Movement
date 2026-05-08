@@ -246,17 +246,17 @@ export default function Donate() {
       {/* Header */}
       <div className="bg-on-surface text-white pt-32 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--brand-green)_0%,_transparent_70%)]"></div>
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-sm">
+        <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
             <span className="text-[10px] font-bold text-white/60 tracking-tight">Financial Mobilization Unit</span>
           </div>
-          <h1 className="mb-4 tracking-tight font-meta">
+          <h1 className="tracking-tight font-meta">
             Support the <span className="text-primary drop-shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.3)]">Movement</span>
           </h1>
           <BrandLine className="mx-auto" />
-          <p className="text-slate-300 max-w-2xl mx-auto mb-0">
-            Your contributions for the growth and sustainability of the movement.
+          <p className="text-slate-300 max-w-2xl mx-auto prose-standard">
+            Your contributions are the lifeblood of our growth and the sustainability of the national mobilization infrastructure.
           </p>
         </div>
       </div>
@@ -303,12 +303,12 @@ export default function Donate() {
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
         {submitted ? (
-          <div className="max-w-2xl mx-auto bg-white border border-slate-200 rounded-none shadow-sm p-12 text-center mt-12">
-            <div className="w-20 h-20 bg-surface-warm flex items-center justify-center mx-auto mb-6 rounded-none">
-              <Check className="w-10 h-10 text-primary" />
+          <div className="max-w-2xl mx-auto bg-white border border-border/60 rounded-sm shadow-sm p-12 text-center mt-12 animate-in fade-in zoom-in-95 duration-500">
+            <div className="w-20 h-20 bg-muted/30 flex items-center justify-center mx-auto mb-6 rounded-sm">
+              <Check className="w-10 h-10 text-primary shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.4)]" />
             </div>
-            <h2 className="text-2xl font-bold text-charcoal-dark mb-3 font-meta tracking-tight">Thank You!</h2>
-            <p className="text-slate-600 mb-8 font-body-md leading-relaxed">
+            <h2 className="text-2xl font-bold text-on-surface mb-3 font-meta tracking-tight">Deployment Secured</h2>
+            <p className="text-muted-foreground/80 mb-8 font-body-md leading-relaxed">
               Your donation has been recorded and will be verified shortly. Your support is what makes this movement possible.
             </p>
             <Button asChild variant="primary" size="lg">
@@ -328,7 +328,7 @@ export default function Donate() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="flex-columns">
                 {loading ? (
                   Array.from({ length: 3 }).map((_, i) => (
                     <div key={i} className="h-[400px] bg-muted/30 animate-pulse rounded-sm border border-border/40" />
@@ -341,9 +341,9 @@ export default function Donate() {
                         <span className="bg-primary text-white text-[9px] font-bold tracking-tight px-3 py-1 shadow-xl">In mobilization</span>
                       </div>
                     </div>
-                    <CardContent className="p-8 flex flex-col flex-1">
-                      <h3 className="font-bold text-on-surface font-meta text-base mb-3 group-hover:text-primary transition-colors tracking-tight">{c.title}</h3>
-                      <p className="text-[11px] font-bold text-muted-foreground/60 mb-8 line-clamp-2 leading-relaxed normal-case">{c.description}</p>
+                    <CardContent className="p-8 flex flex-col flex-1 flow" style={{ '--flow-space': '1.5rem' } as React.CSSProperties}>
+                      <h3 className="font-bold text-on-surface font-meta text-base group-hover:text-primary transition-colors tracking-tight">{c.title}</h3>
+                      <p className="text-[11px] font-bold text-muted-foreground/60 line-clamp-2 leading-relaxed normal-case prose-standard">{c.description}</p>
                       
                       <div className="mt-auto space-y-6">
                         <div>

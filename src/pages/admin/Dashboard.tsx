@@ -146,7 +146,7 @@ export default function AdminDashboard() {
     setIsExporting(true)
     toast({
       title: "Generating export",
-      description: "Aggregating regional performance telemetry...",
+      description: "Aggregating regional performance operational metrics...",
     })
     
     try {
@@ -204,21 +204,21 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-        <div>
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Activity className="w-8 h-8 text-on-surface" />
             Operational dashboard
           </h1>
-          <BrandLine className="mt-4" />
-          <div className="flex items-center gap-4 mt-1">
-            <p className="text-muted-foreground/80 text-xs flex items-center gap-1.5">
+          <BrandLine />
+          <div className="flex items-center gap-4">
+            <p className="text-muted-foreground/80 text-xs flex items-center gap-1.5 mb-0">
               <span className="w-1.5 h-1.5 bg-primary rounded-full" />
               16 regions active
             </p>
-            <p className="text-muted-foreground/80 text-xs font-medium">Telemetry updated 2m ago</p>
+            <p className="text-muted-foreground/80 text-xs font-medium mb-0">Metrics updated 2m ago</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -229,7 +229,7 @@ export default function AdminDashboard() {
             onClick={handleExport}
             disabled={isExporting}
           >
-            {isExporting ? 'Exporting telemetry...' : 'Export regional data'}
+            {isExporting ? 'Exporting metrics...' : 'Export regional data'}
           </Button>
 
           <Button 
@@ -244,7 +244,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* KPI Row */}
-      <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="flex-columns items-stretch" style={{ '--column-gap': '1rem', '--column-min-width': '24ch' } as React.CSSProperties}>
         {isLoading ? (
           <>
             <SkeletonCard />
@@ -260,11 +260,11 @@ export default function AdminDashboard() {
             <StatCard title="Inventory" value={globalStats[3]?.value || "0"} change={globalStats[3]?.change || "0%"} icon={ShoppingBag} color="bg-primary" />
           </>
         )}
-      </dl>
+      </div>
 
       {/* Main Analysis Section */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 items-start">
-        <div className="xl:col-span-2 space-y-10">
+      <div className="flex-columns items-start" style={{ '--column-gap': '2.5rem', '--column-breakpoint': '100ch' } as React.CSSProperties}>
+        <div className="flex-[2] min-w-0 flow" style={{ '--flow-space': '2.5rem' } as React.CSSProperties}>
           
           {/* Membership Growth Trend */}
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
@@ -334,59 +334,61 @@ export default function AdminDashboard() {
           {/* Regional Performance - Filtered Table */}
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/5 flex flex-row items-center justify-between">
-              <div>
+              <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
                 <CardTitle className="text-sm font-bold text-on-surface">Regional Distribution</CardTitle>
-                <CardDescription className="text-[11px] font-medium text-muted-foreground/80 mt-1">Top performing regions by member count</CardDescription>
+                <CardDescription className="text-[11px] font-medium text-muted-foreground/80 mb-0 prose-standard">Top performing regions by member count</CardDescription>
               </div>
               <Button variant="ghost" className="h-7 px-2 text-[10px] font-bold tracking-tight text-muted-foreground/80 hover:text-on-surface active:scale-95">
                 View All
               </Button>
             </CardHeader>
             <CardContent className="p-0">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-muted/30 border-b border-border/40">
-                    <th className="p-4 pl-6 text-[10px] font-bold tracking-tight text-muted-foreground/80">Region</th>
-                    <th className="p-4 text-[10px] font-bold tracking-tight text-muted-foreground/80">Members</th>
-                    <th className="p-4 text-[10px] font-bold tracking-tight text-muted-foreground/80">Chapters</th>
-                    <th className="p-4 pr-6 text-right text-[10px] font-bold tracking-tight text-muted-foreground/80">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {regionalStats.filter(r => r.memberCount > 0).length > 0 ? (
-                    regionalStats.filter(r => r.memberCount > 0).slice(0, 5).map((region) => (
-                      <tr key={region.region} className="hover:bg-muted/5 transition-colors">
-                        <td className="p-4 pl-6">
-                          <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: region.color }} />
-                            <span className="text-xs font-semibold text-on-surface">{region.region}</span>
-                          </div>
-                        </td>
-                        <td className="p-4 text-xs font-medium text-on-surface/80 tabular-nums">{region.memberCount.toLocaleString()}</td>
-                        <td className="p-4 text-xs font-medium text-on-surface/80 tabular-nums">{region.chapters}</td>
-                        <td className="p-4 pr-6 text-right">
-                          <span className={cn("px-2 py-0.5 text-[9px] font-bold rounded-full", 
-                            region.performance === 'High' ? "bg-primary/10 text-primary" : "bg-border/40 text-muted-foreground/80"
-                          )}>
-                            {region.performance}
-                          </span>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-muted/30 border-b border-border/40">
+                      <th className="p-4 pl-6 text-[10px] font-bold tracking-tight text-muted-foreground/80">Region</th>
+                      <th className="p-4 text-[10px] font-bold tracking-tight text-muted-foreground/80">Members</th>
+                      <th className="p-4 text-[10px] font-bold tracking-tight text-muted-foreground/80">Chapters</th>
+                      <th className="p-4 pr-6 text-right text-[10px] font-bold tracking-tight text-muted-foreground/80">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {regionalStats.filter(r => r.memberCount > 0).length > 0 ? (
+                      regionalStats.filter(r => r.memberCount > 0).slice(0, 5).map((region) => (
+                        <tr key={region.region} className="hover:bg-muted/5 transition-colors">
+                          <td className="p-4 pl-6">
+                            <div className="flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: region.color }} />
+                              <span className="text-xs font-semibold text-on-surface">{region.region}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 text-xs font-medium text-on-surface/80 tabular-nums">{region.memberCount.toLocaleString()}</td>
+                          <td className="p-4 text-xs font-medium text-on-surface/80 tabular-nums">{region.chapters}</td>
+                          <td className="p-4 pr-6 text-right">
+                            <span className={cn("px-2 py-0.5 text-[9px] font-bold rounded-full", 
+                              region.performance === 'High' ? "bg-primary/10 text-primary" : "bg-border/40 text-muted-foreground/80"
+                            )}>
+                              {region.performance}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4} className="p-12 text-center text-muted-foreground/80 text-xs font-medium italic">
+                          No regional data available for current filters.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={4} className="p-12 text-center text-muted-foreground/80 text-xs font-medium italic">
-                        No regional data available for current filters.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </CardContent>
           </Card>
 
           {/* System Activity & Logistics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="flex-columns items-stretch" style={{ '--column-gap': '2rem', '--column-breakpoint': '70ch' } as React.CSSProperties}>
             {/* System Activity Table */}
             <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
               <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
@@ -465,7 +467,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Operational Health (Right Sidebar) */}
-        <div className="space-y-10">
+        <div className="flex-1 min-w-0 flow" style={{ '--flow-space': '2.5rem' } as React.CSSProperties}>
           {/* Health & Status Consolidated */}
           <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/5">

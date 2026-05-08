@@ -291,31 +291,31 @@ export default function AdminBlogs() {
 
   if (currentView === 'edit') {
     return (
-      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-on-surface/40 normal-case">
-            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-on-surface text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
-              Blog posts
-            </Button>
-            <span className="text-sm text-on-surface/20">/</span>
-            <span className="text-sm font-semibold text-on-surface normal-case">{editingPost ? 'Edit post' : 'Create new post'}</span>
-          </div>
+      <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flex items-center gap-2 text-on-surface/40 normal-case">
+          <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-on-surface text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
+            Blog posts
+          </Button>
+          <span className="text-sm text-on-surface/20">/</span>
+          <span className="text-sm font-semibold text-on-surface normal-case">{editingPost ? 'Edit post' : 'Create new post'}</span>
         </div>
+      </div>
 
-        <div>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h2 className="text-3xl font-bold text-on-surface tracking-tight normal-case">
             {editingPost ? 'Edit post' : 'Create new post'}
           </h2>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1 font-medium">
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">
             Fill in the details below to configure and publish your post.
           </p>
         </div>
         
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <form onSubmit={handleSubmit} className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
           
           {/* Main Content Column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="flex-[2] min-w-0 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
             <Card className="rounded-sm border-border/40 bg-white shadow-sm overflow-hidden">
               <div className="p-4 border-b border-border/40 bg-muted/5">
                 <h3 className="font-bold text-on-surface text-xs normal-case">Post details</h3>
@@ -395,7 +395,7 @@ export default function AdminBlogs() {
           </div>
 
           {/* Right Sidebar Column */}
-          <div className="space-y-8 sticky top-6">
+          <div className="flex-1 min-w-0 flow sticky top-6" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
             
             <Card className="rounded-sm border-border/40 bg-white shadow-sm overflow-hidden">
               <div className="p-4 border-b border-border/40 bg-muted/5">
@@ -649,10 +649,10 @@ export default function AdminBlogs() {
 
   if (currentView === 'view' && viewPost) {
     return (
-      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 text-muted-foreground/40 normal-case mb-2">
+      <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+        <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+          <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+            <div className="flex items-center gap-2 text-muted-foreground/40 normal-case">
               <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-on-surface text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
                 Blog posts
               </Button>
@@ -706,16 +706,16 @@ export default function AdminBlogs() {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <FileText className="w-8 h-8 text-on-surface" />
             Blog posts
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Draft and publish strategic articles for the movement feed.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">Draft and publish strategic articles for the movement feed.</p>
         </div>
         <Button 
           onClick={() => handleEditPost()}
@@ -773,7 +773,7 @@ export default function AdminBlogs() {
       </Card>
 
       {/* Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+      <div className="grid-responsive" style={{ '--grid-min-width': '38ch' } as React.CSSProperties}>
         {isLoading ? (
           Array(6).fill(0).map((_, i) => (
             <Card key={i} className="rounded-sm border-border/40 animate-pulse bg-white">

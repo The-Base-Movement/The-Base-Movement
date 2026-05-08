@@ -240,16 +240,16 @@ export default function AdminStore() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <Package className="w-8 h-8 text-on-surface" />
             Logistics and supply
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Movement inventory, merchandising, and regional distribution.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm prose-standard mb-0">Movement inventory, merchandising, and regional distribution infrastructure.</p>
         </div>
         <div className="flex items-center gap-4">
         <div className="flex bg-muted/10 p-1 rounded-sm">
@@ -324,11 +324,11 @@ export default function AdminStore() {
           )}
 
           {/* Store Performance Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Total stock value</p>
-            <h3 className="text-xl md:text-2xl font-bold text-on-surface">
+            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-0">Total stock value</p>
+            <h3 className="text-xl md:text-2xl font-bold text-on-surface m-0">
               GHS {products.reduce((acc, p) => acc + (parseFloat(p.price.replace(/[^0-9.-]+/g, '')) * p.stock), 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </h3>
             <span className="text-[9px] font-bold text-muted-foreground/80 flex items-center gap-1 mt-1">
@@ -338,8 +338,8 @@ export default function AdminStore() {
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Active requests</p>
-            <h3 className="text-xl md:text-2xl font-bold text-on-surface">{requests.filter(r => r.status === 'Pending').length}</h3>
+            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-0">Active requests</p>
+            <h3 className="text-xl md:text-2xl font-bold text-on-surface m-0">{requests.filter(r => r.status === 'Pending').length}</h3>
             <span className={cn(
               "text-[9px] font-bold mt-1",
               requests.filter(r => r.status === 'Pending').length > 0 ? "text-accent" : "text-muted-foreground/80"
@@ -350,8 +350,8 @@ export default function AdminStore() {
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex flex-col gap-1">
-            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Stock items</p>
-            <h3 className="text-xl md:text-2xl font-bold text-on-surface">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
+            <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mb-0">Stock items</p>
+            <h3 className="text-xl md:text-2xl font-bold text-on-surface m-0">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</h3>
             <span className="text-[9px] font-bold text-muted-foreground/80 mt-1">Across {products.length} products</span>
           </CardContent>
         </Card>
@@ -361,11 +361,11 @@ export default function AdminStore() {
         )}>
           <CardContent className="p-6 flex flex-col gap-1">
             <p className={cn(
-              "text-[10px] font-bold tracking-tight",
+              "text-[10px] font-bold tracking-tight mb-0",
               lowStockItems.length > 0 ? "text-destructive" : "text-muted-foreground/80"
             )}>Stock alerts</p>
             <h3 className={cn(
-              "text-xl md:text-2xl font-bold",
+              "text-xl md:text-2xl font-bold m-0",
               lowStockItems.length > 0 ? "text-destructive" : "text-on-surface"
             )}>{lowStockItems.length}</h3>
             <span className={cn(
@@ -788,7 +788,7 @@ export default function AdminStore() {
                 }}
               >
                 <Download className="w-4 h-4 mr-2" />
-                Export telemetry
+                Export operational metrics
               </Button>
             </div>
           </CardHeader>

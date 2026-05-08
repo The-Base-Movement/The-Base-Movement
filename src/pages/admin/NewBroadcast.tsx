@@ -62,8 +62,8 @@ export default function NewBroadcast() {
       setFullRegions(regions || [])
       setAllConstituencies(cData?.data || [])
     } catch (err) {
-      console.error("[COMMUNICATION-HUB] Telemetry sync failure:", err)
-      toast.error("Failed to synchronize mobilization telemetry")
+      console.error("[COMMUNICATION-HUB] operational metrics sync failure:", err)
+      toast.error("Failed to synchronize mobilization operational metrics")
     }
   }, [])
 
@@ -118,12 +118,12 @@ export default function NewBroadcast() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto pb-20">
+    <div className="admin-page-container max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Breadcrumb & Header */}
-      <div className="space-y-4 px-4 md:px-0">
+      <div className="space-y-4">
         <Breadcrumbs />
         
-        <div className="flex items-center justify-between">
+        <div className="flex-columns items-center">
           <div>
             <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
               <Megaphone className="w-8 h-8 text-on-surface" />

@@ -204,7 +204,7 @@ class ChapterService {
   async getRegionalLeaderboard(): Promise<ChapterLeaderboard[]> {
     try {
       const { data, error } = await supabase
-        .from('chapter_performance_telemetry')
+        .from('chapter_performance_operational metrics')
         .select('*')
         .order('regional_chapter_rank', { ascending: true })
       if (error) throw error

@@ -77,8 +77,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         root.style.setProperty('--admin-gap', '0.75rem')
         root.style.setProperty('--admin-font-scale', '0.9')
       } else {
-        root.style.setProperty('--admin-padding', '3rem')
-        root.style.setProperty('--admin-gap', '2rem')
+        root.style.setProperty('--admin-padding', '2rem')
+        root.style.setProperty('--admin-gap', '1.5rem')
         root.style.setProperty('--admin-font-scale', '1')
       }
     }
@@ -225,7 +225,11 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
                 <p className="text-white font-bold text-xl leading-none mb-0 tracking-tight">The Base</p>
-                <p className="text-[var(--brand-green)] text-[10px] font-bold tracking-tight mt-1.5 leading-none">Admin panel</p>
+                <p className="text-white/40 text-[10px] font-bold tracking-tight mt-1.5 leading-none">Admin command</p>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[8px] font-bold tracking-widest text-emerald-400/80 uppercase">Live Uplink</span>
+                </div>
               </div>
 
             </Link>
@@ -473,7 +477,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             fontSize: `calc(1rem * var(--admin-font-scale, 1))` 
           }}
         >
-          <div className="max-w-7xl mx-auto w-full">
+          <div className="main-content-wrapper">
             {children || <Outlet />}
           </div>
         </main>

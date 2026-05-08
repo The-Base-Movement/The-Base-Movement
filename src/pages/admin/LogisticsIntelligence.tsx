@@ -70,8 +70,8 @@ export default function LogisticsIntelligence() {
         setAlerts(alertsData)
         setAuditLogs(auditData)
       } catch (error) {
-        console.error('[LOGISTICS] Failed to synchronize supply chain telemetry:', error)
-        toast.error('Failed to synchronize supply chain telemetry.')
+        console.error('[LOGISTICS] Failed to synchronize supply chain operational metrics:', error)
+        toast.error('Failed to synchronize supply chain operational metrics.')
       } finally {
         setLoading(false)
       }
@@ -86,7 +86,7 @@ export default function LogisticsIntelligence() {
     
     if (success) {
       toast.success('Replenishment protocol initiated for all low-stock assets.')
-      // Refresh telemetry
+      // Refresh operational metrics
       const [updatedAlerts, updatedAudit] = await Promise.all([
         adminService.getInventoryAlerts(),
         adminService.getLogisticsAudit(15)
@@ -120,23 +120,23 @@ export default function LogisticsIntelligence() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-border/40 border-t-primary animate-spin" />
-          <p className="text-[10px] font-bold normal-case text-primary">Synchronizing supply chain telemetry...</p>
+          <p className="text-[10px] font-bold normal-case text-primary">Synchronizing supply chain operational metrics...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="admin-page-container animate-in fade-in duration-700">
       {/* 🚀 Header & Tactical Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
+      <div className="flex-columns items-center">
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Package className="w-8 h-8 text-on-surface" />
             Logistics monitoring
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Automated supply chain monitoring and regional dispatch tracking.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0">Automated supply chain monitoring and regional dispatch tracking.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -162,8 +162,8 @@ export default function LogisticsIntelligence() {
         </div>
       </div>
 
-      {/* 📊 High-Impact Telemetry */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {/* 📊 High-Impact operational metrics */}
+      <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
         {(() => {
           const avgDispatch = velocity.length > 0 
             ? (velocity.reduce((sum, v) => sum + v.avg_dispatch_hours, 0) / velocity.length).toFixed(1) 
@@ -209,9 +209,9 @@ export default function LogisticsIntelligence() {
         })()}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
         {/* 🚨 Inventory Intelligence (Urgent) */}
-        <Card className="lg:col-span-1 rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
+        <Card className="flex-1 rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
           <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
             <div className="flex items-center justify-between">
               <CardTitle className="text-xs font-bold normal-case font-meta">Inventory alerts</CardTitle>
@@ -258,7 +258,7 @@ export default function LogisticsIntelligence() {
         </Card>
 
         {/* 🚛 Regional Dispatch Velocity */}
-        <Card className="lg:col-span-2 rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
+        <Card className="flex-[2] rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
           <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xs font-bold normal-case font-meta">Regional dispatch performance</CardTitle>
@@ -282,7 +282,7 @@ export default function LogisticsIntelligence() {
                 <tbody className="divide-y divide-border/40">
                   {velocity.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-[10px] font-bold text-muted-foreground/80 normal-case">No dispatch telemetry available</td>
+                      <td colSpan={5} className="px-6 py-12 text-center text-[10px] font-bold text-muted-foreground/80 normal-case">No dispatch operational metrics available</td>
                     </tr>
                   ) : (
                     velocity.map((v, idx) => (
@@ -321,7 +321,7 @@ export default function LogisticsIntelligence() {
               <div className="md:hidden divide-y divide-border/40">
                 {velocity.length === 0 ? (
                   <div className="p-12 text-center">
-                    <p className="text-[10px] font-bold text-muted-foreground/80 normal-case">No dispatch telemetry available</p>
+                    <p className="text-[10px] font-bold text-muted-foreground/80 normal-case">No dispatch operational metrics available</p>
                   </div>
                 ) : (
                   velocity.map((v, idx) => (
@@ -370,10 +370,10 @@ export default function LogisticsIntelligence() {
 
       {/* 📍 Supply Chain Map (Placeholder for high-fidelity visualization) */}
       <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden p-0">
-        <div className="bg-on-surface p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div>
+        <div className="bg-on-surface p-8 flex-columns items-center justify-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+          <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
             <h3 className="text-white text-xl font-bold font-meta leading-tight">National supply chain map</h3>
-            <p className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-2">Real-time visualization of material flow across the 16 regions.</p>
+            <p className="text-[10px] font-bold normal-case text-muted-foreground/80 mb-0">Real-time visualization of material flow across the 16 regions.</p>
           </div>
           <Button 
             variant="outline" 

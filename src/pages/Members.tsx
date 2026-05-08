@@ -130,31 +130,31 @@ export default function Members() {
   return (
     <div className="bg-stone-50/50 min-h-screen font-meta pb-20">
       {/* Header Section */}
-      <section className="bg-charcoal-dark py-16 px-8 relative overflow-hidden">
+      <section className="bg-on-surface py-20 px-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-[0.03]"></div>
         </div>
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-[var(--brand-green)]/20 rounded-none flex items-center justify-center">
-              <Users className="w-6 h-6 text-[var(--brand-green)]" />
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-sm flex items-center justify-center">
+              <Users className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
             </div>
-            <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter mb-4">
+            <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter m-0">
               Movement Directory
             </h1>
-            <BrandLine />
           </div>
-          <p className="text-white/60 max-w-xl mb-0">
+          <BrandLine className="mb-8" />
+          <p className="text-muted-foreground/60 max-w-xl mb-0 font-body-md leading-relaxed">
             The Base movement is built by its people. Connect with brothers and sisters committed to Ghana's prosperity, both at home and in the diaspora.
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-8 -mt-8 relative z-20">
-        <Card className="border-none shadow-2xl shadow-slate-200/60 overflow-hidden bg-white rounded-none">
+      <div className="max-w-7xl mx-auto px-8 -mt-12 relative z-20">
+        <Card className="border-none shadow-[0_48px_96px_-16px_rgba(0,0,0,0.1)] overflow-hidden bg-white rounded-sm">
           <CardContent className="p-0">
             {/* Control Bar */}
-            <div className="p-6 border-b border-slate-100 bg-white space-y-6">
+            <div className="p-8 border-b border-border/40 bg-white space-y-6">
               <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center">
                 <Tabs 
                   defaultValue="GHANA" 
@@ -276,11 +276,11 @@ export default function Members() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-32 text-center">
-                  <div className="w-20 h-20 bg-slate-50 rounded-none flex items-center justify-center mb-6">
-                    <Users className="w-10 h-10 text-slate-200" />
+                  <div className="w-20 h-20 bg-muted/30 rounded-sm flex items-center justify-center mb-6">
+                    <Users className="w-10 h-10 text-muted-foreground/20" />
                   </div>
-                  <h3 className="text-charcoal-dark">No members found</h3>
-                  <p className="text-slate-400 max-w-sm mt-2">We couldn't find any members matching your current filters. Try adjusting your search criteria.</p>
+                  <h3 className="text-on-surface font-meta font-bold tracking-tight">No members found</h3>
+                  <p className="text-muted-foreground/60 max-w-sm mt-2 font-bold text-[11px] tracking-tight">We couldn't find any members matching your current filters. Try adjusting your search criteria.</p>
                   <button 
                     onClick={() => {
                       setSearch('');
@@ -304,23 +304,23 @@ export default function Members() {
       <Dialog open={!!selectedMember} onOpenChange={(open) => !open && setSelectedMember(null)}>
         <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-none rounded-none bg-white">
           <DialogHeader className="p-0">
-            <div className="bg-charcoal-dark p-8 relative overflow-hidden">
+            <div className="bg-on-surface p-8 relative overflow-hidden">
               <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-[0.03]"></div>
               </div>
               <div className="relative z-10 flex flex-col items-center">
-                <div className="w-24 h-24 rounded-none bg-primary/10 border-4 border-primary/20 flex items-center justify-center mb-4 shadow-xl">
+                <div className="w-24 h-24 rounded-sm bg-primary/10 border-4 border-primary/20 flex items-center justify-center mb-4 shadow-xl">
                   <User className="w-12 h-12 text-primary" />
                 </div>
-                <DialogTitle className="text-white mb-1">{selectedMember?.name}</DialogTitle>
+                <DialogTitle className="text-white mb-1 font-meta font-bold tracking-tight">{selectedMember?.name}</DialogTitle>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-primary tracking-tight">{selectedMember?.profession}</span>
-                  <span className="text-[10px] font-bold bg-primary/20 text-primary px-2 py-0.5 rounded-none tracking-tight">
+                  <span className="text-[10px] font-bold text-primary tracking-tight uppercase">{selectedMember?.profession}</span>
+                  <span className="text-[10px] font-bold bg-primary/20 text-primary px-3 py-1 rounded-sm tracking-tight">
                     {selectedMember?.status === 'Active' || selectedMember?.status === 'Approved' || !selectedMember?.status ? 'VERIFIED' : 'PENDING'}
                   </span>
                 </div>
               </div>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-accent"></div>
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-accent shadow-[0_-2px_10px_rgba(var(--brand-gold-rgb),0.5)]"></div>
             </div>
           </DialogHeader>
 

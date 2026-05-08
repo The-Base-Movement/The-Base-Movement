@@ -71,7 +71,7 @@ export function SystemHealthDashboard() {
               <Activity className="w-5 h-5 text-destructive" />
               Real-time API latency
             </CardTitle>
-            <CardDescription className="text-xs mt-1">Live telemetry monitoring of global data engine response times.</CardDescription>
+            <CardDescription className="text-xs mt-1">Live operational metrics monitoring of global data engine response times.</CardDescription>
           </div>
           <Button 
             variant="ghost" 
@@ -162,7 +162,7 @@ export function SystemHealthDashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* Hardware & Compute Telemetry */}
+        {/* Hardware & Compute operational metrics */}
         <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
           <CardHeader className="p-8 border-b border-border/10">
             <CardTitle className="text-xs font-bold tracking-tight text-muted-foreground/40 flex items-center gap-2">

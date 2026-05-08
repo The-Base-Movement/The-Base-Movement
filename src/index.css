@@ -126,6 +126,7 @@
   }
   html {
     scroll-behavior: smooth;
+    /* font-size: 1.5rem; */
   }
   body {
     @apply bg-background text-on-surface antialiased;
@@ -188,6 +189,100 @@
   .text-scale-lg { font-size: var(--fs-lg); }
   .text-scale-xl { font-size: var(--fs-xl); }
   .text-scale-2xl { font-size: var(--fs-2xl); }
+
+  /* Premium Responsive Layout Patterns */
+  .flex-columns {
+    display: flex;
+    gap: 1.5rem;
+    flex-direction: column;
+
+    /* Primary responsive mechanism: Container Queries (@90ch for multi-column) */
+    @container (min-width: 90ch) {
+      flex-direction: row;
+    }
+
+    & > * { 
+      flex: 1; 
+      min-width: 0; /* Prevent flex children from overflowing */
+    }
+
+    &.flex-between {
+      @container (min-width: 90ch) {
+        justify-content: space-between;
+        & > * { flex: initial; }
+        & > :first-child { flex: 1; }
+      }
+    }
+  }
+
+  .grid-responsive {
+    display: grid;
+    gap: var(--grid-gap, 2rem);
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-width, 32ch), 1fr));
+  }
+
+  /* The 'Flow' utility: Intrinsic vertical spacing for content blocks */
+  .flow > :where(:not(:first-child)) {
+    margin-block-start: var(--flow-space, 1.25em);
+  }
+
+  /* CSS Container Queries - Modern Adaptive Architecture */
+  main {
+    container-type: inline-size;
+    width: 100%;
+    /* Display grid removed to allow flex-1 from layouts to behave predictably */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .main-content-wrapper {
+    width: 100%;
+    max-inline-size: 110rem;
+    margin-inline: auto;
+    /* Grid layout for inner content if needed, but flex-columns/flow handle most spacing */
+    display: grid;
+    align-items: start;
+    gap: 2.5rem;
+  }
+
+  .cq-container {
+    container-type: inline-size;
+    width: 100%;
+  }
+
+  /* Content-driven breakpoints using the 'ch' unit */
+  .cq-content-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    
+    @container (min-width: 80ch) {
+      flex-direction: row;
+      gap: 2rem;
+    }
+  }
+
+  /* Typographic Readability Utilities (ch-based) */
+  .prose-narrow { max-width: 45ch; }
+  .prose-standard { max-width: 65ch; }
+  .prose-wide { max-width: 85ch; }
+  .prose-xl { max-width: 100ch; }
+
+  /* Administrative Layout Utilities (Density Aware) */
+  .admin-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-gap, 2rem);
+  }
+
+  .admin-page-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--admin-gap, 2rem);
+    padding-bottom: 5rem;
+    animation: fade-in 0.5s ease-out;
+  }
 }
 
 /* Material Symbols configuration */
@@ -237,7 +332,7 @@
   background: #f1f5ee;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to right, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)));
+  background: linear-gradient(to bottom, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)));
   border-radius: 4px;
 }
 
@@ -251,7 +346,7 @@
 }
 
 .sidebar-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(to right, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)));
+  background: linear-gradient(to bottom, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)));
   border-radius: 10px;
 }
 
