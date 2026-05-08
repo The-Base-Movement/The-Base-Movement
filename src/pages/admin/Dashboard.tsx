@@ -281,15 +281,15 @@ export default function AdminDashboard() {
                 <div className="hidden lg:flex items-center gap-6 mr-6 border-r border-border/40 pr-6">
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Total Growth</p>
-                    <p className="text-xs font-bold text-primary">+{growthData.reduce((acc, curr) => acc + curr.count, 0).toLocaleString()}</p>
+                    <p className="text-tiny font-bold text-primary">+{growthData.reduce((acc, curr) => acc + curr.count, 0).toLocaleString()}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Peak Day</p>
-                    <p className="text-xs font-bold text-on-surface">{Math.max(...growthData.map(d => d.count), 0)}</p>
+                    <p className="text-tiny font-bold text-on-surface">{Math.max(...growthData.map(d => d.count), 0)}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Avg/Day</p>
-                    <p className="text-xs font-bold text-on-surface">{(growthData.reduce((acc, curr) => acc + curr.count, 0) / (growthData.length || 1)).toFixed(0)}</p>
+                    <p className="text-tiny font-bold text-on-surface">{(growthData.reduce((acc, curr) => acc + curr.count, 0) / (growthData.length || 1)).toFixed(0)}</p>
                   </div>
                 </div>
                 <select className="h-7 px-2 bg-white border border-border/60 text-micro font-bold text-on-surface/80 rounded-sm outline-none focus:ring-1 focus:ring-primary/20 transition-all">
