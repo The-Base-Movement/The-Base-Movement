@@ -27,6 +27,7 @@ import { useState, useEffect } from 'react'
 import { 
   AreaChart, 
   Area, 
+  Bar,
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -275,60 +276,100 @@ export default function AdminDashboard() {
                 </CardTitle>
                 <CardDescription className="text-tiny font-medium text-muted-foreground/80 mt-1">Rolling 30-day expansion trend</CardDescription>
               </div>
-              <div className="flex items-center gap-2">
-                <select className="h-7 px-2 bg-white border border-border/60 text-micro font-bold text-on-surface/80 rounded-sm outline-none">
+              <div className="flex items-center gap-4">
+                {/* 📈 Tactical Summary Stats */}
+                <div className="hidden lg:flex items-center gap-6 mr-6 border-r border-border/40 pr-6">
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Total Growth</p>
+                    <p className="text-xs font-bold text-primary">+{growthData.reduce((acc, curr) => acc + curr.count, 0).toLocaleString()}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Peak Day</p>
+                    <p className="text-xs font-bold text-on-surface">{Math.max(...growthData.map(d => d.count), 0)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Avg/Day</p>
+                    <p className="text-xs font-bold text-on-surface">{(growthData.reduce((acc, curr) => acc + curr.count, 0) / (growthData.length || 1)).toFixed(0)}</p>
+                  </div>
+                </div>
+                <select className="h-7 px-2 bg-white border border-border/60 text-micro font-bold text-on-surface/80 rounded-sm outline-none focus:ring-1 focus:ring-primary/20 transition-all">
                   <option>Last 30 Days</option>
                   <option>Last 90 Days</option>
                 </select>
               </div>
             </CardHeader>
-            <CardContent className="p-8 h-[320px]">
+            <CardContent className="p-8 h-[360px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={growthData}>
+                <AreaChart data={growthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.08}/>
-                      <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0.01}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="hsl(var(--border) / 0.4)" />
+                  <CartesianGrid 
+                    strokeDasharray="3 3" 
+                    vertical={false} 
+                    horizontal={true} 
+                    stroke="hsl(var(--border) / 0.3)" 
+                  />
                   <XAxis 
                     dataKey="date" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fontWeight: 500, fill: 'hsl(var(--on-surface) / 0.4)' }}
+                    tick={{ fontSize: 9, fontWeight: 700, fill: 'hsl(var(--muted-foreground) / 0.8)' }}
+                    tickFormatter={(value) => value.toUpperCase()}
                     dy={12}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fontWeight: 500, fill: 'hsl(var(--on-surface) / 0.4)' }}
+                    tick={{ fontSize: 9, fontWeight: 700, fill: 'hsl(var(--muted-foreground) / 0.8)' }}
                   />
                   <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1c1917', 
-                      border: '1px solid rgba(255,255,255,0.1)', 
-                      borderRadius: '6px', 
-                      color: 'white',
-                      fontSize: '11px',
-                      fontWeight: '500',
-                      padding: '8px 12px'
-                    }} 
-                    labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: '4px' }}
-                    itemStyle={{ color: 'rgba(255,255,255,0.8)' }}
+                    cursor={{ fill: 'hsl(var(--muted) / 0.3)', radius: 2 }}
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-on-surface p-3 border border-white/10 rounded-sm shadow-2xl animate-in fade-in zoom-in-95 duration-200 min-w-[140px]">
+                            <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2 border-b border-white/5 pb-1.5">{label}</p>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between gap-4">
+                                <span className="text-[10px] font-bold text-white/60 uppercase">Daily Gain</span>
+                                <span className="text-sm font-bold text-white">+{payload[0].value}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-primary transition-all duration-500" 
+                                    style={{ width: `${(Number(payload[0].value) / Math.max(...growthData.map(d => d.count), 1)) * 100}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      }
+                      return null
+                    }}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="hsl(var(--destructive))" 
+                    radius={[2, 2, 0, 0]} 
+                    barSize={12}
+                    animationDuration={1500}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="count" 
-                    stroke="hsl(var(--destructive))" 
-                    strokeWidth={2}
-                    fillOpacity={1} 
+                    stroke="none" 
                     fill="url(#colorGrowth)" 
-                    animationDuration={1500}
+                    animationDuration={2500}
                   />
                 </AreaChart>
               </ResponsiveContainer>
-              </CardContent>
+            </CardContent>
           </Card>
 
           {/* Regional Performance - Filtered Table */}

@@ -380,13 +380,11 @@ class ContentService {
   }
 
   async getLocalAssets(category: string): Promise<string[]> {
-    const files = mediaManifest.files || []
-    
     switch (category) {
       case 'logos-favicons':
-        return files.filter(f => f.includes('logo') || f.includes('favicon'))
+        return mediaManifest.branding || []
       case 'public-assets':
-        return files.filter(f => !f.includes('logos') && !f.includes('favicon') && !f.includes('blog-images') && !f.includes('author-images'))
+        return mediaManifest.publicAssets || []
       default:
         return []
     }

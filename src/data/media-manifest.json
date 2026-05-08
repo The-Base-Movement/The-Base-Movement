@@ -1,35 +1,15 @@
 {
-  "lastUpdated": "2026-05-04T21:48:33.031Z",
-  "files": [
-    "/favicons/android-icon-144x144.png",
-    "/favicons/android-icon-192x192.png",
-    "/favicons/android-icon-36x36.png",
-    "/favicons/android-icon-48x48.png",
-    "/favicons/android-icon-72x72.png",
-    "/favicons/android-icon-96x96.png",
-    "/favicons/apple-icon-114x114.png",
-    "/favicons/apple-icon-120x120.png",
-    "/favicons/apple-icon-144x144.png",
-    "/favicons/apple-icon-152x152.png",
-    "/favicons/apple-icon-180x180.png",
-    "/favicons/apple-icon-57x57.png",
-    "/favicons/apple-icon-60x60.png",
-    "/favicons/apple-icon-72x72.png",
-    "/favicons/apple-icon-76x76.png",
-    "/favicons/apple-icon-precomposed.png",
-    "/favicons/apple-icon.png",
-    "/favicons/favicon-16x16.png",
-    "/favicons/favicon-32x32.png",
-    "/favicons/favicon-96x96.png",
-    "/favicons/ms-icon-144x144.png",
-    "/favicons/ms-icon-150x150.png",
-    "/favicons/ms-icon-310x310.png",
-    "/favicons/ms-icon-70x70.png",
-    "/founder.jpg",
-    "/hero-bg.png",
-    "/logo.png",
-    "/og-image.png",
-    "/party-headquarters.webp",
-    "/the-base-banner-1.png"
+  "lastUpdated": "2026-05-08T20:06:00.000Z",
+  "branding": [
+    "/branding/logo.png",
+    "/branding/favicon.ico"
+  ],
+  "publicAssets": [
+    "/branding/base-banner-image.png",
+    "/branding/founder-image.jpg",
+    "/branding/hero-background-image.png",
+    "/branding/og-image.png",
+    "/branding/party-headquarters-image.webp",
+    "/branding/twitter-card.png"
   ]
 }

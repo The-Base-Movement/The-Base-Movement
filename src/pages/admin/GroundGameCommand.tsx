@@ -114,6 +114,7 @@ export default function GroundGameCommand() {
     { name: 'Hostile', value: fieldLogs.filter(l => l.interaction_result === 'HOSTILE').length, color: '#ef4444' }
   ].filter(d => d.value > 0)
 
+  return (
     <div className="admin-page-container">
       {/* Page Header - Standardized */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">

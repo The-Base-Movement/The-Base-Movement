@@ -328,26 +328,26 @@ export default function AdminStore() {
             <Card className="rounded-sm border-border/60 shadow-sm bg-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">Stock value</span>
+                  <span className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest">Stock value</span>
                   <TrendingUp className="w-4 h-4 text-primary/20" />
                 </div>
                 <p className="text-3xl font-bold text-on-surface mb-1">
                   GHS {products.reduce((acc, p) => acc + (parseFloat(p.price.replace(/[^0-9.-]+/g, '')) * p.stock), 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                 </p>
-                <p className="text-micro text-muted-foreground/40 font-bold tracking-tight">Movement asset valuation</p>
+                <p className="text-xs font-bold tracking-tight text-muted-foreground/60 mt-1.5">Movement asset valuation</p>
               </CardContent>
             </Card>
 
             <Card className="rounded-sm border-border/60 shadow-sm bg-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">Active requests</span>
+                  <span className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest">Active requests</span>
                   <Truck className="w-4 h-4 text-primary/20" />
                 </div>
                 <p className="text-3xl font-bold text-on-surface mb-1">{requests.filter(r => r.status === 'Pending').length}</p>
                 <p className={cn(
-                  "text-micro font-bold tracking-tight",
-                  requests.filter(r => r.status === 'Pending').length > 0 ? "text-accent" : "text-muted-foreground/40"
+                  "text-xs font-bold tracking-tight mt-1.5",
+                  requests.filter(r => r.status === 'Pending').length > 0 ? "text-accent" : "text-muted-foreground/60"
                 )}>
                   {requests.filter(r => r.status === 'Pending').length > 0 ? 'Pending HQ approval' : 'All requests processed'}
                 </p>
@@ -357,11 +357,11 @@ export default function AdminStore() {
             <Card className="rounded-sm border-border/60 shadow-sm bg-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">Stock units</span>
+                  <span className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest">Stock units</span>
                   <Package className="w-4 h-4 text-muted-foreground/10" />
                 </div>
                 <p className="text-3xl font-bold text-on-surface mb-1">{products.reduce((acc, p) => acc + p.stock, 0).toLocaleString()}</p>
-                <p className="text-micro text-muted-foreground/40 font-bold tracking-tight">Across {products.length} catalog items</p>
+                <p className="text-xs font-bold tracking-tight text-muted-foreground/60 mt-1.5">Across {products.length} catalog items</p>
               </CardContent>
             </Card>
 
@@ -373,7 +373,7 @@ export default function AdminStore() {
                 <div className="flex items-center justify-between mb-4">
                   <span className={cn(
                     "text-micro font-bold uppercase tracking-widest",
-                    lowStockItems.length > 0 ? "text-destructive" : "text-muted-foreground/80"
+                    lowStockItems.length > 0 ? "text-destructive" : "text-muted-foreground/60"
                   )}>Inventory alerts</span>
                   <AlertTriangle className={cn("w-4 h-4", lowStockItems.length > 0 ? "text-destructive/20" : "text-muted-foreground/10")} />
                 </div>
@@ -382,8 +382,8 @@ export default function AdminStore() {
                   lowStockItems.length > 0 ? "text-destructive" : "text-on-surface"
                 )}>{lowStockItems.length}</p>
                 <p className={cn(
-                  "text-micro font-bold tracking-tight",
-                  lowStockItems.length > 0 ? "text-destructive/60" : "text-muted-foreground/40"
+                  "text-xs font-bold tracking-tight mt-1.5",
+                  lowStockItems.length > 0 ? "text-destructive/60" : "text-muted-foreground/60"
                 )}>
                   {lowStockItems.length > 0 ? "Replenishment required" : "Supply chain stable"}
                 </p>

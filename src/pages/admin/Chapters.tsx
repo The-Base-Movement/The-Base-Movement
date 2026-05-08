@@ -367,8 +367,8 @@ export default function ChaptersManagement() {
           </div>
         </CardHeader>
         <CardContent className="p-10 cq-container bg-muted/20">
-          <div className="cq-content-stack items-center justify-center">
-            <div className="relative w-full max-w-[500px] aspect-[4/5] bg-border/20 flex items-center justify-center border border-border/40 group overflow-hidden">
+          <div className="flex flex-col md:flex-row items-start gap-10">
+            <div className="relative w-full md:w-auto md:min-w-[280px] md:max-w-[340px] aspect-[4/5] bg-border/20 flex items-center justify-center border border-border/40 group overflow-hidden shrink-0">
              {/* Abstract SVG Map of Ghana Regions */}
              <svg viewBox="0 0 400 500" className="w-full h-full p-8 opacity-80 group-hover:opacity-100 transition-opacity duration-700">
                 {/* Northern Regions */}

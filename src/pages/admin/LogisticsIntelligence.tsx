@@ -202,7 +202,7 @@ export default function LogisticsIntelligence() {
               </div>
               <div>
                 <p className="text-xl md:text-3xl font-bold tracking-tighter text-on-surface">{stat.value}</p>
-                <p className="text-micro font-bold text-muted-foreground/80 mt-1">{stat.sub}</p>
+                <p className="text-xs font-bold text-muted-foreground/60 mt-1.5">{stat.sub}</p>
               </div>
             </Card>
           ))

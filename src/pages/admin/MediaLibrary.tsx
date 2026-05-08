@@ -43,17 +43,20 @@ export default function MediaLibrary() {
   const loadFiles = useCallback(async () => {
     setIsLoading(true)
     try {
-      // Load from Supabase
-      const cloudUrls = await contentService.getMediaFiles(activeFolder)
-      
-      // Load from Local Manifest for specific categories
-      let localUrls: string[] = []
-      if (activeFolder === 'logos-favicons' || activeFolder === 'public-assets') {
-        localUrls = await contentService.getLocalAssets(activeFolder)
+      if (activeFolder === 'logos-favicons') {
+        // Local-only: never query the DB for logos/favicons
+        const localUrls = await contentService.getLocalAssets('logos-favicons')
+        setFiles(localUrls)
+      } else {
+        // Load from Supabase
+        const cloudUrls = await contentService.getMediaFiles(activeFolder)
+        // Supplement with local manifest for public-assets
+        let localUrls: string[] = []
+        if (activeFolder === 'public-assets') {
+          localUrls = await contentService.getLocalAssets('public-assets')
+        }
+        setFiles([...cloudUrls, ...localUrls])
       }
-      
-      // Combine (deduplicate by filename if needed, but here we just list both)
-      setFiles([...cloudUrls, ...localUrls])
     } catch {
       toast.error('Failed to load media files')
     } finally {
@@ -192,7 +195,24 @@ export default function MediaLibrary() {
         </div>
 
         {/* Sidebar - Folders (Desktop Only) */}
-        <div className="hidden lg:block space-y-6 lg:sticky lg:top-24 self-start">
+        <div className="hidden lg:flex lg:flex-col space-y-4 lg:sticky lg:top-24 self-start">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-border/10 bg-muted/5">
+              <h3 className="font-bold text-on-surface text-xs normal-case">Search assets</h3>
+            </div>
+            <CardContent className="p-3">
+              <div className="relative group">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-on-surface transition-colors z-10" />
+                <Input
+                  placeholder="Search your assets..."
+                  className="pl-10 h-10 rounded-sm border-border/60 focus:ring-0 focus:border-on-surface transition-all bg-white text-xs"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-border/10 bg-muted/5">
               <h3 className="font-bold text-on-surface text-xs normal-case">Asset categories</h3>
@@ -222,18 +242,6 @@ export default function MediaLibrary() {
 
         {/* Main Content - File Grid */}
         <div className="lg:col-span-3 space-y-6">
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-on-surface transition-colors" />
-              <Input 
-                placeholder="Search your assets..." 
-                className="pl-12 h-12 rounded-sm border-border/60 focus:ring-0 focus:border-on-surface transition-all bg-white shadow-sm"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-
           <Card className="rounded-sm border-border/60 shadow-sm min-h-[500px] overflow-hidden bg-white">
             <CardContent className="p-8">
               {isLoading ? (
@@ -263,7 +271,7 @@ export default function MediaLibrary() {
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
                   {filteredFiles.map((url, idx) => (
                     <div key={idx} className="group relative">
                       <div className="aspect-square rounded-sm overflow-hidden bg-muted/5 border border-border/10 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-1">

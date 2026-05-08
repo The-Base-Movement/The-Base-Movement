@@ -4,20 +4,15 @@ import { Button } from '@/components/ui/neon-button'
 import { 
   Trash2, 
   RotateCcw, 
-  Trash, 
   FileText, 
   Package, 
   Image as ImageIcon,
-  Calendar,
-  Clock,
   ShieldAlert,
   Search,
-  Filter,
-  History,
-  Archive,
   AlertCircle,
-  LayoutGrid,
-  ChevronRight
+  Archive,
+  Clock,
+  History
 } from 'lucide-react'
 import { contentService } from '@/services/contentService'
 import { logisticsService } from '@/services/logisticsService'
@@ -127,7 +122,7 @@ export default function TrashPage() {
   }
 
   const getFilteredItems = () => {
-    let items: any[] = []
+    let items: (BlogPost | InventoryItem | MediaAsset | Author)[] = []
     if (activeTab === 'blogs') items = blogs
     else if (activeTab === 'products') items = products
     else if (activeTab === 'media') items = media
@@ -136,7 +131,8 @@ export default function TrashPage() {
     if (!searchQuery) return items
     
     return items.filter(item => {
-      const name = item.title || item.name || item.filename || ''
+      const r = item as unknown as Record<string, unknown>
+      const name = String(r['title'] ?? r['name'] ?? r['filename'] ?? '')
       return name.toLowerCase().includes(searchQuery.toLowerCase())
     })
   }
@@ -176,89 +172,99 @@ export default function TrashPage() {
       <div className="flex flex-col lg:flex-row gap-8 items-start relative">
         
         {/* Sticky Filter Sidebar */}
-        <aside className="w-full lg:w-80 sticky lg:top-32 space-y-6 shrink-0 z-30">
-          <div className="glass-card p-6 rounded-sm shadow-xl border border-stone-200/60 space-y-8 bg-white">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between px-2">
-                <h3 className="text-xs font-bold tracking-tight text-on-surface/40 flex items-center gap-2">
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                  Sector selection
-                </h3>
-              </div>
-              <nav className="flex flex-col gap-1.5">
-                <TabButton 
-                  active={activeTab === 'blogs'} 
-                  onClick={() => setActiveTab('blogs')} 
-                  icon={<FileText className="w-4 h-4" />} 
-                  label="Blog intelligence" 
-                  count={blogs.length}
-                />
-                <TabButton 
-                  active={activeTab === 'products'} 
-                  onClick={() => setActiveTab('products')} 
-                  icon={<Package className="w-4 h-4" />} 
-                  label="Logistics store" 
-                  count={products.length}
-                />
-                <TabButton 
-                  active={activeTab === 'media'} 
-                  onClick={() => setActiveTab('media')} 
-                  icon={<ImageIcon className="w-4 h-4" />} 
-                  label="Visual assets" 
-                  count={media.length}
-                />
-                <TabButton 
-                  active={activeTab === 'authors'} 
-                  onClick={() => setActiveTab('authors')} 
-                  icon={<PenTool className="w-4 h-4" />} 
-                  label="Editorial roster" 
-                  count={authors.length}
-                />
-              </nav>
+        <aside className="w-full lg:w-72 sticky lg:top-32 space-y-6 shrink-0 z-30">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-border/10 bg-muted/5">
+              <h3 className="font-bold text-on-surface text-xs normal-case">Vault sectors</h3>
             </div>
-            
-            <div className="pt-8 border-t border-stone-100 space-y-4">
-              <h3 className="text-xs font-bold tracking-tight text-on-surface/40 flex items-center gap-2 px-2">
-                <Search className="w-3.5 h-3.5" />
-                Vault scanner
-              </h3>
+            <CardContent className="p-2">
+              <div className="space-y-1">
+                <Button
+                  variant={activeTab === 'blogs' ? "primary" : "ghost"}
+                  onClick={() => setActiveTab('blogs')}
+                  className={cn(
+                    "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
+                    activeTab === 'blogs'
+                      ? "shadow-lg shadow-brand-green/20"
+                      : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
+                  )}
+                >
+                  <FileText className={cn("w-4 h-4", activeTab === 'blogs' ? "text-white" : "text-muted-foreground/40")} />
+                  <span className="flex-1 text-left">Blog intelligence</span>
+                  <span className={cn("text-micro font-bold", activeTab === 'blogs' ? "text-white/70" : "text-muted-foreground/40")}>{blogs.length}</span>
+                </Button>
+                <Button
+                  variant={activeTab === 'products' ? "primary" : "ghost"}
+                  onClick={() => setActiveTab('products')}
+                  className={cn(
+                    "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
+                    activeTab === 'products'
+                      ? "shadow-lg shadow-brand-green/20"
+                      : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
+                  )}
+                >
+                  <Package className={cn("w-4 h-4", activeTab === 'products' ? "text-white" : "text-muted-foreground/40")} />
+                  <span className="flex-1 text-left">Logistics store</span>
+                  <span className={cn("text-micro font-bold", activeTab === 'products' ? "text-white/70" : "text-muted-foreground/40")}>{products.length}</span>
+                </Button>
+                <Button
+                  variant={activeTab === 'media' ? "primary" : "ghost"}
+                  onClick={() => setActiveTab('media')}
+                  className={cn(
+                    "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
+                    activeTab === 'media'
+                      ? "shadow-lg shadow-brand-green/20"
+                      : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
+                  )}
+                >
+                  <ImageIcon className={cn("w-4 h-4", activeTab === 'media' ? "text-white" : "text-muted-foreground/40")} />
+                  <span className="flex-1 text-left">Visual assets</span>
+                  <span className={cn("text-micro font-bold", activeTab === 'media' ? "text-white/70" : "text-muted-foreground/40")}>{media.length}</span>
+                </Button>
+                <Button
+                  variant={activeTab === 'authors' ? "primary" : "ghost"}
+                  onClick={() => setActiveTab('authors')}
+                  className={cn(
+                    "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
+                    activeTab === 'authors'
+                      ? "shadow-lg shadow-brand-green/20"
+                      : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
+                  )}
+                >
+                  <PenTool className={cn("w-4 h-4", activeTab === 'authors' ? "text-white" : "text-muted-foreground/40")} />
+                  <span className="flex-1 text-left">Editorial roster</span>
+                  <span className={cn("text-micro font-bold", activeTab === 'authors' ? "text-white/70" : "text-muted-foreground/40")}>{authors.length}</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-border/10 bg-muted/5">
+              <h3 className="font-bold text-on-surface text-xs normal-case">Vault scanner</h3>
+            </div>
+            <CardContent className="p-4 space-y-4">
               <div className="relative group/search">
-                <div className="absolute inset-0 bg-stone-100 rounded-sm group-focus-within/search:bg-white group-focus-within/search:ring-2 group-focus-within/search:ring-destructive/10 transition-all duration-300"></div>
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface/20 group-focus-within/search:text-destructive/40 transition-colors z-10" />
-                <input 
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within/search:text-on-surface transition-colors z-10" />
+                <input
                   type="text"
                   placeholder="Scan keywords..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="relative w-full h-12 pl-11 pr-4 bg-transparent border-none focus:ring-0 text-sm font-bold text-on-surface placeholder:text-on-surface/20 z-10"
+                  className="w-full h-10 pl-10 pr-4 bg-muted/30 border border-border/40 focus:bg-white focus:border-border/60 rounded-sm text-xs font-medium outline-none transition-all"
                 />
               </div>
-            </div>
-
-            {/* Tactical Status */}
-            <div className="pt-4 px-2">
-              <div className="bg-destructive/5 rounded-sm p-5 border border-destructive/10 space-y-4">
+              <div className="bg-destructive/5 rounded-sm p-4 border border-destructive/10 space-y-2">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-destructive" />
-                  <p className="text-xs font-bold text-destructive tracking-tight uppercase">Critical awareness</p>
+                  <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
+                  <p className="text-micro font-bold text-destructive tracking-tight uppercase">Critical awareness</p>
                 </div>
-                <p className="text-tiny font-bold text-destructive leading-relaxed">
-                  Permanent deletion occurs automatically at T-0. Records cannot be recovered once the purge protocol completes.
+                <p className="text-micro font-medium text-destructive/80 leading-relaxed">
+                  Permanent deletion occurs at T-0. Records cannot be recovered once purged.
                 </p>
               </div>
-            </div>
-          </div>
-
-          {/* Secondary Intelligence Card */}
-          <div className="glass-card p-6 rounded-sm border border-stone-100 bg-stone-50/50 space-y-4 shadow-sm group">
-            <h4 className="text-micro font-bold tracking-tight text-on-surface/40 uppercase">Archival Guide</h4>
-            <p className="text-tiny font-medium text-on-surface/60 leading-relaxed">
-              Use the vault scanner to locate specific personnel files or media assets slated for removal.
-            </p>
-            <Button variant="ghost" className="w-full justify-between h-9 px-0 text-micro font-bold tracking-tight text-on-surface hover:bg-transparent group-hover:text-destructive transition-colors">
-              Read security protocols <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
+            </CardContent>
+          </Card>
         </aside>
 
         {/* Main Content Sector */}
@@ -370,35 +376,6 @@ export default function TrashPage() {
   )
 }
 
-function TabButton({ active, onClick, icon, label, count }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string, count: number }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "flex items-center gap-4 px-4 py-4 rounded-sm transition-all duration-300 active:scale-95 group relative w-full border",
-        active 
-          ? "bg-white border-stone-200 text-on-surface shadow-md ring-1 ring-stone-100" 
-          : "bg-transparent border-transparent text-on-surface/40 hover:text-on-surface/70 hover:bg-stone-50/50"
-      )}
-    >
-      <div className={cn(
-        "w-10 h-10 rounded-sm flex items-center justify-center transition-all duration-500",
-        active ? "bg-stone-50 text-destructive shadow-sm scale-110" : "bg-stone-100/50 text-on-surface/20 group-hover:text-on-surface/40"
-      )}>
-        {icon}
-      </div>
-      <div className="text-left flex-1">
-        <p className={cn("text-tiny font-bold tracking-tight leading-none mb-1", active ? "text-on-surface" : "text-on-surface/60")}>{label}</p>
-        <p className={cn("text-micro font-bold tracking-tight", active ? "text-destructive" : "text-on-surface/20")}>{count} Units</p>
-      </div>
-      {active && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <div className="w-1.5 h-1.5 rounded-full bg-destructive shadow-lg shadow-destructive/40" />
-        </div>
-      )}
-    </button>
-  )
-}
 
 function TrashCard({ 
   title, 
@@ -479,7 +456,7 @@ function TrashCard({
                 </div>
                 <div className="flex items-center gap-1.5">
                   <History className="w-3.5 h-3.5" />
-                  ID: {Math.random().toString(36).substring(7).toUpperCase()}
+                  ID: {title.substring(0, 8).toUpperCase()}
                 </div>
               </div>
             </div>
