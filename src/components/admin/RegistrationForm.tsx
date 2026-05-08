@@ -590,7 +590,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                   <div className="bg-on-surface text-white p-10 mt-10 border-l-8 border-primary rounded-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
                     <h5 className="text-accent mb-4 font-bold tracking-tight text-xs">The Base declaration</h5>
-                    <p className="text-white/60 mb-8 leading-relaxed text-sm font-medium">
+                    <p className="text-white/80 mb-8 leading-relaxed text-sm font-medium">
                       I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong className="text-white">THE BASE</strong>: Patriotism, Honesty, and Discipline and pledge to advance the cause of <strong className="text-accent">GHANA FIRST</strong> in all my actions.
                     </p>
                     
@@ -602,7 +602,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         onChange={(e) => setAgreed(e.target.checked)}
                         className="mt-1 w-6 h-6 shrink-0 accent-primary bg-on-surface border-white/20 rounded-lg cursor-pointer"
                       />
-                      <label htmlFor="privacy" className="text-sm text-white/40 cursor-pointer leading-tight font-bold">
+                      <label htmlFor="privacy" className="text-sm text-white/70 cursor-pointer leading-tight font-bold">
                         I accept this declaration on behalf of the member and agree to the <span className="text-accent font-bold underline underline-offset-4 decoration-accent/20">Privacy Policy</span> <span className="text-destructive">*</span>
                       </label>
                     </div>

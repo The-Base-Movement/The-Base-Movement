@@ -249,7 +249,7 @@ export default function Donate() {
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
-            <span className="text-[10px] font-bold text-white/60 tracking-tight">Financial Mobilization Unit</span>
+            <span className="text-[10px] font-bold text-white/90 tracking-tight">Financial Mobilization Unit</span>
           </div>
           <h1 className="mb-4 tracking-tight font-meta">
             Support the <span className="text-primary drop-shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.3)]">Movement</span>
@@ -282,13 +282,13 @@ export default function Donate() {
                           "w-7 h-7 flex items-center justify-center text-[10px] font-bold transition-all border",
                           activeStep === s.step 
                             ? `${s.color} border-transparent ${s.text} shadow-lg shadow-black/10 scale-110` 
-                            : "bg-white border-border/60 text-muted-foreground/40 group-hover:border-on-surface group-hover:text-on-surface"
+                            : "bg-white border-border/60 text-muted-foreground/80 group-hover:border-on-surface group-hover:text-on-surface"
                         )}>
                           {s.step}
                         </div>
                         <span className={cn(
                           "text-[8px] font-bold tracking-tight mt-2 transition-colors",
-                          activeStep === s.step ? "text-on-surface" : "text-muted-foreground/40"
+                          activeStep === s.step ? "text-on-surface" : "text-muted-foreground/80"
                         )}>
                           {s.label}
                         </span>
@@ -308,7 +308,7 @@ export default function Donate() {
               <Check className="w-10 h-10 text-primary" />
             </div>
             <h2 className="text-2xl font-bold text-charcoal-dark mb-3 font-meta tracking-tight">Thank You!</h2>
-            <p className="text-slate-600 mb-8 font-body-md leading-relaxed">
+            <p className="text-muted-foreground/90 mb-8 font-body-md leading-relaxed">
               Your donation has been recorded and will be verified shortly. Your support is what makes this movement possible.
             </p>
             <Button asChild variant="primary" size="lg">
@@ -324,7 +324,7 @@ export default function Donate() {
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                 <div>
                   <h2 className="text-2xl font-bold text-on-surface tracking-tight font-meta">Strategic Priorities</h2>
-                  <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight mt-2">Deploy your capital to critical movement cells.</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight mt-2">Deploy your capital to critical movement cells.</p>
                 </div>
               </div>
               
@@ -343,12 +343,12 @@ export default function Donate() {
                     </div>
                     <CardContent className="p-8 flex flex-col flex-1">
                       <h3 className="font-bold text-on-surface font-meta text-base mb-3 group-hover:text-primary transition-colors tracking-tight">{c.title}</h3>
-                      <p className="text-[11px] font-bold text-muted-foreground/60 mb-8 line-clamp-2 leading-relaxed normal-case">{c.description}</p>
+                      <p className="text-[11px] font-bold text-muted-foreground/90 mb-8 line-clamp-2 leading-relaxed normal-case">{c.description}</p>
                       
                       <div className="mt-auto space-y-6">
                         <div>
                           <div className="flex justify-between items-end mb-2">
-                            <span className="text-[9px] font-bold text-muted-foreground/40 tracking-tight">Strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
+                             <span className="text-[9px] font-bold text-muted-foreground/80 tracking-tight">Strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
                             <span className="text-xs font-bold font-meta text-on-surface">GHS {c.raisedAmount.toLocaleString()}</span>
                           </div>
                           <div className="h-1.5 w-full bg-muted/10 overflow-hidden rounded-full border border-border/5">
@@ -399,7 +399,7 @@ export default function Donate() {
                   <div className="grid grid-cols-1 gap-6 pt-8 border-t border-white/10">
                     <div>
                       <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">Network Hub</p>
-                      <p className="text-white/60 font-bold font-meta text-[11px]">MTN Mobile Money</p>
+                      <p className="text-white/90 font-bold font-meta text-[11px]">MTN Mobile Money</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold tracking-tight text-white/40 font-meta mb-2">Deployment Reference</p>
@@ -427,7 +427,7 @@ export default function Donate() {
 
                 <form onSubmit={handleSubmit} id="donationForm" className="space-y-6 flex-1">
                   <div className="space-y-2">
-                    <label htmlFor="fullName" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
+                    <label htmlFor="fullName" className="text-[10px] font-bold text-muted-foreground/80 font-meta tracking-tight">
                       Identification <span className="text-destructive">*</span>
                     </label>
                     <input 
@@ -442,7 +442,7 @@ export default function Donate() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="phone" className="text-[10px] font-bold text-muted-foreground/40 font-meta tracking-tight">
+                    <label htmlFor="phone" className="text-[10px] font-bold text-muted-foreground/80 font-meta tracking-tight">
                       Contact line <span className="text-destructive">*</span>
                     </label>
                     <input 
@@ -542,7 +542,7 @@ export default function Donate() {
                       <div className="flex items-center gap-3">
                         <Activity className="w-4 h-4 text-primary" />
                         <h4 className="font-bold text-on-surface font-meta tracking-tight text-[11px]">
-                          {isLoggedIn ? 'Active session' : 'Movement ID'} <span className="text-muted-foreground/40 font-bold tracking-normal">(optional)</span>
+                          {isLoggedIn ? 'Active session' : 'Movement ID'} <span className="text-muted-foreground/80 font-bold tracking-tight">Active Mobilization</span>
                         </h4>
                       </div>
                       <p className="text-[10px] text-muted-foreground/60 font-bold leading-relaxed tracking-tight">
@@ -698,7 +698,7 @@ export default function Donate() {
                     onClick={() => setHistoryTab('contributions')}
                     className={cn(
                       "px-8 py-2.5 text-[9px] font-bold tracking-tight rounded-sm transition-all",
-                      historyTab === 'contributions' ? "bg-primary text-white shadow-md" : "text-muted-foreground/60 hover:text-on-surface"
+                      historyTab === 'contributions' ? "bg-primary text-white shadow-md" : "text-muted-foreground/90 hover:text-on-surface"
                     )}
                   >
                     Mobilization History
@@ -707,7 +707,7 @@ export default function Donate() {
                     onClick={() => setHistoryTab('spending')}
                     className={cn(
                       "px-8 py-2.5 text-[9px] font-bold tracking-tight rounded-sm transition-all",
-                      historyTab === 'spending' ? "bg-primary text-white shadow-md" : "text-muted-foreground/60 hover:text-on-surface"
+                      historyTab === 'spending' ? "bg-primary text-white shadow-md" : "text-muted-foreground/90 hover:text-on-surface"
                     )}
                   >
                     Spending & Allocation
@@ -766,11 +766,11 @@ export default function Donate() {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-muted/30 border-b border-border/40">
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Deployment details</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Capital</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Channel</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Verification</th>
-                        <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case text-right">Audit</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Deployment details</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Capital</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Channel</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Verification</th>
+                        <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case text-right">Audit</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/40">
@@ -795,13 +795,13 @@ export default function Donate() {
                                 {contributionFilter === 'all' ? item.fullName : 'Verified Contribution'}
                               </p>
                               <p className="text-[10px] text-primary font-bold tracking-tight mt-1">{item.campaignTitle || 'Strategic Fund'}</p>
-                              <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
+                              <p className="text-[9px] text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
                             </td>
                             <td className="p-6">
                               <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
                             </td>
                             <td className="p-6">
-                              <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.method || 'Standard MoMo'}</p>
+                               <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">{item.method || 'Standard MoMo'}</p>
                             </td>
                             <td className="p-6">
                               <span className="inline-flex items-center gap-2 px-3 py-1 text-[9px] font-bold tracking-tight rounded-sm bg-primary/10 text-primary">
@@ -834,13 +834,13 @@ export default function Donate() {
                                 <td className="p-6">
                                   <p className="text-[10px] font-bold text-on-surface tracking-tight normal-case">{item.chapter}</p>
                                   <p className="text-[10px] text-accent font-bold tracking-tight mt-1">{item.category}</p>
-                                  <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
+                                  <p className="text-[9px] text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
                                 </td>
                                 <td className="p-6">
                                   <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>
                                 </td>
                                 <td className="p-6">
-                                  <p className="text-[10px] font-bold text-muted-foreground/60 tracking-tight">{item.description}</p>
+                                   <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">{item.description}</p>
                                 </td>
                                 <td className="p-6">
                                   <span className={cn(
@@ -969,7 +969,7 @@ export default function Donate() {
                          <thead>
                            <tr className="bg-muted/30 border-b border-border/40">
                              <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Contributor</th>
-                             <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Capital</th>
+                             <th className="p-6 text-[9px] font-bold text-muted-foreground/80 tracking-tight normal-case">Capital</th>
                              <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case">Cell</th>
                              <th className="p-6 text-[9px] font-bold text-muted-foreground/40 tracking-tight normal-case text-right">Verification</th>
                            </tr>
@@ -979,7 +979,7 @@ export default function Donate() {
                              <tr key={idx} className="hover:bg-muted/10 transition-colors group">
                                <td className="p-6">
                                  <p className="text-xs font-bold text-on-surface tracking-tight normal-case">{item.fullName}</p>
-                                 <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight mt-1">{item.date}</p>
+                                 <p className="text-[9px] text-muted-foreground/80 font-bold tracking-tight mt-1">{item.date}</p>
                                </td>
                                <td className="p-6">
                                  <p className="text-sm font-bold text-on-surface font-meta">{item.amount}</p>

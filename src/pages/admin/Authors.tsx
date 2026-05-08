@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, PenTool, Edit3, Trash2, Shield, Loader2 } from 'lucide-react'
+import { Plus, Search, PenTool, Edit3, Trash2, Shield, Loader2, Eye, Calendar, Quote, User } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { contentService } from '@/services/contentService'
 import type { Author } from '@/types/admin'
 import { toast } from 'sonner'
@@ -16,11 +17,31 @@ export default function AdminAuthors() {
   const [isLoading, setIsLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string, name: string } | null>(null)
+  const [viewingAuthor, setViewingAuthor] = useState<Author | null>(null)
   const [roleFilter, setRoleFilter] = useState('All Roles')
 
   useEffect(() => {
     fetchAuthors()
   }, [])
+
+  // Deep Link Handling for Global Search
+  useEffect(() => {
+    if (authors.length > 0) {
+      const params = new URLSearchParams(window.location.search)
+      const viewId = params.get('view')
+      if (viewId) {
+        const author = authors.find(a => a.id === viewId)
+        if (author) {
+          // Defer to avoid synchronous setState warning
+          setTimeout(() => {
+            setViewingAuthor(author)
+            // Clean up URL
+            window.history.replaceState({}, '', window.location.pathname)
+          }, 0)
+        }
+      }
+    }
+  }, [authors])
 
   const fetchAuthors = async () => {
     try {
@@ -184,8 +205,18 @@ export default function AdminAuthors() {
                         <Button 
                           variant="outline" 
                           size="icon" 
+                          className="h-10 w-10 text-stone-500 hover:text-brand-green border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
+                          onClick={() => setViewingAuthor(author)}
+                          title="View Profile"
+                        >
+                          <Eye className="w-5 h-5" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
                           className="h-10 w-10 text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => window.location.href = `/admin/authors/edit/${author.id}`}
+                          title="Edit Profile"
                         >
                           <Edit3 className="w-5 h-5" />
                         </Button>
@@ -216,6 +247,102 @@ export default function AdminAuthors() {
         itemName={deleteConfirm?.name || ''}
         isLoading={isDeleting === deleteConfirm?.id}
       />
+
+      <AuthorDetailModal 
+        author={viewingAuthor}
+        isOpen={!!viewingAuthor}
+        onClose={() => setViewingAuthor(null)}
+      />
     </div>
+  )
+}
+
+function AuthorDetailModal({ author, isOpen, onClose }: { author: Author | null, isOpen: boolean, onClose: () => void }) {
+  if (!author) return null
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-4xl bg-white border-stone-200 p-0 overflow-hidden rounded-sm shadow-2xl">
+        <div className="h-32 bg-stone-100 relative">
+          <div className="absolute -bottom-12 left-8">
+            <div className="w-24 h-24 rounded-full border-4 border-white bg-stone-200 overflow-hidden shadow-lg">
+              {author.imageUrl ? (
+                <img src={author.imageUrl} alt={author.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-stone-400 bg-stone-100">
+                  <User className="w-10 h-10" />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        <div className="pt-16 px-8 pb-8">
+          <DialogHeader className="sr-only">
+            <DialogTitle>{author.name} Profile</DialogTitle>
+            <DialogDescription>Viewing editorial profile for {author.name}</DialogDescription>
+          </DialogHeader>
+
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-stone-900 font-meta tracking-tight">{author.name}</h2>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
+                <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 whitespace-nowrap">
+                  {author.role || 'Contributor'}
+                </span>
+                <span className="text-xs text-stone-400 flex items-center gap-1.5 font-medium">
+                  <Shield className="w-3.5 h-3.5 text-stone-300" />
+                  Editorial ID: <span className="text-stone-600 font-mono">{author.id.substring(0, 8)}</span>
+                </span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              className="text-xs font-bold uppercase tracking-wider"
+              onClick={() => window.location.href = `/admin/authors/edit/${author.id}`}
+            >
+              <Edit3 className="w-3.5 h-3.5 mr-2" />
+              Edit Profile
+            </Button>
+          </div>
+
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <Quote className="w-4 h-4 text-stone-300" />
+                Biography & Editorial Mission
+              </h3>
+              <div className="text-stone-600 text-base leading-relaxed bg-stone-50/50 p-6 rounded-sm border border-stone-100 italic relative group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-stone-200 group-hover:bg-brand-red transition-colors" />
+                {author.bio || "No biography has been established for this editorial profile. Profiles without biographies may appear less authoritative to the mobilization base."}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-stone-50/80 border-t border-stone-100 px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-12">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-stone-400 uppercase font-bold tracking-tighter mb-0.5">Enlisted Date</span>
+              <span className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                <Calendar className="w-3 h-3 text-stone-400" />
+                {format(new Date(author.createdAt), 'MMMM dd, yyyy')}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] text-stone-400 uppercase font-bold tracking-tighter mb-0.5">Current Status</span>
+              <span className="text-xs font-bold text-green-600 flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                Active Duty
+              </span>
+            </div>
+          </div>
+          <div className="text-[10px] text-stone-300 font-bold uppercase tracking-widest flex items-center gap-2">
+            <Shield className="w-3 h-3" />
+            Verified Editorial Personnel
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }

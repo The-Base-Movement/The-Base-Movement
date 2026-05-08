@@ -106,7 +106,7 @@ export default function Home() {
             <div className="flex justify-center md:justify-start">
               <BrandLine />
             </div>
-            <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-2xl mb-10 leading-relaxed font-body-md mx-auto md:mx-0">
+            <p className="text-white/90 text-sm md:text-base font-body-md max-w-xl animate-in slide-in-from-bottom duration-1000 delay-200">
               A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry and innovation.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-3 justify-center md:justify-start">
@@ -178,21 +178,21 @@ export default function Home() {
             <div className="border-l-2 border-destructive pl-6">
               <span className="text-destructive font-meta font-bold tracking-tight text-xs mb-3 block">Our mission</span>
               <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Actionable agenda</h3>
-              <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
+              <p className="text-white/80 leading-relaxed font-body-md text-sm">
                 To deliver an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians, covering education, governance, industrialisation, infrastructure, institutional reform, and agriculture.
               </p>
             </div>
             <div className="border-l-2 border-accent pl-6">
               <span className="text-accent font-meta font-bold tracking-tight text-xs mb-3 block">Our values</span>
               <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Patriotism, honesty, discipline</h3>
-              <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
+              <p className="text-white/80 leading-relaxed font-body-md text-sm">
                 We are guided by love of country, transparency in leadership, and the moral courage to do what is right for Ghana.
               </p>
             </div>
             <div className="border-l-2 border-primary pl-6">
               <span className="text-primary font-meta font-bold tracking-tight text-xs mb-3 block">Our vision</span>
               <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">A transformed nation</h3>
-              <p className="text-muted-foreground/60 leading-relaxed font-body-md text-sm">
+              <p className="text-white/80 leading-relaxed font-body-md text-sm">
                 A Ghana with quality education, lean accountable government, industrialisation, tourism, and agro-processing, quality infrastructure, comprehensive institutional reform, and expertise-led agriculture.
               </p>
             </div>
@@ -210,14 +210,14 @@ export default function Home() {
               <dd className="m-0">
                 <AnimatedCounter target={355482} />
               </dd>
-              <dt className="text-sm text-on-surface/40 mt-4 tracking-tight font-bold">Citizens joined</dt>
+              <dt className="text-sm text-on-surface-muted mt-4 tracking-tight font-bold">Citizens joined</dt>
             </div>
             <div className="pl-8 relative">
               <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
               <dd className="m-0">
                 <AnimatedCounter target={2} />
               </dd>
-              <dt className="text-sm text-on-surface/40 mt-4 tracking-tight font-bold">Global platforms</dt>
+              <dt className="text-sm text-on-surface-muted mt-4 tracking-tight font-bold">Global platforms</dt>
             </div>
           </dl>
         </div>
@@ -263,7 +263,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-[10px] font-meta font-bold text-primary tracking-tight">{post.category}</span>
-                    <span className="text-[10px] text-muted-foreground/60 font-meta">
+                    <span className="text-[10px] text-muted-foreground font-meta">
                       {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
                     </span>
                   </div>
@@ -298,7 +298,7 @@ export default function Home() {
                 <h2 id="cta-heading" className="text-4xl md:text-6xl font-meta font-bold text-white mb-8 leading-[1.1] tracking-tighter">
                   Join 355,482 people building Ghana’s future.
                 </h2>
-                <p className="text-lg md:text-xl text-muted-foreground/80 mb-12 leading-relaxed font-body-md max-w-2xl mx-auto">
+                <p className="text-lg md:text-xl text-white/80 mb-12 leading-relaxed font-body-md max-w-2xl mx-auto">
                   From Ghana to the diaspora, The Base is more than a platform - it's a collective engine for national industrialization and economic dignity.
                 </p>
                 
@@ -318,7 +318,7 @@ export default function Home() {
                 {/* Trust Row - Pill Badges */}
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   {['Base Ghana', 'Base Diaspora', 'Free Registration'].map((label) => (
-                    <span key={label} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-meta font-bold text-muted-foreground/80 tracking-tight">
+                    <span key={label} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-meta font-bold text-white/80 tracking-tight">
                       {label}
                     </span>
                   ))}

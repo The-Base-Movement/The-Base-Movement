@@ -43,7 +43,13 @@ import jsPDF from 'jspdf'
 export default function MembersList() {
   const [members, setMembers] = useState<Member[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      return params.get('search') || ''
+    }
+    return ''
+  })
   const { toast } = useToast()
   const [isExporting, setIsExporting] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
@@ -439,7 +445,7 @@ export default function MembersList() {
         {selectedIds.size > 0 && (
           <div className="px-6 py-3 bg-on-surface text-white flex items-center justify-between animate-in slide-in-from-top-2 duration-300">
             <div className="flex items-center gap-4">
-              <p className="text-[10px] font-bold tracking-tight text-white/60">
+              <p className="text-[10px] font-bold tracking-tight text-white/90">
                 {selectedIds.size} members selected
               </p>
               <div className="h-4 w-px bg-white/20" />
@@ -614,7 +620,7 @@ export default function MembersList() {
                       </span>
                     </td>
                     <td className="px-6 py-5">
-                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-1">
                         <Button 
                           variant="ghost" 
                           size="icon" 

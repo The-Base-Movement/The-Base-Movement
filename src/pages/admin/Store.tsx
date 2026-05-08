@@ -310,7 +310,7 @@ export default function AdminStore() {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-on-surface">Inventory alert</p>
-                  <p className="text-xs text-on-surface/60">Some items require replenishment soon.</p>
+                  <p className="text-xs text-on-surface/90">Some items require replenishment soon.</p>
                 </div>
               </div>
               <Button 

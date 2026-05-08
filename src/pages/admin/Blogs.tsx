@@ -156,9 +156,7 @@ export default function AdminBlogs() {
     }
   }, [toast])
 
-  useEffect(() => {
-    fetchPosts()
-  }, [fetchPosts])
+
 
   const handleEditPost = (post?: BlogPost) => {
     if (post) {
@@ -213,6 +211,29 @@ export default function AdminBlogs() {
     setViewPost(post)
     setCurrentView('view')
   }
+
+  useEffect(() => {
+    fetchPosts()
+  }, [fetchPosts])
+
+  // Deep Link Handling for Global Search
+  useEffect(() => {
+    if (posts.length > 0) {
+      const params = new URLSearchParams(window.location.search)
+      const editId = params.get('edit')
+      if (editId) {
+        const post = posts.find(p => p.id === editId)
+        if (post) {
+          // Defer to avoid synchronous setState warning in effect
+          setTimeout(() => {
+            handleEditPost(post)
+            // Clean up URL to avoid re-opening on reload
+            window.history.replaceState({}, '', window.location.pathname)
+          }, 0)
+        }
+      }
+    }
+  }, [posts])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -728,155 +749,187 @@ export default function AdminBlogs() {
       </div>
 
 
-      {/* Control Bar */}
-      <Card className="rounded-sm border-border/40 bg-white p-2 shadow-sm mb-10">
-        <div className="flex flex-wrap items-center gap-8 px-2 py-1">
-          <div className="flex-1 min-w-[240px] relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-            <input 
-              type="text" 
-              placeholder="Search posts by title or category..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-muted/5 border-none rounded-lg text-sm font-medium focus:ring-1 focus:ring-border/40 transition-all placeholder:text-muted-foreground/40"
-            />
-          </div>
-          <div className="flex items-center gap-3 pr-2">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="h-10 w-[160px] bg-white border-border/40 text-sm font-semibold rounded-lg">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="Published">Published</SelectItem>
-                <SelectItem value="Pending Verification">Pending</SelectItem>
-                <SelectItem value="Draft">Drafts</SelectItem>
-              </SelectContent>
-            </Select>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        {/* Sidebar Filters */}
+        <aside className="lg:sticky lg:top-24 self-start space-y-8 order-2 lg:order-1">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
+            <div className="p-4 border-b border-border/10 bg-muted/5">
+              <h3 className="font-bold text-on-surface text-xs normal-case">Intelligence filters</h3>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-3">
+                <Label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Search feed</Label>
+                <div className="relative group">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-300 group-focus-within:text-on-surface transition-colors" />
+                  <input 
+                    type="text" 
+                    placeholder="Keywords..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full h-10 pl-10 pr-4 bg-white border border-stone-200 rounded-sm text-xs font-bold focus:border-on-surface outline-none transition-all placeholder:text-stone-300"
+                  />
+                </div>
+              </div>
 
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-10 w-[160px] bg-white border-border/40 text-sm font-semibold rounded-lg">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="Movement">Movement</SelectItem>
-                <SelectItem value="Youth">Youth</SelectItem>
-                <SelectItem value="Economy">Economy</SelectItem>
-                <SelectItem value="Diaspora">Diaspora</SelectItem>
-                <SelectItem value="Integrity">Integrity</SelectItem>
-                <SelectItem value="Community">Community</SelectItem>
-              </SelectContent>
-            </Select>
+              <div className="space-y-3 pt-6 border-t border-stone-50">
+                <Label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Status</Label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="h-10 w-full bg-white border-stone-200 text-xs font-bold rounded-sm focus:ring-0 focus:border-on-surface">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="Published">Published</SelectItem>
+                    <SelectItem value="Pending Verification">Pending</SelectItem>
+                    <SelectItem value="Draft">Drafts</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-3 pt-6 border-t border-stone-50">
+                <Label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Category</Label>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="h-10 w-full bg-white border-stone-200 text-xs font-bold rounded-sm focus:ring-0 focus:border-on-surface">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="Movement">Movement</SelectItem>
+                    <SelectItem value="Youth">Youth</SelectItem>
+                    <SelectItem value="Economy">Economy</SelectItem>
+                    <SelectItem value="Diaspora">Diaspora</SelectItem>
+                    <SelectItem value="Integrity">Integrity</SelectItem>
+                    <SelectItem value="Community">Community</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Content Telemetry Card */}
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-on-surface text-white p-6">
+             <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">Content telemetry</p>
+             <div className="space-y-4">
+                <div className="flex justify-between items-end">
+                   <span className="text-xs font-bold">Total Articles</span>
+                   <span className="text-xl font-bold font-meta">{posts.length}</span>
+                </div>
+                <div className="flex justify-between items-end">
+                   <span className="text-xs font-bold">Authorized</span>
+                   <span className="text-xl font-bold font-meta text-primary">{posts.filter(p => p.status === 'Published').length}</span>
+                </div>
+             </div>
+          </Card>
+        </aside>
+
+        {/* Articles Grid */}
+        <div className="lg:col-span-3 order-1 lg:order-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {isLoading ? (
+              Array(6).fill(0).map((_, i) => (
+                <Card key={i} className="rounded-sm border-border/40 animate-pulse bg-white">
+                  <div className="h-48 bg-muted/5" />
+                  <CardContent className="p-6 space-y-4">
+                    <div className="h-4 bg-muted/5 w-3/4 rounded" />
+                    <div className="h-4 bg-muted/5 w-1/2 rounded" />
+                  </CardContent>
+                </Card>
+              ))
+            ) : filteredPosts.length === 0 ? (
+              <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-border/40 rounded-sm">
+                <div className="w-16 h-16 bg-muted/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-8 h-8 text-muted-foreground/20" />
+                </div>
+                <h3 className="text-lg font-bold text-on-surface">No posts found</h3>
+                <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSearchQuery('')}
+                  className="mt-6 rounded-sm border-border/40 font-bold text-[10px] tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                >
+                  Clear search
+                </Button>
+              </div>
+            ) : (
+              filteredPosts.map((post) => (
+                <Card key={post.id} className="rounded-sm border-border/40 group hover:border-border/60 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
+                  <div className="aspect-video relative overflow-hidden bg-muted/5">
+                    <img 
+                      src={post.imageUrl || CATEGORY_PLACEHOLDERS[post.category] || DEFAULT_PLACEHOLDER} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  
+                      decoding="async" 
+                      loading="lazy" 
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-[10px] font-bold tracking-tight rounded-full border-none shadow-sm px-3">
+                        {post.category}
+                      </Badge>
+                    </div>
+                    <div className="absolute top-4 right-12">
+                      <Badge className={cn(
+                        "backdrop-blur-sm text-[10px] font-bold tracking-tight rounded-full border-none shadow-sm px-3",
+                        post.status === 'Published' ? "bg-brand-green text-white" : 
+                        post.status === 'Pending Verification' ? "bg-brand-gold text-on-surface" :
+                        "bg-amber-500/80 text-white"
+                      )}>
+                        {post.status}
+                      </Badge>
+                    </div>
+                    {post.isFeatured && (
+                      <div className="absolute top-4 right-4">
+                        <div className="w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg">
+                          <Star className="w-3.5 h-3.5 fill-white" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <CardContent className="p-6 flex-1 flex flex-col">
+                    <div className="flex justify-between items-start mb-3 gap-2">
+                      <h3 className="text-lg font-bold text-on-surface leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title}
+                      </h3>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0 shrink-0 hover:bg-muted/5 rounded-full">
+                            <MoreVertical className="w-4 h-4 text-muted-foreground/40" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-sm border-border/40 shadow-xl p-2 w-48">
+                          <DropdownMenuItem onClick={() => handleEditPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
+                            <Edit2 className="w-4 h-4 text-muted-foreground/40" /> Edit post
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleViewPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
+                            <Eye className="w-4 h-4 text-muted-foreground/40" /> View post
+                          </DropdownMenuItem>
+                          <div className="h-px bg-border/40 my-1" />
+                          <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5 text-destructive focus:text-destructive focus:bg-destructive/10">
+                            <Trash2 className="w-4 h-4" /> Delete post
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <p className="text-muted-foreground/40 text-sm line-clamp-2 mb-6 font-medium leading-relaxed flex-1">
+                      {post.excerpt}
+                    </p>
+                    <div className="flex items-center justify-between pt-5 border-t border-border/40 mt-auto">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 text-muted-foreground/40">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span className="text-[11px] font-semibold">{new Date(post.publishedAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-muted-foreground/40">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span className="text-[11px] font-semibold">{post.readTime}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
-      </Card>
-
-      {/* Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {isLoading ? (
-          Array(6).fill(0).map((_, i) => (
-            <Card key={i} className="rounded-sm border-border/40 animate-pulse bg-white">
-              <div className="h-48 bg-muted/5" />
-              <CardContent className="p-6 space-y-4">
-                <div className="h-4 bg-muted/5 w-3/4 rounded" />
-                <div className="h-4 bg-muted/5 w-1/2 rounded" />
-              </CardContent>
-            </Card>
-          ))
-        ) : filteredPosts.length === 0 ? (
-          <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-border/40 rounded-sm">
-            <div className="w-16 h-16 bg-muted/5 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-muted-foreground/20" />
-            </div>
-            <h3 className="text-lg font-bold text-on-surface">No posts found</h3>
-            <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
-            <Button 
-              variant="outline" 
-              onClick={() => setSearchQuery('')}
-              className="mt-6 rounded-sm border-border/40 font-bold text-[10px] tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-            >
-              Clear search
-            </Button>
-          </div>
-        ) : (
-          filteredPosts.map((post) => (
-            <Card key={post.id} className="rounded-sm border-border/40 group hover:border-border/60 hover:shadow-md transition-all overflow-hidden bg-white flex flex-col">
-              <div className="aspect-video relative overflow-hidden bg-muted/5">
-                <img 
-                  src={post.imageUrl || CATEGORY_PLACEHOLDERS[post.category] || DEFAULT_PLACEHOLDER} 
-                  alt={post.title} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"  
-                  decoding="async" 
-                  loading="lazy" 
-                />
-                <div className="absolute top-4 left-4">
-                  <Badge className="bg-white/90 backdrop-blur-sm text-on-surface/80 text-[10px] font-bold tracking-tight rounded-full border-none shadow-sm px-3">
-                    {post.category}
-                  </Badge>
-                </div>
-                <div className="absolute top-4 right-12">
-                  <Badge className={cn(
-                    "backdrop-blur-sm text-[10px] font-bold tracking-tight rounded-full border-none shadow-sm px-3",
-                    post.status === 'Published' ? "bg-brand-green text-white" : 
-                    post.status === 'Pending Verification' ? "bg-brand-gold text-on-surface" :
-                    "bg-amber-500/80 text-white"
-                  )}>
-                    {post.status}
-                  </Badge>
-                </div>
-                {post.isFeatured && (
-                  <div className="absolute top-4 right-4">
-                    <div className="w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg">
-                      <Star className="w-3.5 h-3.5 fill-white" />
-                    </div>
-                  </div>
-                )}
-              </div>
-              <CardContent className="p-6 flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-3 gap-2">
-                  <h3 className="text-lg font-bold text-on-surface leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                    {post.title}
-                  </h3>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0 shrink-0 hover:bg-muted/5 rounded-full">
-                        <MoreVertical className="w-4 h-4 text-muted-foreground/40" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-sm border-border/40 shadow-xl p-2 w-48">
-                      <DropdownMenuItem onClick={() => handleEditPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
-                        <Edit2 className="w-4 h-4 text-muted-foreground/40" /> Edit post
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleViewPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
-                        <Eye className="w-4 h-4 text-muted-foreground/40" /> View post
-                      </DropdownMenuItem>
-                      <div className="h-px bg-border/40 my-1" />
-                      <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5 text-destructive focus:text-destructive focus:bg-destructive/10">
-                        <Trash2 className="w-4 h-4" /> Delete post
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <p className="text-muted-foreground/40 text-sm line-clamp-2 mb-6 font-medium leading-relaxed flex-1">
-                  {post.excerpt}
-                </p>
-                <div className="flex items-center justify-between pt-5 border-t border-border/40 mt-auto">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 text-muted-foreground/40">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span className="text-[11px] font-semibold">{new Date(post.publishedAt).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-muted-foreground/40">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span className="text-[11px] font-semibold">{post.readTime}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
       </div>
 
       {/* Delete Confirmation */}

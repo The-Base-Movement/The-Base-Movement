@@ -230,7 +230,7 @@ export default function Broadcasts() {
         </div>
 
         {/* Sidebar: Mobilization Templates */}
-        <div className="space-y-6">
+        <div className="space-y-6 lg:sticky lg:top-8 self-start">
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
             <CardHeader className="border-b border-border/10 bg-muted/5">
               <CardTitle className="text-sm font-bold normal-case">Mobilization presets</CardTitle>

@@ -16,6 +16,8 @@ export interface BrandingSettings {
   newsletter_email: string
   font_scale_global: number
   font_scale_headings: number
+  muted_foreground_color: string
+  on_surface_muted_color: string
   [key: string]: unknown
 }
 
@@ -36,5 +38,7 @@ export const defaultSettings: BrandingSettings = {
   primary_email: 'info@thebasemovement.com',
   newsletter_email: 'info@thebasemovement.com',
   font_scale_global: 1.0,
-  font_scale_headings: 1.0
+  font_scale_headings: 1.0,
+  muted_foreground_color: '0 0% 55%',
+  on_surface_muted_color: '0 0% 55%'
 }

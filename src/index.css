@@ -58,7 +58,7 @@
     
     /* Semantic Roles */
     --on-surface: 220 15% 15%;
-    --on-surface-muted: 220 10% 40%;
+    --on-surface-muted: 220 10% 55%;
     
     /* Mapping shadcn variables to brand colors with hierarchy */
     --primary: 156 100% 21%; /* #006B3F - High intensity brand green */
@@ -68,7 +68,7 @@
     --secondary-foreground: 150 80% 15%;
     
     --muted: 40 10% 94%; /* Warm light gray for inactive/backgrounds */
-    --muted-foreground: 220 10% 40%;
+    --muted-foreground: 220 10% 55%;
     
     --accent: 45 80% 45%; /* #DAA520 - Gold for controlled emphasis */
     --accent-foreground: 0 0% 100%;
@@ -188,6 +188,10 @@
   .text-scale-lg { font-size: var(--fs-lg); }
   .text-scale-xl { font-size: var(--fs-xl); }
   .text-scale-2xl { font-size: var(--fs-2xl); }
+  
+  /* Management Controlled Muted Text Utilities */
+  .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+  .text-on-surface-muted { color: hsl(var(--on-surface-muted)); }
 }
 
 /* Material Symbols configuration */

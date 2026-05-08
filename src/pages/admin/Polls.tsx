@@ -417,7 +417,7 @@ export default function PollsManagement() {
         <div className="p-8 bg-on-surface text-white relative overflow-hidden rounded-sm shadow-xl border border-white/5">
           <div className="relative z-10 space-y-4">
             <h4 className="text-lg font-bold tracking-tight">Maximize engagement</h4>
-            <p className="text-sm text-muted-foreground/80 leading-relaxed max-w-sm">
+            <p className="text-sm text-white/60 leading-relaxed max-w-sm">
               Use regional-specific polls to gather more precise data. Our research shows chapters with localized campaigns see 40% higher member participation.
             </p>
             <Button 

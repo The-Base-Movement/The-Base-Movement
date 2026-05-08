@@ -58,18 +58,7 @@ export default function ChaptersManagement() {
     status: 'Pending'
   })
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      const stats = await adminService.getRegionalStats()
-      setRegionalStats(stats)
-    }
-    fetchStats()
 
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
 
 
@@ -124,6 +113,38 @@ export default function ChaptersManagement() {
     setIsModalOpen(false)
     setEditingChapterId(null)
   }
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const stats = await adminService.getRegionalStats()
+      setRegionalStats(stats)
+    }
+    fetchStats()
+
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Deep Link Handling for Global Search
+  useEffect(() => {
+    if (chapters.length > 0) {
+      const params = new URLSearchParams(window.location.search)
+      const chapterId = params.get('id')
+      if (chapterId) {
+        const chapter = chapters.find(c => c.id === chapterId)
+        if (chapter) {
+          // Defer to avoid synchronous setState warning in effect
+          setTimeout(() => {
+            openEditModal(chapter)
+            // Clean up URL
+            window.history.replaceState({}, '', window.location.pathname)
+          }, 0)
+        }
+      }
+    }
+  }, [chapters])
 
   const handleDeleteChapter = async (id: string, name: string) => {
     if (window.confirm(`Are you sure you want to decommission the "${name}" chapter?`)) {

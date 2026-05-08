@@ -215,7 +215,7 @@ export default function MobilizationMetrics() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">Points</p>
+                        <p className="text-[10px] font-bold text-muted-foreground/70 tracking-tight">Points</p>
                         <p className="text-lg font-bold text-on-surface tracking-tighter">{entry.total_mobilization_points.toLocaleString()}</p>
                       </div>
                     </div>
@@ -226,7 +226,7 @@ export default function MobilizationMetrics() {
                           <Users className="w-4 h-4 text-muted-foreground/80" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-bold text-muted-foreground/40">Members</p>
+                          <p className="text-[9px] font-bold text-muted-foreground/70">Members</p>
                           <p className="text-xs font-bold text-on-surface">{entry.total_patriots}</p>
                         </div>
                       </div>
@@ -235,7 +235,7 @@ export default function MobilizationMetrics() {
                           <Zap className="w-4 h-4 text-accent" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-bold text-muted-foreground/40">Badges</p>
+                          <p className="text-[9px] font-bold text-muted-foreground/70">Badges</p>
                           <p className="text-xs font-bold text-on-surface">{entry.achievements_unlocked}</p>
                         </div>
                       </div>

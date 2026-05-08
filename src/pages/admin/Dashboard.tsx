@@ -64,12 +64,12 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
       <CardContent className="p-4 sm:p-5">
         <div className="flex justify-between items-start gap-4">
           <div className="space-y-1.5 flex-1 min-w-0">
-            <dt className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/80 normal-case truncate">{title}</dt>
+            <dt className="text-[10px] sm:text-[11px] font-bold text-muted-foreground normal-case truncate">{title}</dt>
             <dd className="m-0 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
               <span className="text-xl sm:text-2xl font-bold text-on-surface tabular-nums truncate">{value}</span>
               <span className={cn(
                 "text-[9px] sm:text-[10px] font-bold flex items-center gap-0.5 whitespace-nowrap",
-                change.startsWith('+') ? "text-primary" : "text-muted-foreground/80"
+                change.startsWith('+') ? "text-primary" : "text-muted-foreground"
               )}>
                 {change}
               </span>
@@ -214,11 +214,11 @@ export default function AdminDashboard() {
           </h1>
           <BrandLine className="mt-4" />
           <div className="flex items-center gap-4 mt-1">
-            <p className="text-muted-foreground/80 text-xs flex items-center gap-1.5">
+            <p className="text-muted-foreground text-xs flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-primary rounded-full" />
               16 regions active
             </p>
-            <p className="text-muted-foreground/80 text-xs font-medium">Telemetry updated 2m ago</p>
+            <p className="text-muted-foreground text-xs font-medium">Telemetry updated 2m ago</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -307,7 +307,7 @@ export default function AdminDashboard() {
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: '#1c1917', 
-                      border: 'none', 
+                      border: '1px solid rgba(255,255,255,0.1)', 
                       borderRadius: '6px', 
                       color: 'white',
                       fontSize: '11px',
@@ -315,7 +315,7 @@ export default function AdminDashboard() {
                       padding: '8px 12px'
                     }} 
                     labelStyle={{ color: 'white', fontWeight: 'bold', marginBottom: '4px' }}
-                    itemStyle={{ color: 'white' }}
+                    itemStyle={{ color: 'rgba(255,255,255,0.8)' }}
                   />
                   <Area 
                     type="monotone" 
@@ -520,11 +520,11 @@ export default function AdminDashboard() {
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-6">
                     <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold tracking-tight text-white/40">Core system</span>
+                    <span className="text-[10px] font-bold tracking-tight text-white/70">Core system status</span>
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold tabular-nums tracking-tighter">99.8%</span>
-                    <span className="text-[10px] font-medium text-white/30 tracking-tight">Uptime</span>
+                    <span className="text-[10px] font-bold text-white/60 tracking-tight uppercase">Operational</span>
                   </div>
                 </div>
               </div>

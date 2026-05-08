@@ -613,6 +613,14 @@ export interface MediaKitAsset {
   isActive: boolean
 }
 
+export interface GlobalSearchResult {
+  type: 'Member' | 'Article' | 'Chapter' | 'Broadcast' | 'Product' | 'Author'
+  title: string
+  subtitle?: string
+  id: string
+  to: string
+}
+
 export interface Order {
   id: string
   user_id: string

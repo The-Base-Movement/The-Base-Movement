@@ -301,7 +301,7 @@ export default function Register() {
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <h1 className="text-3xl font-bold text-on-surface tracking-tighter font-meta mb-2">Registration complete</h1>
-            <p className="text-muted-foreground font-meta tracking-tight text-xs">Welcome to the movement, patriot.</p>
+            <p className="text-muted-foreground/90 font-meta tracking-tight text-xs">Welcome to the movement, patriot.</p>
           </div>
 
           <div className="space-y-8">
@@ -365,7 +365,7 @@ export default function Register() {
 
                 <div className="bg-primary text-white p-8 flex flex-col justify-between">
                 <div>
-                  <h4 className="font-meta font-bold text-[10px] text-white/60 tracking-tight mb-4">Next step</h4>
+                  <h4 className="font-meta font-bold text-[10px] text-white/90 tracking-tight mb-4">Next step</h4>
                   <p className="text-sm font-bold font-meta leading-tight mb-4">Access your portal to join a chapter.</p>
                 </div>
                 <button
@@ -418,7 +418,7 @@ export default function Register() {
                     Local membership <br/> (Ghana)
                   </h3>
                   <div className="space-y-4 pt-2">
-                    <p className="text-sm text-muted-foreground leading-relaxed font-body-md">
+                    <p className="text-sm text-muted-foreground/90 leading-relaxed font-body-md">
                       Designed for citizens and residents currently living within the 16 regions of Ghana. This is the core of our grassroots mobilization.
                     </p>
                     <ul className="space-y-3">
@@ -428,7 +428,7 @@ export default function Register() {
                         'Eligibility for local leadership and volunteer roles',
                         'Access to physical field stations and community hubs'
                       ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-3 text-xs text-on-surface/70 font-body-md">
+                        <li key={i} className="flex items-start gap-3 text-xs text-on-surface/90 font-body-md">
                           <div className="w-1.5 h-1.5 rounded-full bg-brand-green mt-1.5 shrink-0" />
                           {item}
                         </li>
@@ -483,7 +483,7 @@ export default function Register() {
                     Diaspora <br/> membership
                   </h3>
                   <div className="space-y-4 pt-2">
-                    <p className="text-sm text-muted-foreground leading-relaxed font-body-md">
+                    <p className="text-sm text-muted-foreground/90 leading-relaxed font-body-md">
                       Tailored for Ghanaians and supporters living abroad. Leverage your global expertise and resources to transform the motherland.
                     </p>
                     <ul className="space-y-3">
@@ -493,7 +493,7 @@ export default function Register() {
                         'Support the movement\'s logistics and intelligence operations',
                         'Dedicated Diaspora Member ID and recognition'
                       ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-3 text-xs text-on-surface/70 font-body-md">
+                        <li key={i} className="flex items-start gap-3 text-xs text-on-surface/90 font-body-md">
                           <div className="w-1.5 h-1.5 rounded-full bg-brand-gold mt-1.5 shrink-0" />
                           {item}
                         </li>
@@ -604,7 +604,7 @@ export default function Register() {
                             <Zap className="w-5 h-5 text-accent" />
                             <h4 className="text-white font-meta font-bold tracking-tight text-lg">AI identity verification</h4>
                           </div>
-                          <p className="text-muted-foreground/60 text-sm max-w-sm mb-0">
+                          <p className="text-white/80 text-sm max-w-sm mb-0">
                             Scan your Ghana Card or Voter ID to instantly auto-fill your profile and verify your membership.
                           </p>
                         </div>

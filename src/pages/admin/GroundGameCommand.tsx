@@ -131,7 +131,7 @@ export default function GroundGameCommand() {
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold text-muted-foreground/40 mb-1">Registered voters</p>
+              <p className="text-[10px] font-bold text-muted-foreground/80 mb-1">Registered voters</p>
               <h3 className="text-3xl font-bold text-primary tracking-tight">{verifiedVoters.toLocaleString()}</h3>
             </div>
             <Vote className="w-8 h-8 text-muted-foreground/20" />
@@ -141,8 +141,7 @@ export default function GroundGameCommand() {
         <Card className="rounded-sm border-border/60 shadow-sm">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold text-muted-foreground/40 mb-1">Campaign outreach</p>
-              <h3 className="text-3xl font-bold text-on-surface tracking-tight">{totalContacts.toLocaleString()} <span className="text-sm font-normal text-muted-foreground/40">doors</span></h3>
+              <h3 className="text-3xl font-bold text-on-surface tracking-tight">{totalContacts.toLocaleString()} <span className="text-sm font-normal text-muted-foreground/70">doors</span></h3>
             </div>
             <ClipboardList className="w-8 h-8 text-muted-foreground/20" />
           </CardContent>
@@ -156,7 +155,7 @@ export default function GroundGameCommand() {
             <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
               <Activity className="w-4 h-4 text-primary" /> Registration velocity
             </CardTitle>
-            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">7-day mobilization trend</CardDescription>
+            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-1">7-day mobilization trend</CardDescription>
           </CardHeader>
           <div className="h-[240px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -172,12 +171,12 @@ export default function GroundGameCommand() {
                   dataKey="date" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.6)' }}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.2)' }}
+                  tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(255,255,255,0.6)' }}
                 />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0A0A0A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px' }}
@@ -196,7 +195,7 @@ export default function GroundGameCommand() {
             <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
               <PieIcon className="w-4 h-4 text-primary" /> Field sentiment breakdown
             </CardTitle>
-            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Canvassing interaction intelligence</CardDescription>
+            <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-1">Canvassing interaction intelligence</CardDescription>
           </CardHeader>
           <div className="h-[240px] w-full flex items-center justify-center">
             {sentimentData.length > 0 ? (
@@ -225,7 +224,7 @@ export default function GroundGameCommand() {
             ) : (
               <div className="text-center">
                 <BarIcon className="w-8 h-8 text-muted-foreground/10 mx-auto mb-2" />
-                <p className="text-[10px] font-bold text-muted-foreground/20 normal-case">Awaiting canvassing data...</p>
+                <p className="text-[10px] font-bold text-muted-foreground/70 normal-case">Awaiting canvassing data...</p>
               </div>
             )}
           </div>
@@ -243,7 +242,7 @@ export default function GroundGameCommand() {
                   <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
                     <ClipboardList className="w-4 h-4 text-primary" /> Active canvassing
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Door-to-door outreach missions</CardDescription>
+                  <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-1">Door-to-door outreach missions</CardDescription>
                 </div>
                 <Button 
                   variant="primary"
@@ -274,7 +273,7 @@ export default function GroundGameCommand() {
                           </span>
                           <span className="text-[10px] font-bold text-on-surface/60 normal-case">{campaign.target_constituency}</span>
                         </div>
-                        <span className="text-[9px] font-bold text-muted-foreground/40">Target: {campaign.goal_contacts} doors</span>
+                        <span className="text-[9px] font-bold text-muted-foreground/80">Target: {campaign.goal_contacts} doors</span>
                       </div>
                       <h3 className="text-sm font-bold text-on-surface normal-case mb-2">{campaign.title}</h3>
                       <p className="text-sm text-muted-foreground/80 font-medium leading-relaxed mb-4">{campaign.description}</p>
@@ -284,7 +283,7 @@ export default function GroundGameCommand() {
                         <div className="h-2 w-full bg-muted/10 rounded-full overflow-hidden">
                           <div className="h-full bg-primary" style={{ width: '45%' }} /> {/* Placeholder progress */}
                         </div>
-                        <span className="text-[10px] font-bold text-muted-foreground/40 normal-case w-12 text-right">45%</span>
+                        <span className="text-[10px] font-bold text-muted-foreground/80 normal-case w-12 text-right">45%</span>
                       </div>
                     </div>
                   ))
@@ -303,7 +302,7 @@ export default function GroundGameCommand() {
                   <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
                     <Car className="w-4 h-4 text-primary" /> Transport logistics
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/40 mt-1">Election day GOTV</CardDescription>
+                  <CardDescription className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-1">Election day GOTV</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -311,7 +310,7 @@ export default function GroundGameCommand() {
               <div className="divide-y divide-border/10 max-h-[600px] overflow-y-auto">
                 {transportReqs.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-[10px] font-bold text-muted-foreground/40 normal-case">No transport requests.</p>
+                    <p className="text-[10px] font-bold text-muted-foreground/80 normal-case">No transport requests.</p>
                   </div>
                 ) : (
                   transportReqs.map((req) => (
@@ -323,13 +322,13 @@ export default function GroundGameCommand() {
                         )}>
                           {req.status.toLowerCase()}
                         </span>
-                        <span className="text-[9px] font-bold text-muted-foreground/40">
+                        <span className="text-[9px] font-bold text-muted-foreground/80">
                           {format(new Date(req.requested_time), 'HH:mm')}
                         </span>
                       </div>
                       <div className="space-y-1 mb-3">
                         <div className="flex items-center gap-2 text-[10px] font-medium text-on-surface/60">
-                          <MapPin className="w-3 h-3 text-muted-foreground/40" />
+                          <MapPin className="w-3 h-3 text-muted-foreground/80" />
                           <span className="truncate">{req.pickup_address}</span>
                         </div>
                         <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface">
@@ -339,7 +338,7 @@ export default function GroundGameCommand() {
                       </div>
                       
                       <div className="flex justify-between items-center pt-3 border-t border-border/10">
-                        <span className="text-[9px] font-bold text-muted-foreground/40 normal-case">
+                        <span className="text-[9px] font-bold text-muted-foreground/80 normal-case">
                           <Users className="w-3 h-3 inline mr-1" /> {req.passengers} pax
                         </span>
                         {req.status === 'PENDING' && (
@@ -373,7 +372,7 @@ export default function GroundGameCommand() {
               <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto sidebar-scroll">
                 {fieldLogs.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-[10px] font-bold text-white/20">Awaiting field intelligence...</p>
+                    <p className="text-[10px] font-bold text-white/60">Awaiting field intelligence...</p>
                   </div>
                 ) : (
                   fieldLogs.map((log) => (
@@ -389,12 +388,12 @@ export default function GroundGameCommand() {
                         )}>
                           {log.interaction_result.replace('_', ' ').toLowerCase()}
                         </span>
-                        <span className="text-[9px] font-bold text-white/20">{format(new Date(log.created_at), 'HH:mm')}</span>
+                        <span className="text-[9px] font-bold text-white/60">{format(new Date(log.created_at), 'HH:mm')}</span>
                       </div>
                       <p className="text-[11px] text-white/80 mb-2">"{log.address_notes || 'No notes provided'}"</p>
                       <div className="flex items-center gap-2">
                         <MapPin className="w-3 h-3 text-white/20" />
-                        <span className="text-[9px] font-bold text-white/40">Sector {log.canvasser_id.substring(0, 4)}</span>
+                        <span className="text-[9px] font-bold text-white/80">Sector {log.canvasser_id.substring(0, 4)}</span>
                       </div>
                     </div>
                   ))

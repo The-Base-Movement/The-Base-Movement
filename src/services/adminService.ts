@@ -62,7 +62,8 @@ import type {
   Notification,
   AdminUser,
   PressRelease,
-  MediaKitAsset
+  MediaKitAsset,
+  GlobalSearchResult
 } from '@/types/admin'
 
 // Re-export all types so consumers can import from either location
@@ -78,7 +79,7 @@ export type {
   MovementPulse, GrowthTrend, PendingVerification, ActivityLog,
   PollStats, Order, OrderStats, OrderItem, BlogPost, ResourceRequest,
   LogisticsAuditEntry, AuditLogEntry, AdminRole, AdminPermission,
-  SentimentStat, Broadcast, Notification, AdminUser, PressRelease, MediaKitAsset
+  SentimentStat, Broadcast, Notification, AdminUser, PressRelease, MediaKitAsset, GlobalSearchResult
 } from '@/types/admin'
 
 
@@ -1313,6 +1314,83 @@ class AdminService {
     } catch (error) {
       console.error('[DATABASE] Failed to update site setting:', error)
       return false
+    }
+  }
+
+  // --- Global Command Search ---
+  async globalSearch(query: string): Promise<GlobalSearchResult[]> {
+    if (!query || query.length < 2) return []
+
+    try {
+      const [members, blogPosts, chapters, products, authors] = await Promise.all([
+        this.searchMembers(query),
+        supabase.from('blog_posts').select('id, title, slug').ilike('title', `%${query}%`).is('deleted_at', null).limit(5),
+        supabase.from('chapters').select('id, name').ilike('name', `%${query}%`).limit(5),
+        supabase.from('store_inventory').select('id, name, slug').ilike('name', `%${query}%`).limit(5),
+        supabase.from('authors').select('id, name, role').ilike('name', `%${query}%`).is('deleted_at', null).limit(5)
+      ])
+
+      const results: GlobalSearchResult[] = []
+
+      // Map members
+      members.forEach(m => {
+        results.push({
+          type: 'Member',
+          title: m.name,
+          subtitle: `${m.id} · ${m.region}`,
+          id: m.id,
+          to: `/admin/members?search=${m.id}`
+        })
+      })
+
+      // Map blog posts
+      blogPosts.data?.forEach(p => {
+        results.push({
+          type: 'Article',
+          title: p.title,
+          subtitle: 'Editorial Update',
+          id: p.id,
+          to: `/admin/blogs?edit=${p.id}`
+        })
+      })
+
+      // Map chapters
+      chapters.data?.forEach(c => {
+        results.push({
+          type: 'Chapter',
+          title: c.name,
+          subtitle: 'Regional Mobilization Hub',
+          id: c.id,
+          to: `/admin/chapters?id=${c.id}`
+        })
+      })
+
+      // Map products
+      products.data?.forEach(p => {
+        results.push({
+          type: 'Product',
+          title: p.name,
+          subtitle: 'Movement Supply',
+          id: p.id,
+          to: `/admin/store?id=${p.id}`
+        })
+      })
+
+      // Map authors
+      authors.data?.forEach(a => {
+        results.push({
+          type: 'Author',
+          title: a.name,
+          subtitle: a.role || 'Contributor',
+          id: a.id,
+          to: `/admin/authors?view=${a.id}`
+        })
+      })
+
+      return results.slice(0, 10)
+    } catch (error) {
+      console.error('[ADMIN SERVICE] Global search failed:', error)
+      return []
     }
   }
 }

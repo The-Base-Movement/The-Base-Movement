@@ -192,7 +192,7 @@ export default function MediaLibrary() {
         </div>
 
         {/* Sidebar - Folders (Desktop Only) */}
-        <div className="hidden lg:block space-y-6">
+        <div className="hidden lg:block space-y-6 lg:sticky lg:top-24 self-start">
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-border/10 bg-muted/5">
               <h3 className="font-bold text-on-surface text-xs normal-case">Asset categories</h3>

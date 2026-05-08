@@ -428,7 +428,7 @@ export default function AdminSettings() {
 
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Settings Navigation */}
-        <div className="w-full lg:w-64 space-y-1">
+        <div className="w-full lg:w-64 space-y-1 lg:sticky lg:top-24 self-start">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
             return (
@@ -696,7 +696,9 @@ export default function AdminSettings() {
                         {[
                           { key: 'primary_color', label: 'Primary Brand (Green)', desc: 'HSL value for the dominant identity color.' },
                           { key: 'accent_color', label: 'Accent Highlight (Gold)', desc: 'HSL value for secondary emphasis.' },
-                          { key: 'destructive_color', label: 'Destructive/Alert (Red)', desc: 'HSL value for high-urgency elements.' }
+                          { key: 'destructive_color', label: 'Destructive/Alert (Red)', desc: 'HSL value for high-urgency elements.' },
+                          { key: 'muted_foreground_color', label: 'Muted Text (General)', desc: 'HSL value for secondary labels/hints.' },
+                          { key: 'on_surface_muted_color', label: 'Muted Text (Dark)', desc: 'HSL value for text on dark backgrounds.' }
                         ].map((color) => (
                           <div key={color.key} className="space-y-2">
                             <Label className="text-[10px] font-bold text-stone-500 normal-case">{color.label}</Label>
@@ -777,7 +779,9 @@ export default function AdminSettings() {
                               { key: 'registration_form_ghana_url', value: siteSettings.registration_form_ghana_url },
                               { key: 'registration_form_diaspora_url', value: siteSettings.registration_form_diaspora_url },
                               { key: 'font_scale_global', value: siteSettings.font_scale_global },
-                              { key: 'font_scale_headings', value: siteSettings.font_scale_headings }
+                              { key: 'font_scale_headings', value: siteSettings.font_scale_headings },
+                              { key: 'muted_foreground_color', value: siteSettings.muted_foreground_color },
+                              { key: 'on_surface_muted_color', value: siteSettings.on_surface_muted_color }
                             ]
                             
                             await Promise.all(settingsToUpdate.map(s => 

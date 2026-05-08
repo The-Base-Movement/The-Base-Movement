@@ -373,7 +373,7 @@ export default function LogisticsIntelligence() {
         <div className="bg-on-surface p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
             <h3 className="text-white text-xl font-bold font-meta leading-tight">National supply chain map</h3>
-            <p className="text-[10px] font-bold normal-case text-muted-foreground/80 mt-2">Real-time visualization of material flow across the 16 regions.</p>
+            <p className="text-[10px] font-bold normal-case text-white/70 mt-2">Real-time visualization of material flow across the 16 regions.</p>
           </div>
           <Button 
             variant="outline" 
@@ -400,7 +400,7 @@ export default function LogisticsIntelligence() {
               <Map className="w-8 h-8 text-border/60" />
             </div>
             <h4 className="text-on-surface text-[11px] font-bold mb-2">Syncing regional data</h4>
-            <p className="text-[10px] font-bold normal-case text-muted-foreground/80">No regional data available yet. Waiting for hub connection.</p>
+            <p className="text-[10px] font-bold normal-case text-muted-foreground/90">No regional data available yet. Waiting for hub connection.</p>
             <div className="flex items-center justify-center gap-2 mt-6">
               <span className="w-1.5 h-1.5 rounded-full bg-border/60 animate-bounce" />
               <span className="w-1.5 h-1.5 rounded-full bg-border/60 animate-bounce delay-150" />
@@ -448,7 +448,7 @@ export default function LogisticsIntelligence() {
                   auditLogs.map((log) => (
                     <tr key={log.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-6 py-4">
-                        <span className="text-[10px] font-bold normal-case text-on-surface/60">
+                        <span className="text-[10px] font-bold normal-case text-on-surface/80">
                           {format(new Date(log.timestamp), 'MMM dd, HH:mm')}
                         </span>
                       </td>
@@ -463,7 +463,7 @@ export default function LogisticsIntelligence() {
                       <td className="px-6 py-4">
                         <span className="text-[10px] font-bold text-on-surface">+{log.quantityChange} units</span>
                       </td>
-                      <td className="px-6 py-4 text-[10px] font-bold text-on-surface/60 normal-case">{log.sourceLocation}</td>
+                      <td className="px-6 py-4 text-[10px] font-bold text-on-surface/80 normal-case">{log.sourceLocation}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center">

@@ -73,6 +73,10 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
               --destructive: ${settings.destructive_color};
               --brand-red: ${settings.destructive_color};
 
+              /* Muted Text Management */
+              --muted-foreground: ${settings.muted_foreground_color || '0 0% 55%'};
+              --on-surface-muted: ${settings.on_surface_muted_color || '0 0% 55%'};
+
               /* Typography Management */
               --font-scale: ${settings.font_scale_global || 1.0};
               --font-heading-scale: ${settings.font_scale_headings || 1.0};
