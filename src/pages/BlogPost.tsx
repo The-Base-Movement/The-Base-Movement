@@ -109,14 +109,40 @@ export default function BlogPost() {
   const pageDescription = post.metaDescription || post.excerpt || `Read "${post.title}" on The Base Movement.`
   const canonicalUrl = `${window.location.origin}/blog/${post.slug}`
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": pageDescription,
+    "image": post.imageUrl,
+    "datePublished": post.publishedAt,
+    "author": {
+      "@type": "Person",
+      "name": post.authorName || "The Base Editorial"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "The Base Movement",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://thebasemovement.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": canonicalUrl
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white pb-20">
       <SEO 
         title={pageTitle}
         description={pageDescription}
-        image={post.imageUrl || undefined}
+        ogImage={post.imageUrl || undefined}
         canonical={`/blog/${post.slug}`}
-        type="article"
+        ogType="article"
+        jsonLd={articleSchema}
       />
       <main className="max-w-[1280px] mx-auto px-6 md:px-8 pt-12">
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">

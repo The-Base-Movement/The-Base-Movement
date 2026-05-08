@@ -7,7 +7,8 @@ interface SEOProps {
   ogImage?: string
   ogType?: 'website' | 'article'
   canonical?: string
-  jsonLd?: Record<string, any>
+  jsonLd?: Record<string, unknown>
+  noindex?: boolean
 }
 
 export default function SEO({ 
@@ -15,7 +16,9 @@ export default function SEO({
   description, 
   ogImage, 
   ogType = 'website',
-  canonical 
+  canonical,
+  jsonLd,
+  noindex
 }: SEOProps) {
   const { settings } = useBranding()
   
@@ -32,6 +35,9 @@ export default function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={metaDescription} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+      
+      {/* Search Engine Directives */}
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
       
       {/* Canonical Link */}
       {canonical && <link rel="canonical" href={`${siteUrl}${canonical}`} />}
