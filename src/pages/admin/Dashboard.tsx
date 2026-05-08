@@ -65,7 +65,7 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
       <CardContent className="p-4 sm:p-5">
         <div className="flex justify-between items-start gap-4">
           <div className="space-y-1.5 flex-1 min-w-0">
-            <dt className="text-micro sm:text-tiny font-bold text-muted-foreground normal-case truncate">{title}</dt>
+            <dt className="text-micro font-bold text-muted-foreground uppercase tracking-widest truncate">{title}</dt>
             <dd className="m-0 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
               <span className="text-xl sm:text-2xl font-bold text-on-surface tabular-nums truncate">{value}</span>
               <span className={cn(
@@ -280,15 +280,15 @@ export default function AdminDashboard() {
                 {/* 📈 Tactical Summary Stats */}
                 <div className="hidden lg:flex items-center gap-6 mr-6 border-r border-border/40 pr-6">
                   <div className="text-right">
-                    <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Total Growth</p>
+                    <p className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Total Growth</p>
                     <p className="text-tiny font-bold text-primary">+{growthData.reduce((acc, curr) => acc + curr.count, 0).toLocaleString()}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Peak Day</p>
+                    <p className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Peak Day</p>
                     <p className="text-tiny font-bold text-on-surface">{Math.max(...growthData.map(d => d.count), 0)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Avg/Day</p>
+                    <p className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Avg/Day</p>
                     <p className="text-tiny font-bold text-on-surface">{(growthData.reduce((acc, curr) => acc + curr.count, 0) / (growthData.length || 1)).toFixed(0)}</p>
                   </div>
                 </div>

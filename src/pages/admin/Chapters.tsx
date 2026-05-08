@@ -220,7 +220,7 @@ export default function ChaptersManagement() {
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
-              <p className="text-micro font-bold opacity-80 normal-case mb-0">Total chapters</p>
+              <p className="text-micro font-bold text-white/60 uppercase tracking-widest mb-1">Total chapters</p>
               <h3 className="text-2xl font-bold font-meta m-0">{chapters.length}</h3>
             </div>
           </CardContent>
@@ -231,7 +231,7 @@ export default function ChaptersManagement() {
               <Users className="w-6 h-6 text-on-surface" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
-              <p className="text-micro font-bold text-muted-foreground/40 normal-case mb-0">Member count</p>
+              <p className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Member count</p>
               <h3 className="text-2xl font-bold font-meta text-on-surface m-0">{totalMembers.toLocaleString()}</h3>
             </div>
           </CardContent>

@@ -133,9 +133,9 @@ export default function GroundGameCommand() {
         <Card className="rounded-sm border-border/60 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-micro font-bold text-muted-foreground/80 mb-1 tracking-tight uppercase">Registered voters</p>
+              <p className="text-micro font-bold text-muted-foreground/60 mb-1 tracking-widest uppercase">Registered voters</p>
               <h3 className="text-3xl font-bold text-primary tracking-tight">{verifiedVoters.toLocaleString()}</h3>
-              <p className="text-micro text-muted-foreground/40 font-bold tracking-tight mt-1">Verified personnel</p>
+              <p className="text-tiny text-muted-foreground/60 font-bold tracking-tight mt-1.5">Verified personnel</p>
             </div>
             <Vote className="w-8 h-8 text-muted-foreground/10" />
           </CardContent>
@@ -144,11 +144,11 @@ export default function GroundGameCommand() {
         <Card className="rounded-sm border-border/60 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-micro font-bold text-muted-foreground/80 mb-1 tracking-tight uppercase">Canvassing goal</p>
+              <p className="text-micro font-bold text-muted-foreground/60 mb-1 tracking-widest uppercase">Canvassing goal</p>
               <h3 className="text-3xl font-bold text-on-surface tracking-tight">{totalContacts.toLocaleString()} <span className="text-sm font-normal text-muted-foreground/70">doors</span></h3>
-              <p className="text-micro text-muted-foreground/40 font-bold tracking-tight mt-1">Active outreach target</p>
+              <p className="text-tiny text-muted-foreground/60 font-bold tracking-tight mt-1.5">Active outreach target</p>
             </div>
-            <ClipboardList className="w-8 h-8 text-muted-foreground/10" />
+            <Target className="w-8 h-8 text-muted-foreground/10" />
           </CardContent>
         </Card>
       </div>
