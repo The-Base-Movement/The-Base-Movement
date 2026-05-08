@@ -242,7 +242,6 @@ export default function FieldDirectives() {
                         <p className="text-[8px] font-bold text-muted-foreground/40 normal-case">{new Date(report.created_at).toLocaleTimeString()} - {new Date(report.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
-                  </div>
                   <p className="text-xs text-on-surface/80 leading-relaxed">"{report.report_text || 'Completed tactical directive as requested. Awaiting point verification.'}"</p>
                   
                   {report.status === 'Pending' && (
