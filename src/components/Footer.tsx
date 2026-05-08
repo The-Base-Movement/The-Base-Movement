@@ -41,7 +41,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-on-surface/60 text-sm leading-relaxed font-medium max-w-sm">
-              A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry, innovation, and collective progress.
+              We are a grassroots movement committed to youth jobs, accountable leadership, and national development. Join citizens across Ghana and the diaspora working for a more productive future.
             </p>
             <div className="flex items-center gap-6 pt-4">
               <a href="https://www.facebook.com/profile.php?id=61579415816496" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform" title="Facebook">
@@ -94,9 +94,9 @@ export default function Footer() {
           {/* Newsletter Column */}
           <div className="lg:col-span-4 lg:pl-12">
             <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
-              <h4 className="font-meta font-bold text-lg tracking-tight mb-4">The Base Weekly</h4>
+              <h4 className="font-meta font-bold text-lg tracking-tight mb-4">Stay Informed.</h4>
               <p className="text-xs text-slate-400 leading-relaxed mb-6">
-                Get the movement's authoritative policy briefs and news delivered directly to your inbox.
+                Subscribe to receive regular updates on our progress, community initiatives, and news from across the movement.
               </p>
               
               {subscribed ? (

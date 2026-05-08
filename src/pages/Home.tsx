@@ -76,7 +76,7 @@ export default function Home() {
       {/* Hero Section */}
       <section 
         aria-labelledby="hero-heading"
-        className="relative bg-on-surface text-white pt-32 pb-32 md:pt-40 md:pb-40 overflow-hidden border-b-[8px] border-accent group"
+        className="relative bg-on-surface text-white min-h-screen flex items-center overflow-hidden border-b-[8px] border-accent group"
         onMouseMove={handleMouseMove}
       >
         {!lowBandwidthMode ? (
@@ -98,7 +98,7 @@ export default function Home() {
         )}
 
         <div className="absolute inset-0 z-0 bg-gradient-to-t from-on-surface via-on-surface/60 to-transparent"></div>
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
+        <div className="max-w-[1280px] mx-auto px-8 py-20 relative z-10 flex flex-col md:flex-row items-center gap-12 w-full">
           <div className="flex-1 text-center md:text-left">
             <h1 id="hero-heading" className="text-5xl md:text-h1 font-meta font-bold mb-4 leading-[1.1] tracking-tighter">
               Ghana First,<br />Jobs for the youth!
@@ -107,17 +107,17 @@ export default function Home() {
               <BrandLine />
             </div>
             <p className="text-white/90 text-sm md:text-base font-body-md max-w-xl animate-in slide-in-from-bottom duration-1000 delay-200">
-              A global political movement uniting citizens to build a stronger, more prosperous Ghana through industry and innovation.
+              We are a grassroots movement committed to youth jobs, accountable leadership, and national development. Join citizens in Ghana and across the diaspora working for a more productive future.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-3 justify-center md:justify-start">
               <Button asChild variant="gold" size="lg" className="shadow-2xl shadow-brand-gold/20 w-full sm:w-auto">
                 <Link to="/register">
-                  Register Now <ArrowRight className="w-5 h-5 ml-2" />
+                  Join the Movement <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
               <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
                 <Link to="/our-agenda">
-                  Read the Plan
+                  Learn More About Us
                 </Link>
               </Button>
             </div>
@@ -135,28 +135,28 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 md:gap-24">
             <div className="border-t-[4px] border-primary pt-8 group">
               <h3 className="text-h3 font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight">
-                <MapPin className="text-primary w-8 h-8" /> Base Ghana
+                <MapPin className="text-primary w-8 h-8" /> For Citizens in Ghana.
               </h3>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
-                For Ghanaians living in Ghana. Join our grassroots movement and make your voice heard in the development of our great nation.
+                Get involved in your district. Join your local branch, take part in community activity, and support practical action for jobs and development.
               </p>
               <Button asChild variant="primary" className="w-full sm:w-auto">
                 <Link to="/register?platform=GHANA">
-                  Register for Base Ghana <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
+                  Join Base Ghana <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </div>
             
             <div className="border-t-[4px] border-accent pt-8 group">
               <h3 className="text-h3 font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight">
-                <Globe className="text-accent w-8 h-8" /> Base Diaspora
+                <Globe className="text-accent w-8 h-8" /> For Ghanaians Abroad.
               </h3>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
-                For Ghanaians and friends of Ghana living abroad. Stay connected and contribute to Ghana's progress from anywhere in the world.
+                Stay connected to home and support national development from abroad through your skills, networks, and commitment to Ghana’s future.
               </p>
               <Button asChild variant="gold" className="w-full sm:w-auto">
                 <Link to="/register?platform=DIASPORA">
-                  Register for Diaspora <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
+                  Join Base Diaspora <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </div>
@@ -176,50 +176,95 @@ export default function Home() {
           
           <div className="grid md:grid-cols-3 gap-12">
             <div className="border-l-2 border-destructive pl-6">
-              <span className="text-destructive font-meta font-bold tracking-tight text-xs mb-3 block">Our mission</span>
-              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Actionable agenda</h3>
+              <span className="text-destructive font-meta font-bold tracking-tight text-xs mb-3 block">Core Pillar 01</span>
+              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Economic Responsibility</h3>
               <p className="text-white/80 leading-relaxed font-body-md text-sm">
-                To deliver an honest, detailed, and actionable agenda rooted in the realities of ordinary Ghanaians, covering education, governance, industrialisation, infrastructure, institutional reform, and agriculture.
+                We advocate for the transparent management of national resources to ensure they are invested in projects that create sustainable, long‑term jobs for our youth.
               </p>
             </div>
             <div className="border-l-2 border-accent pl-6">
-              <span className="text-accent font-meta font-bold tracking-tight text-xs mb-3 block">Our values</span>
-              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Patriotism, honesty, discipline</h3>
+              <span className="text-accent font-meta font-bold tracking-tight text-xs mb-3 block">Core Pillar 02</span>
+              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Youth Participation</h3>
               <p className="text-white/80 leading-relaxed font-body-md text-sm">
-                We are guided by love of country, transparency in leadership, and the moral courage to do what is right for Ghana.
+                We believe young people must be at the heart of our progress, equipped with the skills and opportunities to lead Ghana’s development.
               </p>
             </div>
             <div className="border-l-2 border-primary pl-6">
-              <span className="text-primary font-meta font-bold tracking-tight text-xs mb-3 block">Our vision</span>
-              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">A transformed nation</h3>
+              <span className="text-primary font-meta font-bold tracking-tight text-xs mb-3 block">Core Pillar 03</span>
+              <h3 className="text-2xl font-meta font-bold mb-4 tracking-tight text-white">Integrity & Accountability</h3>
               <p className="text-white/80 leading-relaxed font-body-md text-sm">
-                A Ghana with quality education, lean accountable government, industrialisation, tourism, and agro-processing, quality infrastructure, comprehensive institutional reform, and expertise-led agriculture.
+                A movement built on trust. We believe every leader must be answerable to the citizens they represent and the promises they make.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section - Stark Typography */}
-      <section aria-labelledby="stats-heading" className="py-24 md:py-32 bg-background border-y border-border/60">
-        <div className="max-w-[1280px] mx-auto px-8">
+      {/* Stats Section - Modernized Hardened Typography */}
+      <section aria-labelledby="stats-heading" className="py-32 bg-stone-50 border-y border-border/40 relative overflow-hidden">
+        {/* Subtle background texture for premium feel */}
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.02] pointer-events-none" />
+        
+        <div className="max-w-[1280px] mx-auto px-8 relative z-10">
           <h2 id="stats-heading" className="sr-only">Movement Statistics</h2>
-          <dl className="grid md:grid-cols-2 gap-16 md:gap-8 items-center">
-            <div className="pl-8 relative">
-              <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+            {/* Stat Pillar 01 */}
+            <div className="group">
+              <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={355482} />
+                <AnimatedCounter target={355482} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
               </dd>
-              <dt className="text-sm text-on-surface-muted mt-4 tracking-tight font-bold">Citizens joined</dt>
+              <dt className="text-micro font-bold text-primary tracking-tight normal-case mb-2">
+                Members registered
+              </dt>
+              <p className="text-[11px] font-medium text-muted-foreground/70 leading-relaxed max-w-[200px]">
+                Verified citizens joined across the movement's national network.
+              </p>
             </div>
-            <div className="pl-8 relative">
-              <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-destructive via-accent to-primary" />
+
+            {/* Stat Pillar 02 */}
+            <div className="group">
+              <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={2} />
+                <AnimatedCounter target={98} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
               </dd>
-              <dt className="text-sm text-on-surface-muted mt-4 tracking-tight font-bold">Global platforms</dt>
+              <dt className="text-micro font-bold text-accent tracking-tight normal-case mb-2">
+                Active branches
+              </dt>
+              <p className="text-[11px] font-medium text-muted-foreground/70 leading-relaxed max-w-[200px]">
+                Community branches established and operating in every district.
+              </p>
             </div>
-          </dl>
+
+            {/* Stat Pillar 03 */}
+            <div className="group">
+              <BrandLine className="mb-6 opacity-60" />
+              <dd className="m-0">
+                <AnimatedCounter target={16} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+              </dd>
+              <dt className="text-micro font-bold text-destructive tracking-tight normal-case mb-2">
+                Regions represented
+              </dt>
+              <p className="text-[11px] font-medium text-muted-foreground/70 leading-relaxed max-w-[200px]">
+                Full movement presence secured across all sixteen administrative regions.
+              </p>
+            </div>
+
+            {/* Stat Pillar 04 */}
+            <div className="group">
+              <BrandLine className="mb-6 opacity-60" />
+              <dd className="m-0">
+                <AnimatedCounter target={42000} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+              </dd>
+              <dt className="text-micro font-bold text-on-surface/80 tracking-tight normal-case mb-2">
+                Diaspora supporters
+              </dt>
+              <p className="text-[11px] font-medium text-muted-foreground/70 leading-relaxed max-w-[200px]">
+                Global Ghanaians committed to supporting national development.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -296,21 +341,21 @@ export default function Home() {
               <div className="max-w-4xl">
                 <span className="text-accent font-meta font-bold tracking-tight text-xs mb-6 block">Ready to build Ghana?</span>
                 <h2 id="cta-heading" className="text-4xl md:text-6xl font-meta font-bold text-white mb-8 leading-[1.1] tracking-tighter">
-                  Join 355,482 people building Ghana’s future.
+                  Join the Movement Shaping Ghana’s Future.
                 </h2>
                 <p className="text-lg md:text-xl text-white/80 mb-12 leading-relaxed font-body-md max-w-2xl mx-auto">
-                  From Ghana to the diaspora, The Base is more than a platform - it's a collective engine for national industrialization and economic dignity.
+                  Be part of a growing movement focused on jobs, accountability, and a stronger future for the next generation.
                 </p>
                 
                 <div className="flex flex-col sm:flex-row items-center gap-3 justify-center mb-12">
                   <Button asChild variant="gold" size="lg" className="w-full sm:w-auto">
                     <Link to="/register" className="flex items-center justify-center gap-3">
-                      Join The Base <ArrowRight className="w-5 h-5" />
+                      Register Now <ArrowRight className="w-5 h-5" />
                     </Link>
                   </Button>
                   <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
                     <Link to="/our-agenda" className="flex items-center justify-center gap-3">
-                      See the Plan <ArrowRight className="w-5 h-5" />
+                      Get Involved <ArrowRight className="w-5 h-5" />
                     </Link>
                   </Button>
                 </div>
