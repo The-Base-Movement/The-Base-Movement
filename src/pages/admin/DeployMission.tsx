@@ -96,9 +96,9 @@ export default function DeployMission() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* 🧭 Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-[10px] font-bold capitalize tracking-tight text-muted-foreground/60 mb-2">
+      <nav className="flex items-center gap-2 text-[10px] font-bold capitalize tracking-tight text-muted-foreground/60">
         <Link to="/admin/dashboard" className="hover:text-primary transition-colors flex items-center gap-1">
           <LayoutDashboard className="w-3 h-3" /> HQ
         </Link>
@@ -109,7 +109,7 @@ export default function DeployMission() {
       </nav>
 
       {/* 🏆 Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex-columns items-center">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Crosshair className="w-8 h-8 text-on-surface" />

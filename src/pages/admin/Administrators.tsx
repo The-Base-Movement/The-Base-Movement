@@ -175,18 +175,16 @@ export default function Administrators() {
   })
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="admin-page-container animate-in fade-in duration-700">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <Shield className="w-8 h-8 text-on-surface" />
             Administrators
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Authorized personnel with leadership credentials.</p>
-        </div>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Authorized personnel with leadership credentials and platform oversight.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -205,10 +203,10 @@ export default function Administrators() {
       <Card className="rounded-sm border-border/60 shadow-sm">
         <CardContent className="p-6">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
             <input 
               placeholder="Search by name, ID or role..." 
-              className="w-full pl-10 pr-4 h-11 bg-muted/5 border border-border/10 focus:bg-white focus:border-on-surface focus:ring-0 transition-all text-[11px] outline-none font-bold placeholder:text-muted-foreground/20 rounded-lg"
+              className="w-full pl-12 pr-4 h-12 bg-muted/5 border border-border/10 focus:bg-white focus:border-on-surface focus:ring-0 transition-all text-[11px] outline-none font-bold placeholder:text-muted-foreground/20 rounded-lg"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -465,14 +463,14 @@ export default function Administrators() {
 
       {/* Security Advisory */}
       <div className="bg-muted/5 border border-border/60 p-8 text-on-surface/60 relative overflow-hidden rounded-sm shadow-sm">
-        <div className="flex items-center gap-6 relative z-10">
-          <div className="w-12 h-12 bg-muted/5 flex items-center justify-center shrink-0 rounded-lg">
-            <ShieldCheck className="w-6 h-6 text-muted-foreground/40" />
+        <div className="flex-columns items-center" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+          <div className="w-12 h-12 bg-white flex items-center justify-center shrink-0 rounded-lg shadow-sm border border-border/10">
+            <ShieldCheck className="w-6 h-6 text-primary" />
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-on-surface mb-1">Security protocol</h3>
-            <p className="text-muted-foreground/80 text-xs leading-relaxed max-w-2xl font-medium">
-              Administrative access is governed by movement encryption standards. All actions within the command center are logged in the audit vault for transparency and security.
+          <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+            <h3 className="text-sm font-bold text-on-surface mb-0">Security protocol</h3>
+            <p className="text-muted-foreground/80 text-[11px] leading-relaxed max-w-3xl font-medium mb-0 normal-case">
+              Administrative access is governed by movement encryption standards. All actions within the command center are logged in the audit vault for transparency and security. Unauthorized access attempts will be intercepted.
             </p>
           </div>
         </div>

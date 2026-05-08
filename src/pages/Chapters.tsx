@@ -246,9 +246,9 @@ export default function Chapters() {
         <div className="max-w-[1280px] mx-auto px-8 py-8">
           <Breadcrumbs />
           <div className="mt-4">
-            <h1 className="text-stone-900 mb-4">Movement Chapters</h1>
+            <h1 className="text-on-surface mb-4 font-meta">Movement Chapters</h1>
             <BrandLine />
-            <p className="text-stone-500 max-w-2xl mt-4 leading-relaxed font-bold tracking-tight">
+            <p className="text-muted-foreground/80 max-w-2xl mt-4 leading-relaxed font-bold tracking-tight font-body-md">
               Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {chapters.length}+ regional hubs.
             </p>
           </div>
@@ -348,8 +348,8 @@ export default function Chapters() {
               </div>
             )}
 
-            <div className="mt-20 border-l-4 border-brand-green pl-8 py-4">
-              <p className="text-stone-600 text-lg leading-relaxed italic max-w-2xl">
+            <div className="mt-20 border-l-4 border-primary pl-8 py-4">
+              <p className="text-muted-foreground/80 text-lg leading-relaxed italic max-w-2xl font-body-md">
                 "Our strength lies in our unity across borders. Together, we build the foundations of a new Ghana. Every chapter is a pillar of our collective destiny."
               </p>
               <div className="mt-6 h-1 w-24 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]" />

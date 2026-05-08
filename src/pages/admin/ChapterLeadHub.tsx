@@ -70,9 +70,9 @@ export default function ChapterLeadHub() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* 🏛️ Hub Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex-columns items-center">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
             <MapPin className="w-8 h-8 text-on-surface" />
@@ -87,7 +87,7 @@ export default function ChapterLeadHub() {
             size="lg"
             className="rounded-sm border-border/40 text-on-surface/80 text-[10px] px-8 font-bold capitalize tracking-tight hover:bg-stone-100 h-10 transition-all active:scale-95"
           >
-            <BarChart3 className="w-4 h-4 mr-2" /> Local Telemetry
+            <BarChart3 className="w-4 h-4 mr-2" /> Local operational metrics
           </Button>
           <Button 
             variant="primary"

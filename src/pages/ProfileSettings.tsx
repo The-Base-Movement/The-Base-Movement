@@ -402,7 +402,7 @@ export default function ProfileSettings() {
                 <p className="text-[10px] text-slate-400 font-meta italic tracking-tight">Official records</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+              <div className="flex-columns gap-x-12 gap-y-10">
                 <div className="space-y-2">
                   <label className="text-[10px] font-meta font-bold text-slate-400 block tracking-tight">
                     Full Name <span className="text-[var(--brand-red)]">*</span>

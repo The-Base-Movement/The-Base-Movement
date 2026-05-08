@@ -322,16 +322,16 @@ export default function MembersList() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <Users className="w-8 h-8 text-on-surface" />
-            Member directory
+            Patriot directory
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Manage and coordinate registered members.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Movement registration database, identity verification, and regional deployment oversight.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -342,7 +342,7 @@ export default function MembersList() {
             disabled={isExporting || members.length === 0}
           >
             <Download className="w-4 h-4 mr-2" />
-            {isExporting ? 'Processing Records...' : 'Export intelligence'}
+            {isExporting ? 'Ingesting records...' : 'Export intelligence'}
           </Button>
           <Button 
             variant="primary"
@@ -357,24 +357,24 @@ export default function MembersList() {
       </div>
 
       {/* Summary Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
         {[
-          { label: 'Total members', value: stats.total, icon: Users, color: 'text-on-surface/80', bg: 'bg-muted/10' },
+          { label: 'Total patriots', value: stats.total, icon: Users, color: 'text-on-surface/80', bg: 'bg-muted/10' },
           { label: 'Active status', value: stats.active, icon: CheckCircle2, color: 'text-primary', bg: 'bg-primary/10' },
           { label: 'Pending verification', value: stats.pending, icon: Clock, color: 'text-accent', bg: 'bg-accent/10' },
           { label: 'Regions represented', value: stats.regions, icon: Globe2, color: 'text-primary', bg: 'bg-primary/5' },
         ].map((stat, i) => (
-          <Card key={i} className="rounded-sm border-border/40 shadow-sm overflow-hidden group hover:border-border/60 transition-all bg-white/80 backdrop-blur-sm min-h-[100px]">
+          <Card key={i} className="rounded-sm border-border/40 shadow-sm overflow-hidden group hover:border-border/60 transition-all bg-white/80 backdrop-blur-sm">
             <CardContent className="p-5 h-full flex items-center gap-4">
               <div className={cn("w-12 h-12 rounded-sm flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", stat.bg)}>
                 <stat.icon className={cn("w-6 h-6", stat.color)} />
               </div>
-              <div className="flex-1">
-                <p className="text-[10px] font-bold text-muted-foreground/80">{stat.label}</p>
+              <div className="flex-1 flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
+                <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">{stat.label}</p>
                 {isLoading ? (
                   <div className="h-7 w-16 bg-muted/20 animate-pulse rounded-lg mt-1" />
                 ) : (
-                  <p className="text-xl font-bold text-on-surface leading-tight mt-0.5">
+                  <p className="text-2xl font-bold text-on-surface leading-tight m-0">
                     {stat.value.toLocaleString()}
                   </p>
                 )}

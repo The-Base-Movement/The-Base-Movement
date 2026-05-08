@@ -134,16 +134,16 @@ export default function PollsManagement() {
   const filteredPolls = polls.filter(p => p.question.toLowerCase().includes(searchQuery.toLowerCase()))
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <BarChart3 className="w-8 h-8 text-on-surface" />
             Engagement hub
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Manage opinion polls, surveys, and movement feedback.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Manage movement-wide opinion polls, surveys, and live member feedback intercepts.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -158,43 +158,48 @@ export default function PollsManagement() {
       </div>
 
       {/* Engagement Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Total engagements</p>
-              <h3 className="text-2xl font-bold text-on-surface">{stats?.totalEngagements || "..."}</h3>
-              <div className="flex items-center gap-1 text-[9px] font-bold text-primary mt-1">
-                <TrendingUp className="w-3 h-3" /> +15.2%
-              </div>
+      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+        <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <TrendingUp className="w-6 h-6 text-primary" />
+            </div>
+            <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
+              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">Total engagements</p>
+              <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.totalEngagements || "..."}<span className="text-[10px] text-primary ml-2">+15.2%</span></h3>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6">
-            <p className="text-[10px] font-bold tracking-tight text-muted-foreground/80 mb-2">National sentiment</p>
+        <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-on-surface text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50" />
+          <CardContent className="p-6 relative z-10">
+            <p className="text-[10px] font-bold tracking-tight text-white/40 mb-2 uppercase tracking-widest">National sentiment</p>
             <div className="flex items-end gap-3">
-              <h3 className="text-2xl font-bold text-primary">{stats?.nationalSentimentScore || "..."}%</h3>
-              <span className="text-[9px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-md mb-1">Positive</span>
+              <h3 className="text-2xl font-bold text-primary m-0">{stats?.nationalSentimentScore || "..."}%</h3>
+              <span className="text-[9px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full mb-1">Positive</span>
             </div>
-            <p className="text-[10px] text-muted-foreground/80 font-bold tracking-tight mt-2">Live engagement analysis</p>
+            <p className="text-[10px] text-white/20 font-bold tracking-tight mt-3 normal-case">Live engagement analysis from field chapters</p>
           </CardContent>
         </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Avg response time</p>
-              <h3 className="text-2xl font-bold text-on-surface">{stats?.avgResponseTime || "..."}</h3>
-              <p className="text-[10px] font-bold text-muted-foreground/80 mt-1">Per survey session</p>
+        <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-lg bg-muted/5 flex items-center justify-center shrink-0 border border-border/10">
+              <Clock className="w-6 h-6 text-muted-foreground/40" />
+            </div>
+            <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
+              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">Avg response time</p>
+              <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.avgResponseTime || "..."}</h3>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Feedback rate</p>
-              <h3 className="text-2xl font-bold text-on-surface">{stats?.feedbackRate || "..."}</h3>
-              <p className="text-[10px] font-bold text-muted-foreground/80 mt-1">From active members</p>
+        <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
+          <CardContent className="p-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-lg bg-muted/5 flex items-center justify-center shrink-0 border border-border/10">
+              <MessageSquare className="w-6 h-6 text-muted-foreground/40" />
+            </div>
+            <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
+              <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">Feedback rate</p>
+              <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.feedbackRate || "..."}</h3>
             </div>
           </CardContent>
         </Card>
@@ -413,9 +418,8 @@ export default function PollsManagement() {
       </Card>
 
       {/* Quick Tips Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="p-8 bg-on-surface text-white relative overflow-hidden rounded-sm shadow-xl border border-white/5">
-          <div className="relative z-10 space-y-4">
+      <div className="flex-columns items-stretch" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="p-8 bg-on-surface text-white relative overflow-hidden rounded-sm shadow-xl border border-white/5 flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
             <h4 className="text-lg font-bold tracking-tight">Maximize engagement</h4>
             <p className="text-sm text-white/60 leading-relaxed max-w-sm">
               Use regional-specific polls to gather more precise data. Our research shows chapters with localized campaigns see 40% higher member participation.
@@ -428,11 +432,10 @@ export default function PollsManagement() {
             >
               Scan Analytics Guide
             </Button>
-          </div>
-          <BarChart3 className="absolute -bottom-4 -right-4 w-32 h-32 text-white/5 rotate-12" />
+            <BarChart3 className="absolute -bottom-4 -right-4 w-32 h-32 text-white/5 rotate-12" />
         </div>
 
-        <div className="p-8 border border-border/60 bg-white space-y-4 rounded-sm shadow-sm">
+        <div className="p-8 border border-border/60 bg-white flow rounded-sm shadow-sm" style={{ '--flow-space': '1.5rem' } as React.CSSProperties}>
           <h4 className="text-lg font-bold tracking-tight text-on-surface">Recent feedback highlights</h4>
           <div className="space-y-4">
             <div className="flex items-start gap-4">

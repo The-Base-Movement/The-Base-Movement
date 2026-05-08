@@ -260,7 +260,7 @@ export interface MemberFeedback {
   created_at: string
 }
 
-export interface SentimentTelemetry {
+export interface SentimentIntelligence {
   id: string
   region: string
   avg_sentiment: number

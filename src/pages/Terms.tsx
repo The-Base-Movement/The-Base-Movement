@@ -27,7 +27,7 @@ export default function Terms() {
 
       <div className="max-w-[1280px] mx-auto px-8 py-16">
         <div className="max-w-4xl">
-          <div className="space-y-12">
+          <div className="flow" style={{ '--flow-space': '3rem' } as React.CSSProperties}>
             
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
               <div className="flex gap-6">
@@ -36,7 +36,7 @@ export default function Terms() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Membership agreement</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
                     By joining The Base, you agree to support the movement's objectives of promoting civic engagement and youth empowerment. You commit to upholding the values of integrity, accountability, and national development. This agreement constitutes a formal commitment to the principles of 'Ghana First'.
                   </p>
                 </div>
@@ -50,7 +50,7 @@ export default function Terms() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Code of conduct</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
                     Members are expected to engage in constructive dialogue and represent the movement with dignity at all times. Any form of hate speech, violence, or illegal activity will result in immediate termination of membership and potential restriction from movement spaces.
                   </p>
                 </div>
@@ -64,7 +64,7 @@ export default function Terms() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Platform usage & security</h2>
-                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                  <p className="text-slate-600 leading-relaxed text-sm md:text-base prose-standard">
                     Your member portal is for personal use only. You are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account. Unauthorized attempts to access movement data or disrupt platform operations will be met with institutional and legal action.
                   </p>
                 </div>

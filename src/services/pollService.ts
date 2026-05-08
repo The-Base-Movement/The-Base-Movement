@@ -133,7 +133,7 @@ class PollService {
     const [pollsRes, usersRes, sentimentRes] = await Promise.all([
       supabase.from('polls').select('total_votes, status'),
       supabase.from('users').select('id', { count: 'exact', head: true }),
-      supabase.from('national_sentiment_telemetry').select('avg_sentiment')
+      supabase.from('national_sentiment_intelligence').select('avg_sentiment')
     ])
 
     const pollsData = pollsRes.data || []

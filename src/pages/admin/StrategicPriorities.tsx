@@ -137,16 +137,16 @@ export default function StrategicPriorities() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* 🎯 Tactical Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Page Header */}
+      <div className="flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta m-0">
             <Target className="w-8 h-8 text-on-surface" />
-            Strategic Priorities
+            Strategic priorities
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Managing high-impact mobilization campaigns and resource allocation.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0 prose-standard">Establish movement-wide mobilization goals, financial targets, and operational milestones.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -165,137 +165,147 @@ export default function StrategicPriorities() {
             }}
             className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
-            <Plus className="w-4 h-4 mr-2" /> New Priority
+            <Plus className="w-4 h-4 mr-2" /> Establish Priority
           </Button>
         </div>
       </div>
 
-      {/* 🔍 Search & Filters */}
-      <div className="bg-white border border-border/60 p-2 rounded-sm flex items-center justify-between gap-4 shadow-sm">
-        <div className="relative w-full max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-          <input 
-            type="text" 
-            placeholder="Search priorities by title or mission..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-9 pr-4 bg-transparent border-none text-[10px] font-bold normal-case placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0"
-          />
-        </div>
-        <div className="flex items-center gap-2 pr-2">
-          <span className="text-[10px] font-bold text-muted-foreground/40 tracking-tight">{filteredCampaigns.length} Active Missions</span>
-        </div>
-      </div>
-
-      {/* 📋 Priority Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {filteredCampaigns.map((campaign) => (
-          <Card key={campaign.id} className="rounded-sm border-border/60 shadow-sm flex flex-col group overflow-hidden bg-white">
-            <div className="aspect-video bg-muted/50 overflow-hidden relative">
-              {campaign.imageUrl ? (
-                <img src={campaign.imageUrl} alt={campaign.title} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000" />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/20">
-                  <ImageIcon className="w-12 h-12 mb-2 opacity-10" />
-                  <span className="text-[10px] font-bold tracking-tight">No Tactical Visual</span>
-                </div>
-              )}
-              <div className="absolute top-4 right-4">
-                <span className={cn(
-                  "px-3 py-1 text-[9px] font-bold tracking-tight shadow-xl",
-                  campaign.status === 'Active' ? "bg-primary text-white" : "bg-on-surface text-white"
-                )}>
-                  {campaign.status}
-                </span>
+      {/* Stats Summary Area */}
+      <div className="grid-responsive" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+        {[
+          { label: 'Active priorities', value: campaigns.filter(c => c.status === 'Active').length, icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
+          { label: 'Total Mobilized', value: `$${campaigns.reduce((acc, c) => acc + c.raisedAmount, 0).toLocaleString()}`, icon: DollarSign, color: 'text-primary', bg: 'bg-primary/5' },
+          { label: 'Average progress', value: `${campaigns.length > 0 ? (campaigns.reduce((acc, c) => acc + (c.raisedAmount / c.targetAmount), 0) / campaigns.length * 100).toFixed(0) : 0}%`, icon: TrendingUp, color: 'text-accent', bg: 'bg-accent/10' },
+          { label: 'Upcoming deadlines', value: campaigns.filter(c => new Date(c.endDate) > new Date()).length, icon: Clock, color: 'text-on-surface/60', bg: 'bg-muted/10' },
+        ].map((stat, i) => (
+          <Card key={i} className="rounded-sm border-border/40 shadow-sm bg-white overflow-hidden group hover:border-border/60 transition-all backdrop-blur-sm">
+            <CardContent className="p-6 h-full flex items-center gap-4">
+              <div className={cn("w-12 h-12 rounded-sm flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", stat.bg)}>
+                <stat.icon className={cn("w-6 h-6", stat.color)} />
               </div>
-            </div>
-            <CardContent className="p-8 flex flex-col flex-1">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="font-bold text-on-surface font-meta text-lg tracking-tight leading-tight">{campaign.title}</h3>
-                <div className="flex items-center gap-1">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => {
-                      setEditingCampaign(campaign)
-                      setFormData({
-                        title: campaign.title,
-                        description: campaign.description,
-                        targetAmount: campaign.targetAmount,
-                        endDate: campaign.endDate.split('T')[0],
-                        status: campaign.status,
-                        imageUrl: campaign.imageUrl
-                      })
-                    }}
-                    className="h-8 w-8 text-muted-foreground/40 hover:text-on-surface hover:bg-muted/10 rounded-sm"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => handleDelete(campaign.id, campaign.title)}
-                    className="h-8 w-8 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 rounded-sm"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              <p className="text-[11px] font-bold text-muted-foreground/60 mb-8 line-clamp-3 leading-relaxed">
-                {campaign.description}
-              </p>
-              
-              <div className="mt-auto space-y-6">
-                <div>
-                  <div className="flex justify-between items-end mb-2">
-                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground/40 tracking-tight">
-                      <TrendingUp className="w-3.5 h-3.5" /> 
-                      Mobilization: {Math.round((campaign.raisedAmount / campaign.targetAmount) * 100)}%
-                    </div>
-                    <span className="text-xs font-bold font-meta text-on-surface tracking-tighter">GH₵ {campaign.raisedAmount.toLocaleString()}</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-muted/10 overflow-hidden rounded-full border border-border/5">
-                    <div 
-                      className="h-full bg-primary transition-all duration-1000 shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" 
-                      style={{ width: `${Math.min(100, (campaign.raisedAmount / campaign.targetAmount) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-border/10">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-primary" />
-                    <div>
-                      <p className="text-[8px] font-bold text-muted-foreground/40 tracking-tight leading-none mb-1">Target</p>
-                      <p className="text-[11px] font-bold text-on-surface tracking-tight leading-none">GH₵ {campaign.targetAmount.toLocaleString()}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-on-surface/40" />
-                    <div>
-                      <p className="text-[8px] font-bold text-muted-foreground/40 tracking-tight leading-none mb-1">Deadline</p>
-                      <p className="text-[11px] font-bold text-on-surface tracking-tight leading-none">{new Date(campaign.endDate).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                </div>
+              <div className="flex-1 flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
+                <p className="text-[10px] font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">{stat.label}</p>
+                <p className="text-2xl font-bold text-on-surface leading-tight m-0">{stat.value}</p>
               </div>
             </CardContent>
           </Card>
         ))}
-        {filteredCampaigns.length === 0 && (
-          <div className="col-span-full border-2 border-dashed border-border/40 p-20 text-center rounded-sm">
-            <Target className="w-16 h-16 text-muted-foreground/10 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-muted-foreground/40 normal-case mb-2">No strategic priorities found</h3>
-            <p className="text-[10px] font-bold text-muted-foreground/20 tracking-tight">Awaiting tactical directives from HQ.</p>
-          </div>
-        )}
       </div>
+
+      <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
+        <div className="p-6 border-b border-border/10 bg-muted/5 flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+            <input 
+              placeholder="Filter by priority title or objective..." 
+              className="w-full pl-12 pr-4 h-11 bg-white border border-border/60 focus:ring-1 focus:ring-primary focus:border-transparent rounded-lg text-[11px] font-bold outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground/60 font-bold bg-white px-5 py-2.5 rounded-lg border border-border/10 shadow-sm">
+            <Target className="w-4 h-4 text-primary" />
+            <span className="normal-case">Active campaigns:</span> <span className="text-on-surface font-bold ml-1">{campaigns.length}</span>
+          </div>
+        </div>
+        <CardContent className="p-8">
+          <div className="grid-responsive" style={{ '--grid-min-width': '340px' } as React.CSSProperties}>
+            {filteredCampaigns.length === 0 ? (
+              <div className="col-span-full py-20 text-center border-2 border-dashed border-border/20 rounded-sm">
+                <Target className="w-12 h-12 text-muted mx-auto mb-4 opacity-20" />
+                <p className="text-sm font-bold text-muted-foreground normal-case">No strategic priorities found matching your query.</p>
+              </div>
+            ) : (
+              filteredCampaigns.map((campaign) => (
+                <Card key={campaign.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden group hover:shadow-xl hover:border-on-surface/40 transition-all bg-white flex flex-col">
+                  <div className="relative h-48 bg-stone-100 overflow-hidden shrink-0 border-b border-border/10">
+                    {campaign.imageUrl ? (
+                      <img src={campaign.imageUrl} alt={campaign.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" decoding="async" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ImageIcon className="w-12 h-12 text-muted-foreground/20" />
+                      </div>
+                    )}
+                    <div className="absolute top-4 right-4">
+                      <span className={cn(
+                        "px-3 py-1 text-[9px] font-bold tracking-tight rounded-full border shadow-sm backdrop-blur-md",
+                        campaign.status === 'Active' ? "bg-primary/90 text-white border-primary" : "bg-muted/90 text-on-surface border-border/60"
+                      )}>
+                        {campaign.status}
+                      </span>
+                    </div>
+                  </div>
+                  <CardContent className="p-6 flex-1 flex flex-col justify-between flow" style={{ '--flow-space': '1.5rem' } as React.CSSProperties}>
+                    <div className="flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
+                      <h3 className="text-sm font-bold text-on-surface leading-tight tracking-tight m-0">{campaign.title}</h3>
+                      <p className="text-xs text-muted-foreground/80 leading-relaxed m-0 line-clamp-3 font-medium">{campaign.description}</p>
+                    </div>
+
+                    <div className="flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-end">
+                          <span className="text-[10px] font-bold text-muted-foreground/40 normal-case">Operational Progress</span>
+                          <span className="text-sm font-bold text-on-surface">{((campaign.raisedAmount / campaign.targetAmount) * 100).toFixed(0)}%</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-on-surface transition-all duration-1000 ease-out shadow-sm" 
+                            style={{ width: `${Math.min((campaign.raisedAmount / campaign.targetAmount) * 100, 100)}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-[11px] font-bold tracking-tight">
+                          <span className="text-primary">${campaign.raisedAmount.toLocaleString()}</span>
+                          <span className="text-muted-foreground/40 normal-case">of ${campaign.targetAmount.toLocaleString()} target</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-border/10">
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/60">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>Deadline: {new Date(campaign.endDate).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-9 w-9 text-muted-foreground/40 hover:text-on-surface hover:bg-stone-50 rounded-sm active:scale-95 transition-all"
+                            onClick={() => {
+                              setEditingCampaign(campaign)
+                              setFormData({
+                                title: campaign.title,
+                                description: campaign.description,
+                                targetAmount: campaign.targetAmount,
+                                endDate: campaign.endDate.split('T')[0],
+                                status: campaign.status,
+                                imageUrl: campaign.imageUrl || ''
+                              })
+                            }}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-9 w-9 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 rounded-sm active:scale-95 transition-all"
+                            onClick={() => handleDelete(campaign.id, campaign.title)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* 📝 Create/Edit Modal */}
       {(isCreating || editingCampaign) && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-xl rounded-sm border-border/60 shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden">
+          <Card className="w-full max-w-xl rounded-sm border-border/60 shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden bg-white">
             <CardHeader className="p-8 border-b border-border/10 bg-muted/5">
               <div className="flex justify-between items-start">
                 <div>

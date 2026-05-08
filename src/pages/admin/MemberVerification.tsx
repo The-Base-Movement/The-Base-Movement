@@ -170,17 +170,17 @@ export default function MemberVerification() {
   const handleFilter = (val: PendingVerification['status'] | 'All') => { setStatusFilter(val); setCurrentPage(1) }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-        <div>
+      <div className="flex-columns items-center">
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <ShieldCheck className="w-8 h-8 text-on-surface" />
             Member verification
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Review and approve new member registrations for movement security.</p>
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0">Review and approve new member registrations for movement security.</p>
         </div>
         <div className="flex items-center gap-4">
           {pendingCount > 0 && (
@@ -206,10 +206,10 @@ export default function MemberVerification() {
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
 
         {/* ── Left: Pending List ──────────────────────────────────────────── */}
-        <div className="xl:col-span-2 space-y-6">
+        <div className="min-w-0 flex-[2] flow" style={{ '--flow-space': '1.5rem' } as React.CSSProperties}>
           <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-border/40 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="relative flex-1 max-w-sm">
@@ -362,9 +362,9 @@ export default function MemberVerification() {
         </div>
 
         {/* ── Right: Review Panel ─────────────────────────────────────────── */}
-        <div className="xl:col-span-1">
+        <div className="flex-1">
           {selectedMember ? (
-            <div className="space-y-4 sticky top-8">
+            <div className="flow sticky top-8" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
 
               {/* Identity Card */}
               <Card className="rounded-sm border-on-surface bg-on-surface text-white shadow-2xl overflow-hidden relative">
@@ -671,13 +671,14 @@ export default function MemberVerification() {
               </div>
             </CardHeader>
             <CardContent className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="space-y-8">
+              <div className="flex-columns items-start" style={{ '--column-gap': '3rem' } as React.CSSProperties}>
+                <div className="flex-[1.5] flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
                   <section>
                     <h3 className="text-[12px] font-bold tracking-tight text-on-surface/40 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
                       <FileText className="w-3.5 h-3.5" /> Identity metadata
                     </h3>
-                    <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+                    <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+                      <div className="grid grid-cols-2 gap-y-4 gap-x-8">
                       {[
                         { label: 'Full name', value: viewingVaultRecord.name },
                         { label: 'Platform', value: viewingVaultRecord.platform },
@@ -694,6 +695,7 @@ export default function MemberVerification() {
                           <p className="text-sm font-bold tracking-tight text-on-surface">{f.value || '-'}</p>
                         </div>
                       ))}
+                      </div>
                     </div>
                   </section>
 
@@ -731,7 +733,7 @@ export default function MemberVerification() {
                   </section>
                 </div>
 
-                <div className="space-y-8">
+                <div className="flex-1 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
                   <section>
                     <h3 className="text-[12px] font-bold tracking-tight text-muted-foreground/40 border-b border-border/40 pb-2 mb-4">
                       Captured credentials

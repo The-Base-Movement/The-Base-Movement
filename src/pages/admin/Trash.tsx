@@ -119,16 +119,16 @@ export default function TrashPage() {
   }
 
   return (
-    <div className="animate-in fade-in duration-500 pb-20">
+    <div className="admin-page-container animate-in fade-in duration-500">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-        <div>
+      <div className="flex-columns items-center">
+        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
             <Trash2 className="w-8 h-8 text-on-surface" />
             Trash vault
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">
+          <BrandLine />
+          <p className="text-muted-foreground/80 text-sm mb-0">
             Items are retained for 30 days before permanent purging.
           </p>
         </div>
@@ -149,7 +149,7 @@ export default function TrashPage() {
       </div>
 
       {/* Tabs (Desktop Only) */}
-      <div className="hidden lg:flex items-center gap-2 mb-8 bg-muted/10 p-1.5 rounded-sm w-fit border border-border/40">
+      <div className="hidden lg:flex-columns items-center" style={{ '--column-gap': '0.5rem' } as React.CSSProperties}>
         <Button
           variant={activeTab === 'blogs' ? 'outline' : 'ghost'}
           onClick={() => setActiveTab('blogs')}
@@ -205,13 +205,13 @@ export default function TrashPage() {
       </div>
 
       {/* Retention Notice */}
-      <div className="mb-8 p-4 bg-accent/5 border border-accent/20 rounded-sm flex items-start gap-4">
+      <div className="mb-8 p-4 bg-accent/5 border border-accent/20 rounded-sm flex-columns items-start" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
         <div className="w-10 h-10 rounded-sm bg-accent/10 flex items-center justify-center shrink-0">
           <Clock className="w-5 h-5 text-accent" />
         </div>
-        <div>
-          <h4 className="text-sm font-bold text-on-surface">30-Day Retention Policy</h4>
-          <p className="text-xs text-muted-foreground/80 mt-0.5 font-medium leading-relaxed">
+        <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+          <h4 className="text-sm font-bold text-on-surface mb-0">30-Day Retention Policy</h4>
+          <p className="text-xs text-muted-foreground/80 mb-0 font-medium leading-relaxed">
             All items moved to the trash are automatically purged after 30 days. Restoration is not possible once an item has been permanently deleted from the vault.
           </p>
         </div>
@@ -238,7 +238,7 @@ export default function TrashPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="flex-columns items-start" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
             {activeTab === 'blogs' && blogs.map(post => (
               <TrashItemCard 
                 key={post.id}
