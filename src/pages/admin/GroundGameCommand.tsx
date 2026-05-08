@@ -6,6 +6,7 @@ import {
   Car, 
   Vote, 
   ClipboardList,
+  Target,
   Crosshair,
   Activity,
   PieChart as PieIcon,
