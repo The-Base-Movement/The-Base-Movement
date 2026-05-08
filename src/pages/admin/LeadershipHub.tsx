@@ -143,7 +143,7 @@ export default function LeadershipHub() {
             placeholder="Search applications..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-10 pr-4 bg-muted/5 border-none text-[11px] font-bold placeholder:text-muted-foreground/40 focus:ring-1 focus:ring-border/40 rounded-lg"
+            className="w-full h-10 pl-10 pr-4 bg-muted/5 border-none text-[11px] font-bold placeholder:text-muted-foreground/40 focus:ring-1 focus:ring-border/40 rounded-sm"
           />
         </div>
         <div className="flex items-center gap-3">
@@ -232,7 +232,7 @@ export default function LeadershipHub() {
                   <tr key={app.id} className="hover:bg-muted/30 transition-colors group">
                     <td className="p-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-border/40 flex items-center justify-center font-bold text-[10px] normal-case rounded-lg">
+                        <div className="w-10 h-10 bg-border/40 flex items-center justify-center font-bold text-[10px] normal-case rounded-sm">
                           {app.applicant_name?.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div>
@@ -283,7 +283,7 @@ export default function LeadershipHub() {
                           </Button>
                         </div>
                       ) : (
-                        <Button variant="ghost" className="h-8 text-muted-foreground/40 text-[9px] font-bold normal-case pointer-events-none rounded-lg">
+                        <Button variant="ghost" className="h-8 text-muted-foreground/40 text-[9px] font-bold normal-case pointer-events-none rounded-sm">
                           Processed <ChevronRight className="w-3 h-3 ml-1" />
                         </Button>
                       )}
@@ -308,7 +308,7 @@ export default function LeadershipHub() {
                 <blockquote className="border-l-2 border-accent pl-4 py-1 italic text-on-surface/80 text-sm leading-relaxed mb-6 font-body-md">
                   "{app.vision_statement}"
                 </blockquote>
-                <div className="bg-white border border-border/40 p-4 rounded-lg">
+                <div className="bg-white border border-border/40 p-4 rounded-sm">
                   <p className="text-[9px] font-bold normal-case text-muted-foreground/40 mb-2">Experience summary</p>
                   <p className="text-xs text-muted-foreground/80 leading-relaxed prose-standard">{app.experience_summary}</p>
                 </div>

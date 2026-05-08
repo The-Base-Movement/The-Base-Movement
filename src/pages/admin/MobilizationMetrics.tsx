@@ -224,7 +224,7 @@ export default function MobilizationMetrics() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-sm border border-border/10">
-                        <div className="w-8 h-8 rounded-lg bg-background flex items-center justify-center border border-border/10">
+                        <div className="w-8 h-8 rounded-sm bg-background flex items-center justify-center border border-border/10">
                           <Users className="w-4 h-4 text-muted-foreground/80" />
                         </div>
                         <div>
@@ -233,7 +233,7 @@ export default function MobilizationMetrics() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-sm border border-border/10">
-                        <div className="w-8 h-8 rounded-lg bg-background flex items-center justify-center border border-border/10">
+                        <div className="w-8 h-8 rounded-sm bg-background flex items-center justify-center border border-border/10">
                           <Zap className="w-4 h-4 text-accent" />
                         </div>
                         <div>
@@ -262,7 +262,7 @@ export default function MobilizationMetrics() {
               {achievements.map((achievement) => (
                 <div key={achievement.id} className="p-4 bg-muted/5 border border-border/10 hover:border-border/40 transition-all group cursor-pointer relative overflow-hidden">
                   <div className="flex gap-4 relative z-10">
-                    <div className="p-3 bg-muted/10 rounded-lg self-start group-hover:scale-110 transition-transform">
+                    <div className="p-3 bg-muted/10 rounded-sm self-start group-hover:scale-110 transition-transform">
                       <Target className="w-5 h-5 text-accent" />
                     </div>
                     <div className="space-y-1">

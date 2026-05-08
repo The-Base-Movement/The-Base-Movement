@@ -74,7 +74,7 @@ export default function AdminRegions() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="rounded-sm border-border/40 shadow-sm bg-on-surface text-white">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 bg-white/10 flex items-center justify-center shrink-0 rounded-lg">
+            <div className="w-10 h-10 bg-white/10 flex items-center justify-center shrink-0 rounded-sm">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
@@ -86,7 +86,7 @@ export default function AdminRegions() {
         
         <Card className="rounded-sm border-border/40 shadow-sm">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 bg-destructive/10 flex items-center justify-center shrink-0 rounded-lg">
+            <div className="w-10 h-10 bg-destructive/10 flex items-center justify-center shrink-0 rounded-sm">
               <MapPin className="w-5 h-5 text-destructive" />
             </div>
             <div>
@@ -97,7 +97,7 @@ export default function AdminRegions() {
         </Card>
         <Card className="rounded-sm border-border/40 shadow-sm col-span-2 md:col-span-2">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="w-10 h-10 bg-primary/10 flex items-center justify-center shrink-0 rounded-lg">
+            <div className="w-10 h-10 bg-primary/10 flex items-center justify-center shrink-0 rounded-sm">
               <MapPin className="w-5 h-5 text-primary" />
             </div>
             <div>
@@ -159,7 +159,7 @@ export default function AdminRegions() {
                 >
                   <div className="flex items-center gap-4">
                     <div className={cn(
-                      "w-8 h-8 flex items-center justify-center transition-colors rounded-lg",
+                      "w-8 h-8 flex items-center justify-center transition-colors rounded-sm",
                       isExpanded ? "bg-on-surface text-white" : "bg-muted/10 text-muted-foreground/80 group-hover:bg-muted/20"
                     )}>
                       <MapPin className="w-4 h-4" />
@@ -209,7 +209,7 @@ export default function AdminRegions() {
                           value={cSearch}
                           onChange={e => setConstituencySearch(prev => ({ ...prev, [region.id]: e.target.value }))}
                           placeholder="Filter constituencies..."
-                          className="pl-9 h-9 rounded-lg border-border/40 text-xs shadow-sm"
+                          className="pl-9 h-9 rounded-sm border-border/40 text-xs shadow-sm"
                         />
                       </div>
                       <Button
@@ -225,7 +225,7 @@ export default function AdminRegions() {
                       {visibleConstituencies.map(con => (
                         <div
                           key={con}
-                          className="group flex items-center justify-between gap-1 px-3 py-2 bg-white border border-border/40 hover:border-on-surface/40 transition-colors rounded-lg"
+                          className="group flex items-center justify-between gap-1 px-3 py-2 bg-white border border-border/40 hover:border-on-surface/40 transition-colors rounded-sm"
                         >
                           <span className="text-[10px] font-bold tracking-tight text-on-surface/80 group-hover:text-on-surface truncate">
                             {con}

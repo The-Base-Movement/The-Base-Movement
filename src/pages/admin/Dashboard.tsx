@@ -51,7 +51,7 @@ function SkeletonCard() {
     <Card className="rounded-sm border-border/60 shadow-none overflow-hidden bg-white">
       <CardContent className="p-5 space-y-3">
         <dt className="w-1/4 h-2 bg-muted/10 animate-pulse rounded-full" />
-        <dd className="m-0 w-1/2 h-6 bg-muted/10 animate-pulse rounded-lg" />
+        <dd className="m-0 w-1/2 h-6 bg-muted/10 animate-pulse rounded-sm" />
       </CardContent>
     </Card>
   )
@@ -75,7 +75,7 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
               </span>
             </dd>
           </div>
-          <div className={cn("w-8 h-8 shrink-0 flex items-center justify-center rounded-lg bg-muted/10", color.replace('bg-', 'text-'))}>
+          <div className={cn("w-8 h-8 shrink-0 flex items-center justify-center rounded-sm bg-muted/10", color.replace('bg-', 'text-'))}>
             <Icon className="w-4 h-4" />
           </div>
         </div>
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
                 <CardDescription className="text-[11px] font-medium text-muted-foreground/80 mt-1">Rolling 30-day expansion trend</CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <select className="h-7 px-2 bg-white border border-border/60 text-[10px] font-bold text-on-surface/80 rounded-lg outline-none">
+                <select className="h-7 px-2 bg-white border border-border/60 text-[10px] font-bold text-on-surface/80 rounded-sm outline-none">
                   <option>Last 30 Days</option>
                   <option>Last 90 Days</option>
                 </select>
@@ -454,7 +454,7 @@ export default function AdminDashboard() {
                   </div>
                 )}
                 <div className="pt-4">
-                   <div className="bg-muted/10 rounded-lg p-4 flex justify-between items-center border border-border/40">
+                   <div className="bg-muted/10 rounded-sm p-4 flex justify-between items-center border border-border/40">
                       <p className="text-[10px] font-bold text-muted-foreground/80 tracking-tight">Overall velocity</p>
                      <p className="text-sm font-bold text-on-surface tracking-tight">3.2 Days</p>
                    </div>
@@ -540,7 +540,7 @@ export default function AdminDashboard() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                    <div className="flex items-center gap-4">
-                     <div className="w-9 h-9 rounded-lg bg-muted/10 flex items-center justify-center text-[10px] font-bold text-on-surface border border-border/40">GA</div>
+                     <div className="w-9 h-9 rounded-sm bg-muted/10 flex items-center justify-center text-[10px] font-bold text-on-surface border border-border/40">GA</div>
                      <div>
                        <p className="text-xs font-bold text-on-surface">Greater Accra</p>
                        <p className="text-[10px] text-muted-foreground/80 font-medium">Peak flow detected</p>
@@ -550,7 +550,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                    <div className="flex items-center gap-4">
-                     <div className="w-9 h-9 rounded-lg bg-muted/10 flex items-center justify-center text-[10px] font-bold text-on-surface border border-border/40">AS</div>
+                     <div className="w-9 h-9 rounded-sm bg-muted/10 flex items-center justify-center text-[10px] font-bold text-on-surface border border-border/40">AS</div>
                      <div>
                        <p className="text-xs font-bold text-on-surface">Ashanti</p>
                        <p className="text-[10px] text-muted-foreground/80 font-medium">Normal operations</p>

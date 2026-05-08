@@ -226,7 +226,7 @@ export default function RoadmapManagement() {
               placeholder="Search milestones..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 text-xs rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
+              className="pl-9 h-9 text-xs rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
             />
           </div>
         </CardHeader>

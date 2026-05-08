@@ -88,54 +88,54 @@ export default function Broadcasts() {
             onClick={() => navigate('/admin/broadcasts/new')}
             className="rounded-sm text-[10px] font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
-            <Plus className="w-4 h-4 mr-2" /> Deploy New Broadcast
+            <Plus className="w-4 h-4 mr-2" /> Create New Broadcast
           </Button>
         </div>
       </div>
 
       {/* Stats Overview - Balanced Grid */}
       <div className="grid-stats mb-12" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-accent transition-colors bg-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Total</span>
-              <Megaphone className="w-4 h-4 text-muted-foreground/10" />
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-accent transition-all bg-white cursor-default">
+          <CardContent className="p-8">
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-xs font-bold text-muted-foreground/80 uppercase tracking-widest">Total</span>
+              <Megaphone className="w-5 h-5 text-muted-foreground/20 group-hover:text-accent transition-colors" />
             </div>
-            <p className="text-3xl font-bold text-on-surface mb-1">{broadcasts.length}</p>
-            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Total deployments</p>
+            <p className="text-4xl font-bold text-on-surface mb-2 tracking-tight transition-transform group-hover:translate-x-1">{broadcasts.length}</p>
+            <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight uppercase">Total deployments</p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-destructive transition-colors bg-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest text-destructive">Urgent</span>
-              <AlertOctagon className="w-4 h-4 text-destructive/10" />
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-destructive transition-all bg-white cursor-default">
+          <CardContent className="p-8">
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-xs font-bold text-destructive uppercase tracking-widest">Urgent</span>
+              <AlertOctagon className="w-5 h-5 text-destructive/20 group-hover:text-destructive transition-colors" />
             </div>
-            <p className="text-3xl font-bold text-destructive mb-1">{broadcasts.filter(b => b.priority === 'Urgent').length}</p>
-            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Critical alerts</p>
+            <p className="text-4xl font-bold text-destructive mb-2 tracking-tight transition-transform group-hover:translate-x-1">{broadcasts.filter(b => b.priority === 'Urgent').length}</p>
+            <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight uppercase">Critical alerts</p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-primary transition-colors bg-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Reach</span>
-              <Users className="w-4 h-4 text-muted-foreground/10" />
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-primary transition-all bg-white cursor-default">
+          <CardContent className="p-8">
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-xs font-bold text-muted-foreground/80 uppercase tracking-widest">Reach</span>
+              <Users className="w-5 h-5 text-muted-foreground/20 group-hover:text-primary transition-colors" />
             </div>
-            <p className="text-3xl font-bold text-on-surface mb-1">100%</p>
-            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Field saturation</p>
+            <p className="text-4xl font-bold text-on-surface mb-2 tracking-tight transition-transform group-hover:translate-x-1">100%</p>
+            <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight uppercase">Field saturation</p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-on-surface transition-colors bg-white">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Uptime</span>
-              <Clock className="w-4 h-4 text-muted-foreground/10" />
+        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group hover:border-on-surface transition-all bg-white cursor-default">
+          <CardContent className="p-8">
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-xs font-bold text-muted-foreground/80 uppercase tracking-widest">Uptime</span>
+              <Clock className="w-5 h-5 text-muted-foreground/20 group-hover:text-on-surface transition-colors" />
             </div>
-            <p className="text-3xl font-bold text-on-surface mb-1">24/7</p>
-            <p className="text-[9px] text-muted-foreground/40 font-bold tracking-tight">Direct HQ connection</p>
+            <p className="text-4xl font-bold text-on-surface mb-2 tracking-tight transition-transform group-hover:translate-x-1">24/7</p>
+            <p className="text-[10px] text-muted-foreground/40 font-bold tracking-tight uppercase">Direct HQ connection</p>
           </CardContent>
         </Card>
       </div>
@@ -154,7 +154,7 @@ export default function Broadcasts() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
                   <Input 
                     placeholder="Search broadcasts..." 
-                    className="pl-9 h-8 text-xs rounded-lg border-border/60 focus:ring-0 focus:border-on-surface"
+                    className="pl-9 h-8 text-xs rounded-sm border-border/60 focus:ring-0 focus:border-on-surface"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -247,30 +247,24 @@ export default function Broadcasts() {
               ].map((template, idx) => (
                 <div 
                   key={idx}
-                  className="p-3 border border-border/10 hover:border-border/60 cursor-pointer transition-colors group"
-                  onClick={() => {
-                    navigate('/admin/broadcasts/new', { 
-                      state: { 
-                        template: {
-                          title: template.title,
-                          content: template.content,
-                          type: template.type,
-                          priority: template.priority
-                        } 
-                      } 
-                    })
-                  }}
+                  className="p-4 border border-border/10 hover:border-primary/40 hover:bg-muted/5 cursor-pointer transition-all group active:scale-[0.98] rounded-sm shadow-sm hover:shadow-md"
+                  onClick={() => navigate('/admin/broadcasts/new', { state: { template } })}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold normal-case text-on-surface">{template.title}</span>
-                    <Plus className="w-3 h-3 text-muted-foreground/20 group-hover:text-on-surface" />
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="outline" className="text-[8px] font-bold uppercase border-border/40 text-muted-foreground/60">{template.type}</Badge>
+                    <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[10px] font-bold text-primary tracking-tighter uppercase">Use Protocol</span>
+                      <Plus className="w-3 h-3 text-primary" />
+                    </div>
                   </div>
-                  <div className="text-[9px] text-muted-foreground/40 font-bold normal-case">
-                    {template.priority} • {template.type === 'ALL' ? 'National' : 'Segmented'}
-                  </div>
+                  <h4 className="font-bold text-sm tracking-tight text-on-surface mb-2 group-hover:text-primary transition-colors">{template.title}</h4>
+                  <p className="text-[11px] font-medium text-muted-foreground/80 leading-relaxed line-clamp-2">
+                    {template.content}
+                  </p>
                 </div>
               ))}
             </CardContent>
+
           </Card>
 
           <Card className="rounded-sm bg-on-surface text-white border-none shadow-xl overflow-hidden relative">

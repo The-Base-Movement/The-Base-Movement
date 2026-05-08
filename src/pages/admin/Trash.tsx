@@ -156,17 +156,17 @@ export default function TrashPage() {
           <p className="text-muted-foreground/80 text-sm mt-1">Staging area for decommissioned assets and intelligence records awaiting purge.</p>
         </div>
         
-        <div className="bg-stone-50/80 backdrop-blur-sm rounded-xl px-6 py-4 border border-stone-200/60 flex items-center gap-6 shadow-sm">
+        <div className="bg-stone-50/80 backdrop-blur-sm rounded-sm px-8 py-5 border border-stone-200/60 flex items-center gap-8 shadow-sm">
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold tracking-tight text-on-surface/40 uppercase">Retention protocol</span>
+            <span className="text-xs font-bold tracking-tight text-on-surface/60 uppercase">Retention protocol</span>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold text-on-surface">30</span>
               <span className="text-[10px] font-bold text-on-surface/40">Days</span>
             </div>
           </div>
           <div className="w-px h-8 bg-stone-200" />
-          <div className="flex items-center gap-2 text-[10px] font-bold text-destructive/60">
-            <ShieldAlert className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-xs font-bold text-destructive">
+            <ShieldAlert className="w-5 h-5" />
             Purge sequence active
           </div>
         </div>
@@ -177,7 +177,7 @@ export default function TrashPage() {
         
         {/* Sticky Filter Sidebar */}
         <aside className="w-full lg:w-80 sticky lg:top-32 space-y-6 shrink-0 z-30">
-          <div className="glass-card p-6 rounded-xl shadow-xl border border-stone-200/60 space-y-8">
+          <div className="glass-card p-6 rounded-sm shadow-xl border border-stone-200/60 space-y-8 bg-white">
             <div className="space-y-4">
               <div className="flex items-center justify-between px-2">
                 <h3 className="text-xs font-bold tracking-tight text-on-surface/40 flex items-center gap-2">
@@ -223,7 +223,7 @@ export default function TrashPage() {
                 Vault scanner
               </h3>
               <div className="relative group/search">
-                <div className="absolute inset-0 bg-stone-100 rounded-lg group-focus-within/search:bg-white group-focus-within/search:ring-2 group-focus-within/search:ring-destructive/10 transition-all duration-300"></div>
+                <div className="absolute inset-0 bg-stone-100 rounded-sm group-focus-within/search:bg-white group-focus-within/search:ring-2 group-focus-within/search:ring-destructive/10 transition-all duration-300"></div>
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface/20 group-focus-within/search:text-destructive/40 transition-colors z-10" />
                 <input 
                   type="text"
@@ -237,12 +237,12 @@ export default function TrashPage() {
 
             {/* Tactical Status */}
             <div className="pt-4 px-2">
-              <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/10 space-y-3">
+              <div className="bg-destructive/5 rounded-sm p-5 border border-destructive/10 space-y-4">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-3.5 h-3.5 text-destructive" />
-                  <p className="text-[10px] font-bold text-destructive tracking-tight">Critical awareness</p>
+                  <AlertCircle className="w-4 h-4 text-destructive" />
+                  <p className="text-xs font-bold text-destructive tracking-tight uppercase">Critical awareness</p>
                 </div>
-                <p className="text-[9px] font-bold text-destructive/60 leading-tight">
+                <p className="text-[11px] font-bold text-destructive leading-relaxed">
                   Permanent deletion occurs automatically at T-0. Records cannot be recovered once the purge protocol completes.
                 </p>
               </div>
@@ -250,7 +250,7 @@ export default function TrashPage() {
           </div>
 
           {/* Secondary Intelligence Card */}
-          <div className="glass-card p-6 rounded-xl border border-stone-100 bg-stone-50/50 space-y-4 shadow-sm group">
+          <div className="glass-card p-6 rounded-sm border border-stone-100 bg-stone-50/50 space-y-4 shadow-sm group">
             <h4 className="text-[10px] font-bold tracking-tight text-on-surface/40 uppercase">Archival Guide</h4>
             <p className="text-[11px] font-medium text-on-surface/60 leading-relaxed">
               Use the vault scanner to locate specific personnel files or media assets slated for removal.
@@ -266,8 +266,8 @@ export default function TrashPage() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-40 space-y-6">
               <div className="relative w-16 h-16">
-                <div className="absolute inset-0 border-4 border-stone-100 rounded-xl"></div>
-                <div className="absolute inset-0 border-4 border-destructive border-t-transparent rounded-xl animate-spin"></div>
+                <div className="absolute inset-0 border-4 border-stone-100 rounded-none"></div>
+                <div className="absolute inset-0 border-4 border-destructive border-t-transparent rounded-none animate-spin"></div>
               </div>
               <div className="space-y-1 text-center">
                 <p className="text-xs font-bold tracking-tight text-on-surface/20">Syncing vault sectors</p>
@@ -275,8 +275,8 @@ export default function TrashPage() {
               </div>
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className="glass-card rounded-2xl p-24 text-center space-y-8 border-dashed border-2 border-stone-200 animate-in zoom-in-95 duration-500">
-              <div className="w-24 h-24 rounded-2xl bg-stone-50 flex items-center justify-center mx-auto border border-stone-100 shadow-inner group-hover:scale-110 transition-transform">
+            <div className="glass-card rounded-sm p-24 text-center space-y-8 border-dashed border-2 border-stone-200 animate-in zoom-in-95 duration-500 bg-white">
+              <div className="w-24 h-24 rounded-sm bg-stone-50 flex items-center justify-center mx-auto border border-stone-100 shadow-inner group-hover:scale-110 transition-transform">
                 <Archive className="w-10 h-10 text-stone-200" />
               </div>
               <div className="space-y-3">
@@ -375,15 +375,15 @@ function TabButton({ active, onClick, icon, label, count }: { active: boolean, o
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center gap-4 px-4 py-3.5 rounded-lg transition-all duration-300 active:scale-95 group relative w-full border",
+        "flex items-center gap-4 px-4 py-4 rounded-sm transition-all duration-300 active:scale-95 group relative w-full border",
         active 
-          ? "bg-stone-50 border-stone-200 text-on-surface shadow-md" 
+          ? "bg-white border-stone-200 text-on-surface shadow-md ring-1 ring-stone-100" 
           : "bg-transparent border-transparent text-on-surface/40 hover:text-on-surface/70 hover:bg-stone-50/50"
       )}
     >
       <div className={cn(
-        "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500",
-        active ? "bg-white text-destructive shadow-sm scale-110" : "bg-stone-100/50 text-on-surface/20 group-hover:text-on-surface/40"
+        "w-10 h-10 rounded-sm flex items-center justify-center transition-all duration-500",
+        active ? "bg-stone-50 text-destructive shadow-sm scale-110" : "bg-stone-100/50 text-on-surface/20 group-hover:text-on-surface/40"
       )}>
         {icon}
       </div>
@@ -426,7 +426,7 @@ function TrashCard({
   const isExpiringSoon = daysLeft <= 7;
 
   return (
-    <Card className="rounded-xl border border-stone-200/60 overflow-hidden bg-white hover:shadow-2xl hover:border-stone-300 transition-all duration-500 group relative">
+    <Card className="rounded-sm border border-stone-200/60 overflow-hidden bg-white hover:shadow-2xl hover:border-stone-400 transition-all duration-500 group relative">
       <CardContent className="p-0">
         <div className="flex flex-col sm:flex-row min-h-[160px]">
           {/* Visual ID Overlay */}
@@ -441,7 +441,7 @@ function TrashCard({
               accent === 'red' ? "bg-destructive" : accent === 'gold' ? "bg-accent" : "bg-primary"
             )} />
             <div className="absolute top-4 left-4">
-              <span className="text-[9px] font-bold tracking-tight text-white bg-on-surface/80 px-2 py-1 rounded backdrop-blur-sm border border-white/10">
+              <span className="text-[10px] font-bold tracking-tight text-white bg-on-surface/90 px-3 py-1 rounded-none backdrop-blur-sm border border-white/10 uppercase">
                 {type}
               </span>
             </div>
@@ -456,16 +456,19 @@ function TrashCard({
                 </div>
                 
                 <div className={cn(
-                  "px-3 py-2 rounded-lg flex flex-col items-center justify-center min-w-[70px] border transition-all duration-300",
+                  "px-4 py-3 rounded-sm flex flex-col items-center justify-center min-w-[80px] border transition-all duration-300",
                   isExpiringSoon 
-                    ? "bg-destructive/5 border-destructive/20 shadow-lg shadow-destructive/5" 
-                    : "bg-stone-50 border-stone-200"
+                    ? "bg-destructive border-destructive text-white shadow-lg shadow-destructive/20" 
+                    : "bg-stone-50 border-stone-200 text-on-surface"
                 )}>
                   <span className={cn(
-                    "text-2xl font-bold tabular-nums leading-none tracking-tighter",
-                    isExpiringSoon ? "text-destructive" : "text-on-surface"
+                    "text-3xl font-bold tabular-nums leading-none tracking-tighter",
+                    isExpiringSoon ? "text-white" : "text-on-surface"
                   )}>{daysLeft}</span>
-                  <span className="text-[8px] font-bold tracking-tight text-on-surface/40">Days left</span>
+                  <span className={cn(
+                    "text-[9px] font-bold tracking-tight uppercase mt-1",
+                    isExpiringSoon ? "text-white/80" : "text-on-surface/40"
+                  )}>Days left</span>
                 </div>
               </div>
 
@@ -485,7 +488,7 @@ function TrashCard({
               <Button 
                 onClick={onRestore}
                 variant="outline" 
-                className="flex-1 h-12 rounded-lg border-stone-200 text-[10px] font-bold tracking-tight hover:bg-stone-50 hover:text-primary hover:border-primary/30 gap-2 transition-all active:scale-95 group/btn"
+                className="flex-1 h-12 rounded-sm border-stone-200 text-[10px] font-bold tracking-tight hover:bg-stone-50 hover:text-primary hover:border-primary/30 gap-2 transition-all active:scale-95 group/btn"
               >
                 <RotateCcw className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" />
                 Restore record
@@ -493,7 +496,7 @@ function TrashCard({
               <Button 
                 onClick={onDelete}
                 variant="ghost" 
-                className="h-12 w-12 rounded-lg border border-stone-200 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all active:scale-95"
+                className="h-12 w-12 rounded-sm border border-stone-200 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all active:scale-95"
                 title="Permanent purge"
               >
                 <AlertCircle className="w-5 h-5" />

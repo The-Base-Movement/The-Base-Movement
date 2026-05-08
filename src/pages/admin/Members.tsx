@@ -372,7 +372,7 @@ export default function MembersList() {
               <div className="flex-1 flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
                 <p className="text-[10px] font-bold text-muted-foreground/80 m-0 tracking-tight">{stat.label}</p>
                 {isLoading ? (
-                  <div className="h-7 w-16 bg-muted/20 animate-pulse rounded-lg mt-1" />
+                  <div className="h-7 w-16 bg-muted/20 animate-pulse rounded-sm mt-1" />
                 ) : (
                   <p className="text-2xl font-bold text-on-surface leading-tight m-0">
                     {stat.value.toLocaleString()}

@@ -218,7 +218,7 @@ export default function MemberVerification() {
                   value={search}
                   onChange={e => handleSearch(e.target.value)}
                   placeholder="Search by name, ID, region..."
-                  className="pl-9 h-9 text-xs rounded-lg border-border/60 shadow-sm focus:ring-on-surface/20"
+                  className="pl-9 h-9 text-xs rounded-sm border-border/60 shadow-sm focus:ring-on-surface/20"
                 />
               </div>
               <div className="relative">
@@ -226,7 +226,7 @@ export default function MemberVerification() {
                 <select
                   value={statusFilter}
                   onChange={e => handleFilter(e.target.value as PendingVerification['status'] | 'All')}
-                  className="h-9 pl-9 pr-8 text-[9px] font-bold rounded-lg border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:border-on-surface appearance-none cursor-pointer transition-colors shadow-sm normal-case"
+                  className="h-9 pl-9 pr-8 text-[9px] font-bold rounded-sm border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:border-on-surface appearance-none cursor-pointer transition-colors shadow-sm normal-case"
                 >
                   {STATUS_OPTIONS.map(s => (
                     <option key={s} value={s}>{s === 'All' ? 'All statuses' : s}</option>
@@ -263,7 +263,7 @@ export default function MemberVerification() {
                       {/* Avatar + name */}
                       <div className="flex items-center gap-4">
                         <div className={cn(
-                          'w-12 h-12 overflow-hidden flex items-center justify-center font-bold text-xs shadow-inner shrink-0 rounded-lg',
+                          'w-12 h-12 overflow-hidden flex items-center justify-center font-bold text-xs shadow-inner shrink-0 rounded-sm',
                           selectedMember?.id === member.id ? 'bg-white/10' : 'bg-muted/10'
                         )}>
                           {member.photoUrl
@@ -393,7 +393,7 @@ export default function MemberVerification() {
                     </div>
                     {/* Photo */}
                     <button
-                      className="w-14 h-16 bg-white/5 flex-shrink-0 overflow-hidden border border-white/10 hover:opacity-80 transition-opacity rounded-lg"
+                      className="w-14 h-16 bg-white/5 flex-shrink-0 overflow-hidden border border-white/10 hover:opacity-80 transition-opacity rounded-sm"
                       onClick={() => selectedMember.photoUrl && setShowPhotoFull(true)}
                       title={selectedMember.photoUrl ? 'View photo' : 'No photo uploaded'}
                     >
@@ -460,7 +460,7 @@ export default function MemberVerification() {
                       { label: 'Photo uploaded', done: !!selectedMember.photoUrl },
                       { label: 'Regional chapter approval', done: selectedMember.status === 'Approved' },
                     ].map(({ label, done }) => (
-                      <div key={label} className="flex items-center gap-3 p-2.5 bg-white/5 border border-white/5 rounded-lg">
+                      <div key={label} className="flex items-center gap-3 p-2.5 bg-white/5 border border-white/5 rounded-sm">
                         {done
                           ? <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
                           : <div className="w-3.5 h-3.5 rounded-full border border-muted-foreground/20 flex items-center justify-center shrink-0">

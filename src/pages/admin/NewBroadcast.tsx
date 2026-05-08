@@ -160,7 +160,7 @@ export default function NewBroadcast() {
             <label className="text-[10px] font-bold normal-case text-muted-foreground/40">Broadcast title</label>
             <Input 
               placeholder="e.g. National registration wave" 
-              className="rounded-lg border-border/40 h-12 text-sm font-bold placeholder:font-normal shadow-sm bg-muted/5 focus:bg-background transition-colors"
+              className="rounded-sm border-border/40 h-12 text-sm font-bold placeholder:font-normal shadow-sm bg-muted/5 focus:bg-background transition-colors"
               value={newBroadcast.title}
               onChange={(e) => setNewBroadcast({...newBroadcast, title: e.target.value})}
             />
@@ -174,10 +174,10 @@ export default function NewBroadcast() {
                 value={newBroadcast.channel}
                 onValueChange={(v: 'SMS' | 'Email' | 'Push' | 'In-app') => setNewBroadcast({...newBroadcast, channel: v})}
               >
-                <SelectTrigger className="rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
+                <SelectTrigger className="rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
                   <SelectValue placeholder="Select channel" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border-border/40">
+                <SelectContent className="rounded-sm border-border/40">
                   <SelectItem value="In-app" className="text-[10px] font-bold normal-case">
                     <div className="flex items-center gap-2">
                       <MessageSquare className="w-3.5 h-3.5" /> In-app message
@@ -214,10 +214,10 @@ export default function NewBroadcast() {
                   })
                 }}
               >
-                <SelectTrigger className="rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
+                <SelectTrigger className="rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
                   <SelectValue placeholder="Select target" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border-border/40">
+                <SelectContent className="rounded-sm border-border/40">
                   <SelectItem value="ALL" className="text-[10px] font-bold normal-case">National (all)</SelectItem>
                   <SelectItem value="REGION" className="text-[10px] font-bold normal-case">Regional</SelectItem>
                   <SelectItem value="CONSTITUENCY" className="text-[10px] font-bold normal-case">Constituency</SelectItem>
@@ -232,12 +232,12 @@ export default function NewBroadcast() {
                 onValueChange={(v: 'Normal' | 'High' | 'Urgent') => setNewBroadcast({...newBroadcast, priority: v})}
               >
                 <SelectTrigger className={cn(
-                  "rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5",
+                  "rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5",
                   newBroadcast.priority === 'Urgent' ? "text-destructive border-destructive/20 bg-destructive/5" : ""
                 )}>
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border-border/40">
+                <SelectContent className="rounded-sm border-border/40">
                   <SelectItem value="Normal" className="text-[10px] font-bold normal-case">Normal</SelectItem>
                   <SelectItem value="High" className="text-[10px] font-bold normal-case text-orange-600">High priority</SelectItem>
                   <SelectItem value="Urgent" className="text-[10px] font-bold normal-case text-destructive">Urgent (Level Red)</SelectItem>
@@ -261,10 +261,10 @@ export default function NewBroadcast() {
                     }
                   }}
                 >
-                  <SelectTrigger className="rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
+                  <SelectTrigger className="rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
                     <SelectValue placeholder="Select region" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-lg border-border/40">
+                  <SelectContent className="rounded-sm border-border/40">
                     {(fullRegions || []).map((r: Region) => (
                       <SelectItem key={`region-${r.id}`} value={r.name} className="text-[10px] font-bold normal-case">{r.name}</SelectItem>
                     ))}
@@ -293,10 +293,10 @@ export default function NewBroadcast() {
                       }
                     }}
                   >
-                    <SelectTrigger className="rounded-lg border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
+                    <SelectTrigger className="rounded-sm border-border/40 h-12 text-[10px] font-bold normal-case shadow-sm bg-muted/5">
                       <SelectValue placeholder={!selectedRegionId ? "Select region first" : "Select constituency"} />
                     </SelectTrigger>
-                    <SelectContent className="rounded-lg border-border/40">
+                    <SelectContent className="rounded-sm border-border/40">
                       <SelectItem value="ALL_IN_REGION" className="text-[10px] font-bold normal-case italic text-muted-foreground/40">All in Region</SelectItem>
                       {(allConstituencies || [])
                         .filter(c => c.region_id === selectedRegionId)
@@ -388,7 +388,7 @@ export default function NewBroadcast() {
 
       {/* Preview Info */}
       <div className="flex items-center gap-4 p-4 rounded-sm bg-muted/5 border border-border/40 text-muted-foreground/80">
-        <div className="w-10 h-10 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-sm bg-background border border-border/40 flex items-center justify-center shrink-0">
           {getChannelIcon(newBroadcast.channel)}
         </div>
         <div>

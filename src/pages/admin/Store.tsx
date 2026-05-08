@@ -256,7 +256,7 @@ export default function AdminStore() {
             <button 
               onClick={() => setActiveTab('inventory')}
               className={cn(
-                "px-5 py-2 text-[10px] font-bold rounded-lg transition-all",
+                "px-5 py-2 text-[10px] font-bold rounded-sm transition-all",
                 activeTab === 'inventory' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
@@ -265,7 +265,7 @@ export default function AdminStore() {
             <button 
               onClick={() => setActiveTab('requests')}
               className={cn(
-                "px-5 py-2 text-[10px] font-bold rounded-lg transition-all",
+                "px-5 py-2 text-[10px] font-bold rounded-sm transition-all",
                 activeTab === 'requests' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
@@ -274,7 +274,7 @@ export default function AdminStore() {
             <button 
               onClick={() => setActiveTab('audit')}
               className={cn(
-                "px-5 py-2 text-[10px] font-bold rounded-lg transition-all",
+                "px-5 py-2 text-[10px] font-bold rounded-sm transition-all",
                 activeTab === 'audit' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
@@ -451,7 +451,7 @@ export default function AdminStore() {
                     <tr key={product.id} className="hover:bg-muted/5 transition-colors group">
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-muted/10 rounded-lg flex items-center justify-center text-xl overflow-hidden">
+                          <div className="w-10 h-10 bg-muted/10 rounded-sm flex items-center justify-center text-xl overflow-hidden">
                             {product.image?.startsWith('http') ? (
                               <img src={product.image} alt={product.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                             ) : (
@@ -672,7 +672,7 @@ export default function AdminStore() {
                       </td>
                       <td className="px-6 py-5 text-right">
                         <Select onValueChange={(v: ResourceRequest['status']) => handleStatusUpdate(req.id, v)}>
-                          <SelectTrigger className="w-32 h-8 text-[10px] font-bold tracking-tight rounded-lg border-border/60">
+                          <SelectTrigger className="w-32 h-8 text-[10px] font-bold tracking-tight rounded-sm border-border/60">
                             <SelectValue placeholder="Update Status" />
                           </SelectTrigger>
                           <SelectContent className="rounded-sm">
@@ -1010,7 +1010,7 @@ export default function AdminStore() {
               <Input 
                 value={selectedProduct?.name || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, name: e.target.value }))}
-                className="col-span-3 h-10 rounded-lg border-border/60 text-xs" 
+                className="col-span-3 h-10 rounded-sm border-border/60 text-xs" 
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -1019,10 +1019,10 @@ export default function AdminStore() {
                 value={selectedProduct?.category} 
                 onValueChange={v => setSelectedProduct(prev => ({ ...prev!, category: v }))}
               >
-                <SelectTrigger className="col-span-3 h-10 rounded-lg border-border/60 text-xs font-bold">
+                <SelectTrigger className="col-span-3 h-10 rounded-sm border-border/60 text-xs font-bold">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg">
+                <SelectContent className="rounded-sm">
                   <SelectItem value="Apparel">Apparel</SelectItem>
                   <SelectItem value="Accessories">Accessories</SelectItem>
                   <SelectItem value="Print">Print material</SelectItem>
@@ -1036,7 +1036,7 @@ export default function AdminStore() {
                 <Input 
                   value={selectedProduct?.price || ''} 
                   onChange={e => setSelectedProduct(prev => ({ ...prev!, price: e.target.value }))}
-                  className="h-10 rounded-lg border-border/60 text-xs font-bold" 
+                  className="h-10 rounded-sm border-border/60 text-xs font-bold" 
                 />
               </div>
               <div className="grid grid-cols-2 items-center gap-4">
@@ -1045,7 +1045,7 @@ export default function AdminStore() {
                   type="number"
                   value={selectedProduct?.stock || 0} 
                   onChange={e => setSelectedProduct(prev => ({ ...prev!, stock: parseInt(e.target.value) }))}
-                  className="h-10 rounded-lg border-border/60 text-xs font-bold" 
+                  className="h-10 rounded-sm border-border/60 text-xs font-bold" 
                 />
               </div>
             </div>
@@ -1055,7 +1055,7 @@ export default function AdminStore() {
                 value={selectedProduct?.description || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, description: e.target.value }))}
                 placeholder="Short patriotic summary..."
-                className="col-span-3 min-h-[80px] bg-white rounded-lg border border-border/60 p-3 text-xs focus:ring-1 focus:ring-brand-green outline-none" 
+                className="col-span-3 min-h-[80px] bg-white rounded-sm border border-border/60 p-3 text-xs focus:ring-1 focus:ring-brand-green outline-none" 
               />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
@@ -1064,7 +1064,7 @@ export default function AdminStore() {
                 value={selectedProduct?.longDescription || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, longDescription: e.target.value }))}
                 placeholder="Complete product specs and movement significance..."
-                className="col-span-3 min-h-[120px] bg-white rounded-lg border border-border/60 p-3 text-xs focus:ring-1 focus:ring-brand-green outline-none" 
+                className="col-span-3 min-h-[120px] bg-white rounded-sm border border-border/60 p-3 text-xs focus:ring-1 focus:ring-brand-green outline-none" 
               />
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
@@ -1073,7 +1073,7 @@ export default function AdminStore() {
                 {/* Image Grid */}
                 <div className="grid grid-cols-4 gap-2">
                   {(selectedProduct?.images || []).map((url, idx) => (
-                    <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border border-border/60 bg-muted/10 group">
+                    <div key={idx} className="relative aspect-square rounded-sm overflow-hidden border border-border/60 bg-muted/10 group">
                       <img src={url} alt={`Product ${idx}`} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                       <button 
                         onClick={() => removeImage(url)}
@@ -1084,7 +1084,7 @@ export default function AdminStore() {
                     </div>
                   ))}
                   {/* Upload Placeholder */}
-                  <label className="aspect-square rounded-lg border border-dashed border-muted-foreground/60 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-muted/10 transition-colors">
+                  <label className="aspect-square rounded-sm border border-dashed border-muted-foreground/60 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-muted/10 transition-colors">
                     <input
                       type="file"
                       className="hidden"
@@ -1109,7 +1109,7 @@ export default function AdminStore() {
                     value={selectedProduct?.image?.startsWith('http') ? '' : (selectedProduct?.image || '')} 
                     onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}
                     placeholder="👕, 🧢, 🎒"
-                    className="h-9 rounded-lg border-border/60 text-lg text-center w-24" 
+                    className="h-9 rounded-sm border-border/60 text-lg text-center w-24" 
                   />
                 </div>
               </div>

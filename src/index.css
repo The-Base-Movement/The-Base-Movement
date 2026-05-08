@@ -176,18 +176,10 @@
   .brand-line-destructive { @apply flex-1 bg-destructive; }
   .brand-line-accent { @apply flex-1 bg-accent; }
   .brand-line-primary { @apply flex-1 bg-primary; }
-  .text-balance {
-    text-wrap: balance;
-  }
   
   /* Centralized Typographic Scale Utilities */
   .text-micro { font-size: var(--fs-micro); }
   .text-tiny { font-size: var(--fs-tiny); }
-  .text-referral { font-size: var(--fs-sm); }
-  .text-scale-base { font-size: var(--fs-base); }
-  .text-scale-lg { font-size: var(--fs-lg); }
-  .text-scale-xl { font-size: var(--fs-xl); }
-  .text-scale-2xl { font-size: var(--fs-2xl); }
   
   /* Management Controlled Muted Text Utilities */
   .text-muted-foreground { color: hsl(var(--muted-foreground)); }
@@ -264,38 +256,27 @@
   .glass-card {
     @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
   }
-  
-  .glass-dark {
-    @apply bg-stone-900/90 backdrop-blur-lg border border-white/10 shadow-2xl;
-  }
-
-  .carbon-fiber {
-    background-color: #1a1a1a;
-    background-image: 
-      linear-gradient(45deg, #222 25%, transparent 25%), 
-      linear-gradient(-45deg, #222 25%, transparent 25%), 
-      linear-gradient(45deg, transparent 75%, #222 75%), 
-      linear-gradient(-45deg, transparent 75%, #222 75%);
-    background-size: 4px 4px;
-  }
-
-  .tactical-gradient-red {
-    background: linear-gradient(135deg, hsl(var(--destructive)) 0%, #8b0000 100%);
-  }
-
-  .tactical-gradient-green {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, #004d2e 100%);
-  }
-
-  .tactical-gradient-gold {
-    background: linear-gradient(135deg, hsl(var(--accent)) 0%, #b8860b 100%);
-  }
-
   .hover-lift {
     @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg;
   }
+}
 
-  .stat-card-tactical {
-    @apply bg-white border-l-4 border-primary p-6 shadow-sm hover:shadow-md transition-all;
-  }
+/* Admin Global Spacing Refinements */
+.admin-page-container {
+  @apply space-y-8 animate-in fade-in duration-500;
+}
+
+.flex-columns {
+  @apply flex flex-col md:flex-row gap-6;
+}
+
+.flow > * + * {
+  margin-top: var(--flow-space, 1em);
+}
+
+/* Intelligent Stats Grid - Last card takes empty space */
+.grid-stats {
+  display: grid;
+  gap: var(--grid-gap, 1.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-width, 240px), 1fr));
 }

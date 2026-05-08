@@ -206,7 +206,7 @@ export default function StrategicPriorities() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
                   <input 
                     placeholder="Keywords..." 
-                    className="w-full pl-11 pr-4 h-11 bg-white border border-border/60 focus:ring-1 focus:ring-primary focus:border-transparent rounded-lg text-[11px] font-bold outline-none"
+                    className="w-full pl-11 pr-4 h-11 bg-white border border-border/60 focus:ring-1 focus:ring-primary focus:border-transparent rounded-sm text-[11px] font-bold outline-none"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -218,11 +218,11 @@ export default function StrategicPriorities() {
                   <span>Intelligence Summary</span>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-lg border border-border/10">
+                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
                     <span className="text-[10px] font-bold text-on-surface/60">Total Active</span>
                     <span className="text-xs font-bold text-primary">{campaigns.filter(c => c.status === 'Active').length}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-lg border border-border/10">
+                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
                     <span className="text-[10px] font-bold text-on-surface/60">Success Rate</span>
                     <span className="text-xs font-bold text-accent">
                       {campaigns.length > 0 ? (campaigns.filter(c => (c.raisedAmount / c.targetAmount) >= 1).length / campaigns.length * 100).toFixed(0) : 0}%
@@ -361,7 +361,7 @@ export default function StrategicPriorities() {
                     Defining critical resource allocation for the movement.
                   </CardDescription>
                 </div>
-                <Button variant="ghost" onClick={() => { setIsCreating(false); setEditingCampaign(null); }} className="h-8 w-8 p-0 rounded-lg hover:bg-muted/10">
+                <Button variant="ghost" onClick={() => { setIsCreating(false); setEditingCampaign(null); }} className="h-8 w-8 p-0 rounded-sm hover:bg-muted/10">
                   <X className="w-5 h-5 text-muted-foreground/40" />
                 </Button>
               </div>

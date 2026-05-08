@@ -285,7 +285,7 @@ export default function FieldDirectives() {
                   <CardTitle className="text-xl font-bold normal-case font-meta">Issue new directive</CardTitle>
                   <CardDescription className="text-muted-foreground/80 text-[10px] font-bold normal-case mt-1">Deploy tactical objectives to the field.</CardDescription>
                 </div>
-                <Button variant="ghost" onClick={() => setIsCreating(false)} className="h-8 w-8 p-0 rounded-lg hover:bg-muted/10">
+                <Button variant="ghost" onClick={() => setIsCreating(false)} className="h-8 w-8 p-0 rounded-sm hover:bg-muted/10">
                   <XCircle className="w-5 h-5 text-muted-foreground/40" />
                 </Button>
               </div>
@@ -298,7 +298,7 @@ export default function FieldDirectives() {
                     <input 
                       type="text" 
                       placeholder="e.g. Regional Flyer Blitz" 
-                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg"
+                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-sm"
                       value={newDirective.title}
                       onChange={(e) => setNewDirective({ ...newDirective, title: e.target.value })}
                     />
@@ -306,7 +306,7 @@ export default function FieldDirectives() {
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Target level</label>
                     <select 
-                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg"
+                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-sm"
                       value={newDirective.target_type}
                       onChange={(e) => setNewDirective({ ...newDirective, target_type: e.target.value as FieldDirective['target_type'] })}
                     >
@@ -321,7 +321,7 @@ export default function FieldDirectives() {
                   <textarea 
                     rows={3} 
                     placeholder="Describe the tactical goal..." 
-                    className="w-full bg-muted/5 border-border/60 text-xs font-bold p-4 focus:ring-1 focus:ring-on-surface outline-none resize-none rounded-lg"
+                    className="w-full bg-muted/5 border-border/60 text-xs font-bold p-4 focus:ring-1 focus:ring-on-surface outline-none resize-none rounded-sm"
                     value={newDirective.description}
                     onChange={(e) => setNewDirective({ ...newDirective, description: e.target.value })}
                   />
@@ -331,7 +331,7 @@ export default function FieldDirectives() {
                     <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Points awarded</label>
                     <input 
                       type="number" 
-                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg"
+                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-sm"
                       value={newDirective.points_awarded}
                       onChange={(e) => setNewDirective({ ...newDirective, points_awarded: Number(e.target.value) })}
                     />
@@ -339,7 +339,7 @@ export default function FieldDirectives() {
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold normal-case text-muted-foreground/40">Priority</label>
                     <select 
-                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-lg"
+                      className="w-full h-11 bg-muted/5 border-border/60 text-xs font-bold px-4 focus:ring-1 focus:ring-on-surface outline-none rounded-sm"
                       value={newDirective.priority}
                       onChange={(e) => setNewDirective({ ...newDirective, priority: e.target.value as FieldDirective['priority'] })}
                     >

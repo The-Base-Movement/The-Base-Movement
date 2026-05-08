@@ -114,7 +114,7 @@ export default function ChapterLeadHub() {
                   <p className="text-[9px] font-bold normal-case text-muted-foreground/40 mb-1">{stat.label}</p>
                   <h3 className="text-2xl font-bold font-meta text-on-surface tracking-tighter">{stat.value}</h3>
                 </div>
-                <div className={cn("w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110 rounded-lg", stat.bg)}>
+                <div className={cn("w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110 rounded-sm", stat.bg)}>
                   <stat.icon className={cn("w-5 h-5", stat.color)} />
                 </div>
               </div>
@@ -133,7 +133,7 @@ export default function ChapterLeadHub() {
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
-                <input type="text" placeholder="Filter events..." className="pl-9 pr-4 py-2 bg-muted/5 border-none text-[10px] font-bold normal-case rounded-lg focus:ring-1 focus:ring-on-surface w-48 shadow-inner" />
+                <input type="text" placeholder="Filter events..." className="pl-9 pr-4 py-2 bg-muted/5 border-none text-[10px] font-bold normal-case rounded-sm focus:ring-1 focus:ring-on-surface w-48 shadow-inner" />
               </div>
             </div>
           </div>

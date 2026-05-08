@@ -161,7 +161,7 @@ export default function PollsManagement() {
       <div className="grid-stats mb-10" style={{ '--grid-min-width': '260px' } as React.CSSProperties}>
         <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center shrink-0">
               <TrendingUp className="w-6 h-6 text-primary" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
@@ -183,7 +183,7 @@ export default function PollsManagement() {
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-muted/5 flex items-center justify-center shrink-0 border border-border/10">
+            <div className="w-12 h-12 rounded-sm bg-muted/5 flex items-center justify-center shrink-0 border border-border/10">
               <Clock className="w-6 h-6 text-muted-foreground/40" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
@@ -194,7 +194,7 @@ export default function PollsManagement() {
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-muted/5 flex items-center justify-center shrink-0 border border-border/10">
+            <div className="w-12 h-12 rounded-sm bg-muted/5 flex items-center justify-center shrink-0 border border-border/10">
               <MessageSquare className="w-6 h-6 text-muted-foreground/40" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
@@ -218,7 +218,7 @@ export default function PollsManagement() {
               placeholder="Search polls..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 text-xs rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
+              className="pl-9 h-9 text-xs rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
             />
           </div>
         </CardHeader>
@@ -340,7 +340,7 @@ export default function PollsManagement() {
                 <div key={i} className="p-6 animate-pulse space-y-4">
                   <div className="h-4 bg-muted/30 w-3/4 rounded" />
                   <div className="h-3 bg-muted/20 w-1/2 rounded" />
-                  <div className="h-8 bg-muted/30 w-full rounded-lg" />
+                  <div className="h-8 bg-muted/30 w-full rounded-sm" />
                 </div>
               ))
             ) : filteredPolls.length === 0 ? (
@@ -364,7 +364,7 @@ export default function PollsManagement() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-muted/5 rounded-lg border border-border/10">
+                      <div className="p-2.5 bg-muted/5 rounded-sm border border-border/10">
                         <Users className="w-5 h-5 text-on-surface" />
                       </div>
                       <div>
@@ -439,7 +439,7 @@ export default function PollsManagement() {
           <h4 className="text-lg font-bold tracking-tight text-on-surface">Recent feedback highlights</h4>
           <div className="space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-muted/10 border border-border/40 flex items-center justify-center shrink-0 rounded-lg">
+              <div className="w-10 h-10 bg-muted/10 border border-border/40 flex items-center justify-center shrink-0 rounded-sm">
                 <MessageSquare className="w-5 h-5 text-muted-foreground/80" />
               </div>
               <div>
@@ -488,7 +488,7 @@ export default function PollsManagement() {
                         placeholder="e.g. Should we increase regional chapter funding?" 
                         value={newPoll.question}
                         onChange={e => setNewPoll({...newPoll, question: e.target.value})}
-                        className="rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
+                        className="rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
                       />
                     </div>
 
@@ -506,7 +506,7 @@ export default function PollsManagement() {
                               region: val === 'GHANA' ? 'National' : 'International'
                             })
                           }}
-                          className="w-full h-10 px-3 text-xs border border-border/60 rounded-lg focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
+                          className="w-full h-10 px-3 text-xs border border-border/60 rounded-sm focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
                         >
                           <option value="GHANA">Ghana Local Base</option>
                           <option value="DIASPORA">Diaspora Global Base</option>
@@ -526,7 +526,7 @@ export default function PollsManagement() {
                               setNewPoll({...newPoll, country: e.target.value})
                             }
                           }}
-                          className="w-full h-10 px-3 text-xs border border-border/60 rounded-lg focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
+                          className="w-full h-10 px-3 text-xs border border-border/60 rounded-sm focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
                         >
                           {newPoll.targetBase === 'GHANA' ? (
                             <>
@@ -556,7 +556,7 @@ export default function PollsManagement() {
                           type="date"
                           value={newPoll.endDate}
                           onChange={e => setNewPoll({...newPoll, endDate: e.target.value})}
-                          className="pl-9 h-10 text-xs rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
+                          className="pl-9 h-10 text-xs rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
                         />
                       </div>
                     </div>
@@ -579,7 +579,7 @@ export default function PollsManagement() {
                               updated[idx] = e.target.value
                               setNewPoll({...newPoll, options: updated})
                             }}
-                            className="rounded-lg border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
+                            className="rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
                           />
                           {newPoll.options.length > 2 && (
                             <Button 

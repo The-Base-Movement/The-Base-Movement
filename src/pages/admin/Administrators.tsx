@@ -206,7 +206,7 @@ export default function Administrators() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
             <input 
               placeholder="Search by name, ID or role..." 
-              className="w-full pl-12 pr-4 h-12 bg-muted/5 border border-border/10 focus:bg-white focus:border-on-surface focus:ring-0 transition-all text-[11px] outline-none font-bold placeholder:text-muted-foreground/20 rounded-lg"
+              className="w-full pl-12 pr-4 h-12 bg-muted/5 border border-border/10 focus:bg-white focus:border-on-surface focus:ring-0 transition-all text-[11px] outline-none font-bold placeholder:text-muted-foreground/20 rounded-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -249,7 +249,7 @@ export default function Administrators() {
                       <td className="px-6 py-6">
                         <div className="flex items-center gap-4">
                           <div className={cn(
-                            "w-10 h-10 flex items-center justify-center font-bold text-xs shadow-md overflow-hidden rounded-lg",
+                            "w-10 h-10 flex items-center justify-center font-bold text-xs shadow-md overflow-hidden rounded-sm",
                             admin.role === 'SUPER_ADMIN' ? "bg-destructive text-white" : "bg-on-surface text-white"
                           )}>
                             {admin.avatarUrl ? (
@@ -356,13 +356,13 @@ export default function Administrators() {
             <Card key={i} className="rounded-sm border-border/60 shadow-sm animate-pulse">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-muted/5 rounded-lg" />
+                  <div className="w-12 h-12 bg-muted/5 rounded-sm" />
                   <div className="space-y-2">
                     <div className="h-4 bg-muted/5 w-32" />
                     <div className="h-3 bg-muted/5 w-24" />
                   </div>
                 </div>
-                <div className="h-8 bg-muted/5 w-full rounded-lg" />
+                <div className="h-8 bg-muted/5 w-full rounded-sm" />
               </CardContent>
             </Card>
           ))
@@ -464,7 +464,7 @@ export default function Administrators() {
       {/* Security Advisory */}
       <div className="bg-muted/5 border border-border/60 p-8 text-on-surface/60 relative overflow-hidden rounded-sm shadow-sm">
         <div className="flex-columns items-center" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-          <div className="w-12 h-12 bg-white flex items-center justify-center shrink-0 rounded-lg shadow-sm border border-border/10">
+          <div className="w-12 h-12 bg-white flex items-center justify-center shrink-0 rounded-sm shadow-sm border border-border/10">
             <ShieldCheck className="w-6 h-6 text-primary" />
           </div>
           <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
@@ -492,7 +492,7 @@ export default function Administrators() {
                 placeholder="e.g. PATRIOT-123456" 
                 value={newAdmin.id}
                 onChange={(e) => setNewAdmin({ ...newAdmin, id: e.target.value })}
-                className="rounded-lg border-border/60 text-xs font-bold"
+                className="rounded-sm border-border/60 text-xs font-bold"
               />
             </div>
             <div className="space-y-2">
@@ -500,7 +500,7 @@ export default function Administrators() {
               <select 
                 value={newAdmin.role}
                 onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value as AdminRole })}
-                className="w-full h-10 px-3 text-xs font-bold border border-border/60 rounded-lg focus:outline-none focus:border-on-surface"
+                className="w-full h-10 px-3 text-xs font-bold border border-border/60 rounded-sm focus:outline-none focus:border-on-surface"
               >
                 <option value="FOUNDER">Founder</option>
                 <option value="ORGANIZER">Organizer</option>
@@ -551,7 +551,7 @@ export default function Administrators() {
                 'Verify member', 'Delete member', 'Manage chapter', 
                 'Manage polls', 'Manage inventory', 'View audit logs'
               ].map((perm) => (
-                <div key={perm} className="flex items-center justify-between p-3 bg-muted/5 border border-border/10 rounded-lg">
+                <div key={perm} className="flex items-center justify-between p-3 bg-muted/5 border border-border/10 rounded-sm">
                   <span className="text-[10px] font-bold text-on-surface/60 tracking-tight">{perm}</span>
                   <div className="w-8 h-4 bg-on-surface rounded-full relative">
                     <div className="absolute right-1 top-1 w-2 h-2 bg-white rounded-full" />

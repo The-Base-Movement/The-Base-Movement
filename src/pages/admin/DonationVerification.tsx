@@ -248,7 +248,7 @@ export default function FinancialAudit() {
                         {/* Transaction Detail */}
                         <div className="p-6 lg:w-2/5 border-b lg:border-b-0 lg:border-r border-border/40 flex items-start gap-4">
                           <div className={cn(
-                            "w-10 h-10 shrink-0 flex items-center justify-center rounded-lg shadow-sm",
+                            "w-10 h-10 shrink-0 flex items-center justify-center rounded-sm shadow-sm",
                             donation.status === 'Pending' ? "bg-accent/10 text-accent" :
                             donation.status === 'Verified' ? "bg-primary/10 text-primary" :
                             "bg-destructive/10 text-destructive"
@@ -357,7 +357,7 @@ export default function FinancialAudit() {
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setSelectedReceipt(null)}
-                className="bg-black/50 text-white hover:bg-black rounded-lg"
+                className="bg-black/50 text-white hover:bg-black rounded-sm"
               >
                 <XCircle className="w-5 h-5" />
               </Button>

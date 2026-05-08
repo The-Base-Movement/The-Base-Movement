@@ -350,7 +350,7 @@ export default function AdminBlogs() {
                     value={formData.title ?? ''}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                     placeholder="Enter article title..." 
-                    className="rounded-lg border-border/40 h-11 text-sm font-medium"
+                    className="rounded-sm border-border/40 h-11 text-sm font-medium"
                   />
                 </div>
 
@@ -361,7 +361,7 @@ export default function AdminBlogs() {
                     value={formData.slug ?? ''}
                     onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/ /g, '-')})}
                     placeholder="article-url-slug" 
-                    className="rounded-lg border-border/40 h-11 text-sm font-medium"
+                    className="rounded-sm border-border/40 h-11 text-sm font-medium"
                   />
                 </div>
 
@@ -373,7 +373,7 @@ export default function AdminBlogs() {
                     value={formData.excerpt ?? ''}
                     onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
                     placeholder="Provide a strategic summary for the movement feed..." 
-                    className="rounded-lg border-border/40 min-h-[100px] text-sm font-medium leading-relaxed"
+                    className="rounded-sm border-border/40 min-h-[100px] text-sm font-medium leading-relaxed"
                   />
                 </div>
               </CardContent>
@@ -385,7 +385,7 @@ export default function AdminBlogs() {
               </div>
               <CardContent className="p-0 border-0">
                 <div className="p-8">
-                  <div className="rounded-lg border border-border/40 overflow-hidden shadow-inner bg-muted/5">
+                  <div className="rounded-sm border border-border/40 overflow-hidden shadow-inner bg-muted/5">
                     <Editor
                       apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
                       value={formData.content ?? ''}
@@ -447,7 +447,7 @@ export default function AdminBlogs() {
                     value={formData.status}
                     onValueChange={(val: 'Draft' | 'Pending Verification' | 'Published') => setFormData({...formData, status: val})}
                   >
-                    <SelectTrigger className="rounded-lg border-border/40 h-11 text-sm font-medium">
+                    <SelectTrigger className="rounded-sm border-border/40 h-11 text-sm font-medium">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -469,7 +469,7 @@ export default function AdminBlogs() {
                     value={formData.category}
                     onValueChange={(val) => setFormData({...formData, category: val})}
                   >
-                    <SelectTrigger className="rounded-lg border-border/40 h-11 text-sm font-medium">
+                    <SelectTrigger className="rounded-sm border-border/40 h-11 text-sm font-medium">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -514,7 +514,7 @@ export default function AdminBlogs() {
                     value={formData.imageUrl ?? ''}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
                     placeholder="https://example.com/image.jpg" 
-                    className="rounded-lg border-border/40 h-11 text-sm"
+                    className="rounded-sm border-border/40 h-11 text-sm"
                   />
                   <p className="text-xs font-medium text-muted-foreground/40">Provide a direct URL or upload a file.</p>
                 </div>
@@ -525,7 +525,7 @@ export default function AdminBlogs() {
                     value={formData.readTime ?? ''}
                     onChange={(e) => setFormData({...formData, readTime: e.target.value})}
                     placeholder="5 min read" 
-                    className="rounded-lg border-border/40 h-11 text-sm"
+                    className="rounded-sm border-border/40 h-11 text-sm"
                   />
                   <p className="text-xs font-medium text-muted-foreground/40">Suggested format: "5 min read"</p>
                 </div>
@@ -543,7 +543,7 @@ export default function AdminBlogs() {
                     value={formData.authorName ?? ''}
                     onChange={(e) => setFormData({...formData, authorName: e.target.value})}
                     placeholder="e.g. John Doe" 
-                    className="rounded-lg border-border/40 h-11 text-sm"
+                    className="rounded-sm border-border/40 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
@@ -552,7 +552,7 @@ export default function AdminBlogs() {
                     value={formData.authorRole ?? ''}
                     onChange={(e) => setFormData({...formData, authorRole: e.target.value})}
                     placeholder="e.g. Communications Director" 
-                    className="rounded-lg border-border/40 h-11 text-sm"
+                    className="rounded-sm border-border/40 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
@@ -586,7 +586,7 @@ export default function AdminBlogs() {
                     value={formData.authorImage ?? ''}
                     onChange={(e) => setFormData({...formData, authorImage: e.target.value})}
                     placeholder="https://..." 
-                    className="rounded-lg border-border/40 h-11 text-sm"
+                    className="rounded-sm border-border/40 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
@@ -595,7 +595,7 @@ export default function AdminBlogs() {
                     value={formData.authorBio ?? ''}
                     onChange={(e) => setFormData({...formData, authorBio: e.target.value})}
                     placeholder="Short professional bio..." 
-                    className="rounded-lg border-border/40 min-h-[80px] text-sm leading-relaxed"
+                    className="rounded-sm border-border/40 min-h-[80px] text-sm leading-relaxed"
                   />
                 </div>
               </CardContent>
@@ -612,7 +612,7 @@ export default function AdminBlogs() {
                     value={formData.seoTitle ?? ''}
                     onChange={(e) => setFormData({...formData, seoTitle: e.target.value})}
                     placeholder="Title for search engines..." 
-                    className="rounded-lg border-border/40 h-11 text-sm"
+                    className="rounded-sm border-border/40 h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-3">
@@ -621,7 +621,7 @@ export default function AdminBlogs() {
                     value={formData.tags.join(', ')}
                     onChange={(e) => setFormData({...formData, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)})}
                     placeholder="ghana, industry, jobs" 
-                    className="rounded-lg border-border/40 h-11 text-sm"
+                    className="rounded-sm border-border/40 h-11 text-sm"
                   />
                   <p className="text-xs font-medium text-muted-foreground/40">Comma separated tags.</p>
                 </div>
@@ -631,7 +631,7 @@ export default function AdminBlogs() {
                     value={formData.metaDescription ?? ''}
                     onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
                     placeholder="Brief description for search result snippets..." 
-                    className="rounded-lg border-border/40 min-h-[80px] text-sm leading-relaxed"
+                    className="rounded-sm border-border/40 min-h-[80px] text-sm leading-relaxed"
                   />
                 </div>
               </CardContent>
@@ -725,7 +725,7 @@ export default function AdminBlogs() {
       </div>
     )
   }
-
+  return (
     <div className="admin-page-container">
       {/* Page Header - Standardized */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
@@ -897,14 +897,14 @@ export default function AdminBlogs() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="rounded-sm border-border/40 shadow-xl p-2 w-48">
-                          <DropdownMenuItem onClick={() => handleEditPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
+                          <DropdownMenuItem onClick={() => handleEditPost(post)} className="rounded-sm text-sm font-medium gap-3 py-2.5">
                             <Edit2 className="w-4 h-4 text-muted-foreground/40" /> Edit post
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleViewPost(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5">
+                          <DropdownMenuItem onClick={() => handleViewPost(post)} className="rounded-sm text-sm font-medium gap-3 py-2.5">
                             <Eye className="w-4 h-4 text-muted-foreground/40" /> View post
                           </DropdownMenuItem>
                           <div className="h-px bg-border/40 my-1" />
-                          <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="rounded-lg text-sm font-medium gap-3 py-2.5 text-destructive focus:text-destructive focus:bg-destructive/10">
+                          <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="rounded-sm text-sm font-medium gap-3 py-2.5 text-destructive focus:text-destructive focus:bg-destructive/10">
                             <Trash2 className="w-4 h-4" /> Delete post
                           </DropdownMenuItem>
                         </DropdownMenuContent>

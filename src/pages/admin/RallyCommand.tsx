@@ -209,7 +209,7 @@ export default function RallyCommand() {
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80" />
                       <input 
-                        className="bg-muted/10 border-none h-9 pl-9 pr-4 text-[10px] font-bold normal-case focus:ring-1 focus:ring-border/40 rounded-lg w-48"
+                        className="bg-muted/10 border-none h-9 pl-9 pr-4 text-[10px] font-bold normal-case focus:ring-1 focus:ring-border/40 rounded-sm w-48"
                         placeholder="Search member..."
                       />
                     </div>
@@ -236,7 +236,7 @@ export default function RallyCommand() {
                             <tr key={entry.id} className="hover:bg-muted/5 transition-colors">
                               <td className="px-6 py-4">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 bg-muted/10 flex items-center justify-center font-bold text-[10px] normal-case rounded-lg">
+                                  <div className="w-8 h-8 bg-muted/10 flex items-center justify-center font-bold text-[10px] normal-case rounded-sm">
                                     {entry.user_name?.charAt(0)}
                                   </div>
                                   <span className="text-[10px] font-bold normal-case text-on-surface">{entry.user_name}</span>

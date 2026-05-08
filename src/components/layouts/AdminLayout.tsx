@@ -216,14 +216,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
   const toggleGroup = (groupLabel: string) => {
     if (!isSidebarOpen) setIsSidebarOpen(true)
-    setOpenGroups(prev => {
-      const newState: Record<string, boolean> = {}
-      Object.keys(prev).forEach(key => {
-        newState[key] = false
-      })
-      newState[groupLabel] = !prev[groupLabel]
-      return newState
-    })
+    setOpenGroups(prev => ({ ...prev, [groupLabel]: !prev[groupLabel] }))
   }
 
   const handleLogout = () => {
@@ -429,7 +422,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   />
                   <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-border/40 shadow-2xl rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="p-2 border-b border-border/10 bg-muted/5 flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest px-2">
+                      <span className="text-[10px] font-bold text-muted-foreground/60 tracking-tight px-2">
                         Global Search results
                       </span>
                       {isSearching && (
@@ -475,7 +468,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                                 </p>
                               )}
                             </div>
-                            <div className="text-[8px] font-black uppercase tracking-tighter text-muted-foreground/30 px-1.5 py-0.5 border border-border/10 rounded">
+                            <div className="text-[8px] font-bold tracking-tight text-muted-foreground/30 px-1.5 py-0.5 border border-border/10 rounded">
                               {result.type}
                             </div>
                           </Link>

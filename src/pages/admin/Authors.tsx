@@ -118,7 +118,7 @@ export default function AdminAuthors() {
               <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
               <Input 
                 placeholder="Search by name or role..." 
-                className="pl-12 h-11 bg-white border-border/60 focus-visible:ring-primary rounded-lg text-[11px] font-bold"
+                className="pl-12 h-11 bg-white border-border/60 focus-visible:ring-primary rounded-sm text-[11px] font-bold"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -126,7 +126,7 @@ export default function AdminAuthors() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="h-11 px-4 py-2 text-[10px] font-bold rounded-lg border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent cursor-pointer transition-all"
+              className="h-11 px-4 py-2 text-[10px] font-bold rounded-sm border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent cursor-pointer transition-all"
             >
               <option value="All Roles">All Roles</option>
               {uniqueRoles.map(role => (
@@ -134,7 +134,7 @@ export default function AdminAuthors() {
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-3 text-[10px] text-muted-foreground/60 font-bold bg-white px-5 py-2.5 rounded-lg border border-border/10 shadow-sm">
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground/60 font-bold bg-white px-5 py-2.5 rounded-sm border border-border/10 shadow-sm">
             <Shield className="w-4 h-4 text-muted-foreground/40" />
             <span className="normal-case">Authorized personnel:</span> <span className="text-on-surface font-bold ml-1">{authors.length}</span>
           </div>

@@ -509,16 +509,16 @@ export default function AdminSettings() {
                       <Input 
                         value={profileForm.fullName} 
                         onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
-                        className="h-10 rounded-lg border-stone-200 bg-white focus:ring-[var(--brand-red)]/10 focus:border-[var(--brand-red)] transition-all text-xs font-medium" 
+                        className="h-10 rounded-sm border-stone-200 bg-white focus:ring-[var(--brand-red)]/10 focus:border-[var(--brand-red)] transition-all text-xs font-medium" 
                       />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold text-stone-500 normal-case">Email address</Label>
-                      <Input value={profileForm.email} disabled className="h-10 rounded-lg border-stone-100 bg-stone-50 text-stone-400 text-xs font-medium cursor-not-allowed" />
+                      <Input value={profileForm.email} disabled className="h-10 rounded-sm border-stone-100 bg-stone-50 text-stone-400 text-xs font-medium cursor-not-allowed" />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold text-stone-500 normal-case">Administrative role</Label>
-                      <div className="h-10 px-3 flex items-center rounded-lg border border-stone-100 bg-stone-50 text-stone-400 text-[10px] font-bold normal-case">
+                      <div className="h-10 px-3 flex items-center rounded-sm border border-stone-100 bg-stone-50 text-stone-400 text-[10px] font-bold normal-case">
                         {adminData?.role === 'SUPER_ADMIN' ? 'Super Admin' : 
                          adminData?.role === 'REGIONAL_DIRECTOR' ? 'Regional Director' :
                          adminData?.role === 'CONSTITUENCY_LEAD' ? 'Constituency Lead' :
@@ -531,7 +531,7 @@ export default function AdminSettings() {
                         value={profileForm.phone} 
                         onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                         placeholder="+233 XX XXX XXXX"
-                        className="h-10 rounded-lg border-stone-200 bg-white focus:ring-[var(--brand-red)]/10 focus:border-[var(--brand-red)] transition-all text-xs font-medium" 
+                        className="h-10 rounded-sm border-stone-200 bg-white focus:ring-[var(--brand-red)]/10 focus:border-[var(--brand-red)] transition-all text-xs font-medium" 
                       />
                     </div>
                   </div>
@@ -568,7 +568,7 @@ export default function AdminSettings() {
                   ].map((item) => (
                     <div key={item.role} className="p-6 flex items-center justify-between hover:bg-stone-50/50 transition-colors">
                       <div className="flex items-center gap-4">
-                        <div className={cn("w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center", item.color)}>
+                        <div className={cn("w-10 h-10 rounded-sm bg-stone-100 flex items-center justify-center", item.color)}>
                           <item.icon className="w-5 h-5" />
                         </div>
                         <div>
@@ -667,7 +667,7 @@ export default function AdminSettings() {
                           <Input 
                             value={(siteSettings.primary_email as string) || ''} 
                             onChange={(e) => setSiteSettings({ ...siteSettings, primary_email: e.target.value })}
-                            className="pl-10 h-11 rounded-lg border-stone-200 text-xs font-medium" 
+                            className="pl-10 h-11 rounded-sm border-stone-200 text-xs font-medium" 
                           />
                         </div>
                         <p className="text-[9px] text-stone-400 italic">Used for contact forms and general inquiries.</p>
@@ -680,7 +680,7 @@ export default function AdminSettings() {
                           <Input 
                             value={(siteSettings.newsletter_email as string) || ''} 
                             onChange={(e) => setSiteSettings({ ...siteSettings, newsletter_email: e.target.value })}
-                            className="pl-10 h-11 rounded-lg border-stone-200 text-xs font-medium" 
+                            className="pl-10 h-11 rounded-sm border-stone-200 text-xs font-medium" 
                           />
                         </div>
                         <p className="text-[9px] text-stone-400 italic">Authoritative sender for all movement broadcasts.</p>
@@ -704,13 +704,13 @@ export default function AdminSettings() {
                             <Label className="text-[10px] font-bold text-stone-500 normal-case">{color.label}</Label>
                             <div className="flex gap-3">
                               <div 
-                                className="w-11 h-11 rounded-lg border border-stone-200 shrink-0" 
+                                className="w-11 h-11 rounded-sm border border-stone-200 shrink-0" 
                                 style={{ backgroundColor: `hsl(${siteSettings[color.key]})` }}
                               />
                               <Input 
                                 value={(siteSettings[color.key] as string) || ''} 
                                 onChange={(e) => setSiteSettings({ ...siteSettings, [color.key]: e.target.value })}
-                                className="h-11 rounded-lg border-stone-200 text-xs font-medium font-mono"
+                                className="h-11 rounded-sm border-stone-200 text-xs font-medium font-mono"
                                 placeholder="0 0% 0%"
                               />
                             </div>
@@ -738,7 +738,7 @@ export default function AdminSettings() {
                             step="0.05"
                             value={(siteSettings.font_scale_global as number) || 1.0}
                             onChange={(e) => setSiteSettings({ ...siteSettings, font_scale_global: parseFloat(e.target.value) })}
-                            className="w-full h-1.5 bg-stone-100 rounded-lg appearance-none cursor-pointer accent-primary"
+                            className="w-full h-1.5 bg-stone-100 rounded-sm appearance-none cursor-pointer accent-primary"
                           />
                           <p className="text-[9px] text-stone-400 italic leading-tight">Adjusts the base font size for all paragraphs and body text.</p>
                         </div>
@@ -755,7 +755,7 @@ export default function AdminSettings() {
                             step="0.05"
                             value={(siteSettings.font_scale_headings as number) || 1.0}
                             onChange={(e) => setSiteSettings({ ...siteSettings, font_scale_headings: parseFloat(e.target.value) })}
-                            className="w-full h-1.5 bg-stone-100 rounded-lg appearance-none cursor-pointer accent-primary"
+                            className="w-full h-1.5 bg-stone-100 rounded-sm appearance-none cursor-pointer accent-primary"
                           />
                           <p className="text-[9px] text-stone-400 italic leading-tight">Specifically scales H1-H6 headings for high-impact visibility.</p>
                         </div>
@@ -814,7 +814,7 @@ export default function AdminSettings() {
                 <CardContent className="p-8">
                   <div className="max-w-2xl space-y-12">
                     {/* Ghana Form */}
-                    <div className="p-6 rounded-lg border border-stone-100 bg-stone-50/30 group transition-all hover:border-brand-green/20">
+                    <div className="p-6 rounded-sm border border-stone-100 bg-stone-50/30 group transition-all hover:border-brand-green/20">
                       <div className="flex items-start justify-between mb-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded bg-brand-green/10 flex items-center justify-center">
@@ -864,7 +864,7 @@ export default function AdminSettings() {
                     </div>
 
                     {/* Diaspora Form */}
-                    <div className="p-6 rounded-lg border border-stone-100 bg-stone-50/30 group transition-all hover:border-blue-600/20">
+                    <div className="p-6 rounded-sm border border-stone-100 bg-stone-50/30 group transition-all hover:border-blue-600/20">
                       <div className="flex items-start justify-between mb-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded bg-blue-50 flex items-center justify-center">
@@ -933,7 +933,7 @@ export default function AdminSettings() {
                       { key: 'banner_image_url', label: 'Base Banner', icon: Megaphone, desc: 'Authoritative banner for movement messaging.' },
                       { key: 'party_hq_image_url', label: 'HQ Visualization', icon: Building2, desc: 'Authoritative image of Movement Headquarters.' }
                     ].map((asset) => (
-                      <div key={asset.key} className="space-y-4 p-6 rounded-lg border border-stone-100 bg-stone-50/30 group transition-all hover:border-brand-green/20">
+                      <div key={asset.key} className="space-y-4 p-6 rounded-sm border border-stone-100 bg-stone-50/30 group transition-all hover:border-brand-green/20">
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded bg-stone-100 flex items-center justify-center">
@@ -1010,7 +1010,7 @@ export default function AdminSettings() {
                           type="password" 
                           value={passwordForm.newPassword}
                           onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                          className="h-10 rounded-lg border-stone-200" 
+                          className="h-10 rounded-sm border-stone-200" 
                           placeholder="••••••••"
                         />
                       </div>
@@ -1020,7 +1020,7 @@ export default function AdminSettings() {
                           type="password" 
                           value={passwordForm.confirmPassword}
                           onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                          className="h-10 rounded-lg border-stone-200" 
+                          className="h-10 rounded-sm border-stone-200" 
                           placeholder="••••••••"
                         />
                       </div>
@@ -1190,13 +1190,13 @@ export default function AdminSettings() {
                       placeholder="Search by action or resource..." 
                       value={auditSearch}
                       onChange={(e) => setAuditSearch(e.target.value)}
-                      className="pl-9 h-9 text-[11px] border-stone-200 bg-white rounded-lg focus:ring-0"
+                      className="pl-9 h-9 text-[11px] border-stone-200 bg-white rounded-sm focus:ring-0"
                     />
                   </div>
                   <select 
                     value={auditFilter}
                     onChange={(e) => setAuditFilter(e.target.value)}
-                    className="h-9 px-3 text-[11px] font-bold text-stone-600 border border-stone-200 bg-white rounded-lg focus:ring-0 outline-none"
+                    className="h-9 px-3 text-[11px] font-bold text-stone-600 border border-stone-200 bg-white rounded-sm focus:ring-0 outline-none"
                   >
                     <option>All Status</option>
                     <option>Success</option>
@@ -1207,7 +1207,7 @@ export default function AdminSettings() {
                   <select 
                     value={auditResourceFilter}
                     onChange={(e) => setAuditResourceFilter(e.target.value)}
-                    className="h-9 px-3 text-[11px] font-bold text-stone-600 border border-stone-200 bg-white rounded-lg focus:ring-0 outline-none"
+                    className="h-9 px-3 text-[11px] font-bold text-stone-600 border border-stone-200 bg-white rounded-sm focus:ring-0 outline-none"
                   >
                     <option>All Resources</option>
                     <option>MEMBERS</option>

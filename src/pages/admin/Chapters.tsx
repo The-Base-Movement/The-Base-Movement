@@ -216,7 +216,7 @@ export default function ChaptersManagement() {
       <div className="grid-stats mb-10" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
         <Card className="rounded-sm border-border/60 shadow-sm bg-charcoal-dark text-white">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/10 flex items-center justify-center rounded-lg">
+            <div className="w-12 h-12 bg-white/10 flex items-center justify-center rounded-sm">
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
@@ -227,7 +227,7 @@ export default function ChaptersManagement() {
         </Card>
         <Card className="rounded-sm border-border/60 shadow-sm bg-white">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-border/40 flex items-center justify-center rounded-lg">
+            <div className="w-12 h-12 bg-border/40 flex items-center justify-center rounded-sm">
               <Users className="w-6 h-6 text-on-surface" />
             </div>
             <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>
@@ -239,7 +239,7 @@ export default function ChaptersManagement() {
         {regionalStats.slice(0, 2).map((stat) => (
           <Card key={stat.region} className="rounded-sm border-border/60 shadow-sm overflow-hidden relative group cursor-pointer">
             <CardContent className="p-6 flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 bg-border/40 flex items-center justify-center transition-colors group-hover:bg-charcoal-dark group-hover:text-white rounded-lg">
+              <div className="w-12 h-12 bg-border/40 flex items-center justify-center transition-colors group-hover:bg-charcoal-dark group-hover:text-white rounded-sm">
                 <MapPin className="w-5 h-5" />
               </div>
               <div className="flow" style={{ '--flow-space': '0.1em' } as React.CSSProperties}>

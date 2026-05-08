@@ -261,7 +261,7 @@ export default function AdminEditAuthor() {
                     )}
                   </div>
                 ) : (
-                  <div className="flex items-center gap-4 p-4 rounded-lg bg-brand-green/5 border border-brand-green/20 animate-in zoom-in-95 duration-300">
+                  <div className="flex items-center gap-4 p-4 rounded-sm bg-brand-green/5 border border-brand-green/20 animate-in zoom-in-95 duration-300">
                     <div className="w-12 h-12 rounded-full bg-brand-green/10 border border-brand-green/20 flex items-center justify-center overflow-hidden shrink-0">
                       {selectedMember.avatarUrl ? (
                         <img src={selectedMember.avatarUrl} alt="" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
@@ -372,7 +372,7 @@ export default function AdminEditAuthor() {
                       />
                       <label 
                         htmlFor="author-image-upload" 
-                        className="flex items-center gap-2 px-4 py-2 bg-muted/10 hover:bg-muted/20 text-on-surface/80 rounded-lg text-sm font-medium transition-colors cursor-pointer border border-border/60"
+                        className="flex items-center gap-2 px-4 py-2 bg-muted/10 hover:bg-muted/20 text-on-surface/80 rounded-sm text-sm font-medium transition-colors cursor-pointer border border-border/60"
                       >
                         <Upload className="w-4 h-4" />
                         {isUploading ? 'Uploading...' : 'Upload Image'}
