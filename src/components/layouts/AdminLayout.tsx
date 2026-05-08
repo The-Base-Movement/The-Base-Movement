@@ -216,7 +216,14 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
   const toggleGroup = (groupLabel: string) => {
     if (!isSidebarOpen) setIsSidebarOpen(true)
-    setOpenGroups(prev => ({ ...prev, [groupLabel]: !prev[groupLabel] }))
+    setOpenGroups(prev => {
+      const newState: Record<string, boolean> = {}
+      Object.keys(prev).forEach(key => {
+        newState[key] = false
+      })
+      newState[groupLabel] = !prev[groupLabel]
+      return newState
+    })
   }
 
   const handleLogout = () => {
