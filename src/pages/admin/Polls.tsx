@@ -425,7 +425,7 @@ export default function PollsManagement() {
               Use regional-specific polls to gather more precise data. Our research shows chapters with localized campaigns see 40% higher member participation.
             </p>
             <Button 
-              variant="outline"
+              variant="default"
               size="sm"
               className="h-11 px-10 text-micro font-bold tracking-tight border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm transition-all shadow-lg active:scale-95"
               onClick={() => setIsAnalyticsModalOpen(true)}
@@ -612,7 +612,7 @@ export default function PollsManagement() {
               <div className="p-6 pt-0 flex gap-4">
                 <Button 
                   type="button"
-                  variant="outline" 
+                  variant="default" 
                   className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                   onClick={() => setShowCreateModal(false)}
                 >

@@ -104,7 +104,7 @@ export default function RallyCommand() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             size="lg"
             className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 font-bold tracking-tight hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
           >

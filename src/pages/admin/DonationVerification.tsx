@@ -138,7 +138,7 @@ export default function FinancialAudit() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             size="lg"
             className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             onClick={handleExport}
@@ -147,7 +147,7 @@ export default function FinancialAudit() {
             <Download className="w-4 h-4 mr-2" /> Export Ledger
           </Button>
           <Button 
-            variant="outline" 
+            variant="default" 
             size="lg"
             className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             onClick={() => fetchData()} 
@@ -284,7 +284,7 @@ export default function FinancialAudit() {
                           <div className="mt-4">
                             {donation.receiptUrl ? (
                               <Button 
-                                variant="outline" 
+                                variant="default" 
                                 size="sm" 
                                 onClick={() => setSelectedReceipt(donation.receiptUrl || null)}
                                 className="h-11 px-8 text-micro font-bold tracking-tight text-on-surface/80 hover:text-accent hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm w-fit active:scale-95"
@@ -306,7 +306,7 @@ export default function FinancialAudit() {
                               <p className="text-micro font-bold text-muted-foreground/60">Audit action required</p>
                               <div className="flex items-center gap-2">
                                 <Button 
-                                  variant="outline" 
+                                  variant="default" 
                                   onClick={() => handleVerify(donation.id, donation.fullName, 'Rejected')}
                                   disabled={isVerifying === donation.id}
                                   className="flex-1 h-12 text-micro font-bold tracking-tight text-brand-red border-brand-red/20 hover:bg-brand-red/10 transition-all shadow-sm rounded-sm active:scale-95"

@@ -311,17 +311,17 @@ export default function RoadmapManagement() {
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center gap-1 justify-end">
                         <Button 
-                          variant="outline" 
+                          variant="gold" 
                           size="icon" 
-                          className="h-9 w-9 rounded-sm text-stone-500 hover:text-primary border-stone-200 hover:bg-primary/5 transition-all shadow-sm active:scale-95"
+                          className="h-9 w-9 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => handleOpenModal(milestone)}
                         >
                           <Edit2 className="w-4 h-4" />
                         </Button>
                         <Button 
-                          variant="outline" 
+                          variant="destructive" 
                           size="icon" 
-                          className="h-9 w-9 rounded-sm text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
+                          className="h-9 w-9 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => handleDelete(milestone.id, milestone.title)}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -449,7 +449,7 @@ export default function RoadmapManagement() {
               <div className="p-6 pt-0 flex gap-4">
                 <Button 
                   type="button"
-                  variant="outline" 
+                  variant="default" 
                   className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                   onClick={() => setShowModal(false)}
                 >

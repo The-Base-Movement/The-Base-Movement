@@ -107,7 +107,7 @@ export default function SentimentIntelligence() {
               <Activity className="w-4 h-4 mr-2" /> Run AI Analysis
             </Button>
             <Button 
-              variant="outline" 
+              variant="default" 
               size="lg"
               className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
               onClick={() => toast({ title: "Report exported", description: "Your intelligence briefing is ready for download." })}

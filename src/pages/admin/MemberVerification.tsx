@@ -321,7 +321,7 @@ export default function MemberVerification() {
                 </p>
                 <div className="flex items-center gap-1">
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="icon"
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={safePage === 1}
@@ -333,7 +333,7 @@ export default function MemberVerification() {
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                     <Button
                       key={page}
-                      variant={page === safePage ? "primary" : "outline"}
+                      variant={page === safePage ? "primary" : "default"}
                       onClick={() => setCurrentPage(page)}
                       className={cn(
                         "w-8 h-8 flex items-center justify-center text-micro font-bold transition-all rounded-sm active:scale-95",
@@ -347,7 +347,7 @@ export default function MemberVerification() {
                   ))}
 
                   <Button
-                    variant="outline"
+                    variant="default"
                     size="icon"
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={safePage === totalPages}
@@ -662,12 +662,13 @@ export default function MemberVerification() {
                     Permanent record ID: {viewingVaultRecord.id}
                   </p>
                 </div>
-                <button 
-                  onClick={() => setViewingVaultRecord(null)}
+                <Button 
+                variant="default" 
+                onClick={() => setViewingVaultRecord(null)}
                   className="p-2 hover:bg-white/10 text-white/60 transition-colors"
                 >
                   <X className="w-6 h-6" />
-                </button>
+                </Button>
               </div>
             </CardHeader>
             <CardContent className="p-8">

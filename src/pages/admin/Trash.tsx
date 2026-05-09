@@ -292,7 +292,7 @@ export default function TrashPage() {
                 </p>
               </div>
               <Button 
-                variant="outline" 
+                variant="default" 
                 onClick={() => setSearchQuery('')}
                 className="h-12 px-10 rounded-sm text-micro font-bold tracking-tight border-stone-200 hover:border-destructive/30 hover:bg-destructive/5 transition-all shadow-sm"
               >

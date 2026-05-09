@@ -184,26 +184,26 @@ export default function Chapters() {
             <p className="text-tiny font-bold tracking-tight text-stone-500">Region Selection</p>
             <div className="flex flex-col gap-2">
               <Button
-                variant={activeTab === 'ghana' ? 'primary' : 'outline'}
+                variant={activeTab === 'ghana' ? 'active-tab' : 'default'}
                 onClick={() => setActiveTab('ghana')}
                 className={cn(
-                  "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
-                  activeTab === 'ghana' ? '' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
+                  "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
+                  activeTab === 'ghana' ? '' : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
                 )}
               >
                 Ghana Regional
-                <Building2 className={cn("w-4 h-4", activeTab === 'ghana' ? "text-primary-foreground" : "text-stone-300")} />
+                <Building2 className={cn("w-4 h-4", activeTab === 'ghana' ? "text-[hsl(var(--active-tab-text))]" : "text-stone-300")} />
               </Button>
               <Button 
-                variant={activeTab === 'diaspora' ? 'primary' : 'outline'}
+                variant={activeTab === 'diaspora' ? 'active-tab' : 'default'}
                 onClick={() => setActiveTab('diaspora')}
                 className={cn(
-                  "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
-                  activeTab === 'diaspora' ? '' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
+                  "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
+                  activeTab === 'diaspora' ? '' : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
                 )}
               >
                 Global Diaspora
-                <Globe className={cn("w-4 h-4", activeTab === 'diaspora' ? "text-primary-foreground" : "text-stone-300")} />
+                <Globe className={cn("w-4 h-4", activeTab === 'diaspora' ? "text-[hsl(var(--active-tab-text))]" : "text-stone-300")} />
               </Button>
             </div>
           </div>
@@ -266,7 +266,7 @@ export default function Chapters() {
         <div className="lg:hidden mb-8 flex gap-4">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" className="flex-1 h-12 gap-2 font-bold tracking-tight text-xs border-stone-200">
+              <Button variant="default" className="flex-1 h-12 gap-2 font-bold tracking-tight text-xs border-stone-200 shadow-sm active:scale-95">
                 <Filter className="w-4 h-4" />
                 Filter & Search
               </Button>

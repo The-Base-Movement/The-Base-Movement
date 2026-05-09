@@ -22,6 +22,8 @@ export interface BrandingSettings {
   button_primary_text_color: string
   button_gold_text_color: string
   button_destructive_text_color: string
+  button_active_tab_bg_color?: string
+  button_active_tab_text_color?: string
   [key: string]: unknown
 }
 
@@ -50,5 +52,7 @@ export const defaultSettings: BrandingSettings = {
   button_neon_enabled: true,
   button_primary_text_color: '0 0% 100%',
   button_gold_text_color: '220 15% 15%',
-  button_destructive_text_color: '0 0% 100%'
+  button_destructive_text_color: '0 0% 100%',
+  button_active_tab_bg_color: '156 100% 21%',
+  button_active_tab_text_color: '0 0% 100%'
 }

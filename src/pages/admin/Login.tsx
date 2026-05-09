@@ -118,7 +118,7 @@ export default function AdminLogin() {
 
               <Button
                 type="button"
-                variant="outline"
+                variant="default"
                 onClick={async () => {
                   try {
                     await authService.signInWithGoogle()

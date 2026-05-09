@@ -122,7 +122,7 @@ export default function FieldDirectives() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             size="lg"
             className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 font-bold tracking-tight hover:bg-stone-50 transition-all h-12 shadow-sm active:scale-95"
           >
@@ -195,7 +195,7 @@ export default function FieldDirectives() {
               <Eye className="w-5 h-5 text-destructive" /> Situational awareness feed
             </h2>
             <Button 
-              variant="outline" 
+              variant="default" 
               className="h-11 px-8 text-micro font-bold tracking-tight hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
             >
               <Filter className="w-4 h-4 mr-2" /> Filter Feed
@@ -247,7 +247,7 @@ export default function FieldDirectives() {
                   {report.status === 'Pending' && (
                       <div className="pt-6 mt-auto grid grid-cols-2 gap-4">
                         <Button 
-                          variant="outline" 
+                          variant="default" 
                           onClick={() => handleVerify(report.id, 'Rejected')}
                           className="h-12 border-border/40 text-brand-red hover:bg-brand-red/10 rounded-sm text-micro font-bold tracking-tight transition-all active:scale-95"
                         >
@@ -351,7 +351,7 @@ export default function FieldDirectives() {
               </div>
               <div className="pt-6 flex gap-4">
                 <Button 
-                  variant="outline" 
+                  variant="default" 
                   onClick={() => setIsCreating(false)} 
                   className="flex-1 h-12 rounded-sm border-border/40 font-bold text-micro tracking-tight hover:bg-stone-50 transition-all active:scale-95"
                   disabled={isSubmitting}

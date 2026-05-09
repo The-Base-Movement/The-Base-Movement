@@ -518,7 +518,7 @@ export default function Administrators() {
           </div>
           <DialogFooter className="gap-4">
             <Button 
-              variant="outline" 
+              variant="default" 
               className="flex-1 h-12 text-micro font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               onClick={() => setIsProvisionModalOpen(false)}
             >
@@ -562,14 +562,14 @@ export default function Administrators() {
           </div>
           <DialogFooter className="gap-4">
             <Button 
-              variant="outline" 
+              variant="default" 
               className="flex-1 h-12 text-micro font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               onClick={() => setIsPermissionsModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
-              variant="primary"
+              variant="active-tab"
               className="flex-1 h-12 text-micro font-bold capitalize tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               onClick={handleUpdatePermissions}
             >

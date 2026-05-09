@@ -294,9 +294,9 @@ export default function Dashboard() {
                 </p>
                 <div className="mt-8 flex flex-col items-center gap-6">
                   <Button 
-                    variant="outline" 
+                    variant="default" 
                     size="sm" 
-                    className="h-10 px-8 text-tiny font-bold tracking-tight border-primary/20 text-primary hover:bg-primary hover:text-white transition-all rounded-none"
+                    className="h-10 px-8 text-tiny font-bold tracking-tight border-stone-200 text-stone-500 hover:text-brand-green hover:bg-stone-50 transition-all rounded-none active:scale-95 shadow-sm"
                   >
                     Find Local Chapters
                   </Button>

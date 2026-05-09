@@ -133,7 +133,7 @@ export default function NewBroadcast() {
             <p className="text-muted-foreground/80 text-sm mt-1">Deploying a movement-wide communication to the field.</p>
           </div>
           <Button 
-            variant="outline"
+            variant="default"
             onClick={() => navigate('/admin/broadcasts')}
             className="rounded-sm text-micro font-bold tracking-tight h-11 px-8 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
           >
@@ -360,7 +360,7 @@ export default function NewBroadcast() {
           {/* Footer Actions */}
           <div className="pt-6 border-t border-border/10 flex items-center justify-end gap-4">
             <Button 
-              variant="outline" 
+              variant="default" 
               onClick={() => navigate('/admin/broadcasts')}
               className="rounded-sm h-12 px-10 text-micro font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >

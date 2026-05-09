@@ -654,7 +654,7 @@ export default function AdminBlogs() {
               </Button>
               <Button 
                 type="button" 
-                variant="outline" 
+                variant="default" 
                 onClick={() => setCurrentView('list')}
                 className="w-full h-12 rounded-sm text-micro font-bold tracking-tight text-muted-foreground/80 hover:text-red-500 border-border/40 hover:bg-red-50 transition-all shadow-sm active:scale-95"
               >
@@ -684,7 +684,7 @@ export default function AdminBlogs() {
           </div>
           <Button 
             onClick={() => handleEditPost(viewPost)}
-            variant="primary"
+            variant="active-tab"
             className="h-12 px-10 text-micro font-bold tracking-tight flex items-center gap-2 rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Edit2 className="w-4 h-4 mr-2" /> Edit post
@@ -844,7 +844,7 @@ export default function AdminBlogs() {
                 <h3 className="text-lg font-bold text-on-surface">No posts found</h3>
                 <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
                 <Button 
-                  variant="outline" 
+                  variant="default" 
                   onClick={() => setSearchQuery('')}
                   className="mt-6 rounded-sm border-border/40 font-bold text-micro tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 >

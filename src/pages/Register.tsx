@@ -343,9 +343,9 @@ export default function Register() {
                       Print card
                     </Button>
                     <Button 
-                      variant="outline"
+                      variant="default"
                       onClick={() => setSubmitted(false)}
-                      className="flex items-center justify-center gap-2 px-6 py-3 h-auto bg-white"
+                      className="flex items-center justify-center gap-2 px-6 py-3 h-auto text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50 transition-all active:scale-95 shadow-sm"
                     >
                       <ArrowLeft className="w-4 h-4" /> Edit info
                     </Button>
@@ -372,9 +372,9 @@ export default function Register() {
                   <p className="text-sm font-bold font-meta leading-tight mb-4">Access your portal to join a chapter and start mobilizing.</p>
                 </div>
                 <Button
-                  variant="outline"
+                  variant="default"
                   onClick={() => navigate('/dashboard')}
-                  className="w-full inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border-white/20 text-primary-foreground h-auto p-3 text-center justify-center font-bold"
+                  className="w-full inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border-white/20 text-primary-foreground h-auto p-3 text-center justify-center font-bold transition-all active:scale-95 shadow-sm"
                 >
                   Enter Overview <ArrowRight className="w-4 h-4" />
                 </Button>
@@ -556,9 +556,9 @@ export default function Register() {
           </div>
           <h2 className="text-muted-foreground mb-8">Official Registration Form</h2>
           <Button
-            variant="outline"
+            variant="default"
             onClick={() => setStep('choice')}
-            className="inline-flex items-center gap-2 px-6 py-2 h-auto"
+            className="inline-flex items-center gap-2 px-6 py-2 h-auto text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50 transition-all active:scale-95 shadow-sm"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to registration options
           </Button>
@@ -663,17 +663,23 @@ export default function Register() {
                     <div className="grid grid-cols-2 gap-4">
                       <Button
                         type="button"
-                        variant={platform === 'GHANA' ? 'primary' : 'outline'}
+                        variant={platform === 'GHANA' ? 'primary' : 'default'}
                         onClick={() => handlePlatformChange('GHANA')}
-                        className="h-auto p-4 text-sm"
+                        className={cn(
+                          "h-auto p-4 text-sm transition-all active:scale-95 shadow-sm",
+                          platform === 'GHANA' ? "" : "text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50"
+                        )}
                       >
                         Ghana Base
                       </Button>
                       <Button
                         type="button"
-                        variant={platform === 'DIASPORA' ? 'gold' : 'outline'}
+                        variant={platform === 'DIASPORA' ? 'gold' : 'default'}
                         onClick={() => handlePlatformChange('DIASPORA')}
-                        className="h-auto p-4 text-sm"
+                        className={cn(
+                          "h-auto p-4 text-sm transition-all active:scale-95 shadow-sm",
+                          platform === 'DIASPORA' ? "" : "text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50"
+                        )}
                       >
                         Diaspora Base
                       </Button>

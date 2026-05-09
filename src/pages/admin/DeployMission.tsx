@@ -119,7 +119,7 @@ export default function DeployMission() {
           <p className="text-muted-foreground/80 text-sm mt-1">Initiate high-fidelity voter outreach protocols for specific jurisdictional targets.</p>
         </div>
         <Link to="/admin/ground-game">
-          <Button variant="outline" className="rounded-sm text-micro font-bold tracking-tight px-8 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95">
+          <Button variant="default" className="rounded-sm text-micro font-bold tracking-tight px-8 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95">
             <ArrowLeft className="w-4 h-4 mr-2" /> Abort deployment
           </Button>
         </Link>

@@ -43,9 +43,9 @@ export default function RegistrationFormPreview() {
         </Button>
         <div className="flex items-center gap-4">
           <Button 
-            variant="outline" 
+            variant="default" 
             onClick={handlePrint}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-stone-200 text-stone-600 hover:text-brand-green hover:bg-stone-50 transition-all active:scale-95 shadow-sm"
           >
             <Printer className="w-4 h-4" />
             Print Form

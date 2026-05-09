@@ -234,7 +234,7 @@ export default function AdminDashboard() {
           </Button>
 
           <Button 
-            variant="outline"
+            variant="default"
             size="lg"
             className="rounded-sm text-micro font-bold tracking-tight px-10 border-border/40 hover:bg-stone-50 h-12 transition-all active:scale-95"
             onClick={handlePlatformLogs}

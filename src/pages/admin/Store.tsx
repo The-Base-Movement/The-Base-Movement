@@ -774,7 +774,7 @@ export default function AdminStore() {
                 Audit log
               </CardTitle>
               <Button
-                variant="outline"
+                variant="default"
                 size="lg"
                 className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 disabled={auditLogs.length === 0}

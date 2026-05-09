@@ -10,7 +10,7 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> { 
     neon?: boolean 
     asChild?: boolean
-    variant?: "link" | "default" | "solid" | "primary" | "accent" | "gold" | "ghost" | "outline" | "destructive" | null | undefined
+    variant?: "link" | "default" | "solid" | "primary" | "accent" | "gold" | "ghost" | "outline" | "destructive" | "active-tab" | "outline-destructive" | "ghost-destructive" | null | undefined
 }
 
 

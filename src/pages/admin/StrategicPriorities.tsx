@@ -253,7 +253,7 @@ export default function StrategicPriorities() {
                 <h3 className="text-lg font-bold text-on-surface">No priorities found</h3>
                 <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or add a new strategic priority.</p>
                 <Button 
-                  variant="outline" 
+                  variant="default" 
                   onClick={() => setSearchQuery('')}
                   className="mt-6 rounded-sm border-border/40 font-bold text-micro tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 >
@@ -444,7 +444,7 @@ export default function StrategicPriorities() {
               <div className="p-8 border-t border-border/10 bg-muted/5 flex gap-4">
                 <Button 
                   type="button"
-                  variant="outline" 
+                  variant="default" 
                   onClick={() => { setIsCreating(false); setEditingCampaign(null); }} 
                   className="flex-1 h-12 rounded-sm border-border/40 font-bold text-micro tracking-tight hover:bg-stone-50 transition-all active:scale-95"
                   disabled={isSubmitting}

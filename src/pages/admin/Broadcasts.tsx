@@ -216,7 +216,7 @@ export default function Broadcasts() {
                           </div>
                         </div>
                         <Button 
-                          variant="outline" 
+                          variant="default" 
                           size="sm" 
                           className="opacity-0 group-hover:opacity-100 transition-all rounded-sm border border-border/40 h-11 px-8 text-micro font-bold tracking-tight hover:bg-stone-50 shadow-sm active:scale-95"
                           onClick={() => fetchMetrics(broadcast.id)}
@@ -275,7 +275,7 @@ export default function Broadcasts() {
                 Urgent mobilization triggers immediate notifications to all connected field assets. Use only for critical broadcasts.
               </p>
               <Button 
-                variant="outline"
+                variant="default"
                 className="w-full text-white border-destructive/60 hover:bg-destructive/20 text-micro font-bold tracking-tight h-12 rounded-sm transition-all hover:scale-[1.02] shadow-lg shadow-destructive/10 active:scale-95"
               >
                 Trigger Tactical Alert

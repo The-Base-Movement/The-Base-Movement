@@ -105,7 +105,9 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
               --button-font-weight: ${settings.button_font_weight || '700'};
               --primary-foreground: ${settings.button_primary_text_color || '0 0% 100%'};
               --accent-foreground: ${settings.button_gold_text_color || '220 15% 15%'};
-              --destructive-foreground: ${settings.button_destructive_text_color || '0 0% 100%'};
+              --destructive-foreground: ${settings.button_destructive_text_color === '220 15% 15%' ? '0 0% 100%' : (settings.button_destructive_text_color || '0 0% 100%')};
+              --active-tab-bg: ${settings.button_active_tab_bg_color || settings.primary_color};
+              --active-tab-text: ${settings.button_active_tab_text_color || '0 0% 100%'};
             }
           `}
         </style>

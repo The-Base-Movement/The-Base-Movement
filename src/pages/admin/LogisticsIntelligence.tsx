@@ -140,7 +140,7 @@ export default function LogisticsIntelligence() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             size="lg"
             onClick={handleRouteOptimization}
             disabled={isOptimizing}
@@ -376,7 +376,7 @@ export default function LogisticsIntelligence() {
             <p className="text-micro font-bold normal-case text-white/70 mt-2">Real-time visualization of material flow across the 16 regions.</p>
           </div>
           <Button 
-            variant="outline" 
+            variant="default" 
             size="lg"
             onClick={() => toast.success('Initializing high-fidelity enterprise visualization protocol...')}
             className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-sm h-12 px-10 font-bold text-micro tracking-tight shadow-xl shadow-black/20 transition-all active:scale-95"
@@ -497,7 +497,7 @@ export default function LogisticsIntelligence() {
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
             <Button 
-              variant="outline" 
+              variant="default" 
               onClick={() => setShowReplenishConfirm(false)}
               className="rounded-sm text-micro font-bold tracking-tight h-12 px-8 border-border/40 hover:bg-stone-50 transition-all active:scale-95"
             >

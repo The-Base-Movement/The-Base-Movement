@@ -444,7 +444,7 @@ export default function AdminSettings() {
             return (
               <Button
                 key={tab.id}
-                variant={isActive ? "primary" : "ghost"}
+                variant={isActive ? "active-tab" : "ghost"}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "w-full flex items-center justify-between px-4 py-3 rounded-sm text-micro font-bold tracking-tight transition-all group h-12 active:scale-95",
@@ -452,10 +452,10 @@ export default function AdminSettings() {
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <tab.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-stone-300 group-hover:text-white/60")} />
+                  <tab.icon className={cn("w-4 h-4", isActive ? "text-[hsl(var(--active-tab-text))]" : "text-stone-300 group-hover:text-white/60")} />
                   {tab.label}
                 </div>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/60" />}
+                {isActive && <ChevronRight className="w-3.5 h-3.5 text-[hsl(var(--active-tab-text))]/60" />}
               </Button>
             )
           })}
@@ -546,7 +546,7 @@ export default function AdminSettings() {
 
                   <div className="pt-6 flex justify-end border-t border-stone-100">
                     <Button 
-                      variant="primary"
+                      variant="active-tab"
                       size="lg"
                       onClick={handleSaveProfile}
                       disabled={isSaving}
@@ -772,7 +772,7 @@ export default function AdminSettings() {
 
                     <div className="pt-6 flex justify-end border-t border-stone-100">
                       <Button 
-                        variant="primary"
+                        variant="active-tab"
                         size="lg"
                         onClick={async () => {
                           setIsSaving(true)
@@ -1026,7 +1026,7 @@ export default function AdminSettings() {
                           ].map((radius) => (
                             <Button
                               key={radius.value}
-                              variant={siteSettings.button_border_radius === radius.value ? "primary" : "outline"}
+                              variant={siteSettings.button_border_radius === radius.value ? "primary" : "default"}
                               onClick={() => setSiteSettings({ ...siteSettings, button_border_radius: radius.value })}
                               className="h-10 text-[10px] font-bold px-0 rounded-none"
                             >
@@ -1066,7 +1066,7 @@ export default function AdminSettings() {
                           ].map((weight) => (
                             <Button
                               key={weight.value}
-                              variant={siteSettings.button_font_weight === weight.value ? "primary" : "outline"}
+                              variant={siteSettings.button_font_weight === weight.value ? "primary" : "default"}
                               onClick={() => setSiteSettings({ ...siteSettings, button_font_weight: weight.value })}
                               className="h-10 text-[10px] font-bold rounded-none"
                             >
@@ -1085,7 +1085,7 @@ export default function AdminSettings() {
                           ].map((option) => (
                             <Button
                               key={option.value}
-                              variant={siteSettings.button_primary_text_color === option.value ? "primary" : "outline"}
+                              variant={siteSettings.button_primary_text_color === option.value ? "primary" : "default"}
                               onClick={() => setSiteSettings({ ...siteSettings, button_primary_text_color: option.value })}
                               className="h-10 text-[10px] font-bold rounded-none"
                             >
@@ -1104,7 +1104,7 @@ export default function AdminSettings() {
                           ].map((option) => (
                             <Button
                               key={option.value}
-                              variant={siteSettings.button_gold_text_color === option.value ? "primary" : "outline"}
+                              variant={siteSettings.button_gold_text_color === option.value ? "primary" : "default"}
                               onClick={() => setSiteSettings({ ...siteSettings, button_gold_text_color: option.value })}
                               className="h-10 text-[10px] font-bold rounded-none"
                             >
@@ -1116,6 +1116,41 @@ export default function AdminSettings() {
 
                       <div className="space-y-4 pt-4 border-t border-stone-100">
                         <Label className="text-micro font-bold text-stone-500 normal-case">Destructive Button Text</Label>
+                        <div className="grid grid-cols-1 gap-2">
+                          {[
+                            { label: 'Light Text (Recommended)', value: '0 0% 100%' }
+                          ].map((option) => (
+                            <Button
+                              key={option.value}
+                              variant={siteSettings.button_destructive_text_color === option.value ? "primary" : "default"}
+                              onClick={() => setSiteSettings({ ...siteSettings, button_destructive_text_color: option.value })}
+                              className="h-10 text-[10px] font-bold rounded-none"
+                            >
+                              {option.label}
+                            </Button>
+                          ))}
+                        </div>
+                        <p className="text-micro text-stone-400 italic">Forced to light text for mission-critical contrast requirements.</p>
+                      </div>
+
+                      <div className="space-y-4 pt-4 border-t border-stone-100">
+                        <Label className="text-micro font-bold text-stone-500 normal-case">Active Tab Background</Label>
+                        <div className="flex gap-3">
+                          <div 
+                            className="w-11 h-11 rounded-sm border border-stone-200 shrink-0" 
+                            style={{ backgroundColor: `hsl(${siteSettings.button_active_tab_bg_color || siteSettings.primary_color})` }}
+                          />
+                          <Input 
+                            value={(siteSettings.button_active_tab_bg_color as string) || ''} 
+                            onChange={(e) => setSiteSettings({ ...siteSettings, button_active_tab_bg_color: e.target.value })}
+                            className="h-11 rounded-sm border-stone-200 text-xs font-medium font-mono"
+                            placeholder="0 0% 0%"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-4 border-t border-stone-100">
+                        <Label className="text-micro font-bold text-stone-500 normal-case">Active Tab Text</Label>
                         <div className="grid grid-cols-2 gap-2">
                           {[
                             { label: 'Light Text', value: '0 0% 100%' },
@@ -1123,8 +1158,8 @@ export default function AdminSettings() {
                           ].map((option) => (
                             <Button
                               key={option.value}
-                              variant={siteSettings.button_destructive_text_color === option.value ? "primary" : "outline"}
-                              onClick={() => setSiteSettings({ ...siteSettings, button_destructive_text_color: option.value })}
+                              variant={siteSettings.button_active_tab_text_color === option.value ? "primary" : "default"}
+                              onClick={() => setSiteSettings({ ...siteSettings, button_active_tab_text_color: option.value })}
                               className="h-10 text-[10px] font-bold rounded-none"
                             >
                               {option.label}
@@ -1144,6 +1179,8 @@ export default function AdminSettings() {
                             --primary-foreground: ${siteSettings.button_primary_text_color || '0 0% 100%'};
                             --accent-foreground: ${siteSettings.button_gold_text_color || '220 15% 15%'};
                             --destructive-foreground: ${siteSettings.button_destructive_text_color || '0 0% 100%'};
+                            --active-tab-bg: ${siteSettings.button_active_tab_bg_color || siteSettings.primary_color};
+                            --active-tab-text: ${siteSettings.button_active_tab_text_color || '0 0% 100%'};
                           }
                           .preview-gallery-container button {
                             border-radius: var(--button-radius) !important;
@@ -1176,10 +1213,19 @@ export default function AdminSettings() {
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Outline / Ghost</p>
+                          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Active Tabs / Navigation</p>
                           <div className="flex flex-wrap gap-4">
-                            <Button variant="outline" neon={siteSettings.button_neon_enabled as boolean}>Cancel Submission</Button>
-                            <Button variant="ghost" neon={siteSettings.button_neon_enabled as boolean}>View More</Button>
+                            <Button variant="active-tab" neon={siteSettings.button_neon_enabled as boolean}>Active Tab</Button>
+                            <Button variant="default" neon={siteSettings.button_neon_enabled as boolean}>Inactive Tab</Button>
+                          </div>
+                        </div>
+
+
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Outline / Ghost (Interactive)</p>
+                          <div className="flex flex-wrap gap-4">
+                            <Button variant="outline" neon={siteSettings.button_neon_enabled as boolean}>Standard Outline</Button>
+                            <Button variant="ghost" neon={siteSettings.button_neon_enabled as boolean}>Ghost Action</Button>
                           </div>
                         </div>
 
@@ -1190,7 +1236,13 @@ export default function AdminSettings() {
                               variant="destructive"
                               neon={siteSettings.button_neon_enabled as boolean}
                             >
-                              Revoke Access
+                              Solid Alert
+                            </Button>
+                            <Button 
+                              variant="outline-destructive"
+                              neon={siteSettings.button_neon_enabled as boolean}
+                            >
+                              Outline Alert
                             </Button>
                           </div>
                         </div>
@@ -1201,7 +1253,7 @@ export default function AdminSettings() {
 
                   <div className="pt-8 flex justify-end border-t border-stone-100">
                     <Button 
-                      variant="primary"
+                      variant="active-tab"
                       size="lg"
                       onClick={async () => {
                         setIsSaving(true)
@@ -1213,7 +1265,9 @@ export default function AdminSettings() {
                             { key: 'button_neon_enabled', value: siteSettings.button_neon_enabled },
                             { key: 'button_primary_text_color', value: siteSettings.button_primary_text_color },
                             { key: 'button_gold_text_color', value: siteSettings.button_gold_text_color },
-                            { key: 'button_destructive_text_color', value: siteSettings.button_destructive_text_color }
+                            { key: 'button_destructive_text_color', value: siteSettings.button_destructive_text_color },
+                            { key: 'button_active_tab_bg_color', value: siteSettings.button_active_tab_bg_color },
+                            { key: 'button_active_tab_text_color', value: siteSettings.button_active_tab_text_color }
                           ]
                           
                           await Promise.all(settingsToUpdate.map(s => 
@@ -1316,15 +1370,15 @@ export default function AdminSettings() {
                         <div className="flex gap-3 mt-4">
                           {mfaFactors.length > 0 ? (
                             <Button 
-                              variant="outline" 
+                              variant="outline-destructive" 
                               onClick={() => handleUnenrollMfa(mfaFactors[0].id)}
-                              className="h-10 px-6 text-micro font-bold capitalize tracking-tight border-destructive/20 text-destructive hover:bg-destructive/5 rounded-sm transition-all active:scale-95"
+                              className="h-10 px-6 rounded-sm transition-all active:scale-95"
                             >
                               Disable protection
                             </Button>
                           ) : (
                             <Button 
-                              variant="outline" 
+                              variant="default" 
                               size="sm"
                               onClick={handleStartMfaEnroll}
                               className="h-10 px-6 text-micro font-bold capitalize tracking-tight border-stone-200 rounded-sm transition-all active:scale-95"
@@ -1422,7 +1476,7 @@ export default function AdminSettings() {
                     <CardDescription className="text-tiny font-medium text-stone-400 mt-1">Full traceability of administrative decisions and system modifications.</CardDescription>
                   </div>
                   <Button 
-                    variant="outline" 
+                    variant="default" 
                     size="sm"
                     className="h-10 px-6 text-micro font-bold capitalize tracking-tight border-stone-200 rounded-sm hover:bg-stone-50 transition-all active:scale-95"
                     onClick={handleExportLogs}

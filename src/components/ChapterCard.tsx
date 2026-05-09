@@ -111,12 +111,12 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
               </Button>
             ) : (
               <Button
-                variant="outline"
+                variant="default"
                 className={cn(
-                  "w-full h-14 border transition-all duration-500 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none",
+                  "w-full h-14 border transition-all duration-500 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none active:scale-95 shadow-sm",
                   isRequestPending
                     ? "border-amber-200 bg-amber-50 text-amber-600 cursor-default"
-                    : "border-stone-100 text-stone-400 group-hover:border-emerald-600/20 group-hover:!text-emerald-600 group-hover:bg-emerald-50/30"
+                    : "border-stone-100 text-stone-400 hover:border-brand-green/20 hover:text-brand-green hover:bg-stone-50"
                 )}
               >
                 {isRequestPending ? 'Request Sent' : 'View Details'} 

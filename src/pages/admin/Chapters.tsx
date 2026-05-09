@@ -504,9 +504,9 @@ export default function ChaptersManagement() {
         {/* Create New Chapter Placeholder */}
         {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
           <Button 
-            variant="primary"
+            variant="active-tab"
             onClick={openAddModal}
-            className="rounded-sm p-10 flex flex-col items-center justify-center gap-6 transition-all group bg-brand-green/10 h-full shadow-sm hover:shadow-md active:scale-95"
+            className="rounded-sm p-10 flex flex-col items-center justify-center gap-6 transition-all group bg-brand-green h-full shadow-sm hover:shadow-md active:scale-95"
           >
             <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-brand-green transition-all shadow-inner">
               <Plus className="w-7 h-7" />
@@ -631,7 +631,7 @@ export default function ChaptersManagement() {
             <DialogFooter className="pt-4 gap-4 flex-row">
               <Button 
                 type="button" 
-                variant="outline" 
+                variant="default" 
                 onClick={closeModal}
                 className="flex-1 h-14 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
               >

@@ -408,12 +408,12 @@ export default function Donate() {
                         </div>
                         
                         <Button 
-                          variant="outline"
+                          variant="default"
                           onClick={() => {
                             setFormData(prev => ({ ...prev, campaignId: c.id }))
                             document.getElementById('donor-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                           }}
-                          className="w-full h-12 rounded-none text-tiny font-bold tracking-tight border-stone-200 hover:border-stone-900 hover:bg-stone-900 hover:text-white transition-all shadow-sm active:scale-95"
+                          className="w-full h-12 rounded-none text-tiny font-bold tracking-tight border-stone-200 hover:border-brand-green/40 hover:text-brand-green hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                         >
                           Direct Capital <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
@@ -734,7 +734,7 @@ export default function Donate() {
               <div className="flex flex-col md:flex-row items-center justify-between gap-8 p-3 bg-stone-50 border border-stone-200 mb-8">
                 <div className="flex bg-stone-100 p-1 rounded-none border border-stone-200 shadow-inner">
                   <Button 
-                    variant={historyTab === 'contributions' ? 'primary' : 'ghost'}
+                    variant={historyTab === 'contributions' ? 'active-tab' : 'ghost'}
                     onClick={() => setHistoryTab('contributions')}
                     className={cn(
                       "px-10 h-12 text-tiny font-bold tracking-tight rounded-none transition-all",
@@ -744,7 +744,7 @@ export default function Donate() {
                     Mobilization History
                   </Button>
                   <Button 
-                    variant={historyTab === 'spending' ? 'primary' : 'ghost'}
+                    variant={historyTab === 'spending' ? 'active-tab' : 'ghost'}
                     onClick={() => setHistoryTab('spending')}
                     className={cn(
                       "px-10 h-12 text-tiny font-bold tracking-tight rounded-none transition-all",
@@ -769,16 +769,16 @@ export default function Donate() {
                     {historyTab === 'contributions' && (
                       <div className="flex items-center gap-2">
                         <Button 
-                          variant={contributionFilter === 'all' ? 'primary' : 'outline'}
+                          variant={contributionFilter === 'all' ? 'active-tab' : 'default'}
                           onClick={() => setContributionFilter('all')}
-                          className="px-6 h-12 text-[10px] font-bold tracking-tight rounded-none transition-all uppercase"
+                          className="px-6 h-12 text-[10px] font-bold tracking-tight rounded-none transition-all uppercase shadow-sm active:scale-95"
                         >
                           All Records
                         </Button>
                         <Button 
-                          variant={contributionFilter === 'me' ? 'primary' : 'outline'}
+                          variant={contributionFilter === 'me' ? 'active-tab' : 'default'}
                           onClick={() => setContributionFilter('me')}
-                          className="px-6 h-12 text-[10px] font-bold tracking-tight rounded-none transition-all uppercase"
+                          className="px-6 h-12 text-[10px] font-bold tracking-tight rounded-none transition-all uppercase shadow-sm active:scale-95"
                         >
                           My Records
                         </Button>
@@ -1041,9 +1041,9 @@ export default function Donate() {
                     </div>
                     <div className="flex gap-4">
                       <Button 
-                        variant="outline"
+                        variant="default"
                         onClick={() => setIsHistoryModalOpen(false)}
-                        className="px-6 h-12 border-stone-200 text-stone-400 font-bold text-micro tracking-tight rounded-none hover:bg-white transition-all flex items-center gap-2 uppercase"
+                        className="px-6 h-12 border-stone-200 text-stone-400 font-bold text-micro tracking-tight rounded-none hover:text-brand-green hover:bg-stone-50 transition-all flex items-center gap-2 uppercase shadow-sm active:scale-95"
                       >
                         <ArrowDownToLine className="w-4 h-4" /> Download Audit
                       </Button>

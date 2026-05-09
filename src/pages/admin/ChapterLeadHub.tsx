@@ -83,7 +83,7 @@ export default function ChapterLeadHub() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             size="lg"
             className="rounded-sm border-border/40 text-on-surface/80 text-micro px-8 font-bold capitalize tracking-tight hover:bg-stone-100 h-10 transition-all active:scale-95"
           >
@@ -251,7 +251,7 @@ export default function ChapterLeadHub() {
               <span className="text-lg font-bold font-meta text-primary">GH₵{ledger.filter(l => l.transaction_type === 'Allocation').reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
             </div>
             <Button 
-              variant="outline" 
+              variant="default" 
               className="w-full h-12 border-white/20 text-white font-bold text-micro capitalize tracking-tight hover:bg-white/10 rounded-sm transition-all active:scale-95"
             >
               Request Additional Funds

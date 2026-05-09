@@ -175,7 +175,7 @@ export default function AdminOrders() {
         </div>
         <div className="flex items-center gap-3">
           <Button
-            variant="outline"
+            variant="default"
             size="lg"
             onClick={handleExport}
             className="rounded-sm border-border/40 text-on-surface/80 text-micro px-8 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm h-12 active:scale-95"
@@ -424,7 +424,7 @@ export default function AdminOrders() {
                   Order Manifest
                 </CardTitle>
                 <Button 
-                  variant="outline"
+                  variant="default"
                   size="icon"
                   onClick={() => setSelectedOrder(null)}
                   className="w-8 h-8 flex items-center justify-center rounded-sm bg-white border border-border/40 text-muted-foreground/40 hover:text-brand-green transition-all active:scale-95"

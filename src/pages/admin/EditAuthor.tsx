@@ -403,9 +403,9 @@ export default function AdminEditAuthor() {
           <div className="p-6 border-t border-border/10 bg-muted/5 flex justify-end gap-3">
             <Button 
               type="button" 
-              variant="outline" 
+              variant="default" 
               onClick={() => navigate('/admin/authors')}
-              className="border-border/40 hover:bg-stone-50 transition-all rounded-sm text-micro font-bold capitalize tracking-tight h-12 px-8"
+              className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
             >
               Cancel
             </Button>

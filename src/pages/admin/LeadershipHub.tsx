@@ -148,7 +148,7 @@ export default function LeadershipHub() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             className="h-11 px-8 text-micro font-bold tracking-tight border-border/40 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
           >
             <Filter className="w-4 h-4 mr-2 text-muted-foreground/40" /> Filter Status
@@ -194,7 +194,7 @@ export default function LeadershipHub() {
               <CardDescription className="text-xs">Review and approve new Chapter Leaders.</CardDescription>
             </div>
             <Button 
-              variant="outline" 
+              variant="default" 
               onClick={() => fetchApplications()} 
               className="h-11 w-11 p-0 rounded-sm hover:bg-stone-50 border-border/40 text-muted-foreground/40 hover:text-on-surface transition-all shadow-sm active:scale-95"
             >

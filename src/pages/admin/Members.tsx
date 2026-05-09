@@ -335,7 +335,7 @@ export default function MembersList() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="default" 
             size="lg"
             className="rounded-sm text-micro font-bold tracking-tight px-10 border-border/40 h-12 shadow-sm transition-all active:scale-95"
             onClick={handleExport}
@@ -547,7 +547,7 @@ export default function MembersList() {
                             We couldn't find any members matching "{searchTerm}". Try adjusting your filters or search terms.
                           </p>
                           <Button 
-                            variant="outline"
+                            variant="default"
                             onClick={() => {
                               setSearchTerm('')
                               setCurrentPage(1)
@@ -683,7 +683,7 @@ export default function MembersList() {
             </div>
             <div className="flex items-center gap-3">
               <Button 
-                variant="outline" 
+                variant="default" 
                 className="h-11 px-8 text-micro font-bold tracking-tight rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95" 
                 disabled={currentPage === 1}
                 onClick={handlePrevPage}
@@ -696,7 +696,7 @@ export default function MembersList() {
                 ))}
               </div>
               <Button 
-                variant="outline" 
+                variant="default" 
                 className="h-11 px-8 text-micro font-bold tracking-tight rounded-sm border-border/40 disabled:opacity-30 transition-all hover:bg-stone-50 active:scale-95"
                 disabled={currentPage >= totalPages || totalPages === 0}
                 onClick={handleNextPage}
@@ -748,7 +748,7 @@ export default function MembersList() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Button 
-                  variant="outline"
+                  variant="default"
                   onClick={handlePrint}
                   className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-bold tracking-tight text-micro shadow-lg rounded-none transition-all active:scale-95"
                 >

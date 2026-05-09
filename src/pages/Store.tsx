@@ -114,20 +114,20 @@ export default function Store() {
               {categories.map(category => (
                 <Button
                   key={category}
-                  variant={activeCategory === category ? 'primary' : 'outline'}
+                  variant={activeCategory === category ? 'active-tab' : 'default'}
                   onClick={() => {
                     setActiveCategory(category)
                     setCurrentPage(1)
                   }}
                   className={cn(
-                    "w-full h-12 flex items-center justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
+                    "w-full h-12 flex items-center justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
                     activeCategory === category 
                       ? '' 
-                      : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
+                      : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
                   )}
                 >
                   {category}
-                  {activeCategory === category && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                  {activeCategory === category && <div className="w-1.5 h-1.5 bg-[hsl(var(--active-tab-text))] rounded-full" />}
                 </Button>
               ))}
             </div>
@@ -201,7 +201,7 @@ export default function Store() {
           <div className="lg:hidden flex gap-4">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" className="flex-1 h-12 gap-2 font-bold tracking-tight text-xs border-stone-200 rounded-none">
+                <Button variant="default" className="flex-1 h-12 gap-2 font-bold tracking-tight text-xs border-stone-200 rounded-none shadow-sm active:scale-95 hover:text-brand-green hover:bg-stone-50">
                   <Filter className="w-4 h-4" />
                   Filter Supplies
                 </Button>

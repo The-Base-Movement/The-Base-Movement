@@ -204,7 +204,7 @@ export default function AdminAuthors() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button 
-                          variant="outline" 
+                          variant="default" 
                           size="icon" 
                           className="h-10 w-10 text-stone-500 hover:text-brand-green border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => setViewingAuthor(author)}
@@ -213,7 +213,7 @@ export default function AdminAuthors() {
                           <Eye className="w-5 h-5" />
                         </Button>
                         <Button 
-                          variant="outline" 
+                          variant="default" 
                           size="icon" 
                           className="h-10 w-10 text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => window.location.href = `/admin/authors/edit/${author.id}`}
@@ -222,7 +222,7 @@ export default function AdminAuthors() {
                           <Edit3 className="w-5 h-5" />
                         </Button>
                         <Button 
-                          variant="outline" 
+                          variant="default" 
                           size="icon" 
                           className="h-10 w-10 text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => setDeleteConfirm({ id: author.id, name: author.name })}
@@ -298,7 +298,7 @@ function AuthorDetailModal({ author, isOpen, onClose }: { author: Author | null,
               </div>
             </div>
             <Button 
-              variant="outline" 
+              variant="default" 
               className="text-xs font-bold uppercase tracking-wider"
               onClick={() => window.location.href = `/admin/authors/edit/${author.id}`}
             >
