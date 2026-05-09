@@ -193,7 +193,7 @@ export default function Impact() {
         }} />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-stone-900/50" />
         
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
+        <div className="relative text-center">
           <span className="inline-flex items-center gap-2 px-3 py-1 bg-brand-green/10 text-brand-green text-micro font-bold tracking-tight rounded-none mb-6 ring-1 ring-brand-green/20">
             <span className="w-1 h-1 bg-brand-green rounded-full animate-pulse" />
             Live Movement Metrics
@@ -210,7 +210,7 @@ export default function Impact() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 -mt-24 relative z-10">
+      <div className="-mt-24 relative z-10">
         <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
           {[
             { label: 'Donations received', value: stats.totalDonations, icon: Heart, trend: '+12%', color: '#006B3F', status: 'No new donations yet today' },

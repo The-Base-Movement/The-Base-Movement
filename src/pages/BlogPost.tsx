@@ -7,9 +7,11 @@ import { CommentSection } from '@/components/CommentSection'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import { Loader2 } from 'lucide-react'
 import SEO from '@/components/SEO'
+import { useBranding } from '@/hooks/useBranding'
 
 
 export default function BlogPost() {
+  const { settings } = useBranding()
   const { id: slug } = useParams<{ id: string }>()
   const location = useLocation()
   const navigate = useNavigate()
@@ -125,7 +127,7 @@ export default function BlogPost() {
       "name": "The Base Movement",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://thebasemovement.com/logo.png"
+        "url": settings.logo_url
       }
     },
     "mainEntityOfPage": {
@@ -193,7 +195,7 @@ export default function BlogPost() {
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
                 <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
-                <img src="/logo.png" alt="The Base" className="w-32 h-32 opacity-20 mb-6 grayscale" />
+                <img src={settings.logo_url} alt="The Base" className="w-32 h-32 opacity-20 mb-6 grayscale" />
                 <span className="text-xs font-bold text-white/20 tracking-tight">The Base editorial</span>
               </div>
             )}
@@ -332,7 +334,7 @@ export default function BlogPost() {
                           ) : (
                             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
                               <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
-                              <img src="/logo.png" alt="The Base" className="w-8 h-8 opacity-20 mb-2 grayscale" />
+                              <img src={settings.logo_url} alt="The Base" className="w-8 h-8 opacity-20 mb-2 grayscale" />
                             </div>
                           )}
                           <div className="absolute top-0 left-0 w-full h-1 bg-[var(--brand-green)] scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>

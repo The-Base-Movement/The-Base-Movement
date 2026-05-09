@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/neon-button'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
 import SEO from '@/components/SEO'
+import { useBranding } from '@/hooks/useBranding'
 
 export default function Blog() {
+  const { settings } = useBranding()
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
@@ -98,7 +100,7 @@ export default function Blog() {
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
                         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
-                        <img src="/logo.png" alt="The Base" className="w-16 h-16 opacity-20 mb-4 grayscale" />
+                        <img src={settings.logo_url} alt="The Base" className="w-16 h-16 opacity-20 mb-4 grayscale" />
                         <span className="text-micro font-bold text-white/20 tracking-tight">The Base Editorial</span>
                       </div>
                     )}

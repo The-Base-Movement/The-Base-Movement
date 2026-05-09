@@ -17,7 +17,8 @@ const queryClient = new QueryClient({
   },
 })
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root')!
+createRoot(rootElement).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
@@ -30,3 +31,10 @@ createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </StrictMode>,
 )
+
+// Firing event for static prerendering
+if (import.meta.env.PROD) {
+  setTimeout(() => {
+    document.dispatchEvent(new Event('render-event'));
+  }, 2000);
+}

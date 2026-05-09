@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import type { BlogPost } from '@/types/admin'
+import { useBranding } from '@/hooks/useBranding'
 
 interface BlogPostCardProps {
   post: BlogPost
@@ -9,6 +10,7 @@ interface BlogPostCardProps {
 }
 
 export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
+  const { settings } = useBranding()
   const formattedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
@@ -27,7 +29,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
             <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
-            <img src="/logo.png" alt="The Base" className="w-12 h-12 opacity-20 mb-3 grayscale" />
+            <img src={settings.logo_url} alt="The Base" className="w-12 h-12 opacity-20 mb-3 grayscale" />
             <span className="text-[8px] font-bold text-white/20 tracking-tight">The Base Editorial</span>
           </div>
         )}

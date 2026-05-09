@@ -359,7 +359,9 @@ export default function DashboardLayout() {
         </div>
 
         <div className="flex-1 main-content-wrapper px-6 md:px-10 py-8">
-          <Outlet />
+          <div className="max-w-7xl mx-auto w-full">
+            <Outlet />
+          </div>
         </div>
 
         {/* Dashboard Footer */}

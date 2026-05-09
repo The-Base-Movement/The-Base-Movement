@@ -186,7 +186,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full px-4 sm:px-12 py-6 sm:py-8">
+    <div>
       {/* Page Header */}
       <div className="mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 mb-6 backdrop-blur-sm">

@@ -72,7 +72,7 @@ export default function Polls() {
       />
       {/* Header */}
       <div className="bg-white border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-8 py-6">
+        <div className="py-6">
           <Breadcrumbs />
           <div className="mt-4">
               <h1 className="text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-4 text-stone-900 flex items-center gap-3">
@@ -87,7 +87,7 @@ export default function Polls() {
           </div>
           </div>
 
-          <main className="max-w-7xl mx-auto px-8 mt-12">
+          <main className="mt-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
 
           {/* Active Polls Section */}

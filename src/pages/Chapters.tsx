@@ -242,7 +242,6 @@ export default function Chapters() {
   );
 
   return (
-  return (
     <div className="min-h-screen bg-stone-50/50 pb-20">
       <SEO 
         title="Movement Chapters"
@@ -250,7 +249,7 @@ export default function Chapters() {
         canonical="/chapters"
       />
       <div className="bg-white border-b border-stone-200">
-        <div className="max-w-[1280px] mx-auto px-8 py-8">
+        <div className="py-8">
           <Breadcrumbs />
           <div className="mt-4">
             <h1 className="text-on-surface mb-4 font-meta">Movement Chapters</h1>
@@ -262,7 +261,7 @@ export default function Chapters() {
         </div>
       </div>
 
-      <main className="max-w-[1280px] mx-auto px-8 mt-12">
+      <main className="mt-12">
         <div className="lg:hidden mb-8 flex gap-4">
           <Sheet>
             <SheetTrigger asChild>

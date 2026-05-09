@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/neon-button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import SEO from '@/components/SEO'
+import { useBranding } from '@/hooks/useBranding'
 
 interface VerifiedMember {
   full_name: string
@@ -17,6 +18,7 @@ interface VerifiedMember {
 }
 
 export default function VerifyID() {
+  const { settings } = useBranding()
   const { id } = useParams<{ id: string }>()
   const [member, setMember] = useState<VerifiedMember | null>(null)
   const [loading, setLoading] = useState(true)
@@ -71,7 +73,7 @@ export default function VerifyID() {
         {/* Branding */}
         <div className="text-center space-y-2">
           <div className="inline-block p-3 bg-white shadow-xl rounded-[12px] border border-border/40">
-            <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain"  decoding="async" loading="lazy" />
+            <img src={settings.logo_url} alt="Logo" className="w-12 h-12 object-contain"  decoding="async" loading="lazy" />
           </div>
           <h1 className="text-xl font-bold font-meta tracking-tight">The Base Movement</h1>
           <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Official verification portal</p>
