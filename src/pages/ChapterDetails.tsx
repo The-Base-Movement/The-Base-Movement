@@ -131,7 +131,7 @@ export default function ChapterDetails() {
               
               <div className="space-y-4">
                 {chapter.activities && chapter.activities.length > 0 ? (
-                  chapter.activities.map((activity, i) => {
+                  chapter.activities.map((activity: ChapterActivity, i: number) => {
                     const date = new Date(activity.activityDate);
                     const month = date.toLocaleString('en-US', { month: 'short' });
                     const day = date.getDate();
@@ -171,7 +171,7 @@ export default function ChapterDetails() {
                 <h3 className="text-sm font-bold tracking-tight mb-6 border-b border-stone-100 pb-4 text-stone-900">Chapter leadership</h3>
               <div className="space-y-6">
                 {chapter.leadership && chapter.leadership.length > 0 ? (
-                  chapter.leadership.map((leader, i) => (
+                  chapter.leadership.map((leader: ChapterLeader, i: number) => (
                     <div key={i} className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-stone-100 rounded-none overflow-hidden flex items-center justify-center text-stone-400">
                         {leader.imageUrl ? (
