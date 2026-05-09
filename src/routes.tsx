@@ -1,0 +1,185 @@
+import { lazy } from 'react'
+import { type RouteObject, Navigate } from 'react-router-dom'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
+import AdminLogin from './pages/admin/Login'
+import PublicLayout from './components/PublicLayout'
+import DashboardLayout from './components/DashboardLayout'
+
+// Lazy loaded components
+const Blog = lazy(() => import('./pages/Blog'))
+const OurAgenda = lazy(() => import('./pages/OurAgenda'))
+const Contact = lazy(() => import('./pages/Contact'))
+const Donate = lazy(() => import('./pages/Donate'))
+const Members = lazy(() => import('./pages/Members'))
+const Store = lazy(() => import('./pages/Store'))
+const ProductDetails = lazy(() => import('./pages/ProductDetails'))
+const Cart = lazy(() => import('./pages/Cart'))
+const Checkout = lazy(() => import('./pages/Checkout'))
+const OrderSummary = lazy(() => import('./pages/OrderSummary'))
+const Impact = lazy(() => import('./pages/Impact'))
+const Chapters = lazy(() => import('./pages/Chapters'))
+const ChapterDetails = lazy(() => import('./pages/ChapterDetails'))
+const BlogPost = lazy(() => import('./pages/BlogPost'))
+const Privacy = lazy(() => import('./pages/Privacy'))
+const Terms = lazy(() => import('./pages/Terms'))
+const Wishlist = lazy(() => import('./pages/Wishlist'))
+const VerifyID = lazy(() => import('./pages/VerifyID'))
+const Press = lazy(() => import('./pages/Press'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const RegistrationFormPreview = lazy(() => import('./pages/RegistrationFormPreview'))
+
+// Dashboard components
+const ProfileSettings = lazy(() => import('./pages/ProfileSettings'))
+const Polls = lazy(() => import('./pages/Polls'))
+const FeedbackHub = lazy(() => import('./pages/FeedbackHub'))
+const CanvasserClipboard = lazy(() => import('./pages/CanvasserClipboard'))
+
+// Admin components
+const AdminLayout = lazy(() => import('./components/layouts/AdminLayout'))
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
+const AdminMembers = lazy(() => import('./pages/admin/Members'))
+const AdminChapters = lazy(() => import('./pages/admin/Chapters'))
+const AdminPolls = lazy(() => import('./pages/admin/Polls'))
+const AdminStore = lazy(() => import('./pages/admin/Store'))
+const AdminSettings = lazy(() => import('./pages/admin/Settings'))
+const AdminMemberVerification = lazy(() => import('./pages/admin/MemberVerification'))
+const AdminRegions = lazy(() => import('./pages/admin/Regions'))
+const AdminBlogs = lazy(() => import('./pages/admin/Blogs'))
+const AdminAuthors = lazy(() => import('./pages/admin/Authors'))
+const AdminEditAuthor = lazy(() => import('./pages/admin/EditAuthor'))
+const AdminMediaLibrary = lazy(() => import('./pages/admin/MediaLibrary'))
+const AdminLeadershipHub = lazy(() => import('./pages/admin/LeadershipHub'))
+const AdminDonations = lazy(() => import('./pages/admin/DonationVerification'))
+const AdminAdministrators = lazy(() => import('./pages/admin/Administrators'))
+const AdminBroadcasts = lazy(() => import('./pages/admin/Broadcasts'))
+const AdminNewBroadcast = lazy(() => import('./pages/admin/NewBroadcast'))
+const AdminOrders = lazy(() => import('./pages/admin/Orders'))
+const AdminChapterHub = lazy(() => import('./pages/admin/ChapterLeadHub'))
+const AdminFieldDirectives = lazy(() => import('./pages/admin/FieldDirectives'))
+const AdminMobilizationMetrics = lazy(() => import('./pages/admin/MobilizationMetrics'))
+const AdminLogisticsIntelligence = lazy(() => import('./pages/admin/LogisticsIntelligence'))
+const AdminRallyCommand = lazy(() => import('./pages/admin/RallyCommand'))
+const AdminSentimentIntelligence = lazy(() => import('./pages/admin/SentimentIntelligence'))
+const AdminWarRoomCommand = lazy(() => import('./pages/admin/WarRoomCommand'))
+const AdminGroundGameCommand = lazy(() => import('./pages/admin/GroundGameCommand'))
+const AdminDeployMission = lazy(() => import('./pages/admin/DeployMission'))
+const AdminTrash = lazy(() => import('./pages/admin/Trash'))
+const AdminRoadmap = lazy(() => import('./pages/admin/Roadmap'))
+const AdminStrategicPriorities = lazy(() => import('./pages/admin/StrategicPriorities'))
+
+export const routes: RouteObject[] = [
+  {
+    path: '/admin',
+    element: <Navigate to="/admin/dashboard" replace />,
+  },
+  {
+    path: '/checkout',
+    element: <Navigate to="/store/checkout" replace />,
+  },
+  {
+    path: '/dashboard/checkout',
+    element: <Navigate to="/dashboard/store/checkout" replace />,
+  },
+  {
+    path: '/members',
+    element: <Navigate to="/dashboard/members" replace />,
+  },
+  {
+    path: '/register/preview',
+    element: <RegistrationFormPreview />,
+  },
+  {
+    element: <PublicLayout />,
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/blog', element: <Blog /> },
+      { path: '/blog/:id', element: <BlogPost /> },
+      { path: '/our-agenda', element: <OurAgenda /> },
+      { path: '/register', element: <Register /> },
+      { path: '/contact', element: <Contact /> },
+      { path: '/donate', element: <Donate /> },
+      { path: '/login', element: <Login /> },
+      { path: '/store', element: <Store /> },
+      { path: '/store/product/:slug', element: <ProductDetails /> },
+      { path: '/store/cart', element: <Cart /> },
+      { path: '/store/wishlist', element: <Wishlist /> },
+      { path: '/store/checkout', element: <Checkout /> },
+      { path: '/store/summary', element: <OrderSummary /> },
+      { path: '/impact', element: <Impact /> },
+      { path: '/polls', element: <Polls /> },
+      { path: '/chapters', element: <Chapters /> },
+      { path: '/privacy', element: <Privacy /> },
+      { path: '/terms', element: <Terms /> },
+      { path: '/press', element: <Press /> },
+      { path: '/verify/:id', element: <VerifyID /> },
+      { path: '/admin-login', element: <AdminLogin /> },
+      { path: '*', element: <NotFound /> },
+    ],
+  },
+  {
+    element: <DashboardLayout />,
+    children: [
+      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/dashboard/blog', element: <Blog /> },
+      { path: '/dashboard/blog/:id', element: <BlogPost /> },
+      { path: '/dashboard/agenda', element: <OurAgenda /> },
+      { path: '/dashboard/impact', element: <Impact /> },
+      { path: '/dashboard/polls', element: <Polls /> },
+      { path: '/dashboard/store', element: <Store /> },
+      { path: '/dashboard/store/product/:slug', element: <ProductDetails /> },
+      { path: '/dashboard/store/cart', element: <Cart /> },
+      { path: '/dashboard/store/wishlist', element: <Wishlist /> },
+      { path: '/dashboard/store/checkout', element: <Checkout /> },
+      { path: '/dashboard/store/summary', element: <OrderSummary /> },
+      { path: '/dashboard/feedback', element: <FeedbackHub /> },
+      { path: '/dashboard/canvass', element: <CanvasserClipboard /> },
+      { path: '/dashboard/donate', element: <Donate /> },
+      { path: '/dashboard/contact', element: <Contact /> },
+      { path: '/dashboard/members', element: <Members /> },
+      { path: '/dashboard/chapters', element: <Chapters /> },
+      { path: '/dashboard/chapters/:id', element: <ChapterDetails /> },
+      { path: '/dashboard/privacy', element: <Privacy /> },
+      { path: '/dashboard/terms', element: <Terms /> },
+      { path: '/settings', element: <ProfileSettings /> },
+    ],
+  },
+  {
+    element: <AdminLayout />,
+    children: [
+      { path: '/admin/dashboard', element: <AdminDashboard /> },
+      { path: '/admin/leadership', element: <AdminLeadershipHub /> },
+      { path: '/admin/chapter-hub', element: <AdminChapterHub /> },
+      { path: '/admin/directives', element: <AdminFieldDirectives /> },
+      { path: '/admin/mobilization-metrics', element: <AdminMobilizationMetrics /> },
+      { path: '/admin/logistics-intelligence', element: <AdminLogisticsIntelligence /> },
+      { path: '/admin/rally-command', element: <AdminRallyCommand /> },
+      { path: '/admin/sentiment-intelligence', element: <AdminSentimentIntelligence /> },
+      { path: '/admin/war-room', element: <AdminWarRoomCommand /> },
+      { path: '/admin/ground-game', element: <AdminGroundGameCommand /> },
+      { path: '/admin/ground-game/deploy', element: <AdminDeployMission /> },
+      { path: '/admin/donations', element: <AdminDonations /> },
+      { path: '/admin/priorities', element: <AdminStrategicPriorities /> },
+      { path: '/admin/members', element: <AdminMembers /> },
+      { path: '/admin/verification', element: <AdminMemberVerification /> },
+      { path: '/admin/chapters', element: <AdminChapters /> },
+      { path: '/admin/polls', element: <AdminPolls /> },
+      { path: '/admin/store', element: <AdminStore /> },
+      { path: '/admin/settings', element: <AdminSettings /> },
+      { path: '/admin/regions', element: <AdminRegions /> },
+      { path: '/admin/blogs', element: <AdminBlogs /> },
+      { path: '/admin/authors', element: <AdminAuthors /> },
+      { path: '/admin/authors/new', element: <AdminEditAuthor /> },
+      { path: '/admin/authors/edit/:id', element: <AdminEditAuthor /> },
+      { path: '/admin/media', element: <AdminMediaLibrary /> },
+      { path: '/admin/broadcasts', element: <AdminBroadcasts /> },
+      { path: '/admin/broadcasts/new', element: <AdminNewBroadcast /> },
+      { path: '/admin/administrators', element: <AdminAdministrators /> },
+      { path: '/admin/orders', element: <AdminOrders /> },
+      { path: '/admin/roadmap', element: <AdminRoadmap /> },
+      { path: '/admin/trash', element: <AdminTrash /> },
+    ],
+  }
+]

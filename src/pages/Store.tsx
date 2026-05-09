@@ -44,7 +44,7 @@ export default function Store() {
   const handleShare = (product: Product) => {
     setShareData({
       title: `Check out the ${product.name} at The Base Movement Supplies!`,
-      url: window.location.origin + '/store/product/' + product.slug
+      url: (typeof window !== 'undefined' ? window.location.origin : '') + '/store/product/' + product.slug
     })
     setIsShareModalOpen(true)
   }
@@ -175,7 +175,7 @@ export default function Store() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-3 w-full md:w-auto">
             <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-red h-12 text-tiny font-bold tracking-tight rounded-none !overflow-visible overflow-visible">
-              <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/wishlist' : '/store/wishlist'}>
+              <Link to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store/wishlist' : '/store/wishlist'}>
                 <Heart className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-red transition-all" />
                 Wishlist
                 {wishlistCount > 0 && (
@@ -186,7 +186,7 @@ export default function Store() {
               </Link>
             </Button>
             <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-green h-12 text-tiny font-bold tracking-tight rounded-none !overflow-visible overflow-visible">
-              <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}>
+              <Link to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store/cart' : '/store/cart'}>
                 <ShoppingBag className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-green transition-all" />
                 Bag
                 {cartCount > 0 && (

@@ -24,10 +24,12 @@ class AuthService {
     // Listen for auth changes
     supabase.auth.onAuthStateChange((_event, session) => {
       this.currentSession = session;
-      if (session) {
-        localStorage.setItem('supabase_session_active', 'true');
-      } else {
-        localStorage.removeItem('supabase_session_active');
+      if (typeof window !== 'undefined' && window.localStorage) {
+        if (session) {
+          localStorage.setItem('supabase_session_active', 'true');
+        } else {
+          localStorage.removeItem('supabase_session_active');
+        }
       }
     });
   }
@@ -57,7 +59,7 @@ class AuthService {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/dashboard'
+        redirectTo: (typeof window !== 'undefined' ? window.location.origin : '') + '/dashboard'
       }
     });
 
@@ -97,7 +99,10 @@ class AuthService {
 
   isAuthenticated(): boolean {
     if (this.currentSession) return true;
-    return localStorage.getItem('supabase_session_active') === 'true';
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('supabase_session_active') === 'true';
+    }
+    return false;
   }
 
   getUser() {

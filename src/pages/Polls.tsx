@@ -8,13 +8,15 @@ import SEO from '@/components/SEO'
 import { adminService } from '@/services/adminService'
 import type { Poll, PollOption } from '@/types/admin'
 import { toast } from 'sonner'
+import { useIsClient } from '@/hooks/useIsClient'
 
 export default function Polls() {
   const [polls, setPolls] = useState<Poll[]>([])
   const [loading, setLoading] = useState(true)
   const [voting, setVoting] = useState<string | null>(null)
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
-  const [isLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true')
+  const isClient = useIsClient()
+  const isLoggedIn = isClient && typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true'
 
   useEffect(() => {
     async function loadPolls() {

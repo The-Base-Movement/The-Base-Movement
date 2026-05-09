@@ -1,40 +1,38 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { hydrateRoot, createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { HelmetProvider } from 'react-helmet-async'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import './index.css'
+import { HelmetProvider } from 'react-helmet-async'
 import App from './App.tsx'
 import { ChaptersProvider } from './context/ChaptersContext'
+import './index.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 300000, // 5 minutes
+      staleTime: 300000,
       retry: 3,
       networkMode: 'always',
     },
   },
 })
 
-const rootElement = document.getElementById('root')!
-createRoot(rootElement).render(
-  <StrictMode>
+const container = document.getElementById('root')!
+
+const rootElement = (
+  <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
-          <ChaptersProvider>
-            <App />
-          </ChaptersProvider>
-        </BrowserRouter>
+        <ChaptersProvider>
+          <App />
+        </ChaptersProvider>
       </HelmetProvider>
     </QueryClientProvider>
-  </StrictMode>,
+  </BrowserRouter>
 )
 
-// Firing event for static prerendering
-if (import.meta.env.PROD) {
-  setTimeout(() => {
-    document.dispatchEvent(new Event('render-event'));
-  }, 2000);
+// Use hydrateRoot if the page is prerendered, otherwise use createRoot
+if (container.hasChildNodes()) {
+  hydrateRoot(container, rootElement)
+} else {
+  createRoot(container).render(rootElement)
 }

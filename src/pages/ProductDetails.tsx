@@ -158,7 +158,7 @@ export default function ProductDetails() {
       <Breadcrumbs />
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <Link 
-          to={window.location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'}
+          to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store' : '/store'}
           className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -167,7 +167,7 @@ export default function ProductDetails() {
 
         <div className="flex items-center gap-3">
           <Link 
-            to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/wishlist' : '/store/wishlist'}
+            to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store/wishlist' : '/store/wishlist'}
             className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
           >
             <Heart className="w-4 h-4 text-stone-500 group-hover:text-brand-red transition-all" />
@@ -179,7 +179,7 @@ export default function ProductDetails() {
             )}
           </Link>
           <Link 
-            to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}
+            to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store/cart' : '/store/cart'}
             className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
           >
             <ShoppingBag className="w-4 h-4 text-stone-500 group-hover:text-brand-green transition-all" />
@@ -634,7 +634,7 @@ export default function ProductDetails() {
           isOpen={isShareModalOpen} 
           onClose={() => setIsShareModalOpen(false)} 
           title={`Check out the ${product.name} at The Base Movement Store!`}
-          url={window.location.href}
+          url={typeof window !== 'undefined' ? window.location.href : ''}
         />
       )}
       </div>

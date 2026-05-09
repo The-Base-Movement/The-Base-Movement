@@ -12,6 +12,7 @@ import type { RealtimeChannel } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { useIsClient } from '@/hooks/useIsClient'
 
 export default function Donate() {
   const [submitted, setSubmitted] = useState(false)
@@ -69,12 +70,12 @@ export default function Donate() {
     toast.success('Strategic ledger exported successfully.')
   }
 
-  // Auth & Pre-fill states (Initialized directly to avoid cascading renders)
-  const [isLoggedIn] = useState(() => !!localStorage.getItem('userName'))
+  const isClient = useIsClient()
+  const isLoggedIn = isClient && typeof window !== 'undefined' && !!localStorage.getItem('userName')
   const [formData, setFormData] = useState(() => {
-    const storedName = localStorage.getItem('userName') || ''
-    const storedPhone = localStorage.getItem('userPhone') || ''
-    const storedMemberId = localStorage.getItem('userMemberId') || ''
+    const storedName = typeof window !== 'undefined' ? localStorage.getItem('userName') || '' : ''
+    const storedPhone = typeof window !== 'undefined' ? localStorage.getItem('userPhone') || '' : ''
+    const storedMemberId = typeof window !== 'undefined' ? localStorage.getItem('userMemberId') || '' : ''
     
     return {
       fullName: storedName,

@@ -3,17 +3,28 @@ import { Link, useLocation } from 'react-router-dom'
 import { User, Settings, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { useBranding } from '@/hooks/useBranding'
+import { useIsClient } from '@/hooks/useIsClient'
 
 export default function Navbar() {
   const { settings } = useBranding()
   const [isOpen, setIsOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    () => localStorage.getItem('isLoggedIn') === 'true'
-  )
-  const [userAvatar, setUserAvatar] = useState(
-    () => localStorage.getItem('userAvatar') || 'https://i.pravatar.cc/150?u=a042581f4e29026704d'
-  )
+  const isClient = useIsClient()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userAvatar, setUserAvatar] = useState('https://i.pravatar.cc/150?u=a042581f4e29026704d')
+
+  useEffect(() => {
+    if (isClient) {
+      // Deferring to an animation frame avoids the "cascading render" warning
+      // by moving the state update out of the synchronous effect body.
+      const handle = requestAnimationFrame(() => {
+        setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true')
+        const avatar = localStorage.getItem('userAvatar')
+        if (avatar) setUserAvatar(avatar)
+      })
+      return () => cancelAnimationFrame(handle)
+    }
+  }, [isClient])
   const location = useLocation()
   const dropdownRef = useRef<HTMLDivElement>(null)
 

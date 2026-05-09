@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { GraduationCap, Building2, Factory, Construction, Landmark, Sprout, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { useBranding } from '@/hooks/useBranding'
+import { useIsClient } from '@/hooks/useIsClient'
 import { BrandLine } from '@/components/ui/BrandLine'
 import SEO from '@/components/SEO'
 
@@ -204,12 +205,8 @@ const agendaPillars = [
 export default function OurAgenda() {
   const { settings } = useBranding()
   const [activeSection, setActiveSection] = useState('education')
-  const [isLoggedIn] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return !!localStorage.getItem('userName')
-    }
-    return false
-  })
+  const isClient = useIsClient()
+  const isLoggedIn = isClient && typeof window !== 'undefined' && !!localStorage.getItem('userName')
 
   useEffect(() => {
     const handleScroll = () => {

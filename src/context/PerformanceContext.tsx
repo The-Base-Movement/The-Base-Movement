@@ -8,12 +8,17 @@ interface PerformanceContextValue {
 const PerformanceContext = createContext<PerformanceContextValue | null>(null)
 
 export function PerformanceProvider({ children }: { children: ReactNode }) {
-  const [lowBandwidthMode, setLowBandwidthMode] = useState(() => {
-    return localStorage.getItem('low_bandwidth_mode') === 'true'
-  })
+  const [lowBandwidthMode, setLowBandwidthMode] = useState(false)
 
   useEffect(() => {
-    localStorage.setItem('low_bandwidth_mode', String(lowBandwidthMode))
+    const saved = localStorage.getItem('low_bandwidth_mode') === 'true'
+    if (saved) setLowBandwidthMode(true)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('low_bandwidth_mode', String(lowBandwidthMode))
+    }
   }, [lowBandwidthMode])
 
   return (

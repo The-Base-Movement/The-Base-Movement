@@ -26,7 +26,7 @@ export default function Wishlist() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <Link 
-                to={window.location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'}
+                to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store' : '/store'}
                 className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors mb-6 group"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -43,7 +43,7 @@ export default function Wishlist() {
 
             <div className="flex items-center gap-3">
               <Link 
-                to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}
+                to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store/cart' : '/store/cart'}
                 className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
               >
                 <ShoppingCart className="w-4 h-4 text-stone-500 group-hover:text-brand-green transition-all" />
@@ -95,7 +95,7 @@ export default function Wishlist() {
                         Add to Cart
                       </Button>
                       <Button asChild variant="default" className="flex-1 border-stone-200 hover:border-brand-green hover:text-brand-green text-micro font-bold tracking-tight rounded-none h-11">
-                        <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${item.slug}` : `/store/product/${item.slug}`}>Details</Link>
+                        <Link to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? `/dashboard/store/product/${item.slug}` : `/store/product/${item.slug}`}>Details</Link>
                       </Button>
                     </div>
                   </div>
@@ -110,7 +110,7 @@ export default function Wishlist() {
                 Start curating your movement collection. Explore our store and save items you'd love to own.
               </p>
               <Button asChild variant="primary" className="text-micro font-bold tracking-tight rounded-none px-12 h-12">
-                <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'}>Explore Store</Link>
+                <Link to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store' : '/store'}>Explore Store</Link>
               </Button>
             </div>
           )}

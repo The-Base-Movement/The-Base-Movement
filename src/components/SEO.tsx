@@ -47,7 +47,7 @@ export default function SEO({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={metaDescription} />
       <meta property="og:image" content={image} />
-      <meta property="og:url" content={window.location.href} />
+      <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : ''} />
       <meta property="og:site_name" content={siteName} />
       
       {/* Twitter */}

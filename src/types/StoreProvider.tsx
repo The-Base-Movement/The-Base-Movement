@@ -7,20 +7,25 @@ import { authService } from '@/services/authService'
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [wishlist, setWishlist] = useState<Product[]>([])
-  // Initialize cart from localStorage if available
-  const [cart, setCart] = useState<CartItem[]>(() => {
+  const [cart, setCart] = useState<CartItem[]>([])
+
+  // Initialize cart from localStorage if available (Client-side only)
+  useEffect(() => {
     try {
       const saved = localStorage.getItem('the_base_cart')
-      return saved ? JSON.parse(saved) : []
+      if (saved) {
+        setCart(JSON.parse(saved))
+      }
     } catch (e) {
       console.error('Failed to parse cart from local storage', e)
-      return []
     }
-  })
+  }, [])
 
-  // Sync cart to localStorage whenever it changes
+  // Sync cart to localStorage whenever it changes (Client-side only)
   useEffect(() => {
-    localStorage.setItem('the_base_cart', JSON.stringify(cart))
+    if (cart.length > 0) {
+      localStorage.setItem('the_base_cart', JSON.stringify(cart))
+    }
   }, [cart])
 
   useEffect(() => {
