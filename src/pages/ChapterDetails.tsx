@@ -92,7 +92,7 @@ export default function ChapterDetails() {
             <section className="bg-white border border-stone-200 rounded-none overflow-hidden flex flex-col">
               <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
               <div className="p-10">
-                <h2 className="text-lg font-bold text-stone-900 tracking-tight font-meta mb-6 flex items-center gap-3">
+                <h2 className="text-sm font-bold text-stone-900 tracking-tight font-meta mb-6 flex items-center gap-3 uppercase">
                 <Globe className="w-5 h-5 text-[var(--brand-green)]" />
                 About this chapter
               </h2>
@@ -121,33 +121,39 @@ export default function ChapterDetails() {
             {/* Recent Activities */}
             <section>
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-lg font-bold text-stone-900 tracking-tight font-meta flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-[var(--brand-green)]" />
+                <h2 className="text-sm font-bold text-stone-900 tracking-tight font-meta flex items-center gap-3 uppercase">
+                  <Calendar className="w-4 h-4 text-[var(--brand-green)]" />
                   Recent activities
                 </h2>
-                <button className="text-[10px] font-bold text-[var(--brand-green)] tracking-tight hover:underline">View all</button>
+                <button className="text-[10px] font-bold text-[var(--brand-green)] tracking-tight hover:underline uppercase">View all</button>
               </div>
               
               <div className="space-y-4">
-                {[
-                  { title: "Regional Policy Townhall", date: "Oct 24, 2024", type: "Event" },
-                  { title: "Community Outreach Program", date: "Oct 12, 2024", type: "Action" },
-                  { title: "New Member Orientation", date: "Sep 28, 2024", type: "Onboarding" }
-                ].map((activity, i) => (
-                  <div key={i} className="bg-white border border-stone-200 p-6 rounded-none flex items-center justify-between group hover:border-[var(--brand-green)] transition-colors">
-                    <div className="flex items-center gap-6">
-                      <div className="w-12 h-12 bg-stone-50 flex flex-col items-center justify-center text-stone-400 font-meta">
-                        <span className="text-micro font-bold">{activity.date.split(' ')[0]}</span>
-                        <span className="text-lg font-bold leading-none">{activity.date.split(' ')[1].replace(',', '')}</span>
+                {(chapter.activities && chapter.activities.length > 0 ? chapter.activities : [
+                  { title: "Regional Policy Townhall", activityDate: "2024-10-24T00:00:00Z", type: "Event" },
+                  { title: "Community Outreach Program", activityDate: "2024-10-12T00:00:00Z", type: "Action" },
+                  { title: "New Member Orientation", activityDate: "2024-09-28T00:00:00Z", type: "Onboarding" }
+                ]).map((activity, i) => {
+                  const date = new Date(activity.activityDate);
+                  const month = date.toLocaleString('en-US', { month: 'short' });
+                  const day = date.getDate();
+                  
+                  return (
+                    <div key={i} className="bg-white border border-stone-200 p-6 rounded-none flex items-center justify-between group hover:border-[var(--brand-green)] transition-colors">
+                      <div className="flex items-center gap-6">
+                        <div className="w-12 h-12 bg-stone-50 flex flex-col items-center justify-center text-stone-400 font-meta">
+                          <span className="text-micro font-bold uppercase">{month}</span>
+                          <span className="text-lg font-bold leading-none">{day}</span>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-stone-900 group-hover:text-[var(--brand-green)] transition-colors">{activity.title}</h4>
+                          <p className="text-micro text-stone-400 tracking-tight mt-1 uppercase">{activity.type}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-stone-900 group-hover:text-[var(--brand-green)] transition-colors">{activity.title}</h4>
-                        <p className="text-xs text-stone-400 tracking-tight mt-1">{activity.type}</p>
-                      </div>
+                      <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-[var(--brand-green)] transition-all" />
                     </div>
-                    <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-[var(--brand-green)] transition-all" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           </div>

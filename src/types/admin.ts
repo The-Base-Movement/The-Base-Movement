@@ -24,9 +24,18 @@ export interface Region {
 }
 
 export interface ChapterLeader {
+  id: string
   name: string
   role: string
   imageUrl?: string
+}
+
+export interface ChapterActivity {
+  id: string
+  title: string
+  description?: string
+  type: string
+  activityDate: string
 }
 
 export interface Chapter {
@@ -41,6 +50,7 @@ export interface Chapter {
   description?: string
   details_url?: string
   leadership?: ChapterLeader[]
+  activities?: ChapterActivity[]
 }
 
 export interface PollOption {

@@ -19,7 +19,11 @@ class ChapterService {
   async getChapters(): Promise<Chapter[]> {
     const { data, error } = await supabase
       .from('chapters')
-      .select('*')
+      .select(`
+        *,
+        leadership:chapter_leaders(*),
+        activities:chapter_activities(*)
+      `)
       .order('name', { ascending: true })
 
     if (error) {
@@ -36,8 +40,63 @@ class ChapterService {
       member_count: c.member_count || 0,
       status: c.status,
       description: c.description || undefined,
-      details_url: c.details_url || undefined
+      details_url: c.details_url || undefined,
+      leadership: c.leadership?.map((l: any) => ({
+        id: l.id,
+        name: l.name,
+        role: l.role,
+        imageUrl: l.image_url
+      })),
+      activities: c.activities?.map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        description: a.description,
+        type: a.type,
+        activityDate: a.activity_date
+      }))
     }))
+  }
+
+  async getChapterById(id: string): Promise<Chapter | null> {
+    const { data, error } = await supabase
+      .from('chapters')
+      .select(`
+        *,
+        leadership:chapter_leaders(*),
+        activities:chapter_activities(*)
+      `)
+      .eq('id', id)
+      .single()
+
+    if (error || !data) {
+      console.error('[DATABASE] Chapter Fetch Error:', error)
+      return null
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      city_or_region: data.city_or_region,
+      country: data.country || 'Ghana',
+      leader_name: data.leader_name || 'Unassigned',
+      member_count: data.member_count || 0,
+      status: data.status,
+      description: data.description || undefined,
+      details_url: data.details_url || undefined,
+      leadership: data.leadership?.map((l: any) => ({
+        id: l.id,
+        name: l.name,
+        role: l.role,
+        imageUrl: l.image_url
+      })),
+      activities: data.activities?.map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        description: a.description,
+        type: a.type,
+        activityDate: a.activity_date
+      }))
+    }
   }
 
   async createChapter(chapter: Omit<Chapter, 'id'>): Promise<boolean> {
