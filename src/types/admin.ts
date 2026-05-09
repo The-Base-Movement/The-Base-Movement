@@ -23,6 +23,12 @@ export interface Region {
   constituencies: string[]
 }
 
+export interface ChapterLeader {
+  name: string
+  role: string
+  imageUrl?: string
+}
+
 export interface Chapter {
   id: string
   name: string
@@ -34,6 +40,7 @@ export interface Chapter {
   image_url?: string
   description?: string
   details_url?: string
+  leadership?: ChapterLeader[]
 }
 
 export interface PollOption {

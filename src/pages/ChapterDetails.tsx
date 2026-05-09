@@ -161,24 +161,26 @@ export default function ChapterDetails() {
               <div className="p-8">
                 <h3 className="text-sm font-bold tracking-tight mb-6 border-b border-stone-100 pb-4 text-stone-900">Chapter leadership</h3>
               <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-stone-100 rounded-none flex items-center justify-center text-stone-400">
-                    <Users className="w-6 h-6" />
+                {(chapter.leadership && chapter.leadership.length > 0 ? chapter.leadership : [
+                  { name: chapter.leader_name || 'Dr. Samuel Appiah', role: 'Regional coordinator' },
+                  { name: 'Sarah Mensah', role: 'Chapter secretary' }
+                ]).map((leader, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-stone-100 rounded-none overflow-hidden flex items-center justify-center text-stone-400">
+                      {leader.imageUrl ? (
+                        <img src={leader.imageUrl} alt={leader.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <Users className="w-6 h-6" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-stone-900">{leader.name}</p>
+                      <p className="text-[10px] text-stone-500 font-normal tracking-tight normal-case">
+                        {leader.role}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-stone-900">Dr. Samuel Appiah</p>
-                    <p className="text-micro text-stone-400 tracking-tight">Regional coordinator</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-stone-100 rounded-none flex items-center justify-center text-stone-400">
-                    <Users className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-stone-900">Sarah Mensah</p>
-                    <p className="text-micro text-stone-400 tracking-tight">Chapter secretary</p>
-                  </div>
-                </div>
+                ))}
               </div>
               
               <div className="mt-8 pt-8 border-t border-stone-100 space-y-4">
