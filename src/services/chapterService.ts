@@ -1,6 +1,25 @@
 import { supabase } from '@/lib/supabase'
 import { authService } from './authService'
-import type { ChapterApplication, ChapterLeaderboard, Chapter } from '@/types/admin'
+import type { ChapterApplication, ChapterLeaderboard, Chapter, ChapterLeader, ChapterActivity } from '@/types/admin'
+
+interface ChapterLeaderRow {
+  id: string
+  chapter_id: string
+  name: string
+  role: string
+  image_url: string | null
+  created_at: string
+}
+
+interface ChapterActivityRow {
+  id: string
+  chapter_id: string
+  title: string
+  description: string | null
+  type: string
+  activity_date: string
+  created_at: string
+}
 
 class ChapterService {
   private static instance: ChapterService
@@ -41,16 +60,16 @@ class ChapterService {
       status: c.status,
       description: c.description || undefined,
       details_url: c.details_url || undefined,
-      leadership: c.leadership?.map((l: any) => ({
+      leadership: c.leadership?.map((l: ChapterLeaderRow): ChapterLeader => ({
         id: l.id,
         name: l.name,
         role: l.role,
-        imageUrl: l.image_url
+        imageUrl: l.image_url || undefined
       })),
-      activities: c.activities?.map((a: any) => ({
+      activities: c.activities?.map((a: ChapterActivityRow): ChapterActivity => ({
         id: a.id,
         title: a.title,
-        description: a.description,
+        description: a.description || undefined,
         type: a.type,
         activityDate: a.activity_date
       }))
@@ -83,16 +102,16 @@ class ChapterService {
       status: data.status,
       description: data.description || undefined,
       details_url: data.details_url || undefined,
-      leadership: data.leadership?.map((l: any) => ({
+      leadership: data.leadership?.map((l: ChapterLeaderRow): ChapterLeader => ({
         id: l.id,
         name: l.name,
         role: l.role,
-        imageUrl: l.image_url
+        imageUrl: l.image_url || undefined
       })),
-      activities: data.activities?.map((a: any) => ({
+      activities: data.activities?.map((a: ChapterActivityRow): ChapterActivity => ({
         id: a.id,
         title: a.title,
-        description: a.description,
+        description: a.description || undefined,
         type: a.type,
         activityDate: a.activity_date
       }))
