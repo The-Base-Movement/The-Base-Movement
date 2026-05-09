@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useState } from 'react'
 import { ShareModal } from '@/components/ShareModal'
+import type { Chapter, ChapterLeader, ChapterActivity } from '@/types/admin'
 import { useChapters } from '@/context/ChaptersContext'
 import { LoadingScreen } from '../components/LoadingScreen'
 
