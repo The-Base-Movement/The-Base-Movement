@@ -24,16 +24,15 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
       transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Link 
-        to={`/dashboard/chapters/${chapter.id}`}
-        className="group relative bg-white border border-stone-200 rounded-none overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500 flex flex-col h-full"
+      <div 
+        className="group relative bg-white border border-stone-200 rounded-none overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500 flex flex-col h-full"
       >
         {/* Top Accent Line */}
         <div className="h-1.5 w-full bg-stone-100 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] opacity-80 group-hover:opacity-100 transition-opacity"></div>
         </div>
 
-        <div className="p-8 flex-1 flex flex-col">
+        <div className="p-6 flex-1 flex flex-col">
           {/* Header Section */}
           <div className="flex justify-between items-start mb-8">
             <div className="relative">
@@ -53,82 +52,61 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
               )}
             </div>
             
-            <div className={cn(
-              "px-2.5 py-0.5 text-[10px] font-bold tracking-tight normal-case",
-              isRequestPending 
-                ? "bg-amber-50 text-amber-600 border border-amber-100"
-                : isActive
-                  ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                  : "bg-stone-50 text-stone-400 border border-stone-100"
-            )}>
-              {isRequestPending ? 'Pending' : (isActive ? 'Active' : 'Hub')}
-            </div>
-          </div>
-          
           {/* Main Content */}
-          <div className="space-y-2 mb-8">
-            <h3 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors text-lg font-bold tracking-tight font-meta leading-tight normal-case">
-              {chapter.name}
-            </h3>
-            <div className="flex items-center gap-2 text-stone-400">
-              <p className="text-tiny font-medium tracking-tight normal-case">
+          <div className="flex justify-between items-start mb-6">
+            <div className="space-y-1">
+              <h3 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors text-base font-bold tracking-tight font-meta leading-tight normal-case">
+                {chapter.name}
+              </h3>
+              <p className="text-[10px] font-medium tracking-tight normal-case text-stone-400">
                 {chapter.city_or_region} • {chapter.country}
               </p>
+            </div>
+            
+            <div className="flex flex-col items-end gap-2">
+              <div className={cn(
+                "px-2 py-0.5 text-[9px] font-bold tracking-tight normal-case",
+                isRequestPending 
+                  ? "bg-amber-50 text-amber-600 border border-amber-100"
+                  : isActive
+                    ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                    : "bg-stone-50 text-stone-400 border border-stone-100"
+              )}>
+                {isRequestPending ? 'Pending' : (isActive ? 'Active' : 'Hub')}
+              </div>
+              
+              <Link to={`/dashboard/chapters/${chapter.id}`}>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="h-7 px-3 text-[10px] font-bold tracking-tight normal-case rounded-none border-brand-green/20 text-brand-green hover:bg-brand-green hover:text-white transition-all"
+                >
+                  View details
+                </Button>
+              </Link>
             </div>
           </div>
           
           {/* Stats Bar */}
-          <div className="grid grid-cols-2 gap-4 py-4 border-y border-stone-50 mt-auto">
-            <div>
-              <p className="text-[10px] font-medium text-stone-400 normal-case tracking-tight mb-1">Active members</p>
-              <div className="flex items-center gap-2">
-                <Users className="w-3 h-3 text-[var(--brand-green)]" />
-                <span className="text-base font-medium text-stone-900 font-meta tracking-tight">{chapter.member_count}</span>
-              </div>
+          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-stone-50 mt-auto">
+            <div className="flex items-center gap-2">
+              <Users className="w-3 h-3 text-[var(--brand-green)]" />
+              <p className="text-[10px] font-medium text-stone-500 normal-case tracking-tight">
+                <span className="font-bold text-stone-900 mr-1">{chapter.member_count}</span> members
+              </p>
             </div>
-            <div>
-              <p className="text-[10px] font-medium text-stone-400 normal-case tracking-tight mb-1">Status</p>
-              <div className="flex items-center gap-2">
-                <Zap className="w-3 h-3 text-warm-gold" />
-                <span className="text-[10px] font-medium text-stone-900 normal-case tracking-tight">Active Hub</span>
-              </div>
+            <div className="flex items-center gap-2 justify-end">
+              <Zap className="w-3 h-3 text-warm-gold" />
+              <p className="text-[10px] font-medium text-stone-500 normal-case tracking-tight">
+                Active Hub
+              </p>
             </div>
-          </div>
-          
-          {/* Action Button */}
-          <div className="mt-8">
-            {(chapter.status as string) === 'Join Chapter' && !isRequestPending ? (
-              <Button 
-                variant="outline"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleJoinRequest(e, chapter.id)
-                }}
-                className="w-full h-14 transition-all duration-300 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none"
-              >
-                Join Chapter <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            ) : (
-              <Button
-                variant={isRequestPending ? "default" : "outline"}
-                className={cn(
-                  "w-full h-14 border transition-all duration-500 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none active:scale-95 shadow-sm",
-                  isRequestPending
-                    ? "border-amber-200 bg-amber-50 text-amber-600 cursor-default"
-                    : ""
-                )}
-              >
-                {isRequestPending ? 'Request Sent' : 'View Details'} 
-                {!isRequestPending && <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />}
-              </Button>
-            )}
           </div>
         </div>
         
         {/* Subtle Bottom Glow */}
         <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--brand-green)]/0 to-transparent group-hover:via-[var(--brand-green)]/20 transition-all duration-700"></div>
-      </Link>
+      </div>
     </motion.div>
   )
 }
