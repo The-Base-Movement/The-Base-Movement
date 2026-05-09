@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { useIsClient } from '@/hooks/useIsClient'
 
 interface PerformanceContextValue {
   lowBandwidthMode: boolean
@@ -8,12 +9,18 @@ interface PerformanceContextValue {
 const PerformanceContext = createContext<PerformanceContextValue | null>(null)
 
 export function PerformanceProvider({ children }: { children: ReactNode }) {
+  const isClient = useIsClient()
   const [lowBandwidthMode, setLowBandwidthMode] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('low_bandwidth_mode') === 'true'
-    if (saved) setLowBandwidthMode(true)
-  }, [])
+    if (isClient) {
+      const handle = requestAnimationFrame(() => {
+        const saved = localStorage.getItem('low_bandwidth_mode') === 'true'
+        if (saved) setLowBandwidthMode(true)
+      })
+      return () => cancelAnimationFrame(handle)
+    }
+  }, [isClient])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

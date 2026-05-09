@@ -1,7 +1,7 @@
 import { renderToPipeableStream } from 'react-dom/server'
 import { StaticRouter } from 'react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { HelmetProvider } from 'react-helmet-async'
+import { HelmetProvider, type HelmetServerState } from 'react-helmet-async'
 import { ChaptersProvider } from './context/ChaptersContext'
 import App from './App'
 import { Writable } from 'node:stream'
@@ -23,7 +23,7 @@ export async function render(url: string) {
     },
   })
   
-  const helmetContext: { helmet?: any } = {}
+  const helmetContext: { helmet?: HelmetServerState } = {}
 
   return new Promise((resolve, reject) => {
     let appHtml = ''
@@ -65,10 +65,10 @@ export async function render(url: string) {
           // Ensure the stream is ended only after piping is initiated
           stream.end()
         },
-        onShellError(err: any) {
+        onShellError(err: unknown) {
           reject(err)
         },
-        onError(err: any) {
+        onError(err: unknown) {
           // Log errors but don't necessarily fail the whole build for a single component error
           console.error('[SSR ERROR]', err)
         }
