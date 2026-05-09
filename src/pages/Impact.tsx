@@ -12,6 +12,7 @@ import {
   X 
 } from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SEO from '@/components/SEO'
 import { Button } from '../components/ui/neon-button'
 import { cn } from '@/lib/utils'
@@ -186,32 +187,24 @@ export default function Impact() {
       )}
 
       {/* Hero Section */}
-      <div className="relative bg-stone-900 py-24 md:py-32 mb-12 overflow-hidden border-b border-white/5">
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ 
-          backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-          backgroundSize: '32px 32px'
-        }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-stone-900/50" />
-        
-        <div className="relative text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 bg-brand-green/10 text-brand-green text-micro font-bold tracking-tight rounded-none mb-6 ring-1 ring-brand-green/20">
-            <span className="w-1 h-1 bg-brand-green rounded-full animate-pulse" />
-            Live Movement Metrics
-          </span>
-          <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter mb-4">
-            Our Collective Impact
-          </h1>
-          <div className="flex justify-center mb-6">
+      <div className="bg-white border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+          <Breadcrumbs />
+          <div className="mt-6">
+            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
+              <Activity className="w-10 h-10 text-brand-green" />
+              Our Collective Impact
+            </h1>
             <BrandLine />
+            <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
+              Live analytics reflecting our collective momentum across the nation. Every member joined and every contribution made is a direct investment in the Ghana we deserve.
+            </p>
           </div>
-          <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed prose-wide">
-            Live analytics reflecting our collective momentum across the nation. Every member joined and every contribution made is a direct investment in the Ghana we deserve.
-          </p>
         </div>
       </div>
 
-      <div className="-mt-24 relative z-10">
-        <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
           {[
             { label: 'Donations received', value: stats.totalDonations, icon: Heart, trend: '+12%', color: '#006B3F', status: 'No new donations yet today' },
             { label: 'Chapters active', value: stats.activeChapters, icon: Target, trend: '+2', color: '#DAA520', status: 'Verified' },
@@ -220,7 +213,7 @@ export default function Impact() {
           ].map((stat, i) => {
             const Icon = stat.icon
             return (
-              <Card key={i} className="group hover:shadow-2xl transition-all duration-500 border-slate-100 bg-white rounded-none hover:-translate-y-1">
+              <Card key={i} className="group hover:shadow-2xl transition-all duration-500 border-stone-200 bg-white rounded-none hover:-translate-y-1">
                 <CardContent className="p-8">
                   {isLoading ? (
                     <div className="animate-pulse space-y-4">
@@ -232,7 +225,7 @@ export default function Impact() {
                     <>
                       <div className="flex justify-between items-start mb-4">
                         <p className="text-micro font-bold text-slate-400 tracking-tight mb-0">{stat.status}</p>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-brand-green transition-colors" />
+                        <ArrowUpRight className="w-3.5 h-3.5 text-stone-300 group-hover:text-brand-green transition-colors" />
                       </div>
                       <div className="flex justify-between items-end mb-4">
                         <div
@@ -241,12 +234,12 @@ export default function Impact() {
                         >
                           <Icon className="w-6 h-6" style={{ color: stat.color }} />
                         </div>
-                        <span className="text-micro font-semibold text-brand-green bg-brand-green/10 px-2 py-1 rounded-none flex items-center gap-1">
+                        <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-1 rounded-none flex items-center gap-1">
                           {stat.trend} <ArrowUpRight className="w-3 h-3" />
                         </span>
                       </div>
-                      <h3 className="text-charcoal-dark leading-tight mb-0">{stat.value}</h3>
-                      <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">{stat.label}</p>
+                      <h3 className="text-stone-900 font-bold tracking-tighter leading-tight mb-0">{stat.value}</h3>
+                      <p className="text-tiny font-bold text-stone-500 mt-1 mb-0 tracking-tight">{stat.label}</p>
                     </>
                   )}
                 </CardContent>
@@ -255,7 +248,7 @@ export default function Impact() {
           })}
         </div>
 
-        <div className="flex-columns items-stretch" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-8">
             <section className="bg-white rounded-none border border-slate-100 p-8 shadow-xl shadow-slate-200/40">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
