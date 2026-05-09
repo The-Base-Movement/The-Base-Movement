@@ -210,7 +210,7 @@ export default function Chapters() {
 
           <div className="pt-4 border-t border-stone-100">
             <Button 
-              variant="primary"
+              variant="accent"
               onClick={() => setIsRequestModalOpen(true)}
               className="w-full font-bold tracking-tight text-tiny h-12 px-6 rounded-none shadow-sm normal-case transition-all duration-300"
             >

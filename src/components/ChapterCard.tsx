@@ -54,14 +54,14 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
             </div>
             
             <div className={cn(
-              "px-3 py-1 text-micro font-bold tracking-tight normal-case",
+              "px-2.5 py-0.5 text-[10px] font-bold tracking-tight normal-case",
               isRequestPending 
                 ? "bg-amber-50 text-amber-600 border border-amber-100"
                 : isActive
                   ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
                   : "bg-stone-50 text-stone-400 border border-stone-100"
             )}>
-              {isRequestPending ? 'Request Pending' : (chapter.status || 'Verified Hub')}
+              {isRequestPending ? 'Pending' : (isActive ? 'Active' : 'Hub')}
             </div>
           </div>
           
@@ -78,19 +78,19 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
           </div>
           
           {/* Stats Bar */}
-          <div className="grid grid-cols-2 gap-4 py-6 border-y border-stone-50 mt-auto">
+          <div className="grid grid-cols-2 gap-4 py-4 border-y border-stone-50 mt-auto">
             <div>
-              <p className="text-micro font-medium text-stone-400 normal-case tracking-tight mb-1">Active members</p>
+              <p className="text-[10px] font-medium text-stone-400 normal-case tracking-tight mb-1">Active members</p>
               <div className="flex items-center gap-2">
-                <Users className="w-3.5 h-3.5 text-[var(--brand-green)]" />
-                <span className="text-lg font-medium text-stone-900 font-meta tracking-tight">{chapter.member_count}</span>
+                <Users className="w-3 h-3 text-[var(--brand-green)]" />
+                <span className="text-base font-medium text-stone-900 font-meta tracking-tight">{chapter.member_count}</span>
               </div>
             </div>
             <div>
-              <p className="text-micro font-medium text-stone-400 normal-case tracking-tight mb-1">Status</p>
+              <p className="text-[10px] font-medium text-stone-400 normal-case tracking-tight mb-1">Status</p>
               <div className="flex items-center gap-2">
-                <Zap className="w-3.5 h-3.5 text-warm-gold" />
-                <span className="text-tiny font-medium text-stone-900 normal-case tracking-tight">Active Hub</span>
+                <Zap className="w-3 h-3 text-warm-gold" />
+                <span className="text-[10px] font-medium text-stone-900 normal-case tracking-tight">Active Hub</span>
               </div>
             </div>
           </div>
