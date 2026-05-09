@@ -130,10 +130,10 @@ export default function ChapterDetails() {
               
               <div className="space-y-4">
                 {(chapter.activities && chapter.activities.length > 0 ? chapter.activities : [
-                  { title: "Regional Policy Townhall", activityDate: "2024-10-24T00:00:00Z", type: "Event" },
-                  { title: "Community Outreach Program", activityDate: "2024-10-12T00:00:00Z", type: "Action" },
-                  { title: "New Member Orientation", activityDate: "2024-09-28T00:00:00Z", type: "Onboarding" }
-                ]).map((activity, i) => {
+                  { id: '1', title: "Regional Policy Townhall", activityDate: "2024-10-24T00:00:00Z", type: "Event" },
+                  { id: '2', title: "Community Outreach Program", activityDate: "2024-10-12T00:00:00Z", type: "Action" },
+                  { id: '3', title: "New Member Orientation", activityDate: "2024-09-28T00:00:00Z", type: "Onboarding" }
+                ] as ChapterActivity[]).map((activity, i) => {
                   const date = new Date(activity.activityDate);
                   const month = date.toLocaleString('en-US', { month: 'short' });
                   const day = date.getDate();
@@ -168,9 +168,9 @@ export default function ChapterDetails() {
                 <h3 className="text-sm font-bold tracking-tight mb-6 border-b border-stone-100 pb-4 text-stone-900">Chapter leadership</h3>
               <div className="space-y-6">
                 {(chapter.leadership && chapter.leadership.length > 0 ? chapter.leadership : [
-                  { name: chapter.leader_name || 'Dr. Samuel Appiah', role: 'Regional coordinator' },
-                  { name: 'Sarah Mensah', role: 'Chapter secretary' }
-                ]).map((leader, i) => (
+                  { id: '1', name: chapter.leader_name || 'Dr. Samuel Appiah', role: 'Regional coordinator', imageUrl: undefined },
+                  { id: '2', name: 'Sarah Mensah', role: 'Chapter secretary', imageUrl: undefined }
+                ] as ChapterLeader[]).map((leader, i) => (
                   <div key={i} className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-stone-100 rounded-none overflow-hidden flex items-center justify-center text-stone-400">
                       {leader.imageUrl ? (
