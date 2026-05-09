@@ -20,6 +20,14 @@ import {
   DialogDescription,
   DialogFooter
 } from '@/components/ui/dialog'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
 import { Textarea } from '@/components/ui/textarea'
 import { useState, useEffect, useMemo } from 'react'
 import { useChapters } from '@/context/ChaptersContext'
@@ -45,7 +53,6 @@ export default function ChaptersManagement() {
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1)
-  const [isMobile, setIsMobile] = useState(false)
   
   // Chapter Form State
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -120,11 +127,6 @@ export default function ChaptersManagement() {
       setRegionalStats(stats)
     }
     fetchStats()
-
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   // Deep Link Handling for Global Search
@@ -170,7 +172,7 @@ export default function ChaptersManagement() {
     [chapters]
   )
 
-  const itemsPerPage = isMobile ? 8 : 12
+  const itemsPerPage = 12
   const totalPages = Math.ceil(filteredChapters.length / itemsPerPage)
   
   const currentChapters = useMemo(() => {
@@ -438,7 +440,7 @@ export default function ChaptersManagement() {
       </div>
 
       {/* Chapters Grid */}
-      <div className="grid-responsive" style={{ '--grid-min-width': '38ch' } as React.CSSProperties}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {currentChapters.map((chapter) => (
           <Card key={chapter.id} className="rounded-sm border-border/60 shadow-sm hover:shadow-md transition-all group overflow-hidden bg-white">
             <CardHeader className="p-6 border-b border-border/10 bg-muted/30">
@@ -477,19 +479,19 @@ export default function ChaptersManagement() {
               <div className="grid grid-cols-2 gap-2 pt-4 border-t border-border/10">
                 {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                     <Button 
-                      variant="outline" 
+                      variant="primary" 
                       size="sm"
                       onClick={() => openEditModal(chapter)}
-                      className="h-11 px-0 text-micro font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all rounded-sm shadow-sm active:scale-95"
+                      className="h-11 px-0 text-micro font-bold tracking-tight shadow-sm active:scale-95"
                     >
                       Configure Hub
                     </Button>
                 )}
                 {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                     <Button 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
-                      className="h-11 px-0 text-micro font-bold tracking-tight text-muted-foreground/40 hover:text-destructive transition-all rounded-sm border-0 bg-transparent active:scale-95"
+                      className="h-11 px-0 text-micro font-bold tracking-tight text-muted-foreground/80 hover:text-destructive transition-all rounded-sm bg-transparent active:scale-95"
                     >
                       Decommission <ChevronRight className="w-3.5 h-3.5 ml-1" />
                     </Button>
@@ -520,40 +522,34 @@ export default function ChaptersManagement() {
           <span className="text-micro font-bold text-muted-foreground/40 normal-case text-center md:text-left w-full md:w-auto">
             Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredChapters.length)} of {filteredChapters.length} chapters
           </span>
-          <div className="flex items-center justify-center gap-2 w-full md:w-auto">
-            <Button
-              variant="outline"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="h-11 px-8 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-            >
-              Previous
-            </Button>
-            <div className="flex items-center gap-1 overflow-x-auto max-w-[200px] [&::-webkit-scrollbar]:hidden">
-              {Array.from({ length: totalPages }).map((_, i) => (
-                  <Button
-                    key={i}
-                    variant={currentPage === i + 1 ? "primary" : "outline"}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={cn(
-                      "min-w-[44px] h-11 text-micro font-bold transition-all rounded-sm active:scale-95",
-                      currentPage === i + 1 
-                        ? "shadow-md shadow-brand-green/20" 
-                        : "text-muted-foreground/60 border-border/40 hover:bg-stone-50"
-                    )}
-                  >
-                    {i + 1}
-                  </Button>
-              ))}
-            </div>
-            <Button
-              variant="outline"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              className="h-11 px-8 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-            >
-              Next
-            </Button>
+          <div className="w-full md:w-auto flex-1">
+            <Pagination>
+              <PaginationContent className="justify-center md:justify-end">
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    className={cn("h-11 rounded-sm shadow-sm active:scale-95 text-micro font-bold", currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer")}
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <PaginationItem key={i}>
+                    <PaginationLink
+                      isActive={currentPage === i + 1}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={cn("h-11 w-11 rounded-sm text-micro font-bold", currentPage === i + 1 ? "shadow-md shadow-brand-green/20" : "cursor-pointer")}
+                    >
+                      {i + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    className={cn("h-11 rounded-sm shadow-sm active:scale-95 text-micro font-bold", currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer")}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </div>
       )}
