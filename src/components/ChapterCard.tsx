@@ -71,7 +71,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
               {chapter.name}
             </h3>
             <div className="flex items-center gap-2 text-stone-400">
-              <p className="text-tiny font-bold tracking-tight normal-case">
+              <p className="text-tiny font-medium tracking-tight normal-case">
                 {chapter.city_or_region} • {chapter.country}
               </p>
             </div>
@@ -80,17 +80,17 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
           {/* Stats Bar */}
           <div className="grid grid-cols-2 gap-4 py-6 border-y border-stone-50 mt-auto">
             <div>
-              <p className="text-micro font-bold text-stone-400 normal-case tracking-tight mb-1">Active members</p>
+              <p className="text-micro font-medium text-stone-400 normal-case tracking-tight mb-1">Active members</p>
               <div className="flex items-center gap-2">
                 <Users className="w-3.5 h-3.5 text-[var(--brand-green)]" />
-                <span className="text-lg font-bold text-stone-900 font-meta tracking-tight">{chapter.member_count}</span>
+                <span className="text-lg font-medium text-stone-900 font-meta tracking-tight">{chapter.member_count}</span>
               </div>
             </div>
             <div>
-              <p className="text-micro font-bold text-stone-400 normal-case tracking-tight mb-1">Status</p>
+              <p className="text-micro font-medium text-stone-400 normal-case tracking-tight mb-1">Status</p>
               <div className="flex items-center gap-2">
                 <Zap className="w-3.5 h-3.5 text-warm-gold" />
-                <span className="text-tiny font-bold text-stone-900 normal-case tracking-tight">Active Hub</span>
+                <span className="text-tiny font-medium text-stone-900 normal-case tracking-tight">Active Hub</span>
               </div>
             </div>
           </div>

@@ -167,7 +167,7 @@ export default function Chapters() {
         
         <div className="space-y-6">
           <div className="space-y-2">
-            <p className="text-tiny font-bold tracking-tight text-stone-500">Search Chapters</p>
+            <p className="text-tiny font-medium tracking-tight text-stone-500">Search Chapters</p>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
               <input 
@@ -175,13 +175,13 @@ export default function Chapters() {
                 placeholder="City, region, country..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-11 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-none text-xs focus:ring-1 focus:ring-brand-green outline-none transition-all font-bold tracking-tight"
+                className="w-full h-11 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-none text-xs focus:ring-1 focus:ring-brand-green outline-none transition-all font-medium"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <p className="text-tiny font-bold tracking-tight text-stone-500">Region Selection</p>
+            <p className="text-tiny font-medium tracking-tight text-stone-500">Region Selection</p>
             <div className="flex flex-col gap-2">
               <Button
                 variant={activeTab === 'ghana' ? 'active-tab' : 'default'}
