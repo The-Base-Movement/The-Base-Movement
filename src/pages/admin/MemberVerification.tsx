@@ -200,7 +200,7 @@ export default function MemberVerification() {
             className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setShowRegForm(true)}
           >
-            <UserPlus className="w-4 h-4 mr-2" /> Establish Identity
+            <UserPlus className="w-4 h-4 mr-2" /> Add Member
           </Button>
         </div>
       </div>
@@ -530,9 +530,9 @@ export default function MemberVerification() {
                   {(selectedMember.status === 'In Review' || selectedMember.status === 'Processing' || selectedMember.status === 'Flagged') && (
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <Button
-                        variant="outline"
+                        variant="destructive"
                         onClick={() => handleVerdict(false)}
-                        className="h-11 border-brand-red/40 text-brand-red hover:bg-brand-red/10 transition-all text-micro font-bold tracking-tight rounded-sm active:scale-95"
+                        className="h-11 transition-all text-micro font-bold tracking-tight rounded-sm active:scale-95 shadow-lg shadow-brand-red/20"
                       >
                         <XCircle className="w-4 h-4 mr-2" /> Reject Entry
                       </Button>
@@ -565,16 +565,16 @@ export default function MemberVerification() {
                 <Card className="rounded-sm border-border/40 shadow-sm bg-white">
                   <CardContent className="p-4 space-y-2">
                     <Button
-                      variant="outline"
-                      className="w-full h-11 text-micro font-bold tracking-tight text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
+                      variant="gold"
+                      className="w-full h-11 text-micro font-bold tracking-tight rounded-sm transition-all shadow-sm active:scale-95"
                       onClick={() => setShowPhotoFull(true)}
                     >
                       <Eye className="w-4 h-4 mr-2" /> Inspect Biometric Data
                     </Button>
                     {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
                       <Button
-                        variant="outline"
-                        className="w-full h-11 text-micro font-bold tracking-tight text-muted-foreground/60 hover:text-on-surface hover:bg-stone-50 rounded-sm border-border/40 transition-all shadow-sm active:scale-95"
+                        variant="gold"
+                        className="w-full h-11 text-micro font-bold tracking-tight rounded-sm transition-all shadow-sm active:scale-95"
                         onClick={() => setViewingVaultRecord(selectedMember)}
                       >
                         <Database className="w-4 h-4 mr-2" /> Open Audit Vault

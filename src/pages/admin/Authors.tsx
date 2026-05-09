@@ -315,7 +315,7 @@ function AuthorDetailModal({ author, isOpen, onClose }: { author: Author | null,
               </h3>
               <div className="text-stone-600 text-base leading-relaxed bg-stone-50/50 p-6 rounded-sm border border-stone-100 italic relative group">
                 <div className="absolute top-0 left-0 w-1 h-full bg-stone-200 group-hover:bg-brand-red transition-colors" />
-                {author.bio || "No biography has been established for this editorial profile. Profiles without biographies may appear less authoritative to the mobilization base."}
+                {author.bio || "No biography has been added for this editorial profile. Profiles without biographies may appear less authoritative to the mobilization base."}
               </div>
             </div>
           </div>

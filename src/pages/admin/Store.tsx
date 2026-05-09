@@ -253,33 +253,36 @@ export default function AdminStore() {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex bg-muted/10 p-1 rounded-sm mr-2">
-            <button 
+            <Button 
+              variant={activeTab === 'inventory' ? "primary" : "ghost"}
               onClick={() => setActiveTab('inventory')}
               className={cn(
-                "px-5 py-2 text-micro font-bold rounded-sm transition-all",
+                "px-5 py-2 text-micro font-bold rounded-sm transition-all h-auto",
                 activeTab === 'inventory' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
               <Package className="w-3.5 h-3.5 mr-1.5 inline" /> Inventory
-            </button>
-            <button 
+            </Button>
+            <Button 
+              variant={activeTab === 'requests' ? "primary" : "ghost"}
               onClick={() => setActiveTab('requests')}
               className={cn(
-                "px-5 py-2 text-micro font-bold rounded-sm transition-all",
+                "px-5 py-2 text-micro font-bold rounded-sm transition-all h-auto",
                 activeTab === 'requests' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
               <Truck className="w-3.5 h-3.5 mr-1.5 inline" /> Requests
-            </button>
-            <button 
+            </Button>
+            <Button 
+              variant={activeTab === 'audit' ? "primary" : "ghost"}
               onClick={() => setActiveTab('audit')}
               className={cn(
-                "px-5 py-2 text-micro font-bold rounded-sm transition-all",
+                "px-5 py-2 text-micro font-bold rounded-sm transition-all h-auto",
                 activeTab === 'audit' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
               )}
             >
               <History className="w-3.5 h-3.5 mr-1.5 inline" /> Audit
-            </button>
+            </Button>
           </div>
           {activeTab === 'inventory' && (
             <Button 
@@ -288,7 +291,7 @@ export default function AdminStore() {
               onClick={() => handleOpenModal()}
               className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
-              <Plus className="w-4 h-4 mr-2" /> Establish Asset
+              <Plus className="w-4 h-4 mr-2" /> Add Item
             </Button>
           )}
         </div>
@@ -314,9 +317,9 @@ export default function AdminStore() {
                 </div>
               </div>
               <Button 
-                variant="outline" 
+                variant="destructive" 
                 size="sm" 
-                className="h-10 px-8 text-micro font-bold tracking-tight border-brand-red/40 text-brand-red hover:bg-brand-red/5 transition-all shadow-sm rounded-sm active:scale-95"
+                className="h-10 px-8 text-micro font-bold tracking-tight transition-all shadow-sm rounded-sm active:scale-95"
               >
                 Scan Alerts
               </Button>
@@ -402,16 +405,17 @@ export default function AdminStore() {
               
               <div className="flex items-center bg-muted/10 p-1 rounded-sm overflow-x-auto no-scrollbar">
                 {categories.map(cat => (
-                  <button
+                  <Button
                     key={cat}
+                    variant={activeCategory === cat ? "primary" : "ghost"}
                     onClick={() => setActiveCategory(cat)}
                     className={cn(
-                      "px-4 py-1.5 text-micro font-bold tracking-tight transition-all",
+                      "px-4 py-1.5 text-micro font-bold tracking-tight transition-all h-auto",
                       activeCategory === cat ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
                     )}
                   >
                     {cat}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
@@ -498,17 +502,17 @@ export default function AdminStore() {
                       <td className="px-6 py-5 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button 
-                            variant="outline" 
+                            variant="gold" 
                             size="icon" 
-                            className="w-10 h-10 text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
+                            className="w-10 h-10 rounded-sm transition-all shadow-sm active:scale-95"
                             onClick={() => handleOpenModal(product)}
                           >
                             <Edit3 className="w-5 h-5" />
                           </Button>
                           <Button 
-                            variant="outline" 
+                            variant="destructive" 
                             size="icon" 
-                            className="w-10 h-10 text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 rounded-sm transition-all shadow-sm active:scale-95"
+                            className="w-10 h-10 rounded-sm transition-all shadow-sm active:scale-95"
                             disabled={isDeleting === product.id}
                             onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                           >
@@ -566,16 +570,16 @@ export default function AdminStore() {
 
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
-                      variant="outline" 
-                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-micro font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                      variant="gold" 
+                      className="flex-1 h-12 rounded-sm text-micro font-bold tracking-tight transition-all shadow-sm active:scale-95"
                       onClick={() => handleOpenModal(product)}
                     >
                       <Edit3 className="w-4 h-4 mr-2" /> Edit Asset
                     </Button>
                     <Button 
-                      variant="outline" 
+                      variant="destructive" 
                       size="icon" 
-                      className="h-12 w-12 rounded-sm border-border/40 text-stone-400 hover:text-destructive hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
+                      className="h-12 w-12 rounded-sm transition-all shadow-sm active:scale-95"
                       onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
                     >
                       <Trash2 className="w-5 h-5" />

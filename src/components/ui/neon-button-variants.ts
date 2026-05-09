@@ -11,8 +11,8 @@ export const buttonVariants = cva(
                 accent: "bg-brand-gold text-accent-foreground hover:bg-brand-gold/90 border-brand-gold shadow-[0_0_15px_rgba(218,165,32,0.3)] tracking-tight",
                 gold: "bg-brand-gold hover:bg-brand-gold/90 text-accent-foreground border-transparent tracking-tight shadow-[0_0_15px_rgba(218,165,32,0.2)]",
                 destructive: "bg-brand-red text-destructive-foreground hover:bg-brand-red/90 border-brand-red shadow-[0_0_15px_rgba(206,17,38,0.3)] tracking-tight",
-                ghost: "border-transparent bg-transparent hover:border-slate-200 hover:bg-slate-50 text-slate-500 tracking-tight",
-                outline: "bg-transparent border-border/40 hover:bg-stone-100 text-on-surface/80 tracking-tight",
+                ghost: "border-transparent bg-transparent hover:border-white/10 hover:bg-white/5 text-white/60 tracking-tight",
+                outline: "bg-transparent border-border/40 hover:bg-white/5 text-white/80 tracking-tight",
                 link: "border-transparent bg-transparent p-0 h-auto tracking-tight text-foreground",
             },
             size: {

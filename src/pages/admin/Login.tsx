@@ -91,7 +91,7 @@ export default function AdminLogin() {
 
               <Button
                 type="submit"
-                variant="solid"
+                variant="primary"
                 disabled={isLoading}
                 className="w-full h-14"
               >
@@ -118,7 +118,7 @@ export default function AdminLogin() {
 
               <Button
                 type="button"
-                variant="default"
+                variant="outline"
                 onClick={async () => {
                   try {
                     await authService.signInWithGoogle()

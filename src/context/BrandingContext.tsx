@@ -71,7 +71,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
         {/* Dynamic Theme Colors */}
         <style>
           {`
-            :root {
+            html:root {
               --primary: ${settings.primary_color};
               --brand-green: ${settings.primary_color};
               --ring: ${settings.primary_color};

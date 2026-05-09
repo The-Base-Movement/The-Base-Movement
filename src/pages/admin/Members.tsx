@@ -218,7 +218,7 @@ export default function MembersList() {
     setIsAdding(false)
     toast({
       title: "Member registered",
-      description: "Identity successfully established in the database.",
+      description: "Identity successfully registered in the database.",
       variant: "default",
     })
   }
@@ -351,7 +351,7 @@ export default function MembersList() {
             className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Establish Identity
+            Add Member
           </Button>
         </div>
       </div>
@@ -488,9 +488,9 @@ export default function MembersList() {
                     />
                   </th>
                   <th className="px-6 py-4">
-                    <button className="flex items-center gap-2 text-micro font-bold text-muted-foreground/80 tracking-tight group">
+                    <Button variant="ghost" className="flex items-center gap-2 text-micro font-bold text-muted-foreground/80 tracking-tight group hover:bg-transparent p-0 h-auto">
                       Member details <ArrowUpDown className="w-3 h-3 group-hover:text-on-surface transition-colors" />
-                    </button>
+                    </Button>
                   </th>
                   <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Contact info</th>
                   <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Location details</th>
@@ -534,7 +534,7 @@ export default function MembersList() {
                             onClick={handleAddMember}
                           >
                             <Plus className="w-4 h-4 mr-2" />
-                            Establish first identity
+                            Add first member
                           </Button>
                         </div>
                       ) : (
@@ -738,9 +738,9 @@ export default function MembersList() {
                 avatarUrl={selectedMember.avatarUrl}
               />
               <Button 
-                variant="default"
+                variant="ghost"
                 size="icon"
-                className="absolute -top-12 right-0 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border-white/20 text-white"
+                className="absolute -top-12 right-0 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white"
                 onClick={() => setSelectedMember(null)}
               >
                 <X className="w-4 h-4" />
@@ -748,6 +748,7 @@ export default function MembersList() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Button 
+                  variant="outline"
                   onClick={handlePrint}
                   className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-bold tracking-tight text-micro shadow-lg rounded-none transition-all active:scale-95"
                 >

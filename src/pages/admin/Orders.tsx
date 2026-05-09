@@ -381,8 +381,8 @@ export default function AdminOrders() {
 
                         <div className="flex items-center gap-2 pt-2">
                           <Button
-                            variant="outline"
-                            className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-micro font-bold capitalize tracking-tight shadow-sm hover:bg-stone-50 transition-all active:scale-95"
+                            variant="gold"
+                            className="flex-1 h-12 rounded-sm text-micro font-bold capitalize tracking-tight shadow-sm transition-all active:scale-95"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedOrder(order);
@@ -423,12 +423,14 @@ export default function AdminOrders() {
                 <CardTitle className="text-micro font-bold text-muted-foreground/40">
                   Order Manifest
                 </CardTitle>
-                <button 
+                <Button 
+                  variant="outline"
+                  size="icon"
                   onClick={() => setSelectedOrder(null)}
                   className="w-8 h-8 flex items-center justify-center rounded-sm bg-white border border-border/40 text-muted-foreground/40 hover:text-brand-green transition-all active:scale-95"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </CardHeader>
               <CardContent className="p-8 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
                 {/* ID & Status */}
@@ -519,8 +521,8 @@ export default function AdminOrders() {
                   )}
                   {selectedOrder.status !== 'Cancelled' && selectedOrder.status !== 'Delivered' && (
                     <Button
-                      variant="outline"
-                      className="w-full h-14 text-micro font-bold tracking-tight text-brand-red border-border/40 hover:bg-brand-red/10 rounded-sm transition-all active:scale-95"
+                      variant="destructive"
+                      className="w-full h-14 text-micro font-bold tracking-tight rounded-sm transition-all active:scale-95 shadow-lg shadow-brand-red/20"
                       onClick={() => handleCancel(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >

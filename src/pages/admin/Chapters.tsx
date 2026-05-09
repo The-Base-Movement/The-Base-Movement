@@ -87,7 +87,7 @@ export default function ChaptersManagement() {
       if (success) toast.success(`Chapter "${formData.name}" updated successfully.`)
     } else {
       const success = await addChapter(chapterData)
-      if (success) toast.success(`Chapter "${formData.name}" established successfully.`)
+      if (success) toast.success(`Chapter "${formData.name}" registered successfully.`)
     }
     closeModal()
   }
@@ -194,10 +194,10 @@ export default function ChaptersManagement() {
         </div>
         <div className="flex items-center gap-3">
           <Button 
-            variant="outline" 
+            variant="gold" 
             size="lg"
             onClick={() => toast.info("Accessing audit vault...")}
-            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+            className="rounded-sm text-micro px-10 h-12 font-bold tracking-tight transition-all shadow-sm active:scale-95"
           >
             <History className="w-4 h-4 mr-2" /> Inspect Audit Trail
           </Button>
@@ -208,7 +208,7 @@ export default function ChaptersManagement() {
               onClick={openAddModal}
               className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             >
-              <Plus className="w-4 h-4 mr-2" /> Establish New Chapter
+              <Plus className="w-4 h-4 mr-2" /> Add Chapter
             </Button>
           )}
         </div>
@@ -479,7 +479,7 @@ export default function ChaptersManagement() {
               <div className="grid grid-cols-2 gap-2 pt-4 border-t border-border/10">
                 {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                     <Button 
-                      variant="primary" 
+                      variant="gold" 
                       size="sm"
                       onClick={() => openEditModal(chapter)}
                       className="h-11 px-0 text-micro font-bold tracking-tight shadow-sm active:scale-95"
@@ -489,9 +489,9 @@ export default function ChaptersManagement() {
                 )}
                 {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                     <Button 
-                      variant="outline" 
+                      variant="destructive" 
                       onClick={() => handleDeleteChapter(chapter.id, chapter.name)}
-                      className="h-11 px-0 text-micro font-bold tracking-tight text-muted-foreground/80 hover:text-destructive transition-all rounded-sm bg-transparent active:scale-95"
+                      className="h-11 px-0 text-micro font-bold tracking-tight transition-all rounded-sm active:scale-95"
                     >
                       Decommission <ChevronRight className="w-3.5 h-3.5 ml-1" />
                     </Button>
@@ -504,14 +504,14 @@ export default function ChaptersManagement() {
         {/* Create New Chapter Placeholder */}
         {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
           <Button 
-            variant="outline"
+            variant="primary"
             onClick={openAddModal}
-            className="border-2 border-dashed border-border/60 rounded-sm p-10 flex flex-col items-center justify-center gap-6 text-muted-foreground/40 hover:border-on-surface hover:text-on-surface transition-all group bg-white h-full shadow-sm hover:shadow-md active:scale-95"
+            className="rounded-sm p-10 flex flex-col items-center justify-center gap-6 transition-all group bg-brand-green/10 h-full shadow-sm hover:shadow-md active:scale-95"
           >
-            <div className="w-14 h-14 rounded-full bg-muted/5 flex items-center justify-center group-hover:bg-on-surface group-hover:text-white transition-all shadow-inner">
+            <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-brand-green transition-all shadow-inner">
               <Plus className="w-7 h-7" />
             </div>
-            <span className="text-micro font-bold tracking-tight">Establish new chapter</span>
+            <span className="text-micro font-bold tracking-tight">Add new chapter</span>
           </Button>
         )}
       </div>
@@ -560,12 +560,12 @@ export default function ChaptersManagement() {
           <DialogHeader className="p-8 bg-charcoal-dark text-white relative">
             <div className="absolute top-0 left-0 w-full h-1 bg-on-surface/20"></div>
             <DialogTitle className="text-xl font-bold tracking-tight">
-              {editingChapterId ? 'Configure regional hub' : 'Establish new chapter'}
+              {editingChapterId ? 'Configure regional hub' : 'Add new chapter'}
             </DialogTitle>
             <DialogDescription className="text-white/60 text-xs mt-2">
               {editingChapterId 
                 ? 'Update infrastructure settings and mobilization status for this regional cell.' 
-                : 'Register a new mobilization hub. This chapter will immediately be visible on the public platform once established.'}
+                : 'Register a new mobilization hub. This chapter will immediately be visible on the public platform once active.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -642,7 +642,7 @@ export default function ChaptersManagement() {
                 variant="primary"
                 className="flex-1 h-14 text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
               >
-                {editingChapterId ? 'Synchronize Hub' : 'Establish Chapter'}
+                {editingChapterId ? 'Synchronize Hub' : 'Add Chapter'}
               </Button>
             </DialogFooter>
           </form>

@@ -152,7 +152,7 @@ export default function PollsManagement() {
             className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => setShowCreateModal(true)}
           >
-            <Plus className="w-4 h-4 mr-2" /> Establish Campaign
+            <Plus className="w-4 h-4 mr-2" /> Create Campaign
           </Button>
         </div>
       </div>
@@ -309,17 +309,17 @@ export default function PollsManagement() {
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center gap-1 justify-end">
                         <Button 
-                          variant="outline" 
+                          variant="destructive" 
                           size="icon" 
-                          className="h-9 w-9 rounded-sm text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
+                          className="h-9 w-9 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => handleDeletePoll(poll.id, poll.question)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                         <Button 
-                          variant="outline" 
+                          variant="gold" 
                           size="icon" 
-                          className="h-9 w-9 rounded-sm text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                          className="h-9 w-9 rounded-sm transition-all shadow-sm active:scale-95"
                           onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                         >
                           <MoreVertical className="w-5 h-5" />
@@ -395,16 +395,16 @@ export default function PollsManagement() {
 
                   <div className="flex items-center gap-2 pt-2">
                     <Button 
-                      variant="outline" 
-                      className="flex-1 h-11 rounded-sm border-border/40 text-on-surface/80 text-micro font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                      variant="gold" 
+                      className="flex-1 h-11 rounded-sm text-micro font-bold tracking-tight transition-all shadow-sm active:scale-95"
                       onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
                     >
                       Manage Campaign
                     </Button>
                     <Button 
-                      variant="outline" 
+                      variant="destructive" 
                       size="icon" 
-                      className="h-11 w-11 rounded-sm border border-border/40 text-stone-400 hover:text-destructive hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
+                      className="h-11 w-11 rounded-sm transition-all shadow-sm active:scale-95"
                       onClick={() => handleDeletePoll(poll.id, poll.question)}
                     >
                       <Trash2 className="w-5 h-5" />
@@ -464,7 +464,7 @@ export default function PollsManagement() {
             <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
                 <Plus className="w-4 h-4 text-destructive" />
-                Establish Campaign
+                Create Campaign
               </CardTitle>
               <Button 
                 variant="ghost" 
@@ -600,8 +600,8 @@ export default function PollsManagement() {
                     </div>
                     <Button 
                       type="button"
-                      variant="outline" 
-                      className="w-full h-11 text-micro font-bold tracking-tight text-stone-500 hover:text-on-surface hover:bg-stone-50 border-stone-200 rounded-sm transition-all shadow-sm active:scale-95"
+                      variant="primary" 
+                      className="w-full h-11 text-micro font-bold tracking-tight rounded-sm transition-all shadow-sm active:scale-95"
                       onClick={() => setNewPoll({...newPoll, options: [...newPoll.options, '']})}
                     >
                       <Plus className="w-4 h-4 mr-2" /> Add Selection

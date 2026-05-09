@@ -287,9 +287,9 @@ export default function Administrators() {
                       <td className="px-6 py-6 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Button 
-                            variant="outline" 
+                            variant="gold" 
                             size="icon" 
-                            className="w-9 h-9 text-muted-foreground/40 hover:text-accent border-border/40 hover:bg-stone-50 rounded-sm transition-all active:scale-95"
+                            className="w-9 h-9 rounded-sm transition-all active:scale-95"
                             onClick={() => {
                               setSelectedAdmin(admin)
                               setIsActivityModalOpen(true)
@@ -301,9 +301,9 @@ export default function Administrators() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button 
-                                variant="outline" 
+                                variant="gold" 
                                 size="icon" 
-                                className="w-9 h-9 text-muted-foreground/40 hover:text-destructive border-border/40 hover:bg-stone-50 rounded-sm transition-all active:scale-95"
+                                className="w-9 h-9 rounded-sm transition-all active:scale-95"
                               >
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>
@@ -414,20 +414,20 @@ export default function Administrators() {
 
                   <div className="flex items-center gap-2">
                     <Button 
-                      variant="outline" 
-                      className="flex-1 h-12 rounded-sm border-border/40 text-on-surface/80 text-micro font-bold tracking-tight hover:bg-stone-50 shadow-sm transition-all active:scale-95"
+                      variant="gold" 
+                      className="flex-1 h-12 rounded-sm text-micro font-bold tracking-tight transition-all shadow-sm active:scale-95"
                       onClick={() => {
                         setSelectedAdmin(admin)
                         setIsActivityModalOpen(true)
                       }}
                     >
-                      <Zap className="w-4 h-4 mr-2 text-accent" /> Inspect Logs
+                      <Zap className="w-4 h-4 mr-2" /> Inspect Logs
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button 
-                          variant="default" 
-                          className="h-10 px-4 rounded-sm border-border/60 text-muted-foreground/40 hover:text-destructive"
+                          variant="gold" 
+                          className="h-10 px-4 rounded-sm transition-all active:scale-95"
                         >
                           <MoreHorizontal className="w-4 h-4" />
                         </Button>

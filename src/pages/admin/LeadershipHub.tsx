@@ -269,8 +269,8 @@ export default function LeadershipHub() {
                       {app.status === 'Pending' ? (
                         <div className="flex items-center justify-end gap-2">
                           <Button 
-                            variant="outline" 
-                            className="h-11 px-8 text-micro font-bold tracking-tight text-destructive border-destructive/20 hover:bg-destructive/10 transition-all shadow-sm rounded-sm active:scale-95"
+                            variant="destructive" 
+                            className="h-11 px-8 text-micro font-bold tracking-tight transition-all shadow-sm rounded-sm active:scale-95 shadow-lg shadow-brand-red/20"
                           >
                             <XCircle className="w-4 h-4 mr-2" /> Reject Application
                           </Button>

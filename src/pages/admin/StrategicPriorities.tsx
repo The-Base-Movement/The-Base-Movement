@@ -146,7 +146,7 @@ export default function StrategicPriorities() {
             Strategic priorities
           </h1>
           <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Establish movement-wide mobilization goals, financial targets, and operational milestones.</p>
+          <p className="text-muted-foreground/80 text-sm mt-1">Manage movement-wide mobilization goals, financial targets, and operational milestones.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
@@ -165,7 +165,7 @@ export default function StrategicPriorities() {
             }}
             className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
-            <Plus className="w-4 h-4 mr-2" /> Establish Priority
+            <Plus className="w-4 h-4 mr-2" /> Add Priority
           </Button>
         </div>
       </div>
@@ -236,7 +236,7 @@ export default function StrategicPriorities() {
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-on-surface text-white p-6 group">
             <h4 className="text-micro font-bold tracking-tight text-white/40 uppercase mb-4">Tactical Awareness</h4>
             <p className="text-tiny font-medium text-white/60 leading-relaxed">
-              Establishing strategic priorities allows the movement to synchronize resource allocation across multiple regional cells.
+              Setting strategic priorities allows the movement to synchronize resource allocation across multiple regional cells.
             </p>
             <Button variant="ghost" className="w-full justify-between h-9 mt-4 px-0 text-micro font-bold tracking-tight text-white hover:bg-transparent group-hover:text-primary transition-colors">
               Operational Handbook <TrendingUp className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -251,7 +251,7 @@ export default function StrategicPriorities() {
               <div className="col-span-full py-24 text-center border-2 border-dashed border-border/20 rounded-sm bg-white">
                 <Target className="w-12 h-12 text-muted mx-auto mb-4 opacity-10" />
                 <h3 className="text-lg font-bold text-on-surface">No priorities found</h3>
-                <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or establish a new strategic priority.</p>
+                <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or add a new strategic priority.</p>
                 <Button 
                   variant="outline" 
                   onClick={() => setSearchQuery('')}

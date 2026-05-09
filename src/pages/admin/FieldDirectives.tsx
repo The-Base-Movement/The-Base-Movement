@@ -103,7 +103,7 @@ export default function FieldDirectives() {
     return (
       <div className="h-full w-full flex flex-col items-center justify-center py-20">
         <Target className="w-12 h-12 text-muted-foreground/20 animate-spin mb-4" />
-        <p className="text-micro font-bold text-muted-foreground/40">Establishing tactical feed...</p>
+        <p className="text-micro font-bold text-muted-foreground/40">Synchronizing tactical feed...</p>
       </div>
     )
   }

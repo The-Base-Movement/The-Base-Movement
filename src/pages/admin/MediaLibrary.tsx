@@ -282,16 +282,16 @@ export default function MediaLibrary() {
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button 
                             size="icon" 
-                            variant="outline" 
-                            className="h-10 w-10 rounded-sm bg-white/95 border-0 hover:bg-white text-on-surface shadow-2xl transition-all hover:scale-110 active:scale-95"
+                            variant="primary" 
+                            className="h-10 w-10 rounded-sm shadow-2xl transition-all hover:scale-110 active:scale-95"
                             onClick={() => copyToClipboard(url)}
                           >
-                            {copiedUrl === url ? <Check className="w-5 h-5 text-primary" /> : <Copy className="w-5 h-5" />}
+                            {copiedUrl === url ? <Check className="w-5 h-5 text-white" /> : <Copy className="w-5 h-5" />}
                           </Button>
                           <Button 
                             size="icon" 
-                            variant="outline" 
-                            className="h-10 w-10 rounded-sm bg-white/95 border-0 hover:bg-white text-on-surface shadow-2xl transition-all hover:scale-110 active:scale-95"
+                            variant="gold" 
+                            className="h-10 w-10 rounded-sm shadow-2xl transition-all hover:scale-110 active:scale-95"
                             asChild
                           >
                             <a href={url} target="_blank" rel="noopener noreferrer">
@@ -300,8 +300,8 @@ export default function MediaLibrary() {
                           </Button>
                           <Button 
                             size="icon" 
-                            variant="outline" 
-                            className="h-10 w-10 rounded-sm bg-white/95 border-0 hover:bg-destructive/20 text-on-surface hover:text-destructive shadow-2xl transition-all hover:scale-110 active:scale-95"
+                            variant="destructive" 
+                            className="h-10 w-10 rounded-sm shadow-2xl transition-all hover:scale-110 active:scale-95"
                             onClick={() => setAssetToDelete(url)}
                           >
                             <Trash2 className="w-5 h-5" />

@@ -98,11 +98,11 @@ export default function RoadmapManagement() {
       } else {
         const success = await adminService.createMilestone(formData)
         if (success) {
-          toast.success('Strategic milestone established.')
+          toast.success('Strategic milestone added.')
           setShowModal(false)
           fetchData()
         } else {
-          toast.error('Failed to establish milestone.')
+          toast.error('Failed to add milestone.')
         }
       }
     } finally {
@@ -159,7 +159,7 @@ export default function RoadmapManagement() {
             className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
             onClick={() => handleOpenModal()}
           >
-            <Plus className="w-4 h-4 mr-2" /> Establish Milestone
+            <Plus className="w-4 h-4 mr-2" /> Add Milestone
           </Button>
         </div>
       </div>
@@ -344,7 +344,7 @@ export default function RoadmapManagement() {
             <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
               <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
                 {editingMilestone ? <Edit2 className="w-4 h-4 text-destructive" /> : <Plus className="w-4 h-4 text-destructive" />}
-                {editingMilestone ? 'Refine Objective' : 'Establish Milestone'}
+                {editingMilestone ? 'Refine Objective' : 'Add Milestone'}
               </CardTitle>
               <Button 
                 variant="ghost" 
@@ -461,7 +461,7 @@ export default function RoadmapManagement() {
                   disabled={isSubmitting}
                   className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
-                  {isSubmitting ? 'Syncing...' : editingMilestone ? 'Commit Changes' : 'Establish Milestone'}
+                  {isSubmitting ? 'Syncing...' : editingMilestone ? 'Commit Changes' : 'Add Milestone'}
                 </Button>
               </div>
             </form>

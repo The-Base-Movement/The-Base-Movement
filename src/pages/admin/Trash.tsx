@@ -464,16 +464,16 @@ function TrashCard({
             <div className="flex items-center gap-3 mt-8 pt-6 border-t border-stone-50">
               <Button 
                 onClick={onRestore}
-                variant="outline" 
-                className="flex-1 h-12 rounded-sm border-stone-200 text-micro font-bold tracking-tight hover:bg-stone-50 hover:text-primary hover:border-primary/30 gap-2 transition-all active:scale-95 group/btn"
+                variant="primary" 
+                className="flex-1 h-12 rounded-sm text-micro font-bold tracking-tight gap-2 transition-all active:scale-95 group/btn shadow-lg shadow-brand-green/20"
               >
                 <RotateCcw className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" />
                 Restore record
               </Button>
               <Button 
                 onClick={onDelete}
-                variant="ghost" 
-                className="h-12 w-12 rounded-sm border border-stone-200 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all active:scale-95"
+                variant="destructive" 
+                className="h-12 w-12 rounded-sm transition-all active:scale-95"
                 title="Permanent purge"
               >
                 <AlertCircle className="w-5 h-5" />

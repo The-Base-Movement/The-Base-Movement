@@ -176,17 +176,17 @@ export default function AdminRegions() {
                   <div className="flex items-center gap-3">
                     {/* Action buttons - stop propagation so they don't toggle expand */}
                     <Button
-                      variant="outline"
+                      variant="gold"
                       size="icon"
-                      className="h-10 w-10 rounded-sm text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                      className="h-10 w-10 rounded-sm transition-all shadow-sm active:scale-95"
                       onClick={e => { e.stopPropagation(); handleAction('REGION_EDIT', region.name) }}
                     >
                       <Edit2 className="w-5 h-5" />
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="icon"
-                      className="h-10 w-10 rounded-sm text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 transition-all shadow-sm active:scale-95"
+                      className="h-10 w-10 rounded-sm transition-all shadow-sm active:scale-95"
                       onClick={e => { e.stopPropagation(); handleAction('REGION_DELETE', region.name) }}
                     >
                       <Trash2 className="w-5 h-5" />
@@ -213,8 +213,8 @@ export default function AdminRegions() {
                         />
                       </div>
                       <Button
-                        variant="outline"
-                        className="h-10 px-8 text-micro font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                        variant="primary"
+                        className="h-10 px-8 text-micro font-bold capitalize tracking-tight rounded-sm transition-all shadow-lg shadow-brand-green/20 active:scale-95"
                       >
                         <Plus className="w-4 h-4 mr-2" /> Define Constituency
                       </Button>
@@ -231,12 +231,12 @@ export default function AdminRegions() {
                             {con}
                           </span>
                           <Button
-                            variant="outline"
+                            variant="gold"
                             size="icon"
-                            className="h-8 w-8 rounded-sm opacity-0 group-hover:opacity-100 transition-all shrink-0 hover:bg-stone-50 border-stone-200 shadow-sm active:scale-95"
+                            className="h-8 w-8 rounded-sm opacity-0 group-hover:opacity-100 transition-all shrink-0 shadow-sm active:scale-95"
                             onClick={() => handleAction('CONSTITUENCY_EDIT', region.name, con)}
                           >
-                            <Edit2 className="w-3.5 h-3.5 text-stone-500 hover:text-accent" />
+                            <Edit2 className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       ))}

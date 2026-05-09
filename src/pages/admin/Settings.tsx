@@ -444,20 +444,18 @@ export default function AdminSettings() {
             return (
               <Button
                 key={tab.id}
-                variant={isActive ? "outline" : "ghost"}
+                variant={isActive ? "primary" : "ghost"}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "w-full flex items-center justify-between px-4 py-3 rounded-sm text-micro font-bold tracking-tight transition-all group h-12 active:scale-95",
-                  isActive 
-                    ? "bg-white text-stone-900 shadow-sm border-stone-200" 
-                    : "text-stone-400 hover:text-stone-600 hover:bg-stone-50"
+                  !isActive && "text-stone-400 hover:text-white hover:bg-white/5"
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <tab.icon className={cn("w-4 h-4", isActive ? "text-stone-900" : "text-stone-300 group-hover:text-stone-400")} />
+                  <tab.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-stone-300 group-hover:text-white/60")} />
                   {tab.label}
                 </div>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 text-stone-300" />}
+                {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/60" />}
               </Button>
             )
           })}
@@ -624,7 +622,7 @@ export default function AdminSettings() {
                           "p-4 rounded-sm border text-micro font-bold tracking-tight transition-all text-center h-12 active:scale-95",
                           mode === interfaceDensity 
                             ? "shadow-lg shadow-brand-green/20" 
-                            : "border-stone-200 text-stone-400 hover:border-stone-300 bg-white"
+                            : "border-stone-200/20 text-stone-400 hover:border-white/20 hover:bg-white/5"
                         )}
                       >
                         {mode}
@@ -1331,7 +1329,7 @@ export default function AdminSettings() {
                               onClick={handleStartMfaEnroll}
                               className="h-10 px-6 text-micro font-bold capitalize tracking-tight border-stone-200 rounded-sm transition-all active:scale-95"
                             >
-                              Establish MFA Protection
+                              Enable MFA Protection
                             </Button>
                           )}
                         </div>
@@ -1399,12 +1397,13 @@ export default function AdminSettings() {
                         >
                           {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify and Enable MFA"}
                         </Button>
-                        <button 
+                        <Button 
+                          variant="ghost"
                           onClick={() => setMfaStep('qr')}
-                          className="w-full text-micro font-bold text-stone-400 capitalize tracking-tight hover:text-stone-600"
+                          className="w-full text-micro font-bold text-stone-400 capitalize tracking-tight hover:text-stone-600 h-auto p-2"
                         >
                           Go back to QR code
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>
