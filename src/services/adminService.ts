@@ -1363,7 +1363,7 @@ class AdminService {
     return channel
   }
 
-  unsubscribeFromChannel(channel: any) {
+  unsubscribeFromChannel(channel: RealtimeChannel) {
     supabase.removeChannel(channel)
   }
 
