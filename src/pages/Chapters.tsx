@@ -188,22 +188,22 @@ export default function Chapters() {
                 onClick={() => setActiveTab('ghana')}
                 className={cn(
                   "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
-                  activeTab === 'ghana' ? '' : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
+                  activeTab === 'ghana' ? '!text-white' : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
                 )}
               >
                 Ghana Regional
-                <Building2 className={cn("w-4 h-4", activeTab === 'ghana' ? "text-[hsl(var(--active-tab-text))]" : "text-stone-300")} />
+                <Building2 className={cn("w-4 h-4", activeTab === 'ghana' ? "text-white" : "text-stone-300")} />
               </Button>
               <Button 
                 variant={activeTab === 'diaspora' ? 'active-tab' : 'default'}
                 onClick={() => setActiveTab('diaspora')}
                 className={cn(
                   "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
-                  activeTab === 'diaspora' ? '' : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
+                  activeTab === 'diaspora' ? '!text-white' : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
                 )}
               >
                 Global Diaspora
-                <Globe className={cn("w-4 h-4", activeTab === 'diaspora' ? "text-[hsl(var(--active-tab-text))]" : "text-stone-300")} />
+                <Globe className={cn("w-4 h-4", activeTab === 'diaspora' ? "text-white" : "text-stone-300")} />
               </Button>
             </div>
           </div>
@@ -253,9 +253,11 @@ export default function Chapters() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Breadcrumbs />
           <div className="mt-4">
-            <h1 className="text-on-surface mb-4 font-meta">Movement Chapters</h1>
+            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
+              Movement Chapters
+            </h1>
             <BrandLine />
-            <p className="text-muted-foreground/80 max-w-2xl mt-4 leading-relaxed font-bold tracking-tight font-body-md">
+            <p className="text-stone-500 max-w-2xl mt-6 leading-relaxed font-medium text-sm md:text-base">
               Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of {chapters.length}+ regional hubs.
             </p>
           </div>

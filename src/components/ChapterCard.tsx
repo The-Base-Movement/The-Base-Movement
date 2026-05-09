@@ -67,7 +67,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
           
           {/* Main Content */}
           <div className="space-y-2 mb-8">
-            <h3 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors text-xl font-bold tracking-tight font-meta leading-tight normal-case">
+            <h3 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors text-lg font-bold tracking-tight font-meta leading-tight normal-case">
               {chapter.name}
             </h3>
             <div className="flex items-center gap-2 text-stone-400">
@@ -99,7 +99,7 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
           <div className="mt-8">
             {(chapter.status as string) === 'Join Chapter' && !isRequestPending ? (
               <Button 
-                variant="primary"
+                variant="outline"
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
@@ -111,12 +111,12 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
               </Button>
             ) : (
               <Button
-                variant="default"
+                variant={isRequestPending ? "default" : "outline"}
                 className={cn(
                   "w-full h-14 border transition-all duration-500 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none active:scale-95 shadow-sm",
                   isRequestPending
                     ? "border-amber-200 bg-amber-50 text-amber-600 cursor-default"
-                    : "border-stone-100 text-stone-400 hover:border-brand-green/20 hover:text-brand-green hover:bg-stone-50"
+                    : ""
                 )}
               >
                 {isRequestPending ? 'Request Sent' : 'View Details'} 
