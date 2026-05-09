@@ -60,6 +60,10 @@ class ChapterService {
       status: c.status,
       description: c.description || undefined,
       details_url: c.details_url || undefined,
+      meeting_schedule: c.meeting_schedule || undefined,
+      local_focus: c.local_focus || undefined,
+      email: c.email || undefined,
+      phone_number: c.phone_number || undefined,
       leadership: c.leadership?.map((l: ChapterLeaderRow): ChapterLeader => ({
         id: l.id,
         name: l.name,
@@ -102,6 +106,10 @@ class ChapterService {
       status: data.status,
       description: data.description || undefined,
       details_url: data.details_url || undefined,
+      meeting_schedule: data.meeting_schedule || undefined,
+      local_focus: data.local_focus || undefined,
+      email: data.email || undefined,
+      phone_number: data.phone_number || undefined,
       leadership: data.leadership?.map((l: ChapterLeaderRow): ChapterLeader => ({
         id: l.id,
         name: l.name,

@@ -11,7 +11,7 @@ import { LoadingScreen } from '../components/LoadingScreen'
 export default function ChapterDetails() {
   const { id } = useParams<{ id: string }>()
   const { chapters, isLoading } = useChapters()
-  const chapter = chapters.find(c => c.id === id)
+  const chapter: Chapter | undefined = chapters.find(c => c.id === id)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
 
   if (isLoading) return <LoadingScreen />
@@ -108,12 +108,12 @@ export default function ChapterDetails() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
                 <div className="p-6 bg-stone-50 border border-stone-100 rounded-none">
-                  <h4 className="text-micro font-bold text-stone-400 tracking-tight mb-2">Local focus</h4>
-                  <p className="text-sm font-bold text-stone-800">Youth Empowerment & Civic Literacy</p>
+                  <h4 className="text-micro font-bold text-stone-400 tracking-tight mb-2 uppercase">Local focus</h4>
+                  <p className="text-sm font-bold text-stone-800">{chapter.local_focus || "Grassroots mobilization"}</p>
                 </div>
                 <div className="p-6 bg-stone-50 border border-stone-100 rounded-none">
-                  <h4 className="text-micro font-bold text-stone-400 tracking-tight mb-2">Meeting schedule</h4>
-                  <p className="text-sm font-bold text-stone-800">Every First Saturday of the Month</p>
+                  <h4 className="text-micro font-bold text-stone-400 tracking-tight mb-2 uppercase">Meeting schedule</h4>
+                  <p className="text-sm font-bold text-stone-800">{chapter.meeting_schedule || "Contact chapter for schedule"}</p>
                 </div>
               </div>
             </div>
@@ -130,31 +130,33 @@ export default function ChapterDetails() {
               </div>
               
               <div className="space-y-4">
-                {(chapter.activities && chapter.activities.length > 0 ? chapter.activities : [
-                  { id: '1', title: "Regional Policy Townhall", activityDate: "2024-10-24T00:00:00Z", type: "Event" },
-                  { id: '2', title: "Community Outreach Program", activityDate: "2024-10-12T00:00:00Z", type: "Action" },
-                  { id: '3', title: "New Member Orientation", activityDate: "2024-09-28T00:00:00Z", type: "Onboarding" }
-                ] as ChapterActivity[]).map((activity, i) => {
-                  const date = new Date(activity.activityDate);
-                  const month = date.toLocaleString('en-US', { month: 'short' });
-                  const day = date.getDate();
-                  
-                  return (
-                    <div key={i} className="bg-white border border-stone-200 p-6 rounded-none flex items-center justify-between group hover:border-[var(--brand-green)] transition-colors">
-                      <div className="flex items-center gap-6">
-                        <div className="w-12 h-12 bg-stone-50 flex flex-col items-center justify-center text-stone-400 font-meta">
-                          <span className="text-micro font-bold uppercase">{month}</span>
-                          <span className="text-lg font-bold leading-none">{day}</span>
+                {chapter.activities && chapter.activities.length > 0 ? (
+                  chapter.activities.map((activity, i) => {
+                    const date = new Date(activity.activityDate);
+                    const month = date.toLocaleString('en-US', { month: 'short' });
+                    const day = date.getDate();
+                    
+                    return (
+                      <div key={i} className="bg-white border border-stone-200 p-6 rounded-none flex items-center justify-between group hover:border-[var(--brand-green)] transition-colors">
+                        <div className="flex items-center gap-6">
+                          <div className="w-12 h-12 bg-stone-50 flex flex-col items-center justify-center text-stone-400 font-meta">
+                            <span className="text-micro font-bold uppercase">{month}</span>
+                            <span className="text-lg font-bold leading-none">{day}</span>
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-stone-900 group-hover:text-[var(--brand-green)] transition-colors">{activity.title}</h4>
+                            <p className="text-micro text-stone-400 tracking-tight mt-1 uppercase">{activity.type}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="text-sm font-bold text-stone-900 group-hover:text-[var(--brand-green)] transition-colors">{activity.title}</h4>
-                          <p className="text-micro text-stone-400 tracking-tight mt-1 uppercase">{activity.type}</p>
-                        </div>
+                        <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-[var(--brand-green)] transition-all" />
                       </div>
-                      <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-[var(--brand-green)] transition-all" />
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                ) : (
+                  <div className="py-12 text-center border border-dashed border-stone-200 bg-stone-50/30">
+                    <p className="text-xs text-stone-400 font-bold uppercase tracking-widest">No recent activities recorded</p>
+                  </div>
+                )}
               </div>
             </section>
           </div>
@@ -168,36 +170,39 @@ export default function ChapterDetails() {
               <div className="p-8">
                 <h3 className="text-sm font-bold tracking-tight mb-6 border-b border-stone-100 pb-4 text-stone-900">Chapter leadership</h3>
               <div className="space-y-6">
-                {(chapter.leadership && chapter.leadership.length > 0 ? chapter.leadership : [
-                  { id: '1', name: chapter.leader_name || 'Dr. Samuel Appiah', role: 'Regional coordinator', imageUrl: undefined },
-                  { id: '2', name: 'Sarah Mensah', role: 'Chapter secretary', imageUrl: undefined }
-                ] as ChapterLeader[]).map((leader, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-stone-100 rounded-none overflow-hidden flex items-center justify-center text-stone-400">
-                      {leader.imageUrl ? (
-                        <img src={leader.imageUrl} alt={leader.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <Users className="w-6 h-6" />
-                      )}
+                {chapter.leadership && chapter.leadership.length > 0 ? (
+                  chapter.leadership.map((leader, i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-stone-100 rounded-none overflow-hidden flex items-center justify-center text-stone-400">
+                        {leader.imageUrl ? (
+                          <img src={leader.imageUrl} alt={leader.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <Users className="w-6 h-6" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-stone-900">{leader.name}</p>
+                        <p className="text-[10px] text-stone-500 font-normal tracking-tight normal-case">
+                          {leader.role}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-stone-900">{leader.name}</p>
-                      <p className="text-[10px] text-stone-500 font-normal tracking-tight normal-case">
-                        {leader.role}
-                      </p>
-                    </div>
+                  ))
+                ) : (
+                  <div className="py-8 text-center border border-dashed border-stone-200 bg-stone-50/30">
+                    <p className="text-xs text-stone-400 font-bold uppercase tracking-widest">Leadership pending</p>
                   </div>
-                ))}
+                )}
               </div>
               
               <div className="mt-8 pt-8 border-t border-stone-100 space-y-4">
-                <div className="flex items-center gap-3 text-stone-500 text-sm">
+                <div className="flex items-center gap-3 text-stone-50 text-sm">
                   <Mail className="w-4 h-4 text-[var(--brand-green)]" />
-                  <span>{chapter.city_or_region.toLowerCase()}@thebasemovement.com</span>
+                  <span className="text-stone-500">{chapter.email || `${chapter.city_or_region.toLowerCase()}@thebasemovement.com`}</span>
                 </div>
-                <div className="flex items-center gap-3 text-stone-500 text-sm">
+                <div className="flex items-center gap-3 text-stone-50 text-sm">
                   <Phone className="w-4 h-4 text-[var(--brand-green)]" />
-                  <span>+233 (0) 50 123 4567</span>
+                  <span className="text-stone-500">{chapter.phone_number || "+233 (0) 50 123 4567"}</span>
                 </div>
               </div>
             </div>

@@ -223,15 +223,17 @@ export default function Chapters() {
       <div className="bg-[#1a1a1a] p-8 text-white overflow-hidden relative rounded-none">
         <div className="relative z-10 space-y-8">
           <div>
-            <p className="text-stone-500 text-[10px] font-bold tracking-tight">Global Network</p>
-            <p className="text-5xl font-meta font-bold tracking-tighter mt-2">80</p>
-            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1">Active Chapters</p>
+            <p className="text-stone-500 text-[10px] font-bold tracking-tight uppercase">Global Network</p>
+            <p className="text-5xl font-meta font-bold tracking-tighter mt-2">{chapters.length}</p>
+            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1 uppercase">Active Chapters</p>
           </div>
           <div className="h-px bg-white/10" />
           <div>
-            <p className="text-brand-gold text-[10px] font-bold tracking-tight">Global Presence</p>
-            <p className="text-5xl font-meta font-bold tracking-tighter mt-2">50</p>
-            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1">Active Countries</p>
+            <p className="text-brand-gold text-[10px] font-bold tracking-tight uppercase">Global Presence</p>
+            <p className="text-5xl font-meta font-bold tracking-tighter mt-2">
+              {new Set(chapters.map(c => c.country)).size}
+            </p>
+            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1 uppercase">Active Countries</p>
           </div>
         </div>
       </div>

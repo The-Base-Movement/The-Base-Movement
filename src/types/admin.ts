@@ -49,6 +49,10 @@ export interface Chapter {
   image_url?: string
   description?: string
   details_url?: string
+  meeting_schedule?: string
+  local_focus?: string
+  email?: string
+  phone_number?: string
   leadership?: ChapterLeader[]
   activities?: ChapterActivity[]
 }
