@@ -93,7 +93,7 @@ export default function Chapters() {
   const { chapters } = useChapters()
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<'ghana' | 'diaspora'>('ghana')
-  const [requestSent, setRequestSent] = useState<Record<string, boolean>>({})
+
 
   const ghanaChapters = chapters.filter(c => c.country === 'Ghana')
   const diasporaChapters = chapters.filter(c => c.country !== 'Ghana')
@@ -105,11 +105,7 @@ export default function Chapters() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submissionSuccess, setSubmissionSuccess] = useState(false)
 
-  const handleJoinRequest = (e: React.MouseEvent, chapterId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setRequestSent(prev => ({ ...prev, [chapterId]: true }));
-  }
+
 
   const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -303,7 +299,6 @@ export default function Chapters() {
                 <ChapterCard 
                   key={chapter.id} 
                   chapter={chapter} 
-                  requestSent={requestSent} 
                   countryFlags={countryFlags} 
                 />
               ))}

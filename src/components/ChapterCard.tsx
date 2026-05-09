@@ -7,12 +7,11 @@ import { Button } from '@/components/ui/neon-button'
 
 interface ChapterCardProps {
   chapter: Chapter
-  requestSent: Record<string, boolean>
   countryFlags: Record<string, string>
 }
 
-export function ChapterCard({ chapter, requestSent, countryFlags }: ChapterCardProps) {
-  const isRequestPending = requestSent[chapter.id]
+export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
+  const isRequestPending = (chapter.status as string) === 'Pending'
   const isActive = (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member'
   
   return (
