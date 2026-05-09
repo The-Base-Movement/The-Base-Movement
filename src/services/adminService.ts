@@ -1347,6 +1347,26 @@ class AdminService {
     }
   }
 
+  subscribeToSiteSettings(callback: () => void) {
+    const channel = supabase
+      .channel('public:site_settings')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'site_settings' },
+        () => {
+          console.log('[BRANDING] Realtime update detected')
+          callback()
+        }
+      )
+      .subscribe()
+    
+    return channel
+  }
+
+  unsubscribeFromChannel(channel: any) {
+    supabase.removeChannel(channel)
+  }
+
   // --- Global Command Search ---
   async globalSearch(query: string): Promise<GlobalSearchResult[]> {
     if (!query || query.length < 2) return []

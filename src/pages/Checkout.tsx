@@ -433,7 +433,8 @@ export default function Checkout() {
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 disabled:opacity-50 text-white text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20"
+                variant="primary"
+                className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20"
               >
                 {isSubmitting ? 'Processing Order...' : 'Complete Purchase'}
               </Button>

@@ -19,6 +19,9 @@ export interface BrandingSettings {
   button_border_radius: string
   button_font_weight: string
   button_neon_enabled: boolean
+  button_primary_text_color: string
+  button_gold_text_color: string
+  button_destructive_text_color: string
   [key: string]: unknown
 }
 
@@ -44,5 +47,8 @@ export const defaultSettings: BrandingSettings = {
   on_surface_muted_color: '0 0% 55%',
   button_border_radius: '0.125rem',
   button_font_weight: '700',
-  button_neon_enabled: true
+  button_neon_enabled: true,
+  button_primary_text_color: '0 0% 100%',
+  button_gold_text_color: '220 15% 15%',
+  button_destructive_text_color: '0 0% 100%'
 }

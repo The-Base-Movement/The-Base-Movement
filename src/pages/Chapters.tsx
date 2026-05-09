@@ -183,35 +183,36 @@ export default function Chapters() {
           <div className="space-y-2">
             <p className="text-tiny font-bold tracking-tight text-stone-500">Region Selection</p>
             <div className="flex flex-col gap-2">
-              <Button 
-                variant={activeTab === 'ghana' ? 'solid' : 'outline'}
+              <Button
+                variant={activeTab === 'ghana' ? 'primary' : 'outline'}
                 onClick={() => setActiveTab('ghana')}
                 className={cn(
                   "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
-                  activeTab === 'ghana' ? 'bg-on-surface text-white hover:bg-on-surface/90' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
+                  activeTab === 'ghana' ? '' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
                 )}
               >
                 Ghana Regional
-                <Building2 className={cn("w-4 h-4", activeTab === 'ghana' ? "text-white" : "text-stone-300")} />
+                <Building2 className={cn("w-4 h-4", activeTab === 'ghana' ? "text-primary-foreground" : "text-stone-300")} />
               </Button>
               <Button 
-                variant={activeTab === 'diaspora' ? 'solid' : 'outline'}
+                variant={activeTab === 'diaspora' ? 'primary' : 'outline'}
                 onClick={() => setActiveTab('diaspora')}
                 className={cn(
                   "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
-                  activeTab === 'diaspora' ? 'bg-on-surface text-white hover:bg-on-surface/90' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
+                  activeTab === 'diaspora' ? '' : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
                 )}
               >
                 Global Diaspora
-                <Globe className={cn("w-4 h-4", activeTab === 'diaspora' ? "text-white" : "text-stone-300")} />
+                <Globe className={cn("w-4 h-4", activeTab === 'diaspora' ? "text-primary-foreground" : "text-stone-300")} />
               </Button>
             </div>
           </div>
 
           <div className="pt-4 border-t border-stone-100">
             <Button 
+              variant="primary"
               onClick={() => setIsRequestModalOpen(true)}
-              className="w-full bg-brand-green hover:!bg-white text-white hover:!text-emerald-600 border border-transparent hover:!border-emerald-600 font-bold tracking-tight text-tiny h-12 px-6 rounded-none shadow-sm normal-case transition-all duration-300"
+              className="w-full font-bold tracking-tight text-tiny h-12 px-6 rounded-none shadow-sm normal-case transition-all duration-300"
             >
               <Plus className="w-4 h-4 mr-2" /> Request a Chapter
             </Button>
@@ -281,8 +282,9 @@ export default function Chapters() {
           </Sheet>
           
           <Button 
+            variant="primary"
             onClick={() => setIsRequestModalOpen(true)}
-            className="flex-1 bg-brand-green text-white font-bold text-xs h-12 rounded-none"
+            className="flex-1 font-bold text-xs h-12 rounded-none"
           >
             <Plus className="w-4 h-4 mr-2" /> Request
           </Button>
@@ -425,8 +427,9 @@ export default function Chapters() {
                 </Button>
                 <Button 
                   type="submit" 
+                  variant="primary"
                   disabled={isSubmitting}
-                  className="h-12 bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold text-micro tracking-tight rounded-none min-w-[140px]"
+                  className="h-12 font-bold text-micro tracking-tight rounded-none min-w-[140px]"
                 >
                   {isSubmitting ? 'Processing...' : 'Submit Request'}
                 </Button>

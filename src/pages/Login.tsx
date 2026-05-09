@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react'
 import { authService } from '@/services/authService'
+import { Button } from '@/components/ui/neon-button'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
@@ -107,10 +108,11 @@ export default function Login() {
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[var(--brand-green)] hover:opacity-90 text-white font-meta font-bold tracking-tight py-4 transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
+              variant="primary"
+              className="w-full font-meta font-bold tracking-tight py-7 transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2 disabled:opacity-50 text-base"
             >
               {isLoading ? (
                 <>
@@ -121,7 +123,7 @@ export default function Login() {
                   Sign In <ArrowRight className="w-4 h-4" />
                 </>
               )}
-            </button>
+            </Button>
 
             <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">

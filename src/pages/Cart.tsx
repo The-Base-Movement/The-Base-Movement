@@ -129,7 +129,7 @@ export default function Cart() {
                   </div>
                 </div>
 
-                <Button asChild className="w-full h-14 bg-[var(--brand-green)] hover:opacity-90 text-white text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20">
+                <Button asChild variant="primary" className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20">
                   <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/checkout' : '/store/checkout'}>
                     Proceed to Checkout
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -156,7 +156,7 @@ export default function Cart() {
             </div>
             <h2 className="font-h3 text-2xl text-stone-900 mb-2">Your bag is empty</h2>
             <p className="text-muted-gray font-body-md mb-8">Looks like you haven't added anything to your bag yet.</p>
-            <Button asChild className="bg-[var(--brand-green)] hover:opacity-90 text-white px-8 h-12 text-xs font-bold tracking-tight rounded-sm">
+            <Button asChild variant="primary" className="px-8 h-12 text-xs font-bold tracking-tight rounded-sm">
               <Link to="/store">Explore the Store</Link>
             </Button>
           </div>

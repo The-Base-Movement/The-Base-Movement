@@ -90,7 +90,7 @@ export default function Wishlist() {
                     <p className="text-sm font-bold text-brand-green mb-4">{item.price}</p>
                     
                     <div className="pt-6 border-t border-stone-100 flex gap-3">
-                      <Button className="flex-1 bg-brand-green hover:bg-emerald-700 text-white text-micro font-bold tracking-tight rounded-none h-11 flex items-center gap-2">
+                      <Button variant="primary" className="flex-1 rounded-none h-11 flex items-center gap-2 text-micro font-bold tracking-tight">
                         <ShoppingCart className="w-3.5 h-3.5" />
                         Add to Cart
                       </Button>
@@ -109,7 +109,7 @@ export default function Wishlist() {
               <p className="text-muted-gray mb-10 max-w-sm mx-auto">
                 Start curating your movement collection. Explore our store and save items you'd love to own.
               </p>
-              <Button asChild className="bg-brand-green hover:bg-emerald-700 text-white text-micro font-bold tracking-tight rounded-none px-12 h-12">
+              <Button asChild variant="primary" className="text-micro font-bold tracking-tight rounded-none px-12 h-12">
                 <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store' : '/store'}>Explore Store</Link>
               </Button>
             </div>

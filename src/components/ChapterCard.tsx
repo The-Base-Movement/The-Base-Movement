@@ -99,13 +99,13 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
           <div className="mt-8">
             {(chapter.status as string) === 'Join Chapter' && !isRequestPending ? (
               <Button 
-                variant="solid"
+                variant="primary"
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
                   handleJoinRequest(e, chapter.id)
                 }}
-                className="w-full h-14 bg-on-surface text-white hover:!bg-white hover:!text-emerald-600 border border-transparent hover:!border-emerald-600 transition-all duration-300 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none"
+                className="w-full h-14 transition-all duration-300 flex items-center justify-center gap-3 text-tiny font-bold tracking-tight normal-case rounded-none"
               >
                 Join Chapter <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>

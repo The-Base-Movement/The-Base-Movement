@@ -482,7 +482,7 @@ export default function ProductDetails() {
               <p className="text-micro font-bold text-stone-400 tracking-tight">Average patriot rating</p>
             </div>
             <div className="w-px h-12 bg-stone-200" />
-            <Button className="h-12 bg-brand-green text-white text-micro font-bold tracking-tight px-8 rounded-none">
+            <Button variant="primary" className="h-12 text-micro font-bold tracking-tight px-8 rounded-none">
               Write a review
             </Button>
           </div>

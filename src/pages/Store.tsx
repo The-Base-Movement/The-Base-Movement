@@ -112,8 +112,9 @@ export default function Store() {
             <p className="text-tiny font-bold tracking-tight text-stone-500">Categories</p>
             <div className="flex flex-col gap-2">
               {categories.map(category => (
-                <button
+                <Button
                   key={category}
+                  variant={activeCategory === category ? 'primary' : 'outline'}
                   onClick={() => {
                     setActiveCategory(category)
                     setCurrentPage(1)
@@ -121,13 +122,13 @@ export default function Store() {
                   className={cn(
                     "w-full h-12 flex items-center justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all",
                     activeCategory === category 
-                      ? 'bg-on-surface text-white hover:bg-on-surface/90' 
+                      ? '' 
                       : 'bg-white text-stone-500 border-stone-200 hover:!text-emerald-600 hover:border-emerald-600/20 hover:bg-emerald-50/30'
                   )}
                 >
                   {category}
-                  {activeCategory === category && <div className="w-1.5 h-1.5 bg-brand-green rounded-full" />}
-                </button>
+                  {activeCategory === category && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                </Button>
               ))}
             </div>
           </div>
@@ -173,23 +174,23 @@ export default function Store() {
       <main className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-red h-12 text-tiny font-bold tracking-tight rounded-none !overflow-visible">
+            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-red h-12 text-tiny font-bold tracking-tight rounded-none !overflow-visible overflow-visible">
               <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/wishlist' : '/store/wishlist'}>
                 <Heart className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-red transition-all" />
                 Wishlist
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-brand-red text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                  <span className="absolute -top-2 -right-2 bg-brand-red text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm z-30">
                     {wishlistCount}
                   </span>
                 )}
               </Link>
             </Button>
-            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-green h-12 text-tiny font-bold tracking-tight rounded-none !overflow-visible">
+            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-green h-12 text-tiny font-bold tracking-tight rounded-none !overflow-visible overflow-visible">
               <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}>
                 <ShoppingBag className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-green transition-all" />
                 Bag
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-brand-green text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
+                  <span className="absolute -top-2 -right-2 bg-brand-green text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm z-30">
                     {cartCount}
                   </span>
                 )}
@@ -223,7 +224,7 @@ export default function Store() {
           </aside>
 
           <div className="flex-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {loading ? (
                 Array.from({ length: 9 }).map((_, i) => (
                   <div key={i} className="aspect-[3/4] bg-stone-100 animate-pulse rounded-none" />

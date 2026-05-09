@@ -334,19 +334,21 @@ export default function Register() {
                     <p className="font-meta font-bold text-xl text-primary tracking-tight">{regNumber}</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button 
+                    <Button 
+                      variant="gold"
                       onClick={() => window.print()}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-on-surface font-meta font-bold tracking-tight text-micro hover:opacity-90 transition-all shadow-md"
+                      className="flex items-center justify-center gap-2 px-6 py-3 h-auto"
                     >
                       <span className="material-symbols-outlined text-[18px]">print</span>
                       Print card
-                    </button>
-                    <button 
+                    </Button>
+                    <Button 
+                      variant="outline"
                       onClick={() => setSubmitted(false)}
-                      className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-border/60 text-on-surface font-meta font-bold tracking-tight text-micro hover:bg-muted/30 transition-all shadow-sm"
+                      className="flex items-center justify-center gap-2 px-6 py-3 h-auto bg-white"
                     >
                       <ArrowLeft className="w-4 h-4" /> Edit info
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -364,17 +366,18 @@ export default function Register() {
                 </p>
                 </div>
 
-                <div className="bg-primary text-white p-8 flex flex-col justify-between">
+                <div className="bg-primary text-primary-foreground p-8 flex flex-col justify-between shadow-lg">
                 <div>
-                  <h4 className="font-meta font-bold text-micro text-white/90 tracking-tight mb-4">Next step</h4>
-                  <p className="text-sm font-bold font-meta leading-tight mb-4">Access your portal to join a chapter.</p>
+                  <h4 className="font-meta font-bold text-micro text-primary-foreground/90 tracking-tight mb-4 uppercase">Next step</h4>
+                  <p className="text-sm font-bold font-meta leading-tight mb-4">Access your portal to join a chapter and start mobilizing.</p>
                 </div>
-                <button
+                <Button
+                  variant="outline"
                   onClick={() => navigate('/dashboard')}
-                  className="w-full inline-flex items-center gap-2 text-xs font-bold tracking-tight bg-white/10 hover:bg-white/20 p-3 text-center justify-center transition-colors cursor-pointer"
+                  className="w-full inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border-white/20 text-primary-foreground h-auto p-3 text-center justify-center font-bold"
                 >
                   Enter Overview <ArrowRight className="w-4 h-4" />
-                </button>
+                </Button>
                 </div>            </div>
           </div>
         </div>
@@ -552,12 +555,13 @@ export default function Register() {
             <div className="flex-1 bg-primary"></div>
           </div>
           <h2 className="text-muted-foreground mb-8">Official Registration Form</h2>
-          <button
+          <Button
+            variant="outline"
             onClick={() => setStep('choice')}
-            className="inline-flex items-center gap-2 px-6 py-2 border border-border/60 text-micro font-bold text-muted-foreground tracking-tight hover:bg-muted/30 transition-all font-meta"
+            className="inline-flex items-center gap-2 px-6 py-2 h-auto"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to registration options
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -657,20 +661,22 @@ export default function Register() {
                   <div className="space-y-3">
                     <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Membership platform</label>
                     <div className="grid grid-cols-2 gap-4">
-                      <button
+                      <Button
                         type="button"
+                        variant={platform === 'GHANA' ? 'primary' : 'outline'}
                         onClick={() => handlePlatformChange('GHANA')}
-                        className={`p-4 border text-sm font-bold tracking-tight font-meta transition-all ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground hover:border-primary/40'}`}
+                        className="h-auto p-4 text-sm"
                       >
                         Ghana Base
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        variant={platform === 'DIASPORA' ? 'gold' : 'outline'}
                         onClick={() => handlePlatformChange('DIASPORA')}
-                        className={`p-4 border text-sm font-bold tracking-tight font-meta transition-all ${platform === 'DIASPORA' ? 'border-accent bg-accent/5 text-accent' : 'border-border/60 text-muted-foreground hover:border-accent/40'}`}
+                        className="h-auto p-4 text-sm"
                       >
                         Diaspora Base
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   

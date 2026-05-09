@@ -85,7 +85,9 @@ export function ProductCard({ product, onShare }: ProductProps) {
           </div>
 
           <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300">
-            <button 
+            <Button 
+              variant="ghost"
+              size="icon"
               onClick={(e) => {
                 e.preventDefault();
                 if (isWishlisted) {
@@ -97,8 +99,10 @@ export function ProductCard({ product, onShare }: ProductProps) {
               className={`w-10 h-10 bg-white shadow-md flex items-center justify-center transition-all duration-300 group/heart ${isWishlisted ? 'text-[var(--brand-red)]' : 'text-stone-400 hover:text-[var(--brand-red)]'}`}
             >
               <Heart className={`w-5 h-5 transition-all ${isWishlisted ? 'fill-brand-red text-[var(--brand-red)]' : 'group-hover/heart:fill-brand-red group-hover/heart:text-[var(--brand-red)]'}`} />
-            </button>
-            <button 
+            </Button>
+            <Button 
+              variant="ghost"
+              size="icon"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -107,7 +111,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
               className="w-10 h-10 bg-white shadow-md flex items-center justify-center text-stone-400 hover:text-[var(--brand-green)] transition-all duration-300"
             >
               <Share2 className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
 
           {/* Quick Add Bottom Bar */}
@@ -115,8 +119,8 @@ export function ProductCard({ product, onShare }: ProductProps) {
             <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/60 to-transparent z-10">
               <Button 
                 onClick={handleQuickAdd}
-                variant="solid"
-                className="w-full h-10 bg-brand-green text-white hover:opacity-90 border-transparent shadow-lg shadow-brand-green/20"
+                variant="primary"
+                className="w-full h-10"
               >
                 <Plus className="w-3.5 h-3.5 mr-2" /> Quick Add
               </Button>

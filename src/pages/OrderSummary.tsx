@@ -169,7 +169,7 @@ export default function OrderSummary() {
                 </Button>
               </div>
 
-              <Button asChild className="w-full h-14 bg-brand-green hover:bg-emerald-700 text-white text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20">
+              <Button asChild variant="primary" className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20">
                 <Link to="/dashboard">
                   Back to dashboard
                   <ArrowRight className="w-4 h-4 ml-2" />

@@ -38,14 +38,21 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
 
     initializeBranding()
     
-    // Listen for branding updates (custom event from AdminSettings)
+    // 1. Listen for local branding updates (custom event from AdminSettings)
     const handleBrandingUpdate = () => {
       initializeBranding()
     }
     window.addEventListener('site_settings_updated', handleBrandingUpdate)
+
+    // 2. Listen for remote branding updates via Supabase Realtime
+    const channel = adminService.subscribeToSiteSettings(() => {
+      if (isMounted) initializeBranding()
+    })
+
     return () => {
       isMounted = false
       window.removeEventListener('site_settings_updated', handleBrandingUpdate)
+      if (channel) adminService.unsubscribeFromChannel(channel)
     }
   }, [])
 
@@ -96,6 +103,9 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
               /* Button Configuration */
               --button-radius: ${settings.button_border_radius || '0.125rem'};
               --button-font-weight: ${settings.button_font_weight || '700'};
+              --primary-foreground: ${settings.button_primary_text_color || '0 0% 100%'};
+              --accent-foreground: ${settings.button_gold_text_color || '220 15% 15%'};
+              --destructive-foreground: ${settings.button_destructive_text_color || '0 0% 100%'};
             }
           `}
         </style>

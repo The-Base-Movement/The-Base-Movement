@@ -22,7 +22,7 @@ const LABEL_OVERRIDES: Record<string, string> = {
 }
 
 // Routes where the Breadcrumbs component should render
-const SUPPORTED_PREFIXES = ['/dashboard', '/admin', '/blog']
+const SUPPORTED_PREFIXES = ['/dashboard', '/admin', '/blog', '/donate']
 
 // Root labels and links per context
 function getRootContext(pathname: string): { label: string; to: string } {
