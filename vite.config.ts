@@ -26,7 +26,7 @@ export default defineConfig(async ({ mode }) => {
         brotliSize: true,
         template: 'treemap'
       }),
-      mode === 'production' && prerender({
+      mode === 'production' && !process.env.VERCEL && prerender({
         staticDir: path.resolve(__dirname, 'dist'),
         routes: [
           '/', 
