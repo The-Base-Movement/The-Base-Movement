@@ -157,49 +157,50 @@ export default function Chapters() {
   });
 
   const FilterSection = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <div className={cn("space-y-8", isMobile && "pb-20")}>
-      <div className={cn("bg-white p-6 shadow-sm", !isMobile && "border border-stone-200")}>
-        <h3 className="text-tiny font-bold text-stone-400 normal-case tracking-tight mb-6">Chapter Filters</h3>
-        
+    <div className={cn("flex flex-col gap-6", isMobile && "pb-20")}>
+      <div className="bg-white border border-stone-200 p-6">
         <div className="space-y-6">
-          <div className="space-y-2">
-            <p className="text-tiny font-medium tracking-tight text-stone-500">Search Chapters</p>
+          <div>
+            <label className="text-micro font-bold text-stone-900 mb-3 block">
+              Search hubs
+            </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-              <input 
-                type="text"
-                placeholder="City, region, country..."
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
+              <Input 
+                placeholder="Search by city, name..." 
+                className="pl-10 h-11 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-xs"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-11 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-none text-xs focus:ring-1 focus:ring-brand-green outline-none transition-all font-medium"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <p className="text-tiny font-medium tracking-tight text-stone-500">Region Selection</p>
+          <div>
+            <label className="text-[10px] font-bold text-stone-900 mb-3 block">
+              Region filter
+            </label>
             <div className="flex flex-col gap-2">
-              <Button
-                variant={activeTab === 'ghana' ? 'active-tab' : 'default'}
+              <Button 
+                variant="solid"
                 onClick={() => setActiveTab('ghana')}
                 className={cn(
-                  "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
-                  activeTab === 'ghana' ? '!text-white' : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
+                  "w-full justify-between font-bold tracking-tight text-tiny h-11 px-4 rounded-none transition-all duration-300",
+                  activeTab === 'ghana' ? "bg-brand-green text-white" : "bg-white text-stone-500 border-stone-200"
                 )}
               >
-                Ghana Regional
-                <Building2 className={cn("w-4 h-4", activeTab === 'ghana' ? "text-white" : "text-stone-300")} />
+                Ghana Regions
+                <MapPin className="w-4 h-4" />
               </Button>
               <Button 
-                variant={activeTab === 'diaspora' ? 'active-tab' : 'default'}
+                variant="outline"
                 onClick={() => setActiveTab('diaspora')}
                 className={cn(
-                  "w-full h-12 justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
-                  activeTab === 'diaspora' ? '!text-white' : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
+                  "w-full justify-between font-bold tracking-tight text-tiny h-11 px-4 rounded-none transition-all duration-300",
+                  activeTab === 'diaspora' ? "border-brand-green text-brand-green" : "border-stone-200 text-stone-500"
                 )}
               >
                 Global Diaspora
-                <Globe className={cn("w-4 h-4", activeTab === 'diaspora' ? "text-white" : "text-stone-300")} />
+                <Globe className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -208,30 +209,29 @@ export default function Chapters() {
             <Button 
               variant="accent"
               onClick={() => setIsRequestModalOpen(true)}
-              className="w-full font-bold tracking-tight text-tiny h-12 px-6 rounded-none shadow-sm normal-case transition-all duration-300"
+              className="w-full font-bold tracking-tight text-tiny h-12 px-6 rounded-none shadow-sm normal-case bg-brand-gold text-white"
             >
               <Plus className="w-4 h-4 mr-2" /> Request a Chapter
             </Button>
-            <p className="text-micro text-stone-400 font-bold tracking-tight mt-3 text-center italic">
+            <p className="text-[10px] font-bold text-stone-400 mt-3 text-center italic">
               Don't see your region? Propose a new hub.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="bg-charcoal-dark p-6 text-white overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--brand-green)]/10 -mr-12 -mt-12 blur-2xl"></div>
-        <div className="relative z-10 space-y-4">
+      <div className="bg-[#1a1a1a] p-8 text-white overflow-hidden relative rounded-none">
+        <div className="relative z-10 space-y-8">
           <div>
-            <p className="text-[var(--brand-green)] text-micro font-bold tracking-tight normal-case">Global Network</p>
-            <p className="text-3xl font-meta font-bold tracking-tight mt-1">{chapters.length}</p>
-            <p className="text-micro text-stone-400 font-bold tracking-tight">Active Chapters</p>
+            <p className="text-stone-500 text-[10px] font-bold tracking-tight">Global Network</p>
+            <p className="text-5xl font-meta font-bold tracking-tighter mt-2">80</p>
+            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1">Active Chapters</p>
           </div>
           <div className="h-px bg-white/10" />
           <div>
-            <p className="text-warm-gold text-micro font-bold tracking-tight normal-case">Global Presence</p>
-            <p className="text-3xl font-meta font-bold tracking-tight mt-1">{new Set(chapters.map(c => c.country)).size}</p>
-            <p className="text-micro text-stone-400 font-bold tracking-tight">Active Countries</p>
+            <p className="text-brand-gold text-[10px] font-bold tracking-tight">Global Presence</p>
+            <p className="text-5xl font-meta font-bold tracking-tighter mt-2">50</p>
+            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1">Active Countries</p>
           </div>
         </div>
       </div>
@@ -239,16 +239,20 @@ export default function Chapters() {
   );
 
   return (
-    <div className="min-h-screen bg-stone-50/50 pb-20">
+    <div className="min-h-screen bg-[#f8f9fa] pb-20">
       <SEO 
         title="Movement Chapters"
         description="Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of regional hubs."
         canonical="/chapters"
       />
       <div className="bg-white border-b border-stone-200">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
-          <div className="mt-4">
+          <div className="mt-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="flex h-2 w-2 rounded-full bg-[var(--brand-green)] animate-ping"></span>
+              <span className="text-micro font-bold text-[var(--brand-green)] tracking-tight">Mobilization Network</span>
+            </div>
             <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
               Movement Chapters
             </h1>
@@ -260,7 +264,7 @@ export default function Chapters() {
         </div>
       </div>
 
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 mt-12">
         <div className="lg:hidden mb-8 flex gap-4">
           <Sheet>
             <SheetTrigger asChild>
@@ -289,7 +293,7 @@ export default function Chapters() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
-          <aside className="hidden lg:block lg:w-[320px] shrink-0 lg:sticky lg:top-8 lg:self-start">
+          <aside className="hidden lg:block lg:w-[320px] shrink-0 sticky top-0 self-start">
             <FilterSection />
           </aside>
 

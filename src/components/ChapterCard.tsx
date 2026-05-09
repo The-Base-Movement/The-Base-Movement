@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Users, ShieldCheck, Zap } from 'lucide-react'
+import { MapPin, Users, Zap, Clock, Plus } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { type Chapter } from '@/services/adminService'
@@ -16,92 +16,85 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
       className="h-full"
     >
       <div 
-        className="group relative bg-white border border-stone-200 rounded-none overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500 flex flex-col h-full"
+        className="group relative bg-white border border-stone-100 rounded-[20px] overflow-hidden hover:shadow-xl hover:shadow-stone-200/50 hover:border-stone-200 transition-all duration-500 flex flex-col h-full"
       >
-        {/* Top Accent Line */}
-        <div className="h-1.5 w-full bg-stone-100 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] opacity-80 group-hover:opacity-100 transition-opacity"></div>
-        </div>
+        {/* Top accent bar - movement identity */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)] opacity-80 group-hover:opacity-100 transition-opacity" />
 
         <div className="p-6 flex-1 flex flex-col">
-          {/* Header & Main Info */}
-          <div className="flex items-start gap-4 mb-6">
-            <div className="relative flex-shrink-0">
-              <div className="w-12 h-12 bg-stone-50 border border-stone-100 flex items-center justify-center text-stone-300 group-hover:text-[var(--brand-green)] group-hover:border-[var(--brand-green)]/20 group-hover:bg-[var(--brand-green)]/5 transition-all duration-500">
-                {chapter.country === 'Ghana' ? (
-                  <MapPin className="w-5 h-5" />
-                ) : (
-                  <span className="text-xl filter grayscale group-hover:grayscale-0 transition-all duration-500">
-                    {countryFlags[chapter.country] || '🌍'}
-                  </span>
-                )}
-              </div>
-              {isActive && (
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                  <ShieldCheck className="w-2.5 h-2.5 text-white" />
-                </div>
-              )}
-            </div>
+          {/* Header: Status & Badge */}
+          <div className="flex justify-between items-center mb-4">
+            <span className={cn(
+              "text-[10px] font-bold px-3 py-1 rounded-full tracking-tight",
+              isRequestPending 
+                ? "bg-amber-50 text-amber-600 border border-amber-100"
+                : isActive
+                  ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                  : "bg-stone-50 text-stone-500 border border-stone-200"
+            )}>
+              {isRequestPending ? 'Pending' : (isActive ? 'Active Hub' : 'Regional Hub')}
+            </span>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-center mb-1 gap-2">
-                <h3 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors text-base font-bold tracking-tight font-meta leading-tight normal-case truncate">
-                  {chapter.name}
-                </h3>
-                <div className={cn(
-                  "px-2 py-0.5 text-[9px] font-bold tracking-tight normal-case flex-shrink-0",
-                  isRequestPending 
-                    ? "bg-amber-50 text-amber-600 border border-amber-100"
-                    : isActive
-                      ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                      : "bg-stone-50 text-stone-400 border border-stone-100"
-                )}>
-                  {isRequestPending ? 'Pending' : (isActive ? 'Active' : 'Hub')}
-                </div>
-              </div>
-              
-              <div className="flex justify-between items-center gap-4 mt-2">
-                <p className="text-[10px] font-medium tracking-tight normal-case text-stone-400 truncate">
-                  {chapter.city_or_region} • {chapter.country}
-                </p>
-                
-                <Link to={`/dashboard/chapters/${chapter.id}`} className="flex-shrink-0">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="h-7 px-3 text-[10px] font-bold tracking-tight normal-case rounded-none border-brand-green/20 text-brand-green hover:bg-brand-green hover:text-white transition-all shadow-none"
-                  >
-                    View details
-                  </Button>
-                </Link>
-              </div>
+            <div className={cn(
+              "flex items-center gap-1.5 text-[10px] font-bold tracking-tight",
+              isActive ? "text-[var(--brand-green)]" : "text-stone-400"
+            )}>
+              {isRequestPending ? (
+                <Clock className="w-3 h-3" />
+              ) : isActive ? (
+                <Zap className="w-3 h-3 fill-current" />
+              ) : (
+                <Plus className="w-3 h-3" />
+              )}
+              <span>{isRequestPending ? 'Pending' : (isActive ? 'Active' : 'Join Chapter')}</span>
             </div>
           </div>
-          
-          {/* Stats Bar */}
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-stone-50 mt-auto">
-            <div className="flex items-center gap-2">
-              <Users className="w-3 h-3 text-[var(--brand-green)]" />
-              <p className="text-[10px] font-medium text-stone-500 normal-case tracking-tight">
-                <span className="font-bold text-stone-900 mr-1">{chapter.member_count}</span> members
-              </p>
+
+          {/* Chapter Identity */}
+          <div className="mb-6">
+            <h3 className="text-base font-bold text-stone-900 group-hover:text-[var(--brand-green)] transition-colors leading-tight mb-2">
+              {chapter.name}
+            </h3>
+            <p className="text-[10px] text-stone-400 flex items-center gap-1.5 font-medium">
+              <MapPin className="w-3.5 h-3.5 text-stone-300" />
+              {chapter.city_or_region} • {chapter.country}
+              {chapter.country !== 'Ghana' && countryFlags[chapter.country] && (
+                <span className="ml-1 filter grayscale group-hover:grayscale-0 transition-all">{countryFlags[chapter.country]}</span>
+              )}
+            </p>
+          </div>
+
+          {/* Members Stats - Dedicated Row */}
+          <div className="mb-6 flex items-center gap-3 text-stone-400">
+            <div className="w-8 h-8 rounded-full bg-stone-50 flex items-center justify-center border border-stone-100 group-hover:bg-stone-100 transition-colors">
+              <Users className="w-4 h-4" />
             </div>
-            <div className="flex items-center gap-2 justify-end">
-              <Zap className="w-3 h-3 text-warm-gold" />
-              <p className="text-[10px] font-medium text-stone-500 normal-case tracking-tight">
-                Active Hub
-              </p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm font-bold text-stone-900 leading-none">{chapter.member_count}</span>
+              <span className="text-[10px] font-bold text-stone-400">members</span>
             </div>
+          </div>
+
+          {/* Action Button - Dedicated Row/Footer */}
+          <div className="mt-auto pt-6 border-t border-stone-50">
+            <Link to={`/dashboard/chapters/${chapter.id}`} className="block">
+              <Button 
+                variant="default" 
+                className="w-full h-11 text-xs font-bold tracking-tight normal-case rounded-none shadow-none"
+              >
+                View Chapter details
+              </Button>
+            </Link>
           </div>
         </div>
-        
+
         {/* Subtle Bottom Glow */}
         <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--brand-green)]/0 to-transparent group-hover:via-[var(--brand-green)]/20 transition-all duration-700"></div>
       </div>
