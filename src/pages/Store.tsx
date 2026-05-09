@@ -122,7 +122,7 @@ export default function Store() {
                   className={cn(
                     "w-full h-12 flex items-center justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
                     activeCategory === category 
-                      ? '' 
+                      ? 'text-white' 
                       : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
                   )}
                 >

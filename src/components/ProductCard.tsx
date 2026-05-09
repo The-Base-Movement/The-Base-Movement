@@ -151,7 +151,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
           
           <div className="mt-auto pt-6 border-t border-stone-100 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-tiny font-bold text-stone-400 uppercase tracking-tight">Investment</span>
+              <span className="text-tiny font-bold text-stone-400 uppercase tracking-tight">Price</span>
               <span className="text-xl font-bold text-primary font-meta">
                 GH₵{product.price.toString().replace('GHS', '').replace('GH₵', '').trim()}
               </span>
@@ -161,13 +161,13 @@ export function ProductCard({ product, onShare }: ProductProps) {
               <Button 
                 onClick={handleQuickAdd}
                 variant="primary" 
-                className="h-10 text-tiny font-bold tracking-tight uppercase shadow-lg shadow-primary/10"
+                className="h-10 text-tiny font-bold tracking-tight uppercase shadow-lg shadow-primary/10 text-white"
               >
                 Buy now
               </Button>
-              <Button asChild variant="ghost" className="h-10 text-tiny font-bold tracking-tight uppercase border-stone-200">
-                <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`} className="flex items-center">
-                  View Gear <ArrowRight className="w-3.5 h-3.5 ml-2" />
+              <Button asChild variant="primary" className="h-10 text-tiny font-bold tracking-tight uppercase shadow-lg shadow-primary/10 text-white">
+                <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`} className="flex items-center justify-center">
+                  View Item <ArrowRight className="w-3.5 h-3.5 ml-2" />
                 </Link>
               </Button>
             </div>

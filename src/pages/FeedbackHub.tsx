@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { BrandLine } from '@/components/ui/BrandLine'
 import { MessageSquare, Send, Brain, Target } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
@@ -66,18 +67,20 @@ export default function FeedbackHub() {
 
   return (
     <div className="bg-stone-50/50 min-h-screen pb-20">
-      <div className="bg-white border-b border-stone-200 sticky top-0 z-30">
-        <div className="max-w-4xl mx-auto px-8 py-6">
+      <div className="bg-white border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
-          <div className="mt-4">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="mt-6">
+            <div className="flex items-center gap-2 mb-4">
               <span className="flex h-2 w-2 rounded-full bg-[var(--brand-red)] animate-ping"></span>
               <span className="text-micro font-bold text-[var(--brand-red)] tracking-tight">Direct line to HQ</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-stone-900 flex items-center gap-3 mb-0 tracking-tight italic font-meta">
-              Feedback <span className="text-stone-400">hub</span>
+            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
+              <MessageSquare className="w-10 h-10 text-brand-red" />
+              Feedback Hub
             </h1>
-            <p className="text-stone-500 text-sm font-medium tracking-wide mt-2 mb-0 max-w-xl">
+            <BrandLine />
+            <p className="text-stone-500 max-w-2xl mt-6 leading-relaxed font-medium text-sm md:text-base">
               Your ground-level intelligence powers our national strategy. Submit raw, unfiltered feedback directly to the movement's AI sentiment engine.
             </p>
           </div>

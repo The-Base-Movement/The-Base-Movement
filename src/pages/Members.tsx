@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Globe, Search, MapPin, Users, User, ArrowUpDown, Filter, X } from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/neon-button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -130,27 +131,23 @@ export default function Members() {
   return (
     <div className="bg-stone-50/50 min-h-screen font-meta pb-20">
       {/* Header Section */}
-      <section className="bg-on-surface py-20 px-8 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('/noise.png')] opacity-[0.03]"></div>
-        </div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-sm flex items-center justify-center">
-              <Users className="w-6 h-6 text-primary shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
-            </div>
-            <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter m-0">
+      <div className="bg-white border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+          <Breadcrumbs />
+          <div className="mt-6">
+            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
+              <Users className="w-10 h-10 text-brand-green" />
               Movement Directory
             </h1>
+            <BrandLine />
+            <p className="text-stone-500 max-w-2xl mt-6 leading-relaxed font-medium text-sm md:text-base">
+              The Base movement is built by its people. Connect with brothers and sisters committed to Ghana's prosperity, both at home and in the diaspora.
+            </p>
           </div>
-          <BrandLine className="mb-8" />
-          <p className="text-muted-foreground/60 max-w-xl mb-0 font-body-md leading-relaxed">
-            The Base movement is built by its people. Connect with brothers and sisters committed to Ghana's prosperity, both at home and in the diaspora.
-          </p>
         </div>
-      </section>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-8 -mt-12 relative z-20">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16 relative z-20">
         <Card className="border-none shadow-[0_48px_96px_-16px_rgba(0,0,0,0.1)] overflow-hidden bg-white rounded-sm">
           <CardContent className="p-0">
             {/* Control Bar */}
