@@ -82,10 +82,26 @@ async function prerender() {
     for (const url of routesToPrerender) {
       console.log(`[PRERENDER] Rendering route: ${url}`)
       
-      const { appHtml, head } = await render(url)
+      let { appHtml, head } = await render(url)
+
+      // Regex to extract SEO tags from appHtml if they ended up there (common in React 18 streaming)
+      // Matches <title>...</title>, <meta...>, <link...>, and <script type="application/ld+json">...</script>
+      const seoTagsRegex = /<(title|script)[^>]*>.*?<\/\1>|<(meta|link)[^>]*\/?>/gi
+      const extractedTags = []
+      
+      appHtml = appHtml.replace(seoTagsRegex, (match) => {
+        // Only move tags that are typical for the head or SEO
+        if (match.includes('<title') || match.includes('<meta') || match.includes('<link') || match.includes('application/ld+json')) {
+          extractedTags.push(match)
+          return ''
+        }
+        return match
+      })
+
+      const finalHead = (head || '') + extractedTags.join('\n')
 
       const html = template
-        .replace('<!--app-head-->', head || '')
+        .replace('<!--app-head-->', finalHead)
         .replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`)
 
       const filePath = path.join(toAbsolute('../dist'), url === '/' ? 'index.html' : `${url}/index.html`)
