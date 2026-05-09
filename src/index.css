@@ -138,6 +138,11 @@
     @apply bg-background text-on-surface antialiased;
     font-size: var(--p-size);
   }
+
+  button, .button {
+    border-radius: var(--button-radius, 0.125rem);
+    font-weight: var(--button-font-weight, 700);
+  }
   
   /* Unified Typography Scale using Responsive Variables */
   h1, .h1 {

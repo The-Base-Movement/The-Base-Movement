@@ -16,8 +16,9 @@ export interface BrandingSettings {
   newsletter_email: string
   font_scale_global: number
   font_scale_headings: number
-  muted_foreground_color: string
-  on_surface_muted_color: string
+  button_border_radius: string
+  button_font_weight: string
+  button_neon_enabled: boolean
   [key: string]: unknown
 }
 
@@ -40,5 +41,8 @@ export const defaultSettings: BrandingSettings = {
   font_scale_global: 1.0,
   font_scale_headings: 1.0,
   muted_foreground_color: '0 0% 55%',
-  on_surface_muted_color: '0 0% 55%'
+  on_surface_muted_color: '0 0% 55%',
+  button_border_radius: '0.125rem',
+  button_font_weight: '700',
+  button_neon_enabled: true
 }

@@ -2,7 +2,15 @@ import path from "path"
 import react from "@vitejs/plugin-react"
 import { defineConfig, loadEnv } from "vite"
 import { visualizer } from "rollup-plugin-visualizer"
-import prerender from 'vite-plugin-prerender'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+const prerender = require('vite-plugin-prerender')
+
+interface RenderedRoute {
+  html: string;
+  route: string;
+  outputPath: string;
+}
 
 // https://vite.dev/config/
 export default defineConfig(async ({ mode }) => {
@@ -18,7 +26,7 @@ export default defineConfig(async ({ mode }) => {
         brotliSize: true,
         template: 'treemap'
       }),
-      prerender({
+      mode === 'production' && prerender({
         staticDir: path.resolve(__dirname, 'dist'),
         routes: [
           '/', 
@@ -51,7 +59,7 @@ export default defineConfig(async ({ mode }) => {
             '--no-zygote'
           ]
         }),
-        postProcess(renderedRoute: any) {
+        postProcess(renderedRoute: RenderedRoute) {
           renderedRoute.html = renderedRoute.html
             .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, (match: string) => {
               if (match.includes('src') || match.includes('import')) return match;
@@ -65,7 +73,7 @@ export default defineConfig(async ({ mode }) => {
           return renderedRoute;
         }
       })
-    ],
+    ].filter(Boolean),
     server: {
       port: 3000,
     },

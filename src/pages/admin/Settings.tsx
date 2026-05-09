@@ -20,7 +20,8 @@ import {
   Twitter,
   Building2,
   Palette,
-  FileText
+  FileText,
+  MousePointer2
 } from 'lucide-react'
 
 import { adminService, type AuditLogEntry, type AdminUser } from '@/services/adminService'
@@ -77,6 +78,7 @@ export default function AdminSettings() {
     { id: 'system', label: 'Preferences', icon: Globe },
     { id: 'movement', label: 'Movement Info', icon: Megaphone },
     { id: 'security', label: 'Security', icon: Lock },
+    { id: 'buttons', label: 'Buttons', icon: MousePointer2 },
     { id: 'audit', label: 'Audit Log', icon: History },
   ]
 
@@ -799,7 +801,7 @@ export default function AdminSettings() {
                         disabled={isSaving}
                         className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
                       >
-                        {isSaving ? 'Synchronizing...' : 'Commit Configurations'}
+                        {isSaving ? 'Syncing...' : 'Synchronize Configurations'}
                       </Button>
                     </div>
                   </div>
@@ -987,6 +989,165 @@ export default function AdminSettings() {
                         )}
                       </div>
                     ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'buttons' && (
+            <div className="space-y-8">
+              <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
+                <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
+                  <CardTitle className="text-sm font-bold text-stone-900">Button Architecture</CardTitle>
+                  <CardDescription className="text-tiny font-medium text-stone-400 mt-1">Configure the movement's global interactive element parameters and visual feedback systems.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-8 space-y-12">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div className="space-y-8">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-end">
+                          <Label className="text-micro font-bold text-stone-500 normal-case">Global border radius</Label>
+                          <span className="text-micro font-mono font-bold text-primary">{(siteSettings.button_border_radius as string) || '0.125rem'}</span>
+                        </div>
+                        <div className="grid grid-cols-5 gap-2">
+                          {[
+                            { label: 'Square', value: '0px' },
+                            { label: 'XS', value: '0.125rem' },
+                            { label: 'SM', value: '0.25rem' },
+                            { label: 'MD', value: '0.5rem' },
+                            { label: 'Full', value: '9999px' }
+                          ].map((radius) => (
+                            <Button
+                              key={radius.value}
+                              variant={siteSettings.button_border_radius === radius.value ? "primary" : "outline"}
+                              onClick={() => setSiteSettings({ ...siteSettings, button_border_radius: radius.value })}
+                              className="h-10 text-[10px] font-bold px-0 rounded-none"
+                            >
+                              {radius.label}
+                            </Button>
+                          ))}
+                        </div>
+                        <p className="text-micro text-stone-400 italic">Defines the silhouette of all buttons across the mobilization platform.</p>
+                      </div>
+
+                      <div className="space-y-4 pt-4 border-t border-stone-100">
+                        <Label className="text-micro font-bold text-stone-500 normal-case">Visual Feedback Systems</Label>
+                        <div className="flex items-center justify-between p-4 rounded-sm border border-stone-100 bg-stone-50/50">
+                          <div>
+                            <p className="text-xs font-bold text-stone-900">Neon Glow Effects</p>
+                            <p className="text-micro text-stone-400 font-medium">Toggle administrative glow signatures on hover.</p>
+                          </div>
+                          <button 
+                            onClick={() => setSiteSettings({ ...siteSettings, button_neon_enabled: !siteSettings.button_neon_enabled })}
+                            className={cn(
+                              "w-10 h-5 rounded-full flex items-center px-1 transition-colors",
+                              siteSettings.button_neon_enabled ? "bg-emerald-500 justify-end" : "bg-stone-200 justify-start"
+                            )}
+                          >
+                            <div className="w-3 h-3 bg-white rounded-full shadow-sm" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-4 border-t border-stone-100">
+                        <Label className="text-micro font-bold text-stone-500 normal-case">Typography Weight</Label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            { label: 'Normal', value: '400' },
+                            { label: 'Bold', value: '700' },
+                            { label: 'Black', value: '900' }
+                          ].map((weight) => (
+                            <Button
+                              key={weight.value}
+                              variant={siteSettings.button_font_weight === weight.value ? "primary" : "outline"}
+                              onClick={() => setSiteSettings({ ...siteSettings, button_font_weight: weight.value })}
+                              className="h-10 text-[10px] font-bold rounded-none"
+                            >
+                              {weight.label}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-8 bg-stone-50/50 p-8 rounded-sm border border-stone-100">
+                      <h4 className="text-xs font-bold text-stone-900 tracking-tight flex items-center gap-2 mb-6">
+                        <Smartphone className="w-4 h-4 text-primary" />
+                        Component Preview Gallery
+                      </h4>
+                      
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Primary / Action</p>
+                          <div className="flex flex-wrap gap-4">
+                            <Button variant="primary" neon={siteSettings.button_neon_enabled as boolean}>Join Movement</Button>
+                            <Button variant="primary" size="sm" neon={siteSettings.button_neon_enabled as boolean}>Action</Button>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Accent / Gold</p>
+                          <div className="flex flex-wrap gap-4">
+                            <Button variant="gold" neon={siteSettings.button_neon_enabled as boolean}>Official Vision</Button>
+                            <Button variant="gold" size="sm" neon={siteSettings.button_neon_enabled as boolean}>Vision</Button>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Outline / Ghost</p>
+                          <div className="flex flex-wrap gap-4">
+                            <Button variant="outline" neon={siteSettings.button_neon_enabled as boolean}>Cancel Submission</Button>
+                            <Button variant="ghost" neon={siteSettings.button_neon_enabled as boolean}>View More</Button>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Destructive / Alert</p>
+                          <div className="flex flex-wrap gap-4">
+                            <Button 
+                              className="bg-destructive hover:bg-destructive/90 text-white border-transparent"
+                              neon={siteSettings.button_neon_enabled as boolean}
+                            >
+                              Revoke Access
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-8 flex justify-end border-t border-stone-100">
+                    <Button 
+                      variant="primary"
+                      size="lg"
+                      onClick={async () => {
+                        setIsSaving(true)
+                        const toastId = toast.loading('Syncing button architecture...')
+                        try {
+                          const settingsToUpdate = [
+                            { key: 'button_border_radius', value: siteSettings.button_border_radius },
+                            { key: 'button_font_weight', value: siteSettings.button_font_weight },
+                            { key: 'button_neon_enabled', value: siteSettings.button_neon_enabled }
+                          ]
+                          
+                          await Promise.all(settingsToUpdate.map(s => 
+                            adminService.updateSiteSetting(s.key, s.value)
+                          ))
+
+                          window.dispatchEvent(new CustomEvent('site_settings_updated'))
+                          toast.success('Button architecture synchronized', { id: toastId })
+                        } catch (err: unknown) {
+                          toast.error(err instanceof Error ? err.message : 'Failed to update button telemetry', { id: toastId })
+                        } finally {
+                          setIsSaving(false)
+                        }
+                      }}
+                      disabled={isSaving}
+                      className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+                    >
+                      {isSaving ? 'Syncing...' : 'Save Button Settings'}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

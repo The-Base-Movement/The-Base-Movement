@@ -92,6 +92,10 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
               /* Body Text Scaling */
               --p-size: clamp(calc(0.875rem * var(--font-scale)), calc(0.5vw + 0.75rem), calc(1.125rem * var(--font-scale)));
               --text-tiny: clamp(0.65rem, 0.4vw + 0.5rem, 0.8rem);
+
+              /* Button Configuration */
+              --button-radius: ${settings.button_border_radius || '0.125rem'};
+              --button-font-weight: ${settings.button_font_weight || '700'};
             }
           `}
         </style>
