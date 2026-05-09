@@ -155,25 +155,25 @@ export default function Store() {
         canonical="/store"
       />
       <div className="bg-white border-b border-stone-200">
-        <div className="max-w-[1280px] mx-auto px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
-          <div className="mt-4">
-            <h1 className="text-stone-900 mb-4 flex items-center gap-3">
-              <ShoppingBag className="w-8 h-8 text-brand-green" />
+          <div className="mt-6">
+            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
+              <ShoppingBag className="w-10 h-10 text-brand-green" />
               Movement Supplies
             </h1>
             <BrandLine />
-            <p className="text-stone-500 max-w-2xl mt-4 leading-relaxed font-bold tracking-tight">
+            <p className="text-stone-500 max-w-2xl mt-6 leading-relaxed font-medium text-sm md:text-base">
               Equip yourself with official movement gear. Every purchase directly funds our grassroots organizing and civic education programs.
             </p>
           </div>
         </div>
       </div>
 
-      <main className="max-w-[1280px] mx-auto px-8 mt-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 lg:mb-12">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-red h-12 text-tiny font-bold tracking-tight rounded-none">
+            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-red h-12 text-tiny font-bold tracking-tight rounded-none !overflow-visible">
               <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/wishlist' : '/store/wishlist'}>
                 <Heart className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-red transition-all" />
                 Wishlist
@@ -184,7 +184,7 @@ export default function Store() {
                 )}
               </Link>
             </Button>
-            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-green h-12 text-tiny font-bold tracking-tight rounded-none">
+            <Button asChild variant="ghost" className="flex-1 md:flex-none relative group border-stone-200 hover:border-brand-green h-12 text-tiny font-bold tracking-tight rounded-none !overflow-visible">
               <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}>
                 <ShoppingBag className="w-4 h-4 mr-2 text-stone-500 group-hover:text-brand-green transition-all" />
                 Bag
@@ -223,9 +223,9 @@ export default function Store() {
           </aside>
 
           <div className="flex-1">
-            <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
               {loading ? (
-                Array.from({ length: 8 }).map((_, i) => (
+                Array.from({ length: 9 }).map((_, i) => (
                   <div key={i} className="aspect-[3/4] bg-stone-100 animate-pulse rounded-none" />
                 ))
               ) : paginatedProducts.length > 0 ? (

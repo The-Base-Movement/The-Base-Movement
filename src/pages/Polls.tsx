@@ -72,22 +72,22 @@ export default function Polls() {
       />
       {/* Header */}
       <div className="bg-white border-b border-stone-200">
-        <div className="py-6">
+        <div className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
           <Breadcrumbs />
-          <div className="mt-4">
-              <h1 className="text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-4 text-stone-900 flex items-center gap-3">
-                <Vote className="w-8 h-8 text-primary" />
-                Feedback
-              </h1>
-              <BrandLine />
-            <p className="text-stone-500 max-w-2xl mt-4 mb-0">
+          <div className="mt-6">
+            <h1 className="text-5xl md:text-6xl font-meta font-bold tracking-tighter mb-6 text-stone-900 flex items-center gap-4">
+              <Vote className="w-10 h-10 text-primary" />
+              Feedback
+            </h1>
+            <BrandLine />
+            <p className="text-stone-500 max-w-3xl text-sm md:text-base mt-6 mb-0 leading-relaxed">
               Your voice shapes the movement. Participate in our regular polls to help prioritize the plan and regional interventions.
             </p>
           </div>
-          </div>
-          </div>
+        </div>
+      </div>
 
-          <main className="mt-12">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
 
           {/* Active Polls Section */}

@@ -206,8 +206,9 @@ class DonationService {
   }
 
   subscribeToPublicDonations(callback: (donation: DonationDetail) => void): RealtimeChannel {
+    const channelId = `public_donations_${Math.random().toString(36).substring(2, 9)}`
     return supabase
-      .channel('public_donations')
+      .channel(channelId)
       .on(
         'postgres_changes',
         {
