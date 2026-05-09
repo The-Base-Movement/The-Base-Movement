@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ArrowRight, Loader2 } from 'lucide-react'
+import { ArrowRight, Loader2, Newspaper } from 'lucide-react'
+import { BrandLine } from '@/components/ui/BrandLine'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Button } from '@/components/ui/neon-button'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
@@ -39,26 +41,30 @@ export default function Blog() {
   const rest = filtered.slice(1)
 
   return (
-    <div className="bg-surface-warm font-body-md min-h-screen">
+    <div className="min-h-screen bg-stone-50/50 font-meta pb-20">
       <SEO 
         title="Updates & Insights"
         description="Perspectives on governance, youth empowerment, diaspora engagement and the future of Ghana from within The Base Movement."
         canonical="/blog"
       />
-      {/* Hero */}
-      <section className="bg-charcoal-dark text-white py-20 px-8 border-b-4 border-[var(--brand-green)]">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="font-meta text-warm-gold tracking-tight text-xs mb-3">The Base Insights</p>
-          <h1 className="font-meta font-bold text-4xl md:text-5xl tracking-tight leading-tight mb-4 max-w-2xl">
-            Ideas, analysis & movement news
-          </h1>
-          <p className="text-slate-400 max-w-xl text-base">
-            Perspectives from within the movement on governance, youth empowerment, diaspora engagement and the future of Ghana.
-          </p>
+      {/* Hero Section */}
+      <div className="bg-white border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+          <Breadcrumbs />
+          <div className="mt-6">
+            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
+              <Newspaper className="w-10 h-10 text-brand-green" />
+              Updates & Insights
+            </h1>
+            <BrandLine />
+            <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
+              Perspectives from within the movement on governance, youth empowerment, diaspora engagement and the future of Ghana.
+            </p>
+          </div>
         </div>
-      </section>
+      </div>
 
-      <div className="max-w-[1280px] mx-auto px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
 
         {/* Category Filter */}
         <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
@@ -162,25 +168,7 @@ export default function Blog() {
 
                   {/* Sidebar */}
                   <aside className="lg:w-1/3 space-y-12">
-                    <div>
-                      <h2 className="text-stone-900 font-bold tracking-tight mb-6">Categories</h2>
-                      <div className="bg-white border border-slate-200 p-8 space-y-2">
-                        {categories.filter(c => c !== 'All').map((cat) => (
-                          <button
-                            key={cat}
-                            onClick={() => setActiveCategory(cat)}
-                            className="w-full flex items-center justify-between p-3 text-xs font-bold tracking-tight text-slate-600 hover:bg-slate-50 hover:text-brand-green transition-all group"
-                          >
-                            {cat}
-                            <span className="text-micro text-slate-300 font-meta group-hover:text-brand-green transition-colors">
-                              {posts.filter(p => p.category === cat).length} Posts
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
+                    <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white shadow-xl shadow-slate-200/40">
                       <h4 className="font-meta font-bold text-lg tracking-tight mb-4">The Base Weekly</h4>
                       <p className="text-xs text-slate-400 leading-relaxed mb-6">
                         Get the movement's authoritative policy briefs and news delivered directly to your inbox every week.
