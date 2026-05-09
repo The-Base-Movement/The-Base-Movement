@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ShoppingBag, ArrowLeft, Star, Plus, Minus, ShieldCheck, Truck, RefreshCw, Heart, Share2 } from 'lucide-react'
+import { ShoppingBag, Star, Plus, Minus, ShieldCheck, Truck, RefreshCw, Heart, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
@@ -156,15 +156,7 @@ export default function ProductDetails() {
       />
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-12">
       <Breadcrumbs />
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <Link 
-          to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store' : '/store'}
-          className="inline-flex items-center gap-2 text-stone-500 hover:text-brand-green transition-colors group"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-meta text-micro font-bold tracking-tight">Back to store</span>
-        </Link>
-
+      <div className="flex flex-col md:flex-row md:items-center justify-end gap-6 mb-12 mt-4">
         <div className="flex items-center gap-3">
           <Link 
             to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store/wishlist' : '/store/wishlist'}
@@ -246,7 +238,7 @@ export default function ProductDetails() {
               <span className="text-stone-300">|</span>
               <span className="text-sm text-stone-500">{product.reviews || 0} Verified reviews</span>
             </div>
-            <p className="text-2xl font-bold text-brand-green">{product.price}</p>
+            <p className="text-2xl font-bold text-brand-green">GH₵{product.price.toString().replace('GHS', '').replace('GH₵', '').trim()}</p>
           </div>
 
           <p className="text-stone-600 font-body-md leading-relaxed mb-10">
@@ -352,7 +344,8 @@ export default function ProductDetails() {
                 <Button 
                   onClick={checkRegionalAvailability}
                   disabled={checkingAvailability}
-                  className="h-10 px-4 bg-stone-900 text-white text-micro font-bold tracking-tight rounded-sm hover:bg-brand-green transition-all"
+                  variant="primary"
+                  className="h-10 px-4 text-white text-micro font-bold tracking-tight rounded-sm transition-all"
                 >
                   {checkingAvailability ? 'Checking...' : 'Check'}
                 </Button>
@@ -416,7 +409,7 @@ export default function ProductDetails() {
               variant={isComingSoon ? "outline" : "primary"}
               className={cn(
                 "flex-1 h-14 text-xs font-bold tracking-tight rounded-sm",
-                isComingSoon ? "bg-stone-100 text-stone-400 border-stone-200" : "shadow-lg shadow-brand-green/20"
+                isComingSoon ? "bg-stone-100 text-stone-400 border-stone-200" : "shadow-lg shadow-brand-green/20 text-white"
               )}
             >
               {isComingSoon ? 'Coming soon' : (
@@ -482,7 +475,7 @@ export default function ProductDetails() {
               <p className="text-micro font-bold text-stone-400 tracking-tight">Average patriot rating</p>
             </div>
             <div className="w-px h-12 bg-stone-200" />
-            <Button variant="primary" className="h-12 text-micro font-bold tracking-tight px-8 rounded-none">
+            <Button variant="primary" className="h-12 text-micro font-bold tracking-tight px-8 rounded-none text-white">
               Write a review
             </Button>
           </div>
