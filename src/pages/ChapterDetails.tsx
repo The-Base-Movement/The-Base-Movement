@@ -65,13 +65,16 @@ export default function ChapterDetails() {
             
             <div className="flex gap-3">
               <Button 
-                variant="default" 
-                className="border-stone-200 text-stone-600 rounded-none h-12 px-6"
+                variant="outline" 
+                className="rounded-none h-12 px-6 font-bold tracking-tight text-xs"
                 onClick={() => setIsShareModalOpen(true)}
               >
                 <Share2 className="w-4 h-4 mr-2" /> Share
               </Button>
-              <Button className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-xs h-12 px-8 rounded-none">
+              <Button 
+                variant="primary"
+                className="font-bold tracking-tight text-xs h-12 px-8 rounded-none"
+              >
                 Join this chapter
               </Button>
             </div>
@@ -89,9 +92,9 @@ export default function ChapterDetails() {
             <section className="bg-white border border-stone-200 rounded-none overflow-hidden flex flex-col">
               <div className="h-1.5 w-full bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]"></div>
               <div className="p-10">
-                <h2 className="text-xl font-bold text-stone-900 tracking-tight font-meta mb-6 flex items-center gap-3">
+                <h2 className="text-lg font-bold text-stone-900 tracking-tight font-meta mb-6 flex items-center gap-3">
                 <Globe className="w-5 h-5 text-[var(--brand-green)]" />
-                About This Chapter
+                About this chapter
               </h2>
               <div className="prose prose-stone max-w-none">
                 <p className="text-stone-600 leading-relaxed italic border-l-4 border-warm-gold/30 pl-4 py-1">
@@ -118,11 +121,11 @@ export default function ChapterDetails() {
             {/* Recent Activities */}
             <section>
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold text-stone-900 tracking-tight font-meta flex items-center gap-3">
+                <h2 className="text-lg font-bold text-stone-900 tracking-tight font-meta flex items-center gap-3">
                   <Calendar className="w-5 h-5 text-[var(--brand-green)]" />
-                  Recent Activities
+                  Recent activities
                 </h2>
-                <button className="text-micro font-bold text-[var(--brand-green)] tracking-tight hover:underline">View all</button>
+                <button className="text-[10px] font-bold text-[var(--brand-green)] tracking-tight hover:underline">View all</button>
               </div>
               
               <div className="space-y-4">
@@ -210,12 +213,15 @@ export default function ChapterDetails() {
 
           {/* Quick Support */}
           <div className="bg-stone-100 p-8 rounded-none border border-stone-200">
-            <h3 className="text-sm font-bold tracking-tight mb-4 text-stone-900">Support local</h3>
-            <p className="text-xs text-stone-500 leading-relaxed mb-6">
+            <h3 className="text-xs font-bold tracking-tight mb-4 text-stone-900">Support local</h3>
+            <p className="text-[10px] text-stone-500 leading-relaxed mb-6">
               Your donations to this specific chapter help fund local townhalls and community outreach programs in {chapter.city_or_region}.
             </p>
             <Link to="/dashboard/donate">
-              <Button className="w-full bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white rounded-none">
+              <Button 
+                variant="gold"
+                className="w-full text-xs font-bold tracking-tight h-12 rounded-none"
+              >
                 Donate to chapter
               </Button>
             </Link>
