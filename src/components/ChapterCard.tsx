@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Users, ArrowRight, ShieldCheck, Zap } from 'lucide-react'
+import { MapPin, Users, ShieldCheck, Zap } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { type Chapter } from '@/services/adminService'
@@ -9,10 +9,9 @@ interface ChapterCardProps {
   chapter: Chapter
   requestSent: Record<string, boolean>
   countryFlags: Record<string, string>
-  handleJoinRequest: (e: React.MouseEvent, chapterId: string) => void
 }
 
-export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequest }: ChapterCardProps) {
+export function ChapterCard({ chapter, requestSent, countryFlags }: ChapterCardProps) {
   const isRequestPending = requestSent[chapter.id]
   const isActive = (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member'
   
@@ -33,57 +32,57 @@ export function ChapterCard({ chapter, requestSent, countryFlags, handleJoinRequ
         </div>
 
         <div className="p-6 flex-1 flex flex-col">
-          {/* Header Section */}
-          <div className="flex justify-between items-start mb-8">
-            <div className="relative">
-              <div className="w-14 h-14 bg-stone-50 border border-stone-100 flex items-center justify-center text-stone-300 group-hover:text-[var(--brand-green)] group-hover:border-[var(--brand-green)]/20 group-hover:bg-[var(--brand-green)]/5 transition-all duration-500">
+          {/* Header & Main Info */}
+          <div className="flex items-start gap-4 mb-6">
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 bg-stone-50 border border-stone-100 flex items-center justify-center text-stone-300 group-hover:text-[var(--brand-green)] group-hover:border-[var(--brand-green)]/20 group-hover:bg-[var(--brand-green)]/5 transition-all duration-500">
                 {chapter.country === 'Ghana' ? (
-                  <MapPin className="w-6 h-6" />
+                  <MapPin className="w-5 h-5" />
                 ) : (
-                  <span className="text-2xl filter grayscale group-hover:grayscale-0 transition-all duration-500">
+                  <span className="text-xl filter grayscale group-hover:grayscale-0 transition-all duration-500">
                     {countryFlags[chapter.country] || '🌍'}
                   </span>
                 )}
               </div>
               {isActive && (
-                <div className="absolute -top-2 -right-2 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                  <ShieldCheck className="w-3 h-3 text-white" />
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                  <ShieldCheck className="w-2.5 h-2.5 text-white" />
                 </div>
               )}
             </div>
-            
-          {/* Main Content */}
-          <div className="flex justify-between items-start mb-6">
-            <div className="space-y-1">
-              <h3 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors text-base font-bold tracking-tight font-meta leading-tight normal-case">
-                {chapter.name}
-              </h3>
-              <p className="text-[10px] font-medium tracking-tight normal-case text-stone-400">
-                {chapter.city_or_region} • {chapter.country}
-              </p>
-            </div>
-            
-            <div className="flex flex-col items-end gap-2">
-              <div className={cn(
-                "px-2 py-0.5 text-[9px] font-bold tracking-tight normal-case",
-                isRequestPending 
-                  ? "bg-amber-50 text-amber-600 border border-amber-100"
-                  : isActive
-                    ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                    : "bg-stone-50 text-stone-400 border border-stone-100"
-              )}>
-                {isRequestPending ? 'Pending' : (isActive ? 'Active' : 'Hub')}
+
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-center mb-1 gap-2">
+                <h3 className="text-stone-900 group-hover:text-[var(--brand-green)] transition-colors text-base font-bold tracking-tight font-meta leading-tight normal-case truncate">
+                  {chapter.name}
+                </h3>
+                <div className={cn(
+                  "px-2 py-0.5 text-[9px] font-bold tracking-tight normal-case flex-shrink-0",
+                  isRequestPending 
+                    ? "bg-amber-50 text-amber-600 border border-amber-100"
+                    : isActive
+                      ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                      : "bg-stone-50 text-stone-400 border border-stone-100"
+                )}>
+                  {isRequestPending ? 'Pending' : (isActive ? 'Active' : 'Hub')}
+                </div>
               </div>
               
-              <Link to={`/dashboard/chapters/${chapter.id}`}>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="h-7 px-3 text-[10px] font-bold tracking-tight normal-case rounded-none border-brand-green/20 text-brand-green hover:bg-brand-green hover:text-white transition-all"
-                >
-                  View details
-                </Button>
-              </Link>
+              <div className="flex justify-between items-center gap-4 mt-2">
+                <p className="text-[10px] font-medium tracking-tight normal-case text-stone-400 truncate">
+                  {chapter.city_or_region} • {chapter.country}
+                </p>
+                
+                <Link to={`/dashboard/chapters/${chapter.id}`} className="flex-shrink-0">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="h-7 px-3 text-[10px] font-bold tracking-tight normal-case rounded-none border-brand-green/20 text-brand-green hover:bg-brand-green hover:text-white transition-all shadow-none"
+                  >
+                    View details
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
           

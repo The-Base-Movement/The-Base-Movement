@@ -305,7 +305,6 @@ export default function Chapters() {
                   chapter={chapter} 
                   requestSent={requestSent} 
                   countryFlags={countryFlags} 
-                  handleJoinRequest={handleJoinRequest} 
                 />
               ))}
             </div>
