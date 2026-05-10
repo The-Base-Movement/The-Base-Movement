@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { MapPin, Search, Plus, Building2, Send, Globe } from 'lucide-react'
@@ -93,6 +93,20 @@ export default function Chapters() {
   const { chapters } = useChapters()
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<'ghana' | 'diaspora'>('ghana')
+  const [selectedRegion, setSelectedRegion] = useState<string>('All Regions')
+  const [regions, setRegions] = useState<string[]>([])
+
+  useEffect(() => {
+    const fetchRegions = async () => {
+      const res = await adminService.getRegions()
+      setRegions(['All Regions', ...res.map(r => r.name)])
+    }
+    fetchRegions()
+  }, [])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, selectedRegion, activeTab])
 
 
   const ghanaChapters = chapters.filter(c => c.country === 'Ghana')
@@ -139,11 +153,16 @@ export default function Chapters() {
     }
   }
 
-  const filteredChapters = (activeTab === 'ghana' ? ghanaChapters : diasporaChapters).filter(c => 
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    c.city_or_region.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.country.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredChapters = (activeTab === 'ghana' ? ghanaChapters : diasporaChapters).filter(c => {
+    const matchesSearch = 
+      c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      c.city_or_region.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.country.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesRegion = activeTab === 'diaspora' || selectedRegion === 'All Regions' || c.region === selectedRegion;
+    
+    return matchesSearch && matchesRegion;
+  });
 
   // Pagination Logic
   const itemsPerPage = 12;
@@ -161,7 +180,7 @@ export default function Chapters() {
       <div className="bg-white border border-stone-200 p-6">
         <div className="space-y-6">
           <div>
-            <label className="text-micro font-bold text-stone-900 mb-3 block">
+            <label className="text-micro font-medium text-stone-900 mb-3 block">
               Search hubs
             </label>
             <div className="relative">
@@ -176,30 +195,52 @@ export default function Chapters() {
           </div>
 
           <div>
-            <label className="text-[10px] font-bold text-stone-900 mb-3 block">
+            <label className="text-[10px] font-medium text-stone-900 mb-3 block">
               Region filter
             </label>
             <div className="flex flex-col gap-2">
               <Button 
                 variant="solid"
-                onClick={() => setActiveTab('ghana')}
+                onClick={() => {
+                  setActiveTab('ghana')
+                  setSelectedRegion('All Regions')
+                }}
                 className={cn(
-                  "w-full justify-between font-bold tracking-tight text-tiny h-11 px-4 rounded-none transition-all duration-300",
+                  "w-full justify-between font-medium tracking-tight text-tiny h-11 px-4 rounded-none transition-all duration-300",
                   activeTab === 'ghana' ? "bg-brand-green text-white" : "bg-white text-stone-500 border-stone-200"
                 )}
               >
-                Ghana Regions
+                Ghana regions
                 <MapPin className="w-4 h-4" />
               </Button>
+              
+              {activeTab === 'ghana' && regions.length > 0 && (
+                <div className="mt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <select 
+                    value={selectedRegion}
+                    onChange={(e) => setSelectedRegion(e.target.value)}
+                    className="w-full h-11 bg-stone-100 border-stone-200 text-stone-900 font-medium text-[10px] px-3 focus:ring-1 focus:ring-brand-green outline-none rounded-none appearance-none cursor-pointer"
+                    style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
+                  >
+                    {regions.map(region => (
+                      <option key={region} value={region}>{region}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <Button 
                 variant="outline"
-                onClick={() => setActiveTab('diaspora')}
+                onClick={() => {
+                  setActiveTab('diaspora')
+                  setSelectedRegion('All Regions')
+                }}
                 className={cn(
-                  "w-full justify-between font-bold tracking-tight text-tiny h-11 px-4 rounded-none transition-all duration-300",
+                  "w-full justify-between font-medium tracking-tight text-tiny h-11 px-4 rounded-none transition-all duration-300",
                   activeTab === 'diaspora' ? "border-brand-green text-brand-green" : "border-stone-200 text-stone-500"
                 )}
               >
-                Global Diaspora
+                Global diaspora
                 <Globe className="w-4 h-4" />
               </Button>
             </div>
@@ -362,7 +403,7 @@ export default function Chapters() {
               <p className="text-muted-foreground/80 text-lg leading-relaxed italic max-w-2xl font-body-md">
                 "Our strength lies in our unity across borders. Together, we build the foundations of a new Ghana. Every chapter is a pillar of our collective destiny."
               </p>
-              <div className="mt-6 h-1 w-24 bg-gradient-to-r from-[var(--brand-red)] via-[var(--brand-gold)] to-[var(--brand-green)]" />
+              <BrandLine className="w-24 mt-6" />
             </div>
           </div>
         </div>
@@ -394,7 +435,7 @@ export default function Chapters() {
           ) : (
             <form onSubmit={handleSubmitRequest} className="p-8 space-y-6">
               <div className="space-y-1.5">
-                <label className="text-micro font-bold text-stone-400 tracking-tight">Chapter location / country</label>
+                <label className="text-micro font-medium text-stone-400 tracking-tight">Chapter location / country</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
                   <Input 
@@ -408,7 +449,7 @@ export default function Chapters() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-micro font-bold text-stone-400 tracking-tight">Why start a chapter here?</label>
+                <label className="text-micro font-medium text-stone-400 tracking-tight">Why start a chapter here?</label>
                 <Textarea 
                   required
                   placeholder="Describe the local interest and your vision for organizing this hub..."

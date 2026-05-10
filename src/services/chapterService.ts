@@ -58,6 +58,7 @@ class ChapterService {
       leader_name: c.leader_name || 'Unassigned',
       member_count: c.member_count || 0,
       status: c.status,
+      region: c.region || undefined,
       description: c.description || undefined,
       details_url: c.details_url || undefined,
       meeting_schedule: c.meeting_schedule || undefined,
@@ -104,6 +105,7 @@ class ChapterService {
       leader_name: data.leader_name || 'Unassigned',
       member_count: data.member_count || 0,
       status: data.status,
+      region: data.region || undefined,
       description: data.description || undefined,
       details_url: data.details_url || undefined,
       meeting_schedule: data.meeting_schedule || undefined,
@@ -136,8 +138,13 @@ class ChapterService {
         leader_name: chapter.leader_name,
         member_count: chapter.member_count,
         status: chapter.status,
+        region: chapter.region,
         description: chapter.description,
-        details_url: chapter.details_url
+        details_url: chapter.details_url,
+        meeting_schedule: chapter.meeting_schedule,
+        local_focus: chapter.local_focus,
+        email: chapter.email,
+        phone_number: chapter.phone_number
       })
 
     if (error) {
@@ -155,9 +162,14 @@ class ChapterService {
     if (chapter.country) updateData.country = chapter.country
     if (chapter.leader_name) updateData.leader_name = chapter.leader_name
     if (chapter.status) updateData.status = chapter.status
+    if (chapter.region) updateData.region = chapter.region
     if (chapter.member_count !== undefined) updateData.member_count = chapter.member_count
     if (chapter.description) updateData.description = chapter.description
     if (chapter.details_url) updateData.details_url = chapter.details_url
+    if (chapter.meeting_schedule) updateData.meeting_schedule = chapter.meeting_schedule
+    if (chapter.local_focus) updateData.local_focus = chapter.local_focus
+    if (chapter.email) updateData.email = chapter.email
+    if (chapter.phone_number) updateData.phone_number = chapter.phone_number
 
     const { error } = await supabase
       .from('chapters')

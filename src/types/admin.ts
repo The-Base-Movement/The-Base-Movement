@@ -41,6 +41,7 @@ export interface ChapterActivity {
 export interface Chapter {
   id: string
   name: string
+  region?: string
   city_or_region: string
   country: string
   leader_name: string
