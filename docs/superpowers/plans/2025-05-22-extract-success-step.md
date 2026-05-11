@@ -1,6 +1,27 @@
+# Extract SuccessStep Component Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Extract the registration completion screen into a modular `SuccessStep` component.
+
+**Architecture:** Create a functional component that accepts `formData`, `photoUrl`, `regNumber`, and an `onEdit` callback as props.
+
+**Tech Stack:** React, TypeScript, Tailwind CSS, Lucide React, React Router.
+
+---
+
+### Task 1: Create SuccessStep Component
+
+**Files:**
+- Create: `src/pages/register/components/SuccessStep.tsx`
+
+- [ ] **Step 1: Create SuccessStep.tsx with the provided implementation**
+
+```tsx
+// src/pages/register/components/SuccessStep.tsx
 import { CheckCircle2, ArrowLeft, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
-import MembershipCard from '@/components/MembershipCard'
+import MembershipCard from '../../components/MembershipCard'
 import { useNavigate } from 'react-router-dom'
 import type { RegistrationFormData } from '@/types/registration'
 
@@ -103,3 +124,11 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
     </div>
   )
 }
+```
+
+- [ ] **Step 2: Commit Task 1**
+
+```bash
+git add src/pages/register/components/SuccessStep.tsx
+git commit -m "refactor: extract SuccessStep component for registration"
+```

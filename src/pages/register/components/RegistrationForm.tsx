@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowLeft, Zap, Loader2, Eye, EyeOff, Upload } from 'lucide-react'
+import { ArrowRight, Zap, Loader2, Eye, EyeOff, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
@@ -23,7 +23,7 @@ interface RegistrationFormProps {
   ageRanges: string[]
   onPlatformChange: (p: string) => void
   onIdScan: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onInputChange: (field: string, value: any) => void
+  onInputChange: (field: string, value: string | number) => void
   onPasswordToggle: () => void
   onAgreedChange: (val: boolean) => void
   onPhotoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void

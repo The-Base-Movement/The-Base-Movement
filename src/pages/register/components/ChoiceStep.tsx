@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import { FileText, User, ArrowRight } from 'lucide-react'
 import SEO from '@/components/SEO'
+import type { BrandingSettings } from '@/types/branding'
 
 interface ChoiceStepProps {
-  settings: any
+  settings: BrandingSettings
   onSelect: (platform: string) => void
 }
 

@@ -1,6 +1,5 @@
 import { Activity, Search, Download, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/neon-button'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 import { ButtonActiveTab } from '@/components/buttons/ButtonActiveTab'
 import { ButtonInactiveTab } from '@/components/buttons/ButtonInactiveTab'

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Home, Search, ArrowRight } from 'lucide-react'
-import { Button } from '../components/ui/neon-button'
+import { Button } from '@/components/ui/neon-button'
 import SEO from '@/components/SEO'
 
 export default function NotFound() {
