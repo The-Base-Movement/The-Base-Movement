@@ -188,7 +188,7 @@ export default function Dashboard() {
   return (
     <div>
       {/* Page Header */}
-      <div className="mb-12">
+      <header className="mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 mb-6 backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
           <span className="text-micro font-bold text-primary tracking-tight">National infrastructure stabilized</span>
@@ -198,7 +198,7 @@ export default function Dashboard() {
         <p className="text-on-surface/60 max-w-2xl mb-0">
           Welcome back, <span className="text-on-surface font-bold">{member?.full_name || 'Patriot'}</span>. Your tactical overview and movement directives are synchronized.
         </p>
-      </div>
+      </header>
       <WelcomeModal 
         isOpen={isWelcomeModalOpen}
         onClose={() => setIsWelcomeModalOpen(false)}

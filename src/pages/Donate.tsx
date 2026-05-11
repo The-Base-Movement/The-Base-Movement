@@ -221,7 +221,7 @@ export default function Donate() {
         description="your contributions for the growth and sustainability of the base movement. join citizens in ghana and across the diaspora working for a more productive future."
         canonical="/donate"
       />
-      <div className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
           <div className="mt-6">
@@ -235,7 +235,7 @@ export default function Donate() {
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
       <HeroStats 
         totalRaised={globalStats.totalRaised} 

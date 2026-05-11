@@ -48,7 +48,7 @@ export default function Blog() {
         canonical="/blog"
       />
       {/* Hero Section */}
-      <div className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
           <div className="mt-6">
@@ -62,7 +62,7 @@ export default function Blog() {
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
 

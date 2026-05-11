@@ -187,7 +187,7 @@ export default function Impact() {
       )}
 
       {/* Hero Section */}
-      <div className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
           <div className="mt-6">
@@ -201,7 +201,7 @@ export default function Impact() {
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">

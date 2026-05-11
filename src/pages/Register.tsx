@@ -319,7 +319,7 @@ export default function Register() {
 
   return (
     <main className="bg-background font-body-md min-h-screen">
-      <div className="bg-white border-b border-border/60 pt-16 pb-12 px-4 text-center">
+      <header className="bg-white border-b border-border/60 pt-16 pb-12 px-4 text-center">
         <div className="max-w-6xl mx-auto">
           <img src={settings.logo_url} alt="The Base" className="h-20 w-auto mx-auto mb-6 object-contain" decoding="async" />
           <h1 className="text-on-surface mb-2">The Base</h1>
@@ -337,7 +337,7 @@ export default function Register() {
             <ArrowLeft className="w-3.5 h-3.5" /> Back to registration options
           </Button>
         </div>
-      </div>
+      </header>
 
       <div className="max-w-6xl mx-auto py-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">

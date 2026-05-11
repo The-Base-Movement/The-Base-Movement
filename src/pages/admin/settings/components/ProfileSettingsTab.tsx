@@ -11,18 +11,20 @@ import {
 } from '@/components/ui/card'
 import type { AdminUser } from '@/services/adminService'
 
+interface ProfileForm {
+  fullName: string
+  email: string
+  phone: string
+  avatarUrl: string
+}
+
 interface ProfileSettingsTabProps {
-  profileForm: {
-    fullName: string
-    email: string
-    phone: string
-    avatarUrl: string
-  }
-  setProfileForm: (form: any) => void
+  profileForm: ProfileForm
+  setProfileForm: (form: ProfileForm) => void
   isUploading: boolean
   isSaving: boolean
   adminData: AdminUser | null
-  fileInputRef: React.RefObject<HTMLInputElement>
+  fileInputRef: React.RefObject<HTMLInputElement | null>
   handleAvatarClick: () => void
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleSaveProfile: () => void

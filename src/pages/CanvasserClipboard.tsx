@@ -104,7 +104,7 @@ export default function CanvasserClipboard() {
 
   return (
     <div className="bg-stone-50/50 min-h-screen pb-20">
-      <div className="bg-white border-b border-stone-200 sticky top-0 z-30">
+      <header className="bg-white border-b border-stone-200 sticky top-0 z-30">
         <div className="max-w-3xl mx-auto px-6 py-6">
           <Breadcrumbs />
           <div className="mt-4">
@@ -120,7 +120,7 @@ export default function CanvasserClipboard() {
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
       <main className="max-w-3xl mx-auto px-6 mt-8">
         

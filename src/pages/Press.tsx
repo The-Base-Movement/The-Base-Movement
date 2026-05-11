@@ -38,7 +38,7 @@ export default function Press() {
         canonical="/press"
       />
       {/* Hero */}
-      <div className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">
+      <header className="bg-charcoal-dark text-white pt-24 pb-16 border-b-4 border-brand-green relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10">
           <Breadcrumbs />
@@ -50,7 +50,7 @@ export default function Press() {
             Authoritative updates, media assets, and official statements from The Base Movement's communication desk.
           </p>
         </div>
-      </div>
+      </header>
 
       <div className="max-w-[1280px] mx-auto px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">

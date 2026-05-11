@@ -254,7 +254,7 @@ export default function Members() {
       />
       
       {/* Standardized Header */}
-      <div className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
           <div className="mt-6">
@@ -271,7 +271,7 @@ export default function Members() {
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 mt-12">
         {/* Mobile Filter Trigger */}

@@ -10,13 +10,14 @@ import {
   CardDescription 
 } from '@/components/ui/card'
 import { adminService } from '@/services/adminService'
+import type { toast as ToastFn } from 'sonner'
 
 interface MovementInfoTabProps {
   siteSettings: Record<string, unknown>
-  setSiteSettings: (settings: any) => void
+  setSiteSettings: (settings: Record<string, unknown>) => void
   isSaving: boolean
   setIsSaving: (val: boolean) => void
-  toast: any
+  toast: typeof ToastFn
 }
 
 export function MovementInfoTab({

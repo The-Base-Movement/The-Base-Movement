@@ -234,7 +234,7 @@ export default function OurAgenda() {
         canonical="/our-agenda"
       />
       {/* Header */}
-      <div className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
+      <header className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <h1 className="tracking-tighter mb-4">The Plan</h1>
@@ -243,7 +243,7 @@ export default function OurAgenda() {
             The Six Aims of The Base. A detailed, actionable blueprint to build a stronger, more prosperous nation through patriotism, honesty, and discipline.
           </p>
         </div>
-      </div>
+      </header>
 
       <div className="max-w-[1280px] mx-auto px-8 mt-16">
         <div className="flex flex-col lg:flex-row gap-12">

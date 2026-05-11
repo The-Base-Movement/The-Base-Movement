@@ -155,7 +155,7 @@ export default function Store() {
         description="Equip yourself with official movement gear. Every purchase directly funds our grassroots organizing and civic education programs."
         canonical="/store"
       />
-      <div className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
           <div className="mt-6">
@@ -169,7 +169,7 @@ export default function Store() {
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
