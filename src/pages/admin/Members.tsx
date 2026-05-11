@@ -103,7 +103,16 @@ export default function MembersList() {
   const handlePrint = async () => {
     if (!cardRef.current) return
     try {
-      const canvas = await html2canvas(cardRef.current, { scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false })
+      const canvas = await html2canvas(cardRef.current, { 
+        scale: 4, 
+        useCORS: true, 
+        backgroundColor: '#ffffff', 
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: document.documentElement.offsetWidth,
+        windowHeight: document.documentElement.offsetHeight
+      })
       const imgData = canvas.toDataURL('image/png')
       const iframe = document.createElement('iframe')
       iframe.style.position = 'fixed'
@@ -120,13 +129,34 @@ export default function MembersList() {
           <head>
             <title>THE BASE - Official Membership Card</title>
             <style>
-              @page { size: 85.6mm 53.98mm; margin: 0; }
-              body { margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background: #fff; -webkit-print-color-adjust: exact; color-adjust: exact; }
-              img { width: 85.6mm; height: 53.98mm; display: block; image-rendering: -webkit-optimize-contrast; }
+              @page { 
+                size: 85.6mm 54mm; 
+                margin: 0; 
+              }
+              body { 
+                margin: 0; 
+                padding: 0; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                width: 85.6mm;
+                height: 54mm;
+                overflow: hidden;
+                background: #fff; 
+                -webkit-print-color-adjust: exact; 
+                color-adjust: exact; 
+              }
+              img { 
+                width: 85.6mm; 
+                height: 54mm; 
+                display: block; 
+                object-fit: contain;
+                image-rendering: -webkit-optimize-contrast; 
+              }
             </style>
           </head>
           <body>
-            <img src="${imgData}" onload="setTimeout(() = /> { window.print(); }, 200);" />
+            <img src="${imgData}" onload="setTimeout(() => { window.print(); }, 200);" />
           </body>
         </html>
       `)

@@ -2,6 +2,8 @@ import { CheckCircle2, ArrowLeft, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import MembershipCard from '@/components/MembershipCard'
 import { useNavigate } from 'react-router-dom'
+import { useRef } from 'react'
+import html2canvas from 'html2canvas'
 import type { RegistrationFormData } from '@/types/registration'
 
 interface SuccessStepProps {
@@ -13,6 +15,70 @@ interface SuccessStepProps {
 
 export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessStepProps) {
   const navigate = useNavigate()
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  const handlePrint = async () => {
+    if (!cardRef.current) return
+    try {
+      const canvas = await html2canvas(cardRef.current, { 
+        scale: 4, 
+        useCORS: true, 
+        backgroundColor: '#ffffff',
+        logging: false
+      })
+      const imgData = canvas.toDataURL('image/png')
+      const iframe = document.createElement('iframe')
+      iframe.style.position = 'fixed'
+      iframe.style.right = '0'
+      iframe.style.bottom = '0'
+      iframe.style.width = '0'
+      iframe.style.height = '0'
+      iframe.style.border = 'none'
+      document.body.appendChild(iframe)
+      const iframeDoc = iframe.contentWindow?.document
+      if (!iframeDoc) return
+      iframeDoc.write(`
+        <html>
+          <head>
+            <title>THE BASE - Membership Card</title>
+            <style>
+              @page { 
+                size: 85.6mm 54mm; 
+                margin: 0; 
+              }
+              body { 
+                margin: 0; 
+                padding: 0; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                width: 85.6mm;
+                height: 54mm;
+                overflow: hidden;
+                background: #fff; 
+                -webkit-print-color-adjust: exact; 
+                color-adjust: exact; 
+              }
+              img { 
+                width: 85.6mm; 
+                height: 54mm; 
+                display: block; 
+                object-fit: contain;
+                image-rendering: -webkit-optimize-contrast; 
+              }
+            </style>
+          </head>
+          <body>
+            <img src="${imgData}" onload="setTimeout(() => { window.print(); }, 200);" />
+          </body>
+        </html>
+      `)
+      iframeDoc.close()
+      setTimeout(() => { if (document.body.contains(iframe)) document.body.removeChild(iframe) }, 60000)
+    } catch (error) {
+      console.error('Error printing card:', error)
+    }
+  }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -30,7 +96,7 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
             <h3 className="font-meta font-bold text-micro text-muted-foreground/80 tracking-tight">Official membership card</h3>
           </div>
 
-          <div className="max-w-md mx-auto py-4">
+          <div className="max-w-md mx-auto py-4" ref={cardRef}>
             <MembershipCard
               userName={formData.fullName}
               avatarUrl={photoUrl}
@@ -55,8 +121,8 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
               <div className="flex items-center gap-3">
                 <Button
                   variant="gold"
-                  onClick={() => window.print()}
-                  className="flex items-center justify-center gap-2 px-6 py-3 h-auto"
+                  onClick={handlePrint}
+                  className="flex items-center justify-center gap-2 px-6 py-3 h-auto shadow-md hover:scale-[1.02] active:scale-95 transition-all"
                 >
                   <span className="material-symbols-outlined text-[18px]">print</span>
                   Print card

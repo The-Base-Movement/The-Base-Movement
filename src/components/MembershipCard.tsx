@@ -32,10 +32,10 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
 }) => {
   const { settings } = useBranding()
   return (
-    <div className="relative aspect-[1.6/1] w-full overflow-hidden bg-white flex flex-col font-meta shadow-2xl border-l-[3px] border-r-[3px] border-primary border-t-destructive border-b-accent rounded-[8px]">
+    <div className="relative aspect-[1.58/1] w-full bg-white flex flex-col font-meta border-x-[3px] border-x-primary border-t-destructive border-b-[3px] border-b-brand-gold rounded-[8px] overflow-hidden">
       
-      {/* Card Header (Red Section) */}
-      <div className="bg-destructive p-3 sm:p-4 flex justify-between items-start">
+      {/* Card Header (Red Section) - Precise radius matching */}
+      <div className="bg-destructive p-2 sm:p-3 flex justify-between items-center rounded-t-[8px]">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-[8px] p-1 shadow-md">
             <img src={settings.logo_url} alt="Logo" className="w-full h-full object-contain"  decoding="async" loading="lazy" />
@@ -45,18 +45,18 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
             <p className="text-white/80 text-[6px] sm:text-[7px] font-medium mt-1">Ghana First, jobs for the youth!</p>
           </div>
         </div>
-        <div className="px-2 sm:px-3 py-1 bg-white/10 border border-white/20 rounded-none">
-          <span className="text-white text-[7px] sm:text-[8px] font-bold tracking-tight">
+        <div className="px-2 sm:px-3 py-1 bg-white/10 border border-white/20 rounded-none flex items-center justify-center min-h-[20px] sm:min-h-[24px]">
+          <span className="text-white text-[7px] sm:text-[8px] font-bold tracking-tight leading-[1] flex items-center justify-center">
             {country && country !== 'Ghana' ? 'Base Diaspora Member' : 'Ghana Member'}
           </span>
         </div>
       </div>
 
       {/* Card Body */}
-      <div className="flex-1 p-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4 relative overflow-hidden">
-        {/* Photo Frame with Gradient Border - Center-aligned */}
-        <div className="w-24 h-28 sm:w-34 sm:h-42 p-[1.5px] shrink-0 bg-gradient-to-b from-destructive via-accent to-primary shadow-lg relative z-10 rounded-[4px]">
-          <div className="w-full h-full p-1 bg-muted/30 rounded-[3px]">
+      <div className="flex-1 p-2 sm:px-4 sm:py-2 flex items-center gap-3 sm:gap-6 relative">
+        {/* Photo Frame with True External Gradient Border */}
+        <div className="w-24 h-28 sm:w-34 sm:h-42 shrink-0 relative z-10 rounded-[4px] bg-white p-0.5 sm:p-1 shadow-sm before:absolute before:-inset-[1px] before:bg-gradient-to-b before:from-destructive before:via-brand-gold before:to-primary before:rounded-[5px] before:-z-10">
+          <div className="w-full h-full bg-muted/30 rounded-[2px] relative">
             <div 
               className={`w-full h-full bg-muted overflow-hidden relative group rounded-[2px] ${onPhotoClick ? 'cursor-pointer' : ''}`}
               onClick={onPhotoClick}
@@ -78,58 +78,58 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         </div>
 
         {/* Member Details - Center-aligned with photo */}
-        <div className="flex-1 space-y-1 sm:space-y-1.5 min-w-0 pr-20 sm:pr-24">
-          <div>
-            <h5 className="text-[hsl(var(--foreground))] font-bold text-micro sm:text-xl tracking-tight leading-normal truncate pb-[2px]" title={userName || 'Member Name'}>{userName || 'Member Name'}</h5>
+        <div className="flex-1 space-y-0.5 sm:space-y-1.5 min-w-0 pr-16 sm:pr-20">
+          <div className="mb-1 sm:mb-2 pt-1">
+            <h5 className="text-[hsl(var(--foreground))] font-bold text-sm sm:text-xl tracking-tight leading-normal pb-[2px]" title={userName || 'Member Name'}>{userName || 'Member Name'}</h5>
             <div className="h-0.5 w-6 sm:w-12 bg-primary mt-0.5"></div>
           </div>
 
           <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-on-surface">
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Reg. no.</span>
-              <span className="text-[8px] sm:text-tiny font-bold text-primary tracking-tight whitespace-nowrap overflow-hidden truncate pb-[1px]">{userRegNo || 'DI-XXXXXX'}</span>
+              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Reg. no.</span>
+              <span className="text-[8px] sm:text-[11px] font-bold text-primary tracking-tight whitespace-nowrap pb-[2px]">{userRegNo || 'DI-XXXXXX'}</span>
             </div>
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Gender</span>
-              <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{gender || 'Not Specified'}</span>
+              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Gender</span>
+              <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{gender || 'Not Specified'}</span>
             </div>
             
             {(!country || country === 'Ghana') ? (
               <>
                 <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Region</span>
-                  <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{region || 'Not Specified'}</span>
+                  <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Region</span>
+                  <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{region || 'Not Specified'}</span>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Const.</span>
-                  <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{constituency || 'Not Specified'}</span>
+                  <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Const.</span>
+                  <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{constituency || 'Not Specified'}</span>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-1 sm:gap-1.5">
-                <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Country</span>
-                <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{country || 'Not Specified'}</span>
+                <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Country</span>
+                <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{country || 'Not Specified'}</span>
               </div>
             )}
 
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Chapter</span>
-              <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{chapter || 'Not Specified'}</span>
+              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Chapter</span>
+              <span className="text-[7px] sm:text-[10px] font-bold tracking-tight leading-none whitespace-nowrap max-w-[120px] sm:max-w-none pb-[2px]">{chapter || 'Not Specified'}</span>
             </div>
 
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Joined</span>
-              <span className="text-[8px] sm:text-micro font-bold whitespace-nowrap overflow-hidden truncate pb-[1px]">{joinedDate || '30 Apr 2026'}</span>
+              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Joined</span>
+              <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{joinedDate || '30 Apr 2026'}</span>
             </div>
             <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-micro font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Status</span>
-              <span className="text-[8px] sm:text-micro font-bold text-primary whitespace-nowrap overflow-hidden truncate pb-[1px]">{status || 'Verified'}</span>
+              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Status</span>
+              <span className="text-[8px] sm:text-[10px] font-bold text-primary whitespace-nowrap pb-[2px]">{status || 'Verified'}</span>
             </div>
           </div>
         </div>
 
-        {/* QR Code - Perfectly centered vertically */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-2 sm:right-6 flex flex-col items-center scale-[0.65] sm:scale-[1.0] origin-right z-20">
+        {/* QR Code - Optimized for horizontal space */}
+        <div className="absolute top-1/2 -translate-y-1/2 right-2 sm:right-4 flex flex-col items-center scale-[0.65] sm:scale-[0.9] origin-right z-20">
           <div className="bg-white border border-border/60 p-1 shadow-sm">
             <QRCodeSVG 
               value={`${typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/${userRegNo || 'DI-XXXXXX'}`}
@@ -148,9 +148,9 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         </div>
       </div>
 
-      {/* Card Footer */}
-      <div className="bg-muted/30 border-t border-border/40 px-3 sm:px-6 py-1 sm:py-1.5 flex items-center justify-center">
-        <p className="text-[5px] sm:text-[7px] text-muted-foreground/80 font-bold tracking-tight truncate leading-none m-0">
+      {/* Card Footer - Ensuring full visibility */}
+      <div className="bg-muted/10 border-t border-border/20 px-3 sm:px-6 h-6 sm:h-8 flex items-center justify-center pb-1">
+        <p className="text-[5px] sm:text-[7px] text-muted-foreground/80 font-bold tracking-tight leading-normal m-0 whitespace-nowrap">
           {typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/{userRegNo || 'DI-XXXXXX'}
         </p>
       </div>

@@ -217,8 +217,12 @@ export default function ProfileSettings() {
       const canvas = await html2canvas(cardRef.current, {
         scale: 4,
         useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false
+        backgroundColor: '#ffffff', // Force solid background for crisp capture
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: document.documentElement.offsetWidth,
+        windowHeight: document.documentElement.offsetHeight
       })
       
       const imgData = canvas.toDataURL('image/png')
@@ -242,7 +246,7 @@ export default function ProfileSettings() {
             <title>THE BASE - Official Membership Card</title>
             <style>
               @page { 
-                size: 85.6mm 53.98mm; 
+                size: 85.6mm 54mm; 
                 margin: 0; 
               }
               body { 
@@ -251,15 +255,18 @@ export default function ProfileSettings() {
                 display: flex; 
                 align-items: center; 
                 justify-content: center; 
-                height: 100vh; 
+                width: 85.6mm;
+                height: 54mm;
+                overflow: hidden;
                 background: #fff;
                 -webkit-print-color-adjust: exact;
                 color-adjust: exact;
               }
               img { 
                 width: 85.6mm; 
-                height: 53.98mm; 
+                height: 54mm; 
                 display: block; 
+                object-fit: contain;
                 image-rendering: -webkit-optimize-contrast;
               }
             </style>
@@ -296,23 +303,23 @@ export default function ProfileSettings() {
   return (
     <div className="max-w-full py-12">
       
-      {/* Page Title - Now with horizontal padding only for content alignment */}
-      <header className="mb-10 border-b border-divider-gold pb-6 px-4 md:px-10">
+      {/* Page Title - Now with reduced horizontal padding for better fit */}
+      <header className="mb-10 border-b border-divider-gold pb-6 px-4 md:px-6">
         <p className="font-meta text-warm-gold tracking-tight text-xs mb-1">Account</p>
         <h2 className="font-meta font-bold text-3xl text-[var(--brand-green)] tracking-tight">Profile Settings</h2>
         <p className="text-muted-gray text-sm mt-1">Manage your identity, download your card and update your details.</p>
       </header>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 items-start px-4 md:px-10">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 items-start px-4 md:px-6">
         
         {/* Column 1: Membership Card Preview (xl:col-span-5) */}
         <div className="xl:col-span-5 space-y-8">
           
-          <div className="bg-white border border-slate-200 p-2 shadow-2xl relative group">
-            <h3 className="font-meta font-bold text-micro text-slate-400 tracking-tight mb-4 pl-2">Membership card preview</h3>
+          <div className="relative group overflow-visible">
+            <h3 className="font-meta font-bold text-micro text-slate-400 tracking-tight mb-6">Membership card preview</h3>
             
-            {/* The Membership Card Component */}
-            <div ref={cardRef}>
+            {/* The Membership Card Component - Isolated for clean capture and full width */}
+            <div ref={cardRef} className="bg-transparent">
               <MembershipCard 
                 userName={form.fullName}
                 avatarUrl={avatarUrl}
