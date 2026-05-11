@@ -80,8 +80,8 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         {/* Member Details - Center-aligned with photo */}
         <div className="flex-1 space-y-0.5 sm:space-y-1.5 min-w-0 pr-16 sm:pr-20">
           <div className="mb-1 sm:mb-2 pt-1">
-            <h5 className="text-[hsl(var(--foreground))] font-bold text-sm sm:text-xl tracking-tight leading-normal pb-[2px]" title={userName || 'Member Name'}>{userName || 'Member Name'}</h5>
-            <div className="h-0.5 w-6 sm:w-12 bg-primary mt-0.5"></div>
+            <h5 className="text-[hsl(var(--foreground))] font-bold text-sm sm:text-lg tracking-tight leading-normal" title={userName || 'Member Name'}>{userName || 'Member Name'}</h5>
+            <div className="h-0.5 w-6 sm:w-12 bg-primary mt-1"></div>
           </div>
 
           <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-on-surface">
