@@ -18,7 +18,6 @@ interface ProductInfoProps {
   customizationText: string
   setCustomizationText: (text: string) => void
   setShowSizeGuide: (show: boolean) => void
-  isInWishlist: (id: string) => boolean
   addToWishlist: (p: Product) => void
   removeFromWishlist: (id: string) => void
   setIsShareModalOpen: (show: boolean) => void
@@ -44,7 +43,6 @@ export function ProductInfo({
   customizationText,
   setCustomizationText,
   setShowSizeGuide,
-  isInWishlist,
   addToWishlist,
   removeFromWishlist,
   setIsShareModalOpen,

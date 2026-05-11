@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ShoppingBag, Heart, ShoppingBag as ShoppingBagIcon } from 'lucide-react'
+import { Heart, ShoppingBag as ShoppingBagIcon } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
@@ -214,7 +214,6 @@ export default function ProductDetails() {
             customizationText={customizationText}
             setCustomizationText={setCustomizationText}
             setShowSizeGuide={setShowSizeGuide}
-            isInWishlist={isInWishlist}
             addToWishlist={addToWishlist}
             removeFromWishlist={removeFromWishlist}
             setIsShareModalOpen={setIsShareModalOpen}
