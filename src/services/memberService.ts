@@ -51,7 +51,7 @@ class MemberService {
       type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
       avatarUrl: u.avatar_url || undefined,
       gender: u.gender || 'Not specified',
-      chapter: u.chapter || 'Central',
+      chapter: u.chapter || 'TBM Ghana Chapter',
       country: u.country || 'Ghana',
       profession: u.profession || 'Patriot'
     }))
@@ -126,7 +126,7 @@ class MemberService {
       type: data.platform === 'GHANA' ? 'Standard' : 'Premium',
       avatarUrl: data.avatar_url || undefined,
       gender: data.gender || 'Unknown',
-      chapter: data.chapter || 'Central',
+      chapter: data.chapter || 'TBM Ghana Chapter',
       country: data.country || 'Ghana',
       profession: data.profession || 'Patriot'
     }
@@ -291,7 +291,7 @@ class MemberService {
       type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
       avatarUrl: u.avatar_url || undefined,
       gender: u.gender || 'Not specified',
-      chapter: u.chapter || 'Central',
+      chapter: u.chapter || 'TBM Ghana Chapter',
       country: u.country || 'Ghana',
       profession: u.profession || 'Patriot'
     }))
