@@ -202,7 +202,7 @@ export default function Dashboard() {
       <WelcomeModal 
         isOpen={isWelcomeModalOpen}
         onClose={() => setIsWelcomeModalOpen(false)}
-        userName={member?.full_name || 'Member'}
+        userName={member?.full_name || 'Patriot'}
         assignedChapter={{
           name: `The Base - ${member?.region || 'National'} Chapter`,
           region: member?.region || 'Ghana'

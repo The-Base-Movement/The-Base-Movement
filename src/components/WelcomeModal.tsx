@@ -52,7 +52,7 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
               <MapPin className="w-8 h-8 text-[var(--brand-green)]" />
             </div>
             <h2 className="text-stone-900 mb-3">
-              Your Chapter Assignment
+              Welcome to the Movement
             </h2>
             <p className="text-stone-500 max-w-sm mx-auto mb-0">
               Welcome to the movement, <span className="font-bold text-stone-800">{userName}</span>. You've been automatically assigned to a chapter based on your registration details.
@@ -84,8 +84,9 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
           {/* Actions */}
           <div className="space-y-4">
             <Button 
+              variant="primary"
               onClick={onClose}
-              className="w-full h-14 bg-[var(--brand-green)] text-white hover:bg-emerald-800 rounded-none font-bold text-sm tracking-tight shadow-xl shadow-brand-green/20 transition-all active:scale-95 flex items-center justify-center gap-3"
+              className="w-full h-14 rounded-none font-bold text-sm tracking-tight shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3"
             >
               <Check className="w-5 h-5" />
               Confirm this chapter
