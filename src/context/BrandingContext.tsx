@@ -104,10 +104,19 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
               --button-radius: ${settings.button_border_radius || '0.125rem'};
               --button-font-weight: ${settings.button_font_weight || '700'};
               --primary-foreground: ${settings.button_primary_text_color || '0 0% 100%'};
-              --accent-foreground: ${settings.button_gold_text_color || '220 15% 15%'};
-              --destructive-foreground: ${settings.button_destructive_text_color === '220 15% 15%' ? '0 0% 100%' : (settings.button_destructive_text_color || '0 0% 100%')};
+              --accent-foreground: ${settings.button_gold_text_color || '0 0% 100%'};
+              --accent-hover: ${settings.button_accent_hover_bg_color || '45 80% 35%'};
+              
+              --destructive-foreground: ${settings.button_destructive_text_color || '0 0% 100%'};
+              --destructive-hover: ${settings.button_destructive_hover_bg_color || '0 85% 35%'};
+              
               --active-tab-bg: ${settings.button_active_tab_bg_color || settings.primary_color};
               --active-tab-text: ${settings.button_active_tab_text_color || '0 0% 100%'};
+              --active-tab-hover: ${settings.button_active_tab_hover_bg_color || '156 100% 15%'};
+              
+              --inactive-tab-bg: ${settings.button_inactive_tab_bg_color || '0 0% 100%'};
+              --inactive-tab-text: ${settings.button_inactive_tab_text_color || '156 100% 21%'};
+              --inactive-tab-hover: ${settings.button_inactive_tab_hover_bg_color || '0 0% 95%'};
             }
           `}
         </style>

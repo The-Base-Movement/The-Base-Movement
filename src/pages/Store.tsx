@@ -122,8 +122,8 @@ export default function Store() {
                   className={cn(
                     "w-full h-12 flex items-center justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
                     activeCategory === category 
-                      ? 'text-white' 
-                      : 'text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50'
+                      ? '' 
+                      : 'border-stone-200 hover:bg-stone-50'
                   )}
                 >
                   {category}
@@ -201,7 +201,7 @@ export default function Store() {
           <div className="lg:hidden flex gap-4">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="default" className="flex-1 h-12 gap-2 font-bold tracking-tight text-xs border-stone-200 rounded-none shadow-sm active:scale-95 hover:text-brand-green hover:bg-stone-50">
+                <Button variant="default" className="flex-1 h-12 gap-2 font-bold tracking-tight text-xs border-stone-200 rounded-none shadow-sm active:scale-95 hover:bg-stone-50 transition-all">
                   <Filter className="w-4 h-4" />
                   Filter Supplies
                 </Button>

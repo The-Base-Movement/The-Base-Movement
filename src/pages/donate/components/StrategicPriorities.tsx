@@ -11,11 +11,11 @@ interface StrategicPrioritiesProps {
 
 export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: StrategicPrioritiesProps) {
   return (
-    <section className="mt-20 lowercase">
+    <section className="mt-20">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
-          <h2 className="text-3xl font-bold text-stone-900 tracking-tight font-meta">strategic priorities</h2>
-          <p className="text-xs font-medium text-stone-400 tracking-tight mt-2">deploy capital to critical movement units.</p>
+          <h2 className="text-3xl font-bold text-stone-900 tracking-tight font-meta">Strategic priorities</h2>
+          <p className="text-xs font-medium text-stone-400 tracking-tight mt-2">Deploy capital to critical movement units.</p>
         </div>
       </div>
       
@@ -39,14 +39,14 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
               </div>
             </div>
             <CardContent className="p-8 flex flex-col flex-1">
-              <h3 className="font-bold text-stone-900 font-meta text-xl mb-3 group-hover:text-brand-green transition-colors tracking-tight lowercase first-letter:uppercase">{c.title}</h3>
-              <p className="text-sm text-stone-500 mb-8 line-clamp-3 leading-relaxed font-medium lowercase">{c.description}</p>
+              <h3 className="font-bold text-stone-900 font-meta text-xl mb-3 group-hover:text-brand-green transition-colors tracking-tight">{c.title}</h3>
+              <p className="text-sm text-stone-500 mb-8 line-clamp-3 leading-relaxed font-medium">{c.description}</p>
               
               <div className="mt-auto space-y-6">
                 <div>
                   <div className="flex justify-between items-end mb-3">
                      <span className="text-micro font-medium text-stone-400 tracking-tight">strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
-                    <span className="text-sm font-bold font-meta text-stone-900">ghs {c.raisedAmount.toLocaleString()}</span>
+                    <span className="text-sm font-bold font-meta text-stone-900">₵ {c.raisedAmount.toLocaleString()}</span>
                   </div>
                   <div className="h-2 w-full bg-stone-100 overflow-hidden rounded-full border border-stone-50">
                     <div 
@@ -59,7 +59,7 @@ export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: St
                 <Button 
                   variant="default"
                   onClick={() => onSelectCampaign(c.id)}
-                  className="w-full h-12 rounded-none text-tiny font-medium tracking-tight border-stone-200 hover:border-brand-green/40 hover:text-brand-green hover:bg-stone-50 transition-all shadow-sm active:scale-95 lowercase"
+                  className="w-full h-12 rounded-none text-tiny font-medium tracking-tight border-stone-200 hover:border-brand-green/40 hover:text-brand-green hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 >
                   direct capital <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>

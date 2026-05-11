@@ -45,18 +45,18 @@ export function MobilizationProtocol({
   onSubmit
 }: MobilizationProtocolProps) {
   const steps = [
-    { step: 1, label: 'capital transfer', id: 'payment-section', color: 'bg-brand-red' },
-    { step: 2, label: 'profile details', id: 'donor-section', color: 'bg-brand-gold' },
-    { step: 3, label: 'patriot link', id: 'link-section', color: 'bg-brand-green' },
-    { step: 4, label: 'verification', id: 'receipt-section', color: 'bg-brand-green' }
+    { step: 1, label: 'Capital transfer', id: 'payment-section', color: 'bg-brand-red' },
+    { step: 2, label: 'Profile details', id: 'donor-section', color: 'bg-brand-gold' },
+    { step: 3, label: 'Patriot link', id: 'link-section', color: 'bg-brand-green' },
+    { step: 4, label: 'Verification', id: 'receipt-section', color: 'bg-brand-green' }
   ]
 
   return (
-    <div className="flex flex-col lg:flex-row gap-16 items-start pt-20 lowercase">
+    <div className="flex flex-col lg:flex-row gap-16 items-start pt-20">
       {/* sidebar navigation */}
       <aside className="hidden lg:block w-[280px] shrink-0 sticky top-24">
         <div className="bg-white border border-stone-100 p-8 shadow-sm">
-          <h4 className="text-[10px] font-bold text-stone-400 mb-8 uppercase tracking-widest">deployment protocol</h4>
+          <h4 className="text-[10px] font-bold text-stone-400 mb-8 tracking-widest">deployment protocol</h4>
           <div className="space-y-8">
             {steps.map((s) => (
               <button 
@@ -98,13 +98,13 @@ export function MobilizationProtocol({
           
           <div className="flex items-center gap-4 mb-10">
             <span className="w-8 h-8 bg-brand-red text-white flex items-center justify-center font-meta font-bold text-xs">01</span>
-            <h3 className="font-bold text-white font-meta tracking-tight text-xl">capital transfer</h3>
+            <h3 className="font-bold text-white font-meta tracking-tight text-xl">Capital transfer</h3>
           </div>
           
           <div className="space-y-10 flex-1">
             <div>
               <p className="text-micro font-medium tracking-tight text-white/30 font-meta mb-2">account holder</p>
-              <p className="font-bold text-brand-green text-2xl tracking-tight leading-none font-meta first-letter:uppercase">paul kofi agyekum</p>
+              <p className="font-bold text-brand-green text-2xl tracking-tight leading-none font-meta">Paul Kofi Agyekum</p>
             </div>
             <div>
               <p className="text-micro font-medium tracking-tight text-white/30 font-meta mb-2">momo identifier</p>
@@ -113,7 +113,7 @@ export function MobilizationProtocol({
             <div className="grid grid-cols-1 gap-8 pt-10 border-t border-white/10">
               <div>
                 <p className="text-micro font-medium tracking-tight text-white/30 font-meta mb-2">network hub</p>
-                <p className="text-white/90 font-bold font-meta text-base">mtn mobile money</p>
+                <p className="text-white/90 font-bold font-meta text-base">MTN Mobile Money</p>
               </div>
               <div>
                 <p className="text-micro font-medium tracking-tight text-white/30 font-meta mb-2">deployment reference</p>
@@ -127,7 +127,7 @@ export function MobilizationProtocol({
               <Check className="w-4 h-4" />
             </div>
             <p className="text-xs text-white/40 leading-relaxed font-bold tracking-tight">
-              complete transfer protocol first, then capture receipt for verification.
+              Complete transfer protocol first, then capture receipt for verification.
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export function MobilizationProtocol({
         <div id="donor-section" className="bg-white border border-stone-200 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px]">
           <div className="flex items-center gap-4 mb-10">
             <span className="w-8 h-8 bg-brand-gold text-[#92400e] flex items-center justify-center font-meta font-bold text-xs">02</span>
-            <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl">contributor profile</h3>
+            <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl">Contributor profile</h3>
           </div>
 
           <form onSubmit={onSubmit} id="donationForm" className="space-y-8 flex-1">
@@ -146,7 +146,7 @@ export function MobilizationProtocol({
               </label>
               <input 
                 id="fullName" 
-                placeholder="legal full name" 
+                placeholder="Legal full name" 
                 required 
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
@@ -173,7 +173,7 @@ export function MobilizationProtocol({
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label htmlFor="amount" className="text-micro font-medium text-stone-400 font-meta tracking-tight">
-                  amount (ghs) <span className="text-brand-red">*</span>
+                  Amount (₵) <span className="text-brand-red">*</span>
                 </label>
                 <input 
                   id="amount" 
@@ -237,7 +237,7 @@ export function MobilizationProtocol({
           <div className="flex items-center gap-4 mb-10">
             <span className="w-8 h-8 bg-stone-900 text-white flex items-center justify-center font-meta font-bold text-xs">03</span>
             <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl">
-              {isLoggedIn ? 'patriot profile' : 'link patriot'}
+              {isLoggedIn ? 'Patriot profile' : 'Link patriot'}
             </h3>
           </div>
 
@@ -245,7 +245,7 @@ export function MobilizationProtocol({
               <div className="bg-stone-50 border border-stone-100 p-8 rounded-none space-y-8">
                 <div className="flex items-center gap-3">
                   <Activity className="w-5 h-5 text-brand-green" />
-                  <h4 className="font-bold text-stone-900 font-meta tracking-tight text-sm uppercase">
+                  <h4 className="font-bold text-stone-900 font-meta tracking-tight text-sm">
                     {isLoggedIn ? 'active session' : 'movement id'}
                   </h4>
                 </div>
@@ -279,7 +279,7 @@ export function MobilizationProtocol({
                     />
                     <Check className="absolute h-4 w-4 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" />
                   </div>
-                  <span className="text-xs text-stone-600 font-medium tracking-tight group-hover:text-stone-900 transition-colors">publish to personal dossier</span>
+                  <span className="text-xs text-stone-600 font-medium tracking-tight group-hover:text-stone-900 transition-colors">Publish to personal dossier</span>
                 </label>
               </div>
           </div>
@@ -289,7 +289,7 @@ export function MobilizationProtocol({
         <div id="receipt-section" className="bg-white border border-stone-200 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px]">
           <div className="flex items-center gap-4 mb-10">
             <span className="w-8 h-8 bg-brand-green text-white flex items-center justify-center font-meta font-bold text-xs">04</span>
-            <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl">audit trail</h3>
+            <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl">Audit trail</h3>
           </div>
 
           <div className="space-y-8 flex-1 flex flex-col">
@@ -306,14 +306,14 @@ export function MobilizationProtocol({
                 <div className="w-16 h-16 bg-white shadow-sm border border-stone-100 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
                   <ArrowDownToLine className="w-6 h-6 text-stone-300 group-hover:text-brand-green transition-colors" />
                 </div>
-                <p className="text-tiny text-stone-900 font-bold tracking-tight mb-1 uppercase font-meta">synchronize receipt</p>
-                <p className="text-micro text-stone-400 font-bold tracking-tight uppercase">jpg, png, or pdf</p>
+                <p className="text-tiny text-stone-900 font-bold tracking-tight mb-1 font-meta">synchronize receipt</p>
+                <p className="text-micro text-stone-400 font-bold tracking-tight">jpg, png, or pdf</p>
               </div>
 
               <div className="bg-stone-50 p-6 border border-stone-100">
                 <div className="flex items-center gap-3 mb-3">
                   <Globe className="w-5 h-5 text-brand-green" />
-                  <h4 className="font-bold text-stone-900 font-meta tracking-tight text-micro uppercase">global diaspora hub</h4>
+                  <h4 className="font-bold text-stone-900 font-meta tracking-tight text-micro">global diaspora hub</h4>
                 </div>
                 <p className="text-xs text-stone-500 leading-relaxed font-medium tracking-tight">
                   use deployment code <span className="text-brand-green font-bold">thebasem</span> on taptap for resource scaling bonus.
@@ -324,10 +324,10 @@ export function MobilizationProtocol({
                 type="submit"
                 form="donationForm"
                 variant="primary"
-                className="w-full py-10 flex items-center justify-center gap-3 rounded-none shadow-xl shadow-brand-green/10 text-base lowercase"
+                className="w-full h-14 flex items-center justify-center gap-3 rounded-none shadow-xl shadow-brand-green/10 text-tiny font-bold tracking-tight"
               >
                 <Heart className="w-5 h-5" />
-                authorize contribution
+                Authorize contribution
               </Button>
           </div>
         </div>

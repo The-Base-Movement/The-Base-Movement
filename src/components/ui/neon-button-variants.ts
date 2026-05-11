@@ -5,17 +5,17 @@ export const buttonVariants = cva(
     {
         variants: {
             variant: {
-                default: "bg-white text-brand-green border-brand-green/20 hover:border-brand-red hover:text-brand-red hover:bg-brand-red/5 transition-all tracking-tight",
-                solid: "bg-brand-green hover:bg-brand-green/90 text-primary-foreground border-transparent hover:border-white/20 transition-all duration-200 tracking-tight shadow-lg shadow-brand-green/20",
-                primary: "bg-brand-green text-primary-foreground hover:bg-brand-green/90 border-brand-green shadow-[0_0_15px_rgba(0,107,63,0.3)] tracking-tight",
-                accent: "bg-brand-gold text-accent-foreground hover:bg-brand-gold/90 border-brand-gold shadow-[0_0_15px_rgba(218,165,32,0.3)] tracking-tight",
-                gold: "bg-brand-gold hover:bg-brand-gold/90 text-accent-foreground border-transparent tracking-tight shadow-[0_0_15px_rgba(218,165,32,0.2)]",
-                destructive: "bg-brand-red text-destructive-foreground hover:bg-brand-red/90 border-brand-red shadow-[0_0_15px_rgba(206,17,38,0.3)] tracking-tight",
-                ghost: "border-transparent bg-transparent hover:bg-brand-green/5 text-brand-green tracking-tight font-bold",
-                outline: "bg-transparent border-brand-green/40 hover:bg-brand-green hover:text-white text-brand-green tracking-tight font-bold",
-                "outline-destructive": "bg-transparent border-brand-red/40 hover:bg-brand-red hover:text-white text-brand-red tracking-tight font-bold",
-                "ghost-destructive": "border-transparent bg-transparent hover:bg-brand-red/5 text-brand-red tracking-tight font-bold",
-                "active-tab": "bg-[hsl(var(--active-tab-bg))] text-[hsl(var(--active-tab-text))] border-[hsl(var(--active-tab-bg))] shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.3)] tracking-tight",
+                default: "bg-[hsl(var(--inactive-tab-bg))] text-[hsl(var(--inactive-tab-text))] border-[hsl(var(--inactive-tab-text))]/20 hover:bg-[hsl(var(--inactive-tab-hover))] transition-all tracking-tight",
+                solid: "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary-hover))] border-transparent transition-all duration-200 tracking-tight shadow-lg shadow-[hsl(var(--primary))]/20",
+                primary: "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary-hover))] border-[hsl(var(--primary))] shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.3)] tracking-tight",
+                accent: "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] hover:bg-[hsl(var(--accent-hover))] border-[hsl(var(--accent))] shadow-[0_0_15px_rgba(var(--brand-gold-rgb),0.3)] tracking-tight",
+                gold: "bg-[hsl(var(--accent))] hover:bg-[hsl(var(--accent-hover))] text-[hsl(var(--accent-foreground))] border-transparent tracking-tight shadow-[0_0_15px_rgba(var(--brand-gold-rgb),0.2)]",
+                destructive: "bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] hover:bg-[hsl(var(--destructive-hover))] border-[hsl(var(--destructive))] shadow-[0_0_15px_rgba(var(--brand-red-rgb),0.3)] tracking-tight",
+                ghost: "border-transparent bg-transparent hover:bg-[hsl(var(--primary))]/5 text-[hsl(var(--primary))] tracking-tight font-bold",
+                outline: "bg-transparent border-[hsl(var(--primary))]/40 hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] text-[hsl(var(--primary))] tracking-tight font-bold",
+                "outline-destructive": "bg-transparent border-[hsl(var(--destructive))]/40 hover:bg-[hsl(var(--destructive))] hover:text-[hsl(var(--destructive-foreground))] text-[hsl(var(--destructive))] tracking-tight font-bold",
+                "ghost-destructive": "border-transparent bg-transparent hover:bg-[hsl(var(--destructive))]/5 text-[hsl(var(--destructive))] tracking-tight font-bold",
+                "active-tab": "bg-[hsl(var(--active-tab-bg))] text-[hsl(var(--active-tab-text))] border-[hsl(var(--active-tab-bg))] hover:bg-[hsl(var(--active-tab-hover))] shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.3)] tracking-tight",
                 link: "border-transparent bg-transparent p-0 h-auto tracking-tight text-foreground",
             },
             size: {

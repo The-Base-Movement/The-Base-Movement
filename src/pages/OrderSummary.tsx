@@ -161,10 +161,10 @@ export default function OrderSummary() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-micro font-bold tracking-tight rounded-sm transition-all duration-300">
+                <Button variant="default" className="flex-1 h-12 border-stone-200 text-micro font-bold tracking-tight rounded-sm transition-all duration-300">
                   <Printer className="w-4 h-4 mr-2" /> Print invoice
                 </Button>
-                <Button variant="default" className="flex-1 h-12 border-stone-200 text-stone-600 hover:bg-brand-gold hover:text-stone-900 hover:border-brand-gold text-micro font-bold tracking-tight rounded-sm transition-all duration-300">
+                <Button variant="default" className="flex-1 h-12 border-stone-200 text-micro font-bold tracking-tight rounded-sm transition-all duration-300">
                   <Share2 className="w-4 h-4 mr-2" /> Share support
                 </Button>
               </div>

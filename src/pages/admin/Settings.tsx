@@ -1099,7 +1099,7 @@ export default function AdminSettings() {
                         <Label className="text-micro font-bold text-stone-500 normal-case">Gold Button Text</Label>
                         <div className="grid grid-cols-2 gap-2">
                           {[
-                            { label: 'Light Text', value: '0 0% 100%' },
+                            { label: 'Light Text (Recommended)', value: '0 0% 100%' },
                             { label: 'Dark Text', value: '220 15% 15%' }
                           ].map((option) => (
                             <Button
@@ -1167,6 +1167,41 @@ export default function AdminSettings() {
                           ))}
                         </div>
                       </div>
+
+                      <div className="space-y-4 pt-4 border-t border-stone-100">
+                        <Label className="text-micro font-bold text-stone-500 normal-case">Inactive Tab Background</Label>
+                        <div className="flex gap-3">
+                          <div 
+                            className="w-11 h-11 rounded-sm border border-stone-200 shrink-0" 
+                            style={{ backgroundColor: `hsl(${siteSettings.button_inactive_tab_bg_color || '0 0% 100%'})` }}
+                          />
+                          <Input 
+                            value={(siteSettings.button_inactive_tab_bg_color as string) || ''} 
+                            onChange={(e) => setSiteSettings({ ...siteSettings, button_inactive_tab_bg_color: e.target.value })}
+                            className="h-11 rounded-sm border-stone-200 text-xs font-medium font-mono"
+                            placeholder="0 0% 100%"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-4 border-t border-stone-100">
+                        <Label className="text-micro font-bold text-stone-500 normal-case">Inactive Tab Text</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { label: 'Light Text', value: '0 0% 100%' },
+                            { label: 'Dark Text', value: '156 100% 21%' }
+                          ].map((option) => (
+                            <Button
+                              key={option.value}
+                              variant={siteSettings.button_inactive_tab_text_color === option.value ? "primary" : "default"}
+                              onClick={() => setSiteSettings({ ...siteSettings, button_inactive_tab_text_color: option.value })}
+                              className="h-10 text-[10px] font-bold rounded-none"
+                            >
+                              {option.label}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-8 bg-stone-50/50 p-8 rounded-sm border border-stone-100 relative">
@@ -1177,10 +1212,17 @@ export default function AdminSettings() {
                             --button-radius: ${siteSettings.button_border_radius || '0.125rem'};
                             --button-font-weight: ${siteSettings.button_font_weight || '700'};
                             --primary-foreground: ${siteSettings.button_primary_text_color || '0 0% 100%'};
-                            --accent-foreground: ${siteSettings.button_gold_text_color || '220 15% 15%'};
+                            --primary-hover: ${siteSettings.button_primary_hover_bg_color || '156 100% 15%'};
+                            --accent-foreground: ${siteSettings.button_gold_text_color || '0 0% 100%'};
+                            --accent-hover: ${siteSettings.button_accent_hover_bg_color || '45 80% 35%'};
                             --destructive-foreground: ${siteSettings.button_destructive_text_color || '0 0% 100%'};
+                            --destructive-hover: ${siteSettings.button_destructive_hover_bg_color || '0 85% 35%'};
                             --active-tab-bg: ${siteSettings.button_active_tab_bg_color || siteSettings.primary_color};
                             --active-tab-text: ${siteSettings.button_active_tab_text_color || '0 0% 100%'};
+                            --active-tab-hover: ${siteSettings.button_active_tab_hover_bg_color || '156 100% 15%'};
+                            --inactive-tab-bg: ${siteSettings.button_inactive_tab_bg_color || '0 0% 100%'};
+                            --inactive-tab-text: ${siteSettings.button_inactive_tab_text_color || '156 100% 21%'};
+                            --inactive-tab-hover: ${siteSettings.button_inactive_tab_hover_bg_color || '0 0% 95%'};
                           }
                           .preview-gallery-container button {
                             border-radius: var(--button-radius) !important;

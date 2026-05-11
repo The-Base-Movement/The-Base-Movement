@@ -94,7 +94,7 @@ export default function Wishlist() {
                         <ShoppingCart className="w-3.5 h-3.5" />
                         Add to Cart
                       </Button>
-                      <Button asChild variant="default" className="flex-1 border-stone-200 hover:border-brand-green hover:text-brand-green text-micro font-bold tracking-tight rounded-none h-11">
+                      <Button asChild variant="default" className="flex-1 border-stone-200 hover:bg-stone-50 text-micro font-bold tracking-tight rounded-none h-11 transition-all">
                         <Link to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? `/dashboard/store/product/${item.slug}` : `/store/product/${item.slug}`}>Details</Link>
                       </Button>
                     </div>

@@ -24,6 +24,14 @@ export interface BrandingSettings {
   button_destructive_text_color: string
   button_active_tab_bg_color?: string
   button_active_tab_text_color?: string
+  button_inactive_tab_bg_color?: string
+  button_inactive_tab_text_color?: string
+  
+  button_primary_hover_bg_color?: string
+  button_accent_hover_bg_color?: string
+  button_destructive_hover_bg_color?: string
+  button_active_tab_hover_bg_color?: string
+  button_inactive_tab_hover_bg_color?: string
   [key: string]: unknown
 }
 
@@ -54,5 +62,13 @@ export const defaultSettings: BrandingSettings = {
   button_gold_text_color: '220 15% 15%',
   button_destructive_text_color: '0 0% 100%',
   button_active_tab_bg_color: '156 100% 21%',
-  button_active_tab_text_color: '0 0% 100%'
+  button_active_tab_text_color: '0 0% 100%',
+  button_inactive_tab_bg_color: '0 0% 100%',
+  button_inactive_tab_text_color: '156 100% 21%',
+  
+  button_primary_hover_bg_color: '156 100% 15%',
+  button_accent_hover_bg_color: '45 80% 35%',
+  button_destructive_hover_bg_color: '0 85% 35%',
+  button_active_tab_hover_bg_color: '156 100% 15%',
+  button_inactive_tab_hover_bg_color: '0 0% 95%'
 }

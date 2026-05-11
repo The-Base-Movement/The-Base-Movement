@@ -161,11 +161,11 @@ export function ProductCard({ product, onShare }: ProductProps) {
               <Button 
                 onClick={handleQuickAdd}
                 variant="primary" 
-                className="h-10 text-tiny font-bold tracking-tight uppercase shadow-lg shadow-primary/10 text-white"
+                className="h-10 text-tiny font-bold tracking-tight shadow-lg shadow-primary/10"
               >
                 Buy now
               </Button>
-              <Button asChild variant="primary" className="h-10 text-tiny font-bold tracking-tight uppercase shadow-lg shadow-primary/10 text-white">
+              <Button asChild variant="primary" className="h-10 text-tiny font-bold tracking-tight shadow-lg shadow-primary/10">
                 <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`} className="flex items-center justify-center">
                   View Item <ArrowRight className="w-3.5 h-3.5 ml-2" />
                 </Link>

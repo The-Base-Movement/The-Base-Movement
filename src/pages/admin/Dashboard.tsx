@@ -379,7 +379,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-sm font-bold text-on-surface">Regional Distribution</CardTitle>
                 <CardDescription className="text-tiny font-medium text-muted-foreground/80 mt-1">Top performing regions by member count</CardDescription>
               </div>
-              <Button variant="ghost" className="h-7 px-2 text-micro font-bold tracking-tight text-muted-foreground/80 hover:text-on-surface active:scale-95">
+              <Button variant="ghost" className="h-7 px-2 text-micro font-bold tracking-tight active:scale-95">
                 View All
               </Button>
             </CardHeader>
@@ -463,7 +463,7 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
                 <div className="p-4 border-t border-border/40 text-center">
-                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-micro font-bold tracking-tight text-muted-foreground/80 hover:text-on-surface active:scale-95">
+                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-micro font-bold tracking-tight active:scale-95">
                     View full activity log
                   </Button>
                 </div>

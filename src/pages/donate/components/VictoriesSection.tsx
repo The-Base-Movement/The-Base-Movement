@@ -10,14 +10,14 @@ export function VictoriesSection({ pastCampaigns }: VictoriesSectionProps) {
   if (pastCampaigns.length === 0) return null
 
   return (
-    <section className="mt-32 lowercase">
+    <section className="mt-32">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
           <h2 className="text-3xl font-bold text-stone-900 tracking-tight font-meta flex items-center gap-4">
             <Check className="w-8 h-8 text-brand-green" />
-            strategic victories
+            Strategic victories
           </h2>
-          <p className="text-xs font-medium text-stone-400 tracking-tight mt-2">historical proof of patriot mobilization success.</p>
+          <p className="text-xs font-medium text-stone-400 tracking-tight mt-2">Historical proof of patriot mobilization success.</p>
         </div>
       </div>
       
@@ -32,14 +32,14 @@ export function VictoriesSection({ pastCampaigns }: VictoriesSectionProps) {
             <div className="aspect-square bg-stone-50 mb-6 overflow-hidden rounded-none border border-stone-100">
               {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover"  decoding="async" loading="lazy" />}
             </div>
-            <h4 className="font-bold text-stone-900 font-meta text-sm mb-2 tracking-tight lowercase first-letter:uppercase">{c.title}</h4>
-            <p className="text-xs font-medium text-stone-500 mb-8 line-clamp-2 leading-relaxed lowercase">{c.description}</p>
+            <h4 className="font-bold text-stone-900 font-meta text-sm mb-2 tracking-tight">{c.title}</h4>
+            <p className="text-xs font-medium text-stone-500 mb-8 line-clamp-2 leading-relaxed">{c.description}</p>
             <div className="mt-auto pt-6 border-t border-stone-100 flex justify-between items-center">
               <div>
-                <p className="text-micro font-medium text-stone-400 tracking-tight">total impact</p>
-                <p className="text-sm font-bold text-brand-green font-meta">ghs {c.raisedAmount.toLocaleString()}</p>
+                <p className="text-micro font-medium text-stone-400 tracking-tight">Total impact</p>
+                <p className="text-sm font-bold text-brand-green font-meta">₵ {c.raisedAmount.toLocaleString()}</p>
               </div>
-              <span className="text-[9px] font-bold text-stone-300 tracking-tight italic uppercase">decommissioned</span>
+              <span className="text-[9px] font-bold text-stone-300 tracking-tight italic">decommissioned</span>
             </div>
           </Card>
         ))}

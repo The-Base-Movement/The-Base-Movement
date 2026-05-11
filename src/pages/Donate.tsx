@@ -215,7 +215,7 @@ export default function Donate() {
   }
 
   return (
-    <main className="bg-background font-body-md min-h-screen pb-24 lowercase">
+    <main className="bg-background min-h-screen pb-24">
       <SEO 
         title="support the movement"
         description="your contributions for the growth and sustainability of the base movement. join citizens in ghana and across the diaspora working for a more productive future."
@@ -231,7 +231,7 @@ export default function Donate() {
             </h1>
             <BrandLine />
             <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
-              your contributions fuel the growth and sustainability of the movement. join citizens across ghana and the diaspora in building a more productive and transparent future.
+              Your contributions fuel the growth and sustainability of the movement. Join citizens across Ghana and the diaspora in building a more productive and transparent future.
             </p>
           </div>
         </div>

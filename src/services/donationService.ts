@@ -88,7 +88,7 @@ class DonationService {
       id: d.id.substring(0, 8).toUpperCase(),
       chapter: d.chapter,
       type: d.transaction_type,
-      amount: `GHS ${Number(d.amount).toLocaleString()}`,
+      amount: `₵ ${Number(d.amount).toLocaleString()}`,
       description: d.description,
       category: d.category,
       date: new Date(d.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
