@@ -39,7 +39,7 @@ export default function ProfileSettings() {
     gender: 'Male / 26 - 40',
     joinedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
     status: 'Active Member',
-    chapter: 'The Base - Ghana Chapter',
+    chapter: 'TBM Ghana Chapter',
     country: userPlatform === 'GHANA' ? 'Ghana' : ''
   })
 
@@ -92,7 +92,7 @@ export default function ProfileSettings() {
           gender: profile.gender || 'Male / 26 - 40',
           joinedDate: profile.joined,
           status: profile.status === 'Active' ? 'Active Member' : profile.status,
-          chapter: profile.chapter || 'The Base - Ghana Chapter',
+          chapter: profile.chapter || 'TBM Ghana Chapter',
           country: profile.country || (userPlatform === 'GHANA' ? 'Ghana' : '')
         })
       }
