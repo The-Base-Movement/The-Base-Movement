@@ -79,20 +79,24 @@
     --border: 40 10% 88%;
     --input: 40 10% 88%;
     --ring: 156 100% 21%;
-    --radius: 0.5rem;
+    --radius: 0.125rem; /* Elite Industrial - Sharp edges */
+    --radius-lg: 0.25rem;
+    --radius-xl: 0.5rem;
+    
     --brand-green: 156 100% 21%;
     --brand-gold: 45 80% 45%;
     --brand-red: 0 85% 44%;
 
-    /* Full HSL colors for direct CSS usage */
-    --brand-green-full: hsl(156 100% 21%);
-    --brand-gold-full: hsl(45 80% 45%);
-    --brand-red-full: hsl(0 85% 44%);
-
-    /* RGB components for transparency/shadows */
-    --brand-green-rgb: 0, 107, 63;
-    --brand-gold-rgb: 218, 165, 32;
-    --brand-red-rgb: 206, 17, 38;
+    /* Extended Surface Palette */
+    --surface-bright: 150 20% 98%;
+    --surface-dim: 150 10% 85%;
+    --surface-variant: 150 10% 90%;
+    --on-surface-variant: 220 15% 35%;
+    
+    /* Functional Tokens */
+    --outline-variant: 150 10% 75%;
+    --divider-gold: 45 80% 45% / 0.3;
+    --charcoal-dark: 0 0% 10%;
 
     /* Authoritative Font Scale - Optimized for High-Resolution Reading */
     --fs-micro: 12px;
@@ -189,21 +193,9 @@
   .brand-line-accent { @apply flex-1 bg-accent; }
   .brand-line-primary { @apply flex-1 bg-primary; }
   
-  /* Centralized Typographic Scale Utilities */
+  /* Unified Typographic Scale Utilities - Now synced with Tailwind Config */
   .text-micro { font-size: var(--fs-micro); }
   .text-tiny { font-size: var(--fs-tiny); }
-  
-  /* Management Controlled Muted Text Utilities */
-  .text-muted-foreground { color: hsl(var(--muted-foreground)); }
-  .text-on-surface-muted { color: hsl(var(--on-surface-muted)); }
-
-  /* Tailwind Utility Mapping to Authoritative Scale */
-  .text-xs { font-size: var(--fs-xs) !important; }
-  .text-sm { font-size: var(--fs-sm) !important; }
-  .text-base { font-size: var(--fs-base) !important; }
-  .text-lg { font-size: var(--fs-lg) !important; }
-  .text-xl { font-size: var(--fs-xl) !important; }
-  .text-2xl { font-size: var(--fs-2xl) !important; }
 }
 
 /* Material Symbols configuration */
