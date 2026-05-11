@@ -5,12 +5,36 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "primary": "hsl(var(--primary))",
-        "secondary": "hsl(var(--secondary))",
-        "accent": "hsl(var(--accent))",
-        "destructive": "hsl(var(--destructive))",
+        "primary": {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
         "background": "hsl(var(--background))",
         "foreground": "hsl(var(--foreground))",
+        "secondary": {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        "destructive": {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        "muted": {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        "accent": {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        "popover": {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        "card": {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
         "brand-green": "hsl(var(--brand-green))",
         "brand-gold": "hsl(var(--brand-gold))",
         "brand-red": "hsl(var(--brand-red))",
@@ -20,6 +44,9 @@ module.exports = {
         "surface-bright": "hsl(var(--surface-bright))",
         "surface-dim": "hsl(var(--surface-dim))",
         "surface-variant": "hsl(var(--surface-variant))",
+        "on-surface": "hsl(var(--foreground))",
+        "on-background": "hsl(var(--foreground))",
+        "on-surface-muted": "hsl(var(--on-surface-muted))",
         "on-surface-variant": "hsl(var(--on-surface-variant))",
         "outline-variant": "hsl(var(--outline-variant))",
         "divider-gold": "hsl(var(--divider-gold))",
@@ -29,10 +56,6 @@ module.exports = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
       },
       borderRadius: {
         "DEFAULT": "var(--radius)",
