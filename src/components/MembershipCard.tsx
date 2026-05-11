@@ -45,8 +45,8 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
             <p className="text-white/80 text-[6px] sm:text-[7px] font-medium mt-1">Ghana First, jobs for the youth!</p>
           </div>
         </div>
-        <div className="px-2 sm:px-3 h-5 sm:h-6 bg-white/10 border border-white/20 rounded-none flex items-center justify-center">
-          <span className="text-white text-[7px] sm:text-[8px] font-bold tracking-tight leading-none">
+        <div className="px-2 sm:px-3 h-5 sm:h-6 bg-white/10 border border-white/20 rounded-none text-center overflow-hidden">
+          <span className="text-white text-[7px] sm:text-[8px] font-bold tracking-tight leading-[20px] sm:leading-[24px] block uppercase">
             {country && country !== 'Ghana' ? 'Diaspora Member' : 'Local Member'}
           </span>
         </div>
