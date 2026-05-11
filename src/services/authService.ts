@@ -41,11 +41,27 @@ class AuthService {
     return AuthService.instance;
   }
 
-  async login(email: string, password: string): Promise<AuthResponse['data']> {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  async login(identifier: string, password: string): Promise<AuthResponse['data']> {
+    const isPhone = /^\+?[0-9]+$/.test(identifier.replace(/\s+/g, ''));
+    
+    let signInPromise;
+
+    if (isPhone) {
+      let formattedPhone = identifier.replace(/\s+/g, '');
+      if (formattedPhone.startsWith('0')) {
+        formattedPhone = '+233' + formattedPhone.substring(1);
+      } else if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone;
+      }
+      
+      // Since native Phone Auth is disabled, we translate the phone number into the generated dummy email
+      const dummyEmail = `${formattedPhone.replace('+', '')}@thebase.org`;
+      signInPromise = supabase.auth.signInWithPassword({ email: dummyEmail, password });
+    } else {
+      signInPromise = supabase.auth.signInWithPassword({ email: identifier, password });
+    }
+
+    const { data, error } = await signInPromise;
 
     if (error) {
       throw new Error(error.message || 'Login failed');

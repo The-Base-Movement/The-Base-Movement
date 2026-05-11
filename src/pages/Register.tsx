@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { CheckCircle2, ArrowLeft } from 'lucide-react'
+import { useSearchParams, Link } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import type { Area } from 'react-easy-crop'
 import { getCroppedImg } from '@/lib/imageUtils'
@@ -11,14 +11,13 @@ import { ChoiceStep } from './register/components/ChoiceStep'
 import { RegistrationForm } from './register/components/RegistrationForm'
 import { SuccessStep } from './register/components/SuccessStep'
 import type { RegistrationFormData, Region, Constituency } from '@/types/registration'
-
-const ageRanges = ['16-25', '26-40', '41-60', '60+']
+import SEO from '@/components/SEO'
 
 export default function Register() {
   const { settings } = useBranding()
   const [searchParams] = useSearchParams()
   const platformParam = searchParams.get('platform')
-  const [step, setStep] = useState<'choice' | 'form' | 'upload'>(platformParam ? 'form' : 'choice')
+  const [step, setStep] = useState<'choice' | 'form'>(platformParam ? 'form' : 'choice')
   const [formStep, setFormStep] = useState<number>(1)
   const [platform, setPlatform] = useState(platformParam || 'GHANA')
   const [showPassword, setShowPassword] = useState(false)
@@ -27,118 +26,42 @@ export default function Register() {
   const [regNumber, setRegNumber] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [dbCountries, setDbCountries] = useState<string[]>([])
-  const [dbCountryCodes, setDbCountryCodes] = useState<Record<string, string>>({ 'Ghana': '+233' })
+  const [dbCountryCodes, setDbCountryCodes] = useState<Record<string, string>>({})
   const [dbRegions, setDbRegions] = useState<Region[]>([])
   const [dbConstituencies, setDbConstituencies] = useState<Constituency[]>([])
+  const [dbChapters, setDbChapters] = useState<string[]>([])
 
   useEffect(() => {
     async function fetchData() {
       try {
-        // 1. Fetch Countries
-        const { data: countriesData, error: countriesError } = await supabase
-          .from('countries')
-          .select('*')
-          .order('name', { ascending: true })
-
-        if (countriesError) throw countriesError
-
+        const { data: countriesData } = await supabase.from('countries').select('*').order('name', { ascending: true })
         if (Array.isArray(countriesData)) {
-          const names = countriesData.map(c => c.name);
-          const codes: Record<string, string> = {};
+          setDbCountries(countriesData.map(c => c.name).filter(n => n !== 'Ghana'))
+          
+          const codeMap: Record<string, string> = {}
           countriesData.forEach(c => {
-            codes[c.name] = c.dialing_code;
-          });
-          const uniqueNames = Array.from(new Set(names.filter(n => n !== 'Ghana')));
-          setDbCountries(uniqueNames);
-          setDbCountryCodes(codes);
+            if (c.dialing_code) codeMap[c.name] = c.dialing_code
+          })
+          setDbCountryCodes(codeMap)
         }
 
-        // 2. Fetch Regions
-        const { data: regionsData, error: regionsError } = await supabase
-          .from('ghana_regions')
-          .select('*')
-          .order('name', { ascending: true })
+        const { data: regionsData } = await supabase.from('ghana_regions').select('*').order('name', { ascending: true })
+        setDbRegions(Array.from(new Map((regionsData || []).map(r => [r.name, r])).values()))
 
-        if (regionsError) throw regionsError
-        const uniqueRegions = Array.from(new Map((regionsData || []).map(r => [r.name, r])).values())
-        setDbRegions(uniqueRegions)
+        const { data: conData } = await supabase.from('ghana_constituencies').select('*').order('name', { ascending: true })
+        setDbConstituencies(Array.from(new Map((conData || []).map(c => [`${c.region_id}-${c.name}`, c])).values()))
 
-        // 3. Fetch Constituencies
-        const { data: conData, error: conError } = await supabase
-          .from('ghana_constituencies')
-          .select('*')
-          .order('name', { ascending: true })
-
-        if (conError) throw conError
-        const uniqueConstituencies = Array.from(
-          new Map((conData || []).map(c => [`${c.region_id}-${c.name}`, c])).values()
-        )
-        setDbConstituencies(uniqueConstituencies)
-
+        const { data: chaptersData } = await supabase.from('chapters').select('name').order('name', { ascending: true })
+        setDbChapters((chaptersData || []).map(c => c.name))
       } catch (error) {
-        console.error('[DATABASE] Failed to fetch master data for registration:', error);
+        console.error('Failed to fetch registration data:', error)
       }
     }
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const [isScanningId, setIsScanningId] = useState(false)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
-
-  const handleIdScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    setIsScanningId(true);
-    try {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      
-      const base64 = await new Promise<string>((resolve) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      });
-
-      const { data, error } = await supabase.functions.invoke('ocr-verify', {
-        body: { imageBase64: base64 }
-      });
-
-      if (error) throw error;
-      
-      if (data && data.success && data.data) {
-        toast.success(`Identity Verified: Welcome, ${data.data.fullName || 'Patriot'}`);
-        
-        setFormData(prev => ({
-          ...prev,
-          fullName: data.data.fullName || prev.fullName,
-          idNumber: data.data.idNumber || prev.idNumber,
-        }));
-        
-        if (data.data.dateOfBirth) {
-          const birthYear = new Date(data.data.dateOfBirth).getFullYear();
-          const currentYear = new Date().getFullYear();
-          const age = currentYear - birthYear;
-          
-          let computedAgeRange = '';
-          if (age >= 16 && age <= 25) computedAgeRange = '16-25';
-          else if (age >= 26 && age <= 40) computedAgeRange = '26-40';
-          else if (age >= 41 && age <= 60) computedAgeRange = '41-60';
-          else if (age > 60) computedAgeRange = '60+';
-          
-          if (computedAgeRange) {
-             setFormData(prev => ({ ...prev, ageRange: computedAgeRange }));
-          }
-        }
-      } else {
-        throw new Error(data?.error || 'Could not read ID card');
-      }
-      
-    } catch (err) {
-      console.error(err);
-      toast.error(err instanceof Error ? err.message : 'Verification failed. Please enter details manually.');
-    } finally {
-      setIsScanningId(false);
-    }
-  };
-
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
@@ -147,45 +70,62 @@ export default function Register() {
     setCroppedAreaPixels(croppedAreaPixels)
   }, [])
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader()
-      reader.addEventListener('load', () => setPhotoUrl(reader.result?.toString() || null))
-      reader.readAsDataURL(e.target.files[0])
+
+  const handleIdScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setIsScanningId(true);
+    try {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          setPhotoUrl(result);
+          resolve(result);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      const { data, error } = await supabase.functions.invoke('ocr-verify', { body: { imageBase64: base64 } });
+      if (error) throw error;
+      if (data?.success && data?.data) {
+        toast.success(`Identity Verified successfully.`);
+        setFormData(prev => ({
+          ...prev,
+          idNumber: data.data.idNumber || prev.idNumber,
+        }));
+      } else {
+        throw new Error(data?.error || 'Could not read ID card');
+      }
+    } catch {
+      toast.error('Verification failed. Please enter details manually.');
+    } finally {
+      setIsScanningId(false);
     }
-  }
+  };
+
+
 
   const [formData, setFormData] = useState<RegistrationFormData>({
-    idNumber: '',
-    fullName: '',
-    countryCode: '+233',
-    country: 'Ghana',
-    children_count: 0,
-    contactNumber: '',
-    ageRange: '',
-    gender: 'Male',
-    password: '',
-    email: '',
-    residentialAddress: '',
-    region: '',
-    constituency: '',
-    chapter: '',
-    profession: '',
-    educationLevel: '',
-    emergencyContactName: '',
-    emergencyRelationship: '',
-    emergencyNumber: '',
+    idNumber: '', fullName: '', countryCode: '+233', country: 'Ghana', children_count: 0,
+    contactNumber: '', ageRange: '', gender: 'Male', password: '', email: '',
+    residentialAddress: '', region: '', constituency: '', chapter: '', profession: '',
+    educationLevel: '', emergencyContactName: '', emergencyRelationship: '', emergencyNumber: '',
   })
 
   const handleChange = <K extends keyof RegistrationFormData>(field: K, value: RegistrationFormData[K]) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData(prev => {
+      const updates = { ...prev, [field]: value }
+      if (field === 'country' && typeof value === 'string' && dbCountryCodes[value]) {
+        updates.countryCode = dbCountryCodes[value]
+      }
+      return updates
+    })
   }
 
   const handlePlatformChange = (newPlatform: string) => {
     setPlatform(newPlatform)
-    if (newPlatform === 'GHANA') {
-      setFormData(prev => ({ ...prev, country: 'Ghana', countryCode: '+233' }))
-    }
+    if (newPlatform === 'GHANA') setFormData(prev => ({ ...prev, country: 'Ghana', countryCode: '+233' }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -194,213 +134,144 @@ export default function Register() {
       setFormStep(prev => prev + 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
-      const yearStr = new Date().getFullYear().toString().slice(-2)
-      const randomNum = String(Math.floor(1000 + Math.random() * 9000))
-      const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
-      setRegNumber(regNo)
-
-
       setIsLoading(true)
       try {
-        const authEmail = formData.email || `${regNo.toLowerCase()}@thebase.org`
+        const yearStr = new Date().getFullYear().toString().slice(-2)
+        const randomNum = String(Math.floor(1000 + Math.random() * 9000))
+        const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
+        setRegNumber(regNo)
+
+        const authEmail = formData.email ? formData.email.trim() : null
         
-        let finalAvatarUrl = photoUrl
-        if (photoUrl && croppedAreaPixels) {
-          try {
-            const croppedBlob = await getCroppedImg(photoUrl, croppedAreaPixels)
-            if (!croppedBlob) throw new Error('Cropping failed')
-            
-            const fileName = `${regNo}.jpg`
-            const { error: uploadError } = await supabase.storage
-              .from('avatars')
-              .upload(fileName, croppedBlob, { 
-                upsert: true,
-                contentType: 'image/jpeg'
-              })
+        // Clean phone number (remove spaces, leading zeros after country code)
+        const cleanPhone = formData.countryCode + formData.contactNumber.replace(/^0+/, '').replace(/\s+/g, '')
 
-            if (uploadError) throw uploadError
+        const dummyEmail = `${cleanPhone.replace('+', '')}@thebase.org`;
+        const finalAuthEmail = authEmail || dummyEmail;
 
-            const { data: urlData } = supabase.storage
-              .from('avatars')
-              .getPublicUrl(fileName)
-            
-            finalAvatarUrl = urlData.publicUrl
-          } catch (uploadErr) {
-            console.error('[STORAGE] Avatar upload failed, falling back to local URL:', uploadErr)
-          }
-        }
-
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: authEmail,
+        // 1. Sign up with Email (using dummy email if none provided to bypass disabled phone auth)
+        const signUpPromise = supabase.auth.signUp({
+          email: finalAuthEmail,
           password: formData.password!,
-          options: {
-            data: {
-              full_name: formData.fullName,
-              avatar_url: finalAvatarUrl
-            }
-          }
+          options: { data: { full_name: formData.fullName } }
         })
+
+        const { data: authData, error: authError } = await signUpPromise
 
         if (authError) throw authError
 
-        const { error: dbError } = await supabase
-          .from('users')
-          .insert({
-            id: authData.user?.id,
-            national_id: formData.idNumber,
-            full_name: formData.fullName,
-            email: authEmail,
-            registration_number: regNo,
-            platform: platform,
-            country: formData.country,
-            phone_number: formData.countryCode + formData.contactNumber,
-            gender: formData.gender,
-            region: formData.region,
-            constituency: formData.constituency,
-            chapter: formData.chapter,
-            profession: formData.profession,
-            status: 'Pending',
-            verification_status: 'In Review',
-            age_range: formData.ageRange,
-            education_level: formData.educationLevel,
-            emergency_name: formData.emergencyContactName,
-            emergency_relationship: formData.emergencyRelationship,
-            emergency_phone: formData.emergencyNumber,
-            avatar_url: finalAvatarUrl,
-            children_count: formData.children_count
-          })
+        // 2. NOW upload the avatar using the authenticated session
+        let finalAvatarUrl = null
+        if (photoUrl && croppedAreaPixels) {
+          try {
+            const croppedBlob = await getCroppedImg(photoUrl, croppedAreaPixels)
+            if (croppedBlob) {
+              const fileName = `${regNo}.jpg`
+              const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, croppedBlob, { upsert: true, contentType: 'image/jpeg' })
+              if (!uploadError) {
+                const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(fileName)
+                finalAvatarUrl = urlData.publicUrl
+                // Update auth metadata with the new avatar URL
+                await supabase.auth.updateUser({ data: { avatar_url: finalAvatarUrl } })
+              } else {
+                console.error("Avatar upload error:", uploadError)
+              }
+            }
+          } catch (err) {
+            console.error('Failed to process/upload avatar:', err)
+          }
+        }
+
+        // 3. Insert into the users table
+        const { error: dbError } = await supabase.from('users').insert({
+          id: authData.user?.id, national_id: formData.idNumber, full_name: formData.fullName,
+          email: authEmail, registration_number: regNo, platform: platform,
+          country: formData.country, phone_number: cleanPhone,
+          gender: formData.gender, region: formData.region, constituency: formData.constituency,
+          chapter: formData.chapter, profession: formData.profession, status: 'Pending',
+          verification_status: 'In Review', age_range: formData.ageRange, avatar_url: finalAvatarUrl,
+          education_level: formData.educationLevel, emergency_name: formData.emergencyContactName,
+          emergency_relationship: formData.emergencyRelationship, emergency_phone: formData.emergencyNumber,
+          children_count: formData.children_count, residential_address: formData.residentialAddress
+        })
 
         if (dbError) throw dbError
-
-        toast.success('Official records synchronized.')
+        
         setSubmitted(true)
         window.scrollTo({ top: 0, behavior: 'smooth' })
-      } catch (error: unknown) {
-        console.error('[DATABASE] Registration failed:', error)
-        toast.error(error instanceof Error ? error.message : 'Registration failed. Please try again.')
+      } catch (error) {
+        toast.error((error as Error)?.message || 'Registration failed. Please try again.')
       } finally {
         setIsLoading(false)
       }
     }
   }
 
-  const goBack = () => {
-    setFormStep(prev => prev - 1)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
   if (submitted) {
     return (
-      <main className="bg-background font-body-md min-h-screen py-12 px-4">
-        <SuccessStep 
-          formData={formData} 
-          photoUrl={photoUrl} 
-          regNumber={regNumber} 
-          onEdit={() => setSubmitted(false)} 
-        />
+      <main className="bg-container-low min-h-screen py-12 px-4 flex items-center justify-center">
+        <SuccessStep formData={formData} photoUrl={photoUrl} regNumber={regNumber} onEdit={() => setSubmitted(false)} />
       </main>
     )
   }
 
   if (step === 'choice') {
     return (
-      <main className="bg-background font-body-md min-h-screen flex flex-col justify-center py-12 px-4">
-        <ChoiceStep 
-          settings={settings} 
-          onSelect={(p) => { 
-            handlePlatformChange(p); 
-            setStep('form'); 
-            setFormStep(1); 
-          }} 
-        />
+      <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
+        <ChoiceStep settings={settings} onSelect={(p) => { handlePlatformChange(p); setStep('form'); setFormStep(1); }} />
       </main>
     )
   }
 
   return (
-    <main className="bg-background font-body-md min-h-screen">
-      <header className="bg-white border-b border-border/60 pt-16 pb-12 px-4 text-center">
-        <div className="max-w-6xl mx-auto">
-          <img src={settings.logo_url} alt="The Base" className="h-20 w-auto mx-auto mb-6 object-contain" decoding="async" />
-          <h1 className="text-on-surface mb-2">The Base</h1>
-          <div className="w-24 h-1.5 mx-auto mb-4 flex">
-            <div className="flex-1 bg-destructive"></div>
-            <div className="flex-1 bg-accent"></div>
-            <div className="flex-1 bg-primary"></div>
-          </div>
-          <h2 className="text-muted-foreground mb-8">Official Registration Form</h2>
-          <Button
-            variant="default"
-            onClick={() => setStep('choice')}
-            className="inline-flex items-center gap-2 px-6 py-2 h-auto text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50 transition-all active:scale-95 shadow-sm"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to registration options
+    <main className="bg-container-low min-h-screen flex flex-col items-center justify-center py-12 px-4">
+      <SEO title="Member Registration" description="Join The Base Movement. Create your account and help build a better Ghana." canonical="/register" />
+      
+      <div className="max-w-[480px] w-full">
+        <div className="mb-8 flex justify-between items-center px-2">
+          <Link to="/" className="flex items-center gap-2">
+            <img src={settings.logo_url} alt="Logo" className="h-10 w-auto" />
+            <h1 className="text-lg font-black tracking-tight text-on-surface">The Base</h1>
+          </Link>
+          <Button variant="ghost" onClick={() => setStep('choice')} className="text-xs font-bold gap-2">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back
           </Button>
         </div>
-      </header>
 
-      <section className="max-w-6xl mx-auto py-12 px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          <nav className="lg:col-span-3 space-y-2 sticky top-8" aria-label="Registration progress">
-            <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-6 pl-4">Registration progress</p>
-            <div className="space-y-1">
-              {[
-                { step: 1, label: 'Primary details' },
-                { step: 2, label: 'Demographic info' },
-                { step: 3, label: 'Emergency contact' },
-                { step: 4, label: 'Final verification' }
-              ].map((item) => (
-                <div key={item.step} className={`flex items-center gap-4 p-4 transition-all border-l-4 ${formStep === item.step ? 'bg-white border-primary shadow-sm' : 'border-transparent text-muted-foreground/80 opacity-60'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-meta shrink-0 ${formStep >= item.step ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
-                    {formStep > item.step ? <CheckCircle2 className="w-5 h-5" /> : item.step}
-                  </div>
-                  <span className={`text-xs font-bold tracking-tight font-meta ${formStep === item.step ? 'text-on-surface' : ''}`}>
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
+        <RegistrationForm 
+          platform={platform}
+          formStep={formStep}
+          formData={formData}
+          isLoading={isLoading}
+          isScanningId={isScanningId}
+          showPassword={showPassword}
+          agreed={agreed}
+          photoUrl={photoUrl}
+          crop={crop}
+          zoom={zoom}
+          onCropChange={setCrop}
+          onCropComplete={onCropComplete}
+          onZoomChange={setZoom}
+          onClearPhoto={() => setPhotoUrl(null)}
+          dbCountries={dbCountries}
+          dbRegions={dbRegions}
+          dbConstituencies={dbConstituencies}
+          dbChapters={dbChapters}
+          onPlatformChange={handlePlatformChange}
+          onIdScan={handleIdScan}
+          onInputChange={handleChange}
+          onPasswordToggle={() => setShowPassword(!showPassword)}
+          onAgreedChange={setAgreed}
+          onBack={() => setFormStep(prev => prev - 1)}
+          onSubmit={handleSubmit}
+        />
 
-            <div className="mt-12 pl-4 pt-8 border-t border-border/60">
-              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-1">Need assistance?</p>
-              <a href="mailto:info@thebasemovement.com" className="text-xs font-meta font-medium text-muted-foreground hover:text-primary transition-colors">
-                info@thebasemovement.com
-              </a>
-            </div>
-          </nav>
-
-          <section className="lg:col-span-9">
-            <RegistrationForm 
-              platform={platform}
-              formStep={formStep}
-              formData={formData}
-              isLoading={isLoading}
-              isScanningId={isScanningId}
-              showPassword={showPassword}
-              agreed={agreed}
-              photoUrl={photoUrl}
-              crop={crop}
-              zoom={zoom}
-              dbCountries={dbCountries}
-              dbCountryCodes={dbCountryCodes}
-              dbRegions={dbRegions}
-              dbConstituencies={dbConstituencies}
-              ageRanges={ageRanges}
-              onPlatformChange={handlePlatformChange}
-              onIdScan={handleIdScan}
-              onInputChange={handleChange}
-              onPasswordToggle={() => setShowPassword(!showPassword)}
-              onAgreedChange={setAgreed}
-              onPhotoUpload={handlePhotoUpload}
-              onCropChange={setCrop}
-              onCropComplete={onCropComplete}
-              onZoomChange={setZoom}
-              onBack={goBack}
-              onSubmit={handleSubmit}
-            />
-          </section>
+        <div className="mt-8 text-center">
+          <p className="text-[12px] text-on-surface-muted">
+            Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Sign in here →</Link>
+          </p>
         </div>
-      </section>
+      </div>
     </main>
   )
 }
