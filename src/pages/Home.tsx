@@ -44,10 +44,10 @@ function AnimatedCounter({ target, duration = 2000, className }: { target: numbe
   }
 
   return (
-    <div 
-      ref={ref} 
-      className={className || "text-6xl md:text-[5rem] font-meta font-bold tracking-tighter transition-colors duration-300"} 
-      style={!className ? { color: getColor(count) } : undefined}
+    <div
+      ref={ref}
+      className={className || "text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 leading-none"}
+      style={{ color: getColor(count) }}
     >
       {count.toLocaleString()}
     </div>
@@ -108,7 +108,7 @@ export default function Home() {
       {/* Hero Section */}
       <section 
         aria-labelledby="hero-heading"
-        className="relative bg-on-surface text-white min-h-screen flex items-center overflow-hidden border-b-[8px] border-accent group"
+        className="relative bg-on-surface text-white min-h-[560px] flex items-center overflow-hidden border-b-[8px] border-accent group"
         onMouseMove={handleMouseMove}
       >
         {!lowBandwidthMode ? (
@@ -130,9 +130,9 @@ export default function Home() {
         )}
 
         <div className="absolute inset-0 z-0 bg-gradient-to-t from-on-surface via-on-surface/60 to-transparent"></div>
-        <div className="max-w-[1280px] mx-auto px-8 py-20 relative z-10 flex flex-col md:flex-row items-center gap-12 w-full">
+        <div className="max-w-[1280px] mx-auto px-8 py-[80px] relative z-10 flex flex-col md:flex-row items-center gap-12 w-full">
           <div className="flex-1 text-center md:text-left">
-            <h1 id="hero-heading" className="text-5xl md:text-h1 font-meta font-bold mb-4 leading-[1.1] tracking-tighter">
+            <h1 id="hero-heading" className="text-[48px] md:text-[64px] font-meta font-extrabold mb-2 leading-[1.05] tracking-tighter">
               Ghana First,<br />Jobs for the youth!
             </h1>
             <div className="flex justify-center md:justify-start">
@@ -166,7 +166,7 @@ export default function Home() {
           <h2 id="platforms-heading" className="sr-only">Our Platforms</h2>
           <div className="grid md:grid-cols-2 gap-12 md:gap-24">
             <div className="border-t-[4px] border-primary pt-8 group">
-              <h3 className="text-h3 font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight">
+              <h3 className="text-[28px] md:text-[32px] font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight leading-tight">
                 <MapPin className="text-primary w-8 h-8" /> For Citizens in Ghana.
               </h3>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
@@ -180,7 +180,7 @@ export default function Home() {
             </div>
             
             <div className="border-t-[4px] border-accent pt-8 group">
-              <h3 className="text-h3 font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight">
+              <h3 className="text-[28px] md:text-[32px] font-meta font-bold text-on-surface mb-4 flex items-center gap-3 tracking-tight leading-tight">
                 <Globe className="text-accent w-8 h-8" /> For Ghanaians Abroad.
               </h3>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-body-md">
@@ -233,19 +233,19 @@ export default function Home() {
       </section>
 
       {/* Stats Section - Modernized Hardened Typography */}
-      <section aria-labelledby="stats-heading" className="py-32 bg-stone-50 border-y border-border/40 relative overflow-hidden">
+      <section aria-labelledby="stats-heading" className="py-24 bg-[#fafaf6] border-y border-border/40 relative overflow-hidden">
         {/* Subtle background texture for premium feel */}
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.02] pointer-events-none" />
         
         <div className="max-w-[1280px] mx-auto px-8 relative z-10">
           <h2 id="stats-heading" className="sr-only">Movement Statistics</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             {/* Stat Pillar 01 */}
             <div className="group">
               <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={stats.members} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+                <AnimatedCounter target={stats.members} className="text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 mb-2 leading-none" />
               </dd>
               <dt className="text-micro font-bold text-primary tracking-tight normal-case mb-2">
                 Members registered nationwide
@@ -259,7 +259,7 @@ export default function Home() {
             <div className="group">
               <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={stats.chapters} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+                <AnimatedCounter target={stats.chapters} className="text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 mb-2 leading-none" />
               </dd>
               <dt className="text-micro font-bold text-accent tracking-tight normal-case mb-2">
                 Community branches active in nearly every district
@@ -273,7 +273,7 @@ export default function Home() {
             <div className="group">
               <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={stats.regions} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+                <AnimatedCounter target={stats.regions} className="text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 mb-2 leading-none" />
               </dd>
               <dt className="text-micro font-bold text-destructive tracking-tight normal-case mb-2">
                 Movement presence across all 16 regions
@@ -287,7 +287,7 @@ export default function Home() {
             <div className="group">
               <BrandLine className="mb-6 opacity-60" />
               <dd className="m-0">
-                <AnimatedCounter target={stats.diaspora} className="text-6xl lg:text-7xl font-meta font-bold tracking-tighter text-on-surface mb-2" />
+                <AnimatedCounter target={stats.diaspora} className="text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 mb-2 leading-none" />
               </dd>
               <dt className="text-micro font-bold text-on-surface/80 tracking-tight normal-case mb-2">
                 Diaspora supporters registered online

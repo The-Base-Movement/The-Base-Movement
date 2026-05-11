@@ -52,6 +52,31 @@ export default defineConfig(({ mode }) => {
     build: {
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return
+            if (id.includes('@tinymce')) return 'vendor-editor'
+            if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf'
+            if (id.includes('framer-motion')) return 'vendor-motion'
+            if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-')) return 'vendor-charts'
+            if (id.includes('lucide-react')) return 'vendor-icons'
+            if (id.includes('@radix-ui')) return 'vendor-radix'
+            if (id.includes('@supabase')) return 'vendor-supabase'
+            if (id.includes('@tanstack')) return 'vendor-query'
+            if (
+              id.includes('react-dom') ||
+              id.includes('react-router') ||
+              id.includes('/react/') ||
+              id.includes('/react-is/')
+            ) return 'vendor-react'
+            if (
+              id.includes('react-hook-form') ||
+              id.includes('@hookform') ||
+              id.includes('/zod/')
+            ) return 'vendor-forms'
+            return 'vendor'
+          }
+        }
       }
     },
     define: {

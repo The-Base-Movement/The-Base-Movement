@@ -1367,6 +1367,56 @@ class AdminService {
     supabase.removeChannel(channel)
   }
 
+  async getGhanaRegions(): Promise<{ id: number; name: string }[]> {
+    const { data, error } = await supabase
+      .from('ghana_regions')
+      .select('id, name')
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('[ADMIN SERVICE] Failed to fetch regions:', error)
+      return []
+    }
+    return (data || []).map(r => ({ id: Number(r.id), name: r.name }))
+  }
+
+  async getGhanaConstituencies(regionId?: number): Promise<{ id: number; name: string; region_id: number }[]> {
+    let query = supabase
+      .from('ghana_constituencies')
+      .select('id, name, region_id')
+      .order('name', { ascending: true })
+
+    if (regionId) {
+      query = query.eq('region_id', regionId)
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('[ADMIN SERVICE] Failed to fetch constituencies:', error)
+      return []
+    }
+    return (data || []).map(c => ({ 
+      id: Number(c.id), 
+      name: c.name, 
+      region_id: Number(c.region_id) 
+    }))
+  }
+
+  async getDiasporaChapters(): Promise<{ id: string; name: string; country: string }[]> {
+    const { data, error } = await supabase
+      .from('chapters')
+      .select('id, name, country')
+      .neq('country', 'Ghana')
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('[ADMIN SERVICE] Failed to fetch diaspora chapters:', error)
+      return []
+    }
+    return data || []
+  }
+
   // --- Global Command Search ---
   async globalSearch(query: string): Promise<GlobalSearchResult[]> {
     if (!query || query.length < 2) return []

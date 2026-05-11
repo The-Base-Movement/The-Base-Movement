@@ -1,127 +1,87 @@
-import { 
-  Users, 
-  MapPin, 
-  ShoppingBag, 
-  Activity,
-  Globe,
-  Trash2
-} from 'lucide-react'
-
-
-import type { LucideIcon } from 'lucide-react'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle,
-  CardDescription 
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
-import { logisticsService } from '@/services/logisticsService'
-import { contentService } from '@/services/contentService'
-import type { GrowthTrend, SentimentStat, AuditLogEntry, RegionalStat, LogisticsLatency } from '@/types/admin'
-import { useState, useEffect } from 'react'
-
-import { 
-  AreaChart, 
-  Area, 
-  Bar,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
-} from 'recharts'
+import { tacticalService } from '@/services/tacticalService'
 import { useToast } from '@/hooks/use-toast'
-import { useNavigate } from 'react-router-dom'
-import { BrandLine } from '@/components/ui/BrandLine'
 
-interface StatCardProps {
-  title: string
-  value: string
-  change: string
-  icon: LucideIcon
-  color: string
-}
+import type { 
+  AuditLogEntry, 
+  RegionalStat, 
+  PendingVerification,
+  Broadcast
+} from '@/types/admin'
 
-// Operational Skeleton Component
-function SkeletonCard() {
+
+
+// KPI Component matching the reference kit
+function KPI({ label, value, delta, variant }: { label: string, value: string, delta?: string, variant: 'r' | 'g' | 'k' | 'gr' }) {
+  const isDown = delta?.toLowerCase().includes('down')
   return (
-    <Card className="rounded-sm border-border/60 shadow-none overflow-hidden bg-white">
-      <CardContent className="p-5 space-y-3">
-        <dt className="w-1/4 h-2 bg-muted/10 animate-pulse rounded-full" />
-        <dd className="m-0 w-1/2 h-6 bg-muted/10 animate-pulse rounded-sm" />
-      </CardContent>
-    </Card>
-  )
-}
-
-// Operational Stat Card Component
-function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
-  return (
-    <Card className="rounded-sm border-border/40 shadow-sm transition-all overflow-hidden bg-white hover:border-border/60">
-      <CardContent className="p-4 sm:p-5">
-        <div className="flex justify-between items-start gap-4">
-          <div className="space-y-1.5 flex-1 min-w-0">
-            <dt className="text-micro font-bold text-muted-foreground uppercase tracking-widest truncate">{title}</dt>
-            <dd className="m-0 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
-              <span className="text-xl sm:text-2xl font-bold text-on-surface tabular-nums truncate">{value}</span>
-              <span className={cn(
-                "text-micro font-bold flex items-center gap-0.5 whitespace-nowrap",
-                change.startsWith('+') ? "text-primary" : "text-muted-foreground"
-              )}>
-                {change}
-              </span>
-            </dd>
-          </div>
-          <div className={cn("w-8 h-8 shrink-0 flex items-center justify-center rounded-sm bg-muted/10", color.replace('bg-', 'text-'))}>
-            <Icon className="w-4 h-4" />
-          </div>
+    <div className={cn("kpi", variant)}>
+      <div className="l">{label}</div>
+      <div className="v tnum">{value}</div>
+      {delta && (
+        <div className={cn("d", isDown && "dn")}>
+          <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
+            {isDown ? 'south' : 'north'}
+          </span>
+          {delta}
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   )
 }
 
 
 
 export default function AdminDashboard() {
-  const [growthData, setGrowthData] = useState<GrowthTrend[]>([])
-  const [sentimentStats, setSentimentStats] = useState<SentimentStat[]>([])
-  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
+  const [pendingVerifications, setPendingVerifications] = useState<PendingVerification[]>([])
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
-  const [globalStats, setGlobalStats] = useState<{ label: string, value: string, change: string }[]>([])
-  const [logisticsData, setLogisticsData] = useState<LogisticsLatency[]>([])
-  const [trashCount, setTrashCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [globalStats, setGlobalStats] = useState<{ label: string, value: string, change: string }[]>([])
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const navigate = useNavigate()
+  const { toast } = useToast()
+  const [isExporting, setIsExporting] = useState(false)
+  
+  // Broadcast State
+  const [broadcast, setBroadcast] = useState({
+    title: 'Eastern region jobs program — first cohort begins Monday',
+    content: 'Patriots — the first 600 youth begin paid apprenticeships across 14 districts of the Eastern region this Monday.',
+    target_type: 'REGION' as Broadcast['target_type'],
+    target_value: 'Eastern',
+    priority: 'Normal' as Broadcast['priority'],
+    channel: 'In-app' as Broadcast['channel']
+  })
+  const [isSending, setIsSending] = useState(false)
+
+  // Targeting Data
+  const [regions, setRegions] = useState<{ id: number; name: string }[]>([])
+  const [constituencies, setConstituencies] = useState<{ id: number; name: string; region_id: number }[]>([])
+  const [diasporaChapters, setDiasporaChapters] = useState<{ id: string; name: string; country: string }[]>([])
+  const [selectedRegionId, setSelectedRegionId] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('[SYSTEM] Dashboard: Starting data fetch...')
       setIsLoading(true)
       try {
-        const [growth, sentiment, audit, regions, stats, logistics, trashedBlogs, trashedProducts, trashedMedia] = await Promise.all([
-          adminService.getGrowthTrends(),
-          adminService.getSentimentAnalysis(),
-          adminService.getSystemAuditLogs(),
-          adminService.getRegionalStats(),
+        const [stats, audit, pending, regs, consts, diaspora, regional] = await Promise.all([
           adminService.getGlobalStats(),
-          logisticsService.getLogisticsLatency(),
-          contentService.getTrashedBlogPosts(),
-          logisticsService.getTrashedInventory(),
-          contentService.getTrashedMedia()
+          adminService.getSystemAuditLogs(),
+          adminService.getPendingVerifications(),
+          adminService.getGhanaRegions(),
+          adminService.getGhanaConstituencies(),
+          adminService.getDiasporaChapters(),
+          adminService.getRegionalStats()
         ])
-        setGrowthData(growth)
-        setSentimentStats(sentiment)
-        setAuditLogs(audit)
-        setRegionalStats(regions)
         setGlobalStats(stats)
-        setLogisticsData(logistics)
-        setTrashCount(trashedBlogs.length + trashedProducts.length + trashedMedia.length)
-        console.log('[SYSTEM] Dashboard: Data fetch complete.')
+        setAuditLogs(audit)
+        setPendingVerifications(pending)
+        setRegions(regs as unknown as { id: number; name: string }[])
+        setConstituencies(consts as unknown as { id: number; name: string; region_id: number }[])
+        setDiasporaChapters(diaspora as unknown as { id: string; name: string; country: string }[])
+        setRegionalStats(regional)
       } catch (error) {
         console.error('[SYSTEM] Dashboard: Data fetch failed:', error)
       } finally {
@@ -131,8 +91,50 @@ export default function AdminDashboard() {
     fetchData()
   }, [])
 
-  const { toast } = useToast()
-  const [isExporting, setIsExporting] = useState(false)
+
+
+  const handleSendBroadcast = async () => {
+    if (!broadcast.title || !broadcast.content) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide both a headline and message content.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsSending(true)
+    try {
+      const success = await tacticalService.sendBroadcast({
+        title: broadcast.title,
+        content: broadcast.content,
+        target_type: broadcast.target_type,
+        target_value: broadcast.target_value,
+        priority: broadcast.priority,
+        channel: broadcast.channel,
+        status: 'Sent'
+      })
+
+      if (success) {
+        toast({
+          title: "Broadcast Dispatched",
+          description: `Message sent to targeted ${broadcast.target_type.toLowerCase()} audience.`,
+        })
+        // Reset form or keep for next? Let's clear content but keep target for speed
+        setBroadcast(prev => ({ ...prev, content: '' }))
+      } else {
+        throw new Error('Service response failed')
+      }
+    } catch {
+      toast({
+        title: "Dispatch Failure",
+        description: "Strategic communication layer encountered an error.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsSending(false)
+    }
+  }
 
   const handleExport = async () => {
     if (regionalStats.length === 0) {
@@ -200,411 +202,328 @@ export default function AdminDashboard() {
   }
 
 
-  const handlePlatformLogs = () => {
-    navigate('/admin/settings?tab=audit')
-  }
+
 
   return (
-    <div className="admin-page-container">
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main">
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <Activity className="w-8 h-8 text-on-surface" />
-            Operational dashboard
-          </h1>
-          <BrandLine className="mt-4" />
-          <div className="flex items-center gap-4 mt-1">
-            <p className="text-muted-foreground text-xs flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-              16 regions active
-            </p>
-            <p className="text-muted-foreground text-xs font-medium">Telemetry updated 2m ago</p>
-          </div>
+          <div className="crumbs">Admin / Mission control</div>
+          <h2>Today's operations</h2>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="primary" 
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+        <div className="actions">
+          <button 
+            className="btn btn-outline btn-sm"
             onClick={handleExport}
             disabled={isExporting}
           >
-            {isExporting ? 'Exporting telemetry...' : 'Export regional data'}
-          </Button>
-
-          <Button 
-            variant="default"
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-10 border-border/40 hover:bg-stone-50 h-12 transition-all active:scale-95"
-            onClick={handlePlatformLogs}
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>file_download</span>
+            {isExporting ? 'Exporting...' : 'Export'}
+          </button>
+          <button 
+            className="btn btn-dest btn-sm"
+            onClick={() => navigate('/admin/broadcasts')}
           >
-            System logs
-          </Button>
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>notifications_active</span>
+            Send broadcast
+          </button>
         </div>
       </div>
 
-      {/* KPI Row - Balanced Grid */}
-      <dl className="grid-stats mb-8" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+      {/* KPI strip */}
+      <div className="kpis">
         {isLoading ? (
           <>
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
+            <div className="kpi r animate-pulse h-24 bg-white" />
+            <div className="kpi g animate-pulse h-24 bg-white" />
+            <div className="kpi k animate-pulse h-24 bg-white" />
+            <div className="kpi gr animate-pulse h-24 bg-white" />
           </>
         ) : (
           <>
-            <StatCard title="Members" value={globalStats[0]?.value || "0"} change={globalStats[0]?.change || "0%"} icon={Users} color="bg-destructive" />
-            <StatCard title="Chapters" value={globalStats[1]?.value || "0"} change={globalStats[1]?.change || "0%"} icon={MapPin} color="bg-accent" />
-            <StatCard title="Trash Vault" value={trashCount.toString()} change="30d retention" icon={Trash2} color="bg-on-surface" />
-            <StatCard title="Inventory" value={globalStats[3]?.value || "0"} change={globalStats[3]?.change || "0%"} icon={ShoppingBag} color="bg-primary" />
+            {globalStats.length > 0 ? (
+              globalStats.map((stat, idx) => (
+                <KPI 
+                  key={stat.label}
+                  variant={idx === 0 ? 'r' : idx === 1 ? 'g' : idx === 2 ? 'k' : 'gr'}
+                  label={stat.label}
+                  value={stat.value}
+                  delta={stat.change}
+                />
+              ))
+            ) : (
+              <>
+                <KPI 
+                  variant="r" 
+                  label="Verifications pending" 
+                  value={pendingVerifications.length.toString()} 
+                  delta="Syncing..." 
+                />
+                <KPI variant="g" label="Patriots" value="--" delta="--" />
+                <KPI variant="k" label="Logistics" value="--" delta="--" />
+                <KPI variant="gr" label="Field" value="--" delta="--" />
+              </>
+            )}
           </>
         )}
-      </dl>
-
-      {/* Main Analysis Section */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 items-start">
-        <div className="xl:col-span-2 space-y-10">
-          
-          {/* Membership Growth Trend */}
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
-            <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/5">
-              <div>
-                <CardTitle className="text-sm font-bold text-on-surface flex items-center gap-2">
-                  Membership Growth
-                </CardTitle>
-                <CardDescription className="text-tiny font-medium text-muted-foreground/80 mt-1">Rolling 30-day expansion trend</CardDescription>
-              </div>
-              <div className="flex items-center gap-4">
-                {/* 📈 Tactical Summary Stats */}
-                <div className="hidden lg:flex items-center gap-6 mr-6 border-r border-border/40 pr-6">
-                  <div className="text-right">
-                    <p className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Total Growth</p>
-                    <p className="text-tiny font-bold text-primary">+{growthData.reduce((acc, curr) => acc + curr.count, 0).toLocaleString()}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Peak Day</p>
-                    <p className="text-tiny font-bold text-on-surface">{Math.max(...growthData.map(d => d.count), 0)}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-micro font-bold text-muted-foreground/60 uppercase tracking-widest leading-none mb-1.5">Avg/Day</p>
-                    <p className="text-tiny font-bold text-on-surface">{(growthData.reduce((acc, curr) => acc + curr.count, 0) / (growthData.length || 1)).toFixed(0)}</p>
-                  </div>
-                </div>
-                <select className="h-7 px-2 bg-white border border-border/60 text-micro font-bold text-on-surface/80 rounded-sm outline-none focus:ring-1 focus:ring-primary/20 transition-all">
-                  <option>Last 30 Days</option>
-                  <option>Last 90 Days</option>
-                </select>
-              </div>
-            </CardHeader>
-            <CardContent className="p-8 h-[360px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={growthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.15}/>
-                      <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0.01}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid 
-                    strokeDasharray="3 3" 
-                    vertical={false} 
-                    horizontal={true} 
-                    stroke="hsl(var(--border) / 0.3)" 
-                  />
-                  <XAxis 
-                    dataKey="date" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fontSize: 9, fontWeight: 700, fill: 'hsl(var(--muted-foreground) / 0.8)' }}
-                    tickFormatter={(value) => value.toUpperCase()}
-                    dy={12}
-                  />
-                  <YAxis 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fontSize: 9, fontWeight: 700, fill: 'hsl(var(--muted-foreground) / 0.8)' }}
-                  />
-                  <Tooltip 
-                    cursor={{ fill: 'hsl(var(--muted) / 0.3)', radius: 2 }}
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-on-surface p-3 border border-white/10 rounded-sm shadow-2xl animate-in fade-in zoom-in-95 duration-200 min-w-[140px]">
-                            <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2 border-b border-white/5 pb-1.5">{label}</p>
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between gap-4">
-                                <span className="text-[10px] font-bold text-white/60 uppercase">Daily Gain</span>
-                                <span className="text-sm font-bold text-white">+{payload[0].value}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <div className="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
-                                  <div 
-                                    className="h-full bg-primary transition-all duration-500" 
-                                    style={{ width: `${(Number(payload[0].value) / Math.max(...growthData.map(d => d.count), 1)) * 100}%` }}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
-                  />
-                  <Bar 
-                    dataKey="count" 
-                    fill="hsl(var(--destructive))" 
-                    radius={[2, 2, 0, 0]} 
-                    barSize={12}
-                    animationDuration={1500}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="count" 
-                    stroke="none" 
-                    fill="url(#colorGrowth)" 
-                    animationDuration={2500}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Regional Performance - Filtered Table */}
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/5 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-bold text-on-surface">Regional Distribution</CardTitle>
-                <CardDescription className="text-tiny font-medium text-muted-foreground/80 mt-1">Top performing regions by member count</CardDescription>
-              </div>
-              <Button variant="ghost" className="h-7 px-2 text-micro font-bold tracking-tight active:scale-95">
-                View All
-              </Button>
-            </CardHeader>
-            <CardContent className="p-0">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-muted/30 border-b border-border/40">
-                    <th className="p-4 pl-6 text-micro font-bold tracking-tight text-muted-foreground/80">Region</th>
-                    <th className="p-4 text-micro font-bold tracking-tight text-muted-foreground/80">Members</th>
-                    <th className="p-4 text-micro font-bold tracking-tight text-muted-foreground/80">Chapters</th>
-                    <th className="p-4 pr-6 text-right text-micro font-bold tracking-tight text-muted-foreground/80">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {regionalStats.filter(r => r.memberCount > 0).length > 0 ? (
-                    regionalStats.filter(r => r.memberCount > 0).slice(0, 5).map((region) => (
-                      <tr key={region.region} className="hover:bg-muted/5 transition-colors">
-                        <td className="p-4 pl-6">
-                          <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: region.color }} />
-                            <span className="text-xs font-semibold text-on-surface">{region.region}</span>
-                          </div>
-                        </td>
-                        <td className="p-4 text-xs font-medium text-on-surface/80 tabular-nums">{region.memberCount.toLocaleString()}</td>
-                        <td className="p-4 text-xs font-medium text-on-surface/80 tabular-nums">{region.chapters}</td>
-                        <td className="p-4 pr-6 text-right">
-                          <span className={cn("px-2 py-0.5 text-micro font-bold rounded-full", 
-                            region.performance === 'High' ? "bg-primary/10 text-primary" : "bg-border/40 text-muted-foreground/80"
-                          )}>
-                            {region.performance}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={4} className="p-12 text-center text-muted-foreground/80 text-xs font-medium italic">
-                        No regional data available for current filters.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </CardContent>
-          </Card>
-
-          {/* System Activity & Logistics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {/* System Activity Table */}
-            <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
-              <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
-                <CardTitle className="text-sm font-bold text-on-surface">System Activity</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <table className="w-full text-left">
-                  <tbody className="divide-y divide-border/40">
-                    {auditLogs.length > 0 ? (
-                      auditLogs.slice(0, 6).map((log) => (
-                        <tr key={log.id} className="text-tiny hover:bg-muted/5 transition-colors">
-                          <td className="p-4 pl-6 text-muted-foreground/80 font-medium whitespace-nowrap">
-                            {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </td>
-                          <td className="p-4">
-                            <span className="font-bold text-on-surface">{log.adminName.split(' ')[0]}</span>
-                            <span className="text-muted-foreground/80 ml-1.5">{log.action.toLowerCase()}</span>
-                          </td>
-                          <td className="p-4 pr-6 text-right">
-                            <div className={cn("w-1.5 h-1.5 rounded-full inline-block", 
-                              log.status === 'Success' ? "bg-primary" : "bg-accent"
-                            )} />
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td className="p-12 text-center text-muted-foreground/80 text-xs font-medium italic">
-                          No recent system activity.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-                <div className="p-4 border-t border-border/40 text-center">
-                  <Button variant="ghost" onClick={handlePlatformLogs} className="h-7 text-micro font-bold tracking-tight active:scale-95">
-                    View full activity log
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Logistics Performance */}
-            <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
-              <CardHeader className="p-6 border-b border-border/40 bg-muted/5 flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-bold text-on-surface">Logistics Performance</CardTitle>
-                <ShoppingBag className="w-4 h-4 text-muted-foreground/40" />
-              </CardHeader>
-              <CardContent className="p-6 space-y-6">
-                {logisticsData.length > 0 ? (
-                  logisticsData.slice(0, 3).map((item) => (
-                    <div key={item.region} className="space-y-2">
-                      <div className="flex justify-between items-end">
-                        <p className="text-micro font-bold text-muted-foreground/80 tracking-wide">{item.region}</p>
-                        <p className="text-xs font-bold text-on-surface tabular-nums">{item.avgDispatchToDeliveryDays}d <span className="text-micro font-medium text-muted-foreground/80 ml-1">avg</span></p>
-                      </div>
-                      <div className="h-1 w-full bg-muted/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-on-surface rounded-full" style={{ width: `${Math.min(100, (3 / item.avgDispatchToDeliveryDays) * 100)}%` }} />
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-8 text-center text-muted-foreground/80 text-xs font-medium italic">
-                    Logistics data unavailable.
-                  </div>
-                )}
-                <div className="pt-4">
-                   <div className="bg-muted/10 rounded-sm p-4 flex justify-between items-center border border-border/40">
-                      <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Overall velocity</p>
-                     <p className="text-sm font-bold text-on-surface tracking-tight">3.2 Days</p>
-                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Operational Health (Right Sidebar) */}
-        <div className="space-y-10">
-          {/* Health & Status Consolidated */}
-          <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
-              <CardTitle className="text-tiny font-bold tracking-tight text-muted-foreground/80">Operations health</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-8">
-              {/* System Health */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-on-surface/80">Infrastructure</span>
-                  <span className="text-primary font-bold">Optimal</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-on-surface/80">Database Engine</span>
-                  <span className="text-primary font-bold">Stable</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-on-surface/80">Regional Sync</span>
-                  <span className="text-primary font-bold">Active</span>
-                </div>
-              </div>
-
-              <div className="h-px bg-border/40" />
-
-              {/* Engagement Pulse (Simplified) */}
-              <div className="space-y-6">
-                <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Sentiment pulse</p>
-                {sentimentStats.length > 0 && sentimentStats.some(s => s.score > 0) ? (
-                  sentimentStats.slice(0, 3).map((stat) => (
-                    <div key={stat.topic} className="space-y-2">
-                      <div className="flex justify-between items-end">
-                        <p className="text-tiny font-bold text-on-surface">{stat.topic}</p>
-                        <span className="text-xs font-bold tabular-nums">{stat.score}%</span>
-                      </div>
-                      <div className="h-1 w-full bg-muted/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-on-surface opacity-20 rounded-full" style={{ width: `${stat.score}%` }} />
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center text-muted-foreground/80 text-micro font-medium italic py-4">
-                    No recent sentiment data.
-                  </div>
-                )}
-              </div>
-
-              <div className="h-px bg-border/40" />
-
-              {/* Quick Status Bar */}
-              <div className="bg-on-surface rounded-sm p-6 text-white relative overflow-hidden group shadow-lg">
-                <Globe className="absolute -bottom-6 -right-6 w-32 h-32 text-white/5" />
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2 mb-6">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                    <span className="text-micro font-bold tracking-tight text-white/70">Core system status</span>
-                  </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold tabular-nums tracking-tighter">99.8%</span>
-                    <span className="text-micro font-bold text-white/60 tracking-tight uppercase">Operational</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Regional Traffic Summary */}
-          <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/5">
-              <CardTitle className="text-tiny font-bold tracking-tight text-muted-foreground/80">Regional traffic</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                   <div className="flex items-center gap-4">
-                     <div className="w-9 h-9 rounded-sm bg-muted/10 flex items-center justify-center text-micro font-bold text-on-surface border border-border/40">GA</div>
-                     <div>
-                       <p className="text-xs font-bold text-on-surface">Greater Accra</p>
-                       <p className="text-micro text-muted-foreground/80 font-medium">Peak flow detected</p>
-                     </div>
-                   </div>
-                   <Activity className="w-4 h-4 text-destructive" />
-                </div>
-                <div className="flex items-center justify-between">
-                   <div className="flex items-center gap-4">
-                     <div className="w-9 h-9 rounded-sm bg-muted/10 flex items-center justify-center text-micro font-bold text-on-surface border border-border/40">AS</div>
-                     <div>
-                       <p className="text-xs font-bold text-on-surface">Ashanti</p>
-                       <p className="text-micro text-muted-foreground/80 font-medium">Normal operations</p>
-                     </div>
-                     </div>
-                   <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
 
+      <div className="twocol">
+        
+        {/* Verification queue */}
+        <div className="panel">
+          <div className="ph">
+            <div>
+              <h3>ID verification queue</h3>
+              <div className="meta">{pendingVerifications.length} pending · sorted by oldest first</div>
+            </div>
+            <button className="btn btn-outline btn-sm" onClick={() => navigate('/admin/verification')}>View all</button>
+          </div>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Reg. no.</th>
+                <th>Region</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {pendingVerifications.slice(0, 5).map((member) => (
+                <tr key={member.id}>
+                  <td>
+                    <div className="who">
+                      <div className="w-8 h-8 rounded-full bg-muted/10 flex items-center justify-center text-[10px] font-bold">
+                        {member.name[0]}
+                      </div>
+                      <div>
+                        <b>{member.name}</b>
+                        <span>{member.phone}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span className="reg">{member.id.slice(0, 8).toUpperCase()}</span></td>
+                  <td>{member.chapter || member.region}</td>
+                  <td>{new Date(member.submitted).toLocaleDateString()}</td>
+                  <td>
+                    <span className={cn("pill", (member.status === 'Processing' || member.status === 'In Review') ? "pill-warn" : "pill-ok")}>
+                      {member.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="row-actions">
+                      <button className="ico ok" onClick={() => navigate(`/admin/verification?id=${member.id}`)}>
+                        <span className="material-symbols-outlined">check</span>
+                      </button>
+                      <button className="ico no">
+                        <span className="material-symbols-outlined">close</span>
+                      </button>
+                      <button className="ico">
+                        <span className="material-symbols-outlined">visibility</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {pendingVerifications.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-on-surface-muted text-xs italic">
+                    All verifications complete. Operational baseline maintained.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Right column: composer + log */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          
+          {/* Broadcast composer */}
+          <div className="panel compose">
+            <div className="ph">
+              <h3>New broadcast</h3>
+              <span className="pill pill-mute">Mission Control</span>
+            </div>
+            
+            <div className="field">
+              <span className="lbl">Headline</span>
+              <input 
+                className="title" 
+                value={broadcast.title}
+                onChange={(e) => setBroadcast({ ...broadcast, title: e.target.value })}
+                placeholder="Mobilization directive..."
+              />
+            </div>
+            
+            <div className="field">
+              <span className="lbl">Message</span>
+              <textarea 
+                value={broadcast.content}
+                onChange={(e) => setBroadcast({ ...broadcast, content: e.target.value })}
+                placeholder="Tactical update content..."
+                style={{ minHeight: '80px' }}
+              />
+            </div>
+            
+            <div className="field">
+              <span className="lbl">Target Audience</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
+                <select 
+                  className="reg" 
+                  style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)', width: '100%' }}
+                  value={broadcast.target_type}
+                  onChange={(e) => {
+                    const type = e.target.value as Broadcast['target_type']
+                    setBroadcast({ ...broadcast, target_type: type, target_value: 'ALL' })
+                    setSelectedRegionId(null)
+                  }}
+                >
+                  <option value="ALL">National (All Members)</option>
+                  <option value="REGION">Regional Targeting</option>
+                  <option value="CONSTITUENCY">Constituency Targeting</option>
+                  <option value="DIASPORA">Diaspora Chapters</option>
+                </select>
+                
+                {broadcast.target_type === 'REGION' && (
+                  <select 
+                    className="reg"
+                    value={broadcast.target_value}
+                    onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)' }}
+                  >
+                    <option value="ALL">Select Region...</option>
+                    {regions.map(r => (
+                      <option key={r.id} value={r.name}>{r.name}</option>
+                    ))}
+                  </select>
+                )}
+
+                {broadcast.target_type === 'CONSTITUENCY' && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <select 
+                      className="reg"
+                      value={selectedRegionId || ''}
+                      onChange={(e) => {
+                        const id = parseInt(e.target.value)
+                        setSelectedRegionId(id)
+                        setBroadcast({ ...broadcast, target_value: 'ALL' })
+                      }}
+                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)', flex: 1 }}
+                    >
+                      <option value="">Filter by Region...</option>
+                      {regions.map(r => (
+                        <option key={r.id} value={r.id}>{r.name}</option>
+                      ))}
+                    </select>
+
+                    <select 
+                      className="reg"
+                      value={broadcast.target_value}
+                      onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
+                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)', flex: 2 }}
+                      disabled={!selectedRegionId}
+                    >
+                      <option value="ALL">Select Constituency...</option>
+                      {constituencies
+                        .filter(c => !selectedRegionId || c.region_id === selectedRegionId)
+                        .map(c => (
+                          <option key={c.id} value={c.name}>{c.name}</option>
+                        ))}
+                    </select>
+                  </div>
+                )}
+
+                {broadcast.target_type === 'DIASPORA' && (
+                  <select 
+                    className="reg"
+                    value={broadcast.target_value}
+                    onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)' }}
+                  >
+                    <option value="ALL">All Diaspora Chapters</option>
+                    {diasporaChapters.map(c => (
+                      <option key={c.id} value={c.name}>{c.name} ({c.country})</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
+
+            <div className="toolbar">
+              <div className="left">
+                <select 
+                  className="reg"
+                  value={broadcast.priority}
+                  onChange={(e) => setBroadcast({ ...broadcast, priority: e.target.value as Broadcast['priority'] })}
+                  style={{ background: 'transparent', border: 'none', fontSize: '10px', color: 'var(--on-surface-muted)', cursor: 'pointer' }}
+                >
+                  <option value="Normal">Normal</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">URGENT</option>
+                </select>
+                <div style={{ width: '1px', height: '12px', background: 'var(--border)', margin: '0 8px' }} />
+                <select 
+                  className="reg"
+                  value={broadcast.channel}
+                  onChange={(e) => setBroadcast({ ...broadcast, channel: e.target.value as Broadcast['channel'] })}
+                  style={{ background: 'transparent', border: 'none', fontSize: '10px', color: 'var(--on-surface-muted)', cursor: 'pointer' }}
+                >
+                  <option value="In-app">In-App</option>
+                  <option value="SMS">SMS</option>
+                  <option value="Push">Push</option>
+                  <option value="Email">Email</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button 
+                  className="btn btn-dest btn-sm" 
+                  disabled={isSending}
+                  onClick={handleSendBroadcast}
+                >
+                  {isSending ? 'Sending...' : 'Deploy Broadcast →'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activity Log */}
+          <div className="panel">
+            <div className="ph">
+              <h3>Recent admin activity</h3>
+              <span className="meta">Last 24h</span>
+            </div>
+            <div className="log">
+              {auditLogs.slice(0, 4).map((log) => (
+                <div key={log.id} className="log-row">
+                  <span className="stamp">
+                    {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                  <div className="body">
+                    <p><b>{log.adminName.split(' ')[0]}</b> {log.action.toLowerCase().replace('_', ' ')}</p>
+                    <span>{log.resource}</span>
+                  </div>
+                  <span className={cn(
+                    "tag",
+                    log.action.includes('CREATE') ? "create" : 
+                    log.action.includes('DELETE') ? "delete" : "edit"
+                  )}>
+                    {log.action.split('_')[0]}
+                  </span>
+                </div>
+              ))}
+              {auditLogs.length === 0 && (
+                <div className="py-8 text-center text-on-surface-muted text-xs italic">
+                  No recent mobilization telemetry.
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   )
 }

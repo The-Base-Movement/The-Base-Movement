@@ -135,46 +135,60 @@ export default function DashboardLayout() {
       />
 
       {/* Navigation Shell (SideNavBar) */}
-      <aside 
-        aria-label="Dashboard Sidebar" 
-        className={`fixed left-0 top-0 h-full flex flex-col bg-muted/5 text-on-surface border-r border-border/40 z-50 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}
+      <aside
+        aria-label="Dashboard Sidebar"
+        className={`fixed left-0 top-0 h-full flex flex-col bg-[#181d19] text-white border-r-4 border-accent z-50 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}
       >
         {/* Fixed Header */}
-        <div className={`py-8 flex items-center bg-white z-10 shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-6 gap-3'}`}>
-          <img src={settings.logo_url} alt="The Base Logo" className="h-10 w-10 object-contain shrink-0"  decoding="async" />
+        <div className={`py-[18px] flex items-center border-b border-white/[0.08] mb-3 shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-[22px] gap-[10px]'}`}>
+          <img src={settings.logo_url} alt="The Base Logo" className="h-8 w-8 object-contain shrink-0"  decoding="async" />
           {!isSidebarCollapsed && (
             <div className="overflow-hidden whitespace-nowrap">
-              <h1 className="text-xl font-bold text-on-surface leading-none mb-0 tracking-tight">The Base</h1>
-              <p className="text-tiny text-accent font-bold tracking-tight mt-1 mb-0">Civic movement</p>
+              <h1 className="text-base font-extrabold text-white leading-none mb-0 tracking-tight">The Base</h1>
+              <p className="text-[9px] text-accent font-bold tracking-[0.04em] mt-1 mb-0">Member portal</p>
             </div>
           )}
         </div>
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto sidebar-scroll pb-8">
-          <div className="space-y-1">
-            {[
-              { to: '/dashboard', icon: 'grid_view', label: 'Overview' },
+          {[
+            { label: 'Main', items: [
+              { to: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
               { to: '/dashboard/blog', icon: 'article', label: 'Updates' },
               { to: '/dashboard/agenda', icon: 'event_note', label: 'The Plan' },
               { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },
-              { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Feedback' },
-              { to: '/dashboard/store', icon: 'shopping_bag', label: 'Supplies' },
-              { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donations' },
-              { to: '/dashboard/members', icon: 'groups', label: 'Verified' },
-              { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
-              { to: '/settings', icon: 'person', label: 'Account' },
-            ].map((item) => (
-              <Link 
-                key={item.to}
-                className={`flex items-center transition-all font-meta text-sm font-bold tracking-tight ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-6 py-3'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'text-emerald-800 dark:text-emerald-200 bg-stone-200/50 dark:bg-zinc-800/50 border-l-4 border-emerald-700' : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-zinc-800'}`} 
-                to={item.to}
-              >
-                <span className={`material-symbols-outlined ${isSidebarCollapsed ? 'mr-0' : 'mr-3'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{item.icon}</span>
-                {!isSidebarCollapsed && item.label}
-              </Link>
-            ))}
-          </div>
+              { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Polls' },
+              { to: '/dashboard/chapters', icon: 'account_balance', label: 'My Chapter' },
+            ]},
+            { label: 'Engage', items: [
+              { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
+              { to: '/dashboard/store', icon: 'storefront', label: 'Supplies' },
+              { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback' },
+              { to: '/dashboard/members', icon: 'groups', label: 'Members' },
+            ]},
+            { label: 'Account', items: [
+              { to: '/settings', icon: 'settings', label: 'Settings' },
+            ]},
+          ].map((group) => (
+            <div key={group.label} className="px-4 mt-2">
+              {!isSidebarCollapsed && (
+                <h6 className="text-[9px] font-bold text-white/40 tracking-[0.08em] uppercase mb-1 mt-2 px-2">{group.label}</h6>
+              )}
+              <div className="space-y-0.5">
+                {group.items.map((item) => (
+                  <Link
+                    key={item.to}
+                    className={`flex items-center transition-all font-meta text-[12px] font-bold tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[10px] py-[9px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
+                    to={item.to}
+                  >
+                    <span className={`material-symbols-outlined text-[18px] ${isSidebarCollapsed ? 'mr-0' : 'mr-[10px]'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{item.icon}</span>
+                    {!isSidebarCollapsed && item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
 
           {/* Leader Portrait */}
           {!isSidebarCollapsed && (
@@ -187,7 +201,7 @@ export default function DashboardLayout() {
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
               </div>
               <div className="px-2">
-                <p className="text-on-surface text-tiny font-bold tracking-tight leading-tight mb-1">
+                <p className="text-white text-tiny font-bold tracking-tight leading-tight mb-1">
                   Dr. George Oti Bonsu
                 </p>
                 <p className="text-accent text-tiny font-bold tracking-tight mb-0">
@@ -211,8 +225,8 @@ export default function DashboardLayout() {
             </Button>
             
             <div className={`mt-8 space-y-4 ${isSidebarCollapsed ? 'px-0 flex flex-col items-center' : 'pl-2'}`}>
-              <Link 
-                className={`flex items-center transition-all font-bold text-tiny tracking-tight ${isActive('/dashboard/contact') ? 'text-primary' : 'text-on-surface/40 hover:text-primary'}`} 
+              <Link
+                className={`flex items-center transition-all font-bold text-tiny tracking-tight ${isActive('/dashboard/contact') ? 'text-accent' : 'text-white/40 hover:text-white'}`}
                 to="/dashboard/contact"
               >
                 <span className={`material-symbols-outlined ${isSidebarCollapsed ? 'text-2xl' : 'text-lg mr-3'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>help</span>
@@ -221,7 +235,7 @@ export default function DashboardLayout() {
 
               <Link
                 to="/"
-                className={`flex items-center rounded-sm border border-border/40 text-on-surface/40 hover:border-primary hover:text-primary transition-all font-bold text-tiny tracking-tight group bg-white/50 ${isSidebarCollapsed ? 'w-10 h-10 justify-center' : 'w-full h-12 px-4 gap-3 mt-8'}`}
+                className={`flex items-center rounded-sm border border-white/10 text-white/40 hover:border-white/30 hover:text-white transition-all font-bold text-tiny tracking-tight group bg-white/5 ${isSidebarCollapsed ? 'w-10 h-10 justify-center' : 'w-full h-12 px-4 gap-3 mt-8'}`}
               >
                 <span className="material-symbols-outlined text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
                 {!isSidebarCollapsed && "Back to Site"}

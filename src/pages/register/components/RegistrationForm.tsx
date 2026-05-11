@@ -72,12 +72,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
             )}
 
             <div className="space-y-3">
-              <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Full name</label>
+              <label className="field-label">Full name</label>
               <input required pattern=".*\s+.*" title="Please enter both your first and last name separated by a space." value={formData.fullName} onChange={(e) => onInputChange('fullName', e.target.value)} className="w-full form-understate p-4 text-sm" />
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Membership platform</label>
+              <label className="field-label">Membership platform</label>
               <div className="grid grid-cols-2 gap-4">
                 <Button type="button" variant={platform === 'GHANA' ? 'primary' : 'default'} onClick={() => onPlatformChange('GHANA')} className={cn("h-auto p-4 text-sm", platform === 'GHANA' ? "" : "text-stone-500 border-stone-200")}>Ghana Base</Button>
                 <Button type="button" variant={platform === 'DIASPORA' ? 'gold' : 'default'} onClick={() => onPlatformChange('DIASPORA')} className={cn("h-auto p-4 text-sm", platform === 'DIASPORA' ? "" : "text-stone-500 border-stone-200")}>Diaspora Base</Button>
@@ -86,7 +86,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
             {platform === 'GHANA' && (
               <div className="space-y-3">
-                <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">National ID number (Optional)</label>
+                <label className="field-label">National ID number (Optional)</label>
                 <input value={formData.idNumber} onChange={(e) => onInputChange('idNumber', e.target.value)} placeholder="GHA-000000000-0" className="w-full form-understate p-4 text-sm" />
               </div>
             )}
@@ -94,7 +94,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
             <div className="grid md:grid-cols-2 gap-8">
               {platform === 'DIASPORA' && (
                 <div className="space-y-3">
-                  <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Country</label>
+                  <label className="field-label">Country</label>
                   <select required value={formData.country} onChange={(e) => onInputChange('country', e.target.value)} className="w-full form-understate p-4 text-sm">
                     <option value="">Select Country</option>
                     {dbCountries.map(c => <option key={c} value={c}>{c}</option>)}
@@ -102,7 +102,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </div>
               )}
               <div className="space-y-3">
-                <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Phone</label>
+                <label className="field-label">Phone</label>
                 <div className="flex">
                   <select value={formData.countryCode} onChange={(e) => onInputChange('countryCode', e.target.value)} className="px-2 bg-muted border border-border/60 text-xs">
                     {Array.from(new Set(Object.values(dbCountryCodes))).map(code => <option key={code} value={code}>{code}</option>)}
@@ -113,7 +113,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Password</label>
+              <label className="field-label">Password</label>
               <div className="relative">
                 <input type={showPassword ? 'text' : 'password'} required minLength={8} value={formData.password} onChange={(e) => onInputChange('password', e.target.value)} className="w-full form-understate p-4 pr-12 text-sm" />
                 <Button type="button" variant="ghost" onClick={onPasswordToggle} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/80 hover:text-primary">
@@ -131,14 +131,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-3">
-                <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Age range</label>
+                <label className="field-label">Age range</label>
                 <select required value={formData.ageRange} onChange={(e) => onInputChange('ageRange', e.target.value)} className="w-full form-understate p-4 text-sm">
                   <option value="">Select Range</option>
                   {ageRanges.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
               <div className="space-y-3">
-                <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Gender</label>
+                <label className="field-label">Gender</label>
                 <select required value={formData.gender} onChange={(e) => onInputChange('gender', e.target.value)} className="w-full form-understate p-4 text-sm">
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -149,14 +149,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
             {platform === 'GHANA' && (
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Region</label>
+                  <label className="field-label">Region</label>
                   <select required value={formData.region} onChange={(e) => onInputChange('region', e.target.value)} className="w-full form-understate p-4 text-sm">
                     <option value="">Select Region</option>
                     {dbRegions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-3">
-                  <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Constituency</label>
+                  <label className="field-label">Constituency</label>
                   <select required value={formData.constituency} onChange={(e) => onInputChange('constituency', e.target.value)} className="w-full form-understate p-4 text-sm">
                     <option value="">Select Constituency</option>
                     {formData.region && dbConstituencies
@@ -176,16 +176,16 @@ export function RegistrationForm(props: RegistrationFormProps) {
               <h3 className="text-on-surface">Step 3: Emergency & profile</h3>
             </div>
             <div className="space-y-3">
-              <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Profession</label>
+              <label className="field-label">Profession</label>
               <input required value={formData.profession} onChange={(e) => onInputChange('profession', e.target.value)} className="w-full form-understate p-4 text-sm" />
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-3">
-                <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Emergency name</label>
+                <label className="field-label">Emergency name</label>
                 <input required value={formData.emergencyContactName} onChange={(e) => onInputChange('emergencyContactName', e.target.value)} className="w-full form-understate p-4 text-sm" />
               </div>
               <div className="space-y-3">
-                <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Emergency phone</label>
+                <label className="field-label">Emergency phone</label>
                 <input required value={formData.emergencyNumber} onChange={(e) => onInputChange('emergencyNumber', e.target.value)} className="w-full form-understate p-4 text-sm" />
               </div>
             </div>
@@ -198,7 +198,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
               <h3 className="text-on-surface">Step 4: Final verification</h3>
             </div>
             <div className="space-y-6">
-              <label className="text-xs font-bold text-on-surface font-meta tracking-tight block">Photo</label>
+              <label className="field-label">Photo</label>
               {!photoUrl ? (
                 <div className="border-2 border-dashed p-12 text-center bg-muted/30 relative">
                   <input type="file" accept="image/*" onChange={onPhotoUpload} className="absolute inset-0 opacity-0 cursor-pointer" />

@@ -79,7 +79,7 @@ export function OperationalTransparency({
               className="px-10 h-12 text-tiny tracking-tight flex items-center justify-between gap-3"
             >
               Mobilization history
-              <div className="w-1.5 h-1.5 bg-[hsl(var(--active-tab-text))] rounded-full" />
+              <div className="w-1.5 h-1.5 bg-white rounded-full" />
             </ButtonActiveTab>
           ) : (
             <ButtonInactiveTab 
@@ -95,7 +95,7 @@ export function OperationalTransparency({
               className="px-10 h-12 text-tiny tracking-tight flex items-center justify-between gap-3"
             >
               Spending & allocation
-              <div className="w-1.5 h-1.5 bg-[hsl(var(--active-tab-text))] rounded-full" />
+              <div className="w-1.5 h-1.5 bg-white rounded-full" />
             </ButtonActiveTab>
           ) : (
             <ButtonInactiveTab 
@@ -126,7 +126,7 @@ export function OperationalTransparency({
                     className="px-6 h-12 text-tiny tracking-tight transition-all shadow-sm active:scale-95 flex items-center gap-3"
                   >
                     All records
-                    <div className="w-1.5 h-1.5 bg-[hsl(var(--active-tab-text))] rounded-full" />
+                    <div className="w-1.5 h-1.5 bg-white rounded-full" />
                   </ButtonActiveTab>
                 ) : (
                   <ButtonInactiveTab 
@@ -142,7 +142,7 @@ export function OperationalTransparency({
                     className="px-6 h-12 text-tiny tracking-tight transition-all shadow-sm active:scale-95 flex items-center gap-3"
                   >
                     My records
-                    <div className="w-1.5 h-1.5 bg-[hsl(var(--active-tab-text))] rounded-full" />
+                    <div className="w-1.5 h-1.5 bg-white rounded-full" />
                   </ButtonActiveTab>
                 ) : (
                   <ButtonInactiveTab 

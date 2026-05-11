@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mobile — The Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700;800&family=Work+Sans:wght@400;500;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  body { background:var(--container-low); padding:32px; }
+  .row { display:flex; gap:32px; flex-wrap:wrap; justify-content:center; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .col h4 { font-family:'Public Sans'; font-weight:800; font-size:13px; letter-spacing:-.005em; }
+  .col span { font-size:10.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+
+  .device { width:340px; height:720px; background:#000; border-radius:42px; padding:9px;
+    box-shadow:0 28px 60px -12px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.06); position:relative; }
+  .device::after { content:""; position:absolute; top:18px; left:50%; transform:translateX(-50%); width:96px; height:24px; background:#000; border-radius:99px; z-index:5; }
+  .screen { width:100%; height:100%; background:#fff; border-radius:34px; overflow:hidden; position:relative;
+    display:flex; flex-direction:column; }
+  .status { height:40px; padding:14px 22px 0; display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:700; font-family:'Public Sans'; }
+  .status .icons { display:flex; gap:5px; }
+  .status .icons .material-symbols-outlined { font-size:13px; }
+
+  /* SCREEN 1: Dashboard mobile */
+  .m-top { padding:18px 20px 8px; display:flex; align-items:center; justify-content:space-between; }
+  .m-top .who { display:flex; align-items:center; gap:10px; }
+  .m-top .who img { width:36px; height:36px; border-radius:50%; border:2px solid var(--accent); }
+  .m-top .who b { font-family:'Public Sans'; font-weight:800; font-size:13px; display:block; line-height:1.1; }
+  .m-top .who span { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+  .m-top .ic { width:34px; height:34px; border:1px solid var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; position:relative; }
+  .m-top .ic .material-symbols-outlined { font-size:18px; }
+  .m-top .ic .dot { position:absolute; top:6px; right:6px; width:6px; height:6px; background:var(--destructive); border-radius:50%; }
+
+  /* Hero membership tile */
+  .m-hero { margin:14px 16px 16px; background:linear-gradient(135deg,#181d19,#0f1310); color:#fff;
+    border-radius:14px; padding:16px 18px; position:relative; overflow:hidden;
+    border-top:3px solid var(--destructive); border-bottom:3px solid var(--accent); }
+  .m-hero::after { content:""; position:absolute; right:-30px; top:-30px; width:120px; height:120px;
+    background:radial-gradient(circle, rgba(218,165,32,.15), transparent 70%); }
+  .m-hero .row { display:flex; justify-content:space-between; align-items:flex-start; }
+  .m-hero .label { font-size:10px; color:var(--accent); font-weight:800; letter-spacing:.06em; text-transform:uppercase; font-family:'Public Sans'; }
+  .m-hero h2 { font-family:'Public Sans'; font-weight:800; font-size:18px; margin-top:4px; letter-spacing:-.01em; }
+  .m-hero .reg { font-family:'Public Sans'; font-weight:800; font-size:11px; color:var(--accent); margin-top:6px; font-variant-numeric:tabular-nums; }
+  .m-hero .pillrow { display:flex; gap:6px; margin-top:14px; }
+  .m-hero .p { padding:3px 8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:99px; font-family:'Public Sans'; font-weight:800; font-size:9px; letter-spacing:.04em; text-transform:uppercase; }
+  .m-hero .p.ok { color:var(--accent); border-color:rgba(218,165,32,.3); }
+
+  /* stat row */
+  .m-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 16px 16px; }
+  .ms { background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px; position:relative; }
+  .ms::before { content:""; position:absolute; left:0; top:14px; bottom:14px; width:3px; background:var(--ac); border-radius:0 2px 2px 0; }
+  .ms.r { --ac:var(--destructive); }
+  .ms.gr { --ac:var(--primary); }
+  .ms .l { font-size:9px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding-left:8px; }
+  .ms .v { font-family:'Public Sans'; font-weight:800; font-size:20px; letter-spacing:-.02em; padding-left:8px; margin-top:2px; line-height:1; }
+
+  /* feed */
+  .m-card { background:#fff; border:1px solid var(--border); border-radius:12px; margin:0 16px 14px; padding:14px 16px; }
+  .m-card .h { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .m-card .h h3 { font-family:'Public Sans'; font-weight:800; font-size:13px; }
+  .m-card .h .live { display:inline-flex; align-items:center; gap:5px; font-family:'Public Sans'; font-weight:800; font-size:9px; color:var(--destructive); letter-spacing:.05em; text-transform:uppercase; }
+  .m-card .h .live i { width:5px; height:5px; background:var(--destructive); border-radius:50%; animation:pl 1.4s infinite; }
+  @keyframes pl { 50% { opacity:.3; } }
+  .fl { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+  .fl:last-child { border-bottom:0; }
+  .fl img { width:28px; height:28px; border-radius:50%; flex-shrink:0; }
+  .fl .b { flex:1; min-width:0; }
+  .fl .b p { margin:0; font-size:11px; line-height:1.4; }
+  .fl .b p b { font-family:'Public Sans'; font-weight:800; }
+  .fl .b span { font-size:9.5px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:700; }
+  .fl .amt { font-family:'Public Sans'; font-weight:800; color:var(--primary); font-size:11.5px; }
+
+  /* tabbar */
+  .tabbar { margin-top:auto; height:64px; background:#fff; border-top:1px solid var(--border); display:flex; padding-bottom:14px; }
+  .tabbar a { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-family:'Public Sans'; font-weight:800; font-size:9px; color:var(--on-surface-muted); letter-spacing:.04em; text-transform:uppercase; }
+  .tabbar a .material-symbols-outlined { font-size:22px; }
+  .tabbar a.is-active { color:var(--primary); }
+  .tabbar a.is-active .material-symbols-outlined { font-variation-settings:'FILL' 1; }
+  .tabbar a.center { color:#fff; }
+  .tabbar a.center i { width:48px; height:48px; background:var(--destructive); border-radius:14px; display:flex; align-items:center; justify-content:center; margin-top:-22px; box-shadow:0 12px 24px -6px rgba(206,17,38,.5); }
+  .tabbar a.center i .material-symbols-outlined { color:#fff; font-size:22px; }
+
+  /* SCREEN 2: Commerce mobile */
+  .s2-top { padding:18px 20px 14px; display:flex; align-items:center; gap:10px; }
+  .s2-top .ic { width:34px; height:34px; border:1px solid var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+  .s2-top .ic .material-symbols-outlined { font-size:18px; }
+  .s2-top h2 { font-family:'Public Sans'; font-weight:800; font-size:17px; flex:1; letter-spacing:-.01em; }
+  .s2-top .cart { position:relative; }
+  .s2-top .cart .badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--destructive); color:#fff; border-radius:50%; font-family:'Public Sans'; font-weight:800; font-size:9px; display:flex; align-items:center; justify-content:center; }
+  .s2-search { margin:0 16px 12px; position:relative; }
+  .s2-search input { width:100%; height:38px; padding:0 12px 0 36px; background:var(--container-low); border:1px solid var(--border); border-radius:10px; font-size:12px; font-family:inherit; }
+  .s2-search .material-symbols-outlined { position:absolute; left:10px; top:10px; font-size:18px; color:var(--on-surface-muted); }
+  .s2-chips { display:flex; gap:6px; padding:0 16px 14px; overflow-x:auto; }
+  .s2-chips .ch { padding:5px 12px; background:#fff; border:1px solid var(--border); border-radius:99px; font-family:'Public Sans'; font-weight:800; font-size:10px; flex-shrink:0; }
+  .s2-chips .ch.is-active { background:#181d19; color:#fff; border-color:#181d19; }
+  .s2-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px 14px; }
+  .s2-pc { background:#fff; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .s2-pc .img { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; position:relative; }
+  .s2-pc .img .heart { position:absolute; top:8px; right:8px; width:26px; height:26px; background:rgba(255,255,255,.9); border-radius:50%; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(8px); }
+  .s2-pc .img .heart .material-symbols-outlined { font-size:14px; color:var(--destructive); font-variation-settings:'FILL' 1; }
+  .s2-pc .body { padding:10px 12px 12px; }
+  .s2-pc .body .cat { font-family:'Public Sans'; font-weight:800; font-size:8.5px; color:var(--primary); letter-spacing:.06em; text-transform:uppercase; }
+  .s2-pc .body h4 { font-family:'Public Sans'; font-weight:800; font-size:11.5px; margin-top:3px; line-height:1.3; letter-spacing:-.005em; min-height:30px; }
+  .s2-pc .body .rwo { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+  .s2-pc .body .price { font-family:'Public Sans'; font-weight:800; font-size:13px; font-variant-numeric:tabular-nums; }
+  .s2-pc .body .add { width:26px; height:26px; background:var(--primary); color:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center; }
+  .s2-pc .body .add .material-symbols-outlined { font-size:16px; }
+
+  /* SCREEN 3: Canvasser clipboard */
+  .s3-head { background:var(--destructive); color:#fff; padding:14px 20px 18px; }
+  .s3-head .meta { font-family:'Public Sans'; font-weight:800; font-size:9px; letter-spacing:.06em; text-transform:uppercase; opacity:.8; }
+  .s3-head h2 { font-family:'Public Sans'; font-weight:800; font-size:18px; margin-top:4px; letter-spacing:-.01em; }
+  .s3-head .row { display:flex; gap:8px; margin-top:12px; }
+  .s3-head .pill { padding:4px 10px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:99px; font-family:'Public Sans'; font-weight:800; font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; }
+  .s3-prog { padding:14px 20px; background:var(--container-low); display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); }
+  .s3-prog .v { font-family:'Public Sans'; font-weight:800; font-size:24px; letter-spacing:-.02em; color:var(--primary); font-variant-numeric:tabular-nums; }
+  .s3-prog .l { font-size:10px; color:var(--on-surface-muted); font-family:'Public Sans'; font-weight:800; letter-spacing:.05em; text-transform:uppercase; line-height:1.2; }
+  .s3-prog .bar { width:120px; height:6px; background:var(--border); border-radius:99px; overflow:hidden; }
+  .s3-prog .bar .fill { height:100%; width:62%; background:linear-gradient(to right, var(--brand-red), var(--brand-gold), var(--brand-green)); }
+  .s3-form { padding:14px 20px; flex:1; overflow-y:auto; }
+  .s3-form .lbl { font-family:'Public Sans'; font-weight:800; font-size:9.5px; color:var(--on-surface-muted); letter-spacing:.06em; text-transform:uppercase; margin-bottom:5px; display:block; }
+  .s3-form .input { padding:10px 12px; font-size:13px; margin-bottom:14px; border-radius:8px; }
+  .s3-form .seg { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:14px; }
+  .s3-form .seg button { padding:10px; background:#fff; border:1px solid var(--border); border-radius:8px; font-family:'Public Sans'; font-weight:800; font-size:11px; }
+  .s3-form .seg button.on { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .s3-form .photo { background:var(--container-low); border:2px dashed var(--outline-variant); border-radius:10px; padding:24px; text-align:center; margin-bottom:14px; }
+  .s3-form .photo .material-symbols-outlined { font-size:32px; color:var(--on-surface-muted); }
+  .s3-form .photo b { display:block; font-family:'Public Sans'; font-weight:800; font-size:12px; margin-top:6px; }
+  .s3-form .photo span { font-size:10px; color:var(--on-surface-muted); }
+  .s3-fab { padding:14px 16px; border-top:1px solid var(--border); background:#fff; }
+  .s3-fab .btn { width:100%; height:48px; }
+
+  /* shared brand line */
+  .blm { display:flex; height:3px; width:48px; }
+  .blm > * { flex:1; }
+</style>
+</head>
+<body>
+<div class="row">
+
+  <!-- Phone 1: Dashboard -->
+  <div class="col">
+    <div class="device">
+      <div class="screen">
+        <div class="status">
+          <span>9:41</span>
+          <div class="icons">
+            <span class="material-symbols-outlined">signal_cellular_alt</span>
+            <span class="material-symbols-outlined">wifi</span>
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">battery_full</span>
+          </div>
+        </div>
+        <div class="m-top">
+          <div class="who">
+            <img src="https://i.pravatar.cc/72?u=kwesi">
+            <div>
+              <b>Akwaaba, Kwesi</b>
+              <span>Member since Mar '25</span>
+            </div>
+          </div>
+          <button class="ic"><span class="material-symbols-outlined">notifications</span><span class="dot"></span></button>
+        </div>
+
+        <div class="m-hero">
+          <div class="row">
+            <div>
+              <span class="label">My Membership</span>
+              <h2>Verified · Patriot</h2>
+              <div class="reg">GH-001847</div>
+            </div>
+            <span class="material-symbols-outlined" style="color:var(--accent); font-size:32px; opacity:.4">verified</span>
+          </div>
+          <div class="pillrow">
+            <span class="p ok">● Verified</span>
+            <span class="p">Greater Accra</span>
+            <span class="p">Lapaz 04</span>
+          </div>
+        </div>
+
+        <div class="m-stats">
+          <div class="ms gr">
+            <div class="l">YTD Contribution</div>
+            <div class="v tnum">₵420</div>
+          </div>
+          <div class="ms r">
+            <div class="l">Chapter rank</div>
+            <div class="v tnum">#08</div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="h">
+            <h3>Live feed</h3>
+            <span class="live"><i></i>Live</span>
+          </div>
+          <div class="fl">
+            <img src="https://i.pravatar.cc/56?u=ama">
+            <div class="b">
+              <p><b>Ama D.</b> contributed to <b>Eastern jobs fund</b></p>
+              <span>2 min ago · Koforidua</span>
+            </div>
+            <div class="amt tnum">₵120</div>
+          </div>
+          <div class="fl">
+            <img src="https://i.pravatar.cc/56?u=kofi">
+            <div class="b">
+              <p><b>Kofi M.</b> joined <b>Base Diaspora</b></p>
+              <span>12 min ago · London</span>
+            </div>
+          </div>
+          <div class="fl">
+            <img src="https://i.pravatar.cc/56?u=akua">
+            <div class="b">
+              <p><b>Akua S.</b> joined <b>Lapaz 04</b></p>
+              <span>28 min ago · Accra</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabbar">
+          <a class="is-active"><span class="material-symbols-outlined">home</span>Home</a>
+          <a><span class="material-symbols-outlined">badge</span>ID</a>
+          <a class="center"><i><span class="material-symbols-outlined">volunteer_activism</span></i></a>
+          <a><span class="material-symbols-outlined">how_to_vote</span>Polls</a>
+          <a><span class="material-symbols-outlined">person</span>Me</a>
+        </div>
+      </div>
+    </div>
+    <div><h4>Member home</h4><span style="display:block;text-align:center">Dashboard · mobile</span></div>
+  </div>
+
+  <!-- Phone 2: Commerce -->
+  <div class="col">
+    <div class="device">
+      <div class="screen">
+        <div class="status">
+          <span>9:41</span>
+          <div class="icons">
+            <span class="material-symbols-outlined">signal_cellular_alt</span>
+            <span class="material-symbols-outlined">wifi</span>
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">battery_full</span>
+          </div>
+        </div>
+        <div class="s2-top">
+          <button class="ic"><span class="material-symbols-outlined">arrow_back</span></button>
+          <h2>Movement supplies</h2>
+          <button class="ic cart"><span class="material-symbols-outlined">shopping_bag</span><span class="badge">3</span></button>
+        </div>
+        <div class="s2-search">
+          <span class="material-symbols-outlined">search</span>
+          <input placeholder="Search supplies…">
+        </div>
+        <div class="s2-chips">
+          <span class="ch is-active">All · 24</span>
+          <span class="ch">Apparel</span>
+          <span class="ch">Accessories</span>
+          <span class="ch">Books</span>
+          <span class="ch">Print</span>
+        </div>
+
+        <div class="s2-grid">
+          <div class="s2-pc">
+            <div class="img" style="background:linear-gradient(135deg,#006B3F,#005733)">
+              <span style="font-family:'Public Sans';font-weight:800;font-size:30px;color:#fff;letter-spacing:-.02em">Base</span>
+              <button class="heart"><span class="material-symbols-outlined">favorite</span></button>
+            </div>
+            <div class="body">
+              <span class="cat">Apparel</span>
+              <h4>Ghana First — heavyweight tee</h4>
+              <div class="rwo"><span class="price">₵85</span><button class="add"><span class="material-symbols-outlined">add</span></button></div>
+            </div>
+          </div>
+          <div class="s2-pc">
+            <div class="img" style="background:linear-gradient(135deg,#DAA520,#c4951c)">
+              <span style="font-family:'Public Sans';font-weight:800;font-size:36px;color:rgba(0,0,0,.2)">★</span>
+            </div>
+            <div class="body">
+              <span class="cat">Accessories</span>
+              <h4>Black Star pin set</h4>
+              <div class="rwo"><span class="price">₵35</span><button class="add"><span class="material-symbols-outlined">add</span></button></div>
+            </div>
+          </div>
+          <div class="s2-pc">
+            <div class="img" style="background:#181d19">
+              <span style="font-family:'Public Sans';font-weight:800;font-size:24px;color:rgba(255,255,255,.15)">Plan</span>
+            </div>
+            <div class="body">
+              <span class="cat">Books</span>
+              <h4>The Plan paperback</h4>
+              <div class="rwo"><span class="price">₵60</span><button class="add"><span class="material-symbols-outlined">add</span></button></div>
+            </div>
+          </div>
+          <div class="s2-pc">
+            <div class="img" style="background:linear-gradient(135deg,#CE1126,#a40e1f)">
+              <span style="font-family:'Public Sans';font-weight:800;font-size:48px;color:rgba(255,255,255,.18)">B</span>
+            </div>
+            <div class="body">
+              <span class="cat">Apparel</span>
+              <h4>Movement bomber</h4>
+              <div class="rwo"><span class="price">₵320</span><button class="add"><span class="material-symbols-outlined">add</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabbar">
+          <a><span class="material-symbols-outlined">home</span>Home</a>
+          <a><span class="material-symbols-outlined">badge</span>ID</a>
+          <a class="center"><i><span class="material-symbols-outlined">volunteer_activism</span></i></a>
+          <a class="is-active"><span class="material-symbols-outlined">storefront</span>Shop</a>
+          <a><span class="material-symbols-outlined">person</span>Me</a>
+        </div>
+      </div>
+    </div>
+    <div><h4>Supplies</h4><span style="display:block;text-align:center">Commerce · mobile</span></div>
+  </div>
+
+  <!-- Phone 3: Canvasser -->
+  <div class="col">
+    <div class="device">
+      <div class="screen">
+        <div class="status">
+          <span>9:41</span>
+          <div class="icons">
+            <span class="material-symbols-outlined">signal_cellular_alt</span>
+            <span class="material-symbols-outlined">wifi</span>
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">battery_full</span>
+          </div>
+        </div>
+        <div class="s3-head">
+          <span class="meta">Canvasser clipboard</span>
+          <h2>Sign up · new patriot</h2>
+          <div class="row">
+            <span class="pill">📍 Lapaz, Accra</span>
+            <span class="pill">Branch 04</span>
+          </div>
+        </div>
+        <div class="s3-prog">
+          <div>
+            <div class="v tnum">23</div>
+            <div class="l">Sign-ups today</div>
+          </div>
+          <div class="bar"><div class="fill"></div></div>
+          <div>
+            <div class="v tnum" style="text-align:right">37</div>
+            <div class="l" style="text-align:right">of 60 goal</div>
+          </div>
+        </div>
+        <div class="s3-form">
+          <span class="lbl">Full name</span>
+          <input class="input" value="Akosua Boateng">
+          <span class="lbl">Mobile · for MoMo verify</span>
+          <input class="input" value="+233 24 412 8890">
+          <span class="lbl">Constituency</span>
+          <div class="seg">
+            <button>Ablekuma</button>
+            <button class="on">Lapaz N</button>
+            <button>Awoshie</button>
+          </div>
+          <span class="lbl">Photo of Ghana Card</span>
+          <div class="photo">
+            <span class="material-symbols-outlined">photo_camera</span>
+            <b>Tap to capture</b>
+            <span>Front side · auto-OCR</span>
+          </div>
+        </div>
+        <div class="s3-fab">
+          <button class="btn btn-dest btn-lg">Submit · sign next →</button>
+        </div>
+      </div>
+    </div>
+    <div><h4>Field sign-up</h4><span style="display:block;text-align:center">Canvasser · mobile</span></div>
+  </div>
+
+</div>
+</body>
+</html>

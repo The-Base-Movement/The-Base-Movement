@@ -62,7 +62,7 @@ export default function Login() {
         <div className="bg-white border border-slate-200 rounded-none shadow-sm p-8 md:p-10">
           <form className="space-y-6" onSubmit={handleLogin}>
             <div className="space-y-2">
-              <label htmlFor="phone" className="text-xs font-bold text-charcoal-dark font-meta tracking-tight">
+              <label htmlFor="phone" className="field-label">
                 Phone number or email
               </label>
               <input
@@ -81,7 +81,7 @@ export default function Login() {
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label htmlFor="password" className="text-xs font-bold text-charcoal-dark font-meta tracking-tight">
+                <label htmlFor="password" className="field-label">
                   Password
                 </label>
                 <Link to="#" className="text-xs text-[var(--brand-green)] hover:underline font-meta">

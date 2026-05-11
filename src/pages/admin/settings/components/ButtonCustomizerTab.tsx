@@ -48,7 +48,7 @@ export function ButtonCustomizerTab({
                 ].map((radius) => (
                   <Button
                     key={radius.value}
-                    variant={siteSettings.button_border_radius === radius.value ? "primary" : "default"}
+                    variant={siteSettings.button_border_radius === radius.value ? "primary" : "outline"}
                     onClick={() => setSiteSettings({ ...siteSettings, button_border_radius: radius.value })}
                     className="h-10 text-[10px] font-bold px-0 rounded-none"
                   >
@@ -69,7 +69,7 @@ export function ButtonCustomizerTab({
                   onClick={() => setSiteSettings({ ...siteSettings, button_neon_enabled: !siteSettings.button_neon_enabled })}
                   className={cn(
                     "w-10 h-5 rounded-full flex items-center px-1 transition-colors",
-                    siteSettings.button_neon_enabled ? "bg-emerald-50 justify-end" : "bg-stone-200 justify-start"
+                    siteSettings.button_neon_enabled ? "bg-[hsl(var(--primary))] justify-end" : "bg-stone-200 justify-start"
                   )}
                 >
                   <div className="w-3 h-3 bg-white rounded-full shadow-sm" />
@@ -88,7 +88,7 @@ export function ButtonCustomizerTab({
                 ].map((weight) => (
                   <Button
                     key={weight.value}
-                    variant={siteSettings.button_font_weight === weight.value ? "primary" : "default"}
+                    variant={siteSettings.button_font_weight === weight.value ? "primary" : "outline"}
                     onClick={() => setSiteSettings({ ...siteSettings, button_font_weight: weight.value })}
                     className="h-10 text-[10px] font-bold rounded-none"
                   >
@@ -108,7 +108,7 @@ export function ButtonCustomizerTab({
                 ].map((option) => (
                   <Button
                     key={option.value}
-                    variant={siteSettings.button_primary_text_color === option.value ? "primary" : "default"}
+                    variant={siteSettings.button_primary_text_color === option.value ? "primary" : "outline"}
                     onClick={() => setSiteSettings({ ...siteSettings, button_primary_text_color: option.value })}
                     className="h-10 text-[10px] font-bold rounded-none"
                   >
@@ -128,7 +128,7 @@ export function ButtonCustomizerTab({
                 ].map((option) => (
                   <Button
                     key={option.value}
-                    variant={siteSettings.button_gold_text_color === option.value ? "primary" : "default"}
+                    variant={siteSettings.button_gold_text_color === option.value ? "primary" : "outline"}
                     onClick={() => setSiteSettings({ ...siteSettings, button_gold_text_color: option.value })}
                     className="h-10 text-[10px] font-bold rounded-none"
                   >
@@ -147,7 +147,7 @@ export function ButtonCustomizerTab({
                 ].map((option) => (
                   <Button
                     key={option.value}
-                    variant={siteSettings.button_destructive_text_color === option.value ? "primary" : "default"}
+                    variant={siteSettings.button_destructive_text_color === option.value ? "primary" : "outline"}
                     onClick={() => setSiteSettings({ ...siteSettings, button_destructive_text_color: option.value })}
                     className="h-10 text-[10px] font-bold rounded-none"
                   >
@@ -174,24 +174,10 @@ export function ButtonCustomizerTab({
               </div>
             </div>
 
-            {/* Active Tab Text */}
-            <div className="space-y-4 pt-4 border-t border-stone-100">
+            {/* Active Tab Text — hardcoded white for contrast safety */}
+            <div className="space-y-2 pt-4 border-t border-stone-100">
               <Label className="text-micro font-bold text-stone-500 normal-case">Active Tab Text</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: 'Light Text', value: '0 0% 100%' },
-                  { label: 'Dark Text', value: '220 15% 15%' }
-                ].map((option) => (
-                  <Button
-                    key={option.value}
-                    variant={siteSettings.button_active_tab_text_color === option.value ? "primary" : "default"}
-                    onClick={() => setSiteSettings({ ...siteSettings, button_active_tab_text_color: option.value })}
-                    className="h-10 text-[10px] font-bold rounded-none"
-                  >
-                    {option.label}
-                  </Button>
-                ))}
-              </div>
+              <p className="text-[10px] text-stone-400 leading-relaxed">Always white — ensures readable contrast on any active tab background color.</p>
             </div>
 
             {/* Inactive Tab Background */}
@@ -221,7 +207,7 @@ export function ButtonCustomizerTab({
                 ].map((option) => (
                   <Button
                     key={option.value}
-                    variant={siteSettings.button_inactive_tab_text_color === option.value ? "primary" : "default"}
+                    variant={siteSettings.button_inactive_tab_text_color === option.value ? "primary" : "outline"}
                     onClick={() => setSiteSettings({ ...siteSettings, button_inactive_tab_text_color: option.value })}
                     className="h-10 text-[10px] font-bold rounded-none"
                   >
@@ -242,7 +228,6 @@ export function ButtonCustomizerTab({
                   --accent-foreground: ${siteSettings.button_gold_text_color || '0 0% 100%'};
                   --destructive-foreground: ${siteSettings.button_destructive_text_color || '0 0% 100%'};
                   --active-tab-bg: ${siteSettings.button_active_tab_bg_color || siteSettings.primary_color};
-                  --active-tab-text: ${siteSettings.button_active_tab_text_color || '0 0% 100%'};
                   --inactive-tab-bg: ${siteSettings.button_inactive_tab_bg_color || '0 0% 100%'};
                   --inactive-tab-text: ${siteSettings.button_inactive_tab_text_color || '156 100% 21%'};
                 }
@@ -261,7 +246,7 @@ export function ButtonCustomizerTab({
               
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Primary / Action</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Primary / Action</p>
                   <div className="flex flex-wrap gap-4">
                     <Button variant="primary" neon={siteSettings.button_neon_enabled as boolean}>Join Movement</Button>
                     <Button variant="primary" size="sm" neon={siteSettings.button_neon_enabled as boolean}>Action</Button>
@@ -269,7 +254,7 @@ export function ButtonCustomizerTab({
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Accent / Gold</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Accent / Gold</p>
                   <div className="flex flex-wrap gap-4">
                     <Button variant="gold" neon={siteSettings.button_neon_enabled as boolean}>Official Vision</Button>
                     <Button variant="gold" size="sm" neon={siteSettings.button_neon_enabled as boolean}>Vision</Button>
@@ -277,7 +262,7 @@ export function ButtonCustomizerTab({
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Active Tabs / Navigation</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Active Tabs / Navigation</p>
                   <div className="flex flex-wrap gap-4">
                     <Button variant="active-tab" neon={siteSettings.button_neon_enabled as boolean}>Active Tab</Button>
                     <Button variant="default" neon={siteSettings.button_neon_enabled as boolean}>Inactive Tab</Button>
@@ -286,7 +271,7 @@ export function ButtonCustomizerTab({
 
 
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Outline / Ghost (Interactive)</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Outline / Ghost (Interactive)</p>
                   <div className="flex flex-wrap gap-4">
                     <Button variant="outline" neon={siteSettings.button_neon_enabled as boolean}>Standard Outline</Button>
                     <Button variant="ghost" neon={siteSettings.button_neon_enabled as boolean}>Ghost Action</Button>
@@ -294,7 +279,7 @@ export function ButtonCustomizerTab({
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Destructive / Alert</p>
+                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Destructive / Alert</p>
                   <div className="flex flex-wrap gap-4">
                     <Button 
                       variant="destructive"
@@ -316,14 +301,14 @@ export function ButtonCustomizerTab({
         </div>
 
         <div className="pt-8 flex justify-end border-t border-stone-100">
-          <Button 
-            variant="active-tab"
+          <Button
+            variant="primary"
             size="lg"
             onClick={handleSave}
             disabled={isSaving}
-            className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+            className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 active:scale-95"
           >
-            {isSaving ? 'Syncing...' : 'Save Button Settings'}
+            {isSaving ? 'Syncing...' : 'Save Settings'}
           </Button>
         </div>
       </CardContent>

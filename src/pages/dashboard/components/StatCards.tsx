@@ -1,4 +1,3 @@
-import { Users, Navigation, Trophy, Flag } from 'lucide-react'
 import type { FieldAction } from '@/types/admin'
 
 interface GrowthStats {
@@ -14,53 +13,65 @@ interface StatCardsProps {
   unlockedAchievementsCount: number
 }
 
+function Tile({ color, label, value, delta, deltaDown }: {
+  color: 'red' | 'gold' | 'ink' | 'green'
+  label: string
+  value: string | number
+  delta: string
+  deltaDown?: boolean
+}) {
+  const accentClass = {
+    red: 'bg-destructive',
+    gold: 'bg-accent',
+    ink: 'bg-[#181d19]',
+    green: 'bg-primary',
+  }[color]
+
+  const deltaColor = deltaDown ? 'text-destructive' : 'text-primary'
+
+  return (
+    <div className="bg-white border border-border rounded-[6px] p-[18px] relative overflow-hidden">
+      <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${accentClass}`} />
+      <div className="text-[10px] font-bold text-on-surface-muted uppercase tracking-[0.06em] font-meta leading-none">
+        {label}
+      </div>
+      <div className="font-meta text-[32px] font-extrabold tracking-[-0.025em] leading-none my-2 text-on-surface">
+        {value}
+      </div>
+      <div className={`text-[11px] font-bold ${deltaColor} font-meta flex items-center gap-1`}>
+        {delta}
+      </div>
+    </div>
+  )
+}
+
 export function StatCards({ stats, fieldActions, totalPoints, unlockedAchievementsCount }: StatCardsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm group hover:border-primary/40 transition-all">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-tiny font-bold text-on-surface/40 tracking-tight">New Members</span>
-          <Users className="w-4 h-4 text-primary opacity-40" />
-        </div>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-3xl font-bold tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
-          <span className="text-tiny font-bold text-on-surface/20">Past 24h</span>
-        </div>
-        <p className="text-micro text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and the regional rollout is now underway.</p>
-      </div>
-      <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Active outreach</span>
-          <Navigation className="w-4 h-4 text-primary opacity-40" />
-        </div>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-3xl font-bold tracking-tight m-0">{fieldActions.length}</h3>
-          <span className="text-tiny font-bold text-on-surface/20">In area</span>
-        </div>
-        <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">No community actions detected yet.</p>
-      </div>
-      <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Impact points</span>
-          <Trophy className="w-4 h-4 text-[var(--brand-gold)] opacity-40" />
-        </div>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-3xl font-bold tracking-tight m-0">{totalPoints}</h3>
-          <span className="text-tiny font-bold text-on-surface/20">Earned</span>
-        </div>
-        <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">Participate to earn your first points.</p>
-      </div>
-      <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Achievements</span>
-          <Flag className="w-4 h-4 text-[var(--brand-red)] opacity-40" />
-        </div>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-3xl font-bold tracking-tight m-0">{unlockedAchievementsCount}</h3>
-          <span className="text-tiny font-bold text-on-surface/20">Unlocked</span>
-        </div>
-        <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">Complete actions to earn badges.</p>
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[14px] mb-4">
+      <Tile
+        color="red"
+        label="New members"
+        value={stats?.joined_last_24h ?? 0}
+        delta="Past 24 hours"
+      />
+      <Tile
+        color="gold"
+        label="Active outreach"
+        value={fieldActions.length}
+        delta={fieldActions.length > 0 ? `${fieldActions.length} in your area` : 'None nearby'}
+      />
+      <Tile
+        color="ink"
+        label="Impact points"
+        value={totalPoints}
+        delta={totalPoints > 0 ? `${totalPoints} earned` : 'Participate to earn'}
+      />
+      <Tile
+        color="green"
+        label="Achievements"
+        value={unlockedAchievementsCount}
+        delta={unlockedAchievementsCount > 0 ? `${unlockedAchievementsCount} unlocked` : 'Complete actions'}
+      />
     </div>
   )
 }

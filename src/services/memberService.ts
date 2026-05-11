@@ -16,45 +16,41 @@ class MemberService {
 
 
   async getMembers(): Promise<Member[]> {
-    const { data: adminIds } = await supabase
-      .from('admins')
-      .select('id')
+    const [usersRes, adminsRes] = await Promise.all([
+      supabase
+        .from('users')
+        .select('id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession')
+        .order('joined_at', { ascending: false }),
+      supabase.from('admins').select('id'),
+    ])
 
-    const adminIdList = adminIds?.map(a => a.id) || []
-
-    const query = supabase
-      .from('users')
-      .select('*')
-      .order('joined_at', { ascending: false })
-
-    if (adminIdList.length > 0) {
-      query.not('id', 'in', `(${adminIdList.join(',')})`)
-    }
-
-    const { data, error } = await query
+    const { data, error } = usersRes
+    const adminIdSet = new Set((adminsRes.data || []).map((a: { id: string }) => a.id))
 
     if (error) {
       console.warn('[DATABASE] Failed to fetch members:', error)
       return []
     }
 
-    return data.map((u) => ({
-      id: u.registration_number,
-      name: u.full_name,
-      email: u.email,
-      phone: u.phone_number || 'N/A',
-      region: u.region || 'Region pending',
-      constituency: u.constituency || 'Constituency pending',
-      status: u.status,
-      joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
-      platform: u.platform || 'GHANA',
-      type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
-      avatarUrl: u.avatar_url || undefined,
-      gender: u.gender || 'Not specified',
-      chapter: u.chapter || 'TBM Ghana Chapter',
-      country: u.country || 'Ghana',
-      profession: u.profession || 'Patriot'
-    }))
+    return data
+      .filter((u) => !adminIdSet.has(u.id))
+      .map((u) => ({
+        id: u.registration_number,
+        name: u.full_name,
+        email: u.email,
+        phone: u.phone_number || 'N/A',
+        region: u.region || 'Region pending',
+        constituency: u.constituency || 'Constituency pending',
+        status: u.status,
+        joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
+        platform: u.platform || 'GHANA',
+        type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
+        avatarUrl: u.avatar_url || undefined,
+        gender: u.gender || 'Not specified',
+        chapter: u.chapter || 'TBM Ghana Chapter',
+        country: u.country || 'Ghana',
+        profession: u.profession || 'Patriot'
+      }))
   }
 
   async getAdministrators(): Promise<AdminUser[]> {

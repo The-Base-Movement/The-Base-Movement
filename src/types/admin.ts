@@ -562,7 +562,7 @@ export interface Broadcast {
   title: string
   content: string
   channel: 'SMS' | 'Email' | 'Push' | 'In-app'
-  target_type: 'ALL' | 'REGION' | 'CONSTITUENCY'
+  target_type: 'ALL' | 'REGION' | 'CONSTITUENCY' | 'DIASPORA'
   target_value?: string
   priority: 'Normal' | 'High' | 'Urgent'
   status: 'Draft' | 'Sent' | 'Cancelled'

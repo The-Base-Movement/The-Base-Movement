@@ -28,6 +28,8 @@ export interface Product {
   sizes?: string[];
   colors?: string[];
   reviews?: number;
+  compare_at_price?: string | number;
+  stock_quantity?: number;
   // Premium Fields
   is_featured?: boolean;
   customization_allowed?: boolean;

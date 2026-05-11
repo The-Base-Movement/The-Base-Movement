@@ -759,7 +759,7 @@ export default function AdminBlogs() {
             </div>
             <CardContent className="p-6 space-y-6">
               <div className="space-y-3">
-                <Label className="text-micro font-bold text-stone-500 uppercase tracking-widest">Search feed</Label>
+                <Label className="field-label">Search feed</Label>
                 <div className="relative group">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-300 group-focus-within:text-on-surface transition-colors" />
                   <input 
@@ -773,7 +773,7 @@ export default function AdminBlogs() {
               </div>
 
               <div className="space-y-3 pt-6 border-t border-stone-50">
-                <Label className="text-micro font-bold text-stone-500 uppercase tracking-widest">Status</Label>
+                <Label className="field-label">Status</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="h-10 w-full bg-white border-stone-200 text-xs font-bold rounded-sm focus:ring-0 focus:border-on-surface">
                     <SelectValue placeholder="Status" />
@@ -788,7 +788,7 @@ export default function AdminBlogs() {
               </div>
 
               <div className="space-y-3 pt-6 border-t border-stone-50">
-                <Label className="text-micro font-bold text-stone-500 uppercase tracking-widest">Category</Label>
+                <Label className="field-label">Category</Label>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="h-10 w-full bg-white border-stone-200 text-xs font-bold rounded-sm focus:ring-0 focus:border-on-surface">
                     <SelectValue placeholder="Category" />

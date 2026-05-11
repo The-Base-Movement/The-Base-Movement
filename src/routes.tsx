@@ -1,12 +1,18 @@
 import { lazy } from 'react'
-import { type RouteObject, Navigate } from 'react-router-dom'
+import { type RouteObject, Navigate, Outlet } from 'react-router-dom'
+import { ChaptersProvider } from './context/ChaptersContext'
+
+function WithChapters() {
+  return <ChaptersProvider><Outlet /></ChaptersProvider>
+}
 import Home from './pages/Home'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
-import AdminLogin from './pages/admin/Login'
 import PublicLayout from './components/PublicLayout'
 import DashboardLayout from './components/DashboardLayout'
+
+const Login = lazy(() => import('./pages/Login'))
+const Register = lazy(() => import('./pages/Register'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const AdminLogin = lazy(() => import('./pages/admin/Login'))
 
 // Lazy loaded components
 const Blog = lazy(() => import('./pages/Blog'))
@@ -110,7 +116,9 @@ export const routes: RouteObject[] = [
       { path: '/store/summary', element: <OrderSummary /> },
       { path: '/impact', element: <Impact /> },
       { path: '/polls', element: <Polls /> },
-      { path: '/chapters', element: <Chapters /> },
+      { element: <WithChapters />, children: [
+        { path: '/chapters', element: <Chapters /> },
+      ]},
       { path: '/privacy', element: <Privacy /> },
       { path: '/terms', element: <Terms /> },
       { path: '/press', element: <Press /> },
@@ -128,6 +136,10 @@ export const routes: RouteObject[] = [
       { path: '/dashboard/agenda', element: <OurAgenda /> },
       { path: '/dashboard/impact', element: <Impact /> },
       { path: '/dashboard/polls', element: <Polls /> },
+      { element: <WithChapters />, children: [
+        { path: '/dashboard/chapters', element: <Chapters /> },
+        { path: '/dashboard/chapters/:id', element: <ChapterDetails /> },
+      ]},
       { path: '/dashboard/store', element: <Store /> },
       { path: '/dashboard/store/product/:slug', element: <ProductDetails /> },
       { path: '/dashboard/store/cart', element: <Cart /> },
@@ -139,8 +151,6 @@ export const routes: RouteObject[] = [
       { path: '/dashboard/donate', element: <Donate /> },
       { path: '/dashboard/contact', element: <Contact /> },
       { path: '/dashboard/members', element: <Members /> },
-      { path: '/dashboard/chapters', element: <Chapters /> },
-      { path: '/dashboard/chapters/:id', element: <ChapterDetails /> },
       { path: '/dashboard/privacy', element: <Privacy /> },
       { path: '/dashboard/terms', element: <Terms /> },
       { path: '/settings', element: <ProfileSettings /> },
@@ -164,7 +174,9 @@ export const routes: RouteObject[] = [
       { path: '/admin/priorities', element: <AdminStrategicPriorities /> },
       { path: '/admin/members', element: <AdminMembers /> },
       { path: '/admin/verification', element: <AdminMemberVerification /> },
-      { path: '/admin/chapters', element: <AdminChapters /> },
+      { element: <WithChapters />, children: [
+        { path: '/admin/chapters', element: <AdminChapters /> },
+      ]},
       { path: '/admin/polls', element: <AdminPolls /> },
       { path: '/admin/store', element: <AdminStore /> },
       { path: '/admin/settings', element: <AdminSettings /> },

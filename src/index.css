@@ -49,52 +49,60 @@
 
 @layer base {
   :root {
-    --background: 40 20% 97%;
-    --foreground: 220 15% 15%;
+    /* --- Surfaces — design spec: #f6fbf4 green-tinted off-white --- */
+    --background: 103 47% 97%;       /* #f6fbf4 */
+    --surface-warm: 36 24% 96%;      /* #F7F5F2 footer / soft sections */
+
+    /* --- Ink / text --- */
+    --foreground: 132 9% 10%;        /* #181d19 near-black green ink */
+    --on-surface: 132 9% 10%;        /* same */
+    --on-surface-muted: 131 5% 46%;  /* #6f7a71 */
+    --muted-foreground: 131 5% 46%;  /* #6f7a71 — aligns brand muted text */
+
+    /* --- Card / popover (pure white) --- */
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 132 9% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
-    
-    /* Semantic Roles */
-    --on-surface: 220 15% 15%;
-    --on-surface-muted: 220 10% 55%;
-    
-    /* Mapping shadcn variables to brand colors with hierarchy */
-    --primary: 156 100% 21%; /* #006B3F - High intensity brand green */
+    --popover-foreground: 132 9% 10%;
+
+    /* --- Brand colors --- */
+    --primary: 156 100% 21%; /* #006B3F */
     --primary-foreground: 0 0% 100%;
-    
-    --secondary: 150 20% 96%; /* Pale green tint for soft backgrounds */
-    --secondary-foreground: 150 80% 15%;
-    
-    --muted: 40 10% 94%; /* Warm light gray for inactive/backgrounds */
-    --muted-foreground: 220 10% 55%;
-    
-    --accent: 45 80% 45%; /* #DAA520 - Gold for controlled emphasis */
+
+    --secondary: 103 20% 96%; /* pale green tint */
+    --secondary-foreground: 156 80% 15%;
+
+    --muted: 103 10% 94%;    /* skeleton / inactive backgrounds */
+
+    --accent: 45 80% 45%;    /* #DAA520 */
     --accent-foreground: 0 0% 100%;
-    
-    --destructive: 0 85% 44%; /* #CE1126 - Brand red for urgency */
+
+    --destructive: 0 85% 44%; /* #CE1126 */
     --destructive-foreground: 0 0% 100%;
-    
-    --border: 40 10% 88%;
-    --input: 40 10% 88%;
+
+    /* --- Borders --- */
+    --border: 103 12% 88%;   /* #dfe4dd */
+    --input: 103 12% 88%;
     --ring: 156 100% 21%;
-    --radius: 0.125rem; /* Elite Industrial - Sharp edges */
+    --radius: 0.125rem;
     --radius-lg: 0.25rem;
     --radius-xl: 0.5rem;
-    
+
     --brand-green: 156 100% 21%;
     --brand-gold: 45 80% 45%;
     --brand-red: 0 85% 44%;
 
-    /* Extended Surface Palette */
-    --surface-bright: 150 20% 98%;
-    --surface-dim: 150 10% 85%;
-    --surface-variant: 150 10% 90%;
-    --on-surface-variant: 220 15% 35%;
-    
-    /* Functional Tokens */
-    --outline-variant: 150 10% 75%;
+    /* --- Extended surfaces --- */
+    --surface-bright: 103 20% 98%;
+    --surface-dim: 103 10% 85%;
+    --surface-variant: 103 10% 90%;
+    --on-surface-variant: 132 9% 35%;
+    --container: #ebefe9;
+    --container-low: #f1f5ee;
+    --container-hi: #e5e9e3;
+
+    /* --- Functional tokens --- */
+    --outline-variant: 103 10% 75%;
     --divider-gold: 45 80% 45% / 0.3;
     --charcoal-dark: 0 0% 10%;
 
@@ -121,6 +129,9 @@
     --h5-size: clamp(calc(1.1rem * var(--font-heading-scale)), calc(2vw * var(--font-heading-scale)), calc(1.5rem * var(--font-heading-scale)));
     --h6-size: clamp(calc(1rem * var(--font-heading-scale)), calc(1.5vw * var(--font-heading-scale)), calc(1.25rem * var(--font-heading-scale)));
     --p-size: clamp(calc(1rem * var(--font-scale)), calc(0.6vw + 0.85rem), calc(1.25rem * var(--font-scale)));
+
+    /* Elite Industrial Admin specific tokens */
+    --charcoal: #1A1A1A;
   }
 
   @media (min-width: 1280px) {
@@ -192,10 +203,55 @@
   .brand-line-destructive { @apply flex-1 bg-destructive; }
   .brand-line-accent { @apply flex-1 bg-accent; }
   .brand-line-primary { @apply flex-1 bg-primary; }
-  
+
   /* Unified Typographic Scale Utilities - Now synced with Tailwind Config */
   .text-micro { font-size: var(--fs-micro); }
   .text-tiny { font-size: var(--fs-tiny); }
+
+  /* Design-spec form field label — uppercase meta label used in all forms */
+  .field-label {
+    font-family: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: hsl(var(--on-surface-muted));
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+
+  /* Design-spec eyebrow text */
+  .eye {
+    font-family: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: hsl(var(--primary));
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .eye-gold { color: hsl(var(--accent)); }
+  .eye-red  { color: hsl(var(--destructive)); }
+  .eye-mute { color: hsl(var(--on-surface-muted)); }
+
+  /* Design-spec status pills */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-family: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: -0.005em;
+    border: 1px solid transparent;
+    line-height: 1.3;
+  }
+  .pill-ok   { background: rgba(0,107,63,.08);   color: hsl(var(--primary));     border-color: rgba(0,107,63,.18); }
+  .pill-warn { background: rgba(218,165,32,.10);  color: #a87d10;                 border-color: rgba(218,165,32,.2); }
+  .pill-err  { background: rgba(206,17,38,.08);   color: hsl(var(--destructive)); border-color: rgba(206,17,38,.18); }
+  .pill-mute { background: hsl(var(--muted));     color: hsl(var(--on-surface-muted)); border-color: hsl(var(--border)); }
 }
 
 /* Material Symbols configuration */
@@ -208,13 +264,15 @@
 /* Form Styles */
 .form-understate {
   border: 1px solid #bec9bf;
-  background: transparent;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 13px;
   transition: all 0.2s ease;
 }
 .form-understate:focus {
   outline: none;
   border-color: hsl(var(--primary));
-  box-shadow: inset 0 0 0 2px rgba(0, 107, 63, 0.1);
+  box-shadow: inset 0 0 0 2px rgba(0, 107, 63, 0.08);
 }
 
 /* Navigation Utilities */
@@ -292,3 +350,94 @@
   gap: var(--grid-gap, 1.5rem);
   grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-width, 240px), 1fr));
 }
+
+/* =========================================================================
+   ELITE INDUSTRIAL ADMIN — layout & components
+   ========================================================================= */
+
+/* Core Layout */
+.app-shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+.main { padding: 24px 28px 60px; min-width: 0; }
+.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.top h2 { font-family: 'Public Sans'; font-weight: 800; font-size: 22px; letter-spacing: -.015em; margin: 0; }
+.top .crumbs { font-size: 10px; color: hsl(var(--on-surface-muted)); font-family: 'Public Sans'; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.top .actions { display: flex; gap: 8px; }
+
+/* KPI strip */
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+.kpi { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 6px; padding: 14px 16px; position: relative; overflow: hidden; }
+.kpi::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--ac); }
+.kpi.r { --ac: hsl(var(--destructive)); }
+.kpi.g { --ac: hsl(var(--accent)); }
+.kpi.k { --ac: var(--charcoal); }
+.kpi.gr { --ac: hsl(var(--primary)); }
+.kpi .l { font-size: 9.5px; color: hsl(var(--on-surface-muted)); font-family: 'Public Sans'; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; line-height: 1; }
+.kpi .v { font-family: 'Public Sans'; font-weight: 800; font-size: 24px; letter-spacing: -.02em; line-height: 1; margin: 8px 0 4px; color: hsl(var(--on-surface)); }
+.kpi .d { font-size: 10.5px; font-family: 'Public Sans'; font-weight: 700; color: hsl(var(--primary)); display: flex; align-items: center; }
+.kpi .d.dn { color: hsl(var(--destructive)); }
+
+/* Two-col layout */
+.twocol { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; }
+
+/* Panels & Tables */
+.panel { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 6px; overflow: hidden; }
+.ph { padding: 14px 18px; border-bottom: 1px solid hsl(var(--border)); display: flex; justify-content: space-between; align-items: center; }
+.ph h3 { font-family: 'Public Sans'; font-weight: 800; font-size: 13.5px; letter-spacing: -.005em; margin: 0; }
+.ph .meta { font-size: 10.5px; color: hsl(var(--on-surface-muted)); font-family: 'Public Sans'; font-weight: 700; }
+
+.table { width: 100%; border-collapse: collapse; }
+.table th { text-align: left; padding: 10px 18px; font-size: 9.5px; font-weight: 800; color: hsl(var(--on-surface-muted)); letter-spacing: .06em; text-transform: uppercase; font-family: 'Public Sans'; background: hsl(var(--container-low)); border-bottom: 1px solid hsl(var(--border)); }
+.table td { padding: 11px 18px; font-size: 12px; border-bottom: 1px solid hsl(var(--border)); vertical-align: middle; color: hsl(var(--on-surface)); }
+.table tr:last-child td { border-bottom: 0; }
+.table tr:hover td { background: hsl(var(--container-low)); }
+.table .who { display: flex; align-items: center; gap: 10px; }
+.table .who b { font-family: 'Public Sans'; font-weight: 800; font-size: 12px; display: block; line-height: 1.2; }
+.table .who span { font-size: 10px; color: hsl(var(--on-surface-muted)); font-family: 'Public Sans'; font-weight: 700; }
+.table .reg { font-family: 'Public Sans'; font-weight: 800; font-size: 11.5px; color: hsl(var(--primary)); font-variant-numeric: tabular-nums; }
+
+.row-actions { display: flex; gap: 5px; }
+.ico { width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid hsl(var(--border)); border-radius: 3px; background: #fff; cursor: pointer; transition: all 0.15s ease; color: hsl(var(--on-surface-muted)); }
+.ico:hover { border-color: hsl(var(--primary)); color: hsl(var(--primary)); }
+.ico.ok { color: hsl(var(--primary)); }
+.ico.ok:hover { background: hsla(var(--primary), 0.05); }
+.ico.no { color: hsl(var(--destructive)); }
+.ico.no:hover { background: hsla(var(--destructive), 0.05); }
+
+/* Broadcast composer */
+.compose .field { padding: 14px 18px; border-bottom: 1px solid hsl(var(--border)); }
+.compose .field input, .compose .field textarea { width: 100%; border: 0; outline: 0; font-family: inherit; font-size: 13px; resize: none; background: transparent; padding: 0; color: hsl(var(--on-surface)); }
+.compose .field input.title { font-family: 'Public Sans'; font-weight: 800; font-size: 18px; letter-spacing: -.015em; }
+.compose .field textarea { min-height: 90px; line-height: 1.55; }
+.compose .field .lbl { font-size: 9.5px; color: hsl(var(--on-surface-muted)); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
+.compose .field .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.compose .ch { padding: 3px 9px; background: hsla(var(--primary), 0.08); border: 1px solid hsla(var(--primary), 0.18); color: hsl(var(--primary)); border-radius: 3px; font-family: 'Public Sans'; font-weight: 800; font-size: 10px; display: inline-flex; align-items: center; gap: 4px; }
+.compose .ch .material-symbols-outlined { font-size: 11px; cursor: pointer; }
+.compose .toolbar { padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; background: hsl(var(--container-low)); border-radius: 0 0 6px 6px; }
+.compose .toolbar .left { display: flex; gap: 6px; }
+.compose .toolbar .left .ico { background: transparent; border-color: transparent; }
+
+/* Recent activity log */
+.log { padding: 0 18px 18px; }
+.log-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid hsl(var(--border)); align-items: flex-start; }
+.log-row:last-child { border-bottom: 0; }
+.log-row .stamp { font-family: 'Public Sans'; font-weight: 800; font-size: 9.5px; color: hsl(var(--on-surface-muted)); letter-spacing: .04em; text-transform: uppercase; min-width: 54px; padding-top: 2px; }
+.log-row .body { flex: 1; }
+.log-row .body p { margin: 0; font-size: 12px; line-height: 1.4; color: hsl(var(--on-surface)); }
+.log-row .body p b { font-family: 'Public Sans'; font-weight: 800; }
+.log-row .body span { font-size: 10.5px; color: hsl(var(--on-surface-muted)); font-family: 'Public Sans'; font-weight: 700; display: block; margin-top: 2px; }
+.log-row .tag { padding: 2px 7px; border-radius: 2px; font-family: 'Public Sans'; font-weight: 800; font-size: 9px; letter-spacing: .05em; text-transform: uppercase; }
+.log-row .tag.create { background: hsla(var(--primary), 0.1); color: hsl(var(--primary)); }
+.log-row .tag.edit { background: hsla(var(--accent), 0.12); color: #a87d10; }
+.log-row .tag.delete { background: hsla(var(--destructive), 0.1); color: hsl(var(--destructive)); }
+
+/* Standard buttons matching reference kit */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Public Sans'; font-weight: 800; letter-spacing: -.005em; border: 0; border-radius: 4px; padding: 0 16px; height: 38px; font-size: 12.5px; transition: all .18s ease; line-height: 1; cursor: pointer; }
+.btn:active { transform: scale(0.96); }
+.btn-sm { height: 30px; padding: 0 12px; font-size: 11.5px; }
+.btn-outline { background: #fff; color: hsl(var(--on-surface)); border: 1px solid hsl(var(--border)); }
+.btn-outline:hover { border-color: hsl(var(--primary)); color: hsl(var(--primary)); }
+.btn-dest { background: hsl(var(--destructive)); color: #fff; }
+.btn-dest:hover { opacity: 0.9; }
+.btn-ghost { background: transparent; color: hsl(var(--on-surface)); }
+.btn-ghost:hover { background: hsl(var(--container-low)); color: hsl(var(--primary)); }

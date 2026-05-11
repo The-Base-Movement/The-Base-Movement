@@ -103,32 +103,30 @@ export default function Store() {
                   setSearchQuery(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="w-full h-11 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-none text-xs focus:ring-1 focus:ring-brand-green outline-none transition-all font-bold tracking-tight"
+                className="w-full h-11 pl-10 pr-4 form-understate text-[13px] font-bold"
               />
             </div>
           </div>
 
           <div className="space-y-2">
             <p className="text-tiny font-bold tracking-tight text-stone-500">Categories</p>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap gap-2">
               {categories.map(category => (
-                <Button
+                <button
                   key={category}
-                  variant={activeCategory === category ? 'active-tab' : 'default'}
                   onClick={() => {
                     setActiveCategory(category)
                     setCurrentPage(1)
                   }}
                   className={cn(
-                    "w-full h-12 flex items-center justify-between px-4 text-tiny font-bold tracking-tight border rounded-none transition-all shadow-sm active:scale-95",
-                    activeCategory === category 
-                      ? '' 
-                      : 'border-stone-200 hover:bg-stone-50'
+                    "px-[14px] py-[6px] rounded-full border font-meta font-bold text-[11px] cursor-pointer transition-all",
+                    activeCategory === category
+                      ? 'bg-on-surface text-white border-on-surface'
+                      : 'bg-white text-on-surface border-border hover:border-primary hover:text-primary'
                   )}
                 >
                   {category}
-                  {activeCategory === category && <div className="w-1.5 h-1.5 bg-[hsl(var(--active-tab-text))] rounded-full" />}
-                </Button>
+                </button>
               ))}
             </div>
           </div>
@@ -224,7 +222,7 @@ export default function Store() {
           </aside>
 
           <div className="flex-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[18px]">
               {loading ? (
                 Array.from({ length: 9 }).map((_, i) => (
                   <div key={i} className="aspect-[3/4] bg-stone-100 animate-pulse rounded-none" />

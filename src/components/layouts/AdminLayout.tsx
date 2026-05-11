@@ -52,11 +52,11 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const { settings } = useBranding()
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    'Core': true,
-    'People': false,
-    'Operations': false,
-    'Finance': false,
-    'Communications': false
+    'Overview': true,
+    'Members': true,
+    'Field': true,
+    'Content': true,
+    'System': true
   })
   const location = useLocation()
   const navigate = useNavigate()
@@ -146,63 +146,49 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
   const navGroups = [
     {
-      label: "Core",
+      label: "Overview",
       icon: LayoutDashboard,
       items: [
-        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Overview' },
-        { to: '/admin/blogs', icon: FileText, label: 'Updates', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/media', icon: ImageIcon, label: 'Media Library', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/trash', icon: Trash2, label: 'Trash Vault', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Mission control' },
+        { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Analytics' },
       ]
     },
     {
-      label: "People",
+      label: "Members",
       icon: Users,
       items: [
-        { to: '/admin/members', icon: Users, label: 'Verified', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-        { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/verification', icon: ShieldCheck, label: 'Verifications', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-        { to: '/admin/authors', icon: PenTool, label: 'Authors', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-
-        { to: '/admin/leadership', icon: Zap, label: 'Leadership', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+        { to: '/admin/members', icon: Users, label: 'Directory', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/verification', icon: ShieldCheck, label: 'ID verification', pill: '42', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/donations', icon: DollarSign, label: 'Donations', pill: '14', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
+      ]
+    },
+    {
+      label: "Field",
+      icon: MapPin,
+      items: [
         { to: '/admin/chapters', icon: MapPin, label: 'Chapters', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
-        { to: '/admin/regions', icon: MapPin, label: 'Regions', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
-      ]
-    },
-    {
-      label: "Operations",
-      icon: Target,
-      items: [
-        { to: '/admin/polls', icon: BarChart3, label: 'Feedback', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
-        { to: '/admin/sentiment-intelligence', icon: Brain, label: 'Sentiment Analysis', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/mobilization-metrics', icon: Trophy, label: 'Mobilization', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/roadmap', icon: Flag, label: 'Roadmap', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/directives', icon: Target, label: 'Directives', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/rally-command', icon: Target, label: 'Events', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/ground-game', icon: Vote, label: 'Canvassing', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/war-room', icon: ShieldAlert, label: 'Alerts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-      ]
-    },
-    {
-      label: "Finance",
-      icon: DollarSign,
-      items: [
-        { to: '/admin/donations', icon: DollarSign, label: 'Financial Audit', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
-        { to: '/admin/priorities', icon: Target, label: 'Strategic Priorities', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
-        { to: '/admin/store', icon: ShoppingBag, label: 'Supplies', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
-        { to: '/admin/orders', icon: ShoppingBag, label: 'Orders', permission: { action: 'MANAGE_INVENTORY', resource: 'STORE' } },
-        { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Logistics', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-      ]
-    },
-    {
-      label: "Communications",
-      icon: Megaphone,
-      items: [
         { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcasts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/directives', icon: Target, label: 'Field directives', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/deploy', icon: Target, label: 'Deploy mission', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+      ]
+    },
+    {
+      label: "Content",
+      icon: FileText,
+      items: [
+        { to: '/admin/blogs', icon: FileText, label: 'Blog posts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/authors', icon: PenTool, label: 'Authors', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/polls', icon: Vote, label: 'Polls', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
+      ]
+    },
+    {
+      label: "System",
+      icon: Settings,
+      items: [
+        { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     }
-
   ]
 
   const filteredNavGroups = navGroups.map(group => ({
@@ -225,7 +211,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   }
 
   return (
-    <div className="h-screen bg-muted/30 font-meta text-on-surface flex overflow-hidden">
+    <div className="h-screen bg-[#f1f5ee] font-meta text-on-surface flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       <div 
         className={cn(
@@ -237,14 +223,14 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 flex flex-col bg-[hsl(var(--brand-green))] text-white transition-all duration-300 ease-in-out lg:relative lg:translate-x-0",
-        isSidebarOpen ? "translate-x-0 w-72" : "-translate-x-full lg:w-20 lg:translate-x-0"
+        "fixed inset-y-0 left-0 z-50 flex flex-col bg-[#0f1310] text-white transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 border-r border-black",
+        isSidebarOpen ? "translate-x-0 w-[220px]" : "-translate-x-full lg:w-0 lg:translate-x-0"
       )}>
         <div className="h-full flex flex-col">
           {/* Logo Section */}
           <div className={cn(
-            "h-24 flex items-center border-b border-white/5 overflow-hidden transition-all duration-300",
-            isSidebarOpen ? "px-8" : "px-5"
+            "h-16 flex items-center border-b border-white/[0.08] mb-3 overflow-hidden transition-all duration-300",
+            isSidebarOpen ? "px-[18px]" : "px-5"
           )}>
             <Link to="/admin/dashboard" className="flex items-center gap-4 shrink-0">
               <div className="w-10 h-10 bg-white flex items-center justify-center shadow-2xl p-1.5 shrink-0">
@@ -254,34 +240,19 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 "transition-all duration-300 origin-left",
                 isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-0 w-0"
               )}>
-                <p className="text-white font-bold text-xl leading-none mb-0 tracking-tight">The Base</p>
-                <p className="text-[var(--brand-gold)] text-micro font-bold tracking-tight mt-1.5 leading-none">Admin Command Center</p>
+                <p className="text-white font-extrabold text-sm leading-none mb-0 tracking-tight">The Base</p>
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <p className="text-[hsl(var(--destructive))] text-[9px] font-extrabold tracking-[0.08em] uppercase leading-none">Admin · Ops</p>
+                  <span className="w-1 h-1 rounded-full bg-white/20" />
+                  <p className="text-white/40 text-[8px] font-bold uppercase leading-none tracking-tight">HQ</p>
+                </div>
               </div>
-
             </Link>
           </div>
 
 
           {/* Navigation */}
           <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto scrollbar-hide">
-            {/* View Site External Link */}
-            <a 
-              href="/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 mb-8 mx-2 transition-all relative group bg-black/10 hover:bg-black/20 rounded-lg border border-white/10",
-                isSidebarOpen ? "" : "justify-center px-0"
-              )}
-            >
-              <Zap className="w-4 h-4 text-[var(--brand-gold)] group-hover:scale-110 transition-transform shrink-0" />
-              <span className={cn(
-                "text-micro font-bold tracking-tight transition-all duration-300 text-stone-100 group-hover:text-white",
-                isSidebarOpen ? "opacity-100" : "opacity-0 w-0 hidden"
-              )}>
-                View live site
-              </span>
-            </a>
 
             {filteredNavGroups.map((group) => {
               const isOpen = openGroups[group.label]
@@ -292,22 +263,22 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   <button
                     onClick={() => toggleGroup(group.label)}
                     className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 transition-colors group",
+                      "w-full flex items-center justify-between px-2 py-1 hover:bg-white/5 transition-colors group",
                       isSidebarOpen ? "" : "justify-center"
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <group.icon className="w-5 h-5 shrink-0" />
-                      <span className={cn(
-                        "text-xs font-bold tracking-tight whitespace-nowrap transition-all duration-300",
-                        isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 w-0"
-                      )}>
-                        {group.label}
-                      </span>
+                      {isSidebarOpen ? (
+                        <span className="text-[9px] font-extrabold text-white/35 tracking-[0.08em] uppercase whitespace-nowrap py-1">
+                          {group.label}
+                        </span>
+                      ) : (
+                        <group.icon className="w-4 h-4 text-white/40 shrink-0" />
+                      )}
                     </div>
                     {isSidebarOpen && (
                       <ChevronDown className={cn(
-                        "w-4 h-4 transition-transform duration-200",
+                        "w-3 h-3 text-white/30 transition-transform duration-200",
                         isOpen ? "rotate-180" : ""
                       )} />
                     )}
@@ -316,45 +287,36 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   {/* Group Items */}
                   <div className={cn(
                     "overflow-hidden transition-all duration-300 relative",
-                    isOpen && isSidebarOpen ? "max-h-[500px] opacity-100 mt-1 pb-2" : "max-h-0 opacity-0"
+                    isOpen && isSidebarOpen ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0"
                   )}>
-                    {/* Vertical Tree Line */}
-                    {isSidebarOpen && (
-                      <div className="absolute left-[21px] top-0 bottom-4 w-px bg-white/20" />
-                    )}
-
                     {group.items.map((item) => {
                       const isActive = location.pathname === item.to
+                      const Icon = item.icon
                       return (
                         <Link
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2.5 ml-8 transition-all relative group/item rounded-lg mr-4 mb-0.5",
-                            isActive 
-                              ? "bg-white/20 text-white" 
-                              : "text-white/70 hover:text-white hover:bg-white/10"
+                            "flex items-center gap-[10px] px-[10px] py-[8px] mx-[8px] transition-all relative group/item rounded-[3px] font-display font-bold text-[11.5px]",
+                            isActive
+                              ? "bg-[hsl(var(--destructive))] text-white shadow-sm"
+                              : "text-white/70 hover:text-white hover:bg-white/5"
                           )}
                           onClick={() => {
                             if (window.innerWidth < 1024) setIsSidebarOpen(false)
                           }}
                         >
-                          {/* Horizontal Tree Branch */}
-                          {isSidebarOpen && (
-                            <div className="absolute left-[-16px] top-1/2 -translate-y-1/2 w-4 h-px bg-white/20" />
-                          )}
-
-                          <span className={cn(
-                            "text-tiny font-bold tracking-tight whitespace-nowrap transition-all duration-300",
-                            isSidebarOpen ? "opacity-100" : "opacity-0"
-                          )}>
+                          <Icon className="w-4 h-4 shrink-0" />
+                          <span className="whitespace-nowrap flex-1">
                             {item.label}
                           </span>
-                          {isActive && (
-                            <>
-                              <div className="absolute left-[-42px] top-1/2 -translate-y-1/2 w-[4px] h-7 bg-[var(--brand-gold)] shadow-[0_0_20px_rgba(218,165,32,1)] z-10 rounded-r-full" />
-                              <div className="absolute inset-0 bg-white/5 pointer-events-none rounded-lg" />
-                            </>
+                          {item.pill && (
+                            <span className={cn(
+                              "px-[7px] py-[1px] rounded-full text-[9px] font-black",
+                              isActive ? "bg-black/30 text-white" : "bg-[hsl(var(--destructive))] text-white"
+                            )}>
+                              {item.pill}
+                            </span>
                           )}
                         </Link>
                       )
@@ -580,12 +542,29 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         <main 
           className="flex-1 overflow-y-auto transition-all duration-300 ease-in-out"
           style={{ 
-            padding: 'var(--admin-padding, 2.5rem)',
+            padding: '24px 28px 60px',
             fontSize: `calc(1rem * var(--admin-font-scale, 1))` 
           }}
         >
           <div className="max-w-7xl mx-auto w-full">
             {children || <Outlet />}
+
+            {/* Movement Slogan Footer */}
+            <footer className="mt-20 py-12 border-t border-border/10 flex flex-col items-center justify-center gap-4 opacity-50 hover:opacity-100 transition-opacity duration-500">
+              <div className="flex items-center gap-0">
+                <div className="h-1 w-10 bg-[hsl(var(--destructive))]" />
+                <div className="h-1 w-10 bg-[hsl(var(--accent))]" />
+                <div className="h-1 w-10 bg-[hsl(var(--primary))]" />
+              </div>
+              <div className="text-center space-y-1">
+                <p className="text-micro font-black text-on-surface/60 uppercase tracking-[0.15em]">
+                  Ghana First, Jobs for the Youth!
+                </p>
+                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                  © {new Date().getFullYear()} The Base Movement · Operational Command Center
+                </p>
+              </div>
+            </footer>
           </div>
         </main>
 

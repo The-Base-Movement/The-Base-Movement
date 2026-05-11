@@ -647,7 +647,7 @@ class LogisticsService {
   async getLogisticsLatency(): Promise<LogisticsLatency[]> {
     try {
       const { data, error } = await supabase
-        .from('logistics_velocity_operational metrics')
+        .from('logistics_velocity')
         .select('region, avg_dispatch_hours, avg_delivery_hours, total_orders')
 
       if (error || !data) return []
@@ -655,7 +655,6 @@ class LogisticsService {
       return data.map(item => {
         const totalHours = (item.avg_dispatch_hours || 0) + (item.avg_delivery_hours || 0)
         const avgDays = Number((totalHours / 24).toFixed(1))
-        
         return {
           region: item.region,
           avgDispatchToDeliveryDays: avgDays || 0,
@@ -663,8 +662,7 @@ class LogisticsService {
           efficiency: (avgDays < 3 && avgDays > 0) ? 'High' : (avgDays < 5 && avgDays > 0) ? 'Medium' : 'Low'
         }
       })
-    } catch (error) {
-      console.error('[DATABASE] Failed to fetch logistics latency:', error)
+    } catch {
       return []
     }
   }
@@ -672,12 +670,11 @@ class LogisticsService {
   async getLogisticsVelocity(): Promise<LogisticsVelocity[]> {
     try {
       const { data, error } = await supabase
-        .from('logistics_velocity_operational metrics')
+        .from('logistics_velocity')
         .select('*')
-      if (error) throw error
+      if (error) return []
       return (data || []) as LogisticsVelocity[]
-    } catch (error) {
-      console.error('[DATABASE] Failed to fetch logistics velocity:', error)
+    } catch {
       return []
     }
   }

@@ -508,7 +508,7 @@ export default function MembersList() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-muted/30 border-b border-border/40">
+                <tr className="bg-[var(--container-low)] border-b border-border">
                   <th className="px-6 py-4 w-10">
                     <input 
                       type="checkbox" 
@@ -522,9 +522,9 @@ export default function MembersList() {
                       Member details <ArrowUpDown className="w-3 h-3 group-hover:text-on-surface transition-colors" />
                     </Button>
                   </th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Contact info</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Location details</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Status</th>
+                  <th className="px-6 py-4 text-[9.5px] font-bold text-on-surface-muted uppercase tracking-[0.06em] font-meta text-left">Contact info</th>
+                  <th className="px-6 py-4 text-[9.5px] font-bold text-on-surface-muted uppercase tracking-[0.06em] font-meta text-left">Location details</th>
+                  <th className="px-6 py-4 text-[9.5px] font-bold text-on-surface-muted uppercase tracking-[0.06em] font-meta text-left">Status</th>
                   <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight text-right">Actions</th>
                 </tr>
               </thead>
@@ -636,16 +636,13 @@ export default function MembersList() {
                     </td>
                     <td className="px-6 py-5">
                       <span className={cn(
-                        "px-3 py-1 text-micro font-bold tracking-tight rounded-full border inline-flex items-center gap-1.5",
-                        member.status === 'Active' 
-                          ? "bg-primary/10 text-primary border-primary/20" 
+                        "pill",
+                        member.status === 'Active' || member.status === 'Approved'
+                          ? "pill-ok"
                           : member.status === 'Pending'
-                          ? "bg-accent/10 text-accent border-accent/20"
-                          : "bg-destructive/10 text-destructive border-destructive/20"
+                          ? "pill-warn"
+                          : "pill-err"
                       )}>
-                        <div className={cn("w-1 h-1 rounded-full", 
-                          member.status === 'Active' ? "bg-primary" : member.status === 'Pending' ? "bg-accent" : "bg-destructive"
-                        )} />
                         {member.status}
                       </span>
                     </td>

@@ -49,7 +49,7 @@ export function ProductCard({ product, onShare }: ProductProps) {
       transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Card className="group border border-stone-200 bg-white hover:shadow-2xl transition-all duration-500 rounded-sm overflow-hidden flex flex-col h-full relative">
+      <Card className="group border border-border bg-white hover:border-primary hover:-translate-y-0.5 hover:shadow-[0_16px_32px_-8px_rgba(0,107,63,0.15)] transition-all duration-200 rounded-[6px] overflow-hidden flex flex-col h-full relative">
         {/* Product Image Container */}
         <div className="relative aspect-square overflow-hidden bg-stone-100">
           <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
@@ -66,20 +66,20 @@ export function ProductCard({ product, onShare }: ProductProps) {
           </Link>
           
           {/* Status Badge */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
             {isComingSoon && (
-              <span className="bg-stone-800 text-white text-tiny font-bold tracking-tight px-2.5 py-1 rounded-sm shadow-lg">
+              <span className="bg-[#181d19] text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">
                 Coming soon
               </span>
             )}
-            {product.category && (
-              <span className={`text-tiny font-bold tracking-tight px-3 py-1.5 rounded-sm shadow-lg border backdrop-blur-sm transition-all duration-300 ${
-                product.category === 'Apparel' ? 'bg-brand-green/20 text-brand-green border-brand-green/30' :
-                product.category === 'Accessories' ? 'bg-brand-gold/20 text-[#92400e] border-brand-gold/40' :
-                product.category === 'Limited Edition' ? 'bg-brand-red/20 text-brand-red border-brand-red/30' :
-                'bg-white/90 text-stone-800 border-stone-200'
-              }`}>
-                {product.category}
+            {!isComingSoon && product.category === 'Limited Edition' && (
+              <span className="bg-accent text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">
+                Limited
+              </span>
+            )}
+            {!isComingSoon && product.category !== 'Limited Edition' && product.stock_quantity && product.stock_quantity > 0 && (
+              <span className="bg-destructive text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">
+                Bestseller
               </span>
             )}
           </div>
@@ -128,49 +128,42 @@ export function ProductCard({ product, onShare }: ProductProps) {
           )}
         </div>
 
-        <CardContent className="p-6 flex flex-col flex-1">
-          <div className="flex items-center gap-1 mb-2">
-            <Star className="w-3 h-3 fill-warm-gold text-warm-gold" />
-            <span className="text-tiny font-bold text-stone-500 tracking-tight uppercase">Rating {product.rating || '4.8'}</span>
+        <CardContent className="p-4 flex flex-col flex-1 gap-[6px]">
+          <span className="text-[10px] font-bold text-primary font-meta uppercase tracking-[0.06em]">
+            {product.category || 'General'}
+          </span>
+
+          <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
+            <h5
+              id={`product-name-${product.id}`}
+              className="font-meta text-[15px] font-extrabold tracking-[-0.005em] leading-[1.3] text-on-surface group-hover:text-primary transition-colors line-clamp-2 mb-0"
+            >
+              {product.name}
+            </h5>
+          </Link>
+
+          <div className="flex items-center gap-1 text-[11px] text-on-surface-muted">
+            <span className="text-accent text-[13px] leading-none">★★★★★</span>
+            {product.rating || '4.8'}
           </div>
 
-          <div className="mb-2">
-            <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
-              <h5 
-                id={`product-name-${product.id}`}
-                className="text-stone-900 group-hover:text-primary transition-colors line-clamp-2 mb-0 font-bold leading-tight text-sm uppercase tracking-tight"
-              >
-                {product.name}
-              </h5>
-            </Link>
-          </div>
-          
-          <p className="text-muted-gray mb-4 line-clamp-2 text-tiny leading-relaxed font-medium">
-            {product.description}
-          </p>
-          
-          <div className="mt-auto pt-6 border-t border-stone-100 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <span className="text-tiny font-bold text-stone-400 uppercase tracking-tight">Price</span>
-              <span className="text-xl font-bold text-primary font-meta">
-                GH₵{product.price.toString().replace('GHS', '').replace('GH₵', '').trim()}
-              </span>
+          <div className="mt-auto pt-[10px] border-t border-border flex items-center justify-between gap-3">
+            <div className="font-meta font-extrabold text-[20px] tracking-[-0.015em] text-on-surface">
+              GH₵{product.price.toString().replace('GHS', '').replace('GH₵', '').trim()}
+              {product.compare_at_price && (
+                <small className="text-[12px] text-on-surface-muted line-through font-bold ml-1.5">
+                  GH₵{product.compare_at_price}
+                </small>
+              )}
             </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Button 
-                onClick={handleQuickAdd}
-                variant="primary" 
-                className="h-10 text-tiny font-bold tracking-tight shadow-lg shadow-primary/10"
-              >
-                Buy now
-              </Button>
-              <Button asChild variant="primary" className="h-10 text-tiny font-bold tracking-tight shadow-lg shadow-primary/10">
-                <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`} className="flex items-center justify-center">
-                  View Item <ArrowRight className="w-3.5 h-3.5 ml-2" />
-                </Link>
-              </Button>
-            </div>
+            <Button
+              onClick={handleQuickAdd}
+              variant="primary"
+              size="sm"
+              className="h-8 px-4 text-[12px] font-bold shrink-0"
+            >
+              Add
+            </Button>
           </div>
         </CardContent>
       </Card>

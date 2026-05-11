@@ -302,11 +302,11 @@ class ChapterService {
   async getRegionalLeaderboard(): Promise<ChapterLeaderboard[]> {
     try {
       const { data, error } = await supabase
-        .from('chapter_performance_operational metrics')
+        .from('chapter_performance')
         .select('*')
         .order('regional_chapter_rank', { ascending: true })
-      if (error) throw error
-      
+      if (error) return []
+
       return (data || []).map(item => ({
         region: item.region,
         chapter: item.chapter,
@@ -315,8 +315,7 @@ class ChapterService {
         achievements_unlocked: item.total_chapter_achievements,
         regional_rank: item.regional_chapter_rank
       }))
-    } catch (error) {
-      console.error('[DATABASE] Failed to fetch regional leaderboard:', error)
+    } catch {
       return []
     }
   }

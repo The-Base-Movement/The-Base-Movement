@@ -20,25 +20,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         const isNeonEnabled = neon !== undefined ? neon : (settings.button_neon_enabled ?? true)
         const Comp = asChild ? Slot : "button"
         
-        const isDarkPrimaryText = settings.button_primary_text_color === '220 15% 15%';
-        let effectiveVariant = variant;
-        
-        // If admin sets primary button text to dark, we enforce the background to be gold
-        if ((variant === 'primary' || variant === 'solid' || !variant) && isDarkPrimaryText) {
-            effectiveVariant = 'gold';
-        }
-
         const getGlowColor = () => {
-            if (effectiveVariant === 'destructive') return 'via-brand-red';
-            if (effectiveVariant === 'gold' || effectiveVariant === 'accent') return 'via-brand-gold';
+            if (variant === 'destructive') return 'via-brand-red';
+            if (variant === 'gold' || variant === 'accent') return 'via-brand-gold';
             return 'via-brand-green';
         }
 
         const glowColor = getGlowColor();
-        
+
         return (
             <Comp
-                className={cn(buttonVariants({ variant: effectiveVariant, size }), className)}
+                className={cn(buttonVariants({ variant, size }), className)}
                 ref={ref}
                 {...props}
             >

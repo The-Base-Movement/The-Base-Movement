@@ -119,12 +119,23 @@ export default function AdminSettings() {
         setAuditLogs(logs)
         
         const settings = await adminService.getSiteSettings()
-        // Ensure defaults are present for new keys
+        const loaded = settings as Record<string, unknown>
+
+        // Auto-correct white-on-white invisible inactive tab (common bad state from early configs)
+        if (loaded.button_inactive_tab_bg_color === '0 0% 100%' && loaded.button_inactive_tab_text_color === '0 0% 100%') {
+          loaded.button_inactive_tab_text_color = '156 100% 21%'
+        }
+
         setSiteSettings({
+          // Safe design defaults — Supabase values from spread below will override these
           button_primary_text_color: '0 0% 100%',
           button_gold_text_color: '220 15% 15%',
           button_destructive_text_color: '0 0% 100%',
-          ...settings
+          button_inactive_tab_bg_color: '0 0% 100%',
+          button_inactive_tab_text_color: '156 100% 21%',
+          button_border_radius: '0.125rem',
+          button_font_weight: '700',
+          ...loaded
         })
       } catch (err) {
         console.error('[SETTINGS] Failed to synchronize audit telemetry:', err)
@@ -438,14 +449,14 @@ export default function AdminSettings() {
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "w-full flex items-center justify-between px-4 py-3 rounded-sm text-micro font-bold tracking-tight transition-all group h-12 active:scale-95",
-                  !isActive && "text-stone-400 hover:text-white hover:bg-white/5"
+                  !isActive && "text-stone-500 hover:text-primary"
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <tab.icon className={cn("w-4 h-4", isActive ? "text-[hsl(var(--active-tab-text))]" : "text-stone-300 group-hover:text-white/60")} />
+                  <tab.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-stone-400 group-hover:text-primary/70")} />
                   {tab.label}
                 </div>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 text-[hsl(var(--active-tab-text))]/60" />}
+                {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/60" />}
               </Button>
             )
           })}
