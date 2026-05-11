@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { WelcomeModal } from '@/components/WelcomeModal'
 import { ShareModal } from '@/components/ShareModal'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { adminService } from '@/services/adminService'
 import type { Notification, Achievement, LeaderboardEntry, FieldAction } from '@/types/admin'
-import { Trophy, Medal, TrendingUp, Award, MapPin, Navigation, ShieldCheck, Users, Flag } from 'lucide-react'
+import { MapPin, Navigation, ShieldCheck, Users, TrendingUp } from 'lucide-react'
 import { MovementRoadmap } from '@/components/MovementRoadmap'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -14,6 +13,10 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/neon-button'
 import { usePerformance } from '@/context/PerformanceContext'
 import { useBranding } from '@/hooks/useBranding'
+import { StatCards } from './dashboard/components/StatCards'
+import { QuickActions } from './dashboard/components/QuickActions'
+import { ActivityFeed } from './dashboard/components/ActivityFeed'
+import { AchievementsAndLeaderboard } from './dashboard/components/AchievementsAndLeaderboard'
 
 interface GrowthStats {
   joined_last_hour: number
@@ -44,7 +47,6 @@ export default function Dashboard() {
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [achievements, setAchievements] = useState<Achievement[]>([])
-  const [allAvailableAchievements, setAllAvailableAchievements] = useState<Achievement[]>([])
   const [totalPoints, setTotalPoints] = useState(0)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [shareData, setShareData] = useState({ title: '', url: '' })
@@ -88,16 +90,14 @@ export default function Dashboard() {
           })
 
           // Fetch achievements and localized leaderboard in the same scope
-          const [userAchievements, regionLeaderboard, userPoints, allPossible] = await Promise.all([
+          const [userAchievements, regionLeaderboard, userPoints] = await Promise.all([
             adminService.getMemberAchievements(liveMember.id),
             adminService.getLeaderboard(liveMember.region),
-            adminService.getMemberPoints(liveMember.id),
-            adminService.getAchievements()
+            adminService.getMemberPoints(liveMember.id)
           ])
           setAchievements(userAchievements)
           setLeaderboard(regionLeaderboard)
           setTotalPoints(userPoints)
-          setAllAvailableAchievements(allPossible)
 
           // Fetch Active Field Actions
           const activeActions = await adminService.getFieldActions()
@@ -210,55 +210,16 @@ export default function Dashboard() {
       />
       
       {/* Section 1: Metrics Overview */}
-      <section className="mb-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm group hover:border-primary/40 transition-all">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-tiny font-bold text-on-surface/40 tracking-tight">New Members</span>
-              <Users className="w-4 h-4 text-primary opacity-40" />
-            </div>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-bold tracking-tighter m-0">{stats?.joined_last_24h || 0}</h3>
-              <span className="text-tiny font-bold text-on-surface/20">Past 24h</span>
-            </div>
-            <p className="text-micro text-on-surface/30 mt-4 font-medium italic">National digital infrastructure stabilized and the regional rollout is now underway.</p>
-          </div>
-          <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Active outreach</span>
-              <Navigation className="w-4 h-4 text-primary opacity-40" />
-            </div>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-bold tracking-tight m-0">{fieldActions.length}</h3>
-              <span className="text-tiny font-bold text-on-surface/20">In area</span>
-            </div>
-            <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">No community actions detected yet.</p>
-          </div>
-          <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Impact points</span>
-              <Trophy className="w-4 h-4 text-[var(--brand-gold)] opacity-40" />
-            </div>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-bold tracking-tight m-0">{totalPoints}</h3>
-              <span className="text-tiny font-bold text-on-surface/20">Earned</span>
-            </div>
-            <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">Participate to earn your first points.</p>
-          </div>
-          <div className="bg-white border border-border/40 p-6 rounded-none shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-tiny font-bold text-on-surface/40 tracking-tight">Achievements</span>
-              <Flag className="w-4 h-4 text-[var(--brand-red)] opacity-40" />
-            </div>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-bold tracking-tight m-0">{achievements.length}</h3>
-              <span className="text-tiny font-bold text-on-surface/20">Unlocked</span>
-            </div>
-            <p className="text-tiny text-on-surface/30 mt-4 font-medium italic">Complete actions to earn badges.</p>
-          </div>
-        </div>
-      </section>
-
+      <div className="mb-12">
+        <StatCards 
+          stats={stats} 
+          fieldActions={fieldActions} 
+          totalPoints={totalPoints} 
+          unlockedAchievementsCount={achievements.length} 
+        />
+        <QuickActions />
+      </div>
+      
       {/* Section 2: Active Field Mobilization (Tactical Activation) */}
       <section className="mb-12">
         <div className="flex items-center justify-between mb-6">
@@ -378,58 +339,9 @@ export default function Dashboard() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
-        {/* Section 2: Movement Directives (New Feed) */}
         <div className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Section 2: Movement Directives */}
-          <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden flex flex-col">
-            <div className="bg-on-surface/5 border-b border-border/10 p-4 flex items-center justify-between">
-              <h3 className="text-xs font-bold tracking-tight text-primary flex items-center gap-2 m-0">
-                <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>campaign</span>
-                Movement Directives
-              </h3>
-              <span className="text-tiny font-bold text-on-surface/30 tracking-tight">{notifications.length} Active updates</span>
-            </div>
-            <div className="divide-y divide-border/10 max-h-[400px] overflow-y-auto flex-1">
-              {notifications.length === 0 ? (
-                <div className="p-16 text-center">
-                  <span className="material-symbols-outlined text-on-surface/10 text-5xl mb-6" style={{ fontVariationSettings: "'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 48" }}>history</span>
-                  <p className="text-sm font-bold text-on-surface/40 tracking-tight">All Caught Up</p>
-                  <p className="text-xs text-on-surface/20 font-medium mt-2 italic">Standing by for new updates and national broadcasts.</p>
-                </div>
-              ) : (
-                notifications.map((note) => (
-                  <div key={note.id} className={`p-6 transition-all border-l-4 ${note.is_read ? 'border-transparent' : 'border-primary bg-primary/5'}`}>
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                      <div className="flex items-center gap-2">
-                        {note.type === 'Alert' && (
-                          <span className="px-2 py-0.5 bg-destructive text-white text-micro font-bold tracking-tight rounded-none">Urgent</span>
-                        )}
-                        <h4 className={`text-sm font-bold tracking-tight m-0 ${note.is_read ? 'text-on-surface/40' : 'text-on-surface'}`}>
-                          {note.title}
-                        </h4>
-                      </div>
-                      <span className="text-tiny text-on-surface/20 font-bold tracking-tight">
-                        {new Date(note.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="text-xs text-on-surface/60 leading-relaxed mb-4">{note.message}</p>
-                      <Button 
-                        variant="link"
-                        onClick={async () => {
-                          const success = await adminService.markNotificationRead(note.id)
-                          if (success) {
-                            setNotifications(prev => prev.map(n => n.id === note.id ? { ...n, is_read: true } : n))
-                          }
-                        }}
-                        className="h-auto p-0 text-tiny font-bold tracking-tight text-primary hover:underline justify-start"
-                      >
-                        Acknowledge directive
-                      </Button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          {/* Section 2: Movement Directives (Extracted) */}
+          <ActivityFeed notifications={notifications} />
 
           {/* Section 3: Member Identity Details */}
           <div className="bg-surface-warm border-t-[4px] border-t-transparent relative overflow-hidden rounded-sm shadow-sm flex flex-col">
@@ -587,113 +499,12 @@ export default function Dashboard() {
       </div>
 
       {/* Section 4: Achievements & Regional Leaderboard */}
-      <section className="mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Achievements Gallery */}
-          <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden">
-            <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
-              <h3 className="text-xs font-bold tracking-tight text-on-surface flex items-center gap-2 m-0">
-                <Trophy className="w-4 h-4 text-accent" />
-                Movement achievements
-              </h3>
-              <span className="text-tiny font-bold text-on-surface/30 tracking-tight">{achievements.length} Badges Earned</span>
-            </div>
-            <div className="p-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
-              {/* Earned Badges */}
-              {achievements.map((achievement) => (
-                <div key={achievement.id} className="flex flex-col items-center text-center group">
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 border-2 border-accent/50 bg-[radial-gradient(circle_at_center,_rgba(184,134,11,0.1)_0%,transparent_100%)] shadow-sm group-hover:scale-110 transition-transform">
-                    <Award className="w-8 h-8 text-accent" />
-                  </div>
-                  <p className="text-tiny font-bold tracking-tight text-on-surface m-0">{achievement.name}</p>
-                  <p className="text-micro text-on-surface/40 font-bold mt-1 leading-tight">{achievement.description}</p>
-                </div>
-              ))}
-
-              {/* Next Milestones (Locked) */}
-              {allAvailableAchievements
-                .filter(a => !achievements.some(ea => ea.id === a.id))
-                .slice(0, 3)
-                .map((locked) => (
-                <div key={locked.id} className="flex flex-col items-center text-center opacity-40 group">
-                  <div className="w-16 h-16 bg-on-surface/5 rounded-full flex items-center justify-center mb-3 border-2 border-border/10 grayscale">
-                    <Medal className="w-6 h-6 text-on-surface/10" />
-                  </div>
-                  <p className="text-tiny font-bold tracking-tight text-on-surface/20 m-0">{locked.name}</p>
-                  <p className="text-micro text-on-surface/10 font-bold mt-1 leading-tight">Locked ({locked.points_awarded || 0} pts)</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Regional Leaderboard */}
-          <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden">
-            <div className="bg-on-surface/5 border-b border-border/10 p-6 flex items-center justify-between">
-              <h3 className="text-xs font-bold tracking-tight text-on-surface flex items-center gap-2 m-0">
-                <span className="material-symbols-outlined text-primary text-sm">trending_up</span>
-                {member?.region || 'National'} leaderboard
-              </h3>
-              <span className="text-tiny font-bold text-on-surface/30 tracking-tight">Top Community Members</span>
-            </div>
-            <div className="divide-y divide-border/10">
-              {leaderboard.map((entry) => (
-                <div key={entry.name} className="p-4 flex items-center justify-between hover:bg-on-surface/5 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <span className={`w-6 h-6 rounded-none flex items-center justify-center text-tiny font-bold ${
-                      entry.rank === 1 ? 'bg-accent text-on-surface' : 
-                      entry.rank === 2 ? 'bg-on-surface/20 text-on-surface/60' : 
-                      entry.rank === 3 ? 'bg-accent/30 text-accent' : 'bg-on-surface/5 text-on-surface/20'
-                    }`}>
-                      {entry.rank}
-                    </span>
-                    <div>
-                      <p className="text-tiny font-bold tracking-tight text-on-surface m-0">{entry.name}</p>
-                      <p className="text-micro text-on-surface/20 font-bold tracking-tight">{entry.region}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-primary m-0">{entry.points.toLocaleString()}</p>
-                    <p className="text-micro text-on-surface/10 font-bold tracking-tight">Points</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 5: Quick Actions (Functional Grid) */}
-      <section className="mt-12">
-        <h3 className="text-on-surface mb-6 flex items-center gap-2">
-          <div className="h-1 w-8 bg-primary" /> Quick Actions
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-          <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/settings">
-            <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
-            <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">badge</span>
-            <p className="font-meta text-tiny font-bold text-on-surface">Member ID</p>
-          </Link>
-          <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/store">
-            <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
-            <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">storefront</span>
-            <p className="font-meta text-tiny font-bold text-on-surface">Official Store</p>
-          </Link>
-          <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/polls">
-            <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
-            <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">how_to_vote</span>
-            <p className="font-meta text-tiny font-bold text-on-surface">Opinion Polls</p>
-          </Link>
-          <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/feedback">
-            <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
-            <span className="material-symbols-outlined text-destructive mb-3 text-3xl group-hover:scale-110 transition-transform">record_voice_over</span>
-            <p className="font-meta text-tiny font-bold text-on-surface">Feedback Hub</p>
-          </Link>
-          <Link className="bg-white border-t-[4px] border-t-transparent relative p-8 flex flex-col items-center text-center hover-lift transition-all group rounded-none shadow-sm" to="/dashboard/canvass">
-            <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
-            <span className="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform">diversity_3</span>
-            <p className="font-meta text-tiny font-bold text-on-surface">Outreach</p>
-          </Link>
-        </div>
+      <section className="mb-12">
+        <AchievementsAndLeaderboard 
+          leaderboard={leaderboard}
+          achievements={achievements}
+          region={member?.region || ''}
+        />
       </section>
 
       {/* Section 6: Interactive Movement Roadmap */}
