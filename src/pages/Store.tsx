@@ -138,7 +138,7 @@ export default function Store() {
       <div className="bg-on-surface p-8 text-white overflow-hidden relative rounded-sm shadow-xl">
         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/20 -mr-12 -mt-12 blur-2xl"></div>
         <div className="relative z-10 space-y-4">
-          <p className="text-accent text-micro font-bold tracking-tight uppercase">Movement Impact</p>
+          <p className="text-accent text-micro font-bold tracking-tight normal-case">Movement Impact</p>
           <h4 className="text-white text-lg font-meta font-bold tracking-tight leading-snug m-0">Every purchase builds the base</h4>
           <p className="text-micro text-muted-foreground/60 font-bold tracking-tight leading-relaxed m-0">
             All profits are reinvested into grassroots organizing and community infrastructure across Ghana's 16 regions.

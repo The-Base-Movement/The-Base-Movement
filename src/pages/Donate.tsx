@@ -242,9 +242,9 @@ export default function Donate() {
         totalMembers={globalStats.totalMembers} 
       />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <section className="max-w-7xl mx-auto px-4 md:px-8">
         {submitted ? (
-          <div className="max-w-2xl mx-auto bg-white border border-stone-200 rounded-none shadow-sm p-16 text-center mt-20">
+          <section className="max-w-2xl mx-auto bg-white border border-stone-200 rounded-none shadow-sm p-16 text-center mt-20">
             <div className="w-24 h-24 bg-brand-green/10 flex items-center justify-center mx-auto mb-8 rounded-full">
               <Check className="w-12 h-12 text-brand-green" />
             </div>
@@ -269,9 +269,9 @@ export default function Donate() {
                 </Button>
               </Link>
             </div>
-          </div>
+          </section>
         ) : (
-          <div className="relative">
+          <section className="relative">
             <StrategicPriorities 
               loading={loading}
               campaigns={campaigns}
@@ -310,9 +310,9 @@ export default function Donate() {
               onDownload={handleDownload}
               onOpenAudit={() => setIsHistoryModalOpen(true)}
             />
-          </div>
+          </section>
         )}
-      </div>
+      </section>
 
       <AuditModal 
         isOpen={isHistoryModalOpen}

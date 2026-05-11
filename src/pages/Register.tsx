@@ -177,7 +177,7 @@ export default function Register() {
     emergencyNumber: '',
   })
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = <K extends keyof RegistrationFormData>(field: K, value: RegistrationFormData[K]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -339,9 +339,9 @@ export default function Register() {
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto py-12 px-4">
+      <section className="max-w-6xl mx-auto py-12 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          <div className="lg:col-span-3 space-y-2 sticky top-8">
+          <nav className="lg:col-span-3 space-y-2 sticky top-8" aria-label="Registration progress">
             <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-6 pl-4">Registration progress</p>
             <div className="space-y-1">
               {[
@@ -367,9 +367,9 @@ export default function Register() {
                 info@thebasemovement.com
               </a>
             </div>
-          </div>
+          </nav>
 
-          <div className="lg:col-span-9">
+          <section className="lg:col-span-9">
             <RegistrationForm 
               platform={platform}
               formStep={formStep}
@@ -398,9 +398,9 @@ export default function Register() {
               onBack={goBack}
               onSubmit={handleSubmit}
             />
-          </div>
+          </section>
         </div>
-      </div>
+      </section>
     </main>
   )
 }

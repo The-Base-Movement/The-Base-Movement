@@ -7,13 +7,14 @@ import {
   CardDescription 
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import type { toast as ToastFn } from 'sonner'
 
 type InterfaceDensity = 'Comfortable' | 'Compact' | 'High Density';
 
 interface SystemPreferencesTabProps {
   interfaceDensity: InterfaceDensity
   setInterfaceDensity: (mode: InterfaceDensity) => void
-  toast: any
+  toast: typeof ToastFn
 }
 
 export function SystemPreferencesTab({

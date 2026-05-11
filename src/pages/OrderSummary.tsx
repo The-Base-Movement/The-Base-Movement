@@ -59,7 +59,7 @@ export default function OrderSummary() {
   const orderNumber = order.id.substring(0, 8).toUpperCase()
 
   return (
-    <div className="bg-off-white min-h-screen">
+    <main className="bg-off-white min-h-screen">
       <SEO 
         title={`Order Confirmed #${orderNumber}`}
         noindex
@@ -186,6 +186,6 @@ export default function OrderSummary() {
         </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

@@ -186,7 +186,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
+    <main>
       {/* Page Header */}
       <header className="mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 mb-6 backdrop-blur-sm">
@@ -210,7 +210,7 @@ export default function Dashboard() {
       />
       
       {/* Section 1: Metrics Overview */}
-      <div className="mb-12">
+      <section className="mb-12">
         <StatCards 
           stats={stats} 
           fieldActions={fieldActions} 
@@ -218,7 +218,7 @@ export default function Dashboard() {
           unlockedAchievementsCount={achievements.length} 
         />
         <QuickActions />
-      </div>
+      </section>
       
       {/* Section 2: Active Field Mobilization (Tactical Activation) */}
       <section className="mb-12">
@@ -338,7 +338,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
         <div className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Section 2: Movement Directives (Extracted) */}
           <ActivityFeed notifications={notifications} />
@@ -418,8 +418,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Mobilization Impact Progress */}
-        <div className="bg-white border border-border/40 rounded-sm shadow-sm p-6 sm:p-8 col-span-1 lg:col-span-12 mb-8">
+      {/* Mobilization Impact Progress */}
+        <section className="bg-white border border-border/40 rounded-sm shadow-sm p-6 sm:p-8 col-span-1 lg:col-span-12 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-tiny font-bold tracking-tight text-on-surface m-0 flex items-center gap-2">
@@ -447,7 +447,7 @@ export default function Dashboard() {
               </span>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Section 3: Referral/Invite (Full Width Banner) */}
         <section className="lg:col-span-12">
@@ -496,7 +496,7 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
-      </div>
+      </section>
 
       {/* Section 4: Achievements & Regional Leaderboard */}
       <section className="mb-12">
@@ -532,6 +532,6 @@ export default function Dashboard() {
         title={shareData.title}
         url={shareData.url}
       />
-    </div>
+    </main>
   )
 }

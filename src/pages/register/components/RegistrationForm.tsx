@@ -23,7 +23,7 @@ interface RegistrationFormProps {
   ageRanges: string[]
   onPlatformChange: (p: string) => void
   onIdScan: (e: React.ChangeEvent<HTMLInputElement>) => void
-  onInputChange: (field: string, value: string | number) => void
+  onInputChange: <K extends keyof RegistrationFormData>(field: K, value: RegistrationFormData[K]) => void
   onPasswordToggle: () => void
   onAgreedChange: (val: boolean) => void
   onPhotoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void

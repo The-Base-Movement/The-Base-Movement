@@ -297,11 +297,11 @@ export default function ProfileSettings() {
     <div className="max-w-full py-12">
       
       {/* Page Title - Now with horizontal padding only for content alignment */}
-      <div className="mb-10 border-b border-divider-gold pb-6 px-4 md:px-10">
+      <header className="mb-10 border-b border-divider-gold pb-6 px-4 md:px-10">
         <p className="font-meta text-warm-gold tracking-tight text-xs mb-1">Account</p>
         <h2 className="font-meta font-bold text-3xl text-[var(--brand-green)] tracking-tight">Profile Settings</h2>
         <p className="text-muted-gray text-sm mt-1">Manage your identity, download your card and update your details.</p>
-      </div>
+      </header>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 items-start px-4 md:px-10">
         

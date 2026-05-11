@@ -205,9 +205,9 @@ export default function AdminStore() {
   }
 
   return (
-    <div className="admin-page-container">
+    <main className="admin-page-container">
       {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
             <Package className="w-8 h-8 text-on-surface" />
@@ -260,7 +260,7 @@ export default function AdminStore() {
             </Button>
           )}
         </div>
-      </div>
+      </header>
 
       {/* Critical Alerts Banner */}
       {isLoading ? (
@@ -306,9 +306,9 @@ export default function AdminStore() {
             />
           )}
 
-          <div className="pt-8 mt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4 pb-12">
+          <footer className="pt-8 mt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4 pb-12">
             <p className="text-micro font-bold text-muted-foreground/80">© 2026 The Base Movement</p>
-          </div>
+          </footer>
         </>
       )}
 
@@ -336,7 +336,7 @@ export default function AdminStore() {
         handleImageUpload={handleImageUpload}
         removeImage={removeImage}
       />
-    </div>
+    </main>
   )
 }
 

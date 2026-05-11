@@ -87,7 +87,7 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
 
           <div className="bg-primary text-primary-foreground p-8 flex flex-col justify-between shadow-lg">      
             <div>
-              <h4 className="font-meta font-bold text-micro text-primary-foreground/90 tracking-tight mb-4 uppercase">Next step</h4>
+              <h4 className="font-meta font-bold text-micro text-primary-foreground/90 tracking-tight mb-4 normal-case">Next step</h4>
               <p className="text-sm font-bold font-meta leading-tight mb-4">Access your portal to join a chapter.</p>
             </div>
             <Button

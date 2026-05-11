@@ -264,17 +264,17 @@ export default function Chapters() {
       <div className="bg-[#1a1a1a] p-8 text-white overflow-hidden relative rounded-none">
         <div className="relative z-10 space-y-8">
           <div>
-            <p className="text-stone-500 text-[10px] font-bold tracking-tight uppercase">Global Network</p>
+            <p className="text-stone-500 text-[10px] font-bold tracking-tight normal-case">Global Network</p>
             <p className="text-5xl font-meta font-bold tracking-tighter mt-2">{chapters.length}</p>
-            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1 uppercase">Active Chapters</p>
+            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1 normal-case">Active Chapters</p>
           </div>
           <div className="h-px bg-white/10" />
           <div>
-            <p className="text-brand-gold text-[10px] font-bold tracking-tight uppercase">Global Presence</p>
+            <p className="text-brand-gold text-[10px] font-bold tracking-tight normal-case">Global Presence</p>
             <p className="text-5xl font-meta font-bold tracking-tighter mt-2">
               {new Set(chapters.map(c => c.country)).size}
             </p>
-            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1 uppercase">Active Countries</p>
+            <p className="text-[10px] font-bold text-stone-500 tracking-tight mt-1 normal-case">Active Countries</p>
           </div>
         </div>
       </div>
@@ -288,7 +288,7 @@ export default function Chapters() {
         description="Connect with your local community. Organize, mobilize, and build the Ghana we deserve through our global network of regional hubs."
         canonical="/chapters"
       />
-      <div className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
           <div className="mt-6">
@@ -305,7 +305,7 @@ export default function Chapters() {
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 mt-12">
         <div className="lg:hidden mb-8 flex gap-4">
