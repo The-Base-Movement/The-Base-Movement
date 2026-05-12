@@ -6,7 +6,6 @@ import {
   History
 } from 'lucide-react'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
-import { logisticsService } from '@/services/logisticsService'
 import { Button } from '@/components/ui/neon-button'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { cn } from '@/lib/utils'
@@ -133,9 +132,8 @@ export default function AdminStore() {
     
     setIsDeleting(deleteConfirm.id)
     try {
-      const success = await logisticsService.deleteInventoryItem(deleteConfirm.id)
+      const success = await adminService.deleteInventoryItem(deleteConfirm.id, deleteConfirm.name)
       if (success) {
-        handleStoreAction('TRASH_INVENTORY', deleteConfirm.name)
         toast.success(`"${deleteConfirm.name}" moved to trash vault`)
         fetchData()
       } else {

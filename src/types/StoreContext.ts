@@ -15,8 +15,8 @@ interface StoreContextType {
   removeFromWishlist: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
   addToCart: (item: CartItem) => void;
-  removeFromCart: (productId: string) => void;
-  updateCartQuantity: (productId: string, quantity: number) => void;
+  removeFromCart: (productId: string, size?: string, color?: string) => void;
+  updateCartQuantity: (productId: string, quantity: number, size?: string, color?: string) => void;
   clearCart: () => void;
 }
 

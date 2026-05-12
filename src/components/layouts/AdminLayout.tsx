@@ -13,20 +13,16 @@ import {
   Search,
   ShieldCheck,
   FileText,
-  Zap,
   DollarSign,
   ShoppingBag,
+  Package,
+  Truck,
   Megaphone,
   Target,
-  Trophy,
-  Brain,
-  ShieldAlert,
   Vote,
   ChevronDown,
-  Image as ImageIcon,
-  Trash2,
   PenTool,
-  Flag
+  type LucideIcon
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/neon-button'
@@ -54,6 +50,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     'Overview': true,
     'Members': true,
+    'Logistics': true,
     'Field': true,
     'Content': true,
     'System': true
@@ -143,8 +140,18 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+  interface NavItem {
+    to: string;
+    icon: LucideIcon;
+    label: string;
+    pill?: string;
+    permission?: {
+      action: string;
+      resource: string;
+    };
+  }
 
-  const navGroups = [
+  const navGroups: { label: string; icon: LucideIcon; items: NavItem[] }[] = [
     {
       label: "Overview",
       icon: LayoutDashboard,
@@ -160,6 +167,14 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         { to: '/admin/members', icon: Users, label: 'Directory', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/verification', icon: ShieldCheck, label: 'ID verification', pill: '42', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/donations', icon: DollarSign, label: 'Donations', pill: '14', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
+      ]
+    },
+    {
+      label: "Logistics",
+      icon: Package,
+      items: [
+        { to: '/admin/store', icon: ShoppingBag, label: 'Store inventory', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/orders', icon: Truck, label: 'Member orders', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     },
     {

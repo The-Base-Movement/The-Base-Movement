@@ -239,13 +239,14 @@ class LogisticsService {
   }
 
   async deleteInventoryItem(id: string): Promise<boolean> {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('store_inventory')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
+      .select()
 
-    if (error) {
-      console.error('[DATABASE] Failed to soft delete inventory item:', error)
+    if (error || !data || data.length === 0) {
+      console.error('[DATABASE] Failed to soft delete inventory item:', error || 'No matching item found')
       return false
     }
 

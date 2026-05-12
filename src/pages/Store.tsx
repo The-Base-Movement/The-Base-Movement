@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ShoppingBag, Search, Heart, Filter, Plus, Minus, Trash2 } from 'lucide-react'
+import { ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react'
 import { Button } from '../components/ui/neon-button'
 import { ProductCard } from '@/components/ProductCard'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
-import { BrandLine } from '@/components/ui/BrandLine'
 import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
@@ -26,12 +24,11 @@ export default function Store() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('All')
-  const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [shareData, setShareData] = useState({ title: '', url: '' })
   
-  const { wishlist, cart, addToCart, removeFromCart, updateQuantity } = useStore()
+  const { cart, removeFromCart, updateCartQuantity } = useStore()
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
   
   const subtotal = cart.reduce((sum, item) => {
@@ -77,8 +74,7 @@ export default function Store() {
 
   const filteredProducts = products.filter(p => {
     const matchesCategory = activeCategory === 'All' || p.category === activeCategory
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesCategory && matchesSearch
+    return matchesCategory
   })
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
@@ -224,14 +220,14 @@ export default function Store() {
                         <div className="qty inline-flex items-center gap-0 border border-border rounded-[3px] mt-1.5 h-[22px]">
                           <button 
                             className="w-[22px] h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
-                            onClick={() => updateQuantity(item.id, item.selectedSize || '', item.selectedColor || '', item.quantity - 1)}
+                            onClick={() => updateCartQuantity(item.id, item.quantity - 1, item.selectedSize, item.selectedColor)}
                           >
                             <Minus className="w-2.5 h-2.5" />
                           </button>
                           <span className="px-2 font-meta font-extrabold text-[11px]">{item.quantity}</span>
                           <button 
                             className="w-[22px] h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
-                            onClick={() => updateQuantity(item.id, item.selectedSize || '', item.selectedColor || '', item.quantity + 1)}
+                            onClick={() => updateCartQuantity(item.id, item.quantity + 1, item.selectedSize, item.selectedColor)}
                           >
                             <Plus className="w-2.5 h-2.5" />
                           </button>
@@ -243,7 +239,7 @@ export default function Store() {
                         </div>
                         <button 
                           className="text-destructive hover:text-red-700 p-1"
-                          onClick={() => removeFromCart(item.id, item.selectedSize || '', item.selectedColor || '')}
+                          onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedColor)}
                         >
                           <Trash2 className="w-3 h-3" />
                         </button>

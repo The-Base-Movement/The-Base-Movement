@@ -81,12 +81,18 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     })
   }
 
-  const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(item => item.id !== productId))
+  const removeFromCart = (productId: string, size?: string, color?: string) => {
+    setCart(prev => prev.filter(item => 
+      !(item.id === productId && item.selectedSize === size && item.selectedColor === color)
+    ))
   }
 
-  const updateCartQuantity = (productId: string, quantity: number) => {
-    setCart(prev => prev.map(item => item.id === productId ? { ...item, quantity } : item))
+  const updateCartQuantity = (productId: string, quantity: number, size?: string, color?: string) => {
+    setCart(prev => prev.map(item => 
+      (item.id === productId && item.selectedSize === size && item.selectedColor === color)
+        ? { ...item, quantity } 
+        : item
+    ))
   }
 
   const clearCart = () => {
