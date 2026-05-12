@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { PostgrestError } from '@supabase/supabase-js'
 import { authService } from './authService'
 import { memberService } from './memberService'
 import { logisticsService } from './logisticsService'
@@ -64,7 +65,8 @@ import type {
   AdminUser,
   PressRelease,
   MediaKitAsset,
-  GlobalSearchResult
+  GlobalSearchResult,
+  User
 } from '@/types/admin'
 
 // Re-export all types so consumers can import from either location
@@ -80,7 +82,8 @@ export type {
   MovementPulse, GrowthTrend, PendingVerification, ActivityLog,
   PollStats, Order, OrderStats, OrderItem, BlogPost, ResourceRequest,
   LogisticsAuditEntry, AuditLogEntry, AdminRole, AdminPermission,
-  SentimentStat, Broadcast, Notification, AdminUser, PressRelease, MediaKitAsset, GlobalSearchResult
+  SentimentStat, Broadcast, Notification, AdminUser, PressRelease, MediaKitAsset, GlobalSearchResult,
+  User
 } from '@/types/admin'
 
 
@@ -203,6 +206,17 @@ class AdminService {
 
   async updateMemberProfile(regNo: string, profile: Partial<Member>): Promise<boolean> {
     return memberService.updateMemberProfile(regNo, profile)
+  }
+
+  async registerMember(data: User): Promise<{ data: boolean; error: PostgrestError | null }> {
+    const result = await memberService.registerMember(data)
+    if (!result.error) {
+      await this.logAction('MEMBER_REGISTER', `MEMBERS/${data.registration_number}`, 'Success', { 
+        name: data.full_name,
+        regNo: data.registration_number 
+      })
+    }
+    return result
   }
 
   async getPendingVerifications(): Promise<PendingVerification[]> {

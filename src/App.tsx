@@ -6,6 +6,7 @@ import ReadingProgressBar from './components/ReadingProgressBar'
 import { LoadingScreen } from './components/LoadingScreen'
 import { PerformanceProvider } from './context/PerformanceContext'
 import { BrandingProvider } from './context/BrandingContext'
+import { ChaptersProvider } from './context/ChaptersContext'
 import { routes } from './routes'
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/ui/toaster'
@@ -19,19 +20,21 @@ export default function App() {
   return (
     <PerformanceProvider>
       <BrandingProvider>
-        <StoreProvider>
-          <ScrollToTop />
-          <ReadingProgressBar />
-          <Toaster />
-          {isClient && (
-            <>
-              <SonnerToaster position="top-right" richColors />
-            </>
-          )}
-          <Suspense fallback={<LoadingScreen />}>
-            {content}
-          </Suspense>
-        </StoreProvider>
+        <ChaptersProvider>
+          <StoreProvider>
+            <ScrollToTop />
+            <ReadingProgressBar />
+            <Toaster />
+            {isClient && (
+              <>
+                <SonnerToaster position="top-right" richColors />
+              </>
+            )}
+            <Suspense fallback={<LoadingScreen />}>
+              {content}
+            </Suspense>
+          </StoreProvider>
+        </ChaptersProvider>
       </BrandingProvider>
     </PerformanceProvider>
   )

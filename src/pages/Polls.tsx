@@ -128,7 +128,7 @@ export default function Polls() {
             {/* Stats Overview */}
             <div className="bg-charcoal-dark p-8 rounded-none text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Vote className="w-24 h-24 text-[var(--brand-green)]" />
+                <Vote className="w-24 h-24 text-brand-green" />
               </div>
               <div className="relative z-10">
                 <p className="text-warm-gold text-micro font-bold tracking-tight mb-4">Movement voice</p>
@@ -162,7 +162,7 @@ export default function Polls() {
                         {poll.category} • Closed
                       </p>
                     </div>
-                    <h3 className="text-sm font-bold text-stone-800 leading-snug group-hover:text-[var(--brand-green)] transition-colors mb-0">
+                    <h3 className="text-sm font-bold text-stone-800 leading-snug group-hover:text-brand-green transition-colors mb-0">
                       {poll.question}
                     </h3>
                     

@@ -19,6 +19,31 @@ export interface Member {
   residentialAddress?: string
 }
 
+export interface User {
+  id: string
+  full_name: string
+  email: string | null
+  registration_number: string
+  platform: string
+  country: string
+  phone_number: string
+  gender: string
+  avatar_url: string | null
+  age_range: string
+  residential_address: string
+  region: string
+  constituency: string
+  chapter: string
+  profession: string
+  education_level: string
+  emergency_contact_name: string
+  emergency_relationship: string
+  emergency_number: string
+  joined_at: string
+  status: string
+  city?: string
+}
+
 export interface Region {
   id: number
   name: string

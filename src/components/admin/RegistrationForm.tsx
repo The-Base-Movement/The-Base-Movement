@@ -54,6 +54,7 @@ export interface RegistrationSubmission {
   emergencyRelationship: string
   emergencyNumber: string
   photoUrl: string | null
+  croppedAreaPixels?: Area | null
 }
 
 interface RegistrationFormProps {
@@ -72,7 +73,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
-  const [, setCroppedAreaPixels] = useState<Area | null>(null)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
 
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels)
@@ -155,6 +156,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
           registrationNumber: regNo,
           platform,
           photoUrl,
+          croppedAreaPixels,
         })
       }
 

@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
-import type { Member, PendingVerification, AdminUser, AdminRole, AdminPermission } from '@/types/admin'
+import { PostgrestError } from '@supabase/supabase-js'
+import type { Member, PendingVerification, AdminUser, AdminRole, AdminPermission, User } from '@/types/admin'
 
 class MemberService {
   private static instance: MemberService
@@ -158,6 +159,14 @@ class MemberService {
       country: data.country || 'Ghana',
       profession: data.profession || 'Patriot'
     }
+  }
+
+  async registerMember(data: User): Promise<{ data: boolean; error: PostgrestError | null }> {
+    const { error } = await supabase
+      .from('users')
+      .insert([data])
+    
+    return { data: !error, error }
   }
 
   async getGrowthStats(): Promise<{ joined_last_hour: number; joined_last_24h: number; joined_last_7d: number }> {

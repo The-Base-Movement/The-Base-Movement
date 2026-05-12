@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Fragment } from 'react'
 import { 
   Search, 
   Download, 
@@ -42,7 +42,8 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
-import RegistrationForm from '@/components/admin/RegistrationForm'
+import RegistrationForm, { type RegistrationSubmission } from '@/components/admin/RegistrationForm'
+import { getCroppedImg } from '@/lib/imageUtils'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import MembershipCard from '@/components/MembershipCard'
 import html2canvas from 'html2canvas'
@@ -63,6 +64,7 @@ export default function MembersList() {
   const { toast } = useToast()
   const [isExporting, setIsExporting] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
+  const [isSubmittingRegistration, setIsSubmittingRegistration] = useState(false)
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [activeDetailTab, setActiveDetailTab] = useState<'activity' | 'identity' | 'card'>('activity')
   const [detailLogs, setDetailLogs] = useState<AuditLogEntry[]>([])
@@ -168,6 +170,82 @@ export default function MembersList() {
         const data = await adminService.getMembers()
         setMembers(data)
       }
+    }
+  }
+
+  const handleSubmitRegistration = async (data: RegistrationSubmission) => {
+    setIsSubmittingRegistration(true)
+    try {
+      let finalAvatarUrl = null
+      
+      // 1. Process and upload avatar if present
+      if (data.photoUrl && data.croppedAreaPixels) {
+        try {
+          const croppedBlob = await getCroppedImg(data.photoUrl, data.croppedAreaPixels)
+          if (croppedBlob) {
+            const fileName = `${data.registrationNumber}.jpg`
+            const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
+            if (!uploadError) {
+              finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
+            } else {
+              console.error('[REGISTRATION] Avatar upload failed:', uploadError)
+            }
+          }
+        } catch (err) {
+          console.error('[REGISTRATION] Image processing failed:', err)
+        }
+      }
+
+      // 2. Prepare user record
+      const newUser = {
+        id: crypto.randomUUID(), // Generate a new UUID for the member
+        full_name: data.fullName,
+        email: data.email || null,
+        registration_number: data.registrationNumber,
+        platform: data.platform,
+        country: data.country,
+        phone_number: data.contactNumber,
+        gender: data.gender,
+        avatar_url: finalAvatarUrl,
+        age_range: data.ageRange,
+        residential_address: data.residentialAddress,
+        region: data.region,
+        constituency: data.constituency,
+        chapter: data.chapter,
+        profession: data.profession,
+        education_level: data.educationLevel,
+        emergency_contact_name: data.emergencyContactName,
+        emergency_relationship: data.emergencyRelationship,
+        emergency_number: data.emergencyNumber,
+        joined_at: new Date().toISOString(),
+        status: 'Active'
+      }
+
+      // 3. Persist to database
+      const { error: dbError } = await adminService.registerMember(newUser)
+      
+      if (dbError) throw dbError
+
+      toast({
+        title: "Member Registered",
+        description: `${data.fullName} has been successfully added to the directory.`,
+      })
+
+      // Refresh the list
+      const updatedMembers = await adminService.getMembers()
+      setMembers(updatedMembers)
+      setIsAdding(false)
+
+    } catch (error: unknown) {
+      console.error('[REGISTRATION] Submission failed:', error)
+      const errorMessage = error instanceof Error ? error.message : "An error occurred during registration."
+      toast({
+        title: "Registration Failed",
+        description: errorMessage,
+        variant: "destructive"
+      })
+    } finally {
+      setIsSubmittingRegistration(false)
     }
   }
 
@@ -816,7 +894,14 @@ export default function MembersList() {
           <RegistrationForm 
             onClose={() => setIsAdding(false)} 
             onSuccess={handleAddSuccess} 
+            onSubmitData={handleSubmitRegistration}
           />
+          {isSubmittingRegistration && (
+            <div className="absolute inset-0 z-[110] bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center animate-in fade-in duration-300">
+              <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
+              <p className="text-on-surface font-bold tracking-tight text-micro">Finalizing registration...</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -955,10 +1040,10 @@ export default function MembersList() {
                             ['Chapter',       selectedMember.chapter || '—'],
                             ['Joined',        selectedMember.joined || '—'],
                           ].map(([k, v]) => (
-                            <>
-                              <dt key={k + 'dt'} style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans'", alignSelf: 'center' }}>{k}</dt>
-                              <dd key={k + 'dd'} style={{ margin: 0, fontSize: 12.5, fontFamily: "'Public Sans'", fontWeight: 700 }}>{v}</dd>
-                            </>
+                            <Fragment key={k}>
+                              <dt style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans'", alignSelf: 'center' }}>{k}</dt>
+                              <dd style={{ margin: 0, fontSize: 12.5, fontFamily: "'Public Sans'", fontWeight: 700 }}>{v}</dd>
+                            </Fragment>
                           ))}
                         </dl>
                       </div>
@@ -1008,15 +1093,15 @@ export default function MembersList() {
                             ['Joined',       selectedMember.joined || '—'],
                             ['Type',         selectedMember.type || 'Citizen'],
                           ].map(([k, v]) => (
-                            <>
-                              <dt key={k + 'dt'} style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans'", alignSelf: 'center' }}>{k}</dt>
-                              <dd key={k + 'dd'} style={{ margin: 0, fontSize: 12.5, fontFamily: "'Public Sans'", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <Fragment key={k}>
+                              <dt style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans'", alignSelf: 'center' }}>{k}</dt>
+                              <dd style={{ margin: 0, fontSize: 12.5, fontFamily: "'Public Sans'", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
                                 {v}
                                 {(k === 'Email' || k === 'Mobile') && v !== '—' && (
                                   <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))', cursor: 'pointer' }} onClick={() => navigator.clipboard.writeText(v)}>content_copy</span>
                                 )}
                               </dd>
-                            </>
+                            </Fragment>
                           ))}
                         </dl>
                       </div>

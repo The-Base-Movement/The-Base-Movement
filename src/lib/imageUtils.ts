@@ -1,60 +1,4 @@
-export async function getCroppedImg(
-  imageSrc: string,
-  pixelCrop: { x: number; y: number; width: number; height: number },
-  flip = { horizontal: false, vertical: false }
-): Promise<Blob | null> {
-  const image = await createImage(imageSrc)
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-
-  if (!ctx) {
-    return null
-  }
-
-  const rotRad = 0 // No rotation for now
-
-  // calculate bounding box of the rotated image
-  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(
-    image.width,
-    image.height,
-    rotRad
-  )
-
-  // set canvas size to match the bounding box
-  canvas.width = bBoxWidth
-  canvas.height = bBoxHeight
-
-  // translate canvas context to a central point to allow rotating and flipping around the center
-  ctx.translate(bBoxWidth / 2, bBoxHeight / 2)
-  ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1)
-  ctx.translate(-image.width / 2, -image.height / 2)
-
-  // draw rotated image
-  ctx.drawImage(image, 0, 0)
-
-  // croppedAreaPixels values are bounding box relative
-  // extract the cropped image using these values
-  const data = ctx.getImageData(
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height
-  )
-
-  // set canvas width to final desired crop size - high fidelity output
-  canvas.width = pixelCrop.width
-  canvas.height = pixelCrop.height
-
-  // paste generated rotate image with correct offsets for x,y crop values.
-  ctx.putImageData(data, 0, 0)
-
-  // As a blob
-  return new Promise((resolve) => {
-    canvas.toBlob((file) => {
-      resolve(file)
-    }, 'image/jpeg', 0.85) // High fidelity compression
-  })
-}
+import type { Area } from 'react-easy-crop'
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -65,13 +9,53 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
     image.src = url
   })
 
-export function rotateSize(width: number, height: number, rotation: number) {
-  const rotRad = (rotation * Math.PI) / 180
+export async function getCroppedImg(
+  imageSrc: string,
+  pixelCrop: Area
+): Promise<Blob | null> {
+  const image = await createImage(imageSrc)
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
 
-  return {
-    width:
-      Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
-    height:
-      Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
+  if (!ctx) {
+    return null
   }
+
+  // Set canvas size to match the cropped area
+  canvas.width = pixelCrop.width
+  canvas.height = pixelCrop.height
+
+  // Draw the cropped image onto the canvas
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  )
+
+  // As a blob
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      resolve(blob)
+    }, 'image/jpeg')
+  })
+}
+
+export function dataURLtoBlob(dataurl: string) {
+  const arr = dataurl.split(',')
+  const mimeMatch = arr[0].match(/:(.*?);/)
+  if (!mimeMatch) return null
+  const mime = mimeMatch[1]
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new Blob([u8arr], { type: mime })
 }

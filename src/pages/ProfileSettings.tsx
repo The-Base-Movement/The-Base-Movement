@@ -4,6 +4,7 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import MembershipCard from '../components/MembershipCard'
 import { adminService } from '@/services/adminService'
+import { dataURLtoBlob } from '@/lib/imageUtils'
 import { toast } from 'sonner'
 import { usePerformance } from '@/context/PerformanceContext'
 import { Switch } from '@/components/ui/switch'
@@ -136,17 +137,6 @@ export default function ProfileSettings() {
     const regNo = localStorage.getItem('userRegNo')
     if (!regNo) return
 
-    const dataURLtoBlob = (dataurl: string) => {
-      const arr = dataurl.split(',')
-      const mime = arr[0].match(/:(.*?);/)![1]
-      const bstr = atob(arr[1])
-      let n = bstr.length
-      const u8arr = new Uint8Array(n)
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n)
-      }
-      return new Blob([u8arr], { type: mime })
-    }
 
     setLoading(true)
     let finalAvatarUrl = avatarUrl
@@ -155,11 +145,13 @@ export default function ProfileSettings() {
     if (avatarUrl && avatarUrl.startsWith('data:')) {
       try {
         const blob = dataURLtoBlob(avatarUrl)
-        const fileName = `${regNo}.jpg`
-        const { error: uploadError } = await adminService.uploadAvatar(fileName, blob)
-        if (uploadError) throw uploadError
+        if (blob) {
+          const fileName = `${regNo}.jpg`
+          const { error: uploadError } = await adminService.uploadAvatar(fileName, blob)
+          if (uploadError) throw uploadError
 
-        finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
+          finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
+        }
       } catch (uploadErr) {
         console.error('[STORAGE] Avatar upload failed:', uploadErr)
         toast.error('Failed to upload profile photo')
