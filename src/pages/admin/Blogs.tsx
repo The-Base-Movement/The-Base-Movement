@@ -139,6 +139,20 @@ export default function AdminBlogs() {
     sessionStorage.setItem('blogs_formData', JSON.stringify(formData))
   }, [formData])
 
+  const [mediaFiles, setMediaFiles] = useState<string[]>([])
+  const fetchMedia = useCallback(async () => {
+    try {
+      const files = await contentService.getMediaFiles('blog-images')
+      setMediaFiles(files)
+    } catch (err) {
+      console.error('[MEDIA] Failed to fetch library:', err)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchMedia()
+  }, [fetchMedia])
+
   const fetchPosts = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -329,10 +343,10 @@ export default function AdminBlogs() {
     ]
 
     return (
-      <div className="-mx-[28px] -mt-[24px] bg-[#f6fbf4] flex flex-col animate-in fade-in duration-500" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
+      <div className="-mx-[28px] -mt-[24px] -mb-[60px] bg-[#f6fbf4] flex flex-col animate-in fade-in duration-500" style={{ height: 'calc(100vh - 3.5rem)', overflow: 'hidden' }}>
 
         {/* ── Top action bar ── */}
-        <div className="bg-white border-b border-border/40 px-6 py-[10px] flex items-center gap-4 sticky top-0 z-20">
+        <div className="bg-white border-b border-border/40 px-6 py-[10px] flex items-center gap-4 shrink-0">
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <button onClick={() => setCurrentView('list')} className="text-[10.5px] font-extrabold text-muted-foreground/60 hover:text-on-surface uppercase tracking-[.06em]">
               Blog posts
@@ -393,16 +407,18 @@ export default function AdminBlogs() {
                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                   const file = e.target.files?.[0]
                   if (!file) return
-                  const { contentService } = await import('@/services/contentService')
                   const url = await contentService.uploadImage(file, 'blog-images')
-                  if (url) setFormData({...formData, imageUrl: url})
+                  if (url) {
+                    setFormData({...formData, imageUrl: url})
+                    fetchMedia() // Refresh the library
+                  }
                 }} />
                 <b className="font-extrabold text-[11.5px] text-on-surface block">Drop to upload</b>
                 <span className="text-[11px] text-muted-foreground/60">JPG, PNG · up to 50 MB</span>
               </label>
             </div>
             <div className="grid grid-cols-2 gap-2 px-3 pb-3 overflow-y-auto flex-1">
-              {MEDIA_IMAGES.map((url, i) => (
+              {[...mediaFiles, ...MEDIA_IMAGES].map((url, i) => (
                 <button key={i} type="button" onClick={() => setFormData({...formData, imageUrl: url})}
                   className={cn(
                     "aspect-square rounded-[4px] overflow-hidden relative group border-2 transition-all",
