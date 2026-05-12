@@ -373,7 +373,7 @@ export default function AdminDashboard() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
                 <select 
                   className="reg" 
-                  style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)', width: '100%' }}
+                  style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))', width: '100%' }}
                   value={broadcast.target_type}
                   onChange={(e) => {
                     const type = e.target.value as Broadcast['target_type']
@@ -392,7 +392,7 @@ export default function AdminDashboard() {
                     className="reg"
                     value={broadcast.target_value}
                     onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                    style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)' }}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))' }}
                   >
                     <option value="ALL">Select Region...</option>
                     {regions.map(r => (
@@ -411,7 +411,7 @@ export default function AdminDashboard() {
                         setSelectedRegionId(id)
                         setBroadcast({ ...broadcast, target_value: 'ALL' })
                       }}
-                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)', flex: 1 }}
+                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))', flex: 1 }}
                     >
                       <option value="">Filter by Region...</option>
                       {regions.map(r => (
@@ -423,7 +423,7 @@ export default function AdminDashboard() {
                       className="reg"
                       value={broadcast.target_value}
                       onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)', flex: 2 }}
+                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))', flex: 2 }}
                       disabled={!selectedRegionId}
                     >
                       <option value="ALL">Select Constituency...</option>
@@ -441,7 +441,7 @@ export default function AdminDashboard() {
                     className="reg"
                     value={broadcast.target_value}
                     onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                    style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'var(--on-surface)' }}
+                    style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))' }}
                   >
                     <option value="ALL">All Diaspora Chapters</option>
                     {diasporaChapters.map(c => (
@@ -458,18 +458,18 @@ export default function AdminDashboard() {
                   className="reg"
                   value={broadcast.priority}
                   onChange={(e) => setBroadcast({ ...broadcast, priority: e.target.value as Broadcast['priority'] })}
-                  style={{ background: 'transparent', border: 'none', fontSize: '10px', color: 'var(--on-surface-muted)', cursor: 'pointer' }}
+                  style={{ background: 'transparent', border: 'none', fontSize: '10px', color: 'hsl(var(--on-surface-muted))', cursor: 'pointer' }}
                 >
                   <option value="Normal">Normal</option>
                   <option value="High">High</option>
                   <option value="Urgent">URGENT</option>
                 </select>
-                <div style={{ width: '1px', height: '12px', background: 'var(--border)', margin: '0 8px' }} />
+                <div style={{ width: '1px', height: '12px', background: 'hsl(var(--border))', margin: '0 8px' }} />
                 <select 
                   className="reg"
                   value={broadcast.channel}
                   onChange={(e) => setBroadcast({ ...broadcast, channel: e.target.value as Broadcast['channel'] })}
-                  style={{ background: 'transparent', border: 'none', fontSize: '10px', color: 'var(--on-surface-muted)', cursor: 'pointer' }}
+                  style={{ background: 'transparent', border: 'none', fontSize: '10px', color: 'hsl(var(--on-surface-muted))', cursor: 'pointer' }}
                 >
                   <option value="In-app">In-App</option>
                   <option value="SMS">SMS</option>

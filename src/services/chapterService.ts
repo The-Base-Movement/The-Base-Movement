@@ -213,6 +213,73 @@ class ChapterService {
     }
   }
 
+  async addChapterLeader(chapterId: string, leader: { name: string, role: string, imageUrl?: string }): Promise<boolean> {
+    const { error } = await supabase
+      .from('chapter_leaders')
+      .insert({
+        chapter_id: chapterId,
+        name: leader.name,
+        role: leader.role,
+        image_url: leader.imageUrl || null
+      })
+
+    if (error) {
+      console.error('[DATABASE] Failed to add chapter leader:', error)
+      return false
+    }
+
+    // Also update chapter leader_name if it was unassigned
+    const { data: chapter } = await supabase
+      .from('chapters')
+      .select('leader_name')
+      .eq('id', chapterId)
+      .single()
+
+    if (chapter && (chapter.leader_name === 'Unassigned' || !chapter.leader_name)) {
+      await supabase
+        .from('chapters')
+        .update({ leader_name: leader.name })
+        .eq('id', chapterId)
+    }
+
+    return true
+  }
+
+  async removeChapterLeader(leaderId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('chapter_leaders')
+      .delete()
+      .eq('id', leaderId)
+
+    if (error) {
+      console.error('[DATABASE] Failed to remove chapter leader:', error)
+      return false
+    }
+
+    return true
+  }
+
+  async joinChapter(chapterName: string): Promise<boolean> {
+    const user = await authService.getUser()
+    if (!user) return false
+
+    // In this movement, joining a chapter is a direct action for verified members,
+    // but for others it might be a request. 
+    // Here we update the user's chapter field.
+    const { error } = await supabase
+      .from('users')
+      .update({ chapter: chapterName })
+      .eq('id', user.id)
+
+    if (error) {
+      console.error('[DATABASE] Join chapter failed:', error)
+      return false
+    }
+
+    await this.incrementChapterMemberCount(chapterName)
+    return true
+  }
+
   async getChapterApplications(): Promise<ChapterApplication[]> {
     const { data, error } = await supabase
       .from('chapter_applications')

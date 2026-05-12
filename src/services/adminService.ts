@@ -52,6 +52,7 @@ import type {
   Order,
   OrderStats,
   BlogPost,
+  Author,
   ResourceRequest,
   LogisticsAuditEntry,
   AuditLogEntry,
@@ -268,6 +269,30 @@ class AdminService {
 
   async incrementChapterMemberCount(chapterName: string): Promise<void> {
     return chapterService.incrementChapterMemberCount(chapterName)
+  }
+
+  async addChapterLeader(chapterId: string, leader: { name: string, role: string, imageUrl?: string }): Promise<boolean> {
+    const success = await chapterService.addChapterLeader(chapterId, leader)
+    if (success) {
+      await this.logAction('CHAPTER_LEADER_ADD', `CHAPTERS/${chapterId}/LEADERS`, 'Success', { leader: leader.name, role: leader.role })
+    }
+    return success
+  }
+
+  async removeChapterLeader(chapterId: string, leaderId: string, leaderName: string): Promise<boolean> {
+    const success = await chapterService.removeChapterLeader(leaderId)
+    if (success) {
+      await this.logAction('CHAPTER_LEADER_REMOVE', `CHAPTERS/${chapterId}/LEADERS/${leaderName}`, 'Warning')
+    }
+    return success
+  }
+
+  async joinChapter(chapterName: string): Promise<boolean> {
+    const success = await chapterService.joinChapter(chapterName)
+    if (success) {
+      await this.logAction('CHAPTER_JOIN', `CHAPTERS/${chapterName}`, 'Success')
+    }
+    return success
   }
 
   // --- Poll Operations ---
@@ -493,27 +518,73 @@ class AdminService {
     chapters: number;
     regions: number;
     diaspora: number;
+    membersDelta: string;
+    chaptersDelta: string;
+    diasporaDelta: string;
   }> {
     try {
-      const [membersRes, chaptersRes, regionsRes, diasporaRes] = await Promise.all([
-        supabase.from('users').select('*', { count: 'exact', head: true }),
+      const thirtyDaysAgo = new Date()
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+      const dateStr = thirtyDaysAgo.toISOString()
+
+      const [
+        membersTotal, 
+        chaptersTotal, 
+        chaptersRes, 
+        diasporaTotal,
+        membersNew,
+        chaptersNew,
+        diasporaNew,
+        regionsRes
+      ] = await Promise.all([
+        supabase.from('users').select('*', { count: 'exact', head: true }).eq('verification_status', 'Verified'),
         supabase.from('chapters').select('*', { count: 'exact', head: true }),
-        supabase.from('chapters').select('city_or_region'),
-        supabase.from('users').select('*', { count: 'exact', head: true }).neq('country', 'Ghana')
+        supabase.from('chapters').select('region, city_or_region').eq('country', 'Ghana'),
+        supabase.from('users').select('*', { count: 'exact', head: true }).neq('country', 'Ghana').eq('verification_status', 'Verified'),
+        supabase.from('users').select('*', { count: 'exact', head: true }).eq('verification_status', 'Verified').gt('created_at', dateStr),
+        supabase.from('chapters').select('*', { count: 'exact', head: true }).gt('created_at', dateStr),
+        supabase.from('users').select('*', { count: 'exact', head: true }).neq('country', 'Ghana').eq('verification_status', 'Verified').gt('created_at', dateStr),
+        supabase.from('ghana_regions').select('name')
       ]);
 
-      // Calculate unique regions from chapters
-      const uniqueRegions = new Set((regionsRes.data || []).map(c => c.city_or_region)).size;
+      // List of official regions for matching from database
+      const ghanaRegions = (regionsRes.data || []).map(r => r.name);
+
+      // Count how many unique official regions have at least one chapter
+      const uniqueRegionsCount = new Set(
+        (chaptersRes.data || [])
+          .map(c => (c.region || c.city_or_region || '').trim())
+          .filter(val => {
+            if (!val) return false;
+            // Check if it matches any official region from the database (case-insensitive)
+            return ghanaRegions.some(r => r.toLowerCase() === val.toLowerCase());
+          })
+          .map(val => val.toLowerCase()) // Normalize for the Set
+      ).size;
+      
+      const mCount = membersTotal.count || 0;
+      const cCount = chaptersTotal.count || 0;
+      const dCount = diasporaTotal.count || 0;
+      
+      const mNew = membersNew.count || 0;
+      const cNew = chaptersNew.count || 0;
+      const dNew = diasporaNew.count || 0;
 
       return {
-        members: membersRes.count || 0,
-        chapters: chaptersRes.count || 0,
-        regions: uniqueRegions || 0,
-        diaspora: diasporaRes.count || 0
+        members: mCount,
+        chapters: cCount,
+        regions: uniqueRegionsCount,
+        diaspora: dCount,
+        membersDelta: mNew > 0 ? `+${mNew} this month` : 'Steady growth',
+        chaptersDelta: cNew > 0 ? `+${cNew} this month` : 'Growing nationwide',
+        diasporaDelta: dNew > 0 ? `+${dNew} new patriots` : 'Global network'
       };
     } catch (error) {
       console.warn('[ADMIN SERVICE] Failed to fetch public stats:', error);
-      return { members: 0, chapters: 0, regions: 0, diaspora: 0 };
+      return { 
+        members: 0, chapters: 0, regions: 0, diaspora: 0,
+        membersDelta: '...', chaptersDelta: '...', diasporaDelta: '...'
+      };
     }
   }
 

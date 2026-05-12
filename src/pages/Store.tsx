@@ -284,10 +284,10 @@ export default function Store() {
           <h2 className="font-meta font-extrabold text-[20px] mb-6 m-0">Checkout · Order flow</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[14px]">
             {[
-              { num: '01', title: 'Cart review', text: 'Confirm items and quantities. Apply member discount.', color: 'var(--brand-red)' },
-              { num: '02', title: 'Shipping address', text: 'Region · constituency · landmark · phone for delivery rider.', color: 'var(--brand-gold)' },
+              { num: '01', title: 'Cart review', text: 'Confirm items and quantities. Apply member discount.', color: 'hsl(var(--brand-red))' },
+              { num: '02', title: 'Shipping address', text: 'Region · constituency · landmark · phone for delivery rider.', color: 'hsl(var(--brand-gold))' },
               { num: '03', title: 'Payment', text: 'MTN MoMo · Vodafone Cash · card · PayPal for diaspora.', color: 'var(--charcoal)' },
-              { num: '04', title: 'Order summary', text: 'Receipt emailed. Track from your member dashboard.', color: 'var(--brand-green)' },
+              { num: '04', title: 'Order summary', text: 'Receipt emailed. Track from your member dashboard.', color: 'hsl(var(--brand-green))' },
             ].map((step) => (
               <div key={step.num} className="p-[18px] border border-border rounded-[6px] transition-all hover:border-on-surface/20" style={{ borderLeft: `3px solid ${step.color}` }}>
                 <div className="font-meta font-extrabold text-[32px] tracking-tight leading-none" style={{ color: step.color }}>

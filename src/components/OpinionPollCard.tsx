@@ -13,7 +13,7 @@ interface OpinionPollCardProps {
 
 export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleVote, toggleResults }: OpinionPollCardProps) {
   const isLive = poll.status === 'Active'
-  const accentColor = isLive ? 'var(--destructive)' : 'var(--on-surface-muted,#9ca3af)'
+  const accentColor = isLive ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))'
 
   const sortedOptions = [...poll.options].sort((a, b) => b.votes - a.votes)
   const leadId = sortedOptions[0]?.id

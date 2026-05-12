@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 interface ChoiceStepProps {
   settings: BrandingSettings
-  onSelect: (platform: string) => void
+  onSelect: (platform: string, file?: File) => void
 }
 
 export function ChoiceStep({ settings, onSelect }: ChoiceStepProps) {
@@ -41,6 +41,50 @@ export function ChoiceStep({ settings, onSelect }: ChoiceStepProps) {
           variant="gold"
           onClick={() => onSelect('DIASPORA')}
         />
+      </div>
+
+      <div className="mt-12 p-8 border border-dashed border-border rounded-lg bg-container-low/50">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="text-left">
+            <h3 className="text-lg font-bold text-on-surface mb-1">Prefer physical registration?</h3>
+            <p className="text-[12px] text-on-surface-muted max-w-sm">
+              Download the registration form, fill it out manually, and upload a scanned copy here for processing.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3 justify-center md:justify-end">
+            <div className="flex flex-col gap-2">
+              <a 
+                href="/registration-form-ghana.pdf" 
+                download 
+                className="inline-flex items-center justify-center px-4 py-2 bg-primary/10 text-primary text-[11px] font-bold uppercase tracking-wider rounded-sm hover:bg-primary/20 transition-all border border-primary/20"
+              >
+                Download Ghana Form
+              </a>
+              <a 
+                href="/registration-form-diaspora.pdf" 
+                download 
+                className="inline-flex items-center justify-center px-4 py-2 bg-brand-gold/10 text-brand-gold text-[11px] font-bold uppercase tracking-wider rounded-sm hover:bg-brand-gold/20 transition-all border border-brand-gold/20"
+              >
+                Download Diaspora Form
+              </a>
+            </div>
+            <label className="cursor-pointer">
+              <input 
+                type="file" 
+                accept=".pdf,image/*" 
+                className="hidden" 
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    onSelect('PHYSICAL', e.target.files[0]);
+                  }
+                }} 
+              />
+              <div className="inline-flex items-center justify-center px-6 py-4 bg-on-surface text-surface text-[12px] font-bold uppercase tracking-wider rounded-sm hover:opacity-90 transition-all shadow-lg">
+                Upload Scanned Form
+              </div>
+            </label>
+          </div>
+        </div>
       </div>
 
       <div className="text-center mt-12 pt-8 border-t border-border">

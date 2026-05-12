@@ -7,12 +7,60 @@ import { ShareModal } from '@/components/ShareModal'
 import type { Chapter, ChapterLeader, ChapterActivity } from '@/types/admin'
 import { useChapters } from '@/context/ChaptersContext'
 import { LoadingScreen } from '../components/LoadingScreen'
+import { adminService } from '@/services/adminService'
+import { authService } from '@/services/authService'
+import { useToast } from '@/hooks/use-toast'
 
 export default function ChapterDetails() {
   const { id } = useParams<{ id: string }>()
   const { chapters, isLoading } = useChapters()
   const chapter: Chapter | undefined = chapters.find(c => c.id === id)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [isJoining, setIsJoining] = useState(false)
+  const { toast } = useToast()
+  const user = authService.getUser()
+
+  const handleJoin = async () => {
+    if (!user || !chapter) {
+      toast({
+        title: "Action required",
+        description: !user ? "Please register or login to join." : "Chapter hub not found.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    const userChapter = user.user_metadata?.chapter
+
+    if (userChapter === chapter.name) {
+      toast({
+        title: "Already a member",
+        description: `You are already part of the ${chapter.name} chapter.`,
+      })
+      return
+    }
+
+    setIsJoining(true)
+    try {
+      const success = await adminService.joinChapter(chapter.name)
+      if (success) {
+        toast({
+          title: "Mobilization Successful",
+          description: `You have successfully joined the ${chapter.name} chapter hub.`,
+        })
+      } else {
+        throw new Error('Join failed')
+      }
+    } catch {
+      toast({
+        title: "Mobilization Error",
+        description: "Failed to process your chapter join request.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsJoining(false)
+    }
+  }
 
   if (isLoading) return <LoadingScreen />
 
@@ -75,8 +123,10 @@ export default function ChapterDetails() {
               <Button 
                 variant="primary"
                 className="font-bold tracking-tight text-xs h-12 px-8 rounded-none"
+                onClick={handleJoin}
+                disabled={isJoining || (user?.user_metadata?.chapter === chapter.name)}
               >
-                Join this chapter
+                {isJoining ? 'Processing...' : (user?.user_metadata?.chapter === chapter.name ? 'Already a Member' : 'Join this chapter')}
               </Button>
             </div>
           </div>

@@ -12,7 +12,7 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
   const isFeatured = chapter.member_count > 500
 
   const badge = isDiaspora ? 'Diaspora' : isFeatured ? 'Featured' : isActive ? 'Active' : 'Regional'
-  const headerBg = isFeatured ? 'var(--primary)' : 'var(--on-surface,#181d19)'
+  const headerBg = isFeatured ? 'hsl(var(--primary))' : '#181d19'
 
   const leader = chapter.leadership?.[0]
   const leaderName = leader?.name || chapter.leader_name || 'Branch Chair'
@@ -26,7 +26,7 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
   const flag = isDiaspora && countryFlags[chapter.country] ? countryFlags[chapter.country] : ''
 
   return (
-    <div className="bg-white border border-[var(--border,#e5e7eb)] rounded-[6px] overflow-hidden">
+    <div className="bg-white border border-border rounded-[6px] overflow-hidden">
       {/* Dark header */}
       <div
         className="px-4 py-[14px] flex justify-between items-center"
@@ -39,7 +39,7 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
           </h4>
           <div
             className="text-[9.5px] font-bold tracking-[0.06em] uppercase mt-0.5 font-['Public_Sans',sans-serif]"
-            style={{ color: isFeatured ? 'rgba(255,255,255,0.85)' : 'var(--accent,#DAA520)' }}
+            style={{ color: isFeatured ? 'rgba(255,255,255,0.85)' : 'hsl(var(--accent))' }}
           >
             {regionLabel}
           </div>
@@ -59,10 +59,10 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
             { v: programsCount, l: 'Programs' },
           ].map(({ v, l }) => (
             <div key={l}>
-              <div className="font-['Public_Sans',sans-serif] font-extrabold text-[18px] tracking-[-0.015em] text-[var(--on-surface,#181d19)] tabular-nums leading-none">
+              <div className="font-['Public_Sans',sans-serif] font-extrabold text-[18px] tracking-[-0.015em] text-on-surface tabular-nums leading-none">
                 {v}
               </div>
-              <div className="text-[9.5px] font-bold tracking-[0.05em] uppercase text-[var(--on-surface-muted,#6b7280)] mt-[2px] font-['Public_Sans',sans-serif]">
+              <div className="text-[9.5px] font-bold tracking-[0.05em] uppercase text-on-surface-muted mt-[2px] font-['Public_Sans',sans-serif]">
                 {l}
               </div>
             </div>
@@ -70,24 +70,24 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
         </div>
 
         {/* Leader row */}
-        <div className="flex items-center gap-[10px] pt-3 border-t border-[var(--border,#e5e7eb)]">
+        <div className="flex items-center gap-[10px] pt-3 border-t border-border">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[12px] font-bold shrink-0 border-2"
-            style={{ background: 'var(--on-surface,#181d19)', borderColor: 'var(--accent,#DAA520)' }}
+            style={{ background: '#181d19', borderColor: 'hsl(var(--accent))' }}
           >
             {leaderInitial}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="font-['Public_Sans',sans-serif] font-extrabold text-[11.5px] text-[var(--on-surface,#181d19)] truncate">
+            <div className="font-['Public_Sans',sans-serif] font-extrabold text-[11.5px] text-on-surface truncate">
               {leaderName}
             </div>
-            <div className="text-[10px] text-[var(--on-surface-muted,#6b7280)] font-bold font-['Public_Sans',sans-serif]">
+            <div className="text-[10px] text-on-surface-muted font-bold font-['Public_Sans',sans-serif]">
               {leaderRole}
             </div>
           </div>
           <Link
             to={`/dashboard/chapters/${chapter.id}`}
-            className="shrink-0 px-3 py-1.5 border border-[var(--border,#e5e7eb)] rounded-[4px] text-[11px] font-extrabold text-[var(--on-surface,#181d19)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors font-['Public_Sans',sans-serif]"
+            className="shrink-0 px-3 py-1.5 border border-border rounded-[4px] text-[11px] font-extrabold text-on-surface hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors font-['Public_Sans',sans-serif]"
           >
             Join
           </Link>

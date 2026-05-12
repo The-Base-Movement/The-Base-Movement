@@ -121,7 +121,10 @@ export default function Home() {
     members: 0,
     chapters: 0,
     regions: 0,
-    diaspora: 0
+    diaspora: 0,
+    membersDelta: '...',
+    chaptersDelta: '...',
+    diasporaDelta: '...'
   })
   const { lowBandwidthMode } = usePerformance()
 
@@ -320,7 +323,7 @@ export default function Home() {
               value={stats.chapters}
               label="Community branches active in nearly every district"
               sparkHeights={[5,6,7,7,9,10,10,12,13,14,16,18]}
-              delta="+84 this quarter"
+              delta={stats.chaptersDelta}
               deltaIcon="up"
             />
             {/* BLACK — Diaspora */}
@@ -328,9 +331,9 @@ export default function Home() {
               accent="#1A1A1A"
               eye="Diaspora"
               value={stats.diaspora}
-              label="Global Ghanaians supporting from abroad in 21 countries"
+              label="Global Ghanaians supporting from abroad"
               sparkHeights={[3,4,4,5,7,7,10,11,13,14,16,18]}
-              delta="+9.1% MoM"
+              delta={stats.diasporaDelta}
               deltaIcon="up"
             />
             {/* GREEN — Members */}
@@ -340,7 +343,7 @@ export default function Home() {
               value={stats.members}
               label="Verified citizens registered nationwide"
               sparkHeights={[4,6,7,7,9,11,12,14,15,16,17,18]}
-              delta="+12.4% QoQ"
+              delta={stats.membersDelta}
               deltaIcon="up"
             />
           </div>
@@ -391,7 +394,7 @@ export default function Home() {
                   </div>
                   <div
                     className="text-[11px] font-bold tracking-[.06em] uppercase mb-1.5 font-meta"
-                    style={{ color: 'var(--on-surface-muted,#6b7280)' }}
+                    style={{ color: 'hsl(var(--on-surface-muted))' }}
                   >
                     {ms.year}
                   </div>

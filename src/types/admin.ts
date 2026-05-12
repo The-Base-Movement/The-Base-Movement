@@ -15,6 +15,8 @@ export interface Member {
   chapter?: string
   country?: string
   profession?: string
+  city?: string
+  residentialAddress?: string
 }
 
 export interface Region {

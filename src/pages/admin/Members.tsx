@@ -21,8 +21,17 @@ import {
   Plus,
   Trash2,
   CheckCircle,
-  UserCheck
+  UserCheck,
+  Crown
 } from 'lucide-react'
+import { useChapters } from '@/context/ChaptersContext'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { BrandLine } from '@/components/ui/BrandLine'
 import { adminService, type AuditLogEntry, type Member } from '@/services/adminService'
 import { Button } from '@/components/ui/neon-button'
@@ -43,6 +52,7 @@ import jsPDF from 'jspdf'
 export default function MembersList() {
   const [members, setMembers] = useState<Member[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const { chapters } = useChapters()
   const [searchTerm, setSearchTerm] = useState(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
@@ -54,12 +64,65 @@ export default function MembersList() {
   const [isExporting, setIsExporting] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
+  const [activeDetailTab, setActiveDetailTab] = useState<'activity' | 'identity' | 'card'>('activity')
+  const [detailLogs, setDetailLogs] = useState<AuditLogEntry[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 8
   const cardRef = useRef<HTMLDivElement>(null)
   
   // Bulk Selection State
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+  const [assigningMembers, setAssigningMembers] = useState<Member[]>([])
+  const [assignmentData, setAssignmentData] = useState({
+    chapterId: '',
+    role: 'Chapter Coordinator'
+  })
+  const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false)
+
+  const handleOpenAssign = () => {
+    if (selectedIds.size > 0) {
+      const selected = members.filter(m => selectedIds.has(m.id))
+      setAssigningMembers(selected)
+      setIsAssignModalOpen(true)
+    } else if (selectedMember) {
+      setAssigningMembers([selectedMember])
+      setIsAssignModalOpen(true)
+    }
+  }
+
+  const handleConfirmAssignment = async () => {
+    if (!assignmentData.chapterId || assigningMembers.length === 0) return
+
+    setIsSubmittingAssignment(true)
+    try {
+      const selectedChapter = chapters.find(c => c.id === assignmentData.chapterId)
+      if (!selectedChapter) throw new Error('Chapter not found')
+
+      for (const member of assigningMembers) {
+        await adminService.addChapterLeader(assignmentData.chapterId, {
+          name: member.name,
+          role: assignmentData.role,
+          imageUrl: member.avatarUrl || ''
+        })
+      }
+
+      toast({
+        title: "Leadership Appointed",
+        description: `Successfully assigned ${assigningMembers.length} leader(s) to ${selectedChapter.name}.`,
+      })
+      setIsAssignModalOpen(false)
+      setSelectedIds(new Set())
+    } catch {
+      toast({
+        title: "Assignment Failed",
+        description: "Critical failure in leadership protocols.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsSubmittingAssignment(false)
+    }
+  }
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -70,6 +133,14 @@ export default function MembersList() {
     }
     fetchMembers()
   }, [])
+
+  useEffect(() => {
+    if (!selectedMember) { setDetailLogs([]); return }
+    setActiveDetailTab('activity')
+    adminService.getAuditLogsForResource(`MEMBERS/${selectedMember.id}`)
+      .then(setDetailLogs)
+      .catch(() => {})
+  }, [selectedMember])
 
   // Audit Vault State
   const [viewingAuditLogs, setViewingAuditLogs] = useState<AuditLogEntry[] | null>(null)
@@ -487,7 +558,11 @@ export default function MembersList() {
                 >
                   <UserCheck className="w-4 h-4 mr-2 text-primary" /> Verify
                 </Button>
-                <Button variant="ghost" className="h-9 px-4 text-micro font-bold tracking-tight text-white hover:bg-white/10">
+                <Button 
+                  variant="ghost" 
+                  className="h-9 px-4 text-micro font-bold tracking-tight text-white hover:bg-white/10"
+                  onClick={handleOpenAssign}
+                >
                   <Globe2 className="w-4 h-4 mr-2 text-primary" /> Assign
                 </Button>
                 <Button 
@@ -745,56 +820,274 @@ export default function MembersList() {
         </div>
       )}
 
-      {/* Member Card Dialog */}
-      <Dialog open={!!selectedMember} onOpenChange={(open) => !open && setSelectedMember(null)}>
-        <DialogContent className="max-w-[95vw] sm:max-w-[500px] md:max-w-[600px] p-0 border-none bg-transparent shadow-none [&>button]:hidden">
-          {selectedMember && (
-            <div className="flex flex-col gap-4">
-              <div ref={cardRef}>
-              <MembershipCard 
-                userName={selectedMember.name}
-                userRegNo={selectedMember.id}
-                gender={selectedMember.gender}
-                country={selectedMember.country}
-                region={selectedMember.region}
-                constituency={selectedMember.constituency}
-                chapter={selectedMember.chapter}
-                status={selectedMember.status === 'Active' ? 'Active member' : selectedMember.status}
-                joinedDate={selectedMember.joined}
-                initials={selectedMember.name.split(' ').map(n => n[0]).join('')}
-                avatarUrl={selectedMember.avatarUrl}
-              />
-              <Button 
-                variant="ghost"
-                size="icon"
-                className="absolute -top-12 right-0 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white"
-                onClick={() => setSelectedMember(null)}
-              >
+      {/* Member Detail Panel */}
+      {selectedMember && (
+        <div
+          className="fixed inset-0 z-[100] flex items-start justify-end"
+          style={{ background: 'rgba(15,19,16,.55)', backdropFilter: 'blur(4px)' }}
+          onClick={e => { if (e.target === e.currentTarget) setSelectedMember(null) }}
+        >
+          <div className="h-full w-full max-w-[900px] overflow-y-auto animate-in slide-in-from-right duration-300" style={{ background: '#f1f5ee' }}>
+            {/* Dark gradient profile header */}
+            <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', color: '#fff', padding: '24px 28px', position: 'relative', overflow: 'hidden', borderTop: '3px solid hsl(var(--destructive))', borderBottom: '3px solid hsl(var(--brand-green))' }}>
+              <div style={{ position: 'absolute', right: -40, top: -40, width: 200, height: 200, background: 'radial-gradient(circle,rgba(218,165,32,.15),transparent 70%)' }} />
+              {/* Close */}
+              <button onClick={() => setSelectedMember(null)} style={{ position: 'absolute', top: 16, right: 16, width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.2)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}>
                 <X className="w-4 h-4" />
-              </Button>
+              </button>
+              {/* Avatar + identity */}
+              <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', position: 'relative' }}>
+                <div style={{ width: 80, height: 80, borderRadius: '50%', border: '3px solid hsl(var(--accent))', flexShrink: 0, overflow: 'hidden', background: '#2a332b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {selectedMember.avatarUrl
+                    ? <img src={selectedMember.avatarUrl} alt={selectedMember.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : <span style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 24, color: '#fff' }}>{selectedMember.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</span>
+                  }
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 9.5, color: 'hsl(var(--accent))', fontFamily: "'Public Sans'", fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase' }}>
+                    {selectedMember.status === 'Active' || selectedMember.status === 'Approved' ? 'Verified patriot' : 'Pending verification'} · since {selectedMember.joined?.split('-')[0] || '2025'}
+                  </div>
+                  <h2 style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 28, letterSpacing: '-.02em', marginTop: 4, lineHeight: 1.1 }}>{selectedMember.name}</h2>
+                  <div style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 12, color: 'hsl(var(--accent))', marginTop: 4, fontVariantNumeric: 'tabular-nums', letterSpacing: '.04em' }}>
+                    {selectedMember.id.substring(0, 12).toUpperCase()}
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, marginTop: 14, flexWrap: 'wrap' }}>
+                    <span style={{ padding: '3px 10px', background: 'rgba(218,165,32,.1)', border: '1px solid rgba(218,165,32,.36)', borderRadius: 99, fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 10, letterSpacing: '.04em', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: 5, color: 'hsl(var(--accent))' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 11 }}>verified</span>
+                      {selectedMember.status === 'Active' || selectedMember.status === 'Approved' ? 'KYC verified' : 'Pending KYC'}
+                    </span>
+                    {selectedMember.constituency && <span style={{ padding: '3px 10px', background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 99, fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 10, letterSpacing: '.04em', textTransform: 'uppercase' }}>{selectedMember.constituency}</span>}
+                    {selectedMember.region && <span style={{ padding: '3px 10px', background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 99, fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 10, letterSpacing: '.04em', textTransform: 'uppercase' }}>{selectedMember.region}</span>}
+                    {selectedMember.gender && <span style={{ padding: '3px 10px', background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 99, fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 10, letterSpacing: '.04em', textTransform: 'uppercase' }}>{selectedMember.gender}</span>}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8, alignSelf: 'flex-start' }}>
+                  <button className="btn btn-sm" style={{ background: 'rgba(255,255,255,.08)', color: '#fff', border: '1px solid rgba(255,255,255,.18)' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>mail</span>Message
+                  </button>
+                  <button className="btn btn-sm btn-dest" onClick={() => toast({ title: 'Flag account', description: `Flagging ${selectedMember.name}…` })}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>flag</span>Flag
+                  </button>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Button 
-                  variant="default"
-                  onClick={handlePrint}
-                  className="h-14 bg-white hover:bg-muted/10 border border-border/60 text-on-surface font-bold tracking-tight text-micro shadow-lg rounded-none transition-all active:scale-95"
-                >
-                  <span className="material-symbols-outlined text-[18px] mr-2">print</span>
-                  Print card
-                </Button>
-                <Button 
-                  variant="primary"
-                  onClick={handleDownload}
-                  className="h-14 flex-1 rounded-sm text-micro font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                >
-                  <span className="material-symbols-outlined text-[18px] mr-2">download</span>
-                  Download PDF
-                </Button>
+              {/* Quick stats */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0, marginTop: 18, paddingTop: 18, borderTop: '1px solid rgba(255,255,255,.08)' }}>
+                {[
+                  { label: 'Lifetime contribution', val: '₵0',  sub: 'No donations yet' },
+                  { label: 'Polls voted',            val: '—',  sub: 'No poll activity' },
+                  { label: 'Chapter activity',       val: '—',  sub: 'Events attended YTD' },
+                  { label: 'Membership tier',        val: selectedMember.type || 'Citizen', sub: 'Active tier', accent: true },
+                ].map((s, i) => (
+                  <div key={i} style={{ borderLeft: i > 0 ? '1px solid rgba(255,255,255,.08)' : 'none', padding: i === 0 ? '0 18px 0 0' : '0 18px' }}>
+                    <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,.5)', fontFamily: "'Public Sans'", fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase' }}>{s.label}</div>
+                    <div style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 22, letterSpacing: '-.015em', marginTop: 6, fontVariantNumeric: 'tabular-nums', lineHeight: 1, color: s.accent ? 'hsl(var(--accent))' : '#fff' }}>{s.val}</div>
+                    <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,.6)', fontFamily: "'Public Sans'", fontWeight: 700, marginTop: 4 }}>{s.sub}</div>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid hsl(var(--border))', background: '#fff', padding: '0 14px' }}>
+              {(['activity', 'identity', 'card'] as const).map(tab => (
+                <button key={tab} onClick={() => setActiveDetailTab(tab)}
+                  style={{ padding: '14px 16px', fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 12, color: activeDetailTab === tab ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))', background: 'none', border: 'none', borderBottom: activeDetailTab === tab ? '2px solid hsl(var(--destructive))' : '2px solid transparent', cursor: 'pointer', letterSpacing: '-.005em', textTransform: 'capitalize' }}>
+                  {tab === 'card' ? 'ID Card' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  {tab === 'activity' && detailLogs.length > 0 && (
+                    <span style={{ marginLeft: 6, padding: '1px 7px', background: '#f1f5ee', borderRadius: 99, fontSize: 9, fontFamily: "'Public Sans'", fontWeight: 800 }}>{detailLogs.length}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab content */}
+            <div style={{ padding: '14px' }}>
+
+              {/* Activity tab */}
+              {activeDetailTab === 'activity' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 14 }}>
+                  <div>
+                    <div className="panel" style={{ marginBottom: 14 }}>
+                      <div className="ph2"><h3>Recent activity</h3><span className="meta">audit trail</span></div>
+                      <div className="tl">
+                        {detailLogs.length > 0 ? detailLogs.slice(0, 8).map((log, i) => (
+                          <div key={log.id} className="ev" style={{ position: 'relative' }}>
+                            {i < Math.min(detailLogs.length, 8) - 1 && <div style={{ position: 'absolute', left: 13, top: 36, bottom: -12, width: 1, background: 'hsl(var(--border))' }} />}
+                            <div className="ic" style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5ee', color: 'hsl(var(--primary))', flexShrink: 0, zIndex: 1 }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>history</span>
+                            </div>
+                            <div className="b" style={{ flex: 1, minWidth: 0 }}>
+                              <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.5 }}><b style={{ fontFamily: "'Public Sans'", fontWeight: 800 }}>{log.action}</b></p>
+                              <span style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans'", fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase' }}>{new Date(log.timestamp).toLocaleDateString()} · {log.adminName}</span>
+                            </div>
+                          </div>
+                        )) : [
+                          { icon: 'how_to_vote', text: 'Profile created and added to directory', time: selectedMember.joined || 'Mar 2025', cls: '' },
+                          { icon: 'verified',    text: 'Status set to ' + (selectedMember.status || 'Pending'), time: 'On registration', cls: '' },
+                          { icon: 'place',       text: 'Region assigned: ' + (selectedMember.region || '—'), time: 'Auto', cls: '' },
+                        ].map((e, i, arr) => (
+                          <div key={i} style={{ display: 'flex', gap: 12, padding: '12px 0', position: 'relative' }}>
+                            {i < arr.length - 1 && <div style={{ position: 'absolute', left: 13, top: 36, bottom: -12, width: 1, background: 'hsl(var(--border))' }} />}
+                            <div style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5ee', color: 'hsl(var(--primary))', flexShrink: 0, zIndex: 1 }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{e.icon}</span>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.5 }}>{e.text}</p>
+                              <span style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans'", fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase' }}>{e.time}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="panel" style={{ marginBottom: 14 }}>
+                      <div className="ph2"><h3>Identity snapshot</h3><span className="ph2-meta"><span className={cn('pill', selectedMember.status === 'Active' || selectedMember.status === 'Approved' ? 'pill-ok' : 'pill-warn')}>{selectedMember.status}</span></span></div>
+                      <div style={{ padding: '14px 18px' }}>
+                        <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '10px 14px' }}>
+                          {[
+                            ['Full name',     selectedMember.name],
+                            ['Reg number',    selectedMember.id.substring(0, 12).toUpperCase()],
+                            ['Email',         selectedMember.email || '—'],
+                            ['Mobile',        selectedMember.phone || '—'],
+                            ['Region',        selectedMember.region || '—'],
+                            ['Constituency',  selectedMember.constituency || '—'],
+                            ['Chapter',       selectedMember.chapter || '—'],
+                            ['Joined',        selectedMember.joined || '—'],
+                          ].map(([k, v]) => (
+                            <>
+                              <dt key={k + 'dt'} style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans'", alignSelf: 'center' }}>{k}</dt>
+                              <dd key={k + 'dd'} style={{ margin: 0, fontSize: 12.5, fontFamily: "'Public Sans'", fontWeight: 700 }}>{v}</dd>
+                            </>
+                          ))}
+                        </dl>
+                      </div>
+                    </div>
+                    <div className="panel">
+                      <div className="ph2"><h3>KYC checks</h3><span className="meta">auto-run</span></div>
+                      <div style={{ padding: '14px 18px' }}>
+                        {[
+                          { ok: true,  label: 'Phone number on file',      detail: selectedMember.phone ? 'verified' : 'missing' },
+                          { ok: true,  label: 'Email address registered',   detail: selectedMember.email ? 'on file' : 'missing' },
+                          { ok: selectedMember.status === 'Active' || selectedMember.status === 'Approved', label: 'Account status approved', detail: selectedMember.status },
+                          { ok: !!selectedMember.region, label: 'Region assigned',              detail: selectedMember.region || 'unassigned' },
+                          { ok: false, warn: true, label: 'Ghana Card not uploaded',           detail: 'review' },
+                        ].map((c, i, arr) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: i < arr.length - 1 ? '1px solid hsl(var(--border))' : 'none', fontSize: 12 }}>
+                            <div style={{ width: 26, height: 26, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: c.ok ? 'rgba(0,107,63,.12)' : 'rgba(218,165,32,.14)', color: c.ok ? 'hsl(var(--primary))' : '#a87d10', flexShrink: 0 }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{c.ok ? 'check' : 'warning'}</span>
+                            </div>
+                            <b style={{ fontFamily: "'Public Sans'", fontWeight: 800, flex: 1 }}>{c.label}</b>
+                            <span style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans'", fontWeight: 700, marginLeft: 'auto' }}>{c.detail}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Identity tab */}
+              {activeDetailTab === 'identity' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 14 }}>
+                  <div>
+                    <div className="panel" style={{ marginBottom: 14 }}>
+                      <div className="ph2"><h3>Identity</h3><span className={cn('pill', selectedMember.status === 'Active' || selectedMember.status === 'Approved' ? 'pill-ok' : 'pill-warn')}>{selectedMember.status}</span></div>
+                      <div style={{ padding: '14px 18px' }}>
+                        <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '10px 14px' }}>
+                          {[
+                            ['Full name',    selectedMember.name],
+                            ['Reg number',   selectedMember.id.substring(0, 12).toUpperCase()],
+                            ['Email',        selectedMember.email || '—'],
+                            ['Mobile',       selectedMember.phone || '—'],
+                            ['Gender',       selectedMember.gender || '—'],
+                            ['Region',       selectedMember.region || '—'],
+                            ['Constituency', selectedMember.constituency || '—'],
+                            ['Chapter',      selectedMember.chapter || '—'],
+                            ['Country',      selectedMember.country || 'Ghana'],
+                            ['Joined',       selectedMember.joined || '—'],
+                            ['Type',         selectedMember.type || 'Citizen'],
+                          ].map(([k, v]) => (
+                            <>
+                              <dt key={k + 'dt'} style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans'", alignSelf: 'center' }}>{k}</dt>
+                              <dd key={k + 'dd'} style={{ margin: 0, fontSize: 12.5, fontFamily: "'Public Sans'", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                {v}
+                                {(k === 'Email' || k === 'Mobile') && v !== '—' && (
+                                  <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))', cursor: 'pointer' }} onClick={() => navigator.clipboard.writeText(v)}>content_copy</span>
+                                )}
+                              </dd>
+                            </>
+                          ))}
+                        </dl>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="panel" style={{ marginBottom: 14 }}>
+                      <div className="ph2"><h3>Admin notes</h3><span className="meta">internal</span></div>
+                      <div style={{ padding: '12px 18px' }}>
+                        <div style={{ padding: '10px 0', borderBottom: '1px solid hsl(var(--border))' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                            <b style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 11.5 }}>System</b>
+                            <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans'", fontWeight: 700 }}>{selectedMember.joined || 'On join'}</span>
+                          </div>
+                          <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface))' }}>Member registered via {selectedMember.platform === 'DIASPORA' ? 'diaspora portal' : 'standard registration'}. Status: {selectedMember.status}.</p>
+                        </div>
+                        <div style={{ padding: '10px 0' }}>
+                          <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}>No additional notes.</p>
+                        </div>
+                      </div>
+                    </div>
+                    {adminService.can('VERIFY_MEMBER', 'MEMBERS') && selectedMember.status === 'Pending' && (
+                      <div className="panel" style={{ marginBottom: 14 }}>
+                        <div className="ph2"><h3>Actions</h3></div>
+                        <div style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                          <button className="btn btn-primary" onClick={() => handleVerify(selectedMember.id, selectedMember.name)}>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>verified</span>Verify & admit
+                          </button>
+                          <button className="btn btn-dest">
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>block</span>Reject application
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Card tab */}
+              {activeDetailTab === 'card' && (
+                <div style={{ maxWidth: 520, margin: '0 auto' }}>
+                  <div ref={cardRef}>
+                    <MembershipCard
+                      userName={selectedMember.name}
+                      userRegNo={selectedMember.id}
+                      gender={selectedMember.gender}
+                      country={selectedMember.country}
+                      region={selectedMember.region}
+                      constituency={selectedMember.constituency}
+                      chapter={selectedMember.chapter}
+                      status={selectedMember.status === 'Active' ? 'Active member' : selectedMember.status}
+                      joinedDate={selectedMember.joined}
+                      initials={selectedMember.name.split(' ').map(n => n[0]).join('')}
+                      avatarUrl={selectedMember.avatarUrl}
+                    />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 16 }}>
+                    <button className="btn btn-outline" onClick={handlePrint}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>print</span>Print card
+                    </button>
+                    <button className="btn btn-primary" onClick={handleDownload}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>download</span>Download PDF
+                    </button>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Audit Vault History Modal */}
       <Dialog open={isAuditModalOpen} onOpenChange={setIsAuditModalOpen}>
@@ -860,6 +1153,87 @@ export default function MembersList() {
               className="bg-on-surface text-white text-micro font-bold tracking-tight rounded-sm h-11 px-8 shadow-md transition-all active:scale-95"
             >
               Close history
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Leadership Assignment Modal */}
+      <Dialog open={isAssignModalOpen} onOpenChange={setIsAssignModalOpen}>
+        <DialogContent className="max-w-md border-none rounded-none p-0 overflow-hidden bg-white">
+          <div className="p-8 bg-charcoal-dark text-white relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent"></div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/10 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-accent" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold tracking-tight font-meta">Appoint leadership</h2>
+                <p className="text-micro font-medium text-white/60 mt-1">
+                  Assigning {assigningMembers.length} member(s) to command
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-6">
+            <div className="space-y-1.5">
+              <label className="text-micro font-bold text-muted-foreground/40 normal-case">Target Chapter</label>
+              <Select 
+                value={assignmentData.chapterId} 
+                onValueChange={(val) => setAssignmentData({...assignmentData, chapterId: val})}
+              >
+                <SelectTrigger className="h-12 bg-muted/5 border-border/60 rounded-sm focus:ring-0 focus:border-on-surface font-medium text-sm shadow-sm">
+                  <SelectValue placeholder="Select a chapter hub..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {chapters.map(c => (
+                    <SelectItem key={c.id} value={c.id}>{c.name} ({c.city_or_region})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-micro font-bold text-muted-foreground/40 normal-case">Designated Role</label>
+              <Select 
+                value={assignmentData.role} 
+                onValueChange={(val) => setAssignmentData({...assignmentData, role: val})}
+              >
+                <SelectTrigger className="h-12 bg-muted/5 border-border/60 rounded-sm focus:ring-0 focus:border-on-surface font-medium text-sm shadow-sm">
+                  <SelectValue placeholder="Select leadership role..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Chapter Coordinator">Chapter Coordinator</SelectItem>
+                  <SelectItem value="Mobilization Lead">Mobilization Lead</SelectItem>
+                  <SelectItem value="Communications Officer">Communications Officer</SelectItem>
+                  <SelectItem value="Logistics Commander">Logistics Commander</SelectItem>
+                  <SelectItem value="Regional Liaison">Regional Liaison</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="p-4 bg-muted/20 border-l-2 border-accent">
+              <p className="text-[10px] text-muted-foreground leading-relaxed italic">
+                Note: This appointment will be logged in the permanent audit trail. Appointed leaders gain administrative oversight for their specific chapter infrastructure.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-6 border-t border-border/40 bg-stone-50/50 flex gap-3">
+            <Button 
+              variant="outline"
+              onClick={() => setIsAssignModalOpen(false)}
+              className="flex-1 text-micro font-bold tracking-tight rounded-sm h-12 shadow-sm transition-all active:scale-95"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleConfirmAssignment}
+              disabled={isSubmittingAssignment || !assignmentData.chapterId}
+              className="flex-1 bg-on-surface text-white text-micro font-bold tracking-tight rounded-sm h-12 shadow-md transition-all active:scale-95 disabled:opacity-50"
+            >
+              {isSubmittingAssignment ? 'Processing...' : 'Confirm Appointment'}
             </Button>
           </div>
         </DialogContent>

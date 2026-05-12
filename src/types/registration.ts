@@ -18,6 +18,7 @@ export interface RegistrationFormData {
   emergencyContactName: string;
   emergencyRelationship: string;
   emergencyNumber: string;
+  city?: string;
 }
 
 export interface Region {

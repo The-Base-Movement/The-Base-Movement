@@ -14,6 +14,7 @@ interface MembershipCardProps {
   region?: string
   constituency?: string
   chapter?: string
+  city?: string
 }
 
 const MembershipCard: React.FC<MembershipCardProps> = ({
@@ -28,7 +29,8 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   country,
   region,
   constituency,
-  chapter
+  chapter,
+  city
 }) => {
   const { settings } = useBranding()
   return (
@@ -106,10 +108,18 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
                 </div>
               </>
             ) : (
-              <div className="flex items-center gap-1 sm:gap-1.5">
-                <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Country</span>
-                <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{country || 'Not Specified'}</span>
-              </div>
+              <>
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Country</span>
+                  <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{country || 'Not Specified'}</span>
+                </div>
+                {city && (
+                  <div className="flex items-center gap-1 sm:gap-1.5">
+                    <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">City</span>
+                    <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{city}</span>
+                  </div>
+                )}
+              </>
             )}
 
             <div className="flex items-center gap-1 sm:gap-1.5">

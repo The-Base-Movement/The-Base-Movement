@@ -40,7 +40,9 @@ export default function ProfileSettings() {
     joinedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
     status: 'Active Member',
     chapter: 'TBM Ghana Chapter',
-    country: userPlatform === 'GHANA' ? 'Ghana' : ''
+    country: userPlatform === 'GHANA' ? 'Ghana' : '',
+    city: '',
+    residentialAddress: ''
   })
 
   const [loading, setLoading] = useState(true)
@@ -93,7 +95,9 @@ export default function ProfileSettings() {
           joinedDate: profile.joined,
           status: profile.status === 'Active' ? 'Active Member' : profile.status,
           chapter: profile.chapter || 'TBM Ghana Chapter',
-          country: profile.country || (userPlatform === 'GHANA' ? 'Ghana' : '')
+          country: profile.country || (userPlatform === 'GHANA' ? 'Ghana' : ''),
+          city: profile.city || '',
+          residentialAddress: profile.residentialAddress || ''
         })
       }
       setLoading(false)
@@ -171,7 +175,9 @@ export default function ProfileSettings() {
       gender: form.gender,
       chapter: form.chapter,
       avatarUrl: finalAvatarUrl || undefined,
-      profession: form.profession
+      profession: form.profession,
+      city: form.city,
+      residentialAddress: form.residentialAddress
     })
 
     setLoading(false)
@@ -331,6 +337,7 @@ export default function ProfileSettings() {
                 region={form.region}
                 constituency={form.constituency}
                 country={form.country}
+                city={form.city}
                 chapter={form.chapter}
                 onPhotoClick={() => fileRef.current?.click()}
               />
@@ -410,6 +417,15 @@ export default function ProfileSettings() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                <div className="space-y-2">
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">
+                    Registration Number <span className="text-slate-300 italic">(Permanent)</span>
+                  </label>
+                  <div className="w-full border-b-2 border-slate-50 bg-slate-50/50 px-3 py-3 text-sm text-slate-500 font-bold tracking-tight cursor-not-allowed">
+                    {userRegNo || 'Pending Allocation'}
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">
                     Full Name <span className="text-[var(--brand-red)]">*</span>
@@ -576,6 +592,16 @@ export default function ProfileSettings() {
                         <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                       </div>
                     </div>
+
+                    <div className="space-y-2">
+                      <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">City / Locality</label>
+                      <input
+                        value={form.city}
+                        onChange={e => handleChange('city', e.target.value)}
+                        placeholder="E.g. London, New York, Hamburg"
+                        className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                      />
+                    </div>
                     
                     {form.country === 'Ghana' && (
                       <>
@@ -625,6 +651,19 @@ export default function ProfileSettings() {
                     )}
                   </div>
                 )}
+
+                <div className="md:col-span-2 space-y-2">
+                  <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">
+                    Residential Address {userPlatform === 'GHANA' && <span className="text-[var(--brand-red)]">*</span>}
+                  </label>
+                  <input
+                    required={userPlatform === 'GHANA'}
+                    value={form.residentialAddress}
+                    onChange={e => handleChange('residentialAddress', e.target.value)}
+                    placeholder="Physical address for mobilization and logistics"
+                    className="w-full border-b-2 border-slate-100 bg-transparent px-0 py-3 text-sm text-charcoal-dark font-bold tracking-tight focus:outline-none focus:border-[var(--brand-green)] transition-all placeholder:text-slate-300 placeholder:font-medium placeholder:normal-case"
+                  />
+                </div>
 
                 <div className="md:col-span-2 space-y-4 pt-4">
                   <label className="text-micro font-meta font-bold text-slate-400 block tracking-tight">Short bio</label>

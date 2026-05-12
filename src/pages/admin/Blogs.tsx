@@ -33,7 +33,6 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { Editor } from '@tinymce/tinymce-react'
 import { adminService } from '@/services/adminService'
@@ -370,7 +369,7 @@ export default function AdminBlogs() {
               {editingPost ? 'Edit post' : 'New post'}
             </span>
             <span className="inline-flex items-center gap-1.5 font-extrabold text-[10px] tracking-[.06em] uppercase px-2 py-0.5 rounded-full border ml-2"
-              style={{ color: formData.status === 'Published' ? 'var(--primary)' : 'var(--accent)', background: formData.status === 'Published' ? 'rgba(0,107,63,.08)' : 'rgba(218,165,32,.12)', borderColor: formData.status === 'Published' ? 'rgba(0,107,63,.3)' : 'rgba(218,165,32,.3)' }}>
+              style={{ color: formData.status === 'Published' ? 'hsl(var(--primary))' : 'hsl(var(--accent))', background: formData.status === 'Published' ? 'rgba(0,107,63,.08)' : 'rgba(218,165,32,.12)', borderColor: formData.status === 'Published' ? 'rgba(0,107,63,.3)' : 'rgba(218,165,32,.3)' }}>
               <span className="w-[5px] h-[5px] rounded-full bg-current block" />
               {formData.status}
             </span>
@@ -461,7 +460,7 @@ export default function AdminBlogs() {
                   </SelectContent>
                 </Select>
               </div>
-              {[['B','font-bold'],['I','italic'],['U','underline']].map(([label, _]) => (
+              {[['B','font-bold'],['I','italic'],['U','underline']].map(([label]) => (
                 <button key={label} type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center text-[13px] font-extrabold text-on-surface hover:bg-muted/10 transition-colors border-0 bg-transparent">{label}</button>
               ))}
               <div className="flex gap-0.5 px-[10px] mx-1.5 border-x border-border/40">
@@ -488,18 +487,18 @@ export default function AdminBlogs() {
             </div>
 
             {/* Document canvas */}
-            <div className="flex-1 overflow-y-auto p-8" style={{ background: 'var(--container-low)' }}>
+            <div className="flex-1 overflow-y-auto p-8" style={{ background: '#f1f5ee' }}>
               <form onSubmit={handleSubmit} id="blog-compose-form">
                 <div className="max-w-[740px] mx-auto bg-white border border-border/40 rounded-[6px] px-[56px] py-[48px] pb-[64px] relative" style={{ minHeight: 920 }}>
                   {/* Brand line */}
                   <div className="absolute top-0 left-[56px] w-24 h-1 flex overflow-hidden rounded-b-[2px]">
-                    <span className="flex-1" style={{ background: 'var(--brand-red)' }} />
-                    <span className="flex-1" style={{ background: 'var(--brand-gold)' }} />
-                    <span className="flex-1" style={{ background: 'var(--brand-green)' }} />
+                    <span className="flex-1" style={{ background: 'hsl(var(--brand-red))' }} />
+                    <span className="flex-1" style={{ background: 'hsl(var(--brand-gold))' }} />
+                    <span className="flex-1" style={{ background: 'hsl(var(--brand-green))' }} />
                   </div>
 
                   {/* Breadcrumb in doc */}
-                  <div className="font-extrabold text-[10.5px] uppercase tracking-[.08em] mt-6 mb-3" style={{ color: 'var(--primary)' }}>
+                  <div className="font-extrabold text-[10.5px] uppercase tracking-[.08em] mt-6 mb-3" style={{ color: 'hsl(var(--primary))' }}>
                     Updates · {formData.category || 'General'}
                   </div>
 
@@ -521,7 +520,7 @@ export default function AdminBlogs() {
                     placeholder="Subtitle or opening hook…"
                     rows={2}
                     className="w-full text-[18px] leading-[1.5] resize-none outline-none border-0 bg-transparent mb-6 placeholder:text-muted-foreground/30"
-                    style={{ fontFamily: "'Lora', 'Georgia', serif", color: 'var(--on-surface-muted)' }}
+                    style={{ fontFamily: "'Lora', 'Georgia', serif", color: 'hsl(var(--on-surface-muted))' }}
                   />
 
                   {/* Author byline */}
@@ -679,7 +678,7 @@ export default function AdminBlogs() {
             <div className="px-[18px] py-4 border-b border-border/40">
               <h4 className="text-[10.5px] font-extrabold uppercase tracking-[.07em] text-muted-foreground/50 mb-3">SEO · Readability</h4>
               <div className="flex justify-between items-baseline mb-[6px]">
-                <b className="font-extrabold text-[20px] tracking-[-0.02em]" style={{ color: 'var(--primary)' }}>
+                <b className="font-extrabold text-[20px] tracking-[-0.02em]" style={{ color: 'hsl(var(--primary))' }}>
                   {seoScore}<span className="text-[13px] text-muted-foreground/50 ml-0.5 font-bold">/100</span>
                 </b>
                 <span className="text-[10px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50">
@@ -687,14 +686,14 @@ export default function AdminBlogs() {
                 </span>
               </div>
               <div className="h-[6px] bg-border/40 rounded-full overflow-hidden mb-3">
-                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${seoScore}%`, background: 'linear-gradient(to right, var(--brand-red), var(--brand-gold) 60%, var(--brand-green))' }} />
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${seoScore}%`, background: 'linear-gradient(to right, hsl(var(--brand-red)), hsl(var(--brand-gold)) 60%, hsl(var(--brand-green)))' }} />
               </div>
               <div className="space-y-0.5">
                 {seoChecks.map((chk, i) => (
-                  <div key={i} className="flex items-center gap-2 py-[6px] text-[11.5px] font-bold" style={{ color: 'var(--on-surface)' }}>
+                  <div key={i} className="flex items-center gap-2 py-[6px] text-[11.5px] font-bold" style={{ color: 'hsl(var(--on-surface))' }}>
                     {chk.ok
-                      ? <svg className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--primary)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7"/></svg>
-                      : <svg className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--accent)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path fill="currentColor" d="M11 10h2v5h-2zM11 16h2v2h-2z"/></svg>
+                      ? <svg className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(var(--primary))' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+                      : <svg className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(var(--accent))' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path fill="currentColor" d="M11 10h2v5h-2zM11 16h2v2h-2z"/></svg>
                     }
                     {chk.label}
                   </div>

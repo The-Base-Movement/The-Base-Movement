@@ -14,7 +14,7 @@ function LiveClock() {
     return () => clearInterval(t)
   }, [])
   return (
-    <span className="font-extrabold text-[13px] tabular-nums tracking-[.04em]" style={{ color: 'var(--accent)' }}>
+    <span className="font-extrabold text-[13px] tabular-nums tracking-[.04em]" style={{ color: 'hsl(var(--accent))' }}>
       {format(time, 'dd MMM · HH:mm:ss')} GMT
     </span>
   )
@@ -62,19 +62,19 @@ export default function WarRoomCommand() {
   }
 
   const kpis = [
-    { label: 'Sign-ups · today', value: '2,418', delta: '▲ 18% vs yesterday', deltaUp: true, accent: 'var(--destructive)' },
-    { label: 'MoMo donations', value: '₵148K', delta: '▲ 24% MTD', deltaUp: true, accent: 'var(--accent)' },
-    { label: 'Field canvassers', value: String(directives.length > 0 ? `${directives.length * 12}+` : '487'), delta: `${directives.length} active sectors`, deltaUp: true, accent: 'var(--primary)' },
+    { label: 'Sign-ups · today', value: '2,418', delta: '▲ 18% vs yesterday', deltaUp: true, accent: 'hsl(var(--destructive))' },
+    { label: 'MoMo donations', value: '₵148K', delta: '▲ 24% MTD', deltaUp: true, accent: 'hsl(var(--accent))' },
+    { label: 'Field canvassers', value: String(directives.length > 0 ? `${directives.length * 12}+` : '487'), delta: `${directives.length} active sectors`, deltaUp: true, accent: 'hsl(var(--primary))' },
     { label: 'Verified members', value: '355,840', delta: '+ 2,418 today', deltaUp: true, accent: 'rgba(255,255,255,.6)' },
-    { label: 'Active incidents', value: String(incidents.length || '0'), delta: incidents.length > 0 ? 'Needs attention' : 'All clear', deltaUp: incidents.length === 0, accent: 'var(--destructive)' },
+    { label: 'Active incidents', value: String(incidents.length || '0'), delta: incidents.length > 0 ? 'Needs attention' : 'All clear', deltaUp: incidents.length === 0, accent: 'hsl(var(--destructive))' },
   ]
 
   if (loading) {
     return (
       <div className="-mx-[28px] -mt-[24px] bg-[#0a0d0b] flex items-center justify-center" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-[rgba(206,17,38,.3)] border-t-[var(--destructive)] rounded-full animate-spin" />
-          <p className="text-[11px] font-extrabold text-[var(--destructive)] uppercase tracking-[.06em] animate-pulse">Initializing war room protocols…</p>
+          <div className="w-10 h-10 border-2 border-[rgba(206,17,38,.3)] border-t-destructive rounded-full animate-spin" />
+          <p className="text-[11px] font-extrabold text-destructive uppercase tracking-[.06em] animate-pulse">Initializing war room protocols…</p>
         </div>
       </div>
     )
@@ -93,8 +93,8 @@ export default function WarRoomCommand() {
                 War Room — live mobilization
               </h2>
               <span className="inline-flex items-center gap-[6px] font-extrabold text-[10.5px] uppercase tracking-[.06em] px-[10px] py-1 rounded-full border"
-                style={{ color: 'var(--destructive)', background: 'rgba(206,17,38,.12)', borderColor: 'rgba(206,17,38,.3)' }}>
-                <span className="w-[6px] h-[6px] rounded-full animate-pulse block" style={{ background: 'var(--destructive)' }} />
+                style={{ color: 'hsl(var(--destructive))', background: 'rgba(206,17,38,.12)', borderColor: 'rgba(206,17,38,.3)' }}>
+                <span className="w-[6px] h-[6px] rounded-full animate-pulse block" style={{ background: 'hsl(var(--destructive))' }} />
                 Live · updating
               </span>
             </div>
@@ -104,7 +104,7 @@ export default function WarRoomCommand() {
             <button
               className="h-8 px-3 text-[11px] font-extrabold rounded-[4px] border flex items-center gap-1.5 transition-colors"
               style={{ background: 'transparent', color: 'rgba(255,255,255,.8)', borderColor: 'rgba(255,255,255,.18)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--destructive)'; (e.currentTarget as HTMLElement).style.color = 'var(--destructive)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsl(var(--destructive))'; (e.currentTarget as HTMLElement).style.color = 'hsl(var(--destructive))' }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,.18)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,.8)' }}
               onClick={() => window.location.href = '/admin/broadcasts/new'}
             >
@@ -121,7 +121,7 @@ export default function WarRoomCommand() {
               <div className="text-[9.5px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'rgba(255,255,255,.5)' }}>{k.label}</div>
               <div className="font-extrabold text-[26px] tracking-[-0.02em] leading-none my-2 text-white tabular-nums">{k.value}</div>
               <div className={cn("text-[10.5px] font-extrabold inline-flex items-center gap-1", k.deltaUp ? '' : '')}
-                style={{ color: k.deltaUp ? 'var(--primary)' : 'var(--destructive)' }}>
+                style={{ color: k.deltaUp ? 'hsl(var(--primary))' : 'hsl(var(--destructive))' }}>
                 {k.delta}
               </div>
             </div>
@@ -150,11 +150,11 @@ export default function WarRoomCommand() {
 
               {/* Animated pins */}
               {[
-                { city: 'Accra', x: '50%', y: '80%', color: 'var(--primary)', count: '412 online' },
-                { city: 'Kumasi', x: '45%', y: '55%', color: 'var(--accent)', count: '218 online' },
-                { city: 'Tamale', x: '62%', y: '35%', color: 'var(--destructive)', count: '94 alert' },
-                { city: 'Cape Coast', x: '30%', y: '75%', color: 'var(--primary)', count: '86 online' },
-                { city: 'Koforidua', x: '60%', y: '65%', color: 'var(--accent)', count: '71 online' },
+                { city: 'Accra', x: '50%', y: '80%', color: 'hsl(var(--primary))', count: '412 online' },
+                { city: 'Kumasi', x: '45%', y: '55%', color: 'hsl(var(--accent))', count: '218 online' },
+                { city: 'Tamale', x: '62%', y: '35%', color: 'hsl(var(--destructive))', count: '94 alert' },
+                { city: 'Cape Coast', x: '30%', y: '75%', color: 'hsl(var(--primary))', count: '86 online' },
+                { city: 'Koforidua', x: '60%', y: '65%', color: 'hsl(var(--accent))', count: '71 online' },
               ].map(pin => (
                 <div key={pin.city} className="absolute" style={{ left: pin.x, top: pin.y, transform: 'translate(-50%,-50%)' }}>
                   <div className="relative">
@@ -171,9 +171,9 @@ export default function WarRoomCommand() {
               {/* Legend */}
               <div className="absolute bottom-3 left-3 right-3 flex gap-[14px] px-3 py-[10px] text-[9.5px] font-extrabold uppercase tracking-[.05em] rounded-[4px] border"
                 style={{ color: 'rgba(255,255,255,.7)', background: 'rgba(0,0,0,.6)', borderColor: '#1c221e', backdropFilter: 'blur(8px)' }}>
-                <span className="flex items-center gap-[5px]"><span className="w-2 h-2 rounded-full inline-block" style={{ background: 'var(--primary)' }} />Active</span>
-                <span className="flex items-center gap-[5px]"><span className="w-2 h-2 rounded-full inline-block" style={{ background: 'var(--accent)' }} />Below target</span>
-                <span className="flex items-center gap-[5px]"><span className="w-2 h-2 rounded-full inline-block" style={{ background: 'var(--destructive)' }} />Alert</span>
+                <span className="flex items-center gap-[5px]"><span className="w-2 h-2 rounded-full inline-block" style={{ background: 'hsl(var(--primary))' }} />Active</span>
+                <span className="flex items-center gap-[5px]"><span className="w-2 h-2 rounded-full inline-block" style={{ background: 'hsl(var(--accent))' }} />Below target</span>
+                <span className="flex items-center gap-[5px]"><span className="w-2 h-2 rounded-full inline-block" style={{ background: 'hsl(var(--destructive))' }} />Alert</span>
               </div>
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function WarRoomCommand() {
                         <div className="w-20 h-1 rounded-full overflow-hidden" style={{ background: '#1c221e' }}>
                           <div className="h-full rounded-full" style={{
                             width: `${r.pct}%`,
-                            background: r.status === 'ok' ? 'var(--primary)' : r.status === 'warn' ? 'var(--accent)' : 'var(--destructive)'
+                            background: r.status === 'ok' ? 'hsl(var(--primary))' : r.status === 'warn' ? 'hsl(var(--accent))' : 'hsl(var(--destructive))'
                           }} />
                         </div>
                       </td>
@@ -222,14 +222,14 @@ export default function WarRoomCommand() {
             <div className="overflow-y-auto flex-1 px-4" style={{ maxHeight: 380 }}>
               {incidents.length === 0 && directives.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-3">
-                  <CheckCircle2 className="w-8 h-8" style={{ color: 'var(--primary)' }} />
+                  <CheckCircle2 className="w-8 h-8" style={{ color: 'hsl(var(--primary))' }} />
                   <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>All sectors clear</p>
                 </div>
               ) : (
                 <>
                   {incidents.map(inc => (
                     <div key={inc.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: inc.severity === 'DEFCON1' || inc.severity === 'SEVERE' ? 'var(--destructive)' : 'var(--accent)' }}>
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: inc.severity === 'DEFCON1' || inc.severity === 'SEVERE' ? 'hsl(var(--destructive))' : 'hsl(var(--accent))' }}>
                         <AlertTriangle className="w-3.5 h-3.5 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -244,7 +244,7 @@ export default function WarRoomCommand() {
                   ))}
                   {directives.slice(0, 4).map(dir => (
                     <div key={dir.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'var(--primary)' }}>
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--primary))' }}>
                         <Activity className="w-3.5 h-3.5 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -259,7 +259,7 @@ export default function WarRoomCommand() {
                   ))}
                   {narratives.slice(0, 3).map(nar => (
                     <div key={nar.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'var(--accent)' }}>
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--accent))' }}>
                         <MessageSquareWarning className="w-3.5 h-3.5 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -272,7 +272,7 @@ export default function WarRoomCommand() {
                       </div>
                       {nar.dispatch_status === 'PENDING' && (
                         <button className="text-[10px] font-extrabold px-3 rounded-[3px] shrink-0 h-7"
-                          style={{ background: 'rgba(206,17,38,.15)', color: 'var(--destructive)', border: '1px solid rgba(206,17,38,.3)' }}>
+                          style={{ background: 'rgba(206,17,38,.15)', color: 'hsl(var(--destructive))', border: '1px solid rgba(206,17,38,.3)' }}>
                           Dispatch
                         </button>
                       )}
@@ -291,7 +291,7 @@ export default function WarRoomCommand() {
           <div className="rounded-[6px] overflow-hidden" style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}>
             <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid #1c221e' }}>
               <h3 className="font-extrabold text-[12.5px] text-white flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4" style={{ color: 'var(--accent)' }} /> Crisis incidents
+                <AlertTriangle className="w-4 h-4" style={{ color: 'hsl(var(--accent))' }} /> Crisis incidents
               </h3>
               <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>
                 {incidents.filter(i => i.status === 'INVESTIGATING').length} active
@@ -300,7 +300,7 @@ export default function WarRoomCommand() {
             <div>
               {incidents.length === 0 ? (
                 <div className="p-10 text-center">
-                  <CheckCircle2 className="w-7 h-7 mx-auto mb-3" style={{ color: 'var(--primary)' }} />
+                  <CheckCircle2 className="w-7 h-7 mx-auto mb-3" style={{ color: 'hsl(var(--primary))' }} />
                   <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>No active incidents. All sectors secure.</p>
                 </div>
               ) : incidents.map(inc => (
@@ -312,7 +312,7 @@ export default function WarRoomCommand() {
                         inc.severity === 'DEFCON1' ? "animate-pulse" : ""
                       )} style={{
                         background: inc.severity === 'DEFCON1' || inc.severity === 'SEVERE' ? 'rgba(206,17,38,.2)' : 'rgba(218,165,32,.2)',
-                        color: inc.severity === 'DEFCON1' || inc.severity === 'SEVERE' ? 'var(--destructive)' : 'var(--accent)',
+                        color: inc.severity === 'DEFCON1' || inc.severity === 'SEVERE' ? 'hsl(var(--destructive))' : 'hsl(var(--accent))',
                         border: `1px solid ${inc.severity === 'DEFCON1' || inc.severity === 'SEVERE' ? 'rgba(206,17,38,.3)' : 'rgba(218,165,32,.3)'}`
                       }}>
                         {inc.severity}
@@ -328,12 +328,12 @@ export default function WarRoomCommand() {
                   <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid #1c221e' }}>
                     <span className="text-[9px] font-extrabold uppercase tracking-tight px-2 py-0.5 rounded-full" style={{
                       background: inc.status === 'INVESTIGATING' ? 'rgba(218,165,32,.15)' : 'rgba(0,107,63,.15)',
-                      color: inc.status === 'INVESTIGATING' ? 'var(--accent)' : 'var(--primary)',
+                      color: inc.status === 'INVESTIGATING' ? 'hsl(var(--accent))' : 'hsl(var(--primary))',
                     }}>
                       {inc.status.toLowerCase()}
                     </span>
                     <button className="text-[10px] font-extrabold px-4 h-8 rounded-[3px]"
-                      style={{ background: 'rgba(0,107,63,.15)', color: 'var(--primary)', border: '1px solid rgba(0,107,63,.3)' }}>
+                      style={{ background: 'rgba(0,107,63,.15)', color: 'hsl(var(--primary))', border: '1px solid rgba(0,107,63,.3)' }}>
                       Update status
                     </button>
                   </div>

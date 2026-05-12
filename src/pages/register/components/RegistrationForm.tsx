@@ -175,12 +175,24 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-1.5">
-                    <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Country</span>
-                    <select required value={formData.country} onChange={(e) => onInputChange('country', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
-                      <option value="">Select Country</option>
-                      {dbCountries.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Country</span>
+                      <select required value={formData.country} onChange={(e) => onInputChange('country', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
+                        <option value="">Select Country</option>
+                        {dbCountries.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">City</span>
+                      <input 
+                        required 
+                        value={formData.city || ''} 
+                        onChange={(e) => onInputChange('city', e.target.value)} 
+                        className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium focus:border-primary transition-colors outline-none"
+                        placeholder="London / New York"
+                      />
+                    </div>
                   </div>
                 )}
 
@@ -366,12 +378,15 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Residential Address</span>
+                      <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
+                        Residential Address {platform === 'DIASPORA' && <span className="opacity-50 lowercase">(Optional)</span>}
+                      </span>
                       <input 
+                        required={platform === 'GHANA'}
                         value={formData.residentialAddress} 
                         onChange={(e) => onInputChange('residentialAddress', e.target.value)} 
                         className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
-                        placeholder="House no., street, area"
+                        placeholder={platform === 'GHANA' ? "House no., street, area" : "City address (optional)"}
                       />
                     </div>
                   </div>

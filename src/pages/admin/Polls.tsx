@@ -276,7 +276,7 @@ export default function PollsManagement() {
                             className="h-full transition-all duration-1000" 
                             style={{ 
                               width: poll.totalVotes > 10000 ? '90%' : poll.totalVotes > 5000 ? '60%' : '30%', 
-                              backgroundColor: poll.status === 'Active' ? 'var(--primary)' : 'var(--accent)' 
+                              backgroundColor: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))' 
                             }} 
                           />
                         </div>
@@ -287,7 +287,7 @@ export default function PollsManagement() {
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: poll.status === 'Active' ? 'var(--primary)' : 'var(--accent)' }} />
+                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))' }} />
                         <span className={cn(
                           "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-md",
                           poll.status === 'Active' 
@@ -377,7 +377,7 @@ export default function PollsManagement() {
                         className="h-full transition-all duration-1000" 
                         style={{ 
                           width: poll.totalVotes > 10000 ? '90%' : poll.totalVotes > 5000 ? '60%' : '30%', 
-                          backgroundColor: poll.status === 'Active' ? 'var(--primary)' : 'var(--accent)' 
+                          backgroundColor: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))' 
                         }} 
                       />
                     </div>

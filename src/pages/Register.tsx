@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
 import type { Area } from 'react-easy-crop'
 import { getCroppedImg } from '@/lib/imageUtils'
@@ -23,6 +23,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [agreed, setAgreed] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [physicalSubmitted, setPhysicalSubmitted] = useState(false)
   const [regNumber, setRegNumber] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [dbCountries, setDbCountries] = useState<string[]>([])
@@ -128,6 +129,28 @@ export default function Register() {
     if (newPlatform === 'GHANA') setFormData(prev => ({ ...prev, country: 'Ghana', countryCode: '+233' }))
   }
 
+  const handlePhysicalUpload = async (file: File) => {
+    setIsLoading(true)
+    try {
+      const timestamp = Date.now()
+      const fileName = `physical_${timestamp}_${file.name.replace(/\s+/g, '_')}`
+      
+      const { error: uploadError } = await supabase.storage
+        .from('media')
+        .upload(`registrations/${fileName}`, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      setPhysicalSubmitted(true)
+      toast.success('Registration form uploaded successfully!')
+    } catch (error) {
+      toast.error('Upload failed. Please try again or use the online form.')
+      console.error('Physical upload error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formStep < 4) {
@@ -192,7 +215,8 @@ export default function Register() {
           verification_status: 'In Review', age_range: formData.ageRange, avatar_url: finalAvatarUrl,
           education_level: formData.educationLevel, emergency_name: formData.emergencyContactName,
           emergency_relationship: formData.emergencyRelationship, emergency_phone: formData.emergencyNumber,
-          children_count: formData.children_count, residential_address: formData.residentialAddress
+          children_count: formData.children_count, residential_address: formData.residentialAddress,
+          city: formData.city
         })
 
         if (dbError) throw dbError
@@ -215,10 +239,45 @@ export default function Register() {
     )
   }
 
+  if (physicalSubmitted) {
+    return (
+      <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
+        <div className="max-w-[480px] w-full auth-frame p-10 text-center animate-in fade-in zoom-in duration-500">
+          <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10" />
+          </div>
+          <h2 className="text-2xl font-extrabold text-on-surface mb-3 tracking-tight">Form Received, Patriot!</h2>
+          <p className="text-[14px] text-on-surface-muted leading-relaxed mb-8">
+            Your physical registration form has been securely uploaded to the Command Center. Our admin team will verify the details and contact you via phone/email once your account is activated.
+          </p>
+          <div className="space-y-4">
+            <Link to="/" className="block w-full py-4 bg-primary text-white font-bold uppercase tracking-widest text-[12px] rounded-sm hover:opacity-90 transition-all">
+              Return Home
+            </Link>
+            <Button variant="ghost" onClick={() => setPhysicalSubmitted(false)} className="w-full text-xs font-bold">
+              Upload Another Form
+            </Button>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
   if (step === 'choice') {
     return (
       <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
-        <ChoiceStep settings={settings} onSelect={(p) => { handlePlatformChange(p); setStep('form'); setFormStep(1); }} />
+        <ChoiceStep 
+          settings={settings} 
+          onSelect={(p, file) => { 
+            if (p === 'PHYSICAL' && file) {
+              handlePhysicalUpload(file);
+            } else {
+              handlePlatformChange(p); 
+              setStep('form'); 
+              setFormStep(1); 
+            }
+          }} 
+        />
       </main>
     )
   }

@@ -109,6 +109,7 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
               constituency={formData.constituency}
               country={formData.country}
               chapter={formData.chapter}
+              city={formData.city}
             />
           </div>
 

@@ -17,7 +17,7 @@ class MemberService {
     const [usersRes, adminsRes] = await Promise.all([
       supabase
         .from('users')
-        .select('id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession')
+        .select('id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address')
         .order('joined_at', { ascending: false }),
       supabase.from('admins').select('id'),
     ])
@@ -47,7 +47,9 @@ class MemberService {
         gender: u.gender || 'Not specified',
         chapter: u.chapter || 'TBM Ghana Chapter',
         country: u.country || 'Ghana',
-        profession: u.profession || 'Patriot'
+        profession: u.profession || 'Patriot',
+        city: u.city || undefined,
+        residentialAddress: u.residential_address || undefined
       }))
   }
 
@@ -122,7 +124,9 @@ class MemberService {
       gender: data.gender || 'Unknown',
       chapter: data.chapter || 'TBM Ghana Chapter',
       country: data.country || 'Ghana',
-      profession: data.profession || 'Patriot'
+      profession: data.profession || 'Patriot',
+      city: data.city || undefined,
+      residentialAddress: data.residential_address || undefined
     }
   }
 
@@ -191,6 +195,8 @@ class MemberService {
     if (profile.gender) updateData.gender = profile.gender
     if (profile.chapter) updateData.chapter = profile.chapter
     if (profile.profession) updateData.profession = profile.profession
+    if (profile.city) updateData.city = profile.city
+    if (profile.residentialAddress) updateData.residential_address = profile.residentialAddress
 
     const { error } = await supabase
       .from('users')
@@ -317,7 +323,9 @@ class MemberService {
       gender: u.gender || 'Not specified',
       chapter: u.chapter || 'TBM Ghana Chapter',
       country: u.country || 'Ghana',
-      profession: u.profession || 'Patriot'
+      profession: u.profession || 'Patriot',
+      city: u.city || undefined,
+      residentialAddress: u.residential_address || undefined
     }))
   }
 
@@ -350,7 +358,9 @@ class MemberService {
             gender: u.gender || 'Not specified',
             chapter: u.chapter || 'TBM Ghana Chapter',
             country: u.country || 'Ghana',
-            profession: u.profession || 'Patriot'
+            profession: u.profession || 'Patriot',
+            city: u.city || undefined,
+            residentialAddress: u.residential_address || undefined
           })
         }
       )

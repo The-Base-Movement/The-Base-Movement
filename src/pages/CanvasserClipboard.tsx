@@ -95,8 +95,8 @@ export default function CanvasserClipboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <div className="flex flex-col items-center gap-4">
-          <ClipboardList className="w-12 h-12 text-[var(--brand-green)] animate-bounce" />
-          <p className="text-micro font-bold tracking-tight text-[var(--brand-green)]">Loading canvassing protocols...</p>
+          <ClipboardList className="w-12 h-12 text-primary animate-bounce" />
+          <p className="text-micro font-bold tracking-tight text-primary">Loading canvassing protocols...</p>
         </div>
       </div>
     )
@@ -109,8 +109,8 @@ export default function CanvasserClipboard() {
           <Breadcrumbs />
           <div className="mt-4">
             <div className="flex items-center gap-2 mb-2">
-              <span className="flex h-2 w-2 rounded-full bg-[var(--brand-green)] animate-ping"></span>
-              <span className="text-micro font-bold tracking-tight text-[var(--brand-green)]">Operation ground game</span>
+              <span className="flex h-2 w-2 rounded-full bg-primary animate-ping"></span>
+              <span className="text-micro font-bold tracking-tight text-primary">Operation ground game</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-stone-900 flex items-center gap-3 mb-0 tracking-tight italic font-meta">
               Digital <span className="text-stone-400">clipboard</span>
@@ -137,7 +137,7 @@ export default function CanvasserClipboard() {
                 <button 
                   key={camp.id}
                   onClick={() => setSelectedCampaign(camp)}
-                  className="w-full bg-white border border-stone-200 p-6 flex items-center justify-between hover:border-[var(--brand-green)] hover:shadow-md transition-all group text-left"
+                  className="w-full bg-white border border-stone-200 p-6 flex items-center justify-between hover:border-primary hover:shadow-md transition-all group text-left"
                 >
                   <div className="text-left">
                     <div className="flex items-center gap-2 mb-2">
@@ -147,7 +147,7 @@ export default function CanvasserClipboard() {
                     <h3 className="text-sm font-bold text-stone-900 tracking-tight mb-1">{camp.title}</h3>
                     <p className="text-tiny text-stone-500 line-clamp-1">{camp.description}</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-[var(--brand-green)] group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </button>
               ))
             )}
@@ -156,7 +156,7 @@ export default function CanvasserClipboard() {
           <div className="bg-white border border-stone-200 shadow-sm animate-in fade-in slide-in-from-bottom-4">
 
             {/* Red canvasser header */}
-            <div className="text-white p-5 pb-[18px] relative overflow-hidden" style={{ background: 'var(--destructive)' }}>
+            <div className="text-white p-5 pb-[18px] relative overflow-hidden" style={{ background: 'hsl(var(--destructive))' }}>
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <MapPin className="w-24 h-24" />
               </div>
@@ -192,7 +192,7 @@ export default function CanvasserClipboard() {
                 <div className="w-[120px] h-[6px] bg-border rounded-full overflow-hidden">
                   <div
                     className="h-full w-0 rounded-full"
-                    style={{ background: 'linear-gradient(to right, var(--brand-red,#CE1126), var(--brand-gold,#DAA520), var(--brand-green,#006B3F))' }}
+                    style={{ background: 'linear-gradient(to right, #CE1126, #DAA520, #006B3F)' }}
                   />
                 </div>
               </div>
@@ -202,7 +202,7 @@ export default function CanvasserClipboard() {
               
               <div className="space-y-4">
                 <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
-                  <User className="w-4 h-4 text-[var(--brand-green)]" /> Constituent data
+                  <User className="w-4 h-4 text-primary" /> Constituent data
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <input
@@ -210,14 +210,14 @@ export default function CanvasserClipboard() {
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     placeholder="Contact Name (Optional)"
-                    className="w-full h-12 px-4 bg-stone-50 border border-stone-200 focus:border-[var(--brand-green)] focus:ring-0 text-sm font-medium"
+                    className="w-full h-12 px-4 bg-stone-50 border border-stone-200 focus:border-primary focus:ring-0 text-sm font-medium"
                   />
                   <input
                     type="text"
                     value={addressNotes}
                     onChange={(e) => setAddressNotes(e.target.value)}
                     placeholder="House No. / Landmark"
-                    className="w-full h-12 px-4 bg-stone-50 border border-stone-200 focus:border-[var(--brand-green)] focus:ring-0 text-sm font-medium"
+                    className="w-full h-12 px-4 bg-stone-50 border border-stone-200 focus:border-primary focus:ring-0 text-sm font-medium"
                     required
                   />
                 </div>
@@ -225,7 +225,7 @@ export default function CanvasserClipboard() {
 
               <div className="space-y-4">
                 <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-[var(--brand-green)]" /> Interaction result
+                  <FileText className="w-4 h-4 text-primary" /> Interaction result
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[
@@ -260,7 +260,7 @@ export default function CanvasserClipboard() {
               {interactionResult !== 'NOT_HOME' && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
                   <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[var(--brand-green)]" /> Key issues raised
+                    <CheckCircle2 className="w-4 h-4 text-primary" /> Key issues raised
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {issueOptions.map(issue => (
@@ -288,7 +288,7 @@ export default function CanvasserClipboard() {
                     type="checkbox" 
                     checked={needsFollowUp}
                     onChange={(e) => setNeedsFollowUp(e.target.checked)}
-                    className="w-5 h-5 border-2 border-stone-300 text-[var(--brand-green)] focus:ring-[var(--brand-green)] rounded-none" 
+                    className="w-5 h-5 border-2 border-stone-300 text-primary focus:ring-primary rounded-none" 
                   />
                   <div>
                     <span className="text-micro font-bold tracking-tight text-stone-900 block">Needs follow-up</span>
@@ -299,7 +299,7 @@ export default function CanvasserClipboard() {
                 <Button 
                   type="submit" 
                   disabled={submitting || !addressNotes}
-                  className="bg-[var(--brand-green)] text-white hover:bg-green-700 h-12 px-6 rounded-none text-micro font-bold tracking-tight shadow-lg"
+                  className="bg-primary text-white hover:bg-green-700 h-12 px-6 rounded-none text-micro font-bold tracking-tight shadow-lg"
                 >
                   {submitting ? 'Logging...' : 'Log interaction'}
                 </Button>
