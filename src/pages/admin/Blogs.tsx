@@ -311,27 +311,374 @@ export default function AdminBlogs() {
   })
 
   if (currentView === 'edit') {
+    // SEO score calculation
+    const seoChecks = [
+      { ok: (formData.title?.length || 0) > 10 && (formData.title?.length || 0) <= 64, label: `Title ${formData.title?.length || 0}ch · ${(formData.title?.length || 0) <= 64 ? 'within limit' : 'too long'}` },
+      { ok: !!(formData.metaDescription && formData.metaDescription.length > 50), label: `Meta description ${formData.metaDescription ? `set · ${formData.metaDescription.length}ch` : 'missing'}` },
+      { ok: !!(formData.imageUrl), label: formData.imageUrl ? 'Featured image set' : 'No featured image' },
+      { ok: formData.tags.length > 0, label: formData.tags.length > 0 ? `${formData.tags.length} tag${formData.tags.length > 1 ? 's' : ''} added` : 'No tags set' },
+      { ok: !!(formData.excerpt && formData.excerpt.length > 80), label: `Excerpt ${formData.excerpt?.length || 0}ch · ${(formData.excerpt?.length || 0) > 80 ? 'good length' : 'too short'}` },
+    ]
+    const seoScore = Math.round((seoChecks.filter(c => c.ok).length / seoChecks.length) * 100)
+
+    const MEDIA_IMAGES = [
+      CATEGORY_PLACEHOLDERS['Movement'], CATEGORY_PLACEHOLDERS['Youth'],
+      CATEGORY_PLACEHOLDERS['Economy'], CATEGORY_PLACEHOLDERS['Diaspora'],
+      CATEGORY_PLACEHOLDERS['Integrity'], CATEGORY_PLACEHOLDERS['Community'],
+      CATEGORY_PLACEHOLDERS['Impact'], DEFAULT_PLACEHOLDER,
+    ]
+
     return (
-      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-on-surface/40 normal-case">
-            <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-on-surface text-sm font-medium normal-case" onClick={() => setCurrentView('list')}>
+      <div className="-mx-[28px] -mt-[24px] bg-[#f6fbf4] flex flex-col animate-in fade-in duration-500" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
+
+        {/* ── Top action bar ── */}
+        <div className="bg-white border-b border-border/40 px-6 py-[10px] flex items-center gap-4 sticky top-0 z-20">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <button onClick={() => setCurrentView('list')} className="text-[10.5px] font-extrabold text-muted-foreground/60 hover:text-on-surface uppercase tracking-[.06em]">
               Blog posts
+            </button>
+            <span className="text-muted-foreground/30 text-sm">/</span>
+            <span className="text-[10.5px] font-extrabold text-on-surface uppercase tracking-[.06em]">
+              {editingPost ? 'Edit post' : 'New post'}
+            </span>
+            <span className="inline-flex items-center gap-1.5 font-extrabold text-[10px] tracking-[.06em] uppercase px-2 py-0.5 rounded-full border ml-2"
+              style={{ color: formData.status === 'Published' ? 'var(--primary)' : 'var(--accent)', background: formData.status === 'Published' ? 'rgba(0,107,63,.08)' : 'rgba(218,165,32,.12)', borderColor: formData.status === 'Published' ? 'rgba(0,107,63,.3)' : 'rgba(218,165,32,.3)' }}>
+              <span className="w-[5px] h-[5px] rounded-full bg-current block" />
+              {formData.status}
+            </span>
+            <span className="text-[11px] text-muted-foreground/50 font-bold ml-1">· Auto-saved</span>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button variant="outline" size="sm" className="h-8 px-3 text-[11px] font-bold rounded-sm gap-1.5 border-border/40">
+              <Eye className="w-3 h-3" /> Preview
             </Button>
-            <span className="text-sm text-on-surface/20">/</span>
-            <span className="text-sm font-semibold text-on-surface normal-case">{editingPost ? 'Edit post' : 'Create new post'}</span>
+            {!canPublish && (
+              <Button variant="outline" size="sm" className="h-8 px-4 text-[11px] font-bold rounded-sm border-border/40"
+                onClick={() => setFormData({...formData, status: 'Pending Verification'})}
+              >
+                Request review
+              </Button>
+            )}
+            <Button variant="primary" size="sm" className="h-8 px-4 text-[11px] font-bold rounded-sm shadow-sm"
+              disabled={isLoading}
+              onClick={handleSubmit as unknown as React.MouseEventHandler<HTMLButtonElement>}
+            >
+              {isLoading ? 'Saving…' : formData.status === 'Published' ? 'Publish' : 'Save draft'}
+            </Button>
           </div>
         </div>
 
-        <div>
-          <h2 className="text-3xl font-bold text-on-surface tracking-tight normal-case">
-            {editingPost ? 'Edit post' : 'Create new post'}
-          </h2>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1 font-medium">
-            Fill in the details below to configure and publish your post.
-          </p>
+        {/* ── 3-panel body ── */}
+        <div className="flex flex-1 overflow-hidden">
+
+          {/* LEFT: Media library (220px) */}
+          <aside className="w-[220px] shrink-0 bg-white border-r border-border/40 flex flex-col overflow-hidden">
+            <div className="px-4 py-[14px] pb-2 shrink-0">
+              <div className="text-[10px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50">Updates · Composer</div>
+              <h3 className="font-extrabold text-[14px] text-on-surface tracking-[-0.005em] mt-0.5">Media library</h3>
+            </div>
+            <div className="flex px-3 gap-0.5 border-b border-border/40 shrink-0">
+              {['Images', 'Video', 'Docs'].map((tab, i) => (
+                <button key={tab} className={cn(
+                  "px-[10px] py-2 font-extrabold text-[11px] border-b-2 transition-colors",
+                  i === 0 ? "border-destructive text-on-surface" : "border-transparent text-muted-foreground/60 hover:text-on-surface"
+                )}>{tab}</button>
+              ))}
+            </div>
+            <div className="px-3 py-3 shrink-0">
+              <input className="w-full px-3 py-2 text-[12px] rounded-[6px] border border-border/40 bg-muted/5 outline-none focus:border-primary/50" placeholder="Search media…" />
+            </div>
+            <div className="px-3 pb-3 shrink-0">
+              <label className="block border-2 border-dashed border-border/60 rounded-[6px] text-center py-3 cursor-pointer hover:border-primary/60 hover:bg-primary/5 transition-colors">
+                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  const { contentService } = await import('@/services/contentService')
+                  const url = await contentService.uploadImage(file, 'blog-images')
+                  if (url) setFormData({...formData, imageUrl: url})
+                }} />
+                <b className="font-extrabold text-[11.5px] text-on-surface block">Drop to upload</b>
+                <span className="text-[11px] text-muted-foreground/60">JPG, PNG · up to 50 MB</span>
+              </label>
+            </div>
+            <div className="grid grid-cols-2 gap-2 px-3 pb-3 overflow-y-auto flex-1">
+              {MEDIA_IMAGES.map((url, i) => (
+                <button key={i} type="button" onClick={() => setFormData({...formData, imageUrl: url})}
+                  className={cn(
+                    "aspect-square rounded-[4px] overflow-hidden relative group border-2 transition-all",
+                    formData.imageUrl === url ? "border-primary" : "border-transparent hover:border-primary/40"
+                  )}>
+                  <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                  {formData.imageUrl === url && (
+                    <span className="absolute bottom-1 left-1 text-[8.5px] font-extrabold uppercase tracking-[.05em] px-1.5 py-0.5 rounded-[2px] text-white" style={{ background: 'rgba(0,0,0,.6)' }}>In use</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </aside>
+
+          {/* CENTER: Composer */}
+          <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
+            {/* Formatting toolbar */}
+            <div className="bg-white border-b border-border/40 px-6 py-2 flex items-center gap-1 flex-wrap shrink-0">
+              <div className="flex gap-0.5 pr-[10px] mr-1.5 border-r border-border/40">
+                <Select value={formData.category || 'Movement'} onValueChange={(val) => setFormData({...formData, category: val})}>
+                  <SelectTrigger className="h-[30px] px-[10px] border border-border/40 rounded-[4px] text-[11.5px] font-extrabold bg-white min-w-[120px] gap-1.5">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {['Movement','Youth','Economy','Diaspora','Integrity','Community'].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              {[['B','font-bold'],['I','italic'],['U','underline']].map(([label, _]) => (
+                <button key={label} type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center text-[13px] font-extrabold text-on-surface hover:bg-muted/10 transition-colors border-0 bg-transparent">{label}</button>
+              ))}
+              <div className="flex gap-0.5 px-[10px] mx-1.5 border-x border-border/40">
+                {['¶','"','•','1.'].map(s => (
+                  <button key={s} type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center text-[12px] font-extrabold text-on-surface hover:bg-muted/10 transition-colors bg-transparent border-0">{s}</button>
+                ))}
+              </div>
+              <button type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center text-[13px] hover:bg-muted/10 transition-colors bg-transparent border-0">🔗</button>
+              <button type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center hover:bg-muted/10 transition-colors bg-transparent border-0">
+                <Upload className="w-3.5 h-3.5 text-on-surface" />
+              </button>
+              <div className="ml-auto">
+                <Select value={formData.status} onValueChange={(val: 'Draft' | 'Pending Verification' | 'Published') => setFormData({...formData, status: val})}>
+                  <SelectTrigger className="h-[30px] px-[10px] border border-border/40 rounded-[4px] text-[11.5px] font-extrabold bg-white gap-1.5">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Draft">Draft</SelectItem>
+                    <SelectItem value="Pending Verification">Pending</SelectItem>
+                    <SelectItem value="Published" disabled={!canPublish}>Published</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Document canvas */}
+            <div className="flex-1 overflow-y-auto p-8" style={{ background: 'var(--container-low)' }}>
+              <form onSubmit={handleSubmit} id="blog-compose-form">
+                <div className="max-w-[740px] mx-auto bg-white border border-border/40 rounded-[6px] px-[56px] py-[48px] pb-[64px] relative" style={{ minHeight: 920 }}>
+                  {/* Brand line */}
+                  <div className="absolute top-0 left-[56px] w-24 h-1 flex overflow-hidden rounded-b-[2px]">
+                    <span className="flex-1" style={{ background: 'var(--brand-red)' }} />
+                    <span className="flex-1" style={{ background: 'var(--brand-gold)' }} />
+                    <span className="flex-1" style={{ background: 'var(--brand-green)' }} />
+                  </div>
+
+                  {/* Breadcrumb in doc */}
+                  <div className="font-extrabold text-[10.5px] uppercase tracking-[.08em] mt-6 mb-3" style={{ color: 'var(--primary)' }}>
+                    Updates · {formData.category || 'General'}
+                  </div>
+
+                  {/* Title */}
+                  <input
+                    required
+                    value={formData.title ?? ''}
+                    onChange={(e) => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g,'-').replace(/[^\w-]+/g,'')})}
+                    placeholder="Article title…"
+                    className="w-full font-extrabold text-[40px] tracking-[-0.025em] leading-[1.1] outline-none border-0 bg-transparent text-on-surface placeholder:text-muted-foreground/30 mb-3"
+                    style={{ fontFamily: "'Public Sans', sans-serif" }}
+                  />
+
+                  {/* Subtitle / excerpt */}
+                  <textarea
+                    required
+                    value={formData.excerpt ?? ''}
+                    onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
+                    placeholder="Subtitle or opening hook…"
+                    rows={2}
+                    className="w-full text-[18px] leading-[1.5] resize-none outline-none border-0 bg-transparent mb-6 placeholder:text-muted-foreground/30"
+                    style={{ fontFamily: "'Lora', 'Georgia', serif", color: 'var(--on-surface-muted)' }}
+                  />
+
+                  {/* Author byline */}
+                  <div className="flex items-center gap-[10px] my-[22px] py-[14px] border-y border-border/40">
+                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-extrabold text-sm shrink-0">
+                      {(formData.authorName?.[0] || currentUser?.name?.[0] || 'A').toUpperCase()}
+                    </div>
+                    <div>
+                      <b className="font-extrabold text-[12.5px] block">{formData.authorName || currentUser?.name || 'Author'}</b>
+                      <span className="text-[11px] text-muted-foreground/60 font-bold">{formData.authorRole || currentUser?.role?.toLowerCase().replace(/_/g,' ') || 'Editor'}</span>
+                    </div>
+                    <span className="ml-auto text-[10.5px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50">
+                      {formData.status === 'Published' ? `Pub ${new Date(formData.publishedAt).toLocaleDateString('en-US', { month:'short', day:'numeric' })}` : 'Draft'} · {formData.readTime}
+                    </span>
+                  </div>
+
+                  {/* TinyMCE content editor */}
+                  <Editor
+                    apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+                    value={formData.content ?? ''}
+                    onEditorChange={(content) => setFormData({...formData, content})}
+                    init={{
+                      height: 520,
+                      menubar: false,
+                      toolbar: false,
+                      statusbar: false,
+                      plugins: 'anchor autolink link lists image wordcount',
+                      content_style: 'body { font-family: "Lora", Georgia, serif; font-size:16.5px; color:#1f2520; line-height:1.7; background:white; border:none; outline:none; }',
+                      skin: 'oxide',
+                      content_css: 'default',
+                      images_upload_handler: async (blobInfo: { blob: () => Blob; filename: () => string }) => {
+                        const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type })
+                        const { contentService } = await import('@/services/contentService')
+                        const url = await contentService.uploadImage(file, 'editor-content')
+                        if (!url) throw new Error('Upload failed')
+                        return url
+                      }
+                    }}
+                  />
+
+                  {/* Add block prompt */}
+                  <div className="mt-4 px-4 py-[10px] flex items-center gap-2 text-[11.5px] font-extrabold text-muted-foreground/40 border border-dashed border-border/40 rounded-[4px]">
+                    <span>+ Add block</span>
+                    <span className="ml-1">· Press</span>
+                    <kbd className="bg-muted/10 px-[5px] py-[1px] rounded-[3px] text-[10px] font-extrabold border border-border/40">/</kbd>
+                    <span>for commands, or drag from the library</span>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </main>
+
+          {/* RIGHT: Inspector (320px) */}
+          <aside className="w-[320px] shrink-0 bg-white border-l border-border/40 flex flex-col overflow-y-auto">
+
+            {/* Post settings */}
+            <div className="px-[18px] py-4 border-b border-border/40">
+              <h4 className="text-[10.5px] font-extrabold uppercase tracking-[.07em] text-muted-foreground/50 mb-3">Post settings</h4>
+              <div className="space-y-3">
+                <div>
+                  <span className="text-[10.5px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50 block mb-1">URL slug</span>
+                  <Input value={formData.slug ?? ''} onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/ /g,'-')})}
+                    placeholder="article-url-slug" className="rounded-sm border-border/40 h-9 text-[12px]" />
+                </div>
+                <div>
+                  <span className="text-[10.5px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50 block mb-1">Visibility</span>
+                  <div className="grid grid-cols-2 gap-[5px]">
+                    {['Public','Members'].map(v => (
+                      <button key={v} type="button" className={cn("py-[9px] font-extrabold text-[11px] rounded-[4px] border transition-all",
+                        v === 'Public' ? "bg-[#181d19] text-white border-[#181d19]" : "bg-white text-on-surface border-border/40 hover:border-on-surface/30"
+                      )}>{v}</button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[10.5px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50 block mb-1">Featured</span>
+                  <div className="grid grid-cols-2 gap-[5px]">
+                    {[{label:'Off',val:false},{label:'On homepage',val:true}].map(opt => (
+                      <button key={opt.label} type="button"
+                        onClick={() => setFormData({...formData, isFeatured: opt.val})}
+                        className={cn("py-[9px] font-extrabold text-[11px] rounded-[4px] border transition-all",
+                          formData.isFeatured === opt.val ? "bg-[#181d19] text-white border-[#181d19]" : "bg-white text-on-surface border-border/40 hover:border-on-surface/30"
+                        )}>{opt.label}</button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[10.5px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50 block mb-1">Tags</span>
+                  <div className="flex flex-wrap gap-[5px] mt-1">
+                    {formData.tags.map(tag => (
+                      <span key={tag} className="inline-flex items-center gap-1 px-[9px] py-[3px] rounded-full text-[10.5px] font-extrabold" style={{ background: 'rgba(218,165,32,.1)', borderColor: 'rgba(218,165,32,.3)', border: '1px solid', color: '#7d5d12' }}>
+                        {tag}
+                        <button type="button" onClick={() => setFormData({...formData, tags: formData.tags.filter(t => t !== tag)})} className="text-muted-foreground/60 font-extrabold hover:text-on-surface">×</button>
+                      </span>
+                    ))}
+                    <input
+                      placeholder="+ Add tag"
+                      className="text-[10.5px] font-extrabold outline-none bg-transparent border-0 text-primary"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ',') {
+                          e.preventDefault()
+                          const val = (e.target as HTMLInputElement).value.trim()
+                          if (val && !formData.tags.includes(val)) setFormData({...formData, tags: [...formData.tags, val]});
+                          (e.target as HTMLInputElement).value = ''
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* SEO inspector */}
+            <div className="px-[18px] py-4 border-b border-border/40">
+              <h4 className="text-[10.5px] font-extrabold uppercase tracking-[.07em] text-muted-foreground/50 mb-3">SEO · Readability</h4>
+              <div className="flex justify-between items-baseline mb-[6px]">
+                <b className="font-extrabold text-[20px] tracking-[-0.02em]" style={{ color: 'var(--primary)' }}>
+                  {seoScore}<span className="text-[13px] text-muted-foreground/50 ml-0.5 font-bold">/100</span>
+                </b>
+                <span className="text-[10px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50">
+                  {seoScore >= 80 ? 'Good' : seoScore >= 50 ? 'Fair' : 'Needs work'}
+                </span>
+              </div>
+              <div className="h-[6px] bg-border/40 rounded-full overflow-hidden mb-3">
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${seoScore}%`, background: 'linear-gradient(to right, var(--brand-red), var(--brand-gold) 60%, var(--brand-green))' }} />
+              </div>
+              <div className="space-y-0.5">
+                {seoChecks.map((chk, i) => (
+                  <div key={i} className="flex items-center gap-2 py-[6px] text-[11.5px] font-bold" style={{ color: 'var(--on-surface)' }}>
+                    {chk.ok
+                      ? <svg className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--primary)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+                      : <svg className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--accent)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path fill="currentColor" d="M11 10h2v5h-2zM11 16h2v2h-2z"/></svg>
+                    }
+                    {chk.label}
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-3 mt-4">
+                <div>
+                  <span className="text-[10.5px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50 block mb-1">Meta description</span>
+                  <Textarea value={formData.metaDescription ?? ''} onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
+                    placeholder="Brief description for search snippets…" className="rounded-sm border-border/40 min-h-[72px] text-[12px] resize-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* Schedule */}
+            <div className="px-[18px] py-4 border-b border-border/40">
+              <h4 className="text-[10.5px] font-extrabold uppercase tracking-[.07em] text-muted-foreground/50 mb-3">Schedule</h4>
+              <div className="grid grid-cols-2 gap-[5px] mb-3">
+                {['Publish now','Schedule'].map((opt, i) => (
+                  <button key={opt} type="button" className={cn("py-[9px] font-extrabold text-[11px] rounded-[4px] border transition-all",
+                    i === 0 ? "bg-[#181d19] text-white border-[#181d19]" : "bg-white text-on-surface border-border/40"
+                  )}>{opt}</button>
+                ))}
+              </div>
+              <div>
+                <span className="text-[10.5px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50 block mb-1">Est. read time</span>
+                <Input value={formData.readTime ?? ''} onChange={(e) => setFormData({...formData, readTime: e.target.value})}
+                  placeholder="5 min read" className="rounded-sm border-border/40 h-9 text-[12px]" />
+              </div>
+            </div>
+
+            {/* Author */}
+            <div className="px-[18px] py-4 border-b border-border/40">
+              <h4 className="text-[10.5px] font-extrabold uppercase tracking-[.07em] text-muted-foreground/50 mb-3">Author</h4>
+              <div className="space-y-2">
+                <Input value={formData.authorName ?? ''} onChange={(e) => setFormData({...formData, authorName: e.target.value})} placeholder="Author name" className="rounded-sm border-border/40 h-9 text-[12px]" />
+                <Input value={formData.authorRole ?? ''} onChange={(e) => setFormData({...formData, authorRole: e.target.value})} placeholder="Role / title" className="rounded-sm border-border/40 h-9 text-[12px]" />
+              </div>
+            </div>
+
+            {/* Sticky footer actions */}
+            <div className="px-[18px] py-[14px] bg-muted/5 mt-auto flex gap-2">
+              <Button type="button" variant="default" onClick={() => setCurrentView('list')} className="flex-1 h-[38px] text-[12px] rounded-sm border-border/40">
+                Discard
+              </Button>
+              <Button form="blog-compose-form" type="submit" variant="primary" disabled={isLoading} className="flex-1 h-[38px] text-[12px] rounded-sm shadow-sm">
+                {isLoading ? 'Saving…' : 'Send to review'}
+              </Button>
+            </div>
+          </aside>
+
         </div>
+      </div>
+    )
+  }
         
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
@@ -809,7 +1156,7 @@ export default function AdminBlogs() {
 
           {/* Content Telemetry Card */}
           <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-on-surface text-white p-6">
-             <p className="text-micro font-bold text-white/40 uppercase tracking-widest mb-4">Content telemetry</p>
+             <p className="text-micro font-bold text-white/40 uppercase tracking-[.06em] mb-4">Content telemetry</p>
              <div className="space-y-4">
                 <div className="flex justify-between items-end">
                    <span className="text-xs font-bold">Total Articles</span>
