@@ -280,6 +280,31 @@ class DonationService {
       )
       .subscribe()
   }
+
+  async getMemberDonationStats(phone: string): Promise<{ total: number; count: number; lastMonth: number }> {
+    const { data, error } = await supabase
+      .from('donations')
+      .select('amount, created_at')
+      .eq('phone', phone)
+      .eq('status', 'Verified')
+
+    if (error || !data) return { total: 0, count: 0, lastMonth: 0 }
+
+    const now = new Date()
+    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
+
+    const stats = data.reduce((acc, d) => {
+      const amt = Number(d.amount)
+      acc.total += amt
+      acc.count += 1
+      if (new Date(d.created_at) >= oneMonthAgo) {
+        acc.lastMonth += amt
+      }
+      return acc
+    }, { total: 0, count: 0, lastMonth: 0 })
+
+    return stats
+  }
 }
 
 export const donationService = DonationService.getInstance()

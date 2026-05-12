@@ -681,6 +681,10 @@ class AdminService {
     return success
   }
 
+  async getAuthors(): Promise<Author[]> {
+    return contentService.getAuthors()
+  }
+
   // --- Press Operations ---
 
   async getPressReleases(): Promise<PressRelease[]> {

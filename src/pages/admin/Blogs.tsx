@@ -38,7 +38,7 @@ import { Badge } from '@/components/ui/badge'
 import { Editor } from '@tinymce/tinymce-react'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
-import type { BlogPost, AdminUser } from '@/types/admin'
+import type { BlogPost, AdminUser, Author } from '@/types/admin'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { useToast } from '@/hooks/use-toast'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
@@ -59,6 +59,7 @@ const DEFAULT_PLACEHOLDER = 'https://images.unsplash.com/photo-1517245386807-bb4
 
 export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
+  const [authors, setAuthors] = useState<Author[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(adminService.getCurrentUser())
   
@@ -169,6 +170,19 @@ export default function AdminBlogs() {
       setIsLoading(false)
     }
   }, [toast])
+
+  const fetchAuthors = useCallback(async () => {
+    try {
+      const data = await adminService.getAuthors()
+      setAuthors(data)
+    } catch (err) {
+      console.error('[SYSTEM] Failed to fetch authors:', err)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchAuthors()
+  }, [fetchAuthors])
 
 
 
@@ -512,12 +526,53 @@ export default function AdminBlogs() {
 
                   {/* Author byline */}
                   <div className="flex items-center gap-[10px] my-[22px] py-[14px] border-y border-border/40">
-                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-extrabold text-sm shrink-0">
-                      {(formData.authorName?.[0] || currentUser?.name?.[0] || 'A').toUpperCase()}
+                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-extrabold text-sm shrink-0 overflow-hidden">
+                      {formData.authorImage ? (
+                        <img src={formData.authorImage} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        (formData.authorName?.[0] || currentUser?.name?.[0] || 'A').toUpperCase()
+                      )}
                     </div>
-                    <div>
-                      <b className="font-extrabold text-[12.5px] block">{formData.authorName || currentUser?.name || 'Author'}</b>
-                      <span className="text-[11px] text-muted-foreground/60 font-bold">{formData.authorRole || currentUser?.role?.toLowerCase().replace(/_/g,' ') || 'Editor'}</span>
+                    <div className="flex-1">
+                      <Select 
+                        value={formData.authorId || (authors[0]?.id)} 
+                        onValueChange={(val) => {
+                          const author = authors.find(a => a.id === val)
+                          if (author) {
+                            setFormData({
+                              ...formData, 
+                              authorId: author.id,
+                              authorName: author.name,
+                              authorRole: author.role || '',
+                              authorImage: author.imageUrl || '',
+                              authorBio: author.bio || ''
+                            })
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="h-auto p-0 border-0 bg-transparent shadow-none focus:ring-0 text-left w-auto">
+                          <div className="flex flex-col">
+                            <b className="font-extrabold text-[12.5px] block leading-tight">
+                              {formData.authorName || (authors.length > 0 ? 'Select Author' : (currentUser?.name || 'Author'))}
+                            </b>
+                            <span className="text-[11px] text-muted-foreground/60 font-bold leading-tight">
+                              {formData.authorRole || (authors.find(a => a.id === formData.authorId)?.role) || (currentUser?.role?.toLowerCase().replace(/_/g,' ')) || 'Editor'}
+                            </span>
+                          </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {authors.map(author => (
+                            <SelectItem key={author.id} value={author.id}>
+                              <div className="flex items-center gap-2">
+                                <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold overflow-hidden">
+                                  {author.imageUrl ? <img src={author.imageUrl} alt="" className="w-full h-full object-cover" /> : author.name[0]}
+                                </div>
+                                <span>{author.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <span className="ml-auto text-[10.5px] font-extrabold uppercase tracking-[.06em] text-muted-foreground/50">
                       {formData.status === 'Published' ? `Pub ${new Date(formData.publishedAt).toLocaleDateString('en-US', { month:'short', day:'numeric' })}` : 'Draft'} · {formData.readTime}
@@ -532,7 +587,7 @@ export default function AdminBlogs() {
                     init={{
                       height: 520,
                       menubar: false,
-                      toolbar: false,
+                      toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | removeformat',
                       statusbar: false,
                       plugins: 'anchor autolink link lists image wordcount',
                       content_style: 'body { font-family: "Lora", Georgia, serif; font-size:16.5px; color:#1f2520; line-height:1.7; background:white; border:none; outline:none; }',

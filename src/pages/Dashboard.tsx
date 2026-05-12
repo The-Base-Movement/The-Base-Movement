@@ -6,6 +6,8 @@ import { QuickActions } from './dashboard/components/QuickActions'
 import { ActivityFeed } from './dashboard/components/ActivityFeed'
 import { MovementJourney } from './dashboard/components/MovementJourney'
 import { Button as NeonButton } from '@/components/ui/neon-button'
+import { donationService } from '@/services/donationService'
+import { gamificationService } from '@/services/gamificationService'
 
 interface DashboardMember {
   full_name: string
@@ -23,6 +25,8 @@ interface DashboardMember {
 export default function Dashboard() {
   const [member, setMember] = useState<DashboardMember | null>(null)
   const [loading, setLoading] = useState(true)
+  const [contributionStats, setContributionStats] = useState({ total: 0, lastMonth: 0 })
+  const [rankInfo, setRankInfo] = useState({ rank: 99, delta: 'Stable' })
 
   useEffect(() => {
     async function fetchData() {
@@ -57,6 +61,18 @@ export default function Dashboard() {
           platform: liveMember.platform,
           gender: liveMember.gender
         })
+
+        // Fetch additional stats
+        try {
+          const [donations, rank] = await Promise.all([
+            donationService.getMemberDonationStats(liveMember.phone),
+            gamificationService.getMemberRank(liveMember.id)
+          ])
+          setContributionStats({ total: donations.total, lastMonth: donations.lastMonth })
+          setRankInfo({ rank: rank.rank, delta: rank.delta })
+        } catch (err) {
+          console.warn('[DASHBOARD] Secondary stats sync failed:', err)
+        }
       }
       setLoading(false)
     }
@@ -104,7 +120,9 @@ export default function Dashboard() {
       {/* Stat Tiles */}
       <StatCards 
         memberStatus={member?.status || 'Verified'}
-        memberSince="14 mo."
+        memberSince={member?.joined_date || '14 mo.'}
+        contributionYTD={contributionStats}
+        rank={rankInfo}
       />
 
       {/* Hero row: membership card + quick actions */}

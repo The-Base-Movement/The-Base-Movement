@@ -133,18 +133,26 @@ export function ProductCard({ product, onShare }: ProductProps) {
             {product.category || 'General'}
           </span>
 
-          <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
+          <Link 
+            to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}
+            className="group/title flex items-start justify-between gap-3"
+          >
             <h5
               id={`product-name-${product.id}`}
-              className="font-meta text-[15px] font-extrabold tracking-[-0.005em] leading-[1.3] text-on-surface group-hover:text-primary transition-colors line-clamp-2 mb-0"
+              className="font-meta text-[15px] font-extrabold tracking-[-0.005em] leading-[1.3] text-on-surface group-hover/title:text-primary transition-colors line-clamp-2 mb-0"
             >
               {product.name}
             </h5>
+            <ArrowRight className="w-4 h-4 text-primary shrink-0 mt-0.5 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300" />
           </Link>
 
-          <div className="flex items-center gap-1 text-[11px] text-on-surface-muted">
-            <span className="text-accent text-[13px] leading-none">★★★★★</span>
-            {product.rating || '4.8'}
+          <div className="flex items-center gap-1.5 text-[11px] text-on-surface-muted">
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star key={s} className="w-3 h-3 fill-accent text-accent" />
+              ))}
+            </div>
+            <span className="font-bold">{product.rating || '4.8'}</span>
           </div>
 
           <div className="mt-auto pt-[10px] border-t border-border flex items-center justify-between gap-3">

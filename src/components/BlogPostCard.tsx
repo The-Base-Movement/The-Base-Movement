@@ -53,13 +53,14 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           <span>{post.readTime}</span>
         </div>
 
-        <Link to={`${baseUrl}/${post.slug}`}>
+        <Link to={`${baseUrl}/${post.slug}`} className="group/title flex items-start justify-between gap-3">
           <h3
             id={`blog-post-title-${post.id}`}
-            className="font-['Public_Sans',sans-serif] font-extrabold text-[17px] leading-[1.3] tracking-[-0.01em] mb-2 text-[var(--on-surface,#181d19)] group-hover:text-[var(--primary)] transition-colors"
+            className="font-['Public_Sans',sans-serif] font-extrabold text-[17px] leading-[1.3] tracking-[-0.01em] mb-2 text-[var(--on-surface,#181d19)] group-hover/title:text-[var(--primary)] transition-colors"
           >
             {post.title}
           </h3>
+          <ArrowRight className="w-4 h-4 text-[var(--primary)] shrink-0 mt-1 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300" />
         </Link>
 
         <p className="text-[13px] text-[var(--on-surface-muted,#6b7280)] leading-[1.55] mb-[14px] line-clamp-3 flex-1">

@@ -17,9 +17,16 @@ function Tile({ color, label, value, delta, icon }: {
   )
 }
 
-export function StatCards({ memberStatus, memberSince }: { 
+export function StatCards({ 
+  memberStatus, 
+  memberSince,
+  contributionYTD,
+  rank
+}: { 
   memberStatus: string
   memberSince: string
+  contributionYTD: { total: number; lastMonth: number }
+  rank: { rank: number; delta: string }
 }) {
   return (
     <div className="stats4 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -33,22 +40,22 @@ export function StatCards({ memberStatus, memberSince }: {
       <Tile
         color="gold"
         label="Contribution YTD"
-        value="₵420"
-        delta="+₵80 this month"
+        value={`₵${contributionYTD.total}`}
+        delta={`+₵${contributionYTD.lastMonth} this month`}
         icon="north"
       />
       <Tile
         color="ink"
         label="Member Since"
         value={memberSince || '14 mo.'}
-        delta="Joined Mar 2025"
+        delta={`Joined ${memberSince}`}
       />
       <Tile
         color="black"
         label="Chapter Rank"
-        value="#08"
-        delta="Up 3 this week"
-        icon="north"
+        value={`#${rank.rank.toString().padStart(2, '0')}`}
+        delta={rank.delta}
+        icon={rank.delta.includes('Up') ? 'north' : undefined}
       />
 
       <style dangerouslySetInnerHTML={{ __html: `

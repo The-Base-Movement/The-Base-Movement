@@ -1,0 +1,164 @@
+/* =========================================================================
+   THE BASE MOVEMENT — colors & type tokens
+   "Ghana First, Jobs for the Youth!"
+   Source of truth: tailwind.config.js + src/index.css from
+   github.com/Styphler17/The-Base-Movement
+   ========================================================================= */
+
+/* --- FONTS ---------------------------------------------------------------- */
+@font-face{
+  font-family:'Public Sans';
+  font-style:normal;font-weight:400;font-display:swap;
+  src:url('fonts/PublicSans-Regular.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Public Sans';
+  font-style:normal;font-weight:700;font-display:swap;
+  src:url('fonts/PublicSans-Bold.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Public Sans';
+  font-style:normal;font-weight:900;font-display:swap;
+  src:url('fonts/PublicSans-Black.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Work Sans';
+  font-style:normal;font-weight:400;font-display:swap;
+  src:url('fonts/WorkSans-Regular.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Work Sans';
+  font-style:normal;font-weight:700;font-display:swap;
+  src:url('fonts/WorkSans-Bold.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Work Sans';
+  font-style:normal;font-weight:900;font-display:swap;
+  src:url('fonts/WorkSans-Black.woff2') format('woff2');
+}
+
+:root{
+  /* --- BRAND COLORS (Ghana flag) --- */
+  --brand-red:    #CE1126;          /* Call to action, urgency */
+  --brand-gold:   #DAA520;          /* Values: patriotism, honesty, discipline */
+  --brand-green:  #006B3F;          /* Long-term vision, growth */
+  --brand-black:  #000000;          /* Black Star — strength, unity */
+
+  /* HSL forms used by shadcn-style tokens */
+  --primary:      156 100% 21%;     /* brand-green */
+  --accent:        45  80% 45%;     /* brand-gold  */
+  --destructive:    0  85% 44%;     /* brand-red   */
+
+  /* --- SURFACES & FOREGROUNDS --- */
+  --background:           #f6fbf4;  /* slightly warm green-tinted off-white */
+  --surface:              #f6fbf4;
+  --surface-warm:         #F7F5F2;  /* footer / soft sections */
+  --surface-container:    #ebefe9;
+  --surface-container-low:#f1f5ee;
+  --surface-container-hi: #e5e9e3;
+  --surface-dim:          #d7dbd5;
+  --off-white:            #FDFCFB;
+  --card:                 #ffffff;
+
+  --on-surface:           #181d19;  /* near-black ink */
+  --on-surface-muted:     #6f7a71;
+  --muted-gray:           #666666;
+  --charcoal-dark:        #1A1A1A;  /* CTA / newsletter dark block */
+
+  --border:               #dfe4dd;
+  --outline:              #6f7a71;
+  --outline-variant:      #bec9bf;
+  --divider-gold:         rgba(218,165,32,.30);
+
+  --error-deep:           #8B0000;
+  --success-muted:        #4C7F63;
+  --info-soft:            #4682B4;
+
+  /* --- TYPE: families --- */
+  --font-display: 'Public Sans','Work Sans',ui-sans-serif,system-ui,sans-serif;
+  --font-body:    'Work Sans','Public Sans',ui-sans-serif,system-ui,sans-serif;
+  --font-meta:    'Public Sans',ui-sans-serif,system-ui,sans-serif;
+  --font-icon:    'Material Symbols Outlined';
+
+  /* --- TYPE: scale (px tokens from src/index.css) --- */
+  --fs-micro: 12px;
+  --fs-tiny:  13px;
+  --fs-xs:    14px;
+  --fs-sm:    16px;
+  --fs-base:  18px;
+  --fs-lg:    22px;
+  --fs-xl:    28px;
+  --fs-2xl:   36px;
+  --fs-3xl:   48px;
+  --fs-4xl:   64px;
+
+  /* responsive heading scale (clamp) */
+  --font-scale: 1.0;
+  --font-heading-scale: 1.0;
+  --h1-size: clamp(2.25rem, 5vw, 4.5rem);
+  --h2-size: clamp(1.75rem, 4vw, 3.5rem);
+  --h3-size: clamp(1.5rem,  3vw, 2.75rem);
+  --h4-size: clamp(1.25rem, 2.5vw, 2rem);
+  --h5-size: clamp(1.1rem,  2vw, 1.5rem);
+  --h6-size: clamp(1rem,    1.5vw, 1.25rem);
+  --p-size:  clamp(1rem, calc(.6vw + .85rem), 1.25rem);
+
+  /* --- SPACING / RADII / SHADOWS --- */
+  --gutter: 24px;
+  --stack-sm: 8px;
+  --stack-md: 16px;
+  --stack-lg: 32px;
+  --section-padding-mobile: 40px;
+  --section-padding-desktop: 96px;
+  --container-max: 1280px;
+
+  --radius-xs: .125rem;   /*  2px  default button   */
+  --radius-sm: .25rem;    /*  4px                   */
+  --radius-md: .5rem;     /*  8px  default --radius */
+  --radius-lg: .75rem;    /* 12px  pills / circular */
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / .05);
+  --shadow-card: 0 4px 20px -2px rgb(0 0 0 / .05);    /* .civic-card-shadow */
+  --shadow-lift: 0 10px 30px -8px rgb(0 0 0 / .15);
+  --shadow-cta:  0 48px 96px -16px rgb(0 0 0 / .50);  /* hero CTA card */
+}
+
+/* --- ELEMENT DEFAULTS / SEMANTIC ----------------------------------------- */
+html,body{ background:var(--background); color:var(--on-surface); }
+body{
+  font-family:var(--font-body);
+  font-size:var(--p-size);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+h1,.h1{ font-family:var(--font-display); font-weight:800; font-size:var(--h1-size);
+        line-height:1.1; letter-spacing:-.02em; }
+h2,.h2{ font-family:var(--font-display); font-weight:700; font-size:var(--h2-size);
+        line-height:1.2; letter-spacing:-.01em; }
+h3,.h3{ font-family:var(--font-display); font-weight:700; font-size:var(--h3-size);
+        line-height:1.3; letter-spacing:-.01em; }
+h4,.h4{ font-family:var(--font-display); font-weight:700; font-size:var(--h4-size); line-height:1.4; }
+h5,.h5{ font-family:var(--font-display); font-weight:700; font-size:var(--h5-size); line-height:1.5; }
+h6,.h6{ font-family:var(--font-display); font-weight:700; font-size:var(--h6-size); line-height:1.6; }
+
+p{ font-family:var(--font-body); font-size:var(--p-size); line-height:1.6; }
+
+.text-meta{
+  font-family:var(--font-meta); font-weight:700; letter-spacing:.05em;
+  font-size:var(--fs-sm); text-transform:none;
+}
+.text-micro{ font-size:var(--fs-micro); font-weight:700; }
+.text-tiny { font-size:var(--fs-tiny);  font-weight:700; }
+
+/* --- THE BRAND LINE — 3-stripe motif from BrandLine.tsx ------------------ */
+.brand-line{ display:flex; height:6px; width:128px; margin-bottom:24px; }
+.brand-line > *{ flex:1; }
+.brand-line .red  { background:var(--brand-red);   }
+.brand-line .gold { background:var(--brand-gold);  }
+.brand-line .green{ background:var(--brand-green); }
+
+/* --- GRADIENT SCROLLBAR / DIVIDER ---------------------------------------- */
+.gradient-bar{
+  background:linear-gradient(to right,var(--brand-red),var(--brand-gold),var(--brand-green));
+}
