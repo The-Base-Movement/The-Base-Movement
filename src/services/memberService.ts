@@ -13,8 +13,6 @@ class MemberService {
     return MemberService.instance
   }
 
-
-
   async getMembers(): Promise<Member[]> {
     const [usersRes, adminsRes] = await Promise.all([
       supabase
@@ -106,6 +104,36 @@ class MemberService {
 
     if (error || !data) {
       console.error('[DATABASE] Failed to fetch member profile:', error)
+      return null
+    }
+
+    return {
+      id: data.registration_number,
+      name: data.full_name,
+      email: data.email,
+      phone: data.phone_number || 'N/A',
+      region: data.region || 'Unknown',
+      constituency: data.constituency || 'Unknown',
+      status: data.status,
+      joined: data.joined_at ? new Date(data.joined_at).toLocaleDateString() : 'N/A',
+      platform: data.platform || 'GHANA',
+      type: data.platform === 'GHANA' ? 'Standard' : 'Premium',
+      avatarUrl: data.avatar_url || undefined,
+      gender: data.gender || 'Unknown',
+      chapter: data.chapter || 'TBM Ghana Chapter',
+      country: data.country || 'Ghana',
+      profession: data.profession || 'Patriot'
+    }
+  }
+
+  async getMemberProfileByAuthId(authId: string): Promise<Member | null> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', authId)
+      .maybeSingle()
+
+    if (error || !data) {
       return null
     }
 
@@ -291,6 +319,42 @@ class MemberService {
       country: u.country || 'Ghana',
       profession: u.profession || 'Patriot'
     }))
+  }
+
+  subscribeToNewMembers(callback: (member: Member) => void) {
+    const channelId = `new_members_${Math.random().toString(36).substring(2, 9)}`
+    return supabase
+      .channel(channelId)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'users',
+          filter: 'status=eq.Active'
+        },
+        (payload) => {
+          const u = payload.new
+          callback({
+            id: u.registration_number,
+            name: u.full_name,
+            email: u.email,
+            phone: u.phone_number || 'N/A',
+            region: u.region || 'Region pending',
+            constituency: u.constituency || 'Constituency pending',
+            status: u.status,
+            joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
+            platform: u.platform || 'GHANA',
+            type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
+            avatarUrl: u.avatar_url || undefined,
+            gender: u.gender || 'Not specified',
+            chapter: u.chapter || 'TBM Ghana Chapter',
+            country: u.country || 'Ghana',
+            profession: u.profession || 'Patriot'
+          })
+        }
+      )
+      .subscribe()
   }
 }
 

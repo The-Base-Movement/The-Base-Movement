@@ -344,17 +344,76 @@ class LogisticsService {
   }
 
   async updateResourceRequestStatus(id: string, status: ResourceRequest['status']): Promise<boolean> {
-    const { error } = await supabase
-      .from('resource_requests')
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', id)
+    try {
+      // 1. Fetch current request state
+      const { data: currentReq, error: fetchError } = await supabase
+        .from('resource_requests')
+        .select('status, updated_at')
+        .eq('id', id)
+        .single()
 
-    if (error) {
-      console.error('[DATABASE] Failed to update request status:', error)
+      if (fetchError || !currentReq) throw fetchError || new Error('Request not found')
+
+      // 2. Update the status
+      const { error: updateError } = await supabase
+        .from('resource_requests')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', id)
+
+      if (updateError) throw updateError
+
+      // 3. Logic for Inventory Movement (Only if transitioning to Dispatched for the FIRST time)
+      // We use a simplified check here, similar to the order flow
+      if (status === 'Dispatched' && currentReq.status !== 'Dispatched') {
+        const { data: items, error: itemsError } = await supabase
+          .from('resource_request_items')
+          .select('product_id, quantity')
+          .eq('request_id', id)
+
+        if (itemsError) throw itemsError
+
+        if (items && items.length > 0) {
+          const auditEntries = []
+          
+          for (const item of items) {
+            const { data: product } = await supabase
+              .from('store_inventory')
+              .select('stock_quantity')
+              .eq('id', item.product_id)
+              .single()
+
+            if (product) {
+              const newStock = Math.max(0, product.stock_quantity - item.quantity)
+              await supabase
+                .from('store_inventory')
+                .update({ stock_quantity: newStock })
+                .eq('id', item.product_id)
+              
+              auditEntries.push({
+                product_id: item.product_id,
+                request_id: id,
+                action: 'DISPATCHED',
+                quantity_change: -item.quantity,
+                source_location: 'Central Hub',
+                destination_location: currentReq.region || 'Regional Hub',
+                performed_by: 'System / Logistics Engine',
+                notes: `Regional Fulfillment: Request #${id.slice(0, 8)}`,
+                timestamp: new Date().toISOString()
+              })
+            }
+          }
+
+          if (auditEntries.length > 0) {
+            await supabase.from('logistics_audit').insert(auditEntries)
+          }
+        }
+      }
+
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Resource request status update failed:', error)
       return false
     }
-
-    return true
   }
 
   async getLogisticsAudit(limit = 50): Promise<LogisticsAuditEntry[]> {
@@ -586,6 +645,15 @@ class LogisticsService {
 
   async updateOrderStatus(orderId: string, status: Order['status']): Promise<boolean> {
     try {
+      // 1. Fetch current order state to check for double-deduction
+      const { data: currentOrder, error: fetchError } = await supabase
+        .from('store_orders')
+        .select('status, dispatched_at')
+        .eq('id', orderId)
+        .single()
+
+      if (fetchError || !currentOrder) throw fetchError || new Error('Order not found')
+
       const updates: Partial<Order> = { status, updated_at: new Date().toISOString() }
       
       if (status === 'Dispatched') {
@@ -594,7 +662,7 @@ class LogisticsService {
         updates.delivered_at = new Date().toISOString()
       }
 
-      // 1. Update the order
+      // 2. Update the order status first
       const { error: orderError } = await supabase
         .from('store_orders')
         .update(updates)
@@ -602,12 +670,16 @@ class LogisticsService {
 
       if (orderError) throw orderError
 
-      // 2. If Dispatched, deduct stock from inventory
-      if (status === 'Dispatched') {
+      // 3. Logic for Inventory Movement (Only if transitioning to Dispatched for the FIRST time)
+      if (status === 'Dispatched' && !currentOrder.dispatched_at) {
         const order = await this.getOrderById(orderId)
         if (order && order.items) {
+          // Process items for deduction
+          const auditEntries = []
+          
           for (const item of order.items) {
-            // Atomic decrement logic would be better via RPC, but for now we do sequential updates
+            // Atomic decrement using RPC (or manual for now if RPC doesn't exist)
+            // Note: In production, we'd call an RPC like 'decrement_stock(pid, qty)'
             const { data: product } = await supabase
               .from('store_inventory')
               .select('stock_quantity')
@@ -621,19 +693,57 @@ class LogisticsService {
                 .update({ stock_quantity: newStock })
                 .eq('id', item.product_id)
               
-              // 3. Log to logistics audit
-              await supabase
-                .from('logistics_audit')
-                .insert({
-                  product_id: item.product_id,
-                  action: 'DISPATCHED',
-                  quantity_change: -item.quantity,
-                  source_location: 'Central Hub',
-                  performed_by: 'System / Logistics Engine',
-                  notes: `Auto-deducted for Order #${orderId.slice(0, 8)}`,
-                  timestamp: new Date().toISOString()
-                })
+              auditEntries.push({
+                product_id: item.product_id,
+                action: 'DISPATCHED',
+                quantity_change: -item.quantity,
+                source_location: 'Central Hub',
+                performed_by: 'System / Logistics Engine',
+                notes: `Fulfillment: Order #${orderId.slice(0, 8)}`,
+                timestamp: new Date().toISOString()
+              })
             }
+          }
+
+          // Bulk insert audit logs
+          if (auditEntries.length > 0) {
+            await supabase.from('logistics_audit').insert(auditEntries)
+          }
+        }
+      }
+
+      // 4. Logic for Restocking (If a Dispatched order is Cancelled)
+      if (status === 'Cancelled' && currentOrder.dispatched_at) {
+        const order = await this.getOrderById(orderId)
+        if (order && order.items) {
+          const restockEntries = []
+          for (const item of order.items) {
+            const { data: product } = await supabase
+              .from('store_inventory')
+              .select('stock_quantity')
+              .eq('id', item.product_id)
+              .single()
+
+            if (product) {
+              await supabase
+                .from('store_inventory')
+                .update({ stock_quantity: product.stock_quantity + item.quantity })
+                .eq('id', item.product_id)
+
+              restockEntries.push({
+                product_id: item.product_id,
+                action: 'RESTOCKED_CANCELLED',
+                quantity_change: item.quantity,
+                source_location: 'In-Transit',
+                destination_location: 'Central Hub',
+                performed_by: 'System / Termination Protocol',
+                notes: `Order #${orderId.slice(0, 8)} Cancelled`,
+                timestamp: new Date().toISOString()
+              })
+            }
+          }
+          if (restockEntries.length > 0) {
+            await supabase.from('logistics_audit').insert(restockEntries)
           }
         }
       }

@@ -1,33 +1,44 @@
 import { Link } from 'react-router-dom'
 
 const actions = [
-  { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Vote on poll', sub: 'Share your opinion' },
-  { to: '/dashboard/store', icon: 'shopping_bag', label: 'Member store', sub: 'Browse supplies' },
-  { to: '/dashboard/feedback', icon: 'record_voice_over', label: 'Submit feedback', sub: 'Your voice matters' },
-  { to: '/dashboard/canvass', icon: 'share', label: 'Refer a patriot', sub: 'Earn impact points' },
+  { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Vote on poll', sub: 'Closes in 4 days' },
+  { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Make a donation', sub: 'Support the cause' },
+  { to: '/dashboard/chapters', icon: 'groups', label: 'Find a branch', sub: 'Near Ablekuma North' },
+  { to: '/dashboard/members', icon: 'share', label: 'Refer a patriot', sub: 'Earn impact points' },
 ]
 
 export function QuickActions() {
   return (
-    <div className="mt-4">
+    <div className="bg-white border border-border rounded-[4px] p-6 quick h-full">
       <h3 className="font-meta text-[14px] font-extrabold tracking-tight text-on-surface mb-[14px]">Quick actions</h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-[10px]">
+      <div className="row">
         {actions.map(a => (
           <Link
             key={a.to}
             to={a.to}
-            className="flex gap-[10px] p-3 border border-border rounded-[4px] bg-white items-start transition-all hover:border-primary hover:-translate-y-px hover:shadow-[0_8px_20px_-8px_rgba(0,107,63,0.2)] group"
+            className="qa animate-in fade-in slide-in-from-right-4 duration-500"
           >
-            <div className="w-8 h-8 rounded-[4px] bg-[hsl(var(--secondary))] flex items-center justify-center text-primary shrink-0 group-hover:bg-primary/10 transition-colors">
-              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{a.icon}</span>
+            <div className="ic">
+              <span className="material-symbols-outlined">{a.icon}</span>
             </div>
-            <div className="min-w-0">
-              <b className="block font-meta text-[12px] font-extrabold tracking-[-0.005em] text-on-surface">{a.label}</b>
-              <span className="text-[11px] text-on-surface-muted">{a.sub}</span>
+            <div>
+              <b className="font-meta">{a.label}</b>
+              <span>{a.sub}</span>
             </div>
           </Link>
         ))}
       </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .quick h3 { font-size: 14px; font-weight: 800; margin-bottom: 14px; font-family: 'Public Sans', sans-serif; }
+        .quick .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .qa { display: flex; gap: 10px; padding: 12px; border: 1px solid hsl(var(--border)); border-radius: 4px; background: #fff; align-items: flex-start; transition: all .15s; cursor: pointer; text-decoration: none; }
+        .qa:hover { border-color: hsl(var(--primary)); transform: translateY(-1px); box-shadow: 0 8px 20px -8px rgba(0, 107, 63, 0.2); }
+        .qa .ic { width: 32px; height: 32px; border-radius: 4px; background: var(--container-low); display: flex; align-items: center; justify-content: center; color: hsl(var(--primary)); flex-shrink: 0; }
+        .qa .ic .material-symbols-outlined { font-size: 18px; }
+        .qa b { display: block; font-family: 'Public Sans', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: -0.005em; color: var(--on-surface); line-height: 1.2; margin-bottom: 2px; }
+        .qa span { font-size: 11px; color: var(--on-surface-muted); line-height: 1.2; display: block; }
+      ` }} />
     </div>
   )
 }

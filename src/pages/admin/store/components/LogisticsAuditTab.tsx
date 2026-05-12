@@ -86,9 +86,10 @@ export function LogisticsAuditTab({ auditLogs, toast }: LogisticsAuditTabProps) 
                       "px-2 py-0.5 text-micro font-bold tracking-tight border rounded-md",
                       log.action === 'DISPATCHED' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
                       log.action === 'REPLENISHED' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                      log.action === 'RESTOCKED_CANCELLED' ? "bg-amber-50 text-amber-700 border-amber-100" :
                       "bg-muted/10 text-on-surface/80 border-border/40"
                     )}>
-                      {log.action}
+                      {log.action.replace('_', ' ')}
                     </span>
                   </td>
                   <td className="px-6 py-5">
@@ -132,9 +133,10 @@ export function LogisticsAuditTab({ auditLogs, toast }: LogisticsAuditTabProps) 
                   "px-2 py-0.5 text-micro font-bold tracking-tight border rounded-md",
                   log.action === 'DISPATCHED' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
                   log.action === 'REPLENISHED' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                  log.action === 'RESTOCKED_CANCELLED' ? "bg-amber-50 text-amber-700 border-amber-100" :
                   "bg-muted/5 text-on-surface/80 border-border/40"
                 )}>
-                  {log.action}
+                  {log.action.replace('_', ' ')}
                 </div>
               </div>
 

@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useSyncExternalStore } from "react"
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
@@ -86,7 +86,6 @@ export const reducer = (state: State, action: Action): State => {
     case "DISMISS_TOAST": {
       const { toastId } = action
 
-      // ! Side effect ! - This should be removed from a real reducer
       if (toastId) {
         addToRemoveQueue(toastId)
       } else {
@@ -118,18 +117,26 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
+    default:
+      return state
   }
 }
 
-const listeners: Array<(state: State) => void> = []
-
 let memoryState: State = { toasts: [] }
+const listeners = new Set<(state: State) => void>()
+
+function subscribe(listener: (state: State) => void) {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
+}
+
+function getSnapshot() {
+  return memoryState
+}
 
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)
-  listeners.forEach((listener) => {
-    listener(memoryState)
-  })
+  listeners.forEach((listener) => listener(memoryState))
 }
 
 function toast({ ...props }: Omit<ToasterToast, "id">) {
@@ -162,17 +169,7 @@ function toast({ ...props }: Omit<ToasterToast, "id">) {
 }
 
 function useToast() {
-  const [state, setState] = React.useState<State>(memoryState)
-
-  React.useEffect(() => {
-    listeners.push(setState)
-    return () => {
-      const index = listeners.indexOf(setState)
-      if (index > -1) {
-        listeners.splice(index, 1)
-      }
-    }
-  }, [state])
+  const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 
   return {
     ...state,
@@ -182,3 +179,4 @@ function useToast() {
 }
 
 export { useToast, toast }
+

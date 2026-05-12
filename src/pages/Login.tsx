@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { authService } from '@/services/authService'
+import { adminService } from '@/services/adminService'
 import { Button } from '@/components/ui/neon-button'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
@@ -26,6 +27,12 @@ export default function Login() {
         localStorage.setItem('isLoggedIn', 'true')
         localStorage.setItem('userName', user.user_metadata?.full_name || 'Patriot')
         if (user.user_metadata?.avatar_url) localStorage.setItem('userAvatar', user.user_metadata.avatar_url)
+        
+        // Proactively fetch and store regNo
+        const profile = await adminService.getMemberProfileByAuthId(user.id)
+        if (profile) {
+          localStorage.setItem('userRegNo', profile.id)
+        }
       }
       
       window.dispatchEvent(new Event('storage'))

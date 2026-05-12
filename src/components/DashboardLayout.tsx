@@ -3,7 +3,6 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { 
   LogOut, 
   User as UserIcon, 
-  Settings as SettingsIcon,
   Search 
 } from 'lucide-react'
 import BackToTop from './BackToTop'
@@ -27,7 +26,6 @@ export default function DashboardLayout() {
   const navigate = useNavigate()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [userName, setUserName] = useState('Member')
-  const [userPlatform, setUserPlatform] = useState('Member')
   const [userRegNo, setUserRegNo] = useState('')
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -47,7 +45,6 @@ export default function DashboardLayout() {
         setUserName(localStorage.getItem('userName') || 'Member')
       }
       
-      setUserPlatform(localStorage.getItem('userPlatform') || 'General')
       setUserRegNo(localStorage.getItem('userRegNo') || '')
     }
     readProfile()
@@ -137,49 +134,49 @@ export default function DashboardLayout() {
       {/* Navigation Shell (SideNavBar) */}
       <aside
         aria-label="Dashboard Sidebar"
-        className={`fixed left-0 top-0 h-full flex flex-col bg-[#181d19] text-white border-r-4 border-accent z-50 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}
+        className={`fixed left-0 top-0 h-full flex flex-col bg-[#181d19] text-white border-r-[4px] border-accent z-50 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isSidebarCollapsed ? 'w-20' : 'w-60'}`}
       >
         {/* Fixed Header */}
-        <div className={`py-[18px] flex items-center border-b border-white/[0.08] mb-3 shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-[22px] gap-[10px]'}`}>
+        <div className={`py-[24px] flex items-center border-b border-white/[0.08] mb-3 shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-[22px] gap-[10px]'}`}>
           <img src={settings.logo_url} alt="The Base Logo" className="h-8 w-8 object-contain shrink-0"  decoding="async" />
           {!isSidebarCollapsed && (
             <div className="overflow-hidden whitespace-nowrap">
-              <h1 className="text-base font-extrabold text-white leading-none mb-0 tracking-tight">The Base</h1>
-              <p className="text-[9px] text-accent font-bold tracking-[0.04em] mt-1 mb-0">Member portal</p>
+              <h1 className="text-[16px] font-extrabold text-white leading-none mb-0 tracking-tight">The Base</h1>
+              <p className="text-[9px] text-accent font-bold tracking-[0.04em] uppercase mt-1 mb-0">Member portal</p>
             </div>
           )}
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto sidebar-scroll pb-8">
+        <div className="flex-1 overflow-y-auto sidebar-scroll">
           {[
-            { label: 'Main', items: [
-              { to: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
+            { label: 'Navigation', items: [
+              { to: '/dashboard', icon: 'dashboard', label: 'Overview' },
               { to: '/dashboard/blog', icon: 'article', label: 'Updates' },
               { to: '/dashboard/agenda', icon: 'event_note', label: 'The Plan' },
               { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },
-              { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Polls' },
-              { to: '/dashboard/chapters', icon: 'account_balance', label: 'My Chapter' },
+              { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Feedback' },
+              { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
             ]},
-            { label: 'Engage', items: [
+            { label: 'Mobilization', items: [
               { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
               { to: '/dashboard/store', icon: 'storefront', label: 'Supplies' },
-              { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback' },
-              { to: '/dashboard/members', icon: 'groups', label: 'Members' },
+              { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback Hub' },
+              { to: '/dashboard/members', icon: 'groups', label: 'Verified Patriots' },
             ]},
-            { label: 'Account', items: [
+            { label: 'Personal', items: [
               { to: '/settings', icon: 'settings', label: 'Settings' },
             ]},
           ].map((group) => (
-            <div key={group.label} className="px-4 mt-2">
+            <div key={group.label} className="nav-sec mt-2">
               {!isSidebarCollapsed && (
-                <h6 className="text-[9px] font-bold text-white/40 tracking-[0.08em] uppercase mb-1 mt-2 px-2">{group.label}</h6>
+                <h6 className="text-[9px] font-bold text-white/40 tracking-[0.08em] uppercase mb-2 mt-2 px-6 font-meta">{group.label}</h6>
               )}
-              <div className="space-y-0.5">
+              <div className="space-y-0.5 px-4">
                 {group.items.map((item) => (
                   <Link
                     key={item.to}
-                    className={`flex items-center transition-all font-meta text-[12px] font-bold tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[10px] py-[9px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
+                    className={`flex items-center transition-all font-meta text-[12px] font-bold tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
                     to={item.to}
                   >
                     <span className={`material-symbols-outlined text-[18px] ${isSidebarCollapsed ? 'mr-0' : 'mr-[10px]'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{item.icon}</span>
@@ -190,66 +187,46 @@ export default function DashboardLayout() {
             </div>
           ))}
 
-          {/* Leader Portrait */}
-          {!isSidebarCollapsed && (
-            <div className="mx-4 my-8 flex flex-col gap-4 transition-opacity duration-300">
-              <div className="overflow-hidden rounded-none relative group shrink-0 shadow-lg border border-border/10">
-                <img src={settings.founder_image_url || "/founder.jpg"}
-                  alt="Dr. George Oti Bonsu The Base Movement Founder"
-                  className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105"
-                 decoding="async" />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
-              </div>
-              <div className="px-2">
-                <p className="text-white text-tiny font-bold tracking-tight leading-tight mb-1">
-                  Dr. George Oti Bonsu
-                </p>
-                <p className="text-accent text-tiny font-bold tracking-tight mb-0">
-                  Movement Founder
-                </p>
-              </div>
-            </div>
-          )}
-
-          <div className={`pt-2 transition-all duration-300 ${isSidebarCollapsed ? 'px-2' : 'px-6'}`}>
-            <Button 
-              variant="primary"
-              onClick={() => setIsShareModalOpen(true)}
-              className={`w-full font-bold tracking-tight shadow-2xl shadow-primary/20 flex items-center justify-center overflow-hidden ${isSidebarCollapsed ? 'h-12 px-0' : 'h-14'}`}
-            >
-              {isSidebarCollapsed ? (
-                <span className="material-symbols-outlined">share</span>
-              ) : (
-                <span className="text-tiny">Invite & Share</span>
-              )}
-            </Button>
-            
-            <div className={`mt-8 space-y-4 ${isSidebarCollapsed ? 'px-0 flex flex-col items-center' : 'pl-2'}`}>
-              <Link
-                className={`flex items-center transition-all font-bold text-tiny tracking-tight ${isActive('/dashboard/contact') ? 'text-accent' : 'text-white/40 hover:text-white'}`}
-                to="/dashboard/contact"
+          <div className={`mt-8 mb-8 px-4 ${isSidebarCollapsed ? 'flex flex-col items-center' : ''}`}>
+             <Button 
+                variant="primary"
+                onClick={() => setIsShareModalOpen(true)}
+                className={`w-full font-bold tracking-tight shadow-2xl shadow-primary/20 flex items-center justify-center overflow-hidden ${isSidebarCollapsed ? 'h-12 w-12 rounded-full' : 'h-12 text-tiny'}`}
               >
-                <span className={`material-symbols-outlined ${isSidebarCollapsed ? 'text-2xl' : 'text-lg mr-3'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>help</span>
-                {!isSidebarCollapsed && "Support"}
-              </Link>
-
-              <Link
-                to="/"
-                className={`flex items-center rounded-sm border border-white/10 text-white/40 hover:border-white/30 hover:text-white transition-all font-bold text-tiny tracking-tight group bg-white/5 ${isSidebarCollapsed ? 'w-10 h-10 justify-center' : 'w-full h-12 px-4 gap-3 mt-8'}`}
-              >
-                <span className="material-symbols-outlined text-base group-hover:text-primary transition-colors" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}>arrow_back</span>
-                {!isSidebarCollapsed && "Back to Site"}
-              </Link>
-            </div>
+                {isSidebarCollapsed ? (
+                  <span className="material-symbols-outlined">share</span>
+                ) : (
+                  <span>Invite & Share</span>
+                )}
+              </Button>
           </div>
         </div>
+
+        {/* User identification footer */}
+        {!isSidebarCollapsed && (
+          <div className="mt-auto px-[22px] py-6 border-t border-white/[0.08] flex items-center gap-3">
+             <div className="w-8 h-8 rounded-full border-[1.5px] border-accent overflow-hidden shrink-0">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-primary flex items-center justify-center text-[10px] font-bold">
+                    {initials}
+                  </div>
+                )}
+             </div>
+             <div className="min-w-0">
+                <b className="block text-[12px] text-white font-bold leading-none mb-1 truncate capitalize">{userName?.toLowerCase()}</b>
+                <span className="block text-[10px] text-white/50 truncate">Patriot ID: {userRegNo?.slice(0, 8)}</span>
+             </div>
+          </div>
+        )}
       </aside>
 
       {/* Main Content Canvas */}
-      <main className={`min-h-screen bg-muted/10 flex flex-col pt-16 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+      <main className={`min-h-screen bg-muted/10 flex flex-col pt-16 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'}`}>
 
         {/* ── Topbar ── fixed, clears the sidebar */}
-        <div className={`fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-border/40 shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-64'}`}>
+        <div className={`fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-border/40 shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-60'}`}>
           <div className="flex items-center justify-between px-6 md:px-10 h-16">
 
             {/* Left: Hamburger (Mobile) + Current Page Title */}
@@ -267,12 +244,12 @@ export default function DashboardLayout() {
                 <span className="material-symbols-outlined text-[28px]">menu</span>
               </button>
               
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-on-surface m-0 font-meta">
+              <h1 className="text-[20px] md:text-[24px] font-extrabold tracking-tight text-on-surface m-0 font-meta">
                 {getPageTitle()}
-            </h1>
-          </div>
+              </h1>
+            </div>
 
-          {/* Right: Actions + Avatar */}
+            {/* Right: Actions + Avatar */}
             <div className="flex items-center gap-4">
 
               {/* Search */}
@@ -281,14 +258,11 @@ export default function DashboardLayout() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface/30 group-focus-within:text-primary transition-colors" />
                     <input 
                       type="text" 
-                      placeholder="Search updates..." 
-                      className="w-full sm:w-64 pl-10 pr-4 py-2 bg-on-surface/5 border border-transparent focus:border-primary/20 focus:bg-white rounded-none text-xs font-medium transition-all outline-none"
+                      placeholder="Search infrastructure..." 
+                      className="w-[280px] pl-10 pr-4 py-2 bg-on-surface/5 border border-transparent focus:border-primary/20 focus:bg-white rounded-none text-xs font-medium transition-all outline-none"
                     />
                   </div>
               </div>
-
-              {/* Vertical Separator */}
-              <div className="h-6 w-px bg-border/20 mx-2 hidden lg:block"></div>
 
               {/* Notification Bell */}
               <button className="relative p-2.5 rounded-sm hover:bg-muted/10 transition-all group">
@@ -296,7 +270,6 @@ export default function DashboardLayout() {
                   className="material-symbols-outlined text-on-surface/40 group-hover:text-primary transition-colors text-[22px]"
                   style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
                 >notifications</span>
-                {/* Unread badge */}
                 {unreadCount > 0 && (
                   <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-destructive rounded-full ring-2 ring-white text-micro flex items-center justify-center text-white font-bold tracking-tight">
                     {unreadCount}
@@ -304,36 +277,19 @@ export default function DashboardLayout() {
                 )}
               </button>
 
-              {/* Divider */}
-              <div className="h-6 w-px bg-border/20 mx-8"></div>
-
-              {/* User Avatar + Name with Dropdown */}
+              {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-4 group outline-none">
-                    {/* Avatar: real photo or initials fallback */}
                     <div className="w-10 h-10 rounded-sm overflow-hidden ring-4 ring-primary/5 group-hover:ring-primary/20 transition-all shadow-2xl shrink-0">
                       {avatarUrl ? (
-                        <img src={avatarUrl}
-                          alt={userName}
-                          className="w-full h-full object-cover"
-                         decoding="async" />
+                        <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" decoding="async" />
                       ) : (
                         <div className="w-full h-full bg-primary flex items-center justify-center text-white text-tiny font-bold tracking-tight">
                           {initials || 'M'}
                         </div>
                       )}
                     </div>
-                    <div className="hidden lg:block text-left">
-                      <p className="text-xs font-bold text-on-surface leading-none mb-1 capitalize tracking-tight">{userName?.toLowerCase()}</p>
-                       <p className="text-tiny text-accent font-bold tracking-tight mb-0">
-                        {userPlatform === 'ADMIN' ? 'Chapter Lead' : (userPlatform === 'PATRIOT' ? 'Member' : 'Member')} {userRegNo && `· ${userRegNo}`}
-                      </p>
-                    </div>
-                    <span
-                      className="material-symbols-outlined text-on-surface/20 text-[18px] group-hover:text-primary transition-colors"
-                      style={{ fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}
-                    >expand_more</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 mt-2 bg-white border-border/40 shadow-2xl rounded-none">
@@ -350,20 +306,13 @@ export default function DashboardLayout() {
                       <span className="text-tiny font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Member Profile</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer p-3 focus:bg-primary/5 transition-colors group">
-                    <Link to="/dashboard/settings?tab=security" className="flex items-center gap-3 w-full">
-                      <SettingsIcon className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-                      <span className="text-tiny font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Security Settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-border/10" />
                   <DropdownMenuItem 
                     onClick={handleLogout}
                     className="cursor-pointer p-3 focus:bg-destructive/5 transition-colors group text-destructive"
                   >
                     <div className="flex items-center gap-3 w-full">
                       <LogOut className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-                      <span className="text-tiny font-bold tracking-tight">Sign out of Base</span>
+                      <span className="text-tiny font-bold tracking-tight">Sign out</span>
                     </div>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -372,20 +321,20 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        <div className="flex-1 main-content-wrapper px-6 md:px-10 py-8">
-          <div className="max-w-7xl mx-auto w-full">
+        <div className="flex-1 main-content-wrapper px-[32px] py-[28px] pb-[60px]">
+          <div className="max-w-[1440px] mx-auto w-full">
             <Outlet />
           </div>
         </div>
 
         {/* Dashboard Footer */}
-        <footer className="mt-16 py-16 px-12 border-t border-border/10 bg-muted/5">
+        <footer className="mt-16 py-10 px-12 border-t border-border/10 bg-muted/5">
           <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-tiny text-muted-foreground/40 mb-0 font-bold tracking-tight">© {new Date().getFullYear()} The Base Movement. Ghana First.</p>
-            <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10">
-              <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy Policy</Link>
-              <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms of Service</Link>
-              <Link className="font-bold text-xs text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/contact">Support Portal</Link>
+            <p className="text-micro text-muted-foreground/40 mb-0 font-bold tracking-tight uppercase">© {new Date().getFullYear()} The Base Movement. National Infrastructure.</p>
+            <div className="flex flex-wrap justify-center items-center gap-6">
+              <Link className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy</Link>
+              <Link className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms</Link>
+              <Link className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/contact">Support</Link>
             </div>
           </div>
         </footer>

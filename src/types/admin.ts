@@ -512,7 +512,7 @@ export interface LogisticsAuditEntry {
   requestId?: string
   productId: string
   productName?: string
-  action: 'DISPATCHED' | 'RETURNED' | 'REPLENISHED' | 'ADJUSTED'
+  action: 'DISPATCHED' | 'RETURNED' | 'REPLENISHED' | 'ADJUSTED' | 'RESTOCKED_CANCELLED'
   quantityChange: number
   sourceLocation: string
   destinationLocation?: string

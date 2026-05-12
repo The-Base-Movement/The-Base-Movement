@@ -22,9 +22,9 @@ export default function App() {
         <StoreProvider>
           <ScrollToTop />
           <ReadingProgressBar />
+          <Toaster />
           {isClient && (
             <>
-              <Toaster />
               <SonnerToaster position="top-right" richColors />
             </>
           )}
