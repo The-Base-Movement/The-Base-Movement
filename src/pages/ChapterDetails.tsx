@@ -154,7 +154,7 @@ export default function ChapterDetails() {
                   })
                 ) : (
                   <div className="py-12 text-center border border-dashed border-stone-200 bg-stone-50/30">
-                    <p className="text-xs text-stone-400 font-bold uppercase tracking-widest">No recent activities recorded</p>
+                    <p className="text-xs text-stone-400 font-bold uppercase tracking-[.06em]">No recent activities recorded</p>
                   </div>
                 )}
               </div>
@@ -190,7 +190,7 @@ export default function ChapterDetails() {
                   ))
                 ) : (
                   <div className="py-8 text-center border border-dashed border-stone-200 bg-stone-50/30">
-                    <p className="text-xs text-stone-400 font-bold uppercase tracking-widest">Leadership pending</p>
+                    <p className="text-xs text-stone-400 font-bold uppercase tracking-[.06em]">Leadership pending</p>
                   </div>
                 )}
               </div>

@@ -231,7 +231,7 @@ export default function Register() {
         <div className="mb-8 flex justify-between items-center px-2">
           <Link to="/" className="flex items-center gap-2">
             <img src={settings.logo_url} alt="Logo" className="h-10 w-auto" />
-            <h1 className="text-lg font-black tracking-tight text-on-surface">The Base</h1>
+            <h1 className="text-lg font-extrabold tracking-tight text-on-surface">The Base</h1>
           </Link>
           <Button variant="ghost" onClick={() => setStep('choice')} className="text-xs font-bold gap-2">
             <ArrowLeft className="w-3.5 h-3.5" /> Back

@@ -32,7 +32,7 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
 }) => {
   const { settings } = useBranding()
   return (
-    <div className="relative aspect-[1.58/1] w-full bg-white flex flex-col font-meta border-x-[3px] border-x-primary border-t-destructive border-b-[3px] border-b-brand-gold rounded-[8px] overflow-hidden">
+    <div className="relative aspect-[1.58/1] w-full bg-white flex flex-col font-meta border-x-[3px] border-x-primary border-t-[3px] border-t-destructive border-b-[3px] border-b-brand-gold rounded-[8px] overflow-hidden">
       
       {/* Card Header (Red Section) - Precise radius matching */}
       <div className="bg-destructive p-2 sm:p-3 flex justify-between items-center rounded-t-[8px]">

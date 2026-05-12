@@ -8,51 +8,110 @@ import { Button } from '@/components/ui/neon-button'
 import { useBranding } from '@/hooks/useBranding'
 import { BrandLine } from '@/components/ui/BrandLine'
 
-function AnimatedCounter({ target, duration = 2000, className }: { target: number; duration?: number; className?: string }) {
-  const [count, setCount] = useState(0)
+function Sparkline({ heights, accent }: { heights: number[]; accent: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '2px', height: '18px', width: '78px' }}>
+      {heights.map((h, i) => (
+        <span
+          key={i}
+          style={{
+            flex: 1,
+            background: accent,
+            opacity: i >= heights.length - 5 ? 0.85 : 0.18,
+            borderRadius: '1px',
+            minHeight: '3px',
+            height: `${h}px`,
+            display: 'block',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function StatCard({
+  accent, eye, value, suffix, label, sparkHeights, delta, deltaIcon
+}: {
+  accent: string
+  eye: string
+  value: number
+  suffix?: string
+  label: string
+  sparkHeights: number[]
+  delta: string
+  deltaIcon: 'up' | 'circle'
+}) {
   const ref = useRef<HTMLDivElement>(null)
+  const [count, setCount] = useState(0)
   const [started, setStarted] = useState(false)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !started) setStarted(true)
-    }, { threshold: 0.5 })
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting && !started) setStarted(true) }, { threshold: 0.5 })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
   }, [started])
 
   useEffect(() => {
-    if (!started) return
-    let start = 0
-    const increment = target / (duration / 16)
-    const timer = setInterval(() => {
-      start += increment
-      if (start >= target) {
-        setCount(target)
-        clearInterval(timer)
-      } else {
-        setCount(Math.floor(start))
-      }
+    if (!started || !value) return
+    let cur = 0
+    const inc = value / (1800 / 16)
+    const t = setInterval(() => {
+      cur += inc
+      if (cur >= value) { setCount(value); clearInterval(t) } else setCount(Math.floor(cur))
     }, 16)
-    return () => clearInterval(timer)
-  }, [started, target, duration])
-
-  const getColor = (val: number) => {
-    if (val <= 100000) return 'hsl(var(--destructive))'
-    if (val <= 200001) return 'hsl(var(--accent))'
-    return 'hsl(var(--primary))'
-  }
+    return () => clearInterval(t)
+  }, [started, value])
 
   return (
     <div
       ref={ref}
-      className={className || "text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 leading-none"}
-      style={{ color: getColor(count) }}
+      style={{
+        background: '#fff',
+        border: '1px solid #dfe4dd',
+        borderRadius: '6px',
+        padding: '22px 22px 20px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 4px 20px -2px rgba(0,0,0,.04)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '14px',
+        transition: 'transform .18s ease, box-shadow .18s ease',
+      }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 30px -8px rgba(0,0,0,.10)' }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px -2px rgba(0,0,0,.04)' }}
     >
-      {count.toLocaleString()}
+      {/* top accent bar */}
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '5px', background: accent }} />
+      {/* corner dot */}
+      <div style={{ position: 'absolute', top: '14px', right: '18px', width: '6px', height: '6px', borderRadius: '50%', background: accent }} />
+
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: '9.5px', fontWeight: 700, color: '#6f7a71', letterSpacing: '.08em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif" }}>{eye}</span>
+      </div>
+
+      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: '48px', letterSpacing: '-.03em', lineHeight: '.95', color: '#181d19', fontVariantNumeric: 'tabular-nums' }}>
+        {count.toLocaleString()}
+        {suffix && <small style={{ fontSize: '20px', fontWeight: 700, color: '#6f7a71', marginLeft: '2px', letterSpacing: 0 }}>{suffix}</small>}
+      </div>
+
+      <div style={{ fontSize: '12px', fontWeight: 700, color: '#181d19', letterSpacing: '-.005em', lineHeight: 1.4, fontFamily: "'Public Sans', sans-serif" }}>{label}</div>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #dfe4dd', paddingTop: '12px', marginTop: 'auto' }}>
+        <Sparkline heights={sparkHeights} accent={accent} />
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '10.5px', fontWeight: 700, color: accent, letterSpacing: '-.005em', fontFamily: "'Public Sans', sans-serif" }}>
+          {deltaIcon === 'circle' ? (
+            <svg viewBox="0 0 8 8" width="9" height="9"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>
+          ) : (
+            <svg viewBox="0 0 8 8" width="9" height="9"><path d="M0 6 L4 2 L8 6 Z" fill="currentColor"/></svg>
+          )}
+          {delta}
+        </span>
+      </div>
     </div>
   )
 }
+
 
 export default function Home() {
   const { settings } = useBranding()
@@ -232,69 +291,118 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section - Modernized Hardened Typography */}
-      <section aria-labelledby="stats-heading" className="py-24 bg-[#fafaf6] border-y border-border/40 relative overflow-hidden">
-        {/* Subtle background texture for premium feel */}
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.02] pointer-events-none" />
-        
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10">
-          <h2 id="stats-heading" className="sr-only">Movement Statistics</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-            {/* Stat Pillar 01 */}
-            <div className="group">
-              <BrandLine className="mb-6 opacity-60" />
-              <dd className="m-0">
-                <AnimatedCounter target={stats.members} className="text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 mb-2 leading-none" />
-              </dd>
-              <dt className="text-micro font-bold text-primary tracking-tight normal-case mb-2">
-                Members registered nationwide
-              </dt>
-              <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed max-w-[240px]">
-                Verified citizens joined across the movement's national network.
-              </p>
-            </div>
+      {/* Stats Section — redesigned stat cards: red → gold → black → green */}
+      <section aria-labelledby="stats-heading" className="py-24 bg-[#fafaf6] border-y border-border/40">
+        <div className="max-w-[1280px] mx-auto px-8">
+          <div className="flex items-end justify-between mb-5">
+            <h2 id="stats-heading" className="font-meta font-extrabold text-xl tracking-tight text-on-surface">
+              Movement at a glance
+            </h2>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[.06em]">Updated · Q2 2026</span>
+          </div>
 
-            {/* Stat Pillar 02 */}
-            <div className="group">
-              <BrandLine className="mb-6 opacity-60" />
-              <dd className="m-0">
-                <AnimatedCounter target={stats.chapters} className="text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 mb-2 leading-none" />
-              </dd>
-              <dt className="text-micro font-bold text-accent tracking-tight normal-case mb-2">
-                Community branches active in nearly every district
-              </dt>
-              <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed max-w-[240px]">
-                Local community branches established and operating nationwide.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            {/* RED — Regions */}
+            <StatCard
+              accent="#CE1126"
+              eye="Regions"
+              value={stats.regions}
+              suffix="/16"
+              label="Full presence across every administrative region of Ghana"
+              sparkHeights={[6,8,10,11,12,13,14,15,16,17,18,18]}
+              delta="National coverage"
+              deltaIcon="circle"
+            />
+            {/* GOLD — Branches */}
+            <StatCard
+              accent="#DAA520"
+              eye="Branches"
+              value={stats.chapters}
+              label="Community branches active in nearly every district"
+              sparkHeights={[5,6,7,7,9,10,10,12,13,14,16,18]}
+              delta="+84 this quarter"
+              deltaIcon="up"
+            />
+            {/* BLACK — Diaspora */}
+            <StatCard
+              accent="#1A1A1A"
+              eye="Diaspora"
+              value={stats.diaspora}
+              label="Global Ghanaians supporting from abroad in 21 countries"
+              sparkHeights={[3,4,4,5,7,7,10,11,13,14,16,18]}
+              delta="+9.1% MoM"
+              deltaIcon="up"
+            />
+            {/* GREEN — Members */}
+            <StatCard
+              accent="#006B3F"
+              eye="Members"
+              value={stats.members}
+              label="Verified citizens registered nationwide"
+              sparkHeights={[4,6,7,7,9,11,12,14,15,16,17,18]}
+              delta="+12.4% QoQ"
+              deltaIcon="up"
+            />
+          </div>
+        </div>
+      </section>
 
-            {/* Stat Pillar 03 */}
-            <div className="group">
-              <BrandLine className="mb-6 opacity-60" />
-              <dd className="m-0">
-                <AnimatedCounter target={stats.regions} className="text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 mb-2 leading-none" />
-              </dd>
-              <dt className="text-micro font-bold text-destructive tracking-tight normal-case mb-2">
-                Movement presence across all 16 regions
-              </dt>
-              <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed max-w-[240px]">
-                Full representation and active coordination across every administrative region.
-              </p>
-            </div>
+      {/* Movement Roadmap */}
+      <section aria-labelledby="roadmap-heading" className="py-24 bg-white border-b border-border/30">
+        <div className="max-w-[1280px] mx-auto px-8">
+          <div className="mb-12">
+            <span className="text-[10px] font-bold tracking-[.06em] uppercase text-muted-foreground font-meta block mb-2">Movement roadmap</span>
+            <h2 id="roadmap-heading" className="text-3xl font-meta font-bold text-on-surface tracking-tight mb-1">Where we are, what's next.</h2>
+          </div>
 
-            {/* Stat Pillar 04 */}
-            <div className="group">
-              <BrandLine className="mb-6 opacity-60" />
-              <dd className="m-0">
-                <AnimatedCounter target={stats.diaspora} className="text-[64px] font-meta font-extrabold tracking-tighter transition-colors duration-300 mb-2 leading-none" />
-              </dd>
-              <dt className="text-micro font-bold text-on-surface/80 tracking-tight normal-case mb-2">
-                Diaspora supporters registered online
-              </dt>
-              <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed max-w-[240px]">
-                Global Ghanaians committed to supporting national development from abroad.
-              </p>
+          {/* Horizontal milestone track */}
+          <div className="relative">
+            {/* Gradient connecting line */}
+            <div
+              className="absolute left-3 right-0 hidden md:block"
+              style={{
+                top: '12px',
+                height: '3px',
+                background: 'linear-gradient(to right, #CE1126, #DAA520, #181d19, #006B3F)',
+              }}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              {[
+                { color: '#CE1126', done: true,  year: '2024',       title: 'Foundation laid',        body: 'Movement formally launched. First 50 branches opened across Greater Accra and Ashanti.', icon: 'check' },
+                { color: '#DAA520', done: true,  year: '2025',       title: 'National coverage',      body: 'Reached presence in all 16 regions with 1,000+ branches and a verified diaspora chapter network.', icon: 'check' },
+                { color: '#181d19', done: false, year: '2026 · Now', title: 'Jobs program scale-up',  body: '1M-job plan launched. First 50,000 youth in apprenticeships across four priority sectors.', icon: 'bolt', current: true },
+                { color: '#006B3F', done: false, year: '2028',       title: 'National election',      body: 'Field every promise we made. Hold every leader accountable to the published Plan.', icon: 'target' },
+              ].map((ms) => (
+                <div key={ms.year} className="relative pt-16 md:pr-4">
+                  {/* Dot */}
+                  <div
+                    className="absolute top-0 left-0 w-6 h-6 rounded-full flex items-center justify-center border-4"
+                    style={{
+                      background: ms.done ? ms.color : '#fff',
+                      borderColor: ms.color,
+                    }}
+                  >
+                    {ms.done && (
+                      <svg viewBox="0 0 10 10" width="8" height="8" fill="white"><path d="M1.5 5 L4 7.5 L8.5 2.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    )}
+                    {ms.current && !ms.done && (
+                      <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: ms.color }} />
+                    )}
+                  </div>
+                  <div
+                    className="text-[11px] font-bold tracking-[.06em] uppercase mb-1.5 font-meta"
+                    style={{ color: 'var(--on-surface-muted,#6b7280)' }}
+                  >
+                    {ms.year}
+                  </div>
+                  <h4 className="font-meta font-extrabold text-[15px] tracking-[-0.01em] text-on-surface mb-1.5 leading-snug">
+                    {ms.title}
+                  </h4>
+                  <p className="text-[12px] text-muted-foreground leading-[1.5] font-body-md">
+                    {ms.body}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

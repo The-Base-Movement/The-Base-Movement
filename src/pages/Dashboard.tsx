@@ -131,7 +131,7 @@ export default function Dashboard() {
         <div className="bg-white border border-border rounded-[4px] p-6 feed">
           <h3 className="font-meta text-[14px] font-extrabold tracking-tight text-on-surface mb-[20px] flex items-center justify-between">
             Live contribution feed
-            <span className="live flex items-center gap-1.5 text-[10px] font-extrabold text-destructive uppercase tracking-widest font-meta">
+            <span className="live flex items-center gap-1.5 text-[10px] font-extrabold text-destructive uppercase tracking-[.06em] font-meta">
               <i className="w-1.5 h-1.5 bg-destructive rounded-full animate-pulse" />
               Live
             </span>

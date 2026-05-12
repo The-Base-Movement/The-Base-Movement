@@ -265,7 +265,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <div className="p-10 border-2 border-dashed border-border/60 rounded-sm bg-container-low text-center relative hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group">
                     <input type="file" accept="image/*" onChange={onIdScan} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
                     <Upload className="w-10 h-10 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
-                    <b className="text-[13px] block font-black">Upload photo of Ghana Card</b>
+                    <b className="text-[13px] block font-extrabold">Upload photo of Ghana Card</b>
                     <span className="text-[11px] text-on-surface-muted">JPG or PNG, up to 8 MB</span>
                   </div>
                 ) : (

@@ -327,7 +327,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           </span>
                           {item.pill && (
                             <span className={cn(
-                              "px-[7px] py-[1px] rounded-full text-[9px] font-black",
+                              "px-[7px] py-[1px] rounded-full text-[9px] font-extrabold",
                               isActive ? "bg-black/30 text-white" : "bg-[hsl(var(--destructive))] text-white"
                             )}>
                               {item.pill}
@@ -479,7 +479,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   {/* Pulse effect */}
                   <span className="absolute top-2 right-2 w-4 h-4 bg-[var(--brand-red)] rounded-full animate-ping opacity-75" />
                   {/* Luminous Numeric Badge */}
-                  <span className="absolute top-2 right-2 min-w-[16px] h-4 px-1 bg-[var(--brand-red)] rounded-full border-2 border-white shadow-[0_0_8px_rgba(206,17,38,0.8)] flex items-center justify-center text-micro font-black text-white">
+                  <span className="absolute top-2 right-2 min-w-[16px] h-4 px-1 bg-[var(--brand-red)] rounded-full border-2 border-white shadow-[0_0_8px_rgba(206,17,38,0.8)] flex items-center justify-center text-micro font-extrabold text-white">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 </>
@@ -572,10 +572,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 <div className="h-1 w-10 bg-[hsl(var(--primary))]" />
               </div>
               <div className="text-center space-y-1">
-                <p className="text-micro font-black text-on-surface/60 uppercase tracking-[0.15em]">
+                <p className="text-micro font-extrabold text-on-surface/60 uppercase tracking-[.06em]">
                   Ghana First, Jobs for the Youth!
                 </p>
-                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-[.06em]">
                   © {new Date().getFullYear()} The Base Movement · Operational Command Center
                 </p>
               </div>

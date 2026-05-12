@@ -85,7 +85,7 @@ export function MovementJourney() {
       {loading ? (
         <div className="py-10 text-center">
           <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-widest font-meta">Analyzing Journey...</p>
+          <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-[.06em] font-meta">Analyzing Journey...</p>
         </div>
       ) : (
         <div className="steps-container pt-2">

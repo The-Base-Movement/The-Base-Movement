@@ -154,20 +154,47 @@ export default function CanvasserClipboard() {
           </div>
         ) : (
           <div className="bg-white border border-stone-200 shadow-sm animate-in fade-in slide-in-from-bottom-4">
-            
-            <div className="bg-stone-900 text-white p-6 relative overflow-hidden">
+
+            {/* Red canvasser header */}
+            <div className="text-white p-5 pb-[18px] relative overflow-hidden" style={{ background: 'var(--destructive)' }}>
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <MapPin className="w-24 h-24" />
               </div>
               <div className="relative z-10">
-                <button 
+                <button
                   onClick={() => setSelectedCampaign(null)}
-                  className="text-micro font-bold text-stone-400 hover:text-white tracking-tight mb-4 flex items-center gap-1"
+                  className="text-[9px] font-bold text-white/60 hover:text-white tracking-[.06em] uppercase mb-3 flex items-center gap-1"
                 >
                   ← Change mission
                 </button>
-                <h2 className="text-lg font-bold tracking-tight mb-1">{selectedCampaign.title}</h2>
-                <p className="text-tiny text-stone-400">{selectedCampaign.target_constituency}</p>
+                <p className="text-[9px] font-bold text-white/70 uppercase tracking-[.06em] mb-1">Operation ground game</p>
+                <h2 className="font-meta font-extrabold text-[18px] tracking-tight leading-tight mb-2">{selectedCampaign.title}</h2>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <span className="inline-flex items-center gap-1 px-[10px] py-[4px] bg-white/10 border border-white/18 rounded-full font-meta font-extrabold text-[9.5px] uppercase tracking-[.04em]">
+                    <MapPin className="w-2.5 h-2.5" /> {selectedCampaign.target_constituency}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress strip */}
+            <div className="flex justify-between items-center px-5 py-[14px] bg-stone-50 border-b border-stone-200">
+              <div>
+                <div className="font-meta font-extrabold text-[24px] tracking-tight text-primary leading-none tabular-nums">
+                  0
+                </div>
+                <div className="text-[10px] font-bold text-on-surface-muted uppercase tracking-[.05em] mt-0.5">Doors today</div>
+              </div>
+              <div className="flex flex-col items-end gap-1.5">
+                <div className="text-[10px] font-bold text-on-surface-muted uppercase tracking-[.05em]">
+                  Goal: {selectedCampaign.goal_contacts.toLocaleString()}
+                </div>
+                <div className="w-[120px] h-[6px] bg-border rounded-full overflow-hidden">
+                  <div
+                    className="h-full w-0 rounded-full"
+                    style={{ background: 'linear-gradient(to right, var(--brand-red,#CE1126), var(--brand-gold,#DAA520), var(--brand-green,#006B3F))' }}
+                  />
+                </div>
               </div>
             </div>
 

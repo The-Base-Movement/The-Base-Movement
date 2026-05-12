@@ -95,7 +95,7 @@ export function ActivityFeed() {
         {activities.length === 0 ? (
           <div className="py-10 text-center">
             <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-widest font-meta">Synchronizing Feed...</p>
+            <p className="text-[12px] font-bold text-on-surface/40 uppercase tracking-[.06em] font-meta">Synchronizing Feed...</p>
           </div>
         ) : (
           activities.map((act, i) => (

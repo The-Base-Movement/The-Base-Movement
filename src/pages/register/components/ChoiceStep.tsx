@@ -19,8 +19,8 @@ export function ChoiceStep({ settings, onSelect }: ChoiceStepProps) {
       />
       <div className="text-center mb-10">
         <img src={settings.logo_url} alt="The Base" className="h-16 w-auto mx-auto mb-4 object-contain" />
-        <h1 className="text-2xl font-black text-on-surface tracking-tight font-meta mb-1">The Base</h1>
-        <p className="text-[11px] font-black text-primary uppercase tracking-[.06em]">Member Registration</p>
+        <h1 className="text-2xl font-extrabold text-on-surface tracking-tight font-meta mb-1">The Base</h1>
+        <p className="text-[11px] font-bold text-primary uppercase tracking-[.06em]">Member Registration</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -78,12 +78,12 @@ function PlatformCard({ title, subtitle, description, icon, variant, onClick }: 
         )}>
           {icon}
         </div>
-        <h3 className="text-2xl font-black text-on-surface mb-3 tracking-tight">{title}</h3>
+        <h3 className="text-2xl font-extrabold text-on-surface mb-3 tracking-tight">{title}</h3>
         <p className="text-[13px] text-on-surface-muted leading-relaxed mb-8 flex-1">
           {description}
         </p>
         <div className={cn(
-          "flex items-center gap-2 text-[12px] font-black uppercase tracking-wider transition-colors",
+          "flex items-center gap-2 text-[12px] font-bold tracking-tight transition-colors",
           variant === 'primary' ? "text-primary group-hover:text-primary/80" : "text-brand-gold group-hover:text-brand-gold/80"
         )}>
           Join platform <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

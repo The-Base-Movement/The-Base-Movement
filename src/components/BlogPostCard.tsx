@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import type { BlogPost } from '@/types/admin'
-import { useBranding } from '@/hooks/useBranding'
 
 interface BlogPostCardProps {
   post: BlogPost
@@ -10,63 +8,75 @@ interface BlogPostCardProps {
 }
 
 export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
-  const { settings } = useBranding()
   const formattedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
     : ''
 
+  const authorInitial = post.authorName?.charAt(0)?.toUpperCase() || 'T'
+  const displayName = post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName
+
   return (
-    <article 
+    <article
       aria-labelledby={`blog-post-title-${post.id}`}
-      className="bg-white border border-slate-200 overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full"
+      className="bg-white border border-[var(--border,#e5e7eb)] rounded-[6px] overflow-hidden group hover:-translate-y-[2px] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,.1)] hover:border-[var(--primary)] transition-all duration-200 flex flex-col h-full cursor-pointer"
     >
-      <div className="h-44 overflow-hidden bg-stone-100 relative">
+      {/* Image with category pill overlay */}
+      <div className="aspect-[16/10] bg-stone-100 relative overflow-hidden flex items-center justify-center">
         {post.imageUrl ? (
-          <img src={post.imageUrl}
+          <img
+            src={post.imageUrl}
             alt={post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-           decoding="async" loading="lazy" />
+            decoding="async"
+            loading="lazy"
+          />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-charcoal-dark to-charcoal-dark/90 relative">
-            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.05] pointer-events-none" />
-            <img src={settings.logo_url} alt="The Base" className="w-12 h-12 opacity-20 mb-3 grayscale" />
-            <span className="text-[8px] font-bold text-white/20 tracking-tight">The Base Editorial</span>
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#181d19] to-[#181d19]/90">
+            <span className="font-['Public_Sans',sans-serif] font-black text-[64px] text-white/[0.06] tracking-[-0.04em] leading-none select-none">
+              {post.title.charAt(0)}
+            </span>
           </div>
         )}
-      </div>
-      <div className="p-6 flex flex-col flex-1">
-        <div className="flex items-center gap-3 mb-3">
-          <span className={`px-2.5 py-1 rounded-sm text-micro font-bold tracking-tight border transition-all duration-300 ${
-            post.category === 'Impact' ? 'bg-brand-green/10 text-brand-green border-brand-green/20' :
-            post.category === 'Diaspora' ? 'bg-purple-50 text-purple-700 border-purple-100' :
-            post.category === 'Digital Strategy' ? 'bg-sky-50 text-sky-700 border-sky-100' :
-            post.category === 'Events' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-            'bg-stone-50 text-stone-500 border-stone-100'
-          }`}>
+        {post.category && (
+          <span className="absolute bottom-[14px] left-[14px] px-[10px] py-1 bg-white font-bold text-[9.5px] text-[var(--primary)] tracking-[0.06em] uppercase rounded-[2px]">
             {post.category}
           </span>
-          <span className="text-stone-300 opacity-50 text-xs">|</span>
-          <span className="text-tiny text-slate-400 font-medium tracking-tight">{formattedDate}</span>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="p-[18px] flex flex-col flex-1">
+        {/* Meta */}
+        <div className="flex items-center gap-2 mb-2 text-[10.5px] font-bold tracking-[0.04em] uppercase text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
+          <span>{post.category || 'Movement'}</span>
+          <span className="w-[3px] h-[3px] rounded-full bg-current opacity-60 shrink-0" />
+          <span>{post.readTime}</span>
         </div>
+
         <Link to={`${baseUrl}/${post.slug}`}>
-          <h3 
+          <h3
             id={`blog-post-title-${post.id}`}
-            className="text-sm font-bold text-charcoal-dark tracking-tight leading-tight mb-3 hover:text-brand-green transition-colors"
+            className="font-['Public_Sans',sans-serif] font-extrabold text-[17px] leading-[1.3] tracking-[-0.01em] mb-2 text-[var(--on-surface,#181d19)] group-hover:text-[var(--primary)] transition-colors"
           >
             {post.title}
           </h3>
         </Link>
-        <p className="text-slate-500 text-xs leading-relaxed mb-5 line-clamp-3">{post.excerpt}</p>
-        <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
-          <span className="text-tiny font-medium text-stone-400 tracking-tight">
-            {post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName} <span className="mx-1 opacity-50">|</span> {post.readTime}
+
+        <p className="text-[13px] text-[var(--on-surface-muted,#6b7280)] leading-[1.55] mb-[14px] line-clamp-3 flex-1">
+          {post.excerpt}
+        </p>
+
+        {/* Author row */}
+        <div className="flex items-center gap-2 pt-[14px] border-t border-[var(--border,#e5e7eb)]">
+          <div className="w-6 h-6 rounded-full bg-[var(--primary)] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+            {authorInitial}
+          </div>
+          <span className="font-['Public_Sans',sans-serif] text-[11.5px] font-bold text-[var(--on-surface,#181d19)]">
+            {displayName}
           </span>
-          <Button asChild variant="link" className="p-0 h-auto text-brand-green">
-            <Link to={`${baseUrl}/${post.slug}`} className="flex items-center gap-1">
-              Read article
-              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
+          <span className="ml-auto text-[10.5px] text-[var(--on-surface-muted,#6b7280)] font-bold font-['Public_Sans',sans-serif]">
+            {formattedDate}
+          </span>
         </div>
       </div>
     </article>

@@ -1,7 +1,4 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Zap, ArrowRight } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
 import { type Chapter } from '@/types/admin'
 
 interface ChapterCardProps {
@@ -10,89 +7,92 @@ interface ChapterCardProps {
 }
 
 export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
-  const isRequestPending = (chapter.status as string) === 'Pending'
   const isActive = (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member'
-  
+  const isDiaspora = chapter.country !== 'Ghana'
+  const isFeatured = chapter.member_count > 500
+
+  const badge = isDiaspora ? 'Diaspora' : isFeatured ? 'Featured' : isActive ? 'Active' : 'Regional'
+  const headerBg = isFeatured ? 'var(--primary)' : 'var(--on-surface,#181d19)'
+
+  const leader = chapter.leadership?.[0]
+  const leaderName = leader?.name || chapter.leader_name || 'Branch Chair'
+  const leaderRole = leader?.role || (isDiaspora ? 'Hub coordinator' : 'Branch chair')
+  const leaderInitial = leaderName.charAt(0).toUpperCase()
+
+  const eventsCount = chapter.activities?.length ?? 0
+  const programsCount = Math.max(0, Math.floor(eventsCount / 3))
+
+  const regionLabel = chapter.region || chapter.city_or_region
+  const flag = isDiaspora && countryFlags[chapter.country] ? countryFlags[chapter.country] : ''
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.3 }}
-      className="h-full"
-    >
-      <Link 
-        to={`/dashboard/chapters/${chapter.id}`}
-        className="group block h-full relative"
+    <div className="bg-white border border-[var(--border,#e5e7eb)] rounded-[6px] overflow-hidden">
+      {/* Dark header */}
+      <div
+        className="px-4 py-[14px] flex justify-between items-center"
+        style={{ background: headerBg }}
       >
-        <div 
-          className="relative h-full bg-white border border-stone-100 rounded-[32px] p-8 flex flex-col transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:border-emerald-100 hover:-translate-y-1"
-        >
-          {/* Status Badge */}
-          <div className="flex items-center justify-between mb-8">
-            <div className={cn(
-              "px-4 py-1.5 rounded-full text-[10px] font-bold flex items-center gap-2",
-              isRequestPending 
-                ? "bg-amber-50 text-amber-600"
-                : isActive
-                  ? "bg-emerald-50 text-emerald-600"
-                  : "bg-stone-50 text-stone-500"
-            )}>
-              <span className={cn(
-                "w-1.5 h-1.5 rounded-full",
-                isRequestPending ? "bg-amber-400" : isActive ? "bg-emerald-400" : "bg-stone-300"
-              )} />
-              {isRequestPending ? 'Pending' : (isActive ? 'Active Hub' : 'Regional Hub')}
-            </div>
-            
-            <div className="w-10 h-10 rounded-2xl bg-stone-50 flex items-center justify-center group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors duration-500">
-              <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" />
-            </div>
-          </div>
-
-          {/* Chapter Identity */}
-          <div className="mb-8">
-            <h3 className="text-base font-bold text-stone-900 group-hover:text-emerald-700 transition-colors duration-300 mb-2 leading-tight">
-              {chapter.name}
-            </h3>
-            <div className="flex items-center gap-2 text-stone-400 font-medium">
-              <MapPin className="w-4 h-4" />
-              <span className="text-xs">{chapter.city_or_region} • {chapter.country}</span>
-              {chapter.country !== 'Ghana' && countryFlags[chapter.country] && (
-                <span className="ml-1 text-sm">{countryFlags[chapter.country]}</span>
-              )}
-            </div>
-          </div>
-
-          {/* Stats Bar - Members Count */}
-          <div className="mt-auto mb-6 flex items-center gap-3">
-            <div className="flex -space-x-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-stone-100" />
-              ))}
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-stone-900 leading-none">{chapter.member_count}</span>
-              <span className="text-[10px] text-stone-400 font-bold mt-0.5">Members</span>
-            </div>
-          </div>
-
-          {/* Footer - Hub Status */}
-          <div className="pt-6 border-t border-stone-50 flex items-center justify-between">
-            {isActive ? (
-              <div className="flex items-center gap-1.5 text-emerald-600">
-                <Zap className="w-3.5 h-3.5 fill-current" />
-                <span className="text-[10px] font-black italic">Elite Hub</span>
-              </div>
-            ) : (
-              <div className="text-stone-300 font-bold text-[10px]">
-                {chapter.country === 'Ghana' ? 'Regional Hub' : 'Diaspora Hub'}
-              </div>
-            )}
+        <div>
+          <h4 className="font-['Public_Sans',sans-serif] font-extrabold text-[14px] tracking-[-0.005em] text-white leading-tight">
+            {chapter.name}
+            {flag && <span className="ml-1.5">{flag}</span>}
+          </h4>
+          <div
+            className="text-[9.5px] font-bold tracking-[0.06em] uppercase mt-0.5 font-['Public_Sans',sans-serif]"
+            style={{ color: isFeatured ? 'rgba(255,255,255,0.85)' : 'var(--accent,#DAA520)' }}
+          >
+            {regionLabel}
           </div>
         </div>
-      </Link>
-    </motion.div>
+        <span className="px-2 py-[2px] border border-white/20 bg-white/10 rounded-[2px] font-['Public_Sans',sans-serif] font-extrabold text-[9px] tracking-[0.05em] uppercase text-white shrink-0">
+          {badge}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="px-4 py-4">
+        {/* 3-stat grid */}
+        <div className="grid grid-cols-3 gap-2 mb-[14px]">
+          {[
+            { v: chapter.member_count.toLocaleString(), l: 'Members' },
+            { v: eventsCount, l: 'Events' },
+            { v: programsCount, l: 'Programs' },
+          ].map(({ v, l }) => (
+            <div key={l}>
+              <div className="font-['Public_Sans',sans-serif] font-extrabold text-[18px] tracking-[-0.015em] text-[var(--on-surface,#181d19)] tabular-nums leading-none">
+                {v}
+              </div>
+              <div className="text-[9.5px] font-bold tracking-[0.05em] uppercase text-[var(--on-surface-muted,#6b7280)] mt-[2px] font-['Public_Sans',sans-serif]">
+                {l}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Leader row */}
+        <div className="flex items-center gap-[10px] pt-3 border-t border-[var(--border,#e5e7eb)]">
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[12px] font-bold shrink-0 border-2"
+            style={{ background: 'var(--on-surface,#181d19)', borderColor: 'var(--accent,#DAA520)' }}
+          >
+            {leaderInitial}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-['Public_Sans',sans-serif] font-extrabold text-[11.5px] text-[var(--on-surface,#181d19)] truncate">
+              {leaderName}
+            </div>
+            <div className="text-[10px] text-[var(--on-surface-muted,#6b7280)] font-bold font-['Public_Sans',sans-serif]">
+              {leaderRole}
+            </div>
+          </div>
+          <Link
+            to={`/dashboard/chapters/${chapter.id}`}
+            className="shrink-0 px-3 py-1.5 border border-[var(--border,#e5e7eb)] rounded-[4px] text-[11px] font-extrabold text-[var(--on-surface,#181d19)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors font-['Public_Sans',sans-serif]"
+          >
+            Join
+          </Link>
+        </div>
+      </div>
+    </div>
   )
 }
-

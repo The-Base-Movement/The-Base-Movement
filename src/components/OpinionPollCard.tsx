@@ -1,6 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { Clock, CheckCircle2, ArrowRight, Users, BarChart3 } from 'lucide-react'
-
+import { CheckCircle2, Users, BarChart3 } from 'lucide-react'
 import type { Poll } from '@/services/adminService'
 import { toast } from 'sonner'
 
@@ -14,65 +12,80 @@ interface OpinionPollCardProps {
 }
 
 export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleVote, toggleResults }: OpinionPollCardProps) {
-  // Rank options by votes to assign colors
-  const sortedOptions = [...poll.options].sort((a, b) => b.votes - a.votes);
-  const getRankColor = (optionId: string) => {
-    const rank = sortedOptions.findIndex(o => o.id === optionId);
-    if (rank === 0) return 'rgba(0, 107, 60, 0.1)'; // Win: Light Green
-    if (rank === 1) return 'rgba(212, 160, 23, 0.1)'; // 2nd: Light Gold
-    if (rank === 2) return 'rgba(245, 158, 11, 0.1)'; // 3rd: Light Orange
-    return 'rgba(206, 17, 38, 0.05)'; // 4th+: Light Red
-  };
+  const isLive = poll.status === 'Active'
+  const accentColor = isLive ? 'var(--destructive)' : 'var(--on-surface-muted,#9ca3af)'
 
-  const days = Math.max(0, Math.ceil((new Date(poll.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+  const sortedOptions = [...poll.options].sort((a, b) => b.votes - a.votes)
+  const leadId = sortedOptions[0]?.id
+
+  const days = Math.max(0, Math.ceil((new Date(poll.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
 
   return (
-    <Card className="border border-stone-200 rounded-none shadow-sm overflow-hidden hover:border-[var(--brand-green)]/30 transition-all">
-      <CardContent className="p-8">
-        <div className="flex flex-col gap-4 mb-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <span className="text-micro font-bold text-[var(--brand-green)] bg-[var(--brand-green)]/5 px-2 py-1 rounded-none tracking-tight shrink-0 mb-0">
-              {poll.category}
-            </span>
-            <div className="flex items-center gap-2">
-              <Clock className="w-3.5 h-3.5 text-stone-400" />
-              <p className="text-micro font-bold text-stone-400 tracking-tight mb-0">
-                {poll.status === 'Active' ? 'Ends in:' : 'Ended'}
-              </p>
-              <p className="text-xs font-bold text-stone-700 mb-0">
-                {poll.status === 'Active' ? `${days} Day${days !== 1 ? 's' : ''}` : 'Closed'}
-              </p>
-            </div>
-          </div>
-          <h3 className="text-lg font-bold text-stone-900 mb-0 leading-tight">
-            {poll.question}
-          </h3>
+    <div
+      className="bg-white border border-[var(--border,#e5e7eb)] rounded-[6px] overflow-hidden relative"
+      style={{ borderLeft: `4px solid ${accentColor}` }}
+    >
+      <div className="p-[22px]">
+        {/* Poll head */}
+        <div className="flex items-start justify-between mb-2">
+          <span
+            className="flex items-center gap-[6px] text-[10px] font-bold tracking-[0.06em] uppercase font-['Public_Sans',sans-serif]"
+            style={{ color: accentColor }}
+          >
+            {isLive && (
+              <span
+                className="w-[6px] h-[6px] rounded-full shrink-0"
+                style={{ background: accentColor }}
+              />
+            )}
+            {!isLive && <span className="w-[6px] h-[6px] rounded-full bg-current shrink-0 opacity-40" />}
+            {isLive ? `Live · Closes in ${days} day${days !== 1 ? 's' : ''}` : `Closed · ${new Date(poll.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`}
+          </span>
+          <span className="text-[10.5px] text-[var(--on-surface-muted,#6b7280)] font-bold font-['Public_Sans',sans-serif]">
+            {poll.totalVotes.toLocaleString()} votes
+          </span>
         </div>
 
-        <div className="space-y-3">
+        <h3 className="font-['Public_Sans',sans-serif] font-extrabold text-[17px] leading-[1.3] tracking-[-0.01em] mb-[14px] text-[var(--on-surface,#181d19)]">
+          {poll.question}
+        </h3>
+
+        {/* Options */}
+        <div className="flex flex-col gap-2">
           {poll.options.map(option => {
-            const percentage = Math.round((option.votes / poll.totalVotes) * 100);
-            const isSelected = poll.userSelection === option.id;
-            const displayResults = poll.voted || showResults;
+            const percentage = poll.totalVotes > 0 ? Math.round((option.votes / poll.totalVotes) * 100) : 0
+            const isSelected = poll.userSelection === option.id
+            const displayResults = poll.voted || showResults
+            const isLead = option.id === leadId
 
             return (
-              <div key={option.id} className="relative group">
+              <div key={option.id} className="relative">
                 {displayResults ? (
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center text-sm font-bold px-4 py-3 bg-stone-50 border border-stone-100 relative z-10 overflow-hidden">
-                      <div className="flex items-center gap-2">
-                        {isSelected && <CheckCircle2 className="w-4 h-4 text-[var(--brand-green)]" />}
-                        <span className={`text-sm font-medium ${isSelected ? 'text-[var(--brand-green)]' : 'text-stone-600'}`}>{option.label}</span>
-                      </div>
-                      <span className="text-stone-400 text-micro font-bold tracking-tight">{percentage}%</span>
-                      {/* Progress Bar Background */}
-                      <div 
-                        className="absolute inset-0 -z-10 transition-all duration-1000 ease-out"
-                        style={{ 
-                          width: `${percentage}%`,
-                          backgroundColor: getRankColor(option.id)
-                        }}
-                      />
+                  <div
+                    className={`relative px-[14px] py-[10px] border rounded-[4px] overflow-hidden transition-all duration-150 ${
+                      isLead ? 'border-[var(--primary)]' : 'border-[var(--border,#e5e7eb)]'
+                    } bg-[var(--container-low,#f9fafb)]`}
+                  >
+                    {/* Progress bar background */}
+                    <div
+                      className="absolute inset-y-0 left-0 transition-all duration-1000 ease-out"
+                      style={{
+                        width: `${percentage}%`,
+                        background: isLead ? 'rgba(0,107,63,0.18)' : 'rgba(0,107,63,0.08)'
+                      }}
+                    />
+                    <div className="relative flex justify-between items-center">
+                      <span
+                        className={`text-[12.5px] font-extrabold tracking-[-0.005em] font-['Public_Sans',sans-serif] flex items-center gap-2 ${
+                          isLead ? 'text-[var(--primary)]' : 'text-[var(--on-surface,#181d19)]'
+                        }`}
+                      >
+                        {isSelected && <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />}
+                        {option.label}
+                      </span>
+                      <span className="text-[12.5px] font-extrabold tabular-nums font-['Public_Sans',sans-serif] text-[var(--on-surface-muted,#6b7280)]">
+                        {percentage}%
+                      </span>
                     </div>
                   </div>
                 ) : (
@@ -86,42 +99,46 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
                       }
                     }}
                     disabled={voting === poll.id}
-                    className="w-full text-left px-5 py-4 border border-stone-200 hover:border-[var(--brand-green)] hover:bg-stone-50 transition-all rounded-none flex justify-between items-center group/btn"
+                    className="w-full text-left px-[14px] py-[10px] border border-[var(--border,#e5e7eb)] rounded-[4px] bg-[var(--container-low,#f9fafb)] hover:border-[var(--primary)] transition-all duration-150 group/btn"
                   >
-                    <span className="text-sm font-bold text-stone-700">
+                    <span className="text-[12.5px] font-extrabold tracking-[-0.005em] font-['Public_Sans',sans-serif] text-[var(--on-surface,#181d19)] block">
                       {option.label}
-                      {!isLoggedIn && <span className="block text-micro font-bold text-stone-400 mt-1 uppercase tracking-tight">Members only</span>}
                     </span>
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all text-[var(--brand-green)]" />
+                    {!isLoggedIn && (
+                      <span className="text-[9.5px] font-bold text-[var(--on-surface-muted,#6b7280)] uppercase tracking-[0.05em] mt-0.5 block">
+                        Members only
+                      </span>
+                    )}
                   </button>
                 )}
               </div>
-            );
+            )
           })}
         </div>
 
-        <div className="mt-8 pt-6 border-t border-stone-100 flex justify-between items-center">
-          <div className="flex items-center gap-4 text-micro font-bold text-stone-400 tracking-tight mb-0">
-            <div className="flex items-center gap-1.5">
+        {/* Footer */}
+        <div className="mt-[14px] pt-[14px] border-t border-[var(--border,#e5e7eb)] flex justify-between items-center">
+          <div className="flex items-center gap-3 text-[11px] font-bold text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
+            <span className="flex items-center gap-1.5">
               <Users className="w-4 h-4" />
               {poll.totalVotes.toLocaleString()} Votes
-            </div>
-            <button 
+            </span>
+            <button
               onClick={() => toggleResults(poll.id)}
-              className={`flex items-center gap-1.5 transition-colors ${showResults ? 'text-[var(--brand-green)]' : 'hover:text-[var(--brand-green)]'}`}
+              className={`flex items-center gap-1.5 transition-colors hover:text-[var(--primary)] ${showResults ? 'text-[var(--primary)]' : ''}`}
             >
               <BarChart3 className="w-4 h-4" />
-              {showResults ? 'Hide Results' : 'Live Results'}
+              {showResults ? 'Hide results' : 'Live results'}
             </button>
           </div>
           {poll.voted && (
-            <span className="text-micro font-bold text-emerald-600 flex items-center gap-1 tracking-tight mb-0">
+            <span className="text-[10.5px] font-bold text-[var(--primary)] flex items-center gap-1 font-['Public_Sans',sans-serif]">
               <CheckCircle2 className="w-3.5 h-3.5" />
               Vote recorded
             </span>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
