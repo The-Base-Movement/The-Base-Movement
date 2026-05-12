@@ -749,3 +749,39 @@ export interface ResourceRequest {
   createdAt: string
   items: ResourceRequestItem[]
 }
+
+export interface MemberDonation {
+  id: string
+  amount: number
+  method: string
+  ref: string
+  date: string
+  cleared: boolean
+  label: string
+}
+
+export interface MemberPollVote {
+  id: string
+  pollTitle: string
+  pollNumber: number
+  choice: string
+  date: string
+}
+
+export interface MemberSession {
+  id: string
+  device: string
+  location: string
+  ip: string
+  date: string
+  current: boolean
+}
+
+export interface MemberNote {
+  id: string
+  author: string
+  role: string
+  content: string
+  date: string
+  isSystem: boolean
+}

@@ -66,7 +66,11 @@ import type {
   PressRelease,
   MediaKitAsset,
   GlobalSearchResult,
-  User
+  User,
+  MemberDonation,
+  MemberPollVote,
+  MemberSession,
+  MemberNote
 } from '@/types/admin'
 
 // Re-export all types so consumers can import from either location
@@ -83,7 +87,7 @@ export type {
   PollStats, Order, OrderStats, OrderItem, BlogPost, ResourceRequest,
   LogisticsAuditEntry, AuditLogEntry, AdminRole, AdminPermission,
   SentimentStat, Broadcast, Notification, AdminUser, PressRelease, MediaKitAsset, GlobalSearchResult,
-  User
+  User, MemberDonation, MemberPollVote, MemberSession, MemberNote
 } from '@/types/admin'
 
 
@@ -217,6 +221,144 @@ class AdminService {
       })
     }
     return result
+  }
+
+  async getMemberDonations(memberId: string): Promise<MemberDonation[]> {
+    const { data, error } = await supabase
+      .from('donations')
+      .select('id, amount, payment_method, reference, created_at, cleared, description')
+      .eq('member_id', memberId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('[ADMIN] Error fetching member donations:', error)
+      return []
+    }
+
+    return (data || []).map(d => ({
+      id: d.id,
+      amount: d.amount,
+      method: d.payment_method || 'N/A',
+      ref: d.reference || 'N/A',
+      date: d.created_at,
+      cleared: d.cleared || false,
+      label: d.description || 'Contribution'
+    }))
+  }
+
+  async getMemberPollVotes(memberId: string): Promise<MemberPollVote[]> {
+    const { data, error } = await supabase
+      .from('poll_votes')
+      .select(`
+        id,
+        created_at,
+        polls (
+          title,
+          poll_number
+        ),
+        poll_options (
+          label
+        )
+      `)
+      .eq('user_id', memberId) 
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('[ADMIN] Error fetching member poll votes:', error)
+      return []
+    }
+
+    interface PollVoteJoined {
+      id: string
+      created_at: string
+      polls: {
+        title: string
+        poll_number: number
+      } | null
+      poll_options: {
+        label: string
+      } | null
+    }
+
+    return (data as unknown as PollVoteJoined[] || []).map((v) => ({
+      id: v.id,
+      pollTitle: v.polls?.title || 'Unknown Poll',
+      pollNumber: v.polls?.poll_number || 0,
+      choice: v.poll_options?.label || 'Unknown',
+      date: v.created_at
+    }))
+  }
+
+  async getMemberSessions(memberId: string): Promise<MemberSession[]> {
+    const { data, error } = await supabase
+      .from('member_sessions')
+      .select('id, device_name, location, ip_address, created_at, is_current')
+      .eq('member_id', memberId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('[ADMIN] Error fetching member sessions:', error)
+      return []
+    }
+
+    return (data || []).map(s => ({
+      id: s.id,
+      device: s.device_name || 'Unknown Device',
+      location: s.location || 'Unknown Location',
+      ip: s.ip_address || 'N/A',
+      date: s.created_at,
+      current: s.is_current || false
+    }))
+  }
+
+  async getMemberNotes(memberId: string): Promise<MemberNote[]> {
+    const { data, error } = await supabase
+      .from('member_notes')
+      .select('id, author_name, author_role, content, created_at, is_system')
+      .eq('member_id', memberId)
+      .order('created_at', { ascending: true })
+
+    if (error) {
+      console.error('[ADMIN] Error fetching member notes:', error)
+      return []
+    }
+
+    return (data || []).map(n => ({
+      id: n.id,
+      author: n.author_name || 'System',
+      role: n.author_role || 'Admin',
+      content: n.content,
+      date: n.created_at,
+      isSystem: n.is_system || false
+    }))
+  }
+
+  async addMemberNote(memberId: string, authorName: string, authorRole: string, content: string): Promise<MemberNote | null> {
+    const { data, error } = await supabase
+      .from('member_notes')
+      .insert([{
+        member_id: memberId,
+        author_name: authorName,
+        author_role: authorRole,
+        content,
+        is_system: false
+      }])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('[ADMIN] Error adding member note:', error)
+      return null
+    }
+
+    return {
+      id: data.id,
+      author: data.author_name,
+      role: data.author_role,
+      content: data.content,
+      date: data.created_at,
+      isSystem: data.is_system
+    }
   }
 
   async getPendingVerifications(): Promise<PendingVerification[]> {
@@ -1172,7 +1314,7 @@ class AdminService {
     return donationService.getMobilizationLedger(limit)
   }
 
-  async getMemberDonations(phone: string): Promise<DonationDetail[]> {
+  async getMemberDonationsByPhone(phone: string): Promise<DonationDetail[]> {
     return donationService.getMemberDonations(phone)
   }
 
