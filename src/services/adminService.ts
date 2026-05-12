@@ -1478,8 +1478,24 @@ class AdminService {
     return intelligenceService.getCrisisIncidents()
   }
 
+  async updateCrisisIncident(id: string, status: CrisisIncident['status']): Promise<boolean> {
+    const success = await intelligenceService.updateCrisisIncident(id, status)
+    if (success) {
+      await this.logAction('INCIDENT_UPDATE', `CRISIS/${id}`, 'Success', { status })
+    }
+    return success
+  }
+
   async getMediaCounterNarratives(crisisId?: string): Promise<MediaCounterNarrative[]> {
     return intelligenceService.getMediaCounterNarratives(crisisId)
+  }
+
+  async updateMediaCounterNarrative(id: string, status: MediaCounterNarrative['dispatch_status']): Promise<boolean> {
+    const success = await intelligenceService.updateMediaCounterNarrative(id, status)
+    if (success) {
+      await this.logAction('NARRATIVE_UPDATE', `STRIKES/${id}`, 'Success', { status })
+    }
+    return success
   }
 
   // --- Phase 14: Operation "Ground Game" (Voter Registration & Turnout) ---

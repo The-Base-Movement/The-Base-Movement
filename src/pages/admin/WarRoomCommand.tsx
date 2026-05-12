@@ -92,6 +92,23 @@ export default function WarRoomCommand() {
     }
   }, [])
 
+  const handleUpdateIncidentStatus = async (id: string, currentStatus: string) => {
+    const nextStatus = currentStatus === 'REPORTED' ? 'ACTIVE' : 'RESOLVED'
+    const success = await adminService.updateCrisisIncident(id, nextStatus as any)
+    if (success) {
+      toast.success(`Incident ${id} transitioned to ${nextStatus}`)
+      fetchWarRoomIntelligence(true)
+    }
+  }
+
+  const handleDispatchNarrative = async (id: string) => {
+    const success = await adminService.updateMediaCounterNarrative(id, 'DISPATCHED')
+    if (success) {
+      toast.success('Digital strike narrative dispatched to all platforms.')
+      fetchWarRoomIntelligence(true)
+    }
+  }
+
   const fetchWarRoomIntelligence = async (isBackground = false) => {
     if (!isBackground) setLoading(true)
     try {
@@ -432,10 +449,22 @@ export default function WarRoomCommand() {
                             <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
                               <b className="font-extrabold text-white">{inc.region}</b> — {inc.incident_type.replace(/_/g, ' ').toLowerCase()}
                             </p>
-                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>
-                              {format(new Date(inc.created_at), 'HH:mm')} · {inc.status.toLowerCase()}
-                            </span>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ 
+                                color: inc.status === 'RESOLVED' ? 'hsl(var(--primary))' : inc.status === 'ACTIVE' ? 'hsl(var(--accent))' : 'rgba(255,255,255,.4)' 
+                              }}>
+                                {format(new Date(inc.created_at), 'HH:mm')} · {inc.status.toLowerCase()}
+                              </span>
+                            </div>
                           </div>
+                          {inc.status !== 'RESOLVED' && (
+                            <button 
+                              onClick={() => handleUpdateIncidentStatus(inc.id, inc.status)}
+                              className="text-[10px] font-extrabold px-3 rounded-[3px] shrink-0 h-7 transition-all active:scale-95"
+                              style={{ background: 'rgba(255,255,255,.05)', color: 'white', border: '1px solid rgba(255,255,255,.1)' }}>
+                              {inc.status === 'REPORTED' ? 'Activate' : 'Resolve'}
+                            </button>
+                          )}
                         </div>
                       ))}
                       {narratives.slice(0, 5).map(nar => (
@@ -447,15 +476,23 @@ export default function WarRoomCommand() {
                             <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
                               <b className="font-extrabold text-white">{nar.target_platform}</b> — digital directive
                             </p>
-                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>
+                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ 
+                              color: nar.dispatch_status === 'DISPATCHED' ? 'hsl(var(--primary))' : 'rgba(255,255,255,.4)'
+                            }}>
                               {nar.dispatch_status.toLowerCase()}
                             </span>
                           </div>
-                          {nar.dispatch_status === 'PENDING' && (
-                            <button className="text-[10px] font-extrabold px-3 rounded-[3px] shrink-0 h-7"
+                          {nar.dispatch_status === 'PENDING' ? (
+                            <button 
+                              onClick={() => handleDispatchNarrative(nar.id)}
+                              className="text-[10px] font-extrabold px-3 rounded-[3px] shrink-0 h-7 transition-all active:scale-95"
                               style={{ background: 'rgba(206,17,38,.15)', color: 'hsl(var(--destructive))', border: '1px solid rgba(206,17,38,.3)' }}>
                               Dispatch
                             </button>
+                          ) : (
+                            <div className="flex items-center px-3 h-7 rounded-[3px]" style={{ background: 'hsla(var(--primary), .1)', border: '1px solid hsla(var(--primary), .2)' }}>
+                              <span className="text-[9px] font-extrabold text-primary uppercase">Deployed</span>
+                            </div>
                           )}
                         </div>
                       ))}

@@ -278,6 +278,20 @@ class IntelligenceService {
     }
   }
 
+  async updateCrisisIncident(incidentId: string, status: CrisisIncident['status']): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('crisis_incidents')
+        .update({ status })
+        .eq('id', incidentId)
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to update crisis incident:', error)
+      return false
+    }
+  }
+
   async getMediaCounterNarratives(crisisId?: string): Promise<MediaCounterNarrative[]> {
     try {
       let query = supabase.from('media_counter_narratives').select('*').order('created_at', { ascending: false })
@@ -290,6 +304,20 @@ class IntelligenceService {
     } catch (error) {
       console.error('[DATABASE] Failed to fetch counter narratives:', error)
       return []
+    }
+  }
+
+  async updateMediaCounterNarrative(narrativeId: string, status: MediaCounterNarrative['dispatch_status']): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('media_counter_narratives')
+        .update({ dispatch_status: status })
+        .eq('id', narrativeId)
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to update media counter narrative:', error)
+      return false
     }
   }
 
