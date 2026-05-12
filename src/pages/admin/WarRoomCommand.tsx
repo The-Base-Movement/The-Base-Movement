@@ -22,22 +22,22 @@ function LiveClock() {
   )
 }
 const REGION_COORDS: Record<string, { x: string, y: string }> = {
-  'Upper West': { x: '25%', y: '15%' },
+  'Upper West': { x: '22%', y: '15%' },
   'Upper East': { x: '55%', y: '10%' },
-  'North East': { x: '75%', y: '18%' },
+  'North East': { x: '60%', y: '15%' },
   'Northern': { x: '50%', y: '25%' },
   'Savannah': { x: '25%', y: '30%' },
-  'Bono': { x: '25%', y: '45%' },
-  'Bono East': { x: '45%', y: '45%' },
-  'Oti': { x: '75%', y: '50%' },
-  'Ahafo': { x: '20%', y: '55%' },
-  'Ashanti': { x: '45%', y: '60%' },
-  'Eastern': { x: '65%', y: '65%' },
-  'Volta': { x: '80%', y: '75%' },
-  'Western North': { x: '15%', y: '65%' },
-  'Western': { x: '15%', y: '85%' },
-  'Central': { x: '40%', y: '85%' },
-  'Greater Accra': { x: '60%', y: '85%' },
+  'Bono': { x: '20%', y: '52%' },
+  'Bono East': { x: '40%', y: '50%' },
+  'Oti': { x: '70%', y: '50%' },
+  'Ahafo': { x: '20%', y: '62%' },
+  'Ashanti': { x: '35%', y: '60%' },
+  'Eastern': { x: '50%', y: '70%' },
+  'Volta': { x: '75%', y: '70%' },
+  'Western North': { x: '15%', y: '72%' },
+  'Western': { x: '20%', y: '85%' },
+  'Central': { x: '45%', y: '85%' },
+  'Greater Accra': { x: '60%', y: '80%' },
 }
 
 
