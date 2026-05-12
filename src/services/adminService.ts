@@ -159,6 +159,10 @@ class AdminService {
     return memberService.getMembers()
   }
 
+  async getMembersPaginated(page: number, pageSize: number, searchTerm?: string): Promise<{ data: Member[], totalCount: number }> {
+    return memberService.getMembersPaginated(page, pageSize, searchTerm)
+  }
+
   async searchMembers(query: string): Promise<Member[]> {
     return memberService.searchMembers(query)
   }
@@ -1194,7 +1198,7 @@ class AdminService {
     return tacticalService.getBroadcasts()
   }
 
-  async sendBroadcast(broadcast: Omit<Broadcast, 'id' | 'created_at'>): Promise<boolean> {
+  async sendBroadcast(broadcast: Omit<Broadcast, 'id' | 'created_at' | 'sender_id'>): Promise<boolean> {
     const success = await tacticalService.sendBroadcast(broadcast)
     if (success) {
       await this.logAction('SEND_BROADCAST', `TARGET/${broadcast.target_type}`, 'Success', { title: broadcast.title })

@@ -1,16 +1,33 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent } from '@/components/ui/card'
-import { Eye, EyeOff, Shield, ArrowRight } from 'lucide-react'
-import { BrandLine } from '@/components/ui/BrandLine'
-
+import { Link, useNavigate } from 'react-router-dom'
 import { authService } from '@/services/authService'
-import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
+
+const fieldStyle: React.CSSProperties = {
+  width: '100%',
+  height: 44,
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 4,
+  padding: '0 12px',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 700,
+  fontSize: 13,
+  outline: 'none',
+  background: '#fff',
+  color: 'hsl(var(--on-surface))',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 9.5,
+  fontWeight: 800,
+  color: 'hsl(var(--on-surface-muted))',
+  letterSpacing: '.06em',
+  textTransform: 'uppercase' as const,
+  fontFamily: "'Public Sans', sans-serif",
+  marginBottom: 6,
+}
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false)
@@ -22,141 +39,121 @@ export default function AdminLogin() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
     try {
       await authService.login(email, password)
-      toast.success('Access Granted. Welcome to the Command Center.')
+      toast.success('Access granted. Welcome to the Command Center.')
       navigate('/admin')
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Authentication failed. Please check your credentials.'
-      toast.error(message)
+      toast.error(error instanceof Error ? error.message : 'Authentication failed. Please check your credentials.')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <SEO 
-        title="Admin Portal"
-        noindex
-      />
-      <div className="max-w-md w-full">
-        <Card className="border-border/40 shadow-2xl rounded-sm overflow-hidden bg-white/80 backdrop-blur-xl">
-          <CardContent className="p-10">
-            <div className="text-center mb-10 flex flex-col items-center">
-              <div className="w-16 h-16 bg-destructive/10 rounded-sm flex items-center justify-center mb-4 rotate-3">
-                <Shield className="w-8 h-8 text-destructive" />
+    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+      <SEO title="Admin Portal" noindex />
+
+      <div style={{ width: '100%', maxWidth: 420 }}>
+
+        {/* Card */}
+        <div style={{ borderRadius: 8, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.07)' }}>
+
+          {/* Dark header */}
+          <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', borderTop: '4px solid hsl(var(--primary))', padding: '28px 32px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+              <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'rgba(0,107,63,.15)', border: '1px solid rgba(0,107,63,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--primary))' }}>shield</span>
               </div>
-              <h1 className="text-2xl font-bold text-on-surface mb-2 font-meta tracking-tight">Admin login</h1>
-              <BrandLine className="mb-4" />
-              <p className="text-micro text-muted-foreground/60 font-bold capitalize tracking-tight">Authorized personnel only</p>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", color: '#fff', lineHeight: 1.2 }}>Command Center</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,.4)', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, marginTop: 2 }}>The Base Movement · Restricted Access</div>
+              </div>
+            </div>
+            {/* Ghana flag stripe */}
+            <div style={{ display: 'flex', height: 3, borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ flex: 1, background: '#CE1126' }} />
+              <div style={{ flex: 1, background: '#FCD116' }} />
+              <div style={{ flex: 1, background: '#006b3f' }} />
+            </div>
+          </div>
+
+          {/* Form body */}
+          <form onSubmit={handleLogin} style={{ background: '#fff', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+
+            <div style={{ marginBottom: 2 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", color: 'hsl(var(--on-surface))', marginBottom: 4 }}>Admin login</div>
+              <div style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Authorized personnel only</div>
             </div>
 
-            <form className="space-y-4" onSubmit={handleLogin}>
-              <div className="space-y-2">
-                <Label htmlFor="admin-email" className="text-xs font-bold text-on-surface/80 capitalize tracking-tight">Email</Label>
-                <Input
-                  id="admin-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@thebase.org"
-                  className="h-12 bg-muted/5 border-border/60 focus-visible:ring-on-surface rounded-sm"
+            {/* Email */}
+            <div>
+              <label style={labelStyle}>Email address</label>
+              <input
+                type="email"
+                required
+                placeholder="admin@thebase.org"
+                style={fieldStyle}
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label style={labelStyle}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
                   required
+                  placeholder="••••••••"
+                  style={{ ...fieldStyle, paddingRight: 42 }}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center' }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
+                </button>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="admin-password" className="text-xs font-bold text-on-surface/80 capitalize tracking-tight">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="admin-password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="h-12 bg-muted/5 border-border/60 focus-visible:ring-on-surface rounded-sm pr-12"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-on-surface transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isLoading}
-                className="w-full h-14"
-              >
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span>Authenticating...</span>
-                  </div>
-                ) : (
-                  <>
-                    Sign in to Command <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </>
-                )}
-              </Button>
-
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border/40"></span>
-                </div>
-                <div className="relative flex justify-center text-micro capitalize tracking-tight font-bold">
-                  <span className="bg-white px-4 text-muted-foreground/40">Or authorized via</span>
-                </div>
-              </div>
-
-              <Button
-                type="button"
-                variant="default"
-                onClick={async () => {
-                  try {
-                    await authService.signInWithGoogle()
-                  } catch (error) {
-                    toast.error(error instanceof Error ? error.message : 'Google login failed')
-                  }
-                }}
-                className="w-full h-12 flex items-center justify-center gap-3"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
-                  <path
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    fill="#4285F4"
-                  />
-                  <path
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    fill="#34A853"
-                  />
-                  <path
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-                    fill="#FBBC05"
-                  />
-                  <path
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z"
-                    fill="#EA4335"
-                  />
-                </svg>
-                Google Command Access
-              </Button>
-            </form>
-
-            <div className="text-center mt-6 pt-6 border-t border-border/40">
-              <Link to="/login" className="text-micro font-bold capitalize tracking-tight text-muted-foreground/60 hover:text-primary transition-colors">
-                Member login instead?
-              </Link>
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="btn btn-dest"
+              style={{ width: '100%', justifyContent: 'center', height: 48, fontSize: 13, marginTop: 2 }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                {isLoading ? 'hourglass_empty' : 'login'}
+              </span>
+              {isLoading ? 'Authenticating...' : 'Sign in to command →'}
+            </button>
+
+          </form>
+
+          {/* Footer */}
+          <div style={{ padding: '14px 32px', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', textAlign: 'center' }}>
+            <Link to="/login" style={{ fontSize: 12, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", color: 'hsl(var(--on-surface-muted))', textDecoration: 'none' }}>
+              Member login instead →
+            </Link>
+          </div>
+        </div>
+
+        {/* Security notice */}
+        <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 7, justifyContent: 'center' }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>lock</span>
+          <span style={{ fontSize: 11, fontWeight: 700, fontFamily: "'Public Sans', sans-serif", color: 'hsl(var(--on-surface-muted))' }}>
+            Secured · Admin access is monitored and logged
+          </span>
+        </div>
+
       </div>
     </div>
   )

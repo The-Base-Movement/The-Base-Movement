@@ -1,44 +1,46 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { 
-  Megaphone, 
-  Send, 
-  ArrowLeft,
-  Loader2,
-  Shield,
-  MessageSquare,
-  Mail,
-  Smartphone
-} from 'lucide-react'
-import { Button } from "@/components/ui/neon-button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select"
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Editor } from '@tinymce/tinymce-react'
-import { toast } from "sonner"
+import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
 import type { Broadcast, Region } from '@/services/adminService'
-import { cn } from "@/lib/utils"
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { BrandLine } from '@/components/ui/BrandLine'
+
+const fieldStyle: React.CSSProperties = {
+  width: '100%',
+  height: 42,
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 4,
+  padding: '0 12px',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 700,
+  fontSize: 13,
+  outline: 'none',
+  background: '#fff',
+  color: 'hsl(var(--on-surface))',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 9.5,
+  fontWeight: 800,
+  color: 'hsl(var(--on-surface-muted))',
+  letterSpacing: '.06em',
+  textTransform: 'uppercase',
+  fontFamily: "'Public Sans', sans-serif",
+  marginBottom: 6,
+}
 
 export default function NewBroadcast() {
   const navigate = useNavigate()
   const location = useLocation()
   const editorRef = useRef<{ getContent: () => string } | null>(null)
-  
-  const state = location.state as { template?: { title: string, content: string, type: string, priority: string } } | null
+
+  const state = location.state as { template?: { title: string; content: string; type: string; priority: string } } | null
   const initialTemplate = state?.template
 
   const [isSending, setIsSending] = useState(false)
   const [fullRegions, setFullRegions] = useState<Region[]>([])
-  const [allConstituencies, setAllConstituencies] = useState<{ name: string, region_id: number }[]>([])
+  const [allConstituencies, setAllConstituencies] = useState<{ name: string; region_id: number }[]>([])
   const [selectedRegionId, setSelectedRegionId] = useState<number | null>(null)
 
   const [newBroadcast, setNewBroadcast] = useState<Omit<Broadcast, 'id' | 'sender_id' | 'created_at'>>({
@@ -48,357 +50,276 @@ export default function NewBroadcast() {
     target_type: (initialTemplate?.type as 'ALL' | 'REGION' | 'CONSTITUENCY') || 'ALL',
     target_value: '',
     priority: (initialTemplate?.priority as 'Normal' | 'High' | 'Urgent') || 'Normal',
-    status: 'Sent'
+    status: 'Sent',
   })
-
-  const MAX_CHARACTERS = 2000 // Increased for HTML content
 
   const fetchData = useCallback(async () => {
     try {
       const [regions, cData] = await Promise.all([
         adminService.getRegions(),
-        adminService.getConstituencies()
+        adminService.getConstituencies(),
       ])
       setFullRegions(regions || [])
       setAllConstituencies(cData?.data || [])
-    } catch (err) {
-      console.error("[COMMUNICATION-HUB] operational metrics sync failure:", err)
-      toast.error("Failed to synchronize mobilization operational metrics")
+    } catch {
+      toast.error('Failed to load regions and constituencies.')
     }
   }, [])
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  useEffect(() => { fetchData() }, [fetchData])
 
   const handleSend = async () => {
     const content = editorRef.current ? editorRef.current.getContent() : newBroadcast.content
-    
     if (!newBroadcast.title || !content || content === '<p></p>') {
-      toast.error("Please fill in all required fields")
+      toast.error('Please fill in all required fields.')
       return
     }
-
     if (newBroadcast.target_type !== 'ALL' && !newBroadcast.target_value) {
-      toast.error("Please select a target region or constituency")
+      toast.error('Please select a target region or constituency.')
       return
     }
-
     setIsSending(true)
     try {
-      const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
-      const payload: Omit<Broadcast, 'id' | 'created_at'> = { 
-        ...newBroadcast, 
-        content,
-        sender_id: adminId
-      }
-      
+      const payload: Omit<Broadcast, 'id' | 'created_at' | 'sender_id'> = { ...newBroadcast, content }
       const success = await adminService.sendBroadcast(payload)
       if (success) {
-        toast.success("Broadcast deployed to the field successfully")
+        toast.success('Broadcast deployed to the field.')
         navigate('/admin/broadcasts')
       } else {
-        toast.error("Failed to deploy broadcast")
+        toast.error('Failed to deploy broadcast.')
       }
-    } catch (err) {
-      console.error("[COMMUNICATION-HUB] Critical dispatch failure:", err)
-      toast.error("Critical failure in mobilization dispatch")
+    } catch {
+      toast.error('Critical failure in mobilization dispatch.')
     } finally {
       setIsSending(false)
     }
   }
 
-  const getChannelIcon = (channel: string) => {
-    switch (channel) {
-      case 'SMS': return <Smartphone className="w-3 h-3" />
-      case 'Email': return <Mail className="w-3 h-3" />
-      case 'Push': return <Megaphone className="w-3 h-3" />
-      default: return <MessageSquare className="w-3 h-3" />
-    }
+  const channelIconName = (ch: string) => {
+    if (ch === 'SMS') return 'sms'
+    if (ch === 'Email') return 'mail'
+    if (ch === 'Push') return 'notifications'
+    return 'chat_bubble'
+  }
+
+  const priorityBorderColor = (p: string) => {
+    if (p === 'Urgent') return 'hsl(var(--destructive))'
+    if (p === 'High') return '#d97706'
+    return 'hsl(var(--border))'
   }
 
   return (
-    <div className="admin-page-container max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Breadcrumb & Header */}
-      <div className="space-y-4">
-        <Breadcrumbs />
-        
-        <div className="flex-columns items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-              <Megaphone className="w-8 h-8 text-on-surface" />
-              Send new broadcast
-            </h1>
-            <BrandLine className="mt-4" />
-            <p className="text-muted-foreground/80 text-sm mt-1">Deploying a movement-wide communication to the field.</p>
+    <div className="main animate-in fade-in duration-500">
+
+      {/* Top bar */}
+      <div className="top" style={{ marginBottom: 20 }}>
+        <div>
+          <div className="crumbs" style={{ marginBottom: 6 }}>
+            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>Admin</Link>
+            {' · '}
+            <Link to="/admin/broadcasts" style={{ color: 'hsl(var(--primary))' }}>Communication hub</Link>
+            {' · '}
+            New broadcast
           </div>
-          <Button 
-            variant="default"
-            onClick={() => navigate('/admin/broadcasts')}
-            className="rounded-sm text-micro font-bold tracking-tight h-11 px-8 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Intelligence
-          </Button>
+          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>campaign</span>
+            New broadcast
+          </h2>
+        </div>
+        <div className="actions">
+          <Link to="/admin/broadcasts">
+            <button className="btn btn-outline btn-sm">
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>arrow_back</span>
+              Abort
+            </button>
+          </Link>
         </div>
       </div>
 
-      <Card className="rounded-sm border-border/40 shadow-xl overflow-hidden bg-background group border-none md:border-solid">
-        <CardHeader className="p-8 bg-on-surface text-white border-b border-white/5 relative">
-          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50" />
-          <div className="flex items-center gap-3">
-            <Shield className="w-5 h-5 text-brand-red" />
-            <div>
-              <CardTitle className="text-lg font-bold tracking-tight">Deployment configuration</CardTitle>
-              <p className="text-xs text-white/40 font-medium mt-0.5">Define your target audience and broadcast priority.</p>
-            </div>
-          </div>
-        </CardHeader>
+      {/* Form panel */}
+      <div className="panel" style={{ maxWidth: 900 }}>
 
-        <CardContent className="p-8 space-y-8">
+        {/* Dark gradient header */}
+        <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', borderTop: '3px solid hsl(var(--destructive))', borderRadius: '6px 6px 0 0', padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>shield</span>
+          <div>
+            <h3 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: '#fff' }}>Deployment configuration</h3>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, marginTop: 2 }}>Define your target audience and broadcast priority</div>
+          </div>
+        </div>
+
+        <div style={{ padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+
           {/* Title */}
-          <div className="space-y-2">
-            <label className="text-micro font-bold normal-case text-muted-foreground/40">Broadcast title</label>
-            <Input 
-              placeholder="e.g. National registration wave" 
-              className="rounded-sm border-border/40 h-12 text-sm font-bold placeholder:font-normal shadow-sm bg-muted/5 focus:bg-background transition-colors"
+          <div>
+            <label style={labelStyle}>
+              Broadcast title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. National registration wave"
+              style={{ ...fieldStyle, height: 44 }}
               value={newBroadcast.title}
-              onChange={(e) => setNewBroadcast({...newBroadcast, title: e.target.value})}
+              onChange={e => setNewBroadcast({ ...newBroadcast, title: e.target.value })}
             />
           </div>
 
-          {/* Channel, Target & Priority Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <label className="text-micro font-bold normal-case text-muted-foreground/40">Delivery channel</label>
-              <Select 
+          {/* Channel + Target + Priority */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
+            <div>
+              <label style={labelStyle}>Delivery channel</label>
+              <select
+                style={{ ...fieldStyle, appearance: 'none' as const }}
                 value={newBroadcast.channel}
-                onValueChange={(v: 'SMS' | 'Email' | 'Push' | 'In-app') => setNewBroadcast({...newBroadcast, channel: v})}
+                onChange={e => setNewBroadcast({ ...newBroadcast, channel: e.target.value as 'SMS' | 'Email' | 'Push' | 'In-app' })}
               >
-                <SelectTrigger className="rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5">
-                  <SelectValue placeholder="Select channel" />
-                </SelectTrigger>
-                <SelectContent className="rounded-sm border-border/40">
-                  <SelectItem value="In-app" className="text-micro font-bold normal-case">
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="w-3.5 h-3.5" /> In-app message
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="Push" className="text-micro font-bold normal-case">
-                    <div className="flex items-center gap-2">
-                      <Megaphone className="w-3.5 h-3.5" /> Push notification
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="SMS" className="text-micro font-bold normal-case">
-                    <div className="flex items-center gap-2">
-                      <Smartphone className="w-3.5 h-3.5" /> SMS broadcast
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="Email" className="text-micro font-bold normal-case">
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-3.5 h-3.5" /> Email dispatch
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+                <option value="In-app">In-app message</option>
+                <option value="Push">Push notification</option>
+                <option value="SMS">SMS broadcast</option>
+                <option value="Email">Email dispatch</option>
+              </select>
             </div>
-
-            <div className="space-y-2">
-              <label className="text-micro font-bold normal-case text-muted-foreground/40">Target segment</label>
-              <Select 
+            <div>
+              <label style={labelStyle}>Target segment</label>
+              <select
+                style={{ ...fieldStyle, appearance: 'none' as const }}
                 value={newBroadcast.target_type}
-                onValueChange={(v: 'ALL' | 'REGION' | 'CONSTITUENCY') => {
-                  setNewBroadcast({
-                    ...newBroadcast, 
-                    target_type: v, 
-                    target_value: v === 'ALL' ? '' : newBroadcast.target_value 
-                  })
-                }}
+                onChange={e => setNewBroadcast({ ...newBroadcast, target_type: e.target.value as 'ALL' | 'REGION' | 'CONSTITUENCY', target_value: '' })}
               >
-                <SelectTrigger className="rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5">
-                  <SelectValue placeholder="Select target" />
-                </SelectTrigger>
-                <SelectContent className="rounded-sm border-border/40">
-                  <SelectItem value="ALL" className="text-micro font-bold normal-case">National (all)</SelectItem>
-                  <SelectItem value="REGION" className="text-micro font-bold normal-case">Regional</SelectItem>
-                  <SelectItem value="CONSTITUENCY" className="text-micro font-bold normal-case">Constituency</SelectItem>
-                </SelectContent>
-              </Select>
+                <option value="ALL">National (all)</option>
+                <option value="REGION">Regional</option>
+                <option value="CONSTITUENCY">Constituency</option>
+              </select>
             </div>
-
-            <div className="space-y-2">
-              <label className="text-micro font-bold normal-case text-muted-foreground/40">Priority level</label>
-              <Select 
+            <div>
+              <label style={labelStyle}>Priority level</label>
+              <select
+                style={{ ...fieldStyle, appearance: 'none' as const, borderColor: priorityBorderColor(newBroadcast.priority), color: newBroadcast.priority === 'Urgent' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))' }}
                 value={newBroadcast.priority}
-                onValueChange={(v: 'Normal' | 'High' | 'Urgent') => setNewBroadcast({...newBroadcast, priority: v})}
+                onChange={e => setNewBroadcast({ ...newBroadcast, priority: e.target.value as 'Normal' | 'High' | 'Urgent' })}
               >
-                <SelectTrigger className={cn(
-                  "rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5",
-                  newBroadcast.priority === 'Urgent' ? "text-destructive border-destructive/20 bg-destructive/5" : ""
-                )}>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent className="rounded-sm border-border/40">
-                  <SelectItem value="Normal" className="text-micro font-bold normal-case">Normal</SelectItem>
-                  <SelectItem value="High" className="text-micro font-bold normal-case text-orange-600">High priority</SelectItem>
-                  <SelectItem value="Urgent" className="text-micro font-bold normal-case text-destructive">Urgent (Level Red)</SelectItem>
-                </SelectContent>
-              </Select>
+                <option value="Normal">Normal</option>
+                <option value="High">High priority</option>
+                <option value="Urgent">Urgent (Level Red)</option>
+              </select>
             </div>
           </div>
 
-          {/* Region & Constituency Row */}
+          {/* Region + Constituency (conditional) */}
           {newBroadcast.target_type !== 'ALL' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-top-2">
-              <div className="space-y-2">
-                <label className="text-micro font-bold normal-case text-muted-foreground/40">Select region</label>
-                <Select 
-                  value={fullRegions.find(r => r.name === newBroadcast.target_value)?.name || ""}
-                  onValueChange={(v) => {
-                    const region = fullRegions.find(r => r.name === v)
+            <div style={{ display: 'grid', gridTemplateColumns: newBroadcast.target_type === 'CONSTITUENCY' ? '1fr 1fr' : '1fr', gap: 14 }}>
+              <div>
+                <label style={labelStyle}>Select region <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
+                <select
+                  style={{ ...fieldStyle, appearance: 'none' as const }}
+                  value={fullRegions.find(r => r.name === newBroadcast.target_value)?.name || ''}
+                  onChange={e => {
+                    const region = fullRegions.find(r => r.name === e.target.value)
                     if (region) {
                       setSelectedRegionId(region.id)
-                      setNewBroadcast({...newBroadcast, target_value: region.name})
+                      setNewBroadcast({ ...newBroadcast, target_value: region.name })
                     }
                   }}
                 >
-                  <SelectTrigger className="rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5">
-                    <SelectValue placeholder="Select region" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-sm border-border/40">
-                    {(fullRegions || []).map((r: Region) => (
-                      <SelectItem key={`region-${r.id}`} value={r.name} className="text-micro font-bold normal-case">{r.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <option value="">Select region</option>
+                  {fullRegions.map(r => (
+                    <option key={r.id} value={r.name}>{r.name}</option>
+                  ))}
+                </select>
               </div>
-
               {newBroadcast.target_type === 'CONSTITUENCY' && (
-                <div className="space-y-2 animate-in slide-in-from-top-2">
-                  <label className="text-micro font-bold normal-case text-muted-foreground/40">Select constituency</label>
-                  <Select 
+                <div>
+                  <label style={labelStyle}>Select constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
+                  <select
+                    style={{ ...fieldStyle, appearance: 'none' as const, opacity: !selectedRegionId ? 0.45 : 1 }}
                     disabled={!selectedRegionId}
-                    onValueChange={(v) => {
-                      if (v === 'ALL_IN_REGION') {
+                    value={newBroadcast.target_value}
+                    onChange={e => {
+                      if (e.target.value === 'ALL_IN_REGION') {
                         const region = fullRegions.find(r => r.id === selectedRegionId)
                         if (region) {
-                          setNewBroadcast({
-                            ...newBroadcast, 
-                            target_type: 'REGION',
-                            target_value: region.name
-                          })
+                          setNewBroadcast({ ...newBroadcast, target_type: 'REGION', target_value: region.name })
                           toast.info(`Elevated to Regional target: ${region.name}`)
                         }
                       } else {
-                        setNewBroadcast({...newBroadcast, target_value: v})
+                        setNewBroadcast({ ...newBroadcast, target_value: e.target.value })
                       }
                     }}
                   >
-                    <SelectTrigger className="rounded-sm border-border/40 h-12 text-micro font-bold normal-case shadow-sm bg-muted/5">
-                      <SelectValue placeholder={!selectedRegionId ? "Select region first" : "Select constituency"} />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-sm border-border/40">
-                      <SelectItem value="ALL_IN_REGION" className="text-micro font-bold normal-case italic text-muted-foreground/40">All in Region</SelectItem>
-                      {(allConstituencies || [])
-                        .filter(c => c.region_id === selectedRegionId)
-                        .map((c, idx) => (
-                          <SelectItem key={`const-${idx}-${c.name}`} value={c.name} className="text-micro font-bold normal-case">{c.name}</SelectItem>
-                        ))
-                      }
-                    </SelectContent>
-                  </Select>
+                    <option value="">{!selectedRegionId ? 'Select region first' : 'Select constituency'}</option>
+                    <option value="ALL_IN_REGION">All in region</option>
+                    {allConstituencies
+                      .filter(c => c.region_id === selectedRegionId)
+                      .map((c, idx) => (
+                        <option key={idx} value={c.name}>{c.name}</option>
+                      ))
+                    }
+                  </select>
                 </div>
               )}
             </div>
           )}
 
-          {/* Content with TinyMCE */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-micro font-bold normal-case text-muted-foreground/40">Broadcast message (Rich Content)</label>
-              <div className="flex items-center gap-2">
-                <span className={cn(
-                  "text-micro font-bold",
-                  newBroadcast.content.length > MAX_CHARACTERS * 0.9 ? "text-destructive" : "text-muted-foreground/40"
-                )}>
-                  {newBroadcast.content.length} / {MAX_CHARACTERS}
-                </span>
-                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              </div>
-            </div>
-            
-            <div className="rounded-sm overflow-hidden border border-border/40 shadow-sm bg-muted/5">
+          {/* Rich text editor */}
+          <div>
+            <label style={labelStyle}>
+              Broadcast message <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+            </label>
+            <div style={{ border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
               <Editor
                 apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
                 onInit={(_, editor) => (editorRef.current = editor)}
                 initialValue={newBroadcast.content}
                 init={{
-                  height: 400,
+                  height: 380,
                   menubar: false,
-                  plugins: [
-                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                    'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-                  ],
-                  toolbar: 'undo redo | blocks | ' +
-                    'bold italic forecolor | alignleft aligncenter ' +
-                    'alignright alignjustify | bullist numlist outdent indent | ' +
-                    'removeformat | link | help',
-                  content_style: 'body { font-family: "Public Sans", sans-serif; font-size:14px; color: hsl(var(--on-surface)); background-color: transparent; } p { margin-bottom: 1em; }',
+                  plugins: ['advlist', 'autolink', 'lists', 'link', 'charmap', 'preview', 'searchreplace', 'visualblocks', 'code', 'insertdatetime', 'table', 'wordcount'],
+                  toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat | link | help',
+                  content_style: "body { font-family: 'Public Sans', sans-serif; font-size:14px; } p { margin-bottom: 1em; }",
                   skin: 'oxide',
-                  content_css: 'default',
                   placeholder: 'Compose your administrative directive with rich formatting...',
                   branding: false,
-                  statusbar: false
+                  statusbar: false,
                 }}
-                onEditorChange={(content) => {
-                  setNewBroadcast(prev => ({ ...prev, content }))
-                }}
+                onEditorChange={content => setNewBroadcast(prev => ({ ...prev, content }))}
               />
             </div>
           </div>
+        </div>
 
-          {/* Footer Actions */}
-          <div className="pt-6 border-t border-border/10 flex items-center justify-end gap-4">
-            <Button 
-              variant="default" 
-              onClick={() => navigate('/admin/broadcasts')}
-              className="rounded-sm h-12 px-10 text-micro font-bold tracking-tight border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-            >
-              Abort Transmission
-            </Button>
-            <Button 
-              variant="primary"
-              disabled={isSending}
-              onClick={handleSend}
-              className="rounded-sm h-12 px-12 text-micro font-bold tracking-tight min-w-[200px] shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-            >
-              {isSending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Launching...
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4 mr-2" /> Send Broadcast
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Footer */}
+        <div style={{ padding: '14px 18px', borderTop: '1px solid hsl(var(--border))', display: 'flex', gap: 10, justifyContent: 'flex-end', background: 'hsl(var(--container-low))', borderRadius: '0 0 6px 6px' }}>
+          <Link to="/admin/broadcasts">
+            <button type="button" className="btn btn-outline btn-sm">Cancel</button>
+          </Link>
+          <button
+            className="btn btn-dest"
+            disabled={isSending}
+            style={{ minWidth: 180 }}
+            onClick={handleSend}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+              {isSending ? 'hourglass_empty' : 'send'}
+            </span>
+            {isSending ? 'Launching...' : 'Send broadcast →'}
+          </button>
+        </div>
+      </div>
 
-      {/* Preview Info */}
-      <div className="flex items-center gap-4 p-4 rounded-sm bg-muted/5 border border-border/40 text-muted-foreground/80">
-        <div className="w-10 h-10 rounded-sm bg-background border border-border/40 flex items-center justify-center shrink-0">
-          {getChannelIcon(newBroadcast.channel)}
+      {/* Preview info */}
+      <div style={{ marginTop: 14, maxWidth: 900, padding: '14px 18px', border: '1px solid hsl(var(--border))', borderRadius: 6, background: 'hsl(var(--container-low))', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>{channelIconName(newBroadcast.channel)}</span>
         </div>
         <div>
-          <p className="text-micro font-bold normal-case text-on-surface">Broadcast preview</p>
-          <p className="text-micro leading-relaxed">
-            Sending to {newBroadcast.target_type === 'ALL' ? 'all movement members' : `targeted ${newBroadcast.target_type.toLowerCase()} segments`} via {newBroadcast.channel}. 
-            Estimated delivery to ~42,500 members. Rich content is supported on {newBroadcast.channel === 'SMS' ? 'Smartphone links' : 'this channel'}.
+          <b style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, display: 'block', marginBottom: 3 }}>Broadcast preview</b>
+          <p style={{ margin: 0, fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.55, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
+            Sending to {newBroadcast.target_type === 'ALL' ? 'all movement members' : `targeted ${newBroadcast.target_type.toLowerCase()} segments`} via {newBroadcast.channel}.{' '}
+            Estimated delivery to ~42,500 members. Rich content is supported on {newBroadcast.channel === 'SMS' ? 'smartphone links' : 'this channel'}.
           </p>
         </div>
       </div>
+
     </div>
   )
 }

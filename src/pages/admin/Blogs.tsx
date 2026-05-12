@@ -1,16 +1,15 @@
-import { useState, useEffect, useCallback } from 'react'
-import { 
-  FileText, 
-  Plus, 
-  Search, 
-  MoreVertical, 
-  Edit2, 
-  Trash2, 
+import { useState, useEffect, useCallback, useRef } from 'react'
+import {
+  FileText,
+  Plus,
+  Search,
+  MoreVertical,
+  Edit2,
+  Trash2,
   Eye,
   Star,
   Calendar,
   Clock,
-  Upload
 } from 'lucide-react'
 import { 
   Card, 
@@ -62,10 +61,12 @@ export default function AdminBlogs() {
   const [isLoading, setIsLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(adminService.getCurrentUser())
   
-  const canPublish = currentUser?.role === 'SUPER_ADMIN' || 
-                    currentUser?.role === 'CHIEF_EDITOR' || 
+  const canPublish = currentUser?.role === 'SUPER_ADMIN' ||
+                    currentUser?.role === 'CHIEF_EDITOR' ||
                     currentUser?.role === 'SENIOR_EDITOR'
-  
+
+  const editorRef = useRef<{ getContent: () => string } | null>(null)
+
   // Persist view state
   const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(() => {
     return (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
@@ -267,12 +268,13 @@ export default function AdminBlogs() {
     setIsLoading(true)
 
     try {
+      const editorContent = editorRef.current ? editorRef.current.getContent() : formData.content
+      const postData = { ...formData, content: editorContent }
+
       let success = false
       if (editingPost) {
-        success = await adminService.updateBlogPost(editingPost.id, formData)
+        success = await adminService.updateBlogPost(editingPost.id, postData)
       } else {
-        // Simple slug generation if empty
-        const postData = { ...formData }
         if (!postData.slug) {
           postData.slug = postData.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
         }
@@ -449,29 +451,15 @@ export default function AdminBlogs() {
           {/* CENTER: Composer */}
           <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
             {/* Formatting toolbar */}
-            <div className="bg-white border-b border-border/40 px-6 py-2 flex items-center gap-1 flex-wrap shrink-0">
-              <div className="flex gap-0.5 pr-[10px] mr-1.5 border-r border-border/40">
-                <Select value={formData.category || 'Movement'} onValueChange={(val) => setFormData({...formData, category: val})}>
-                  <SelectTrigger className="h-[30px] px-[10px] border border-border/40 rounded-[4px] text-[11.5px] font-extrabold bg-white min-w-[120px] gap-1.5">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {['Movement','Youth','Economy','Diaspora','Integrity','Community'].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              {[['B','font-bold'],['I','italic'],['U','underline']].map(([label]) => (
-                <button key={label} type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center text-[13px] font-extrabold text-on-surface hover:bg-muted/10 transition-colors border-0 bg-transparent">{label}</button>
-              ))}
-              <div className="flex gap-0.5 px-[10px] mx-1.5 border-x border-border/40">
-                {['¶','"','•','1.'].map(s => (
-                  <button key={s} type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center text-[12px] font-extrabold text-on-surface hover:bg-muted/10 transition-colors bg-transparent border-0">{s}</button>
-                ))}
-              </div>
-              <button type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center text-[13px] hover:bg-muted/10 transition-colors bg-transparent border-0">🔗</button>
-              <button type="button" className="w-8 h-[30px] rounded-[4px] flex items-center justify-center hover:bg-muted/10 transition-colors bg-transparent border-0">
-                <Upload className="w-3.5 h-3.5 text-on-surface" />
-              </button>
+            <div className="bg-white border-b border-border/40 px-6 py-2 flex items-center gap-3 flex-wrap shrink-0">
+              <Select value={formData.category || 'Movement'} onValueChange={(val) => setFormData({...formData, category: val})}>
+                <SelectTrigger className="h-[30px] px-[10px] border border-border/40 rounded-[4px] text-[11.5px] font-extrabold bg-white min-w-[120px] gap-1.5">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {['Movement','Youth','Economy','Diaspora','Integrity','Community'].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
               <div className="ml-auto">
                 <Select value={formData.status} onValueChange={(val: 'Draft' | 'Pending Verification' | 'Published') => setFormData({...formData, status: val})}>
                   <SelectTrigger className="h-[30px] px-[10px] border border-border/40 rounded-[4px] text-[11.5px] font-extrabold bg-white gap-1.5">
@@ -580,25 +568,27 @@ export default function AdminBlogs() {
 
                   {/* TinyMCE content editor */}
                   <Editor
+                    key={editingPost?.id ?? 'new'}
                     apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-                    value={formData.content ?? ''}
-                    onEditorChange={(content) => setFormData({...formData, content})}
+                    onInit={(_, editor) => (editorRef.current = editor)}
+                    initialValue={formData.content ?? ''}
                     init={{
                       height: 520,
                       menubar: false,
-                      toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | removeformat',
+                      plugins: ['advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'searchreplace', 'visualblocks', 'insertdatetime', 'table', 'wordcount'],
+                      toolbar: 'undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | link image | removeformat',
                       statusbar: false,
-                      plugins: 'anchor autolink link lists image wordcount',
                       content_style: 'body { font-family: "Lora", Georgia, serif; font-size:16.5px; color:#1f2520; line-height:1.7; background:white; border:none; outline:none; }',
                       skin: 'oxide',
                       content_css: 'default',
+                      branding: false,
                       images_upload_handler: async (blobInfo: { blob: () => Blob; filename: () => string }) => {
                         const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type })
                         const { contentService } = await import('@/services/contentService')
                         const url = await contentService.uploadImage(file, 'editor-content')
                         if (!url) throw new Error('Upload failed')
                         return url
-                      }
+                      },
                     }}
                   />
 

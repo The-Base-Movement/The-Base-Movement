@@ -1,10 +1,6 @@
 import { lazy } from 'react'
-import { type RouteObject, Navigate, Outlet } from 'react-router-dom'
-import { ChaptersProvider } from './context/ChaptersContext'
-
-function WithChapters() {
-  return <ChaptersProvider><Outlet /></ChaptersProvider>
-}
+import { type RouteObject, Navigate } from 'react-router-dom'
+import WithChapters from './components/WithChapters'
 import Home from './pages/Home'
 import PublicLayout from './components/PublicLayout'
 import DashboardLayout from './components/DashboardLayout'
@@ -138,7 +134,7 @@ export const routes: RouteObject[] = [
       { path: '/dashboard/polls', element: <Polls /> },
       { element: <WithChapters />, children: [
         { path: '/dashboard/chapters', element: <Chapters /> },
-        { path: '/dashboard/chapters/:id', element: <ChapterDetails /> },
+        { path: '/dashboard/chapters/:slug', element: <ChapterDetails /> },
       ]},
       { path: '/dashboard/store', element: <Store /> },
       { path: '/dashboard/store/product/:slug', element: <ProductDetails /> },
@@ -170,6 +166,7 @@ export const routes: RouteObject[] = [
       { path: '/admin/war-room', element: <AdminWarRoomCommand /> },
       { path: '/admin/ground-game', element: <AdminGroundGameCommand /> },
       { path: '/admin/ground-game/deploy', element: <AdminDeployMission /> },
+      { path: '/admin/deploy', element: <AdminDeployMission /> },
       { path: '/admin/donations', element: <AdminDonations /> },
       { path: '/admin/priorities', element: <AdminStrategicPriorities /> },
       { path: '/admin/members', element: <AdminMembers /> },

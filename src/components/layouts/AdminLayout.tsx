@@ -22,6 +22,7 @@ import {
   Vote,
   ChevronDown,
   PenTool,
+  Radio,
   type LucideIcon
 } from 'lucide-react'
 
@@ -157,6 +158,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       icon: LayoutDashboard,
       items: [
         { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Mission control' },
+        { to: '/admin/war-room', icon: Radio, label: 'War Room', pill: 'LIVE' },
         { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Analytics' },
       ]
     },

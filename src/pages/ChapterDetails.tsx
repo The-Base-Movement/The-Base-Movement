@@ -12,9 +12,11 @@ import { authService } from '@/services/authService'
 import { useToast } from '@/hooks/use-toast'
 
 export default function ChapterDetails() {
-  const { id } = useParams<{ id: string }>()
+  const { slug } = useParams<{ slug: string }>()
   const { chapters, isLoading } = useChapters()
-  const chapter: Chapter | undefined = chapters.find(c => c.id === id)
+  const chapter: Chapter | undefined = chapters.find(
+    c => c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') === slug
+  )
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [isJoining, setIsJoining] = useState(false)
   const { toast } = useToast()

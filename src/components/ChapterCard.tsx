@@ -24,6 +24,7 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
 
   const regionLabel = chapter.region || chapter.city_or_region
   const flag = isDiaspora && countryFlags[chapter.country] ? countryFlags[chapter.country] : ''
+  const slug = chapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
 
   return (
     <div className="bg-white border border-border rounded-[6px] overflow-hidden">
@@ -86,7 +87,7 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
             </div>
           </div>
           <Link
-            to={`/dashboard/chapters/${chapter.id}`}
+            to={`/dashboard/chapters/${slug}`}
             className="shrink-0 px-3 py-1.5 border border-border rounded-[4px] text-[11px] font-extrabold text-on-surface hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors font-['Public_Sans',sans-serif]"
           >
             Join

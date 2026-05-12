@@ -375,6 +375,50 @@ class MemberService {
       )
       .subscribe()
   }
+
+  async getMembersPaginated(page: number, pageSize: number, searchTerm?: string): Promise<{ data: Member[], totalCount: number }> {
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    let query = supabase
+      .from('users')
+      .select('id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address', { count: 'exact' })
+
+    if (searchTerm) {
+      query = query.or(`full_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,registration_number.ilike.%${searchTerm}%`)
+    }
+
+    const { data, count, error } = await query
+      .order('joined_at', { ascending: false })
+      .range(from, to)
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch paginated members:', error)
+      return { data: [], totalCount: 0 }
+    }
+
+    const members: Member[] = (data || []).map((u) => ({
+      id: u.registration_number,
+      name: u.full_name,
+      email: u.email,
+      phone: u.phone_number || 'N/A',
+      region: u.region || 'Region pending',
+      constituency: u.constituency || 'Constituency pending',
+      status: u.status,
+      joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
+      platform: u.platform || 'GHANA',
+      type: u.platform === 'GHANA' ? 'Standard' : 'Premium',
+      avatarUrl: u.avatar_url || undefined,
+      gender: u.gender || 'Not specified',
+      chapter: u.chapter || 'TBM Ghana Chapter',
+      country: u.country || 'Ghana',
+      profession: u.profession || 'Patriot',
+      city: u.city || undefined,
+      residentialAddress: u.residential_address || undefined
+    }))
+
+    return { data: members, totalCount: count || 0 }
+  }
 }
 
 export const memberService = MemberService.getInstance()

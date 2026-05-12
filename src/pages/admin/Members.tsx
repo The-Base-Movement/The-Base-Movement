@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Fragment } from 'react'
+import { useState, useRef, useEffect, useCallback, Fragment } from 'react'
 import { 
   Search, 
   Download, 
@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { usePerformance } from '@/context/PerformanceContext'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { adminService, type AuditLogEntry, type Member, type MemberDonation, type MemberPollVote, type MemberSession, type MemberNote } from '@/services/adminService'
 import { Button } from '@/components/ui/neon-button'
@@ -61,6 +62,7 @@ export default function MembersList() {
     }
     return ''
   })
+  const { lowBandwidthMode } = usePerformance()
   const { toast } = useToast()
   const [isExporting, setIsExporting] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
@@ -132,15 +134,19 @@ export default function MembersList() {
     }
   }
 
+  const fetchMembers = useCallback(async () => {
+    setIsLoading(true)
+    const { data, totalCount: total } = await adminService.getMembersPaginated(currentPage, itemsPerPage, searchTerm)
+    setMembers(data)
+    setTotalMembers(total)
+    setIsLoading(false)
+  }, [currentPage, searchTerm])
+
   useEffect(() => {
-    const fetchMembers = async () => {
-      setIsLoading(true)
-      const data = await adminService.getMembers()
-      setMembers(data)
-      setIsLoading(false)
-    }
     fetchMembers()
-  }, [])
+  }, [fetchMembers])
+
+  const [totalMembers, setTotalMembers] = useState(0)
 
   useEffect(() => {
     if (!selectedMember) {
@@ -188,9 +194,7 @@ export default function MembersList() {
       const success = await adminService.verifyMember(id, true, 'Administrative Approval')
       if (success) {
         toast({ title: "Member verified", description: `${name} has been successfully admitted.` })
-        // Refresh members
-        const data = await adminService.getMembers()
-        setMembers(data)
+        fetchMembers()
       }
     }
   }
@@ -283,8 +287,7 @@ export default function MembersList() {
       })
 
       // Refresh the list
-      const updatedMembers = await adminService.getMembers()
-      setMembers(updatedMembers)
+      fetchMembers()
       setIsAdding(false)
 
     } catch (error: unknown) {
@@ -453,17 +456,6 @@ export default function MembersList() {
     })
   }
 
-  const filteredMembers = members.filter(m => {
-    const term = searchTerm.toLowerCase()
-    return (
-      m.name?.toLowerCase().includes(term) || 
-      m.id?.toLowerCase().includes(term) ||
-      m.email?.toLowerCase().includes(term) ||
-      m.phone?.toLowerCase().includes(term) ||
-      m.region?.toLowerCase().includes(term) ||
-      m.constituency?.toLowerCase().includes(term)
-    )
-  })
   // Bulk Actions
   const handleBulkVerify = async () => {
     if (!adminService.can('VERIFY_MEMBER', 'MEMBERS')) {
@@ -485,8 +477,7 @@ export default function MembersList() {
       })
       
       setSelectedIds(new Set())
-      const data = await adminService.getMembers()
-      setMembers(data)
+      fetchMembers()
     }
   }
 
@@ -511,14 +502,13 @@ export default function MembersList() {
       })
 
       setSelectedIds(new Set())
-      const data = await adminService.getMembers()
-      setMembers(data)
+      fetchMembers()
     }
   }
 
-  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage)
+  const totalPages = Math.ceil(totalMembers / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedMembers = filteredMembers.slice(startIndex, startIndex + itemsPerPage)
+  const paginatedMembers = members
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(prev => prev + 1)
@@ -796,7 +786,7 @@ export default function MembersList() {
                   </tr>
                 ) : (
                   paginatedMembers.map((member) => (
-                  <tr key={member.id} className="hover:bg-muted/30 transition-all group">
+                  <tr key={member.id} className={cn("transition-all group", !lowBandwidthMode && "hover:bg-muted/30")}>
                     <td className="px-6 py-5">
                       <input 
                         type="checkbox" 
@@ -902,9 +892,9 @@ export default function MembersList() {
           {/* Pagination */}
           <div className="px-6 py-5 border-t border-border/40 bg-muted/5 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="min-w-[140px]">
-              {filteredMembers.length > 0 ? (
+              {members.length > 0 ? (
                 <p className="text-micro font-medium text-muted-foreground/80">
-                  Showing {startIndex + 1}–{Math.min(startIndex + itemsPerPage, filteredMembers.length)} of {filteredMembers.length} records
+                  Showing {startIndex + 1}–{Math.min(startIndex + itemsPerPage, totalMembers)} of {totalMembers} records
                 </p>
               ) : (
                 <p className="text-micro font-medium text-muted-foreground/80">
