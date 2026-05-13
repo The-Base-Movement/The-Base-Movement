@@ -24,17 +24,17 @@ export function StoreStatsOverview({ products, requests, lowStockItems }: StoreS
     <>
       {/* KPI strip */}
       <div className="kpis">
-        <div className={lowStockItems.length > 0 ? 'kpi r' : 'kpi'}>
-          <div className="l" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>Inventory alerts</div>
-          <div className="v" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>{lowStockItems.length}</div>
-          <div className="d" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>
+        <div className={lowStockItems.length > 0 ? 'kpi r' : 'kpi k'}>
+          <div className="l">Inventory alerts</div>
+          <div className="v">{lowStockItems.length}</div>
+          <div className="d">
             {lowStockItems.length > 0 ? 'Replenishment required' : 'Supply chain stable'}
           </div>
         </div>
         <div className={pendingRequests > 0 ? 'kpi g' : 'kpi k'}>
           <div className="l">Active requests</div>
           <div className="v">{pendingRequests}</div>
-          <div className="d" style={{ color: pendingRequests > 0 ? 'hsl(var(--accent))' : undefined }}>
+          <div className="d">
             {pendingRequests > 0 ? 'Pending HQ approval' : 'All processed'}
           </div>
         </div>

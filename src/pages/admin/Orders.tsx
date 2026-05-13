@@ -185,7 +185,7 @@ export default function AdminOrders() {
         )) : statCards.map(s => (
           <div key={s.label} className={cn("kpi", s.variant)}>
             <div className="l">{s.label}</div>
-            <div className="v">{s.value}</div>
+            <div className="v tnum">{s.value}</div>
             <div className="d">{s.sub}</div>
           </div>
         ))}
@@ -299,7 +299,7 @@ export default function AdminOrders() {
                             </div>
                           </td>
                           <td>
-                            <b className="text-[11px] font-bold text-slate-500">
+                            <b className="text-tiny font-bold text-slate-500">
                               {order.region_or_state || '-'}
                             </b>
                           </td>

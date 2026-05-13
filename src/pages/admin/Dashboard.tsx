@@ -296,7 +296,7 @@ export default function AdminDashboard() {
                 <tr key={member.id}>
                   <td>
                     <div className="who">
-                      <div className="w-8 h-8 rounded-full bg-muted/10 flex items-center justify-center text-[10px] font-bold">
+                      <div className="w-8 h-8 rounded-full bg-muted/10 flex items-center justify-center text-micro font-bold">
                         {member.name[0]}
                       </div>
                       <div>
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
               ))}
               {pendingVerifications.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-on-surface-muted text-xs italic">
+                  <td colSpan={6} className="text-center py-8 text-on-surface-muted text-tiny italic font-bold">
                     All verifications complete. Operational baseline maintained.
                   </td>
                 </tr>
