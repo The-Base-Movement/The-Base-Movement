@@ -1,8 +1,3 @@
-import { Package, Search, ArrowUpDown, Edit3, Trash2, Loader2 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
 import type { InventoryItem } from '@/services/adminService'
 
 interface InventoryTableProps {
@@ -14,9 +9,22 @@ interface InventoryTableProps {
   searchQuery: string
   setSearchQuery: (query: string) => void
   handleSort: (key: keyof InventoryItem) => void
+  sortConfig: { key: keyof InventoryItem; direction: 'asc' | 'desc' } | null
   handleOpenModal: (product?: InventoryItem) => void
   setDeleteConfirm: (confirm: { id: string, name: string } | null) => void
   isDeleting: string | null
+}
+
+function statusPill(status: string) {
+  if (status === 'Critical')  return 'pill pill-err'
+  if (status === 'Low Stock') return 'pill pill-warn'
+  if (status === 'Processing') return 'pill pill-mute'
+  return 'pill pill-ok'
+}
+
+function SortIcon({ col, sortConfig }: { col: keyof InventoryItem; sortConfig: InventoryTableProps['sortConfig'] }) {
+  if (sortConfig?.key !== col) return <span className="material-symbols-outlined" style={{ fontSize: 13, opacity: 0.4 }}>unfold_more</span>
+  return <span className="material-symbols-outlined" style={{ fontSize: 13 }}>{sortConfig.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>
 }
 
 export function InventoryTable({
@@ -28,224 +36,234 @@ export function InventoryTable({
   searchQuery,
   setSearchQuery,
   handleSort,
+  sortConfig,
   handleOpenModal,
   setDeleteConfirm,
-  isDeleting
+  isDeleting,
 }: InventoryTableProps) {
+  const thStyle: React.CSSProperties = {
+    padding: '10px 14px',
+    fontSize: 9.5,
+    fontWeight: 800,
+    color: 'hsl(var(--on-surface-muted))',
+    letterSpacing: '.06em',
+    textTransform: 'uppercase',
+    fontFamily: "'Public Sans', sans-serif",
+    background: 'hsl(var(--container-low))',
+    borderBottom: '1px solid hsl(var(--border))',
+    textAlign: 'left' as const,
+    whiteSpace: 'nowrap' as const,
+  }
+
   return (
-    <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-      <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-            <Package className="w-4 h-4 text-on-surface" />
-            Inventory
-          </CardTitle>
-          
-          <div className="flex items-center bg-muted/10 p-1 rounded-sm overflow-x-auto no-scrollbar">
-            {categories.map(cat => (
-              <Button
-                key={cat}
-                variant={activeCategory === cat ? "primary" : "ghost"}
-                onClick={() => setActiveCategory(cat)}
-                className={cn(
-                  "px-4 py-1.5 text-micro font-bold tracking-tight transition-all h-auto",
-                  activeCategory === cat ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
-                )}
+    <div className="panel">
+      {/* Row 1: title */}
+      <div className="ph">
+        <h3>Inventory</h3>
+        <span className="meta">{sortedAndFilteredProducts.length} of {products.length} items</span>
+      </div>
+
+      {/* Row 2: filter controls — categories scroll + search */}
+      <div style={{ padding: '10px 14px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: 8, background: 'hsl(var(--container-low))' }}>
+        {/* Category pills — horizontally scrollable strip */}
+        <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 2 }}>
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              style={{
+                padding: '5px 11px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 4,
+                background: activeCategory === cat ? 'hsl(var(--primary))' : '#fff',
+                color: activeCategory === cat ? '#fff' : 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 800,
+                fontSize: 10.5,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+        {/* Search — full width */}
+        <div style={{ position: 'relative' }}>
+          <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search products…"
+            style={{ width: '100%', height: 34, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', background: '#fff', color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }}
+          />
+        </div>
+      </div>
+
+      {/* Desktop table */}
+      <div className="desktop-only" style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={thStyle}>Product</th>
+              <th style={thStyle}>Category</th>
+              <th style={{ ...thStyle, cursor: 'pointer' }} onClick={() => handleSort('price')}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  Price <SortIcon col="price" sortConfig={sortConfig} />
+                </span>
+              </th>
+              <th style={{ ...thStyle, cursor: 'pointer', textAlign: 'center' }} onClick={() => handleSort('stock')}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  In stock <SortIcon col="stock" sortConfig={sortConfig} />
+                </span>
+              </th>
+              <th style={{ ...thStyle, cursor: 'pointer' }} onClick={() => handleSort('status')}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  Status <SortIcon col="status" sortConfig={sortConfig} />
+                </span>
+              </th>
+              <th style={{ ...thStyle, textAlign: 'right' }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedAndFilteredProducts.map(product => (
+              <tr
+                key={product.id}
+                style={{ borderBottom: '1px solid hsl(var(--border))' }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'hsl(var(--container-low))'}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ''}
               >
-                {cat}
-              </Button>
-            ))}
-          </div>
-
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80" />
-            <Input 
-              placeholder="Search products..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 text-xs rounded-sm border-border/60"
-            />
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        {/* Desktop Table */}
-        <div className="overflow-x-auto hidden md:block">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-border/40 bg-muted/30">
-                <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Product</th>
-                <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Category</th>
-                <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('price')}>
-                  <div className="flex items-center gap-1">Price <ArrowUpDown className="w-3 h-3" /></div>
-                </th>
-                <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight text-center cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('stock')}>
-                  <div className="flex items-center justify-center gap-1">In stock <ArrowUpDown className="w-3 h-3" /></div>
-                </th>
-                <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight cursor-pointer hover:text-on-surface/80 transition-colors" onClick={() => handleSort('status')}>
-                  <div className="flex items-center gap-1">Status <ArrowUpDown className="w-3 h-3" /></div>
-                </th>
-                <th className="px-6 py-4 text-right"></th>
+                <td style={{ padding: '12px 14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', overflow: 'hidden', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>
+                      {product.image?.startsWith('http')
+                        ? <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                        : <span>{product.image}</span>
+                      }
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--on-surface))' }}>{product.name}</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>#ITM-{product.id.substring(0, 6)}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style={{ padding: '12px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                  {product.category}
+                </td>
+                <td style={{ padding: '12px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5 }}>
+                  {product.price}
+                </td>
+                <td style={{ padding: '12px 14px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: product.stock === 0 ? 'hsl(var(--destructive))' : product.stock < 50 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface))' }}>
+                  {product.stock.toLocaleString()}
+                </td>
+                <td style={{ padding: '12px 14px' }}>
+                  <span className={statusPill(product.status)}>{product.status}</span>
+                </td>
+                <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                  <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                    <button
+                      className="btn btn-sm"
+                      style={{ background: 'hsl(var(--accent))', color: '#000', border: 'none' }}
+                      onClick={() => handleOpenModal(product)}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>edit</span>
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-dest btn-sm"
+                      disabled={isDeleting === product.id}
+                      onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
+                    >
+                      {isDeleting === product.id
+                        ? <span className="material-symbols-outlined" style={{ fontSize: 14, animation: 'spin 1s linear infinite' }}>refresh</span>
+                        : <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
+                      }
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
-              {sortedAndFilteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-muted/5 transition-colors group">
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-muted/10 rounded-sm flex items-center justify-center text-xl overflow-hidden">
-                        {product.image?.startsWith('http') ? (
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                        ) : (
-                          <span className="grayscale group-hover:grayscale-0 transition-all">{product.image}</span>
-                        )}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-on-surface tracking-tight">{product.name}</span>
-                        <span className="text-micro font-bold text-muted-foreground/80 mt-0.5 normal-case">#ITM-{product.id.substring(0, 6)}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span className="text-xs font-bold text-on-surface/80">{product.category}</span>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span className="text-xs font-bold text-on-surface">{product.price}</span>
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <span className={cn(
-                      "text-xs font-bold",
-                      product.stock === 0 ? "text-brand-red" : product.stock < 50 ? "text-accent" : "text-on-surface"
-                    )}>
-                      {product.stock.toLocaleString()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: product.color }} />
-                      <span className={cn(
-                          "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-md",
-                          product.status === 'Critical' 
-                            ? "bg-destructive/10 text-destructive border-destructive/20" 
-                            : product.status === 'Low Stock'
-                            ? "bg-accent/10 text-accent border-accent/20"
-                            : product.status === 'Processing'
-                            ? "bg-muted/10 text-on-surface border-border/60"
-                            : "bg-primary/10 text-primary border-primary/20"
-                        )}>
-                        {product.status}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button 
-                        variant="gold" 
-                        size="icon" 
-                        className="w-10 h-10 rounded-sm transition-all shadow-sm active:scale-95"
-                        onClick={() => handleOpenModal(product)}
-                      >
-                        <Edit3 className="w-5 h-5" />
-                      </Button>
-                      <Button 
-                        variant="destructive" 
-                        size="icon" 
-                        className="w-10 h-10 rounded-sm transition-all shadow-sm active:scale-95"
-                        disabled={isDeleting === product.id}
-                        onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
-                      >
-                        {isDeleting === product.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        {/* Mobile Cards */}
-        <div className="md:hidden divide-y divide-border/40">
-          {sortedAndFilteredProducts.map((product) => (
-            <div key={product.id} className="p-6 space-y-6">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-muted/10 rounded-sm flex items-center justify-center text-2xl border border-border/60 overflow-hidden shrink-0">
-                    {product.image?.startsWith('http') ? (
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                    ) : (
-                      <span>{product.image}</span>
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-bold text-on-surface tracking-tight">{product.name}</h4>
-                    <p className="text-micro font-bold text-muted-foreground/80 tracking-tight normal-case">#ITM-{product.id.substring(0, 6)}</p>
-                  </div>
-                </div>
-                <div className={cn(
-                  "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-full",
-                  product.status === 'Critical' ? "bg-destructive/10 text-destructive border-destructive/20" :
-                  product.status === 'Low Stock' ? "bg-accent/10 text-accent border-accent/20" :
-                  "bg-primary/10 text-primary border-primary/20"
-                )}>
-                  {product.status}
+      {/* Mobile cards */}
+      <div className="mobile-only">
+        {sortedAndFilteredProducts.map(product => (
+          <div key={product.id} style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))' }}>
+            {/* Row 1: image + name + status */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 4, border: '1px solid hsl(var(--border))', overflow: 'hidden', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
+                {product.image?.startsWith('http')
+                  ? <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                  : <span>{product.image}</span>
+                }
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {product.name}
+                </p>
+                <span style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
+                  {product.category} · #ITM-{product.id.substring(0, 6)}
+                </span>
+              </div>
+              <span className={statusPill(product.status)} style={{ flexShrink: 0 }}>{product.status}</span>
+            </div>
+
+            {/* Row 2: price + stock */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
+              <div style={{ padding: '8px 12px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4 }}>
+                <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.05em', textTransform: 'uppercase', marginBottom: 3 }}>Price</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13 }}>{product.price}</div>
+              </div>
+              <div style={{ padding: '8px 12px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4 }}>
+                <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.05em', textTransform: 'uppercase', marginBottom: 3 }}>In stock</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: product.stock === 0 ? 'hsl(var(--destructive))' : product.stock < 50 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface))' }}>
+                  {product.stock.toLocaleString()}
                 </div>
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-muted/10 rounded-sm border border-border/40">
-                  <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-1">Price</p>
-                  <p className="text-sm font-bold text-on-surface">{product.price}</p>
-                </div>
-                <div className="p-4 bg-muted/10 rounded-sm border border-border/40">
-                  <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mb-1">Stock</p>
-                  <p className={cn(
-                    "text-sm font-bold",
-                    product.stock < 50 ? "text-accent" : "text-on-surface"
-                  )}>{product.stock.toLocaleString()}</p>
-                </div>
-              </div>
+            {/* Row 3: actions */}
+            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+              <button
+                className="btn btn-sm"
+                style={{ flex: 1, justifyContent: 'center', background: 'hsl(var(--accent))', color: '#000', border: 'none' }}
+                onClick={() => handleOpenModal(product)}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>edit</span>
+                Edit item
+              </button>
+              <button
+                className="btn btn-dest btn-sm"
+                onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
-              <div className="flex items-center gap-2 pt-2">
-                <Button 
-                  variant="gold" 
-                  className="flex-1 h-12 rounded-sm text-micro font-bold tracking-tight transition-all shadow-sm active:scale-95"
-                  onClick={() => handleOpenModal(product)}
-                >
-                  <Edit3 className="w-4 h-4 mr-2" /> Edit Asset
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  size="icon" 
-                  className="h-12 w-12 rounded-sm transition-all shadow-sm active:scale-95"
-                  onClick={() => setDeleteConfirm({ id: product.id, name: product.name })}
-                >
-                  <Trash2 className="w-5 h-5" />
-                </Button>
-              </div>
+      {/* Footer legend */}
+      <div style={{ padding: '10px 18px', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Stable',    count: products.filter(p => p.status === 'Stable').length,    color: 'hsl(var(--primary))' },
+            { label: 'Low stock', count: products.filter(p => p.status === 'Low Stock').length,  color: 'hsl(var(--accent))' },
+            { label: 'Critical',  count: products.filter(p => p.status === 'Critical').length,  color: 'hsl(var(--destructive))' },
+          ].map(({ label, count, color }) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))' }}>{label}: {count}</span>
             </div>
           ))}
         </div>
-      </CardContent>
-      <CardFooter className="px-6 py-4 bg-muted/30 border-t border-border/40 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]" />
-            <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Stable: {products.filter(p => p.status === 'Stable').length}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_8px_rgba(var(--accent-rgb),0.4)]" />
-            <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Low stock: {products.filter(p => p.status === 'Low Stock').length}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-destructive shadow-[0_0_8px_rgba(var(--destructive-rgb),0.4)]" />
-            <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Critical: {products.filter(p => p.status === 'Critical').length}</span>
-          </div>
-        </div>
-        <div className="text-micro font-bold text-muted-foreground/80 italic">
-          Showing {sortedAndFilteredProducts.length} movement assets in the current view
-        </div>
-      </CardFooter>
-    </Card>
+        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))' }}>
+          Showing {sortedAndFilteredProducts.length} of {products.length} items
+        </span>
+      </div>
+    </div>
   )
 }

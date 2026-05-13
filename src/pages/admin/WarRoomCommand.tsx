@@ -4,10 +4,20 @@ import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
 import type { RapidResponseDirective, CrisisIncident, MediaCounterNarrative, RegionalStat, MovementPulse, GrowthTrend, Broadcast } from '@/types/admin'
 import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/neon-button'
 import { supabase } from '@/lib/supabase'
+
+const formatGhanaTime = (dateStr: string | Date, options: Intl.DateTimeFormatOptions) => {
+  try {
+    return new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Africa/Accra',
+      ...options
+    }).format(new Date(dateStr));
+  } catch {
+    return '...';
+  }
+};
 
 function LiveClock() {
   const [time, setTime] = useState(() => new Date())
@@ -15,9 +25,25 @@ function LiveClock() {
     const t = setInterval(() => setTime(new Date()), 1000)
     return () => clearInterval(t)
   }, [])
+
+  const formatter = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Africa/Accra',
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  })
+
+  const parts = formatter.formatToParts(time)
+  const getPart = (type: string) => parts.find(p => p.type === type)?.value || ''
+  
+  const display = `${getPart('day')} ${getPart('month')} · ${getPart('hour')}:${getPart('minute')}:${getPart('second')}`
+
   return (
     <span className="font-extrabold text-[13px] tabular-nums tracking-[.04em]" style={{ color: 'hsl(var(--accent))' }}>
-      {format(time, 'dd MMM · HH:mm:ss')} GMT
+      {display} GMT
     </span>
   )
 }
@@ -197,42 +223,42 @@ export default function WarRoomCommand() {
       <div className="px-6 pt-5">
 
         {/* ── Header ── */}
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-3">
           <div>
             <div className="text-[10px] text-[rgba(255,255,255,.4)] font-bold uppercase tracking-[.05em] mb-1">Command center → War room</div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
               <h2 className="font-meta font-extrabold text-[22px] text-white tracking-[-0.015em] leading-tight">
                 War Room — live mobilization
               </h2>
-              <span className="inline-flex items-center gap-[6px] font-extrabold text-[10.5px] uppercase tracking-[.06em] px-[10px] py-1 rounded-full border"
+              <span className="inline-flex items-center gap-[6px] font-extrabold text-[10.5px] uppercase tracking-[.06em] px-[10px] py-1 rounded-full border self-start sm:self-auto"
                 style={{ color: 'hsl(var(--destructive))', background: 'rgba(206,17,38,.12)', borderColor: 'rgba(206,17,38,.3)' }}>
                 <span className="w-[6px] h-[6px] rounded-full animate-pulse block" style={{ background: 'hsl(var(--destructive))' }} />
                 Live · updating
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-3 mt-1">
+          <div className="flex items-center gap-2 sm:gap-3 sm:mt-1 flex-wrap w-full sm:w-auto">
             <LiveClock />
             <button
-              className="h-8 px-3 text-[11px] font-extrabold rounded-[4px] border flex items-center gap-1.5 transition-colors"
+              className="h-8 px-3 text-[10px] sm:text-[11px] font-extrabold rounded-[4px] border flex items-center gap-1.5 transition-colors flex-1 sm:flex-none justify-center"
               style={{ background: 'transparent', color: 'rgba(255,255,255,.8)', borderColor: 'rgba(255,255,255,.18)' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsl(var(--destructive))'; (e.currentTarget as HTMLElement).style.color = 'hsl(var(--destructive))' }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,.18)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,.8)' }}
               onClick={() => window.location.href = '/admin/broadcasts/new'}
             >
-              Send broadcast
+              <Send className="w-3 h-3" /> Broadcast
             </button>
           </div>
         </div>
 
         {/* ── KPI Strip ── */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-[10px] mb-[14px]">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-[8px] sm:gap-[10px] mb-[14px]">
           {kpis.map((k, i) => (
-            <div key={i} className="relative rounded-[6px] overflow-hidden px-4 py-[14px]"
+            <div key={i} className={`relative rounded-[6px] overflow-hidden px-3 sm:px-4 py-[12px] sm:py-[14px]${i === kpis.length - 1 ? ' col-span-2 sm:col-span-1' : ''}`}
               style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e', borderLeft: `3px solid ${k.accent}` }}>
-              <div className="text-[9.5px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'rgba(255,255,255,.5)' }}>{k.label}</div>
-              <div className="font-extrabold text-[26px] tracking-[-0.02em] leading-none my-2 text-white tabular-nums">{k.value}</div>
-              <div className={cn("text-[10.5px] font-extrabold inline-flex items-center gap-1", k.deltaUp ? '' : '')}
+              <div className="text-[8.5px] sm:text-[9.5px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'rgba(255,255,255,.5)' }}>{k.label}</div>
+              <div className="font-extrabold text-[20px] sm:text-[26px] tracking-[-0.02em] leading-none my-1.5 sm:my-2 text-white tabular-nums">{k.value}</div>
+              <div className={cn("text-[9.5px] sm:text-[10.5px] font-extrabold inline-flex items-center gap-1")}
                 style={{ color: k.deltaUp ? 'hsl(var(--primary))' : 'hsl(var(--destructive))' }}>
                 {k.delta}
               </div>
@@ -241,7 +267,7 @@ export default function WarRoomCommand() {
         </div>
 
         {/* ── 3-column grid: Map · Table · Feed ── */}
-        <div className="grid gap-[12px] mb-[12px]" style={{ gridTemplateColumns: '1.4fr .8fr 1fr' }}>
+        <div className="war-room-main-grid mb-[12px]">
 
           {/* Map panel */}
           <div className="rounded-[6px] overflow-hidden flex flex-col h-full" style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}>
@@ -251,7 +277,7 @@ export default function WarRoomCommand() {
                 {regionalStats.length} regions tracked
               </span>
             </div>
-            <div className="relative flex-1 min-h-[450px]" style={{ background: 'radial-gradient(ellipse at center, #1c2620 0%, #0a0d0b 70%)' }}>
+            <div className="relative flex-1 min-h-[320px] sm:min-h-[450px]" style={{ background: 'radial-gradient(ellipse at center, #1c2620 0%, #0a0d0b 70%)' }}>
               <svg viewBox="0 0 400 500" className="w-full h-full" preserveAspectRatio="xMidYMid meet" stroke="#ffffff11" strokeWidth="0.5">
                 <g transform="scale(0.55) translate(45, 20)">
                   {[
@@ -272,14 +298,14 @@ export default function WarRoomCommand() {
                     { id: "Ahafo", d: "M136.532,571.91c-2.336,0.486-4.847-0.903-6.518,1.715c-1.743,2.731-0.404,4.787,0.923,7.113c3.862,6.767,3.309,10.850-2.325,17.067c-1.604,1.771-2.842,3.315-2.712,5.986c0.150,3.108-1.291,3.799-4.420,2.402c-4.010-1.788-5.191-5.289-6.274-8.761c-2.612-8.372-11.703-15.421-20.451-15.434c-7.545-0.011-15.542-10.087-13.534-17.422c0.858-3.135-0.238-6.307,0.246-8.978c0.926-5.104-0.707-11.515,5.285-15.008c0.868-0.506,1.513-1.740,1.840-2.771c2.296-7.222,8.933-10.354,13.553-15.360c4.493-4.868,11.666-5.724,14.756-11.825c0.985-1.943,3.035-1.903,4.842-1.580c2.332,0.417,1.302,2.486,1.169,3.622c-0.635,5.403,1.707,7.700,6.972,7.312c1.306-0.097,3.066,0.639,2.763,1.433c-2.375,6.231,2.792,3.102,4.483,3.462c3.938,0.839,7.060-2.971,11.381-2.275c1.957,0.314,2.290-6.036-0.074-7.452c-1.623-0.972-2.973-1.741-3.470-3.749c-1.289-5.209-1.297-5.226,4.050-4.449c2.481,0.360,4.425-0.847,6.079-2.550c2.459-2.532,5.286-4.316,8.923-4.393c1.767-0.037,2.854-0.702,2.973-2.563c0.298-4.663,3.081-2.771,4.489-1.250c2.304,2.490,4.835,3.225,7.954,2.794c4.784-0.662,6.644,3.441,8.864,6.134c1.673,2.029,2.928,3.225,5.493,2.879c2.044-0.274,3.905,0.017,3.154,2.725c-0.711,2.564-0.517,6.701-4.480,6.073c-3.861-0.611-5.681,0.571-7.677,3.615c-5.336,8.140-14.772,11.612-24.434,9.619c-1.130-0.233-1.684-0.955-2.400-1.576c-3.892-3.376-6.280-3.346-10.096,0.167c-4.048,3.725-7.824,7.371-7.013,13.813c0.391,3.104-2.747,5.046-4.869,7.032c-1.586,1.484-3.042,3.405-1.574,4.999c1.183,1.283,3.828,1.176,5.259-0.719c1.592-2.107,3.771-2.038,5.853-1.686c2.639,0.445,5.100,1.709,2.439,4.728c-3.017,3.423-0.524,8.307-3.828,11.759C141.818,570.973,140.001,573.218,136.532,571.91z" },
                     { id: "Greater Accra", d: "M379.291,717.52c-1.441-7.525-5.646-13.099-12.673-16.56c-4.692-2.312-7.028-5.817-6.746-11.364c0.188-3.682,1.708-5.116,4.977-6.073c3.609-1.058,3.892,1.461,4.730,3.603c1.066,2.721,2.825,4.032,5.971,3.942c6.030-0.172,12.319,0.746,15.990-5.797c3.140,3.735,5.133,3.554,8.536,0.303c3.963-3.785,6.314-8.659,9.563-12.913c1.396-1.828,2.538-3.632,4.679-4.762c1.559-0.822,2.936-2.070,2.709-4.302c-0.376-3.712,2.569-4.894,5.183-5.454c2.707-0.582,5.645-0.252,8.464-0.067c1.047,0.069,2.921,0.829,2.938,1.323c0.261,7.667,9.728,7.033,11.781,13.290c0.808,2.462,4.365,1.847,6.255,0.925c3.668-1.789,7.460-3.266,9.896-7.349c2.544-4.264,6.599-7.110,12.411-6.369c4.017,0.512,7.956,1.232,11.922,1.991c5.289,1.011,7.802,4.826,8.956,9.223c1.336,5.082,3.043,9.076,8.767,10.284c0.781,0.165,3.547,0.013,2.711,2.856c-0.830,2.822-3.188,2.096-4.358,1.568c-2.449-1.104-4.854-0.818-7.270-0.783c-8.438,0.124-16.836-0.572-25.250-0.897c-6.500-0.251-12.557,0.432-18.979,4.133c-7.575,4.367-15.699,8.520-23.531,12.522c-8.471,4.329-17.776,6.267-25.932,11.098c-4.998,2.961-11.462,1.293-16.753,4.031c-3.712-1.074-5.354-0.800-7.250-0.208C382.829,716.65,381.187,716.924,379.291,717.52z" },
                   ].map(r => {
-                    const stat = regionalStats.find(s => s.region === r.id);
+                    const stat = regionalStats.find(s => s.region.trim() === r.id);
                     const fillColor = stat ? 
                       (stat.performance === 'High' ? 'rgba(0,107,63,0.3)' : 
                        stat.performance === 'Medium' ? 'rgba(218,165,32,0.3)' : 'rgba(206,17,38,0.3)') : 
                       'rgba(255,255,255,0.03)';
                     return (
                       <path 
-                        key={r.id} 
+                        key={`path-${r.id}`} 
                         id={r.id} 
                         d={r.d} 
                         fill={fillColor} 
@@ -299,8 +325,9 @@ export default function WarRoomCommand() {
                 return regionalStats
                   .filter(r => REGION_COORDS[r.region])
                   .filter(r => {
-                    if (seen.has(r.region)) return false;
-                    seen.add(r.region);
+                    const rName = r.region.trim();
+                    if (seen.has(rName)) return false;
+                    seen.add(rName);
                     return true;
                   })
                   .map(r => {
@@ -374,8 +401,9 @@ export default function WarRoomCommand() {
                   {(() => {
                     const seen = new Set();
                     const filtered = regionalStats.filter(r => {
-                      if (seen.has(r.region)) return false;
-                      seen.add(r.region);
+                      const rName = r.region.trim();
+                      if (seen.has(rName)) return false;
+                      seen.add(rName);
                       return true;
                     });
                     return filtered.map((r, i) => (
@@ -449,7 +477,7 @@ export default function WarRoomCommand() {
                               <b className="font-extrabold text-white">{b.title}</b>
                             </p>
                             <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>
-                              {b.target_type === 'ALL' ? 'National' : b.target_value} · {format(new Date(b.created_at), 'HH:mm')}
+                              {b.target_type === 'ALL' ? 'National' : b.target_value} · {formatGhanaTime(b.created_at, { hour: '2-digit', minute: '2-digit', hour12: false })}
                             </span>
                           </div>
                         </div>
@@ -471,7 +499,7 @@ export default function WarRoomCommand() {
                               <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ 
                                 color: inc.status === 'RESOLVED' ? 'hsl(var(--primary))' : inc.status === 'CONTAINED' ? 'hsl(var(--accent))' : 'rgba(255,255,255,.4)' 
                               }}>
-                                {format(new Date(inc.created_at), 'HH:mm')} · {inc.status.toLowerCase()}
+                                {formatGhanaTime(inc.created_at, { hour: '2-digit', minute: '2-digit', hour12: false })} · {inc.status.toLowerCase()}
                               </span>
                             </div>
                           </div>
@@ -541,9 +569,11 @@ export default function WarRoomCommand() {
                   <line x1="0" x2="600" y1="140" y2="140"/>
                 </g>
                 {growthTrends.length > 1 && (() => {
-                  const max = Math.max(...growthTrends.map(t => t.count), 1)
-                  const points = growthTrends.map((t, i) => {
-                    const x = (i / (growthTrends.length - 1)) * 600
+                  const safeTrends = growthTrends.map(t => ({ ...t, count: Number(t.count) || 0 }));
+                  const max = Math.max(...safeTrends.map(t => t.count), 1)
+                  const points = safeTrends.map((t, i) => {
+                    const divisor = Math.max(1, safeTrends.length - 1);
+                    const x = (i / divisor) * 600
                     const y = 180 - (t.count / (max * 1.2)) * 180
                     return `${x} ${y}`
                   }).join(' L ')
@@ -553,8 +583,8 @@ export default function WarRoomCommand() {
                     <>
                       <path d={fillPath} fill="url(#gp)"/>
                       <path d={strokePath} fill="none" stroke="hsl(var(--destructive))" strokeWidth="2"/>
-                      {growthTrends.map((t, i) => (
-                        <circle key={i} cx={(i / (growthTrends.length - 1)) * 600} cy={180 - (t.count / (max * 1.2)) * 180} r="2" fill="hsl(var(--destructive))" />
+                      {safeTrends.map((t, i) => (
+                        <circle key={i} cx={(i / Math.max(1, safeTrends.length - 1)) * 600} cy={180 - (t.count / (max * 1.2)) * 180} r="2" fill="hsl(var(--destructive))" />
                       ))}
                     </>
                   )
@@ -623,7 +653,7 @@ export default function WarRoomCommand() {
                       <span className="text-[10.5px] font-extrabold" style={{ color: 'rgba(255,255,255,.7)' }}>{inc.region}</span>
                     </div>
                     <span className="text-[10px] font-bold shrink-0" style={{ color: 'rgba(255,255,255,.4)' }}>
-                      {format(new Date(inc.created_at), 'MMM dd, HH:mm')}
+                      {formatGhanaTime(inc.created_at, { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
                     </span>
                   </div>
                   <p className="text-[12px] font-bold text-white">{inc.incident_type.replace(/_/g, ' ')}</p>
@@ -635,7 +665,9 @@ export default function WarRoomCommand() {
                     }}>
                       {inc.status.toLowerCase()}
                     </span>
-                    <button className="text-[10px] font-extrabold px-4 h-8 rounded-[3px]"
+                    <button 
+                      onClick={() => handleUpdateIncidentStatus(inc.id, inc.status)}
+                      className="text-[10px] font-extrabold px-4 h-8 rounded-[3px] transition-all active:scale-95"
                       style={{ background: 'rgba(0,107,63,.15)', color: 'hsl(var(--primary))', border: '1px solid rgba(0,107,63,.3)' }}>
                       Update status
                     </button>
@@ -673,7 +705,10 @@ export default function WarRoomCommand() {
                   <div className="flex items-center justify-between pt-1">
                     <p className="text-[10px] font-bold" style={{ color: 'rgba(255,255,255,.4)' }}>{nar.hashtags}</p>
                     {nar.dispatch_status === 'PENDING' && (
-                      <Button variant="primary" className="h-8 px-4 text-[10px] font-extrabold tracking-tight rounded-[3px] gap-1.5 bg-blue-600 hover:bg-blue-700 border-0">
+                      <Button 
+                        variant="primary" 
+                        onClick={() => handleDispatchNarrative(nar.id, nar.dispatch_status)}
+                        className="h-8 px-4 text-[10px] font-extrabold tracking-tight rounded-[3px] gap-1.5 bg-blue-600 hover:bg-blue-700 border-0 transition-all active:scale-95">
                         <Send className="w-3 h-3" /> Dispatch
                       </Button>
                     )}

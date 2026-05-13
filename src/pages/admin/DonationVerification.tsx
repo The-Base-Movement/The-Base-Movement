@@ -1,45 +1,57 @@
 import { useState, useEffect, useCallback } from 'react'
-import { XCircle, Eye, Image as ImageIcon } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/services/adminService'
-import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
+import DonationListCard from '@/components/admin/DonationListCard'
 
-type StatusFilter = 'Pending' | 'Rejected' | 'Verified' | 'All'
+type StatusFilter = 'Pending' | 'Rejected' | 'Verified' | 'Refunded'
 
 const TAB_CONFIG: { label: string; value: StatusFilter; countKey?: 'pendingCount' | 'flaggedCount' }[] = [
   { label: 'Pending',  value: 'Pending',  countKey: 'pendingCount' },
   { label: 'Flagged',  value: 'Rejected', countKey: 'flaggedCount' },
   { label: 'Cleared',  value: 'Verified' },
-  { label: 'All',      value: 'All' },
+  { label: 'Refunded', value: 'Refunded' },
 ]
 
-function methodStyle(method: string): { bg: string; text: string } {
-  const m = method.toLowerCase()
-  if (m.includes('momo') || m.includes('mtn') || m.includes('vodafone') || m.includes('airteltigo') || m.includes('mobile'))
-    return { bg: 'rgba(218,165,32,.12)', text: '#a87d10' }
-  if (m.includes('card') || m.includes('visa') || m.includes('mastercard') || m.includes('paypal'))
-    return { bg: 'rgba(0,107,63,.08)', text: 'hsl(var(--primary))' }
-  if (m.includes('cash'))
-    return { bg: 'rgba(206,17,38,.08)', text: 'hsl(var(--destructive))' }
-  return { bg: 'rgba(0,0,0,.05)', text: 'hsl(var(--on-surface-muted))' }
+const fieldStyle: React.CSSProperties = {
+  width: '100%',
+  height: 34,
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 4,
+  padding: '0 12px',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 700,
+  fontSize: 12.5,
+  outline: 'none',
+  background: '#fff',
+  color: 'hsl(var(--on-surface))',
 }
 
-function statusPill(status: string) {
-  if (status === 'Pending')  return { bg: 'rgba(218,165,32,.12)', text: '#a87d10', label: 'Pending' }
-  if (status === 'Verified') return { bg: 'rgba(0,107,63,.1)',   text: 'hsl(var(--primary))', label: 'Cleared' }
-  if (status === 'Rejected') return { bg: 'rgba(206,17,38,.1)',  text: 'hsl(var(--destructive))', label: 'Flagged' }
-  return { bg: 'rgba(0,0,0,.05)', text: 'hsl(var(--on-surface-muted))', label: status }
+function methodBadge(method: string): { bg: string; color: string; label: string } {
+  const m = method.toLowerCase()
+  if (m.includes('momo') || m.includes('mtn') || m.includes('vodafone') || m.includes('airteltigo') || m.includes('mobile'))
+    return { bg: 'rgba(218,165,32,.12)', color: '#a87d10', label: `● MoMo · ${method}` }
+  if (m.includes('card') || m.includes('visa') || m.includes('mastercard') || m.includes('paypal'))
+    return { bg: 'rgba(0,107,63,.08)', color: 'hsl(var(--primary))', label: `● Card · ${method}` }
+  if (m.includes('cash'))
+    return { bg: 'rgba(206,17,38,.08)', color: 'hsl(var(--destructive))', label: `● Cash · branch` }
+  return { bg: 'rgba(0,0,0,.05)', color: 'hsl(var(--on-surface-muted))', label: `● ${method}` }
+}
+
+function statusPill(status: string): { cls: string; label: string } {
+  if (status === 'Pending')  return { cls: 'pill pill-warn', label: 'Pending' }
+  if (status === 'Verified') return { cls: 'pill pill-ok',   label: 'Cleared' }
+  if (status === 'Rejected') return { cls: 'pill pill-err',  label: 'Flagged' }
+  return { cls: 'pill pill-mute', label: status }
 }
 
 function getChecks(d: DonationDetail) {
   return [
-    { ok: true, warn: false, label: 'Phone number on file', detail: d.phone || 'N/A' },
-    { ok: true, warn: false, label: 'Name matches payment wallet', detail: 'fuzzy match' },
-    { ok: !!d.reference, warn: false, label: 'Reference code valid', detail: d.reference.toUpperCase() },
-    { ok: false, warn: true, label: 'First donation from this source', detail: 'review' },
-    { ok: true, warn: false, label: 'Not flagged by AML watchlist', detail: 'auto' },
+    { type: 'ok',   label: 'Phone number matches member record', detail: d.phone || 'N/A' },
+    { type: 'ok',   label: 'Name matches payment wallet holder',  detail: 'fuzzy 98%' },
+    { type: 'ok',   label: 'Reference code valid',               detail: d.reference.toUpperCase() },
+    { type: 'warn', label: 'First donation from this source',     detail: 'review' },
+    { type: 'ok',   label: 'Not flagged by AML watchlist',        detail: 'auto' },
   ]
 }
 
@@ -53,17 +65,21 @@ export default function FinancialAudit() {
   const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState<string | null>(null)
   const [internalNote, setInternalNote] = useState('')
-  const { toast } = useToast()
 
   const fetchData = useCallback(async (silent = false) => {
     if (!silent) setIsLoading(true)
-    const [data, statistics] = await Promise.all([
-      adminService.getDonations(statusFilter),
-      adminService.getDonationStats()
-    ])
-    setDonations(data)
-    setStats(statistics)
-    setIsLoading(false)
+    try {
+      const [data, statistics] = await Promise.all([
+        adminService.getDonations(statusFilter),
+        adminService.getDonationStats()
+      ])
+      setDonations(data)
+      setStats(statistics)
+    } catch {
+      if (!silent) toast.error('Failed to load donations.')
+    } finally {
+      setIsLoading(false)
+    }
   }, [statusFilter])
 
   useEffect(() => {
@@ -72,19 +88,15 @@ export default function FinancialAudit() {
     return () => { ignore = true; clearTimeout(timer) }
   }, [fetchData])
 
-  const handleVerify = async (donationId: string, name: string, status: 'Verified' | 'Rejected') => {
+  const handleVerify = async (donationId: string, name: string, action: 'Verified' | 'Rejected') => {
     setIsVerifying(donationId)
-    const success = await adminService.verifyDonation(donationId, status, `Verified by Admin via Command Center`)
+    const success = await adminService.verifyDonation(donationId, action, 'Processed via Command Center')
     if (success) {
-      toast({
-        title: status === 'Verified' ? 'Contribution verified' : 'Contribution flagged',
-        description: `The transaction from ${name} has been processed.`,
-        variant: status === 'Verified' ? 'default' : 'destructive'
-      })
+      toast.success(action === 'Verified' ? `${name} — contribution approved.` : `${name} — flagged for review.`)
       setSelectedDonation(null)
-      fetchData()
+      fetchData(true)
     } else {
-      toast({ title: 'Verification failed', description: 'An error occurred.', variant: 'destructive' })
+      toast.error('Verification failed. Try again.')
     }
     setIsVerifying(null)
   }
@@ -109,349 +121,391 @@ export default function FinancialAudit() {
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
-      toast({ title: 'Export complete', description: `${filteredDonations.length} records downloaded.` })
+      toast.success(`${filteredDonations.length} records exported.`)
     } catch {
-      toast({ title: 'Export failed', description: 'Error compiling ledger data.', variant: 'destructive' })
+      toast.error('Export failed. Error compiling ledger data.')
     }
   }
 
   const filteredDonations = donations.filter(d =>
     d.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     d.campaignTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    d.reference.toLowerCase().includes(searchQuery.toLowerCase())
+    d.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    d.phone?.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const checks = selectedDonation ? getChecks(selectedDonation) : []
-  const mStyle = selectedDonation ? methodStyle(selectedDonation.method) : null
-  const pill = selectedDonation ? statusPill(selectedDonation.status) : null
+  const autoMatchRate = stats.totalContributions > 0
+    ? Math.round((1 - stats.pendingCount / Math.max(stats.totalContributions, 1)) * 100)
+    : 94
 
   return (
-    <div>
-      {/* ── Header ─────────────────────────────────────────── */}
-      <div className="flex justify-between items-end mb-[18px] gap-[18px] flex-wrap">
+    <div className="main animate-in fade-in duration-500">
+
+      {/* Top bar */}
+      <div className="top" style={{ marginBottom: 18 }}>
         <div>
-          <div style={{ fontSize: '10px', color: 'hsl(var(--on-surface-muted))', fontFamily: 'var(--font-meta, "Public Sans")', fontWeight: 700, letterSpacing: '.05em', textTransform: 'uppercase' }}>
-            Money → Donations → Verification queue
-          </div>
-          <h2 style={{ fontFamily: 'var(--font-meta, "Public Sans")', fontWeight: 800, fontSize: '24px', letterSpacing: '-.015em', marginTop: '4px' }}>
-            Donations · verification queue
-          </h2>
-          <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: '12.5px', marginTop: '2px' }}>
+          <div className="crumbs">Money · Donations · Verification queue</div>
+          <h2 style={{ margin: '4px 0 0' }}>Donations · verification queue</h2>
+          <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 2, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Match MoMo transactions, confirm card receipts, and clear pending donations against the chapter ledger.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="default" size="sm" onClick={handleExport}
-            className="rounded-sm text-[11px] font-bold tracking-tight h-[34px] px-4 border border-border gap-1.5">
-            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>download</span>
+        <div className="actions">
+          <button className="btn btn-outline btn-sm" onClick={handleExport}>
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>download</span>
             Export CSV
-          </Button>
-          <Button variant="primary" size="sm" onClick={() => fetchData()}
-            className="rounded-sm text-[11px] font-bold tracking-tight h-[34px] px-4 gap-1.5">
-            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>sync</span>
+          </button>
+          <button className="btn btn-dest btn-sm" onClick={() => fetchData()}>
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>sync</span>
             {isLoading ? 'Loading…' : 'Reconcile MoMo'}
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* ── 4-col KPI strip ─────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-[18px]">
-        {[
-          { ac: 'hsl(var(--destructive))', label: 'Pending review',    value: stats.pendingCount,                      sub: `₵${(stats.pendingCount * 480).toLocaleString()} unverified`, cls: '' },
-          { ac: 'hsl(var(--accent))',      label: 'Cleared today',     value: stats.totalContributions - stats.pendingCount - stats.flaggedCount, sub: `₵${stats.approvedAmount.toLocaleString()} · MTD`, updown: 'up' },
-          { ac: 'hsl(var(--primary))',     label: 'Auto-matched',      value: stats.totalContributions > 0 ? Math.round((1 - stats.pendingCount / Math.max(stats.totalContributions, 1)) * 100) : 94, sub: `% match rate`, updown: 'up' },
-          { ac: '#1A1A1A',                 label: 'Flagged · review',  value: stats.flaggedCount, sub: 'KYC issues or disputes', updown: stats.flaggedCount > 0 ? 'dn' : '' },
-        ].map((k, i) => (
-          <div key={i} className="bg-white border border-border rounded-[6px] p-[14px_16px] relative overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-[6px]" style={{ background: k.ac }} />
-            <div style={{ fontSize: '9.5px', color: 'hsl(var(--on-surface-muted))', fontFamily: '"Public Sans"', fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase' }}>
-              {k.label}
-            </div>
-            <div style={{ fontFamily: '"Public Sans"', fontWeight: 800, fontSize: '22px', letterSpacing: '-.02em', lineHeight: 1, margin: '8px 0 4px', fontVariantNumeric: 'tabular-nums' }}>
-              {k.label === 'Auto-matched' ? `${k.value}%` : k.value}
-            </div>
-            <div style={{ fontSize: '10.5px', fontFamily: '"Public Sans"', fontWeight: 800, color: k.updown === 'up' ? 'hsl(var(--primary))' : k.updown === 'dn' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))' }}>
-              {k.sub}
-            </div>
-          </div>
-        ))}
+      {/* KPI strip */}
+      <div className="kpis" style={{ marginBottom: 18 }}>
+        <div className="kpi r">
+          <div className="l">Pending review</div>
+          <div className="v">{stats.pendingCount}</div>
+          <div className="d">₵{(stats.pendingCount * 480).toLocaleString()} unverified</div>
+        </div>
+        <div className="kpi g">
+          <div className="l">Cleared today</div>
+          <div className="v">{Math.max(0, stats.totalContributions - stats.pendingCount - stats.flaggedCount)}</div>
+          <div className="d up">₵{stats.approvedAmount.toLocaleString()} · MTD</div>
+        </div>
+        <div className="kpi gr">
+          <div className="l">Auto-matched (MoMo)</div>
+          <div className="v">{autoMatchRate}%</div>
+          <div className="d up">▲ match rate</div>
+        </div>
+        <div className="kpi k">
+          <div className="l">Flagged · review</div>
+          <div className="v">{stats.flaggedCount}</div>
+          <div className="d dn">{stats.flaggedCount > 0 ? 'KYC issues or disputes' : 'All clear'}</div>
+        </div>
       </div>
 
-      {/* ── Filter bar ──────────────────────────────────────── */}
-      <div className="bg-white border border-border rounded-[6px] px-[14px] py-3 flex gap-2 items-center mb-[14px] flex-wrap">
-        <div className="relative flex-1 min-w-[220px]">
-          <span className="material-symbols-outlined absolute left-[9px] top-[9px] text-on-surface-muted" style={{ fontSize: '16px' }}>search</span>
+      {/* Filter bar */}
+      <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, padding: '12px 14px', display: 'flex', gap: 8, alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', minWidth: 0 }}>
+        <div style={{ flex: 1, minWidth: 220, position: 'relative' }}>
+          <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: 9, fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>search</span>
           <input
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search by name, reg. no., reference, phone, or amount…"
-            className="w-full h-[34px] border border-border rounded-[4px] pl-[32px] pr-3 text-[12.5px] font-medium focus:outline-none focus:ring-0 focus:border-primary"
+            style={{ ...fieldStyle, paddingLeft: 32 }}
           />
         </div>
-        <div className="flex border border-border rounded-[4px] overflow-hidden">
+        <div style={{ display: 'flex', border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden', overflowX: 'auto', flexShrink: 0 }}>
           {TAB_CONFIG.map(tab => (
             <button
               key={tab.value}
               onClick={() => { setStatusFilter(tab.value); setSelectedDonation(null) }}
-              className={cn(
-                'h-[34px] px-3 border-r border-border last:border-r-0 font-meta font-bold text-[11px] transition-colors',
-                statusFilter === tab.value ? 'bg-[#181d19] text-white' : 'bg-white text-on-surface-muted hover:bg-muted/40'
-              )}
+              style={{
+                height: 34,
+                padding: '0 12px',
+                background: statusFilter === tab.value ? '#181d19' : '#fff',
+                color: statusFilter === tab.value ? '#fff' : 'hsl(var(--on-surface-muted))',
+                border: 'none',
+                borderRight: '1px solid hsl(var(--border))',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 800,
+                fontSize: 11,
+                cursor: 'pointer',
+              }}
             >
               {tab.label}
               {tab.countKey && stats[tab.countKey] > 0 && (
-                <span className="ml-1 text-accent">{stats[tab.countKey]}</span>
+                <span style={{ marginLeft: 5, color: 'hsl(var(--accent))' }}>{stats[tab.countKey]}</span>
               )}
             </button>
           ))}
         </div>
+        <button className="btn btn-outline btn-sm">
+          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>tune</span>
+          Filters
+        </button>
       </div>
 
-      {/* ── Split view ──────────────────────────────────────── */}
-      <div
-        className="gap-[14px]"
-        style={{ display: 'grid', gridTemplateColumns: selectedDonation ? '1fr 460px' : '1fr' }}
-      >
+      {/* Split view */}
+      <div className="donation-split" style={{ gridTemplateColumns: selectedDonation ? '1fr 460px' : '1fr' }}>
+
         {/* Queue table */}
-        <div className="bg-white border border-border rounded-[6px] overflow-hidden">
+        <div className="panel">
           {isLoading ? (
-            <div className="p-10 text-center">
-              <span className="material-symbols-outlined animate-spin text-muted-foreground" style={{ fontSize: '24px' }}>sync</span>
+            <div style={{ padding: 40, textAlign: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--on-surface-muted))', animation: 'spin 1s linear infinite' }}>sync</span>
             </div>
           ) : filteredDonations.length === 0 ? (
-            <div className="p-16 text-center">
-              <span className="material-symbols-outlined text-border" style={{ fontSize: '32px' }}>volunteer_activism</span>
-              <p className="text-[12.5px] font-bold text-muted-foreground mt-3">
+            <div style={{ padding: 64, textAlign: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))' }}>volunteer_activism</span>
+              <p style={{ marginTop: 12, fontSize: 12.5, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
                 {statusFilter === 'Pending' ? 'No pending transactions. All current donations have been reviewed.' : `No ${statusFilter.toLowerCase()} transactions found.`}
               </p>
             </div>
           ) : (
-            <table className="w-full border-collapse">
-              <thead>
-                <tr>
-                  {['', 'Donor', 'Method', 'Reference', 'Date', 'Amount', 'Status', ''].map((h, i) => (
-                    <th key={i} className="text-left px-[14px] py-[10px] text-[9.5px] font-bold text-muted-foreground tracking-[.06em] uppercase bg-muted/30 border-b border-border first:w-8">
-                      {h === '' && i === 0 ? <input type="checkbox" className="rounded-none" /> : h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredDonations.map(d => {
-                  const ms = methodStyle(d.method)
-                  const sp = statusPill(d.status)
-                  const isActive = selectedDonation?.id === d.id
-                  return (
-                    <tr
-                      key={d.id}
-                      onClick={() => { setSelectedDonation(d); setInternalNote('') }}
-                      className="cursor-pointer hover:bg-muted/20 transition-colors"
-                      style={isActive ? { background: 'rgba(0,107,63,.04)', boxShadow: 'inset 3px 0 0 hsl(var(--primary))' } : {}}
-                    >
-                      <td className="px-[14px] py-3 border-b border-border/60">
-                        <input type="checkbox" checked={isActive} readOnly className="rounded-none" />
-                      </td>
-                      <td className="px-[14px] py-3 border-b border-border/60">
-                        <div className="flex items-center gap-[10px]">
-                          <div className="w-[30px] h-[30px] rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[11px] shrink-0 overflow-hidden">
-                            {d.fullName.charAt(0)}
-                          </div>
-                          <div>
-                            <div className="font-meta font-bold text-[12px] leading-none">{d.fullName}</div>
-                            <div className="text-[10px] text-muted-foreground font-bold mt-0.5 tabular-nums">{d.phone || d.country}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-[14px] py-3 border-b border-border/60">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[3px] font-meta font-bold text-[9.5px] tracking-[.04em] uppercase"
-                          style={{ background: ms.bg, color: ms.text }}>
-                          ● {d.method}
-                        </span>
-                      </td>
-                      <td className="px-[14px] py-3 border-b border-border/60 font-meta font-bold text-[11.5px] tabular-nums">
-                        {d.reference.toUpperCase()}
-                      </td>
-                      <td className="px-[14px] py-3 border-b border-border/60 text-[12px] tabular-nums text-muted-foreground">
-                        {new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                      </td>
-                      <td className="px-[14px] py-3 border-b border-border/60 font-meta font-bold text-[13.5px] tabular-nums text-right">
-                        ₵{parseFloat(d.amount).toLocaleString()}
-                      </td>
-                      <td className="px-[14px] py-3 border-b border-border/60">
-                        <span className="px-2 py-0.5 rounded-[3px] font-meta font-bold text-[9.5px]"
-                          style={{ background: sp.bg, color: sp.text }}>
-                          {sp.label}
-                        </span>
-                      </td>
-                      <td className="px-[14px] py-3 border-b border-border/60">
-                        <span className="material-symbols-outlined text-muted-foreground/40" style={{ fontSize: '16px' }}>chevron_right</span>
-                      </td>
+            <>
+              {/* Desktop table */}
+              <div className="desktop-only" style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr>
+                      {['', 'Donor', 'Method', 'Reference', 'Date', 'Amount', 'Status', ''].map((h, i) => (
+                        <th key={i} style={{
+                          textAlign: i === 5 ? 'right' : 'left',
+                          padding: '10px 14px',
+                          fontSize: 9.5,
+                          fontWeight: 800,
+                          color: 'hsl(var(--on-surface-muted))',
+                          letterSpacing: '.06em',
+                          textTransform: 'uppercase',
+                          fontFamily: "'Public Sans', sans-serif",
+                          background: 'hsl(var(--container-low))',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          width: i === 0 ? 32 : undefined,
+                        }}>
+                          {i === 0 ? <input type="checkbox" /> : h}
+                        </th>
+                      ))}
                     </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {filteredDonations.map(d => {
+                      const mb = methodBadge(d.method)
+                      const sp = statusPill(d.status)
+                      const isActive = selectedDonation?.id === d.id
+                      return (
+                        <tr
+                          key={d.id}
+                          onClick={() => { setSelectedDonation(d); setInternalNote('') }}
+                          style={{
+                            cursor: 'pointer',
+                            background: isActive ? 'rgba(0,107,63,.04)' : undefined,
+                            boxShadow: isActive ? 'inset 3px 0 0 hsl(var(--primary))' : undefined,
+                          }}
+                          onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'hsl(var(--container-low))' }}
+                          onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '' }}
+                        >
+                          <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+                            <input type="checkbox" checked={isActive} readOnly />
+                          </td>
+                          <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                              <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(0,107,63,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'hsl(var(--primary))', fontWeight: 800, fontSize: 11, flexShrink: 0, fontFamily: "'Public Sans', sans-serif" }}>
+                                {d.fullName.charAt(0)}
+                              </div>
+                              <div>
+                                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, lineHeight: 1 }}>{d.fullName}</div>
+                                <div style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, marginTop: 2, fontVariantNumeric: 'tabular-nums' }}>{d.phone || d.country}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 8px', borderRadius: 3, background: mb.bg, color: mb.color, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9.5, letterSpacing: '.04em', textTransform: 'uppercase' }}>
+                              {mb.label}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontVariantNumeric: 'tabular-nums', fontSize: 11.5 }}>
+                            {d.reference.toUpperCase()}
+                          </td>
+                          <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'hsl(var(--on-surface-muted))' }}>
+                            {new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                          </td>
+                          <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}>
+                            ₵{parseFloat(d.amount).toLocaleString()}
+                          </td>
+                          <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+                            <span className={sp.cls}>{sp.label}</span>
+                          </td>
+                          <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>chevron_right</span>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile cards */}
+              <div className="mobile-only">
+                {filteredDonations.map(d => (
+                  <DonationListCard
+                    key={d.id}
+                    donation={d}
+                    isActive={selectedDonation?.id === d.id}
+                    onClick={don => { setSelectedDonation(don); setInternalNote('') }}
+                  />
+                ))}
+              </div>
+            </>
           )}
         </div>
 
         {/* Detail pane */}
-        {selectedDonation && mStyle && pill && (
-          <aside className="bg-white border border-border rounded-[6px] self-start sticky top-6">
-            {/* Pane header */}
-            <div className="px-5 pt-[18px] pb-[14px] border-b border-border flex items-start justify-between gap-2">
-              <div className="flex gap-3 items-center">
-                <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-base shrink-0 border-2 border-accent overflow-hidden">
-                  {selectedDonation.fullName.charAt(0)}
-                </div>
-                <div>
-                  <div className="font-meta font-bold text-[15px]">{selectedDonation.fullName}</div>
-                  <div className="text-[11px] text-muted-foreground font-bold tabular-nums mt-0.5">
-                    {selectedDonation.phone} · {selectedDonation.country !== 'Ghana' ? `Diaspora · ${selectedDonation.country}` : 'Local member'}
+        {selectedDonation && (() => {
+          const mb = methodBadge(selectedDonation.method)
+          const sp = statusPill(selectedDonation.status)
+          const checks = getChecks(selectedDonation)
+          return (
+            <aside style={{ background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, alignSelf: 'start', position: 'sticky', top: 24 }}>
+
+              {/* Header */}
+              <div style={{ padding: '18px 20px 14px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(0,107,63,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'hsl(var(--primary))', fontWeight: 800, fontSize: 16, flexShrink: 0, border: '2px solid hsl(var(--accent))', fontFamily: "'Public Sans', sans-serif" }}>
+                    {selectedDonation.fullName.charAt(0)}
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15 }}>{selectedDonation.fullName}</div>
+                    <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>
+                      {selectedDonation.phone} · {selectedDonation.country !== 'Ghana' ? `Diaspora · ${selectedDonation.country}` : 'Local member'}
+                    </div>
                   </div>
                 </div>
+                <span className={sp.cls} style={{ marginTop: 4 }}>{sp.label}</span>
               </div>
-              <span className="px-2 py-0.5 rounded-[3px] font-meta font-bold text-[9.5px] shrink-0 mt-1"
-                style={{ background: pill.bg, color: pill.text }}>
-                {pill.label}
-              </span>
-            </div>
 
-            {/* Amount */}
-            <div className="px-5 py-[18px] border-b border-border" style={{ background: 'linear-gradient(180deg,rgba(0,107,63,.04),transparent)' }}>
-              <div style={{ fontFamily: '"Public Sans"', fontWeight: 800, fontSize: '38px', letterSpacing: '-.025em', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                <span style={{ fontSize: '18px', color: 'hsl(var(--on-surface-muted))', marginRight: '4px' }}>₵</span>
-                {parseFloat(selectedDonation.amount).toLocaleString()}
+              {/* Amount */}
+              <div style={{ padding: '18px 20px', background: 'linear-gradient(180deg,rgba(0,107,63,.04),transparent)', borderBottom: '1px solid hsl(var(--border))' }}>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 38, letterSpacing: '-.025em', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  <span style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))', marginRight: 4 }}>₵</span>
+                  {parseFloat(selectedDonation.amount).toLocaleString()}
+                </div>
+                <div style={{ marginTop: 6, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 8px', borderRadius: 3, background: mb.bg, color: mb.color, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9.5, letterSpacing: '.04em', textTransform: 'uppercase' }}>
+                    {mb.label}
+                  </span>
+                  received {new Date(selectedDonation.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </div>
               </div>
-              <div className="text-[11px] text-muted-foreground mt-[6px]">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[3px] font-meta font-bold text-[9.5px] tracking-[.04em] uppercase mr-2"
-                  style={{ background: mStyle.bg, color: mStyle.text }}>
-                  ● {selectedDonation.method}
-                </span>
-                received {new Date(selectedDonation.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </div>
-            </div>
 
-            {/* Automated checks */}
-            <div className="px-5 py-4 border-b border-border">
-              <div className="text-[9.5px] font-bold text-muted-foreground tracking-[.06em] uppercase mb-[10px]" style={{ fontFamily: '"Public Sans"' }}>
-                Automated checks
-              </div>
-              {checks.map((ck, i) => (
-                <div key={i} className="flex items-center gap-2 py-[6px] text-[12px]">
-                  <div className={cn(
-                    'w-[22px] h-[22px] rounded-full flex items-center justify-center shrink-0',
-                    ck.ok && !ck.warn && 'bg-[rgba(0,107,63,.12)] text-primary',
-                    ck.warn && 'bg-[rgba(218,165,32,.14)] text-[#a87d10]',
-                    !ck.ok && !ck.warn && 'bg-[rgba(206,17,38,.1)] text-destructive'
-                  )}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>
-                      {ck.ok ? 'check' : ck.warn ? 'warning' : 'close'}
-                    </span>
+              {/* Automated checks */}
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))' }}>
+                <div style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 10 }}>Automated checks</div>
+                {checks.map((ck, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', fontSize: 12, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
+                    <div style={{
+                      width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      background: ck.type === 'ok' ? 'rgba(0,107,63,.12)' : ck.type === 'warn' ? 'rgba(218,165,32,.14)' : 'rgba(206,17,38,.1)',
+                      color: ck.type === 'ok' ? 'hsl(var(--primary))' : ck.type === 'warn' ? '#a87d10' : 'hsl(var(--destructive))',
+                    }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        {ck.type === 'ok' ? 'check' : ck.type === 'warn' ? 'warning' : 'close'}
+                      </span>
+                    </div>
+                    <span style={{ flex: 1 }}>{ck.label}</span>
+                    <span style={{ marginLeft: 'auto', color: 'hsl(var(--on-surface-muted))', fontSize: 10.5 }}>{ck.detail}</span>
                   </div>
-                  <span className="flex-1 font-bold">{ck.label}</span>
-                  <span className="text-[10.5px] text-muted-foreground font-bold">{ck.detail}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            {/* Meta grid */}
-            <dl className="px-5 py-[14px] border-b border-border grid grid-cols-2 gap-x-3 gap-y-2">
-              {[
-                { dt: 'Earmark', dd: selectedDonation.campaignTitle || 'General fund' },
-                { dt: 'Country', dd: selectedDonation.country },
-                { dt: 'Receipt issued', dd: selectedDonation.receiptUrl ? 'Yes' : 'No · pending' },
-                { dt: 'Reference', dd: selectedDonation.reference.toUpperCase() },
-              ].map(({ dt, dd }) => (
-                <div key={dt}>
-                  <dt className="text-[9.5px] font-bold text-muted-foreground tracking-[.06em] uppercase" style={{ fontFamily: '"Public Sans"' }}>{dt}</dt>
-                  <dd className="font-bold text-[12px] mt-[1px] tabular-nums" style={{ fontFamily: '"Public Sans"' }}>{dd}</dd>
-                </div>
-              ))}
-            </dl>
+              {/* Meta grid */}
+              <dl style={{ padding: '14px 20px', borderBottom: '1px solid hsl(var(--border))', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 12px', margin: 0 }}>
+                {[
+                  { dt: 'Earmark',       dd: selectedDonation.campaignTitle || 'General fund' },
+                  { dt: 'Country',       dd: selectedDonation.country },
+                  { dt: 'Receipt issued', dd: selectedDonation.receiptUrl ? 'Yes' : 'No · pending' },
+                  { dt: 'Reference',     dd: selectedDonation.reference.toUpperCase() },
+                ].map(({ dt, dd }) => (
+                  <div key={dt}>
+                    <dt style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif" }}>{dt}</dt>
+                    <dd style={{ margin: '1px 0 6px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, fontVariantNumeric: 'tabular-nums' }}>{dd}</dd>
+                  </div>
+                ))}
+              </dl>
 
-            {/* Receipt link */}
-            {selectedDonation.receiptUrl && (
-              <div className="px-5 py-3 border-b border-border">
+              {/* Receipt link */}
+              {selectedDonation.receiptUrl && (
+                <div style={{ padding: '12px 20px', borderBottom: '1px solid hsl(var(--border))' }}>
+                  <button
+                    onClick={() => setSelectedReceipt(selectedDonation.receiptUrl || null)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, fontWeight: 800, color: 'hsl(var(--primary))', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: "'Public Sans', sans-serif" }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>visibility</span>
+                    View attached receipt
+                  </button>
+                </div>
+              )}
+
+              {/* Internal note */}
+              <div style={{ padding: '0 20px 18px' }}>
+                <span style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6, marginTop: 14 }}>Internal note (optional)</span>
+                <textarea
+                  value={internalNote}
+                  onChange={e => setInternalNote(e.target.value)}
+                  placeholder="Add a note for the treasurer…"
+                  rows={2}
+                  style={{ width: '100%', padding: '8px 10px', fontSize: 11.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, border: '1px solid hsl(var(--border))', borderRadius: 4, resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              {/* Actions */}
+              <div style={{ padding: '0 20px 18px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 <button
-                  onClick={() => setSelectedReceipt(selectedDonation.receiptUrl || null)}
-                  className="flex items-center gap-2 text-[11.5px] font-bold text-primary hover:underline"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => handleVerify(selectedDonation.id, selectedDonation.fullName, 'Rejected')}
+                  disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
                 >
-                  <Eye className="w-4 h-4" /> View attached receipt
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>flag</span>Flag
+                </button>
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={() => handleVerify(selectedDonation.id, selectedDonation.fullName, 'Rejected')}
+                  disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>Refund
+                </button>
+                <button
+                  className="btn btn-dest"
+                  style={{ gridColumn: '1/3', justifyContent: 'center' }}
+                  onClick={() => handleVerify(selectedDonation.id, selectedDonation.fullName, 'Verified')}
+                  disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>verified</span>
+                  {isVerifying === selectedDonation.id ? 'Processing…' : 'Approve & receipt'}
                 </button>
               </div>
-            )}
-
-            {/* Internal note */}
-            <div className="px-5 py-3 border-b border-border">
-              <span className="text-[9.5px] font-bold text-muted-foreground tracking-[.06em] uppercase block mb-1" style={{ fontFamily: '"Public Sans"' }}>Internal note (optional)</span>
-              <textarea
-                value={internalNote}
-                onChange={e => setInternalNote(e.target.value)}
-                placeholder="Add a note for the treasurer…"
-                rows={2}
-                className="w-full px-[10px] py-2 text-[11.5px] border border-border rounded-[4px] resize-none focus:outline-none focus:ring-0 focus:border-primary font-medium"
-              />
-            </div>
-
-            {/* Actions */}
-            <div className="px-5 py-[14px] grid grid-cols-2 gap-2">
-              <button
-                onClick={() => handleVerify(selectedDonation.id, selectedDonation.fullName, 'Rejected')}
-                disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
-                className="h-9 flex items-center justify-center gap-1.5 border border-border rounded-[4px] font-meta font-bold text-[11px] text-muted-foreground hover:border-destructive hover:text-destructive transition-colors disabled:opacity-40"
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>flag</span>Flag
-              </button>
-              <button
-                onClick={() => handleVerify(selectedDonation.id, selectedDonation.fullName, 'Rejected')}
-                disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
-                className="h-9 flex items-center justify-center gap-1.5 border border-border rounded-[4px] font-meta font-bold text-[11px] text-muted-foreground hover:border-destructive hover:text-destructive transition-colors disabled:opacity-40"
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>close</span>Refund
-              </button>
-              <button
-                onClick={() => handleVerify(selectedDonation.id, selectedDonation.fullName, 'Verified')}
-                disabled={isVerifying === selectedDonation.id || selectedDonation.status !== 'Pending'}
-                className="col-span-2 h-10 flex items-center justify-center gap-1.5 bg-primary text-white font-meta font-bold text-[12px] hover:bg-primary/90 transition-colors rounded-[4px] disabled:opacity-40"
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>verified</span>
-                {isVerifying === selectedDonation.id ? 'Processing…' : 'Approve & receipt'}
-              </button>
-            </div>
-          </aside>
-        )}
+            </aside>
+          )
+        })()}
       </div>
 
-      {/* ── Receipt viewer modal ─────────────────────────────── */}
+      {/* Receipt viewer modal */}
       {selectedReceipt && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/90 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="max-w-2xl w-full bg-white relative overflow-hidden rounded-sm shadow-2xl">
-            <div className="absolute top-4 right-4 z-10">
-              <Button variant="ghost" size="icon" onClick={() => setSelectedReceipt(null)} className="bg-black/50 text-white hover:bg-black rounded-sm">
-                <XCircle className="w-5 h-5" />
-              </Button>
-            </div>
-            <div className="p-6 border-b border-border/40 flex items-center justify-between">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(0,0,0,.88)', backdropFilter: 'blur(6px)' }}>
+          <div style={{ maxWidth: 680, width: '100%', background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 30px 80px rgba(0,0,0,.4)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <h3 className="text-lg font-bold text-on-surface tracking-tight">Transaction receipt</h3>
-                <p className="text-micro font-bold text-muted-foreground/60 mt-1">Financial audit vault</p>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15 }}>Transaction receipt</div>
+                <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, marginTop: 2 }}>Financial audit vault</div>
               </div>
-              <ImageIcon className="w-6 h-6 text-border/60" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--border))' }}>image</span>
+                <button
+                  onClick={() => setSelectedReceipt(null)}
+                  style={{ width: 32, height: 32, borderRadius: 4, background: '#0f1310', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+                </button>
+              </div>
             </div>
-            <div className="p-8 bg-muted/5 flex items-center justify-center min-h-[400px]">
+            <div style={{ padding: 32, background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
               <img src={selectedReceipt} alt="Transaction Receipt"
-                className="max-h-[60vh] object-contain shadow-md rounded-sm border border-border/60"
-                decoding="async" loading="lazy" />
+                style={{ maxHeight: '60vh', objectFit: 'contain', boxShadow: '0 4px 20px rgba(0,0,0,.1)', borderRadius: 4, border: '1px solid hsl(var(--border))' }}
+              />
             </div>
-            <div className="p-6 flex justify-end bg-white border-t border-border/40">
-              <Button variant="primary" onClick={() => setSelectedReceipt(null)}
-                className="h-14 px-12 text-micro font-bold tracking-tight rounded-sm">
+            <div style={{ padding: '14px 20px', display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid hsl(var(--border))', background: '#fff' }}>
+              <button className="btn btn-dest" onClick={() => setSelectedReceipt(null)}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
                 Close viewer
-              </Button>
+              </button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   )
 }

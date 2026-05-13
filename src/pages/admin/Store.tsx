@@ -1,20 +1,9 @@
 import { useState, useEffect } from 'react'
-import { 
-  Plus, 
-  Package, 
-  Truck,
-  History
-} from 'lucide-react'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
-import { Button } from '@/components/ui/neon-button'
-import { BrandLine } from '@/components/ui/BrandLine'
-import { cn } from '@/lib/utils'
 import { adminService, type InventoryItem, type ResourceRequest, type LogisticsAuditEntry } from '@/services/adminService'
 import { toast } from 'sonner'
 import { contentService } from '@/services/contentService'
-import { Loader2 } from 'lucide-react'
 
-// Modular Components
 import { StoreStatsOverview } from './store/components/StoreStatsOverview'
 import { InventoryTable } from './store/components/InventoryTable'
 import { ProductFormDialog } from './store/components/ProductFormDialog'
@@ -33,6 +22,9 @@ export default function AdminStore() {
   const [selectedProduct, setSelectedProduct] = useState<Partial<InventoryItem> | null>(null)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string, name: string } | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeCategory, setActiveCategory] = useState('All')
+  const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryItem; direction: 'asc' | 'desc' } | null>(null)
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -43,11 +35,7 @@ export default function AdminStore() {
       if (url) {
         setSelectedProduct(prev => {
           const currentImages = prev?.images || []
-          return { 
-            ...prev!, 
-            images: [...currentImages, url],
-            image: prev?.image || url // Set as primary if none
-          }
+          return { ...prev!, images: [...currentImages, url], image: prev?.image || url }
         })
         toast.success('Product image added to gallery')
       } else {
@@ -84,52 +72,38 @@ export default function AdminStore() {
     }
   }
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+  useEffect(() => { fetchData() }, [])
 
   const handleOpenModal = (product?: InventoryItem) => {
-    setSelectedProduct(product || {
-      name: '',
-      category: 'Apparel',
-      price: 'GHS 0.00',
-      stock: 0,
-      status: 'Stable',
-      image: '👕',
-      color: '#000000'
-    })
+    setSelectedProduct(product || { name: '', category: 'Apparel', price: 'GHS 0.00', stock: 0, status: 'Stable', image: '👕', color: '#000000' })
     setIsModalOpen(true)
   }
 
   const handleSave = async () => {
     if (!selectedProduct?.name || !selectedProduct?.price) {
-      toast.error("Please fill in all required fields")
+      toast.error('Please fill in all required fields')
       return
     }
-
     setIsSaving(true)
     let success = false
-
     if ('id' in selectedProduct && selectedProduct.id) {
       success = await adminService.updateInventoryItem(selectedProduct.id, selectedProduct)
     } else {
       success = await adminService.addInventoryItem(selectedProduct as Omit<InventoryItem, 'id'>)
     }
-
     if (success) {
-      handleStoreAction(selectedProduct.id ? 'UPDATE_INVENTORY' : 'ADD_INVENTORY', selectedProduct.name!)
-      toast.success(selectedProduct.id ? "Product updated" : "Product added to movement catalog")
+      adminService.logAction(selectedProduct.id ? 'UPDATE_INVENTORY' : 'ADD_INVENTORY', `STORE/${selectedProduct.name!}`, 'Success')
+      toast.success(selectedProduct.id ? 'Product updated' : 'Product added to movement catalog')
       setIsModalOpen(false)
       fetchData()
     } else {
-      toast.error("Failed to save product")
+      toast.error('Failed to save product')
     }
     setIsSaving(false)
   }
 
   const handleDelete = async () => {
     if (!deleteConfirm) return
-    
     setIsDeleting(deleteConfirm.id)
     try {
       const success = await adminService.deleteInventoryItem(deleteConfirm.id, deleteConfirm.name)
@@ -137,10 +111,10 @@ export default function AdminStore() {
         toast.success(`"${deleteConfirm.name}" moved to trash vault`)
         fetchData()
       } else {
-        toast.error("Failed to move item to trash")
+        toast.error('Failed to move item to trash')
       }
     } catch {
-      toast.error("An error occurred during deletion")
+      toast.error('An error occurred during deletion')
     } finally {
       setIsDeleting(null)
       setDeleteConfirm(null)
@@ -150,19 +124,11 @@ export default function AdminStore() {
   const handleStatusUpdate = async (id: string, status: ResourceRequest['status']) => {
     const success = await adminService.updateResourceRequestStatus(id, status)
     if (success) {
-      handleStoreAction('STATUS_UPDATE', `Request ${id.slice(0, 8)}`)
+      adminService.logAction('STATUS_UPDATE', `STORE/Request ${id.slice(0, 8)}`, 'Success')
       toast.success(`Request marked as ${status}`)
       fetchData()
     }
   }
-
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState('All')
-
-  const lowStockItems = products.filter(p => p.stock < 50 && p.stock > 0)
-  const categories = ['All', 'Apparel', 'Accessories', 'Lifestyle', 'Stationery', 'Limited Edition']
-
-  const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryItem; direction: 'asc' | 'desc' } | null>(null)
 
   const handleSort = (key: keyof InventoryItem) => {
     setSortConfig(current => {
@@ -174,6 +140,9 @@ export default function AdminStore() {
     })
   }
 
+  const lowStockItems = products.filter(p => p.stock < 50 && p.stock > 0)
+  const categories = ['All', 'Apparel', 'Accessories', 'Lifestyle', 'Stationery', 'Limited Edition']
+
   const sortedAndFilteredProducts = [...products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCategory = activeCategory === 'All' || p.category === activeCategory
@@ -183,99 +152,96 @@ export default function AdminStore() {
     const { key, direction } = sortConfig
     const aVal = a[key] ?? ''
     const bVal = b[key] ?? ''
-    
-    let aComp = aVal
-    let bComp = bVal
-
+    let aComp: string | number = aVal as string | number
+    let bComp: string | number = bVal as string | number
     if (key === 'price') {
-      aComp = parseFloat((aVal as string).replace(/[^0-9.-]+/g,"")) || 0
-      bComp = parseFloat((bVal as string).replace(/[^0-9.-]+/g,"")) || 0
+      aComp = parseFloat((aVal as string).replace(/[^0-9.-]+/g, '')) || 0
+      bComp = parseFloat((bVal as string).replace(/[^0-9.-]+/g, '')) || 0
     }
-
     if (aComp < bComp) return direction === 'asc' ? -1 : 1
     if (aComp > bComp) return direction === 'asc' ? 1 : -1
     return 0
   })
 
-  const handleStoreAction = (action: string, productName: string) => {
-    adminService.logAction(action, `STORE/${productName}`, 'Success')
-    toast.success(`${action.replace('_', ' ')}: ${productName} recorded in Audit Vault`)
-  }
+  const pendingRequests = requests.filter(r => r.status === 'Pending').length
+
+  const tabs = [
+    { id: 'inventory' as const, label: 'Inventory',  icon: 'inventory_2' },
+    { id: 'requests'  as const, label: 'Requests',   icon: 'local_shipping', count: pendingRequests },
+    { id: 'audit'     as const, label: 'Audit log',  icon: 'history' },
+  ]
 
   return (
-    <main className="admin-page-container">
-      {/* Page Header - Standardized */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main">
+
+      {/* Top bar */}
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <Package className="w-8 h-8 text-on-surface" />
-            Logistics and supply
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Movement inventory, merchandising, and regional distribution infrastructure.</p>
+          <div className="crumbs">Store · Logistics</div>
+          <h2 style={{ margin: '4px 0 0' }}>Logistics and supply</h2>
+          <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
+            Movement inventory, merchandising, and regional distribution infrastructure.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex bg-muted/10 p-1 rounded-sm mr-2">
-            <Button 
-              variant={activeTab === 'inventory' ? "primary" : "ghost"}
-              onClick={() => setActiveTab('inventory')}
-              className={cn(
-                "px-5 py-2 text-micro font-bold rounded-sm transition-all h-auto",
-                activeTab === 'inventory' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
-              )}
-            >
-              <Package className="w-3.5 h-3.5 mr-1.5 inline" /> Inventory
-            </Button>
-            <Button 
-              variant={activeTab === 'requests' ? "primary" : "ghost"}
-              onClick={() => setActiveTab('requests')}
-              className={cn(
-                "px-5 py-2 text-micro font-bold rounded-sm transition-all h-auto",
-                activeTab === 'requests' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
-              )}
-            >
-              <Truck className="w-3.5 h-3.5 mr-1.5 inline" /> Requests
-            </Button>
-            <Button 
-              variant={activeTab === 'audit' ? "primary" : "ghost"}
-              onClick={() => setActiveTab('audit')}
-              className={cn(
-                "px-5 py-2 text-micro font-bold rounded-sm transition-all h-auto",
-                activeTab === 'audit' ? "bg-white text-on-surface shadow-sm" : "text-muted-foreground/80 hover:text-on-surface/80"
-              )}
-            >
-              <History className="w-3.5 h-3.5 mr-1.5 inline" /> Audit
-            </Button>
-          </div>
+        <div className="actions">
           {activeTab === 'inventory' && (
-            <Button 
-              variant="primary"
-              size="lg"
-              onClick={() => handleOpenModal()}
-              className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-            >
-              <Plus className="w-4 h-4 mr-2" /> Add Item
-            </Button>
+            <button className="btn btn-primary" onClick={() => handleOpenModal()}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
+              Add item
+            </button>
+          )}
+          {activeTab === 'audit' && (
+            <button className="btn btn-outline btn-sm" onClick={() => toast.info('Export triggered from parent')}>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>download</span>
+              Export log
+            </button>
           )}
         </div>
-      </header>
+      </div>
 
-      {/* Critical Alerts Banner */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 bg-muted/30 border border-dashed border-border/60">
-          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/60" />
-          <p className="text-xs font-bold tracking-tight text-muted-foreground/80">Synchronizing movement vault...</p>
+        <div style={{ padding: '64px 24px', textAlign: 'center' }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))', display: 'block', marginBottom: 10, animation: 'spin 1.2s linear infinite' }}>sync</span>
+          <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Synchronizing movement vault…</p>
         </div>
       ) : (
         <>
-          <StoreStatsOverview 
-            products={products}
-            requests={requests}
-            lowStockItems={lowStockItems}
-          />
+          <StoreStatsOverview products={products} requests={requests} lowStockItems={lowStockItems} />
+
+          {/* Tab nav */}
+          <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid hsl(var(--border))', background: '#fff', marginBottom: 16, overflowX: 'auto' }}>
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  padding: '13px 20px',
+                  border: 'none',
+                  borderBottom: activeTab === tab.id ? '2px solid hsl(var(--primary))' : '2px solid transparent',
+                  marginBottom: -1,
+                  background: 'none',
+                  cursor: 'pointer',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 800,
+                  fontSize: 12,
+                  color: activeTab === tab.id ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>{tab.icon}</span>
+                {tab.label}
+                {tab.count != null && tab.count > 0 && (
+                  <span style={{ background: 'hsl(var(--accent))', color: '#000', borderRadius: 99, padding: '1px 7px', fontSize: 9, fontWeight: 800 }}>{tab.count}</span>
+                )}
+              </button>
+            ))}
+          </div>
 
           {activeTab === 'inventory' && (
-            <InventoryTable 
+            <InventoryTable
               products={products}
               sortedAndFilteredProducts={sortedAndFilteredProducts}
               categories={categories}
@@ -284,6 +250,7 @@ export default function AdminStore() {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               handleSort={handleSort}
+              sortConfig={sortConfig}
               handleOpenModal={handleOpenModal}
               setDeleteConfirm={setDeleteConfirm}
               isDeleting={isDeleting}
@@ -291,27 +258,16 @@ export default function AdminStore() {
           )}
 
           {activeTab === 'requests' && (
-            <ResourceRequestsTab 
-              requests={requests}
-              handleStatusUpdate={handleStatusUpdate}
-            />
+            <ResourceRequestsTab requests={requests} handleStatusUpdate={handleStatusUpdate} />
           )}
 
           {activeTab === 'audit' && (
-            <LogisticsAuditTab 
-              auditLogs={auditLogs}
-              toast={toast}
-            />
+            <LogisticsAuditTab auditLogs={auditLogs} toast={toast} />
           )}
-
-          <footer className="pt-8 mt-8 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4 pb-12">
-            <p className="text-micro font-bold text-muted-foreground/80">© 2026 The Base Movement</p>
-          </footer>
         </>
       )}
 
-      {/* Delete Confirmation */}
-      <DeleteConfirmationModal 
+      <DeleteConfirmationModal
         isOpen={!!deleteConfirm}
         onClose={() => setDeleteConfirm(null)}
         onConfirm={handleDelete}
@@ -322,7 +278,6 @@ export default function AdminStore() {
         isPermanent={false}
       />
 
-      {/* Add/Edit Product Modal */}
       <ProductFormDialog
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -334,7 +289,6 @@ export default function AdminStore() {
         handleImageUpload={handleImageUpload}
         removeImage={removeImage}
       />
-    </main>
+    </div>
   )
 }
-

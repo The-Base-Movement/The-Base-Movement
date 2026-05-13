@@ -1,96 +1,56 @@
 import { useState, useEffect } from 'react'
-import {
-  ShieldCheck,
-  XCircle,
-  Eye,
-  EyeOff,
-  Search,
-  Filter,
-  CheckCircle2,
-  AlertCircle,
-  ArrowRight,
-  UserCheck,
-  UserPlus,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Database,
-  History,
-  Lock,
-  FileText,
-  Loader2,
-  Cpu,
-  Fingerprint,
-} from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { BrandLine } from '@/components/ui/BrandLine'
-import { cn } from '@/lib/utils'
 import { adminService, type PendingVerification } from '@/services/adminService'
 import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
+import VerificationListCard from '@/components/admin/VerificationListCard'
 
-// ── Types ──────────────────────────────────────────────────────────────────────
-// PendingVerification type imported from adminService
+const PAGE_SIZE = 10
 
-const statusColor = (status: PendingVerification['status']) => {
-  if (status === 'In Review')  return 'bg-accent/10 text-accent border-accent/20'
-  if (status === 'Processing') return 'bg-muted/30 text-on-surface/80 border-border/60'
-  if (status === 'Flagged')    return 'bg-destructive/10 text-destructive border-destructive/20'
-  if (status === 'Approved')   return 'bg-primary/10 text-primary border-primary/20'
-  if (status === 'Rejected')   return 'bg-destructive/20 text-destructive border-destructive/30'
-  return ''
+const STATUS_OPTIONS: (PendingVerification['status'] | 'All')[] = [
+  'All', 'In Review', 'Processing', 'Flagged', 'Approved', 'Rejected'
+]
+
+function statusPill(status: PendingVerification['status']) {
+  if (status === 'Approved')   return 'pill pill-ok'
+  if (status === 'In Review')  return 'pill pill-warn'
+  if (status === 'Processing') return 'pill pill-warn'
+  if (status === 'Flagged')    return 'pill pill-err'
+  if (status === 'Rejected')   return 'pill pill-err'
+  return 'pill pill-mute'
 }
 
-// ── Component ──────────────────────────────────────────────────────────────────
 export default function MemberVerification() {
-  const [members, setMembers] = useState<PendingVerification[]>([])
+  const [members, setMembers]           = useState<PendingVerification[]>([])
   const [selectedMember, setSelectedMember] = useState<PendingVerification | null>(null)
-  const [showRegForm, setShowRegForm] = useState(false)
-  const [search, setSearch] = useState('')
+  const [showRegForm, setShowRegForm]   = useState(false)
+  const [search, setSearch]             = useState('')
   const [statusFilter, setStatusFilter] = useState<PendingVerification['status'] | 'All'>('All')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage]   = useState(1)
   const [showPhotoFull, setShowPhotoFull] = useState(false)
   const [viewingVaultRecord, setViewingVaultRecord] = useState<PendingVerification | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [aiAnalyzing, setAiAnalyzing] = useState(false)
-  const [aiResult, setAiResult] = useState<{ confidence: number, matches: string[], flagged: boolean } | null>(null)
+  const [loading, setLoading]           = useState(true)
+  const [aiAnalyzing, setAiAnalyzing]   = useState(false)
+  const [aiResult, setAiResult]         = useState<{ confidence: number; matches: string[]; flagged: boolean } | null>(null)
 
   useEffect(() => {
-    async function loadVerifications() {
-      setLoading(true)
-      try {
-        const data = await adminService.getPendingVerifications()
-        setMembers(data)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadVerifications()
+    adminService.getPendingVerifications()
+      .then(setMembers)
+      .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
 
-  const PAGE_SIZE = 10
-
-  const STATUS_OPTIONS: (PendingVerification['status'] | 'All')[] = [
-    'All', 'In Review', 'Processing', 'Flagged', 'Approved', 'Rejected'
-  ]
-
   const pendingCount = members.filter(m => m.status === 'In Review' || m.status === 'Processing').length
+  const flaggedCount = members.filter(m => m.status === 'Flagged').length
+  const approvedCount = members.filter(m => m.status === 'Approved').length
+  const rejectedCount = members.filter(m => m.status === 'Rejected').length
 
-  // ── Handle new registration submitted via the wired form ──────────────────
   const handleNewRegistration = (data: RegistrationSubmission) => {
     const newMember: PendingVerification = {
       id: data.registrationNumber,
       name: data.fullName,
       region: data.region || data.country,
-      constituency: data.constituency || data.chapter || '-',
+      constituency: data.constituency || data.chapter || '—',
       platform: data.platform,
       country: data.country,
       phone: `${data.countryCode} ${data.contactNumber}`,
@@ -119,483 +79,436 @@ export default function MemberVerification() {
       const result = await adminService.verifyMemberID(selectedMember.id)
       setAiResult(result)
       if (result.flagged) {
-        toast.warning(`AI Alert: Low confidence score (${result.confidence}%). Please review carefully.`)
+        toast.warning(`AI Alert: Low confidence score (${result.confidence}%). Review carefully.`)
       } else {
-        toast.success(`AI Scan Complete: High identity match confidence.`)
+        toast.success('AI scan complete — high identity match confidence.')
       }
-    } catch (err) {
-      console.error('[AI-ASSISTANT] Scan failed:', err)
-      toast.error("AI Assistant unavailable.")
+    } catch {
+      toast.error('AI assistant unavailable.')
     } finally {
       setAiAnalyzing(false)
     }
   }
 
-  // ── Approve / Reject ──────────────────────────────────────────────────────
   const handleVerdict = async (approve: boolean) => {
     if (!selectedMember) return
     const newStatus: PendingVerification['status'] = approve ? 'Approved' : 'Rejected'
-    
-    // Optimistic UI
-    setMembers(prev =>
-      prev.map(m => m.id === selectedMember.id ? { ...m, status: newStatus } : m)
-    )
+    setMembers(prev => prev.map(m => m.id === selectedMember.id ? { ...m, status: newStatus } : m))
     setSelectedMember(prev => prev ? { ...prev, status: newStatus } : null)
-    
     try {
       await adminService.verifyMember(selectedMember.id, approve, undefined, selectedMember.chapter)
-      toast.success(`Member "${selectedMember.name}" has been ${newStatus.toLowerCase()}.`)
-    } catch (error) {
-      console.error('[VERIFICATION] Action failed:', error)
-      toast.error("Failed to update verification status.")
+      toast.success(`${selectedMember.name} has been ${newStatus.toLowerCase()}.`)
+    } catch {
+      toast.error('Failed to update verification status.')
     }
   }
 
-  const filtered = members
-    .filter(m =>
-      (statusFilter === 'All' || m.status === statusFilter) &&
-      (
-        (m.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
-        (m.id?.toLowerCase() || '').includes(search.toLowerCase()) ||
-        (m.region?.toLowerCase() || '').includes(search.toLowerCase())
-      )
+  const handleSearch = (val: string) => { setSearch(val); setCurrentPage(1) }
+  const handleFilter = (val: PendingVerification['status'] | 'All') => { setStatusFilter(val); setCurrentPage(1) }
+
+  const filtered = members.filter(m =>
+    (statusFilter === 'All' || m.status === statusFilter) &&
+    (
+      (m.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (m.id?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (m.region?.toLowerCase() || '').includes(search.toLowerCase())
     )
+  )
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage   = Math.min(currentPage, totalPages)
   const paginated  = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
 
-  // Reset to page 1 whenever the filter or search changes
-  const handleSearch = (val: string) => { setSearch(val); setCurrentPage(1) }
-  const handleFilter = (val: PendingVerification['status'] | 'All') => { setStatusFilter(val); setCurrentPage(1) }
-
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="main">
 
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+      {/* Top bar */}
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <ShieldCheck className="w-8 h-8 text-on-surface" />
-            Member verification
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Review and approve new member registrations for movement security.</p>
+          <div className="crumbs">Members · Verification</div>
+          <h2 style={{ margin: '4px 0 0' }}>Member verification</h2>
+          <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
+            Review and approve new member registrations for movement security.
+          </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="actions">
           {pendingCount > 0 && (
-            <div className="hidden md:flex px-4 py-2 bg-accent/5 border border-accent/20 items-center gap-2 rounded-sm shadow-sm">
-              <AlertCircle className="w-4 h-4 text-accent" />
-              <div className="text-right">
-                <span className="text-micro font-bold text-accent tracking-tight block uppercase">Pending</span>
-                <span className="text-sm font-bold text-on-surface tracking-tight">
-                  {pendingCount} review{pendingCount !== 1 ? 's' : ''}
-                </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', background: 'rgba(218,165,32,.08)', border: '1px solid rgba(218,165,32,.25)', borderRadius: 4 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#a87d10' }}>pending</span>
+              <div>
+                <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: '#a87d10', letterSpacing: '.06em', textTransform: 'uppercase', lineHeight: 1 }}>Pending</div>
+                <div style={{ fontSize: 13, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface))', lineHeight: 1.2 }}>{pendingCount} review{pendingCount !== 1 ? 's' : ''}</div>
               </div>
             </div>
           )}
-          <Button
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-            onClick={() => setShowRegForm(true)}
-          >
-            <UserPlus className="w-4 h-4 mr-2" /> Add Member
-          </Button>
+          <button className="btn btn-primary" onClick={() => setShowRegForm(true)}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>person_add</span>
+            Add member
+          </button>
         </div>
       </div>
 
-      {/* Main Grid */}
-      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
+      {/* KPI strip */}
+      <div className="kpis">
+        <div className="kpi gr">
+          <span className="material-symbols-outlined">pending_actions</span>
+          <div>
+            <div className="v">{loading ? '—' : pendingCount}</div>
+            <div className="l">Pending review</div>
+          </div>
+        </div>
+        <div className="kpi r">
+          <span className="material-symbols-outlined">flag</span>
+          <div>
+            <div className="v">{loading ? '—' : flaggedCount}</div>
+            <div className="l">Flagged</div>
+          </div>
+        </div>
+        <div className="kpi g">
+          <span className="material-symbols-outlined">verified_user</span>
+          <div>
+            <div className="v">{loading ? '—' : approvedCount}</div>
+            <div className="l">Approved</div>
+          </div>
+        </div>
+        <div className="kpi k">
+          <span className="material-symbols-outlined">block</span>
+          <div>
+            <div className="v">{loading ? '—' : rejectedCount}</div>
+            <div className="l">Rejected</div>
+          </div>
+        </div>
+      </div>
 
-        {/* ── Left: Pending List ──────────────────────────────────────────── */}
-        <div className="min-w-0 flex-[2] flow" style={{ '--flow-space': '1.5rem' } as React.CSSProperties}>
-          <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
-                <Input
-                  value={search}
-                  onChange={e => handleSearch(e.target.value)}
-                  placeholder="Search by name, ID, region..."
-                  className="pl-9 h-9 text-xs rounded-sm border-border/60 shadow-sm focus:ring-on-surface/20"
-                />
-              </div>
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
-                <select
-                  value={statusFilter}
-                  onChange={e => handleFilter(e.target.value as PendingVerification['status'] | 'All')}
-                  className="h-9 pl-9 pr-8 text-micro font-bold rounded-sm border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:border-on-surface appearance-none cursor-pointer transition-colors shadow-sm normal-case"
-                >
-                  {STATUS_OPTIONS.map(s => (
-                    <option key={s} value={s}>{s === 'All' ? 'All statuses' : s}</option>
-                  ))}
-                </select>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              {loading ? (
-                <div className="py-24 flex flex-col items-center justify-center gap-4">
-                  <Loader2 className="w-8 h-8 text-on-surface animate-spin" />
-                  <p className="text-micro font-bold text-muted-foreground/40 normal-case">Fetching member identity files...</p>
-                </div>
-              ) : filtered.length === 0 ? (
-                <div className="py-12 text-center text-muted-foreground/40 text-xs font-bold normal-case">
-                  No registrations match your search.
-                </div>
-              ) : (
-                <div className="divide-y divide-border/40">
-                  {paginated.map((member) => (
+      {/* Two-column layout */}
+      <div className="verify-split">
+
+        {/* ── Left: verification queue ── */}
+        <div className="panel">
+          {/* Search + filter bar */}
+          <div className="ph" style={{ gap: 10 }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>search</span>
+              <input
+                type="text"
+                value={search}
+                onChange={e => handleSearch(e.target.value)}
+                placeholder="Search by name, ID, region…"
+                style={{ width: '100%', height: 36, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px 0 32px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', background: 'hsl(var(--surface))', color: 'hsl(var(--on-surface))' }}
+              />
+            </div>
+            <div style={{ position: 'relative' }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>filter_list</span>
+              <select
+                value={statusFilter}
+                onChange={e => handleFilter(e.target.value as PendingVerification['status'] | 'All')}
+                style={{ height: 36, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', cursor: 'pointer' }}
+              >
+                {STATUS_OPTIONS.map(s => (
+                  <option key={s} value={s}>{s === 'All' ? 'All statuses' : s}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* List rows */}
+          {loading ? (
+            <div style={{ padding: '48px 24px', textAlign: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))', display: 'block', marginBottom: 10, animation: 'spin 1.2s linear infinite' }}>refresh</span>
+              <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Fetching identity files…</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div style={{ padding: '48px 24px', textAlign: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))', display: 'block', marginBottom: 10 }}>search_off</span>
+              <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>No registrations match your search.</p>
+            </div>
+          ) : (
+            <>
+              {/* Desktop list rows */}
+              <div className="desktop-only">
+                {paginated.map((member, i) => {
+                  const isActive = selectedMember?.id === member.id
+                  return (
                     <div
                       key={member.id}
-                      className={cn(
-                        'p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer transition-all',
-                        selectedMember?.id === member.id
-                          ? 'bg-on-surface text-white shadow-lg'
-                          : 'hover:bg-muted/10'
-                      )}
-                      onClick={() => {
-                        setSelectedMember(member)
-                        setAiResult(null)
+                      onClick={() => { setSelectedMember(member); setAiResult(null) }}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+                        padding: '14px 18px',
+                        borderBottom: i < paginated.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                        cursor: 'pointer',
+                        background: isActive ? 'linear-gradient(135deg,#0f1310,#1f2620)' : '',
+                        boxShadow: isActive ? 'inset 3px 0 0 hsl(var(--primary))' : '',
+                        transition: 'background .15s',
                       }}
+                      onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'hsl(var(--container-low))' }}
+                      onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '' }}
                     >
                       {/* Avatar + name */}
-                      <div className="flex items-center gap-4">
-                        <div className={cn(
-                          'w-12 h-12 overflow-hidden flex items-center justify-center font-bold text-xs shadow-inner shrink-0 rounded-sm',
-                          selectedMember?.id === member.id ? 'bg-white/10' : 'bg-muted/10'
-                        )}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 42, height: 42, borderRadius: 4, overflow: 'hidden', background: isActive ? 'rgba(255,255,255,.1)' : '#f1f5ee', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: isActive ? '1px solid rgba(255,255,255,.15)' : '1px solid hsl(var(--border))' }}>
                           {member.photoUrl
-                            ? <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                            : <span className={selectedMember?.id === member.id ? 'text-white' : 'text-muted-foreground/40'}>
-                                {member.name.split(' ').map(n => n[0]).join('')}
-                              </span>
+                            ? <img src={member.photoUrl} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                            : <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: isActive ? 'rgba(255,255,255,.6)' : 'hsl(var(--on-surface-muted))' }}>{member.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</span>
                           }
                         </div>
                         <div>
-                          <p className={cn(
-                            'text-sm font-bold tracking-tight leading-none',
-                            selectedMember?.id === member.id ? 'text-white' : 'text-on-surface'
-                          )}>
-                            {member.name}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-micro font-bold tracking-tight opacity-60">{member.id}</span>
-                            <span className="w-1 h-1 bg-current opacity-20 rounded-full" />
-                            <span className="text-micro font-bold tracking-tight opacity-60">{member.submitted}</span>
+                          <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: isActive ? '#fff' : 'hsl(var(--on-surface))' }}>{member.name}</p>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                            <span style={{ fontSize: 10.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: isActive ? 'rgba(255,255,255,.5)' : 'hsl(var(--on-surface-muted))' }}>{member.id}</span>
+                            <span style={{ width: 3, height: 3, borderRadius: '50%', background: isActive ? 'rgba(255,255,255,.3)' : 'hsl(var(--border))' }} />
+                            <span style={{ fontSize: 10.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: isActive ? 'rgba(255,255,255,.5)' : 'hsl(var(--on-surface-muted))' }}>{member.submitted}</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Region + status */}
-                      <div className="flex items-center gap-6">
-                        <div className="text-right hidden sm:block">
-                          <p className="text-micro font-bold tracking-tight">{member.region}</p>
-                          <p className="text-micro font-bold opacity-60 tracking-tight">{member.constituency}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
+                        <div style={{ textAlign: 'right' }}>
+                          <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11.5, color: isActive ? 'rgba(255,255,255,.8)' : 'hsl(var(--on-surface))' }}>{member.region}</p>
+                          <p style={{ margin: '1px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: isActive ? 'rgba(255,255,255,.45)' : 'hsl(var(--on-surface-muted))' }}>{member.constituency}</p>
                         </div>
-                        <div className={cn(
-                          'px-3 py-1 text-micro font-bold tracking-tight border rounded',
-                          selectedMember?.id === member.id
-                            ? 'bg-white/10 text-white border-white/20'
-                            : statusColor(member.status)
-                        )}>
-                          {member.status}
-                        </div>
-                        <ArrowRight className={cn(
-                          'w-4 h-4 transition-transform',
-                          selectedMember?.id === member.id ? 'translate-x-1 opacity-100' : 'opacity-20'
-                        )} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-
-            {/* Pagination bar */}
-            {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-border/10 bg-muted/5 flex items-center justify-between">
-                <p className="text-micro font-bold tracking-tight text-muted-foreground/40">
-                  Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
-                </p>
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="default"
-                    size="icon"
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    disabled={safePage === 1}
-                    className="w-8 h-8 flex items-center justify-center border border-border/40 text-on-surface/80 hover:bg-stone-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-sm"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                  </Button>
-
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <Button
-                      key={page}
-                      variant={page === safePage ? "primary" : "default"}
-                      onClick={() => setCurrentPage(page)}
-                      className={cn(
-                        "w-8 h-8 flex items-center justify-center text-micro font-bold transition-all rounded-sm active:scale-95",
-                        page === safePage
-                          ? "shadow-sm shadow-brand-green/20"
-                          : "border-border/40 text-on-surface/80 hover:bg-stone-50"
-                      )}
-                    >
-                      {page}
-                    </Button>
-                  ))}
-
-                  <Button
-                    variant="default"
-                    size="icon"
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    disabled={safePage === totalPages}
-                    className="w-8 h-8 flex items-center justify-center border border-border/40 text-on-surface/80 hover:bg-stone-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-sm"
-                  >
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Card>
-        </div>
-
-        {/* ── Right: Review Panel ─────────────────────────────────────────── */}
-        <div className="flex-1">
-          {selectedMember ? (
-            <div className="flow sticky top-8" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
-
-              {/* Identity Card */}
-              <Card className="rounded-sm border-on-surface bg-on-surface text-white shadow-2xl overflow-hidden relative">
-                <div className="absolute top-0 right-0 p-4 opacity-5">
-                  <ShieldCheck className="w-32 h-32 rotate-12" />
-                </div>
-
-                <CardHeader className="p-6 border-b border-white/10 relative z-10">
-                  <div className="flex justify-between items-start gap-3">
-                    <div className="flex-1 min-w-0">
-                      <span className="text-xs font-bold text-white/60 tracking-tight">
-                        Reviewing · {selectedMember.id}
-                      </span>
-                      <CardTitle className="text-xl font-bold tracking-tight mt-1 leading-tight">
-                        {selectedMember.name}
-                      </CardTitle>
-                      <div className={cn(
-                        'inline-flex mt-2 px-2 py-0.5 text-tiny font-bold tracking-tight border rounded',
-                        selectedMember.status === 'Approved' && 'bg-primary/20 text-primary border-primary/30',
-                        selectedMember.status === 'Rejected' && 'bg-destructive/20 text-destructive border-destructive/30',
-                        (selectedMember.status === 'In Review' || selectedMember.status === 'Processing') && 'bg-accent/20 text-accent border-accent/30',
-                        selectedMember.status === 'Flagged' && 'bg-destructive/20 text-destructive border-destructive/30',
-                      )}>
-                        {selectedMember.status}
-                      </div>
-                    </div>
-                    {/* Photo */}
-                    <button
-                      className="w-14 h-16 bg-white/5 flex-shrink-0 overflow-hidden border border-white/10 hover:opacity-80 transition-opacity rounded-sm"
-                      onClick={() => selectedMember.photoUrl && setShowPhotoFull(true)}
-                      title={selectedMember.photoUrl ? 'View photo' : 'No photo uploaded'}
-                    >
-                      {selectedMember.photoUrl
-                        ? <img src={selectedMember.photoUrl} alt={selectedMember.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                        : <div className="w-full h-full flex items-center justify-center text-xs text-white/60 font-bold italic">
-                            No photo
-                          </div>
-                      }
-                    </button>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="p-6 space-y-5 relative z-10">
-                  {/* Key fields grid */}
-                  <div className="grid grid-cols-2 gap-4">
-                    {[
-                      { label: 'Platform', value: selectedMember.platform },
-                      { label: 'Country', value: selectedMember.country },
-                      { label: 'Gender', value: selectedMember.gender },
-                      { label: 'Age Range', value: selectedMember.ageRange },
-                      { label: 'Region', value: selectedMember.region },
-                      { label: 'Constituency', value: selectedMember.constituency },
-                      { label: 'Profession', value: selectedMember.profession },
-                      { label: 'Education', value: selectedMember.educationLevel },
-                    ].map(({ label, value }) => (
-                      <div key={label} className="space-y-0.5">
-                        <p className="text-tiny font-bold text-white/60 tracking-tight">{label}</p>
-                        <p className="text-sm font-bold tracking-tight text-white leading-tight">
-                          {value || '-'}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Contact */}
-                  <div className="border-t border-white/10 pt-4 space-y-1">
-                    <p className="text-tiny font-bold text-white/60 tracking-tight">Phone</p>
-                    <p className="text-sm font-bold text-white">{selectedMember.phone || '-'}</p>
-                  </div>
-
-                  {/* Emergency contact */}
-                  <div className="border-t border-white/10 pt-4 space-y-2">
-                    <p className="text-tiny font-bold text-white/60 tracking-tight mb-2">Emergency contact</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      {[
-                        { label: 'Name', value: selectedMember.emergencyName },
-                        { label: 'Relation', value: selectedMember.emergencyRelationship },
-                      ].map(({ label, value }) => (
-                        <div key={label} className="space-y-0.5">
-                          <p className="text-tiny font-bold text-white/40 tracking-tight">{label}</p>
-                          <p className="text-sm font-bold tracking-tight text-white">{value || '-'}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="text-sm font-bold text-white mt-1">{selectedMember.emergencyPhone || '-'}</p>
-                  </div>
-
-                  {/* Verification checklist */}
-                  <div className="border-t border-white/10 pt-4 space-y-2">
-                    <h4 className="text-xs font-bold tracking-tight text-white/60">Verification steps</h4>
-                    {[
-                      { label: 'Form submitted', done: true },
-                      { label: 'Photo uploaded', done: !!selectedMember.photoUrl },
-                      { label: 'Regional chapter approval', done: selectedMember.status === 'Approved' },
-                    ].map(({ label, done }) => (
-                      <div key={label} className="flex items-center gap-3 p-2.5 bg-white/5 border border-white/5 rounded-sm">
-                        {done
-                          ? <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
-                          : <div className="w-3.5 h-3.5 rounded-full border border-muted-foreground/20 flex items-center justify-center shrink-0">
-                              <div className="w-1 h-1 bg-muted-foreground/20" />
-                            </div>
+                        {isActive
+                          ? <span style={{ padding: '2px 9px', background: 'rgba(255,255,255,.12)', border: '1px solid rgba(255,255,255,.2)', borderRadius: 99, fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '.05em' }}>{member.status}</span>
+                          : <span className={statusPill(member.status)}>{member.status}</span>
                         }
-                        <span className={cn(
-                          'text-xs font-bold tracking-tight',
-                          done ? 'text-white' : 'text-muted-foreground/40'
-                        )}>{label}</span>
+                        <span className="material-symbols-outlined" style={{ fontSize: 16, color: isActive ? 'rgba(255,255,255,.4)' : 'hsl(var(--border))', transform: isActive ? 'translateX(2px)' : 'none', transition: 'transform .15s' }}>chevron_right</span>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* AI Assistant Section */}
-                  <div className="border-t border-white/10 pt-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold tracking-tight text-white/60">Security assistant</h4>
-                      {aiResult && (
-                        <span className={cn(
-                          "text-tiny font-bold px-1.5 py-0.5 tracking-tight rounded",
-                          aiResult.flagged ? "bg-destructive text-white" : "bg-primary text-white"
-                        )}>
-                          {aiResult.confidence}% match
-                        </span>
-                      )}
                     </div>
-                    
-                    {!aiResult && !aiAnalyzing && (
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={handleAiScan}
-                        className="w-full h-11 text-white text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
-                      >
-                        <Cpu className="w-4 h-4 mr-2" /> Execute Identity Scan
-                      </Button>
-                    )}
+                  )
+                })}
+              </div>
 
-                    {aiAnalyzing && (
-                      <div className="p-4 bg-white/5 border border-white/10 flex flex-col items-center gap-3 animate-pulse rounded-sm">
-                        <Fingerprint className="w-6 h-6 text-accent animate-bounce" />
-                        <p className="text-xs font-bold text-muted-foreground/40 tracking-tight">Analyzing identity...</p>
-                      </div>
-                    )}
+              {/* Mobile cards */}
+              <div className="mobile-only">
+                {paginated.map(member => (
+                  <VerificationListCard
+                    key={member.id}
+                    member={member}
+                    isActive={selectedMember?.id === member.id}
+                    onClick={m => { setSelectedMember(m); setAiResult(null) }}
+                  />
+                ))}
+              </div>
+            </>
+          )}
 
-                    {aiResult && (
-                      <div className={cn(
-                        "p-4 border rounded-sm",
-                        aiResult.flagged ? "bg-destructive/10 border-destructive/20" : "bg-primary/10 border-primary/20"
-                      )}>
-                        <div className="flex flex-wrap gap-2">
-                          {aiResult.matches.map(m => (
-                            <span key={m} className="text-tiny font-bold tracking-tight text-white/60 bg-white/5 px-2 py-1 rounded">
-                              {m}
-                            </span>
-                          ))}
-                        </div>
-                        <p className="text-xs text-white/40 mt-3 italic tracking-tight">
-                          * Neural scan of official records completed.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Action buttons */}
-                  {(selectedMember.status === 'In Review' || selectedMember.status === 'Processing' || selectedMember.status === 'Flagged') && (
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleVerdict(false)}
-                        className="h-11 transition-all text-micro font-bold tracking-tight rounded-sm active:scale-95 shadow-lg shadow-brand-red/20"
-                      >
-                        <XCircle className="w-4 h-4 mr-2" /> Reject Entry
-                      </Button>
-                      <Button
-                        variant="primary"
-                        onClick={() => handleVerdict(true)}
-                        className="h-11 text-white text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.01] active:scale-95"
-                      >
-                        <UserCheck className="w-4 h-4 mr-2" /> Approve Admission
-                      </Button>
-                    </div>
-                  )}
-
-                  {selectedMember.status === 'Approved' && (
-                    <div className="flex items-center gap-2 p-3 bg-primary/10 border border-primary/20 text-primary text-micro font-bold tracking-tight rounded-sm">
-                      <CheckCircle2 className="w-4 h-4" /> Member approved
-                    </div>
-                  )}
-
-                  {selectedMember.status === 'Rejected' && (
-                    <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-micro font-bold tracking-tight rounded-sm">
-                      <XCircle className="w-4 h-4" /> Registration rejected
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* View photo button (if available) */}
-              {selectedMember.photoUrl && (
-                <Card className="rounded-sm border-border/40 shadow-sm bg-white">
-                  <CardContent className="p-4 space-y-2">
-                    <Button
-                      variant="gold"
-                      className="w-full h-11 text-micro font-bold tracking-tight rounded-sm transition-all shadow-sm active:scale-95"
-                      onClick={() => setShowPhotoFull(true)}
-                    >
-                      <Eye className="w-4 h-4 mr-2" /> Inspect Biometric Data
-                    </Button>
-                    {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
-                      <Button
-                        variant="gold"
-                        className="w-full h-11 text-micro font-bold tracking-tight rounded-sm transition-all shadow-sm active:scale-95"
-                        onClick={() => setViewingVaultRecord(selectedMember)}
-                      >
-                        <Database className="w-4 h-4 mr-2" /> Open Audit Vault
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          ) : (
-            <div className="h-[400px] border-2 border-dashed border-border/40 rounded-sm flex flex-col items-center justify-center text-muted-foreground/40 gap-4 bg-white/50">
-              <ShieldCheck className="w-12 h-12 opacity-20" />
-              <p className="text-micro font-bold tracking-tight">Select a file to review</p>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="pagination-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+              <span style={{ fontSize: 11.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>
+                {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <button className="btn btn-ghost btn-sm" disabled={safePage === 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_left</span>
+                </button>
+                {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    style={{ width: 28, height: 28, borderRadius: 4, border: '1px solid hsl(var(--border))', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, cursor: 'pointer', background: page === safePage ? 'hsl(var(--primary))' : '#fff', color: page === safePage ? '#fff' : 'hsl(var(--on-surface-muted))' }}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button className="btn btn-ghost btn-sm" disabled={safePage === totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+                </button>
+              </div>
             </div>
           )}
         </div>
+
+        {/* ── Right: review panel ── */}
+        {selectedMember ? (
+          <div style={{ position: 'sticky', top: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+            {/* Dark identity header */}
+            <div style={{ borderRadius: 6, overflow: 'hidden', border: '1px solid hsl(var(--border))' }}>
+              <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', padding: '20px 22px', position: 'relative', overflow: 'hidden', borderTop: '3px solid hsl(var(--destructive))', borderBottom: '3px solid hsl(var(--primary))' }}>
+                <div style={{ position: 'absolute', right: -30, top: -30, width: 160, height: 160, background: 'radial-gradient(circle,rgba(218,165,32,.12),transparent 70%)' }} />
+                <div className="verify-identity-row" style={{ display: 'flex', gap: 14, alignItems: 'flex-start', position: 'relative' }}>
+                  {/* Photo */}
+                  <button
+                    onClick={() => selectedMember.photoUrl && setShowPhotoFull(true)}
+                    style={{ width: 64, height: 72, borderRadius: 4, overflow: 'hidden', background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', flexShrink: 0, cursor: selectedMember.photoUrl ? 'zoom-in' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    {selectedMember.photoUrl
+                      ? <img src={selectedMember.photoUrl} alt={selectedMember.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                      : <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'rgba(255,255,255,.25)' }}>person</span>
+                    }
+                  </button>
+                  {/* Identity */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 9.5, color: 'hsl(var(--accent))', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase' }}>
+                      Reviewing · {selectedMember.id}
+                    </div>
+                    <h3 style={{ margin: '5px 0 6px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-.01em', lineHeight: 1.1 }}>{selectedMember.name}</h3>
+                    <span className={statusPill(selectedMember.status)} style={{ fontSize: 10 }}>{selectedMember.status}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Field grid */}
+              <div style={{ background: '#fff', padding: '18px 22px' }}>
+                <dl className="verify-field-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 18px' }}>
+                  {[
+                    ['Platform',      selectedMember.platform],
+                    ['Country',       selectedMember.country],
+                    ['Gender',        selectedMember.gender],
+                    ['Age range',     selectedMember.ageRange],
+                    ['Region',        selectedMember.region],
+                    ['Constituency',  selectedMember.constituency],
+                    ['Profession',    selectedMember.profession],
+                    ['Education',     selectedMember.educationLevel],
+                    ['Phone',         selectedMember.phone],
+                    ['Submitted',     selectedMember.submitted],
+                  ].map(([k, v]) => (
+                    <div key={k}>
+                      <dt style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 2 }}>{k}</dt>
+                      <dd style={{ margin: 0, fontSize: 12.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'hsl(var(--on-surface))' }}>{v || '—'}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                {/* Emergency contact */}
+                {(selectedMember.emergencyName || selectedMember.emergencyPhone) && (
+                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid hsl(var(--border))' }}>
+                    <div style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 8 }}>Emergency contact</div>
+                    <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 18px' }}>
+                      {[
+                        ['Name',      selectedMember.emergencyName],
+                        ['Relation',  selectedMember.emergencyRelationship],
+                        ['Phone',     selectedMember.emergencyPhone],
+                      ].map(([k, v]) => (
+                        <div key={k}>
+                          <dt style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 2 }}>{k}</dt>
+                          <dd style={{ margin: 0, fontSize: 12, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>{v || '—'}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Verification checklist */}
+            <div className="panel">
+              <div className="ph2"><h3>Verification steps</h3><span className="meta">auto-check</span></div>
+              <div style={{ padding: '14px 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[
+                  { label: 'Form submitted',             done: true },
+                  { label: 'Photo uploaded',             done: !!selectedMember.photoUrl },
+                  { label: 'Regional chapter approval',  done: selectedMember.status === 'Approved' },
+                ].map(({ label, done }) => (
+                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', background: done ? 'rgba(0,107,63,.05)' : 'hsl(var(--container-low))', border: `1px solid ${done ? 'rgba(0,107,63,.18)' : 'hsl(var(--border))'}`, borderRadius: 4 }}>
+                    <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: done ? 'rgba(0,107,63,.12)' : 'rgba(0,0,0,.04)', flexShrink: 0 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 13, color: done ? 'hsl(var(--primary))' : 'hsl(var(--border))' }}>{done ? 'check' : 'radio_button_unchecked'}</span>
+                    </div>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: done ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))' }}>{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* AI Security assistant */}
+            <div className="panel">
+              <div className="ph2">
+                <h3>Security assistant</h3>
+                {aiResult && (
+                  <span style={{ padding: '2px 9px', borderRadius: 99, fontSize: 10, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, background: aiResult.flagged ? 'rgba(206,17,38,.1)' : 'rgba(0,107,63,.1)', color: aiResult.flagged ? 'hsl(var(--destructive))' : 'hsl(var(--primary))', border: `1px solid ${aiResult.flagged ? 'rgba(206,17,38,.2)' : 'rgba(0,107,63,.2)'}` }}>
+                    {aiResult.confidence}% match
+                  </span>
+                )}
+              </div>
+              <div style={{ padding: '14px 22px' }}>
+                {!aiResult && !aiAnalyzing && (
+                  <button
+                    className="btn btn-sm"
+                    onClick={handleAiScan}
+                    style={{ width: '100%', justifyContent: 'center', background: 'hsl(var(--accent))', color: '#000', fontWeight: 800, height: 40 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 15 }}>memory</span>
+                    Execute identity scan
+                  </button>
+                )}
+                {aiAnalyzing && (
+                  <div style={{ padding: '18px 0', textAlign: 'center' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--accent))', display: 'block', marginBottom: 8, animation: 'spin 1.5s linear infinite' }}>fingerprint</span>
+                    <p style={{ margin: 0, fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Analyzing identity…</p>
+                  </div>
+                )}
+                {aiResult && (
+                  <div style={{ padding: '12px 14px', background: aiResult.flagged ? 'rgba(206,17,38,.06)' : 'rgba(0,107,63,.06)', border: `1px solid ${aiResult.flagged ? 'rgba(206,17,38,.18)' : 'rgba(0,107,63,.18)'}`, borderRadius: 4 }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                      {aiResult.matches.map(m => (
+                        <span key={m} style={{ padding: '2px 8px', background: 'rgba(0,0,0,.05)', borderRadius: 99, fontSize: 10.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>{m}</span>
+                      ))}
+                    </div>
+                    <p style={{ margin: 0, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontStyle: 'italic' }}>
+                      Neural scan of official records completed.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            {(selectedMember.status === 'In Review' || selectedMember.status === 'Processing' || selectedMember.status === 'Flagged') && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <button className="btn btn-dest" style={{ justifyContent: 'center', height: 44 }} onClick={() => handleVerdict(false)}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>cancel</span>
+                  Reject
+                </button>
+                <button className="btn btn-primary" style={{ justifyContent: 'center', height: 44 }} onClick={() => handleVerdict(true)}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>verified_user</span>
+                  Approve
+                </button>
+              </div>
+            )}
+
+            {selectedMember.status === 'Approved' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: 'rgba(0,107,63,.07)', border: '1px solid rgba(0,107,63,.2)', borderRadius: 4 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>verified_user</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--primary))' }}>Member approved and admitted.</span>
+              </div>
+            )}
+
+            {selectedMember.status === 'Rejected' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: 'rgba(206,17,38,.07)', border: '1px solid rgba(206,17,38,.2)', borderRadius: 4 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--destructive))' }}>cancel</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--destructive))' }}>Registration rejected.</span>
+              </div>
+            )}
+
+            {/* Biometric + audit vault links */}
+            {selectedMember.photoUrl && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <button className="btn btn-outline" style={{ justifyContent: 'center' }} onClick={() => setShowPhotoFull(true)}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>photo_camera</span>
+                  Inspect biometric data
+                </button>
+                {(selectedMember.status === 'Approved' || selectedMember.status === 'Rejected') && (
+                  <button className="btn btn-ghost" style={{ justifyContent: 'center' }} onClick={() => setViewingVaultRecord(selectedMember)}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>database</span>
+                    Open audit vault
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 380, border: '2px dashed hsl(var(--border))', borderRadius: 6, background: 'rgba(255,255,255,.5)', gap: 12 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))' }}>shield</span>
+            <p style={{ margin: 0, fontSize: 12, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}>Select a file to review</p>
+          </div>
+        )}
       </div>
 
-      {/* ── Registration Form Modal ──────────────────────────────────────────── */}
+      {/* Registration form modal */}
       {showRegForm && (
-        <div className="fixed inset-0 z-[100] bg-on-surface/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(15,19,16,.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, overflowY: 'auto' }}>
           <RegistrationForm
             onClose={() => setShowRegForm(false)}
             onSuccess={() => setShowRegForm(false)}
@@ -604,166 +517,141 @@ export default function MemberVerification() {
         </div>
       )}
 
-      {/* ── Full-screen Photo Lightbox ───────────────────────────────────────── */}
+      {/* Photo lightbox */}
       {showPhotoFull && selectedMember?.photoUrl && (
         <div
-          className="fixed inset-0 z-[110] bg-on-surface/90 flex items-center justify-center p-8"
+          style={{ position: 'fixed', inset: 0, zIndex: 110, background: 'rgba(10,14,11,.93)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}
           onClick={() => setShowPhotoFull(false)}
         >
           <button
-            className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors"
             onClick={() => setShowPhotoFull(false)}
+            style={{ position: 'absolute', top: 24, right: 24, background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.2)', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}
           >
-            <X className="w-8 h-8" />
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
           </button>
-          <div className="flex flex-col items-center gap-4" onClick={e => e.stopPropagation()}>
-            <img src={selectedMember.photoUrl}
-              alt={selectedMember.name}
-              className="max-h-[80vh] max-w-full object-contain shadow-2xl"
-             decoding="async" loading="lazy" />
-            <p className="text-white/60 text-micro font-bold tracking-tight">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }} onClick={e => e.stopPropagation()}>
+            <img src={selectedMember.photoUrl} alt={selectedMember.name} style={{ maxHeight: '80vh', maxWidth: '100%', objectFit: 'contain', boxShadow: '0 32px 80px rgba(0,0,0,.6)' }} decoding="async" />
+            <p style={{ margin: 0, fontSize: 11.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'rgba(255,255,255,.5)' }}>
               {selectedMember.name} · {selectedMember.id}
             </p>
-            <button
-              className="text-white/40 hover:text-white/80 transition-colors"
-              onClick={() => setShowPhotoFull(false)}
-            >
-              <EyeOff className="w-5 h-5" />
-            </button>
           </div>
         </div>
       )}
 
-      {/* ── Audit Vault Modal ────────────────────────────────────────────────── */}
+      {/* Audit vault modal */}
       {viewingVaultRecord && (
-        <div className="fixed inset-0 z-[120] bg-on-surface/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <Card className="max-w-4xl w-full rounded-sm border-0 shadow-2xl overflow-hidden bg-white">
-            <CardHeader className="bg-on-surface text-white p-8 border-b border-white/10 relative">
-              <div className="absolute top-0 right-0 p-6 opacity-10">
-                <Lock className="w-24 h-24 rotate-12" />
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 120, background: 'rgba(0,0,0,.7)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, overflowY: 'auto' }}
+          onClick={e => { if (e.target === e.currentTarget) setViewingVaultRecord(null) }}
+        >
+          <div style={{ width: '100%', maxWidth: 860, background: '#fff', borderRadius: 6, overflow: 'hidden', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+
+            {/* Vault header */}
+            <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', padding: '28px 32px', borderTop: '4px solid hsl(var(--destructive))', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+              <div style={{ position: 'absolute', right: 24, top: 12, opacity: .06 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 96 }}>lock</span>
               </div>
-              <div className="flex justify-between items-start relative z-10">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-white/60 tracking-tight">
-                      Secure vault record
-                    </span>
-                    <div className={cn(
-                      "px-2 py-0.5 text-[8px] font-bold tracking-tight border border-white/20 rounded",
-                      viewingVaultRecord.status === 'Approved' ? "bg-primary/20 text-primary" : "bg-destructive/20 text-destructive"
-                    )}>
-                      {viewingVaultRecord.status}
-                    </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', position: 'relative' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                    <span style={{ fontSize: 10.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'rgba(255,255,255,.5)', letterSpacing: '.06em', textTransform: 'uppercase' }}>Secure vault record</span>
+                    <span className={viewingVaultRecord.status === 'Approved' ? 'pill pill-ok' : 'pill pill-err'} style={{ fontSize: 9 }}>{viewingVaultRecord.status}</span>
                   </div>
-                  <h2 className="text-3xl font-bold font-meta tracking-tighter leading-none pt-2">
-                    {viewingVaultRecord.name}
-                  </h2>
-                  <p className="text-white/60 text-xs font-bold tracking-tight">
-                    Permanent record ID: {viewingVaultRecord.id}
+                  <h2 style={{ margin: '0 0 4px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: '#fff', letterSpacing: '-.02em' }}>{viewingVaultRecord.name}</h2>
+                  <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11.5, color: 'rgba(255,255,255,.45)' }}>Permanent record ID: {viewingVaultRecord.id}</p>
+                </div>
+                <button onClick={() => setViewingVaultRecord(null)} style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff', flexShrink: 0 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Vault body */}
+            <div className="vault-body-grid" style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
+
+              {/* Left: identity + audit */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+                <div>
+                  <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.07em', textTransform: 'uppercase', borderBottom: '1px solid hsl(var(--border))', paddingBottom: 8, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>description</span> Identity metadata
+                  </div>
+                  <dl style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 24px' }}>
+                    {[
+                      ['Full name', viewingVaultRecord.name],
+                      ['Platform', viewingVaultRecord.platform],
+                      ['Country', viewingVaultRecord.country],
+                      ['Region', viewingVaultRecord.region],
+                      ['Constituency', viewingVaultRecord.constituency],
+                      ['Profession', viewingVaultRecord.profession],
+                      ['Education', viewingVaultRecord.educationLevel],
+                      ['Gender', viewingVaultRecord.gender],
+                      ['Age range', viewingVaultRecord.ageRange],
+                    ].map(([k, v]) => (
+                      <div key={k}>
+                        <dt style={{ fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 2 }}>{k}</dt>
+                        <dd style={{ margin: 0, fontSize: 12.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>{v || '—'}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+
+                <div>
+                  <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.07em', textTransform: 'uppercase', borderBottom: '1px solid hsl(var(--border))', paddingBottom: 8, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>history</span> Audit history
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div style={{ padding: '12px 16px', background: '#fff', borderLeft: '3px solid hsl(var(--on-surface))', boxShadow: '0 1px 4px rgba(0,0,0,.06)', borderRadius: '0 4px 4px 0' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5 }}>Registration submitted</p>
+                        <span style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>{viewingVaultRecord.submitted}</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>System generated entry upon form completion.</p>
+                    </div>
+                    {viewingVaultRecord.status === 'Approved' && (
+                      <div style={{ padding: '12px 16px', background: '#fff', borderLeft: '3px solid hsl(var(--primary))', boxShadow: '0 1px 4px rgba(0,0,0,.06)', borderRadius: '0 4px 4px 0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--primary))' }}>Verification approved</p>
+                          <span style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Just now</span>
+                        </div>
+                        <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Administrator: National HQ</p>
+                      </div>
+                    )}
+                    {viewingVaultRecord.status === 'Rejected' && (
+                      <div style={{ padding: '12px 16px', background: '#fff', borderLeft: '3px solid hsl(var(--destructive))', boxShadow: '0 1px 4px rgba(0,0,0,.06)', borderRadius: '0 4px 4px 0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--destructive))' }}>Verification rejected</p>
+                          <span style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Just now</span>
+                        </div>
+                        <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Administrator: National HQ</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: photo + disclaimer */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <div>
+                  <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.07em', textTransform: 'uppercase', borderBottom: '1px solid hsl(var(--border))', paddingBottom: 8, marginBottom: 14 }}>Captured credentials</div>
+                  <div style={{ aspectRatio: '3/4', background: 'hsl(var(--container-low))', overflow: 'hidden', border: '1px solid hsl(var(--border))', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {viewingVaultRecord.photoUrl
+                      ? <img src={viewingVaultRecord.photoUrl} alt="Vault record" style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" />
+                      : <div style={{ textAlign: 'center' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--border))', display: 'block', marginBottom: 8 }}>hide_image</span>
+                          <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>No biometric data</p>
+                        </div>
+                    }
+                  </div>
+                </div>
+                <div style={{ padding: '14px 16px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4 }}>
+                  <p style={{ margin: '0 0 4px', fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontStyle: 'italic' }}>Legal disclaimer</p>
+                  <p style={{ margin: 0, fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, lineHeight: 1.6, fontStyle: 'italic' }}>
+                    This record is persistently stored in the movement's secure audit vault. Metadata cannot be altered after verification completion.
                   </p>
                 </div>
-                <Button 
-                variant="default" 
-                onClick={() => setViewingVaultRecord(null)}
-                  className="p-2 hover:bg-white/10 text-white/60 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </Button>
               </div>
-            </CardHeader>
-            <CardContent className="p-8">
-              <div className="flex-columns items-start" style={{ '--column-gap': '3rem' } as React.CSSProperties}>
-                <div className="flex-[1.5] flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
-                  <section>
-                    <h3 className="text-xs font-bold tracking-tight text-on-surface/40 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
-                      <FileText className="w-3.5 h-3.5" /> Identity metadata
-                    </h3>
-                    <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-                      <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-                      {[
-                        { label: 'Full name', value: viewingVaultRecord.name },
-                        { label: 'Platform', value: viewingVaultRecord.platform },
-                        { label: 'Country', value: viewingVaultRecord.country },
-                        { label: 'Region', value: viewingVaultRecord.region },
-                        { label: 'Constituency', value: viewingVaultRecord.constituency },
-                        { label: 'Profession', value: viewingVaultRecord.profession },
-                        { label: 'Education', value: viewingVaultRecord.educationLevel },
-                        { label: 'Gender', value: viewingVaultRecord.gender },
-                        { label: 'Age range', value: viewingVaultRecord.ageRange },
-                      ].map(f => (
-                        <div key={f.label}>
-                          <p className="text-micro font-bold text-on-surface/60 tracking-tight">{f.label}</p>
-                          <p className="text-sm font-bold tracking-tight text-on-surface">{f.value || '-'}</p>
-                        </div>
-                      ))}
-                      </div>
-                    </div>
-                  </section>
-
-                  <section>
-                    <h3 className="text-xs font-bold tracking-tight text-on-surface/60 border-b border-border/40 pb-2 mb-4 flex items-center gap-2">
-                      <History className="w-3.5 h-3.5" /> Audit history
-                    </h3>
-                    <div className="space-y-3">
-                      <div className="p-4 bg-white border-l-2 border-on-surface shadow-sm rounded-r-xl">
-                        <div className="flex justify-between items-start">
-                          <p className="text-sm font-bold tracking-tight text-on-surface">Registration submitted</p>
-                          <span className="text-micro font-bold text-on-surface-muted">{viewingVaultRecord.submitted}</span>
-                        </div>
-                        <p className="text-xs text-on-surface-muted mt-1 tracking-tight">System generated entry upon form completion.</p>
-                      </div>
-                      {viewingVaultRecord.status === 'Approved' && (
-                        <div className="p-4 bg-white border-l-2 border-primary shadow-sm rounded-r-xl">
-                          <div className="flex justify-between items-start">
-                            <p className="text-sm font-bold tracking-tight text-primary">Verification approved</p>
-                            <span className="text-micro font-bold text-on-surface-muted">Just now</span>
-                          </div>
-                          <p className="text-xs text-on-surface-muted mt-1 tracking-tight">Administrator: National HQ</p>
-                        </div>
-                      )}
-                      {viewingVaultRecord.status === 'Rejected' && (
-                        <div className="p-4 bg-white border-l-2 border-destructive shadow-sm rounded-r-xl">
-                          <div className="flex justify-between items-start">
-                            <p className="text-sm font-bold tracking-tight text-destructive">Verification rejected</p>
-                            <span className="text-micro font-bold text-on-surface-muted">Just now</span>
-                          </div>
-                          <p className="text-xs text-on-surface-muted mt-1 tracking-tight">Administrator: National HQ</p>
-                        </div>
-                      )}
-                    </div>
-                  </section>
-                </div>
-
-                <div className="flex-1 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
-                  <section>
-                    <h3 className="text-xs font-bold tracking-tight text-muted-foreground/40 border-b border-border/40 pb-2 mb-4">
-                      Captured credentials
-                    </h3>
-                    <div className="aspect-[3/4] bg-muted/30 overflow-hidden shadow-inner border border-border/60 relative group rounded-sm">
-                      {viewingVaultRecord.photoUrl ? (
-                        <img src={viewingVaultRecord.photoUrl} alt="Vault Record" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                      ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/40 gap-2">
-                          <EyeOff className="w-8 h-8 opacity-20" />
-                          <p className="text-tiny font-bold tracking-tight">No biometric data</p>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                        <Database className="text-white w-12 h-12 opacity-50" />
-                      </div>
-                    </div>
-                  </section>
-                  
-                  <div className="p-6 bg-muted/30 border border-border/40 rounded-sm">
-                    <p className="text-xs font-bold tracking-tight text-on-surface-muted mb-2 italic">Legal disclaimer</p>
-                    <p className="text-sm text-on-surface-muted leading-relaxed font-medium italic">
-                      This record is persistently stored in the movement's secure audit vault. Metadata cannot be altered after verification completion.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
     </div>

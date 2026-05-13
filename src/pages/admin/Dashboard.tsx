@@ -208,7 +208,7 @@ export default function AdminDashboard() {
     <div className="main">
       <div className="top">
         <div>
-          <div className="crumbs">Admin / Mission control</div>
+          <div className="crumbs">Admin / Dashboard</div>
           <h2>Today's operations</h2>
         </div>
         <div className="actions">
@@ -279,6 +279,7 @@ export default function AdminDashboard() {
             </div>
             <button className="btn btn-outline btn-sm" onClick={() => navigate('/admin/verification')}>View all</button>
           </div>
+          <div style={{ overflowX: 'auto' }}>
           <table className="table">
             <thead>
               <tr>
@@ -336,6 +337,7 @@ export default function AdminDashboard() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
 
         {/* Right column: composer + log */}
