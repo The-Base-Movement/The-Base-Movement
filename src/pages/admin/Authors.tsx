@@ -1,15 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Plus, Search, PenTool, Edit3, Trash2, Shield, Eye, Calendar, Quote, User, Download } from 'lucide-react'
+import { Plus, Search, PenTool, Edit3, Trash2, Shield, Eye, Calendar, User, Download } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/neon-button'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select'
 import { contentService } from '@/services/contentService'
 import type { Author } from '@/types/admin'
@@ -325,103 +324,103 @@ export default function AdminAuthors() {
 }
 
 function AuthorDetailModal({ author, isOpen, onClose }: { author: Author | null, isOpen: boolean, onClose: () => void }) {
-  if (!author) return null
+  if (!author || !isOpen) return null
+
+  const closeBtnSt: React.CSSProperties = {
+    position: 'absolute', top: 12, right: 12,
+    background: 'none', border: '1px solid hsl(var(--border))', borderRadius: 4,
+    width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
+    cursor: 'pointer', color: 'hsl(var(--on-surface-muted))',
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl bg-white border-border/40 p-0 overflow-hidden rounded-sm shadow-2xl animate-in zoom-in-95 duration-200">
-        <div className="h-32 bg-stone-50/50 relative border-b border-border/10">
-          <div className="absolute -bottom-12 left-10">
-            <div className="w-28 h-28 rounded-sm border-4 border-white bg-white shadow-xl overflow-hidden">
-              {author.imageUrl ? (
-                <img src={author.imageUrl} alt={author.name} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground/10 bg-muted/5">
-                  <User className="w-12 h-12" />
-                </div>
-              )}
+    <div
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+      onClick={onClose}
+    >
+      <div
+        style={{ background: '#fff', borderRadius: 6, border: '1px solid hsl(var(--border))', width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Banner + avatar */}
+        <div style={{ height: 76, background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))', position: 'relative' }}>
+          <div style={{ position: 'absolute', bottom: -24, left: 24, width: 52, height: 52, borderRadius: 4, border: '3px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.14)', overflow: 'hidden', background: '#fff' }}>
+            {author.imageUrl ? (
+              <img src={author.imageUrl} alt={author.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'hsl(var(--container-low))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 26, color: 'hsl(var(--on-surface-muted))' }}>person</span>
+              </div>
+            )}
+          </div>
+          <button style={closeBtnSt} onClick={onClose}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+          </button>
+        </div>
+
+        {/* Identity block */}
+        <div style={{ padding: '36px 24px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div>
+            <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 22, color: 'hsl(var(--on-surface))', margin: '0 0 10px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+              {author.name}
+            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <span className="pill pill-ok" style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 10 }}>
+                {author.role || 'Contributor'}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 13, opacity: 0.5 }}>shield</span>
+                ID: <span style={{ fontFamily: 'monospace', letterSpacing: 'normal' }}>{author.id.substring(0, 8).toUpperCase()}</span>
+              </span>
+            </div>
+          </div>
+
+          <Link to={`/admin/authors/edit/${author.id}`} onClick={onClose}>
+            <button className="btn btn-primary btn-sm">
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>edit</span>
+              Modify Credentials
+            </button>
+          </Link>
+
+          {/* Bio */}
+          <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.07em', margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>format_quote</span>
+              Editorial Mission & Biography
+            </p>
+            <div style={{ position: 'relative', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '14px 16px 14px 20px' }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: 'hsl(var(--primary))', borderRadius: '4px 0 0 4px', opacity: 0.25 }} />
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface))', lineHeight: 1.75, fontStyle: 'italic', margin: 0, opacity: 0.7 }}>
+                {author.bio || 'No biography has been added for this editorial profile. Strategic intelligence suggests adding a bio to increase perceived authority.'}
+              </p>
             </div>
           </div>
         </div>
-        
-        <div className="pt-16 px-10 pb-10">
-          <DialogHeader className="sr-only">
-            <DialogTitle>{author.name} Intelligence Review</DialogTitle>
-            <DialogDescription>Accessing verified editorial credentials for personnel ID {author.id}</DialogDescription>
-          </DialogHeader>
 
-          <div className="mb-12">
-            <div className="flex flex-col">
-              <h2 className="text-5xl font-black text-on-surface tracking-tighter leading-none mb-6">{author.name}</h2>
-              
-              <div className="flex mb-6">
-                <span className="pill bg-brand-green/10 text-brand-green font-black uppercase tracking-widest text-[9px] border-brand-green/20 px-3 py-1.5 rounded-sm">
-                  {author.role || 'Contributor'}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mb-8">
-                <Shield className="w-3.5 h-3.5 text-primary/30" />
-                ID: <span className="text-on-surface/60 font-mono tracking-normal">{author.id.substring(0, 8).toUpperCase()}</span>
-              </div>
-
-              <div className="flex">
-                <Link to={`/admin/authors/edit/${author.id}`}>
-                  <Button 
-                    variant="primary" 
-                    className="text-[10px] uppercase tracking-widest rounded-sm bg-brand-green hover:bg-brand-green/90"
-                  >
-                    <Edit3 className="w-3.5 h-3.5 mr-2" />
-                    Modify credentials
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-10">
+        {/* Footer */}
+        <div style={{ background: 'hsl(var(--container-low))', borderTop: '1px solid hsl(var(--border))', padding: '16px 24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
             <div>
-              <h3 className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <Quote className="w-4 h-4 text-primary/20" />
-                Editorial Mission & Biography
-              </h3>
-              <div className="text-on-surface/60 text-[15px] leading-relaxed bg-muted/5 p-8 rounded-sm border border-border/40 italic relative group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-primary/10 group-hover:bg-primary/30 transition-colors" />
-                {author.bio || "No biography has been added for this editorial profile. Strategic intelligence suggests adding a bio to increase perceived authority."}
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Date Enlisted</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11.5, color: 'hsl(var(--on-surface))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))', opacity: 0.45 }}>calendar_today</span>
+                {format(new Date(author.createdAt), 'MMM dd, yyyy').toUpperCase()}
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Security Status</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'hsl(var(--primary))', boxShadow: '0 0 8px rgba(0,107,63,0.4)' }} />
+                Authorized Duty
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="bg-stone-50/80 border-t border-border/10 px-10 py-6">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col">
-                <span className="text-[9px] text-muted-foreground/40 uppercase font-black tracking-widest mb-2">Date Enlisted</span>
-                <div className="flex items-center gap-2.5 text-[11px] font-black text-on-surface/70">
-                  <Calendar className="w-4 h-4 text-primary/30" />
-                  {format(new Date(author.createdAt), 'MMM dd, yyyy').toUpperCase()}
-                </div>
-              </div>
-              
-              <div className="flex flex-col text-right">
-                <span className="text-[9px] text-muted-foreground/40 uppercase font-black tracking-widest mb-2">Security Status</span>
-                <div className="flex items-center justify-end gap-2.5 text-[11px] font-black text-brand-green">
-                  <div className="w-2.5 h-2.5 rounded-full bg-brand-green shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
-                  Authorized Duty
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-5 border-t border-border/10">
-              <div className="flex items-center justify-center gap-2.5 text-[10px] text-muted-foreground/30 font-black uppercase tracking-widest">
-                <Shield className="w-4 h-4" />
-                Verified Editorial Personnel
-              </div>
-            </div>
+          <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>verified_user</span>
+            Verified Editorial Personnel
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   )
 }
