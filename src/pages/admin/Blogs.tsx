@@ -72,6 +72,9 @@ export default function AdminBlogs() {
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [showMediaPanel, setShowMediaPanel] = useState(true)
+  const [mediaSearch, setMediaSearch] = useState('')
+  const [showIntelPanel, setShowIntelPanel] = useState(true)
 
   const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>(() => {
     const saved = sessionStorage.getItem('blogs_formData')
@@ -239,8 +242,6 @@ export default function AdminBlogs() {
       { ok: !!(formData.excerpt && formData.excerpt.length > 80), label: `Excerpt ${formData.excerpt?.length || 0}ch · ${(formData.excerpt?.length || 0) > 80 ? 'good length' : 'too short'}` },
     ]
     const seoScore = Math.round((seoChecks.filter(c => c.ok).length / seoChecks.length) * 100)
-    const MEDIA_IMAGES = Object.values(CATEGORY_PLACEHOLDERS).concat(DEFAULT_PLACEHOLDER)
-
     return (
       <div className="main animate-in fade-in duration-500 !p-0 !max-w-none flex flex-col" style={{ height: 'calc(100vh - 4rem)', overflow: 'hidden', background: 'hsl(var(--background))' }}>
         {/* Top bar */}
@@ -263,9 +264,21 @@ export default function AdminBlogs() {
             </div>
           </div>
           <div className="actions !gap-2">
-            <button className="btn btn-outline btn-sm" style={{ display: 'none' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>visibility</span>
-              Preview
+            <button
+              className={showMediaPanel ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+              onClick={() => setShowMediaPanel(v => !v)}
+              title="Toggle media library"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>photo_library</span>
+              <span className="desktop-only">Media</span>
+            </button>
+            <button
+              className={showIntelPanel ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+              onClick={() => setShowIntelPanel(v => !v)}
+              title="Toggle post intelligence"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>tune</span>
+              <span className="desktop-only">Intel</span>
             </button>
             <button className="btn btn-primary btn-sm" disabled={isLoading} onClick={handleSubmit}>
               {isLoading ? 'Saving…' : formData.status === 'Published' ? 'Authorize' : 'Save draft'}
@@ -275,38 +288,85 @@ export default function AdminBlogs() {
 
         <div style={{ display: 'flex', flex: 1, overflow: 'hidden', position: 'relative' }}>
           {/* Left: media library */}
-          <aside style={{ display: 'none', width: 240, flexShrink: 0, borderRight: '1px solid hsl(var(--border))', flexDirection: 'column', background: '#fff' }} className="lg:!flex">
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Tactical Assets</span>
-            </div>
-            <div style={{ padding: 12, borderBottom: '1px solid hsl(var(--border))' }}>
-              <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed hsl(var(--border))', borderRadius: 4, padding: '14px 0', cursor: 'pointer' }}>
-                <input type="file" style={{ display: 'none' }} onChange={async (e) => {
-                  const file = e.target.files?.[0]
-                  if (!file) return
-                  const url = await contentService.uploadImage(file, 'blog-images')
-                  if (url) { setFormData({ ...formData, imageUrl: url }); fetchMedia() }
-                }} />
-                <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>upload_file</span>
-                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, marginTop: 4, color: 'hsl(var(--on-surface-muted))' }}>Upload Assets</span>
-              </label>
-            </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              {[...mediaFiles, ...MEDIA_IMAGES].map((url, i) => (
-                <button key={i} onClick={() => setFormData({ ...formData, imageUrl: url })}
-                  style={{ aspectRatio: '1', borderRadius: 4, border: `2px solid ${formData.imageUrl === url ? 'hsl(var(--primary))' : 'transparent'}`, overflow: 'hidden', padding: 0, cursor: 'pointer', background: 'none', transition: 'border-color 0.15s' }}>
-                  <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                </button>
-              ))}
-            </div>
-          </aside>
+          {showMediaPanel && (
+            <aside style={{ width: 240, flexShrink: 0, borderRight: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', background: '#fff' }}>
+              {/* Header */}
+              <div style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', gap: 7 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>photo_library</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Blog Media</span>
+              </div>
+
+              {/* Search + upload */}
+              <div style={{ padding: '10px 12px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', gap: 6 }}>
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <span className="material-symbols-outlined" style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+                  <input
+                    placeholder="Search…"
+                    value={mediaSearch}
+                    onChange={e => setMediaSearch(e.target.value)}
+                    style={{ width: '100%', height: 32, paddingLeft: 28, paddingRight: 8, border: '1px solid hsl(var(--border))', borderRadius: 4, background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <label title="Upload to Blog Media" style={{ width: 32, height: 32, borderRadius: 4, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    const url = await contentService.uploadImage(file, 'blog-images')
+                    if (url) { toast.success('Uploaded to blog media'); fetchMedia() }
+                    e.target.value = ''
+                  }} />
+                  <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>upload</span>
+                </label>
+              </div>
+
+              {/* Image grid */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: 10, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
+                {mediaFiles
+                  .filter(url => !mediaSearch || url.toLowerCase().includes(mediaSearch.toLowerCase()))
+                  .map((url, i) => (
+                    <div key={i} style={{ position: 'relative', aspectRatio: '1', borderRadius: 4, overflow: 'hidden', border: `2px solid ${formData.imageUrl === url ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`, transition: 'border-color 0.15s' }}
+                      onMouseEnter={e => { const actions = e.currentTarget.querySelector('.img-actions') as HTMLElement | null; if (actions) actions.style.opacity = '1' }}
+                      onMouseLeave={e => { const actions = e.currentTarget.querySelector('.img-actions') as HTMLElement | null; if (actions) actions.style.opacity = '0' }}>
+                      <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt="" />
+                      <div className="img-actions" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, opacity: 0, transition: 'opacity 0.15s' }}>
+                        <button
+                          title="Set as cover image"
+                          onClick={() => setFormData({ ...formData, imageUrl: url })}
+                          style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.4)', borderRadius: 3, color: '#fff', cursor: 'pointer', padding: '3px 6px', display: 'flex', alignItems: 'center', gap: 3, fontSize: 9, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, width: '80%', justifyContent: 'center' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 12 }}>image</span>
+                          Cover
+                        </button>
+                        <button
+                          title="Insert into article"
+                          onClick={() => {
+                            const editor = editorRef.current as unknown as { insertContent: (html: string) => void } | null
+                            editor?.insertContent(`<img src="${url}" alt="" style="max-width:100%;height:auto;" />`)
+                          }}
+                          style={{ background: 'hsl(var(--primary))', border: 'none', borderRadius: 3, color: '#fff', cursor: 'pointer', padding: '3px 6px', display: 'flex', alignItems: 'center', gap: 3, fontSize: 9, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, width: '80%', justifyContent: 'center' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 12 }}>add_photo_alternate</span>
+                          Insert
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                {mediaFiles.filter(url => !mediaSearch || url.toLowerCase().includes(mediaSearch.toLowerCase())).length === 0 && (
+                  <div style={{ gridColumn: '1/-1', padding: '24px 0', textAlign: 'center' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--on-surface-muted))', opacity: 0.25, display: 'block', marginBottom: 8 }}>photo_library</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>
+                      {mediaSearch ? 'No matches' : 'No assets in this folder'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </aside>
+          )}
 
           {/* Center: article canvas */}
           <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'hsl(var(--container-low))', overflow: 'hidden' }}>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '32px 20px' }}>
-              <div style={{ maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+              <div>
                 <div className="panel !p-0 overflow-hidden" style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}>
-                  <div style={{ background: '#fff', padding: '48px 64px', minHeight: 900 }}>
+                  <div style={{ background: '#fff', padding: '32px 48px', minHeight: 900 }}>
                     {/* Author + category row */}
                     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16, borderBottom: '1px solid hsl(var(--border))', paddingBottom: 20, marginBottom: 24 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -395,7 +455,7 @@ export default function AdminBlogs() {
           </main>
 
           {/* Right: post intelligence */}
-          <aside style={{ display: 'none', width: 300, flexShrink: 0, borderLeft: '1px solid hsl(var(--border))', flexDirection: 'column', background: '#fff', overflowY: 'auto' }} className="xl:!flex">
+          {showIntelPanel && <aside style={{ width: 280, flexShrink: 0, borderLeft: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', background: '#fff', overflowY: 'auto' }}>
             <div style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
               <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Post Intelligence</span>
             </div>
@@ -463,7 +523,7 @@ export default function AdminBlogs() {
                 />
               </div>
             </div>
-          </aside>
+          </aside>}
         </div>
       </div>
     )
