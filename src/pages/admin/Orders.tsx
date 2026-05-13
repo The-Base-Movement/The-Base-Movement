@@ -5,6 +5,8 @@ import type { Order, OrderStats } from '@/services/adminService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { OrderListCard } from '@/components/admin/OrderListCard'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/admin/BrandLine'
 
 
 const STATUS_CONFIG: Record<Order['status'], { label: string; color: string; bg: string; icon: string; kpiClass: string }> = {
@@ -126,25 +128,25 @@ export default function AdminOrders() {
     { 
       label: 'Cancelled',      
       value: stats.cancelledOrders,  
-      variant: 'r', 
+      variant: 'red' as const, 
       sub: 'Terminated manifest flow' 
     },
     { 
       label: 'Revenue Today',   
       value: `₵${stats.revenueToday.toFixed(2)}`, 
-      variant: 'g', 
+      variant: 'gold' as const, 
       sub: 'Tactical daily inflow' 
     },
     { 
       label: 'Total Orders',     
       value: stats.totalOrders, 
-      variant: 'k',  
+      variant: 'black' as const,  
       sub: `₵${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })} total` 
     },
     { 
       label: 'Delivered',      
       value: stats.deliveredOrders,  
-      variant: 'gr', 
+      variant: 'green' as const, 
       sub: 'Successful fulfillment completion' 
     },
   ] : [], [stats])
@@ -165,6 +167,7 @@ export default function AdminOrders() {
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>inventory_2</span>
             Orders Manifest
           </h2>
+          <BrandLine />
         </div>
         <div className="actions">
           <button className="btn btn-outline btn-sm" onClick={handleExport}>
@@ -178,16 +181,18 @@ export default function AdminOrders() {
         </div>
       </div>
 
-      {/* Stats - Industrial KPIs */}
-      <div className="kpis" style={{ marginBottom: 20 }}>
+      {/* KPI Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
         {loading ? Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="kpi k animate-pulse h-24" />
+          <div key={i} className="card black animate-pulse h-48 bg-white" />
         )) : statCards.map(s => (
-          <div key={s.label} className={cn("kpi", s.variant)}>
-            <div className="l">{s.label}</div>
-            <div className="v tnum">{s.value}</div>
-            <div className="d">{s.sub}</div>
-          </div>
+          <TacticalKPI 
+            key={s.label}
+            label={s.label}
+            value={s.value}
+            variant={s.variant}
+            delta={s.sub}
+          />
         ))}
       </div>
 

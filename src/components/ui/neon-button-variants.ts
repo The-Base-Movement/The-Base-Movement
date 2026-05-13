@@ -19,9 +19,9 @@ export const buttonVariants = cva(
                 link: "border-transparent bg-transparent p-0 h-auto tracking-tight text-foreground",
             },
             size: {
-                default: "px-7 py-2.5 text-[12px]",
-                sm: "px-4 py-1.5 text-[10px]",
-                lg: "px-10 py-3.5 text-[14px]",
+                default: "h-[44px] px-[18px] text-[13px] font-bold tracking-tight",
+                sm: "h-[34px] px-[14px] text-[11px] font-bold tracking-tight",
+                lg: "h-[52px] px-[24px] text-[14px] font-bold tracking-tight",
                 icon: "h-9 w-9 p-0",
             },
         },

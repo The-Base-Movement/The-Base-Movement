@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import VerificationListCard from '@/components/admin/VerificationListCard'
+import { BrandLine } from '@/components/admin/BrandLine'
 
 const PAGE_SIZE = 10
 
@@ -127,6 +128,7 @@ export default function MemberVerification() {
         <div>
           <div className="crumbs">Members · Verification</div>
           <h2 style={{ margin: '4px 0 0' }}>Member verification</h2>
+          <BrandLine />
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Review and approve new member registrations for movement security.
           </p>
@@ -148,36 +150,35 @@ export default function MemberVerification() {
         </div>
       </div>
 
-      {/* KPI strip */}
-      <div className="kpis">
-        <div className="kpi gr">
-          <span className="material-symbols-outlined">pending_actions</span>
-          <div>
-            <div className="v">{loading ? '—' : pendingCount}</div>
-            <div className="l">Pending review</div>
-          </div>
-        </div>
-        <div className="kpi r">
-          <span className="material-symbols-outlined">flag</span>
-          <div>
-            <div className="v">{loading ? '—' : flaggedCount}</div>
-            <div className="l">Flagged</div>
-          </div>
-        </div>
-        <div className="kpi g">
-          <span className="material-symbols-outlined">verified_user</span>
-          <div>
-            <div className="v">{loading ? '—' : approvedCount}</div>
-            <div className="l">Approved</div>
-          </div>
-        </div>
-        <div className="kpi k">
-          <span className="material-symbols-outlined">block</span>
-          <div>
-            <div className="v">{loading ? '—' : rejectedCount}</div>
-            <div className="l">Rejected</div>
-          </div>
-        </div>
+      {/* KPI Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
+        <TacticalKPI 
+          label="Pending review"
+          value={loading ? '—' : pendingCount}
+          variant="gold"
+          description="Awaiting identity verification"
+          trend={{ direction: 'neutral', value: 'Queue' }}
+        />
+        <TacticalKPI 
+          label="Flagged"
+          value={loading ? '—' : flaggedCount}
+          variant="red"
+          description="Under security review"
+          trend={flaggedCount > 0 ? { direction: 'down', value: 'Alert' } : undefined}
+        />
+        <TacticalKPI 
+          label="Approved"
+          value={loading ? '—' : approvedCount}
+          variant="green"
+          description="Verified movement members"
+          trend={{ direction: 'up', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Rejected"
+          value={loading ? '—' : rejectedCount}
+          variant="black"
+          description="Decommissioned applications"
+        />
       </div>
 
       {/* Two-column layout */}

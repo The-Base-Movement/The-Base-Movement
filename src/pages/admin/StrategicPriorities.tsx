@@ -6,14 +6,14 @@ import {
   Edit2, 
   Trash2, 
   Calendar, 
-  DollarSign, 
   Image as ImageIcon,
   Clock,
   TrendingUp,
   X,
   Loader2
 } from 'lucide-react'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { 
   Card, 
   CardContent, 
@@ -170,26 +170,30 @@ export default function StrategicPriorities() {
         </div>
       </div>
 
-      {/* Mobilization Stats - Balanced Grid */}
-      <div className="grid-stats mb-10" style={{ '--grid-min-width': '240px' } as React.CSSProperties}>
-        {[
-          { label: 'Active priorities', value: campaigns.filter(c => c.status === 'Active').length, icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
-          { label: 'Total Mobilized', value: `$${campaigns.reduce((acc, c) => acc + c.raisedAmount, 0).toLocaleString()}`, icon: DollarSign, color: 'text-primary', bg: 'bg-primary/5' },
-          { label: 'Average progress', value: `${campaigns.length > 0 ? (campaigns.reduce((acc, c) => acc + (c.raisedAmount / c.targetAmount), 0) / campaigns.length * 100).toFixed(0) : 0}%`, icon: TrendingUp, color: 'text-accent', bg: 'bg-accent/10' },
-          { label: 'Upcoming deadlines', value: campaigns.filter(c => new Date(c.endDate) > new Date()).length, icon: Clock, color: 'text-on-surface/60', bg: 'bg-muted/10' },
-        ].map((stat, i) => (
-          <Card key={i} className="rounded-sm border-border/40 shadow-sm bg-white overflow-hidden group hover:border-border/60 transition-all backdrop-blur-sm">
-            <CardContent className="p-6 h-full flex items-center gap-4">
-              <div className={cn("w-12 h-12 rounded-sm flex items-center justify-center shrink-0 transition-transform group-hover:scale-110", stat.bg)}>
-                <stat.icon className={cn("w-6 h-6", stat.color)} />
-              </div>
-              <div className="flex-1 flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-                <p className="text-micro font-bold text-muted-foreground/80 m-0 uppercase tracking-widest">{stat.label}</p>
-                <p className="text-2xl font-bold text-on-surface leading-tight m-0">{stat.value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Active priorities"
+          value={campaigns.filter(c => c.status === 'Active').length}
+          description="Operational goals"
+          trend={{ direction: 'neutral', value: 'Active' }}
+        />
+        <TacticalKPI 
+          label="Total Mobilized"
+          value={`$${campaigns.reduce((acc, c) => acc + c.raisedAmount, 0).toLocaleString()}`}
+          description="Gross resource intake"
+          trend={{ direction: 'up', value: 'Elite' }}
+        />
+        <TacticalKPI 
+          label="Average progress"
+          value={`${campaigns.length > 0 ? (campaigns.reduce((acc, c) => acc + (c.raisedAmount / c.targetAmount), 0) / campaigns.length * 100).toFixed(0) : 0}%`}
+          description="Mission completion"
+          trend={{ direction: 'up', value: 'Advancing' }}
+        />
+        <TacticalKPI 
+          label="Upcoming deadlines"
+          value={campaigns.filter(c => new Date(c.endDate) > new Date()).length}
+          description="Time-sensitive goals"
+        />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start relative">

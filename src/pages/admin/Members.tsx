@@ -10,6 +10,8 @@ import MembershipCard from '@/components/MembershipCard'
 import MemberListCard from '@/components/admin/MemberListCard'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/admin/BrandLine'
 
 const thStyle: React.CSSProperties = {
   padding: '10px 16px',
@@ -373,6 +375,7 @@ export default function MembersList() {
         <div>
           <div className="crumbs">Members · Directory</div>
           <h2 style={{ margin: '4px 0 0' }}>Member directory</h2>
+          <BrandLine />
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Movement registration database, identity verification, and regional deployment oversight.
           </p>
@@ -389,24 +392,32 @@ export default function MembersList() {
         </div>
       </div>
 
-      {/* KPI strip */}
-      <div className="kpis">
-        <div className="kpi k">
-          <div className="v tnum">{isLoading ? '—' : stats.total.toLocaleString()}</div>
-          <div className="l">Total members</div>
-        </div>
-        <div className="kpi g">
-          <div className="v tnum">{isLoading ? '—' : stats.active.toLocaleString()}</div>
-          <div className="l">Active status</div>
-        </div>
-        <div className="kpi gr">
-          <div className="v tnum">{isLoading ? '—' : stats.pending.toLocaleString()}</div>
-          <div className="l">Pending verification</div>
-        </div>
-        <div className="kpi g">
-          <div className="v tnum">{isLoading ? '—' : stats.regions.toLocaleString()}</div>
-          <div className="l">Regions represented</div>
-        </div>
+      {/* KPI Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
+        <TacticalKPI 
+          label="Intelligence"
+          value={isLoading ? '—' : stats.total.toLocaleString()}
+          variant="black"
+          description="Verified citizens registered nationwide in the movement database"
+        />
+        <TacticalKPI 
+          label="Patriots"
+          value={isLoading ? '—' : stats.active.toLocaleString()}
+          variant="gold"
+          description="Active mobilization personnel with verified administrative status"
+        />
+        <TacticalKPI 
+          label="Verification"
+          value={isLoading ? '—' : stats.pending.toLocaleString()}
+          variant="green"
+          description="Members currently awaiting strategic identity validation"
+        />
+        <TacticalKPI 
+          label="Coverage"
+          value={isLoading ? '—' : stats.regions.toLocaleString()}
+          variant="gold"
+          description="Operational presence across all administrative regions of Ghana"
+        />
       </div>
 
       {/* Filter bar */}

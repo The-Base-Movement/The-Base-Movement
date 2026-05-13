@@ -4,6 +4,7 @@ import { Editor } from '@tinymce/tinymce-react'
 import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
 import type { Broadcast, Region } from '@/services/adminService'
+import { BrandLine } from '@/components/admin/BrandLine'
 
 const fieldStyle: React.CSSProperties = {
   width: '100%',
@@ -125,6 +126,7 @@ export default function NewBroadcast() {
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>campaign</span>
             New broadcast
           </h2>
+          <BrandLine />
         </div>
         <div className="actions">
           <Link to="/admin/broadcasts">

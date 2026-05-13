@@ -11,25 +11,30 @@ import type {
   PendingVerification,
   Broadcast
 } from '@/types/admin'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/admin/BrandLine'
 
 
 
-// KPI Component matching the reference kit
-function KPI({ label, value, delta, variant }: { label: string, value: string, delta?: string, variant: 'r' | 'g' | 'k' | 'gr' }) {
+// KPI Component matching the handoff stats.html spec
+function KPI({ label, value, delta, variant, description }: { label: string, value: string, delta?: string, variant: 'r' | 'g' | 'k' | 'gr', description?: string }) {
   const isDown = delta?.toLowerCase().includes('down')
+  const colorMap: Record<string, 'red' | 'gold' | 'black' | 'green'> = {
+    'r': 'red',
+    'g': 'gold',
+    'k': 'black',
+    'gr': 'green'
+  }
+  
   return (
-    <div className={cn("kpi", variant)}>
-      <div className="l">{label}</div>
-      <div className="v tnum">{value}</div>
-      {delta && (
-        <div className={cn("d", isDown && "dn")}>
-          <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
-            {isDown ? 'south' : 'north'}
-          </span>
-          {delta}
-        </div>
-      )}
-    </div>
+    <TacticalKPI 
+      label={label}
+      value={value}
+      delta={delta}
+      isDown={isDown}
+      variant={colorMap[variant]}
+      description={description}
+    />
   )
 }
 
@@ -208,8 +213,9 @@ export default function AdminDashboard() {
     <div className="main">
       <div className="top">
         <div>
-          <div className="crumbs">Admin / Dashboard</div>
-          <h2>Today's operations</h2>
+          <div className="crumbs">Platform · Strategic oversight</div>
+          <h2 style={{ margin: '4px 0 0' }}>Command center</h2>
+          <BrandLine />
         </div>
         <div className="actions">
           <button 
@@ -231,13 +237,13 @@ export default function AdminDashboard() {
       </div>
 
       {/* KPI strip */}
-      <div className="kpis">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
         {isLoading ? (
           <>
-            <div className="kpi r animate-pulse h-24 bg-white" />
-            <div className="kpi g animate-pulse h-24 bg-white" />
-            <div className="kpi k animate-pulse h-24 bg-white" />
-            <div className="kpi gr animate-pulse h-24 bg-white" />
+            <div className="card red animate-pulse h-48 bg-white" />
+            <div className="card gold animate-pulse h-48 bg-white" />
+            <div className="card black animate-pulse h-48 bg-white" />
+            <div className="card green animate-pulse h-48 bg-white" />
           </>
         ) : (
           <>
@@ -249,6 +255,12 @@ export default function AdminDashboard() {
                   label={stat.label}
                   value={stat.value}
                   delta={stat.change}
+                  description={
+                    idx === 0 ? "Total verified citizens registered across the national movement database." :
+                    idx === 1 ? "Strategic financial inflows from contributions and official merchandise sales." :
+                    idx === 2 ? "Member applications currently in the queue for administrative identity verification." :
+                    "Administrators and field coordinators currently active in the Command Center."
+                  }
                 />
               ))
             ) : (
@@ -258,10 +270,11 @@ export default function AdminDashboard() {
                   label="Verifications pending" 
                   value={pendingVerifications.length.toString()} 
                   delta="Syncing..." 
+                  description="Member applications currently in the queue for administrative identity verification."
                 />
-                <KPI variant="g" label="Patriots" value="--" delta="--" />
-                <KPI variant="k" label="Logistics" value="--" delta="--" />
-                <KPI variant="gr" label="Field" value="--" delta="--" />
+                <KPI variant="g" label="Patriots" value="--" delta="--" description="Total verified citizens registered across the national movement database." />
+                <KPI variant="k" label="Logistics" value="--" delta="--" description="Order fulfillment and logistics asset distribution status." />
+                <KPI variant="gr" label="Field" value="--" delta="--" description="Administrators and field coordinators currently active in the Command Center." />
               </>
             )}
           </>

@@ -1,17 +1,13 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Upload, Loader2, Save, Image as ImageIcon, Search, User, Check, X } from 'lucide-react'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { useNavigate, useParams, Link } from 'react-router-dom'
+import { Upload, Loader2, Save, Image as ImageIcon, Search, User, Check, Shield, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent } from '@/components/ui/card'
-import { BrandLine } from '@/components/ui/BrandLine'
-import { contentService } from '@/services/contentService'
 import { adminService } from '@/services/adminService'
+import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
 import type { Author, Member } from '@/types/admin'
+import { BrandLine } from '@/components/admin/BrandLine'
+
 
 export default function AdminEditAuthor() {
   const { id } = useParams()
@@ -42,12 +38,12 @@ export default function AdminEditAuthor() {
         if (author) {
           setFormData(author)
         } else {
-          toast.error('Author not found')
+          toast.error('Strategic Intelligence: Author profile not located in archives.')
           navigate('/admin/authors')
         }
       } catch (error) {
         console.error('Failed to fetch author:', error)
-        toast.error('Error loading author data')
+        toast.error('Communication failure with editorial vault.')
       } finally {
         setIsLoading(false)
       }
@@ -67,13 +63,13 @@ export default function AdminEditAuthor() {
       const url = await contentService.uploadImage(file, 'author-images')
       if (url) {
         setFormData({ ...formData, imageUrl: url })
-        toast.success('Author image uploaded successfully')
+        toast.success('Tactical Asset: Editorial portrait uploaded successfully')
       } else {
-        toast.error('Failed to upload image')
+        toast.error('Upload protocols failed')
       }
     } catch (error) {
       console.error('Upload error:', error)
-      toast.error('An error occurred during upload')
+      toast.error('Communication error during asset synchronization')
     } finally {
       setIsUploading(false)
       if (e.target) e.target.value = ''
@@ -122,7 +118,7 @@ export default function AdminEditAuthor() {
     })
     setMemberSearchQuery('')
     setMemberSearchResults([])
-    toast.success(`Personnel identified: ${member.name}. Profile pre-filled.`)
+    toast.success(`Personnel Identified: "${member.name}". Credentials pre-filled.`)
   }
 
   const clearMemberSelection = () => {
@@ -140,7 +136,7 @@ export default function AdminEditAuthor() {
     e.preventDefault()
     
     if (!formData.name || !formData.slug) {
-      toast.error('Name and slug are required')
+      toast.error('Critical Error: Full Name and Slug are required identifiers.')
       return
     }
 
@@ -149,20 +145,20 @@ export default function AdminEditAuthor() {
       let success = false
       if (isEditing && id) {
         success = await contentService.updateAuthor(id, formData)
-        if (success) toast.success('Author profile updated successfully')
+        if (success) toast.success('Editorial records updated successfully')
       } else {
         success = await contentService.createAuthor(formData as Omit<Author, 'id' | 'createdAt'>)
-        if (success) toast.success('New author created successfully')
+        if (success) toast.success('New personnel successfully recruited to editorial corps')
       }
 
       if (success) {
         navigate('/admin/authors')
       } else {
-        toast.error(isEditing ? 'Failed to update author' : 'Failed to create author')
+        toast.error(isEditing ? 'Failed to sync modifications' : 'Failed to authorize recruitment')
       }
     } catch (error) {
       console.error('Save error:', error)
-      toast.error('An unexpected error occurred')
+      toast.error('Operational failure during database synchronization')
     } finally {
       setIsSaving(false)
     }
@@ -171,69 +167,94 @@ export default function AdminEditAuthor() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Synchronizing Archives</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="admin-page-container max-w-4xl animate-in fade-in duration-500">
-      <Breadcrumbs currentLabel={formData.name} />
-      
-      {/* Header */}
-      <div className="flex-columns items-center">
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold tracking-tight text-on-surface font-meta mb-2">
-            {isEditing ? 'Edit Editorial Profile' : 'New Editorial Profile'}
-          </h1>
-          <BrandLine className="mb-4" />
-          <p className="text-muted-foreground/80 text-sm">
-            Configure credentials and biographical information for the movement's content creators.
-          </p>
+    <div className="main animate-in fade-in duration-500">
+      {/* Top Header */}
+      <div className="top">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin/authors')} className="w-10 h-10 flex items-center justify-center rounded-sm border border-border/40 bg-white hover:bg-muted/5 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <div>
+            <div className="crumbs uppercase font-black tracking-widest text-[9px]">
+              <Link to="/admin/authors" className="hover:text-primary transition-colors">Editorial</Link>
+              {' · '}
+              {isEditing ? 'Credential refinement' : 'Personnel recruitment'}
+            </div>
+            <h2 className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-primary">{isEditing ? 'manage_accounts' : 'person_add'}</span>
+              {isEditing ? `Refine: ${formData.name}` : 'Recruit new personnel'}
+            </h2>
+            <BrandLine />
+          </div>
+        </div>
+        <div className="actions">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => navigate('/admin/authors')}
+            className="font-bold tracking-tight rounded-sm border-border/40"
+          >
+            Abort
+          </Button>
+          <Button 
+            onClick={handleSubmit as unknown as React.MouseEventHandler<HTMLButtonElement>}
+            variant="primary"
+            disabled={isSaving}
+            className="font-bold tracking-tight rounded-sm shadow-sm"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Syncing...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                {isEditing ? 'Authorize changes' : 'Finalize recruitment'}
+              </>
+            )}
+          </Button>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
-          <CardContent className="p-8 space-y-8">
-            
-            {!isEditing && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="flex items-center justify-between border-b border-border/10 pb-2">
-                  <h3 className="text-sm font-bold text-on-surface capitalize tracking-tight">Personnel Search</h3>
-                  {selectedMember && (
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      onClick={clearMemberSelection}
-                      className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/5 text-micro font-bold capitalize tracking-tight"
-                    >
-                      <X className="w-3 h-3 mr-1" /> Reset selection
-                    </Button>
-                  )}
-                </div>
-
+      <div className="main-sidebar">
+        {/* Left Form Panel */}
+        <div className="space-y-4">
+          {!isEditing && (
+            <div className="panel animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="ph">
+                <h3>Tactical Personnel Search</h3>
+                {selectedMember && (
+                  <button onClick={clearMemberSelection} className="text-[10px] font-black uppercase text-destructive hover:underline">Reset selection</button>
+                )}
+              </div>
+              <div className="p-6">
                 {!selectedMember ? (
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search className="h-4 w-4 text-muted-foreground/40" />
-                    </div>
-                    <Input
-                      type="text"
-                      placeholder="Search by name or phone number to identify movement personnel..."
-                      className="pl-10 h-12 border-border/60 focus-visible:ring-on-surface bg-muted/5 placeholder:italic"
+                  <div className="relative group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
+                    <input 
+                      placeholder="Identify movement personnel by name or ID..." 
+                      className="w-full h-12 pl-12 pr-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-bold outline-none focus:border-primary/50 transition-all placeholder:italic"
                       value={memberSearchQuery}
                       onChange={(e) => handleMemberSearch(e.target.value)}
                     />
-                    
                     {isSearchingMembers && (
-                      <div className="absolute right-3 top-3.5">
-                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
                       </div>
                     )}
-
+                    
                     {memberSearchResults.length > 0 && (
-                      <div className="absolute z-50 w-full mt-2 bg-white border border-border/60 rounded-sm shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="absolute z-50 w-full mt-2 bg-white border border-border/40 rounded-sm shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                         <div className="max-h-60 overflow-y-auto">
                           {memberSearchResults.map((member) => (
                             <button
@@ -244,16 +265,16 @@ export default function AdminEditAuthor() {
                             >
                               <div className="w-10 h-10 rounded-full bg-muted/10 border border-border/10 flex items-center justify-center shrink-0 overflow-hidden">
                                 {member.avatarUrl ? (
-                                  <img src={member.avatarUrl} alt="" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
+                                  <img src={member.avatarUrl} alt="" className="w-full h-full object-cover" />
                                 ) : (
-                                  <User className="w-5 h-5 text-muted-foreground/40" />
+                                  <User className="w-5 h-5 text-muted-foreground/20" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-bold text-on-surface truncate">{member.name}</p>
-                                <p className="text-micro text-muted-foreground/60 truncate">{member.id} • {member.region} • {member.profession}</p>
+                                <p className="text-[10px] text-muted-foreground/60 truncate font-bold uppercase tracking-widest">{member.id.substring(0,12)} • {member.region}</p>
                               </div>
-                              <div className="text-micro font-bold capitalize tracking-tight text-primary opacity-0 group-hover:opacity-100 transition-opacity">Select</div>
+                              <div className="text-[10px] font-black uppercase tracking-widest text-primary">Map Data</div>
                             </button>
                           ))}
                         </div>
@@ -264,172 +285,156 @@ export default function AdminEditAuthor() {
                   <div className="flex items-center gap-4 p-4 rounded-sm bg-brand-green/5 border border-brand-green/20 animate-in zoom-in-95 duration-300">
                     <div className="w-12 h-12 rounded-full bg-brand-green/10 border border-brand-green/20 flex items-center justify-center overflow-hidden shrink-0">
                       {selectedMember.avatarUrl ? (
-                        <img src={selectedMember.avatarUrl} alt="" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
+                        <img src={selectedMember.avatarUrl} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <User className="w-6 h-6 text-brand-green" />
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-bold text-on-surface flex items-center gap-2">
+                      <p className="text-sm font-bold text-on-surface flex items-center gap-2 leading-none mb-1">
                         {selectedMember.name}
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-green/10 text-brand-green text-micro capitalize font-bold tracking-tight">
+                        <span className="pill bg-brand-green/10 text-brand-green !py-0.5 border-brand-green/20">
                           <Check className="w-2 h-2" /> Identified
                         </span>
                       </p>
-                      <p className="text-micro text-muted-foreground/80">{selectedMember.id} • {selectedMember.phone}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">{selectedMember.id.substring(0,16)}</p>
                     </div>
-                    <p className="text-micro font-bold text-muted-foreground/40 italic">Personnel data successfully mapped.</p>
+                    <p className="text-[10px] font-black text-primary uppercase tracking-widest italic">Target Mapped</p>
                   </div>
                 )}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Identity Section */}
-            <div className="space-y-6">
-              <h3 className="text-sm font-bold text-on-surface capitalize tracking-tight border-b border-border/10 pb-2">Identity & Role</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-sm font-bold text-on-surface/80">Full Name</Label>
-                  <Input 
+          <div className="panel">
+            <div className="ph">
+              <h3>Identity & Editorial Mission</h3>
+              <span className="meta">Required credentials</span>
+            </div>
+            <div className="p-8 space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-2.5">
+                  <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Full Professional Name</label>
+                  <input 
                     placeholder="e.g. Kwame Patriot"
                     value={formData.name || ''}
                     onChange={handleNameChange}
-                    className="border-border/60 focus-visible:ring-on-surface"
+                    className="w-full h-11 px-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-bold outline-none focus:border-primary/50 transition-all"
                     required
                   />
                 </div>
                 
-                <div className="space-y-2">
-                  <Label className="text-sm font-bold text-on-surface/80">Unique Slug</Label>
-                  <Input 
+                <div className="space-y-2.5">
+                  <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Tactical Slug</label>
+                  <input 
                     placeholder="kwame-patriot"
                     value={formData.slug || ''}
                     onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                    className="border-border/60 focus-visible:ring-on-surface bg-muted/5"
+                    className="w-full h-11 px-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-bold outline-none focus:border-primary/50 transition-all"
                     required
                   />
-                  <p className="text-micro text-muted-foreground/80">Used for URL generation. Must be unique.</p>
+                  <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-tighter italic">Used for URI resolution. Must be unique.</p>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-sm font-bold text-on-surface/80">Official Title / Role</Label>
-                <Input 
-                  placeholder="e.g. Senior Regional Coordinator"
+              <div className="space-y-2.5">
+                <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Official Title / Authorization Role</label>
+                <input 
+                  placeholder="e.g. Senior Regional Correspondent"
                   value={formData.role || ''}
                   onChange={(e) => setFormData({...formData, role: e.target.value})}
-                  className="border-border/60 focus-visible:ring-on-surface"
+                  className="w-full h-11 px-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-bold outline-none focus:border-primary/50 transition-all"
                 />
               </div>
-            </div>
 
-            {/* Profile Media */}
-            <div className="space-y-6">
-              <h3 className="text-sm font-bold text-on-surface capitalize tracking-tight border-b border-border/10 pb-2">Profile Media</h3>
-              
-              <div className="flex flex-col sm:flex-row items-start gap-6">
-                <div className="w-32 h-32 rounded-sm bg-muted/10 border-2 border-dashed border-border/40 flex items-center justify-center overflow-hidden shrink-0 relative group">
-                  {formData.imageUrl ? (
-                    <>
-                      <img src={formData.imageUrl} alt="Profile" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                      <div className="absolute inset-0 bg-on-surface/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ImageIcon className="w-6 h-6 text-white" />
-                      </div>
-                    </>
-                  ) : (
-                    <div className="text-center text-muted-foreground/40 p-4">
-                      <ImageIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <span className="text-micro capitalize tracking-tight font-bold">No Image</span>
-                    </div>
-                  )}
-                  {isUploading && (
-                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-sm">
-                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                    </div>
-                  )}
-                </div>
-                
-                <div className="space-y-4 flex-1 w-full">
-                  <div className="space-y-2">
-                    <Label className="text-sm font-bold text-on-surface/80">Image URL</Label>
-                    <Input 
-                      placeholder="https://..."
-                      value={formData.imageUrl || ''}
-                      onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                      className="border-border/60 focus-visible:ring-on-surface"
-                    />
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <input 
-                        type="file" 
-                        id="author-image-upload" 
-                        className="hidden" 
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        disabled={isUploading}
-                      />
-                      <label 
-                        htmlFor="author-image-upload" 
-                        className="flex items-center gap-2 px-4 py-2 bg-muted/10 hover:bg-muted/20 text-on-surface/80 rounded-sm text-sm font-medium transition-colors cursor-pointer border border-border/60"
-                      >
-                        <Upload className="w-4 h-4" />
-                        {isUploading ? 'Uploading...' : 'Upload Image'}
-                      </label>
-                    </div>
-                    <p className="text-xs text-muted-foreground/80">Recommended: Square ratio, at least 400x400px.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Biographical Data */}
-            <div className="space-y-6">
-              <h3 className="text-sm font-bold text-on-surface capitalize tracking-tight border-b border-border/10 pb-2">Biographical Information</h3>
-              
-              <div className="space-y-2">
-                <Label className="text-sm font-bold text-on-surface/80">Professional Biography</Label>
-                <Textarea 
-                  placeholder="Provide a comprehensive biography detailing the author's contributions to the movement..."
+              <div className="space-y-2.5">
+                <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Professional Biography</label>
+                <textarea 
+                  placeholder="Provide a comprehensive biography detailing editorial history and movement contributions..."
                   value={formData.bio || ''}
                   onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                  className="min-h-[150px] border-border/60 focus-visible:ring-on-surface resize-y"
+                  className="w-full min-h-[160px] p-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-medium leading-relaxed outline-none focus:border-primary/50 transition-all resize-y"
                 />
               </div>
             </div>
-
-          </CardContent>
-          <div className="p-6 border-t border-border/10 bg-muted/5 flex justify-end gap-3">
-            <Button 
-              type="button" 
-              variant="default" 
-              onClick={() => navigate('/admin/authors')}
-              className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="submit" 
-              variant="primary"
-              disabled={isSaving}
-              className="px-10 h-12 rounded-sm shadow-lg shadow-brand-green/20 text-micro font-bold capitalize tracking-tight"
-            >
-              {isSaving ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  {isEditing ? 'Save Changes' : 'Create Profile'}
-                </>
-              )}
-            </Button>
           </div>
-        </Card>
-      </form>
+        </div>
+
+        {/* Right Asset Panel */}
+        <div className="space-y-4">
+          <div className="panel">
+            <div className="ph">
+              <h3>Personnel Portrait</h3>
+              <span className="meta">Visual identification</span>
+            </div>
+            <div className="p-8 space-y-6">
+              <div className="aspect-square w-full max-w-[200px] mx-auto rounded-sm bg-muted/5 border-2 border-dashed border-border/40 flex items-center justify-center overflow-hidden relative group shadow-inner">
+                {formData.imageUrl ? (
+                  <>
+                    <img src={formData.imageUrl} alt="Profile" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-on-surface/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ImageIcon className="w-8 h-8 text-white opacity-80" />
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center text-muted-foreground/20 p-6">
+                    <User className="w-12 h-12 mx-auto mb-2" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">No Portrait Mapped</span>
+                  </div>
+                )}
+                {isUploading && (
+                  <div className="absolute inset-0 bg-white/90 flex items-center justify-center backdrop-blur-sm z-10">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                )}
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2.5">
+                  <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Portrait Resource URI</label>
+                  <input 
+                    placeholder="https://..."
+                    value={formData.imageUrl || ''}
+                    onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                    className="w-full h-10 px-4 bg-muted/5 border border-border/40 rounded-sm text-xs font-bold outline-none focus:border-primary/50 transition-all"
+                  />
+                </div>
+                
+                <div className="pt-2">
+                  <input 
+                    type="file" 
+                    id="author-image-upload" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                  />
+                  <label 
+                    htmlFor="author-image-upload" 
+                    className="flex items-center justify-center gap-2 w-full h-12 bg-on-surface text-white hover:bg-on-surface/90 rounded-sm text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer active:scale-95"
+                  >
+                    <Upload className="w-4 h-4" />
+                    {isUploading ? 'Uploading...' : 'Transmit Portrait'}
+                  </label>
+                </div>
+                <p className="text-[10px] text-muted-foreground/40 text-center font-bold italic">Required: 1:1 Aspect Ratio, max 2MB.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="panel bg-muted/5 border-dashed">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <Shield className="w-5 h-5 text-primary/40" />
+                <h4 className="text-[11px] font-black uppercase tracking-widest text-on-surface">Security Protocol</h4>
+              </div>
+              <p className="text-[11px] text-muted-foreground/60 leading-relaxed font-medium">
+                Author profiles are publicly accessible. Ensure all biographical information complies with movement security guidelines and contains no sensitive logistical data.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

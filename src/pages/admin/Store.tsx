@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { adminService, type InventoryItem, type ResourceRequest, type LogisticsAuditEntry } from '@/services/adminService'
 import { toast } from 'sonner'
 import { contentService } from '@/services/contentService'
+import { BrandLine } from '@/components/admin/BrandLine'
 
 import { StoreStatsOverview } from './store/components/StoreStatsOverview'
 import { InventoryTable } from './store/components/InventoryTable'
@@ -72,7 +74,30 @@ export default function AdminStore() {
     }
   }
 
-  useEffect(() => { fetchData() }, [])
+  useEffect(() => { 
+    fetchData() 
+    
+    // Subscribe to live inventory updates
+    const inventorySub = supabase
+      .channel('inventory-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'store_inventory' }, () => {
+        adminService.getInventory().then(setProducts)
+      })
+      .subscribe()
+
+    // Subscribe to live resource request updates
+    const requestsSub = supabase
+      .channel('request-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'resource_requests' }, () => {
+        adminService.getResourceRequests().then(setRequests)
+      })
+      .subscribe()
+
+    return () => {
+      inventorySub.unsubscribe()
+      requestsSub.unsubscribe()
+    }
+  }, [])
 
   const handleOpenModal = (product?: InventoryItem) => {
     setSelectedProduct(product || { name: '', category: 'Apparel', price: '₵0.00', stock: 0, status: 'Stable', image: '👕', color: '#000000' })
@@ -179,6 +204,7 @@ export default function AdminStore() {
         <div>
           <div className="crumbs">Store · Logistics</div>
           <h2 style={{ margin: '4px 0 0' }}>Logistics and supply</h2>
+          <BrandLine />
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Movement inventory, merchandising, and regional distribution infrastructure.
           </p>

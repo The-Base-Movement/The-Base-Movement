@@ -21,7 +21,8 @@ import {
 import { cn } from '@/lib/utils'
 import { adminService, type Milestone } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 export default function RoadmapManagement() {
   const [milestones, setMilestones] = useState<Milestone[]>([])
@@ -164,53 +165,30 @@ export default function RoadmapManagement() {
         </div>
       </div>
 
-      {/* Roadmap Stats */}
-      <div className="flex-columns items-stretch" style={{ '--column-gap': '1.5rem' } as React.CSSProperties}>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-1">
-              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Total Milestones</p>
-              <h3 className="text-2xl font-bold text-on-surface">{milestones.length}</h3>
-              <div className="flex items-center gap-1 text-micro font-bold text-primary mt-1">
-                <Target className="w-3 h-3" /> Movement Trajectory
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6">
-            <p className="text-micro font-bold tracking-tight text-muted-foreground/80 mb-2">Completion Rate</p>
-            <div className="flex items-end gap-3">
-              <h3 className="text-2xl font-bold text-[var(--brand-green)]">
-                {milestones.length ? Math.round((milestones.filter(m => m.status === 'Completed').length / milestones.length) * 100) : 0}%
-              </h3>
-              <span className="text-micro font-bold text-[var(--brand-green)] bg-[var(--brand-green)]/10 px-1.5 py-0.5 rounded-md mb-1">Achieved</span>
-            </div>
-            <p className="text-micro text-muted-foreground/80 font-bold tracking-tight mt-2">Verified Objectives</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-1">
-              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Active Operations</p>
-              <h3 className="text-2xl font-bold text-[var(--brand-gold)]">
-                {milestones.filter(m => m.status === 'In Progress').length}
-              </h3>
-              <p className="text-micro font-bold text-muted-foreground/80 mt-1">In Real-time Mobilization</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-1">
-              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Upcoming Phases</p>
-              <h3 className="text-2xl font-bold text-[var(--brand-red)]">
-                {milestones.filter(m => m.status === 'Upcoming').length}
-              </h3>
-              <p className="text-micro font-bold text-muted-foreground/80 mt-1">Strategic Pipeline</p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Total Milestones"
+          value={milestones.length}
+          description="Strategic objectives"
+          trend={{ direction: 'neutral', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Completion Rate"
+          value={`${milestones.length ? Math.round((milestones.filter(m => m.status === 'Completed').length / milestones.length) * 100) : 0}%`}
+          description="Verified achieved"
+          trend={{ direction: 'up', value: 'Optimal' }}
+        />
+        <TacticalKPI 
+          label="Active Operations"
+          value={milestones.filter(m => m.status === 'In Progress').length}
+          description="In mobilization"
+          trend={{ direction: 'up', value: 'Active' }}
+        />
+        <TacticalKPI 
+          label="Upcoming Phases"
+          value={milestones.filter(m => m.status === 'Upcoming').length}
+          description="Strategic pipeline"
+        />
       </div>
 
       {/* Main Content: Roadmap Management */}

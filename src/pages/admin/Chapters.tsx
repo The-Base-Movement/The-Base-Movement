@@ -8,6 +8,8 @@ import { adminService } from '@/services/adminService'
 import type { RegionalStat, Chapter } from '@/services/adminService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const fieldStyle: React.CSSProperties = {
   width: '100%',
@@ -147,6 +149,7 @@ export default function ChaptersManagement() {
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>location_on</span>
             Chapters
           </h2>
+          <BrandLine />
         </div>
         <div className="actions">
           <button className="btn btn-outline btn-sm" onClick={() => toast.info('Accessing audit vault...')}>
@@ -162,28 +165,30 @@ export default function ChaptersManagement() {
         </div>
       </div>
 
-      {/* KPIs */}
-      <div className="kpis" style={{ marginBottom: 20 }}>
-        <div className="kpi k">
-          <div className="l">Total chapters</div>
-          <div className="v tnum">{chapters.length}</div>
-          <div className="d">Registered hubs</div>
-        </div>
-        <div className="kpi g">
-          <div className="l">Total members</div>
-          <div className="v tnum">{totalMembers.toLocaleString()}</div>
-          <div className="d">Across all chapters</div>
-        </div>
-        <div className="kpi g">
-          <div className="l">Active</div>
-          <div className="v tnum">{activeCount}</div>
-          <div className="d">Operational hubs</div>
-        </div>
-        <div className="kpi r">
-          <div className="l">Pending</div>
-          <div className="v tnum">{pendingCount}</div>
-          <div className="d">Awaiting activation</div>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Total chapters"
+          value={chapters.length}
+          description="Registered hubs"
+        />
+        <TacticalKPI 
+          label="Total members"
+          value={totalMembers}
+          description="Across all chapters"
+          trend={{ direction: 'up', value: '+12%' }}
+        />
+        <TacticalKPI 
+          label="Active"
+          value={activeCount}
+          description="Operational hubs"
+          trend={{ direction: 'up', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Pending"
+          value={pendingCount}
+          description="Awaiting activation"
+          trend={{ direction: 'neutral', value: 'Review' }}
+        />
       </div>
 
       {/* Charts row */}

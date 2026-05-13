@@ -1,8 +1,34 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { 
+  Flag, 
+  BarChart3, 
+  Plus, 
+  CheckCircle2, 
+  XCircle, 
+  Clock, 
+  Filter, 
+  Send,
+  Activity
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { FieldDirective, FieldReport } from '@/types/admin'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 export default function FieldDirectives() {
   const [directives, setDirectives] = useState<FieldDirective[]>([])
@@ -79,328 +105,340 @@ export default function FieldDirectives() {
     return sum + (directive?.points_awarded || 0);
   }, 0);
 
-  const priorityPill = (p: string) => {
-    if (p === 'Urgent') return <span className="pill pill-err">{p}</span>
-    if (p === 'High')   return <span className="pill pill-warn">{p}</span>
-    return <span className="pill pill-mute">{p}</span>
-  }
-
-  const statusPill = (s: string) => {
-    if (s === 'Verified') return <span className="pill pill-ok">Verified</span>
-    if (s === 'Rejected') return <span className="pill pill-err">Rejected</span>
-    return <span className="pill pill-warn">Pending</span>
-  }
-
-  const fieldStyle = {
-    width: '100%',
-    height: 40,
-    border: '1px solid hsl(var(--border))',
-    borderRadius: 4,
-    padding: '0 12px',
-    fontFamily: "'Public Sans', sans-serif",
-    fontWeight: 700,
-    fontSize: 13,
-    outline: 'none',
-    background: '#fff',
-    color: 'hsl(var(--on-surface))',
-  }
-  const labelStyle = {
-    display: 'block',
-    fontSize: 9.5,
-    fontWeight: 800,
-    color: 'hsl(var(--on-surface-muted))',
-    letterSpacing: '.06em',
-    textTransform: 'uppercase' as const,
-    fontFamily: "'Public Sans', sans-serif",
-    marginBottom: 5,
-  }
 
 
   if (loading) {
     return (
-      <div className="main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 320 }}>
-        <div style={{ textAlign: 'center' }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--border))', display: 'block', marginBottom: 8, animation: 'spin 1s linear infinite' }}>flag</span>
-          <p style={{ margin: 0, fontSize: 11, fontFamily: "'Public Sans'", fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>Synchronizing tactical feed…</p>
-        </div>
+      <div className="h-full w-full flex flex-col items-center justify-center py-20 space-y-4">
+        <Activity className="w-12 h-12 text-muted-foreground/20 animate-spin" />
+        <p className="text-micro font-bold normal-case text-muted-foreground/40">Synchronizing tactical feed...</p>
       </div>
     )
   }
 
   return (
-    <div className="main animate-in fade-in duration-500">
-
-      {/* Top */}
-      <div className="top">
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* 🏛️ Directives Header */}
+      <div className="flex-columns items-center flex-between">
         <div>
-          <div className="crumbs">Admin · Ground game · Field directives</div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--destructive))' }}>flag</span>
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 m-0">
+            <Flag className="w-8 h-8 text-on-surface" />
             Field directives
-          </h2>
+          </h1>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-2 mb-0">Platform-wide deployment of tactical objectives and field verification protocols.</p>
         </div>
-        <div className="actions">
-          <Link to="/admin/mobilization-metrics" className="btn btn-outline btn-sm">
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>bar_chart</span>Analytics
-          </Link>
-          <button className="btn btn-dest btn-sm" onClick={() => setIsCreating(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>add</span>Issue directive
-          </button>
-        </div>
-      </div>
-
-      {/* KPI strip */}
-      <div className="kpis">
-        <div className="kpi r">
-          <div className="l">Active directives</div>
-          <div className="v tnum font-extrabold">{activeDirectives.length}</div>
-          <div className="d">{directives.length} total issued</div>
-        </div>
-        <div className="kpi g">
-          <div className="l">Pending reports</div>
-          <div className="v tnum font-extrabold">{pendingReports.length}</div>
-          <div className="d dn">{pendingReports.length > 0 ? 'Awaiting review' : 'Queue clear'}</div>
-        </div>
-        <div className="kpi gr">
-          <div className="l">Verified actions</div>
-          <div className="v tnum font-extrabold">{verifiedReports.length}</div>
-          <div className="d">of {reports.length} reports</div>
-        </div>
-        <div className="kpi k">
-          <div className="l">Points earned</div>
-          <div className="v tnum font-extrabold">{totalPointsEarned.toLocaleString()}</div>
-          <div className="d">across all patriots</div>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="default" 
+            size="lg"
+            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-8 h-10 font-bold capitalize tracking-tight hover:bg-stone-100 transition-all active:scale-95"
+            asChild
+          >
+            <Link to="/admin/mobilization-metrics">
+              <BarChart3 className="w-4 h-4 mr-2" /> Analytics
+            </Link>
+          </Button>
+          <Button 
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-micro font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
+            onClick={() => setIsCreating(true)}
+          >
+            <Plus className="w-4 h-4 mr-2" /> Issue Directive
+          </Button>
         </div>
       </div>
 
-      {/* Two-column layout */}
-      <div className="twocol" style={{ gridTemplateColumns: '1fr 1.4fr' }}>
+      {/* KPI Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 mt-12">
+        <TacticalKPI 
+          label="Field Objectives"
+          value={activeDirectives.length}
+          description="Active directives"
+          trend={{ direction: 'neutral', value: 'Vault' }}
+        />
+        <TacticalKPI 
+          label="Awaiting Review"
+          value={pendingReports.length}
+          description="Pending reports"
+          trend={{ direction: pendingReports.length > 0 ? 'down' : 'neutral', value: 'Queue' }}
+        />
+        <TacticalKPI 
+          label="Verified Actions"
+          value={verifiedReports.length}
+          description="Successful missions"
+          trend={{ direction: 'up', value: 'Elite' }}
+        />
+        <TacticalKPI 
+          label="Tactical Influence"
+          value={totalPointsEarned.toLocaleString()}
+          description="Points distributed"
+          trend={{ direction: 'up', value: 'Pulse' }}
+        />
+      </div>
 
-        {/* Directives list */}
-        <div className="panel">
-          <div className="ph">
-            <div>
-              <h3>Active directives</h3>
-              <div className="meta">{activeDirectives.length} in field</div>
-            </div>
-            <button className="btn btn-ghost btn-sm" onClick={() => setIsCreating(true)}>
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>add</span>New
-            </button>
-          </div>
-          {directives.length === 0 ? (
-            <div style={{ padding: '48px 18px', textAlign: 'center' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--border))', display: 'block', marginBottom: 8 }}>flag</span>
-              <p style={{ margin: 0, fontSize: 12, fontFamily: "'Public Sans'", fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>No directives issued yet.</p>
-            </div>
-          ) : (
-            <div>
-              {directives.map((d, i, arr) => (
-                <div key={d.id} style={{ padding: '14px 18px', borderBottom: i < arr.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                      {priorityPill(d.priority)}
-                      <span className="pill pill-mute">{d.target_type}</span>
-                    </div>
-                    <span style={{ fontSize: 10, fontFamily: "'Public Sans'", fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>
-                      {d.points_awarded} pts
-                    </span>
-                  </div>
-                  <p style={{ margin: '0 0 4px', fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 13, lineHeight: 1.35 }}>{d.title}</p>
-                  <p style={{ margin: '0 0 8px', fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.5 }}>{d.description}</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>schedule</span>
-                    <span style={{ fontSize: 10.5, fontFamily: "'Public Sans'", fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>
-                      {d.deadline ? new Date(d.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'No deadline'}
-                    </span>
-                  </div>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        {/* 📋 Active Directives */}
+        <div className="xl:col-span-1">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden h-full">
+            <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-bold tracking-tight">Active directives</CardTitle>
+                <p className="text-micro font-bold text-muted-foreground/40 mt-1">Operational field objectives</p>
+              </div>
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground/40" onClick={() => setIsCreating(true)}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              {directives.length === 0 ? (
+                <div className="px-6 py-20 text-center space-y-4">
+                  <Flag className="w-12 h-12 text-muted-foreground/10 mx-auto" />
+                  <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">No directives deployed</p>
                 </div>
-              ))}
-            </div>
-          )}
+              ) : (
+                <div className="divide-y divide-border/40 max-h-[800px] overflow-y-auto custom-scrollbar">
+                  {directives.map((d) => (
+                    <div key={d.id} className="p-6 hover:bg-muted/30 transition-colors space-y-4">
+                      <div className="flex justify-between items-start">
+                        <div className="flex gap-2">
+                          <span className={cn(
+                            "px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border rounded-md",
+                            d.priority === 'Urgent' ? "bg-destructive/10 text-destructive border-destructive/20" :
+                            d.priority === 'High' ? "bg-accent/10 text-accent border-accent/20" :
+                            "bg-muted/10 text-muted-foreground/60 border-border/20"
+                          )}>
+                            {d.priority}
+                          </span>
+                          <span className="px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border border-border/20 bg-muted/10 text-muted-foreground/60 rounded-md">
+                            {d.target_type}
+                          </span>
+                        </div>
+                        <span className="text-micro font-bold text-accent">+{d.points_awarded} pts</span>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-on-surface m-0">{d.title}</h4>
+                        <p className="text-xs text-muted-foreground/80 leading-relaxed mt-2 font-medium">{d.description}</p>
+                      </div>
+                      <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/40 uppercase tracking-tighter pt-2">
+                        <Clock className="w-3.5 h-3.5" />
+                        {d.deadline ? new Date(d.deadline).toLocaleDateString() : 'Indefinite'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Reports feed */}
-        <div className="panel">
-          <div className="ph">
-            <div>
-              <h3>Situational awareness feed</h3>
-              <div className="meta">{reports.length} reports · {pendingReports.length} pending</div>
-            </div>
-            <button className="btn btn-outline btn-sm">
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>tune</span>Filter
-            </button>
-          </div>
-
-          {reports.length === 0 ? (
-            <div style={{ padding: '48px 18px', textAlign: 'center' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--border))', display: 'block', marginBottom: 8 }}>sensors</span>
-              <p style={{ margin: 0, fontSize: 12, fontFamily: "'Public Sans'", fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>Situational feed is quiet.</p>
-            </div>
-          ) : (
-            <div>
-              {reports.map((report, i, arr) => (
-                <div key={report.id} style={{ borderBottom: i < arr.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
-                  {/* Media */}
-                  {report.media_url && (
-                    <div style={{ aspectRatio: '16/7', overflow: 'hidden', background: '#181d19', position: 'relative' }}>
-                      <img src={report.media_url} alt="Field report" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} loading="lazy" decoding="async" />
-                      <div style={{ position: 'absolute', top: 10, left: 10 }}>
-                        {statusPill(report.status)}
-                      </div>
-                      {report.location_lat && (
-                        <div style={{ position: 'absolute', bottom: 10, left: 10, padding: '3px 8px', background: 'rgba(0,0,0,.55)', borderRadius: 99, display: 'flex', alignItems: 'center', gap: 5 }}>
-                          <span className="material-symbols-outlined" style={{ fontSize: 12, color: 'hsl(var(--destructive))' }}>location_on</span>
-                          <span style={{ fontSize: 10, fontFamily: "'Public Sans'", fontWeight: 800, color: '#fff' }}>GPS verified</span>
+        {/* 📡 Situational Awareness Feed */}
+        <div className="xl:col-span-2">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden h-full">
+            <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-bold tracking-tight">Situational awareness feed</CardTitle>
+                <p className="text-micro font-bold text-muted-foreground/40 mt-1">Real-time field intelligence</p>
+              </div>
+              <Button variant="default" size="sm" className="h-8 text-micro font-bold px-4">
+                <Filter className="w-3 h-3 mr-1.5" /> Filter
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              {reports.length === 0 ? (
+                <div className="px-6 py-20 text-center space-y-4">
+                  <Activity className="w-12 h-12 text-muted-foreground/10 mx-auto" />
+                  <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">Feed is quiet</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-border/40 max-h-[800px] overflow-y-auto custom-scrollbar">
+                  {reports.map((report) => (
+                    <div key={report.id} className="hover:bg-muted/30 transition-colors">
+                      {report.media_url && (
+                        <div className="aspect-[21/9] w-full bg-muted/10 relative overflow-hidden group">
+                          <img 
+                            src={report.media_url} 
+                            alt="Field report" 
+                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+                          />
+                          <div className="absolute top-4 left-4 flex gap-2">
+                            <span className={cn(
+                              "px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border rounded-md shadow-lg",
+                              report.status === 'Verified' ? "bg-primary text-white border-transparent" :
+                              report.status === 'Rejected' ? "bg-destructive text-white border-transparent" :
+                              "bg-white/90 text-on-surface border-transparent"
+                            )}>
+                              {report.status}
+                            </span>
+                          </div>
+                          {report.location_lat && (
+                            <div className="absolute bottom-4 left-4 px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-md flex items-center gap-2 border border-white/10">
+                              <Activity className="w-3 h-3 text-destructive" />
+                              <span className="text-[8px] font-bold uppercase text-white/80">GPS Verified Signals</span>
+                            </div>
+                          )}
                         </div>
                       )}
+
+                      <div className="p-6 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-sm bg-muted/20 border border-border/40 flex items-center justify-center overflow-hidden">
+                              <img src={`https://i.pravatar.cc/100?u=${report.member_id}`} alt="" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-on-surface">Patriot #{report.member_id.slice(0, 8).toUpperCase()}</p>
+                              <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-tighter">
+                                {new Date(report.created_at).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                          {!report.media_url && (
+                            <span className={cn(
+                              "px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border rounded-md",
+                              report.status === 'Verified' ? "bg-primary/10 text-primary border-primary/20" :
+                              report.status === 'Rejected' ? "bg-destructive/10 text-destructive border-destructive/20" :
+                              "bg-muted/10 text-muted-foreground/60 border-border/20"
+                            )}>
+                              {report.status}
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-on-surface/80 leading-relaxed font-medium">
+                          {report.report_text ? `"${report.report_text}"` : "No field notes provided."}
+                        </p>
+
+                        {report.status === 'Pending' && (
+                          <div className="flex gap-3 pt-2">
+                            <Button 
+                              variant="default" 
+                              className="flex-1 h-9 text-[10px] font-bold uppercase bg-transparent border-destructive/20 text-destructive hover:bg-destructive/10"
+                              onClick={() => handleVerify(report.id, 'Rejected')}
+                            >
+                              <XCircle className="w-3.5 h-3.5 mr-2" /> Reject
+                            </Button>
+                            <Button 
+                              variant="primary" 
+                              className="flex-1 h-9 text-[10px] font-bold uppercase shadow-md shadow-brand-green/20"
+                              onClick={() => handleVerify(report.id, 'Verified')}
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5 mr-2" /> Verify
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-
-                  <div style={{ padding: '14px 18px' }}>
-                    {/* Reporter row */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', overflow: 'hidden', background: '#f1f5ee', flexShrink: 0 }}>
-                        <img src={`https://i.pravatar.cc/56?u=${report.member_id}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" decoding="async" />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <b style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 12 }}>Member #{report.member_id.slice(0, 8).toUpperCase()}</b>
-                        <span style={{ display: 'block', fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans'", fontWeight: 700 }}>
-                          {new Date(report.created_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      {!report.media_url && statusPill(report.status)}
-                    </div>
-
-                    <p style={{ margin: '0 0 12px', fontSize: 12.5, color: 'hsl(var(--on-surface))', lineHeight: 1.55 }}>
-                      {report.report_text ? `"${report.report_text}"` : <span style={{ color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}>No field commentary provided.</span>}
-                    </p>
-
-                    {report.status === 'Pending' && (
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                        <button className="btn btn-outline btn-sm" style={{ color: 'hsl(var(--destructive))', borderColor: 'hsl(var(--destructive))' }} onClick={() => handleVerify(report.id, 'Rejected')}>
-                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>Reject
-                        </button>
-                        <button className="btn btn-primary btn-sm" onClick={() => handleVerify(report.id, 'Verified')}>
-                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>check</span>Verify
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* Issue directive modal */}
-      {isCreating && (
-        <div
-          style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(15,19,16,.6)', backdropFilter: 'blur(4px)' }}
-          onClick={e => { if (e.target === e.currentTarget) setIsCreating(false) }}
-        >
-          <div className="animate-in zoom-in-95 duration-200" style={{ width: '100%', maxWidth: 520, background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 32px 64px -16px rgba(0,0,0,.4)' }}>
-            {/* Modal header */}
-            <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', color: '#fff', padding: '20px 22px', borderTop: '3px solid hsl(var(--destructive))', position: 'relative' }}>
-              <button
-                onClick={() => setIsCreating(false)}
-                style={{ position: 'absolute', top: 14, right: 14, width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.2)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
-              </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--accent))' }}>flag</span>
-                <div>
-                  <h3 style={{ fontFamily: "'Public Sans'", fontWeight: 800, fontSize: 16, margin: 0 }}>Issue new directive</h3>
-                  <p style={{ fontFamily: "'Public Sans'", fontWeight: 700, fontSize: 11, color: 'rgba(255,255,255,.55)', margin: 0, marginTop: 2 }}>Deploy tactical objectives to the field</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal body */}
-            <div style={{ padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <div>
-                  <label style={labelStyle}>Directive title <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Regional Flyer Blitz"
-                    style={fieldStyle}
-                    value={newDirective.title}
-                    onChange={e => setNewDirective({ ...newDirective, title: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Target level</label>
-                  <select
-                    style={{ ...fieldStyle, appearance: 'none' as const }}
-                    value={newDirective.target_type}
-                    onChange={e => setNewDirective({ ...newDirective, target_type: e.target.value as FieldDirective['target_type'] })}
-                  >
-                    <option>Regional</option>
-                    <option>Chapter</option>
-                    <option>Global</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label style={labelStyle}>Objective description <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                <textarea
-                  rows={3}
-                  placeholder="Describe the tactical goal for field agents..."
-                  style={{ ...fieldStyle, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }}
-                  value={newDirective.description}
-                  onChange={e => setNewDirective({ ...newDirective, description: e.target.value })}
+      {/* 🚀 Issue Directive Dialog */}
+      <Dialog open={isCreating} onOpenChange={setIsCreating}>
+        <DialogContent className="sm:max-w-[600px] rounded-sm border-border/60">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold tracking-tight flex items-center gap-2">
+              <Flag className="w-5 h-5 text-destructive" />
+              Issue new directive
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground/80">
+              Deploy tactical field objectives to the movement's national network.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-micro font-bold text-muted-foreground/40 uppercase">Directive title</label>
+                <Input 
+                  placeholder="e.g. Regional Flyer Blitz" 
+                  value={newDirective.title}
+                  onChange={e => setNewDirective({ ...newDirective, title: e.target.value })}
+                  className="rounded-sm border-border/60 text-xs font-bold h-11"
                 />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
-                <div>
-                  <label style={labelStyle}>Priority</label>
-                  <select
-                    style={{ ...fieldStyle, appearance: 'none' as const }}
-                    value={newDirective.priority}
-                    onChange={e => setNewDirective({ ...newDirective, priority: e.target.value as FieldDirective['priority'] })}
-                  >
-                    <option>Normal</option>
-                    <option>High</option>
-                    <option>Urgent</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={labelStyle}>Points awarded</label>
-                  <input
-                    type="number"
-                    style={fieldStyle}
-                    value={newDirective.points_awarded}
-                    onChange={e => setNewDirective({ ...newDirective, points_awarded: Number(e.target.value) })}
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Deadline</label>
-                  <input
-                    type="date"
-                    style={fieldStyle}
-                    value={newDirective.deadline}
-                    onChange={e => setNewDirective({ ...newDirective, deadline: e.target.value })}
-                  />
-                </div>
+              <div className="space-y-2">
+                <label className="text-micro font-bold text-muted-foreground/40 uppercase">Target level</label>
+                <select 
+                  className="w-full h-11 px-3 text-xs font-bold border border-border/60 rounded-sm focus:outline-none focus:border-on-surface bg-white"
+                  value={newDirective.target_type}
+                  onChange={e => setNewDirective({ ...newDirective, target_type: e.target.value as FieldDirective['target_type'] })}
+                >
+                  <option>Regional</option>
+                  <option>Chapter</option>
+                  <option>Global</option>
+                </select>
               </div>
             </div>
+            
+            <div className="space-y-2">
+              <label className="text-micro font-bold text-muted-foreground/40 uppercase">Objective description</label>
+              <Textarea 
+                placeholder="Describe the tactical goal for field agents..."
+                value={newDirective.description}
+                onChange={e => setNewDirective({ ...newDirective, description: e.target.value })}
+                className="rounded-sm border-border/60 text-xs font-bold min-h-[100px] resize-none leading-relaxed"
+              />
+            </div>
 
-            {/* Modal footer */}
-            <div style={{ padding: '14px 22px', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-              <button className="btn btn-outline btn-sm" onClick={() => setIsCreating(false)} disabled={isSubmitting}>Cancel</button>
-              <button className="btn btn-dest" onClick={handleIssueDirective} disabled={isSubmitting} style={{ minWidth: 160 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>send</span>
-                {isSubmitting ? 'Deploying…' : 'Deploy directive →'}
-              </button>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <label className="text-micro font-bold text-muted-foreground/40 uppercase">Priority</label>
+                <select 
+                  className="w-full h-11 px-3 text-xs font-bold border border-border/60 rounded-sm focus:outline-none focus:border-on-surface bg-white"
+                  value={newDirective.priority}
+                  onChange={e => setNewDirective({ ...newDirective, priority: e.target.value as FieldDirective['priority'] })}
+                >
+                  <option>Normal</option>
+                  <option>High</option>
+                  <option>Urgent</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-micro font-bold text-muted-foreground/40 uppercase">Points</label>
+                <Input 
+                  type="number"
+                  value={newDirective.points_awarded}
+                  onChange={e => setNewDirective({ ...newDirective, points_awarded: Number(e.target.value) })}
+                  className="rounded-sm border-border/60 text-xs font-bold h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-micro font-bold text-muted-foreground/40 uppercase">Deadline</label>
+                <Input 
+                  type="date"
+                  value={newDirective.deadline}
+                  onChange={e => setNewDirective({ ...newDirective, deadline: e.target.value })}
+                  className="rounded-sm border-border/60 text-xs font-bold h-11"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+          <DialogFooter className="gap-4">
+            <Button 
+              variant="default" 
+              className="flex-1 h-12 text-micro font-bold capitalize tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all active:scale-95"
+              onClick={() => setIsCreating(false)}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="primary"
+              className="flex-1 h-12 text-micro font-bold capitalize tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95 bg-destructive hover:bg-destructive/90"
+              onClick={handleIssueDirective}
+              disabled={isSubmitting}
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {isSubmitting ? 'Deploying...' : 'Deploy Directive'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -1,15 +1,22 @@
-import { useState, useEffect } from 'react'
-import { Plus, Search, PenTool, Edit3, Trash2, Shield, Loader2, Eye, Calendar, Quote, User } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Plus, Search, PenTool, Edit3, Trash2, Shield, Eye, Calendar, Quote, User, Download } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { BrandLine } from '@/components/ui/BrandLine'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select'
 import { contentService } from '@/services/contentService'
 import type { Author } from '@/types/admin'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/admin/BrandLine'
 
 export default function AdminAuthors() {
   const [authors, setAuthors] = useState<Author[]>([])
@@ -18,11 +25,25 @@ export default function AdminAuthors() {
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string, name: string } | null>(null)
   const [viewingAuthor, setViewingAuthor] = useState<Author | null>(null)
-  const [roleFilter, setRoleFilter] = useState('All Roles')
+  const [roleFilter, setRoleFilter] = useState('all')
+  const navigate = useNavigate()
+
+  const fetchAuthors = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const data = await contentService.getAuthors()
+      setAuthors(data)
+    } catch (error) {
+      console.error('Failed to fetch authors:', error)
+      toast.error('Failed to load editorial intelligence')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     fetchAuthors()
-  }, [])
+  }, [fetchAuthors])
 
   // Deep Link Handling for Global Search
   useEffect(() => {
@@ -32,28 +53,14 @@ export default function AdminAuthors() {
       if (viewId) {
         const author = authors.find(a => a.id === viewId)
         if (author) {
-          // Defer to avoid synchronous setState warning
           setTimeout(() => {
             setViewingAuthor(author)
-            // Clean up URL
             window.history.replaceState({}, '', window.location.pathname)
           }, 0)
         }
       }
     }
   }, [authors])
-
-  const fetchAuthors = async () => {
-    try {
-      const data = await contentService.getAuthors()
-      setAuthors(data)
-    } catch (error) {
-      console.error('Failed to fetch authors:', error)
-      toast.error('Failed to load authors')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleDelete = async () => {
     if (!deleteConfirm) return
@@ -62,14 +69,14 @@ export default function AdminAuthors() {
     try {
       const success = await contentService.deleteAuthor(deleteConfirm.id)
       if (success) {
-        toast.success(`Author ${deleteConfirm.name} moved to trash vault`)
+        toast.success(`Personnel "${deleteConfirm.name}" moved to trash vault`)
         setAuthors(authors.filter(a => a.id !== deleteConfirm.id))
       } else {
-        toast.error('Failed to delete author')
+        toast.error('Authorization failure during deletion')
       }
     } catch (error) {
       console.error('Delete error:', error)
-      toast.error('An error occurred while deleting')
+      toast.error('Strategic failure during data purge')
     } finally {
       setIsDeleting(null)
       setDeleteConfirm(null)
@@ -81,172 +88,231 @@ export default function AdminAuthors() {
   const filteredAuthors = authors.filter(a => {
     const matchesSearch = a.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           (a.role && a.role.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesRole = roleFilter === 'All Roles' || (a.role || 'Contributor') === roleFilter;
+    const matchesRole = roleFilter === 'all' || (a.role || 'Contributor') === roleFilter;
     return matchesSearch && matchesRole;
   })
 
   return (
-    <div className="admin-page-container">
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main animate-in fade-in duration-500">
+      {/* Top Header */}
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <PenTool className="w-8 h-8 text-on-surface" />
-            Editorial directory
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Official editorial profiles, biographies, and access credentials for the movement's content creators.</p>
+          <div className="crumbs uppercase font-black tracking-widest text-[9px]">
+            <Link to="/admin/dashboard" className="hover:text-primary transition-colors">Admin</Link>
+            {' · '}
+            Editorial intelligence
+          </div>
+          <h2 className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-primary">edit_note</span>
+            Personnel directory
+          </h2>
+          <BrandLine />
         </div>
-        <div className="flex items-center gap-3">
+        <div className="actions">
+          <Button variant="outline" className="h-10 px-4 text-[12px] font-bold tracking-tight rounded-sm border-border/40 gap-2">
+            <Download className="w-4 h-4" /> Export records
+          </Button>
           <Button 
-            variant="primary" 
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-            onClick={() => window.location.href = '/admin/authors/new'}
+            onClick={() => navigate('/admin/authors/new')}
+            variant="primary"
+            className="text-[12px] font-bold tracking-tight rounded-sm shadow-sm"
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Recruit Author
+            <Plus className="w-4 h-4 mr-2" /> Recruit author
           </Button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
-        <div className="p-6 border-b border-border/10 bg-muted/5 flex-columns items-center flex-between" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
-              <Input 
-                placeholder="Search by name or role..." 
-                className="pl-12 h-11 bg-white border-border/60 focus-visible:ring-primary rounded-sm text-tiny font-bold"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <select
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className="h-11 px-4 py-2 text-micro font-bold rounded-sm border border-border/60 bg-white text-on-surface/80 focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent cursor-pointer transition-all"
-            >
-              <option value="All Roles">All Roles</option>
-              {uniqueRoles.map(role => (
-                <option key={role} value={role}>{role}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-3 text-micro text-muted-foreground/60 font-bold bg-white px-5 py-2.5 rounded-sm border border-border/10 shadow-sm">
-            <Shield className="w-4 h-4 text-muted-foreground/40" />
-            <span className="normal-case">Authorized personnel:</span> <span className="text-on-surface font-bold ml-1">{authors.length}</span>
-          </div>
-        </div>
+      {/* KPI Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
+        <TacticalKPI 
+          label="Intelligence"
+          value={authors.length}
+          variant="green"
+          description="Verified content creators active in command center"
+          delta="Strategic personnel"
+        />
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-micro text-stone-500 capitalize tracking-tight bg-stone-50/80 border-b border-stone-100">
-              <tr>
-                <th className="px-6 py-4 font-bold">Author Profile</th>
-                <th className="px-6 py-4 font-bold">Role & Title</th>
-                <th className="px-6 py-4 font-bold">Date Added</th>
-                <th className="px-6 py-4 font-bold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-stone-100">
-              {isLoading ? (
+        <TacticalKPI 
+          label="Mobility"
+          value={uniqueRoles.length}
+          variant="gold"
+          description="Functional diversity across all operational sectors"
+          delta="Tactical roles"
+        />
+
+        <TacticalKPI 
+          label="Mobilization"
+          value="350k"
+          variant="red"
+          description="Estimated reach through editorial content distribution"
+          delta="Public influence"
+        />
+
+        <TacticalKPI 
+          label="Verification"
+          value="100%"
+          variant="black"
+          description="Personnel background verification success rate"
+          delta="Security protocol"
+        />
+      </div>
+
+      <div className="sidebar-main">
+        {/* Sidebar Filters */}
+        <aside className="panel h-fit sticky top-20">
+          <div className="ph">
+            <h3 className="flex items-center gap-2 text-sm font-black">
+              <Search className="w-4 h-4" />
+              Intelligence filters
+            </h3>
+          </div>
+          <div className="p-5 flex flex-col gap-6">
+            <div className="space-y-2.5">
+              <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Search personnel</label>
+              <div className="relative group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
+                <input 
+                  type="text" 
+                  placeholder="Name or role..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-10 pl-9 pr-4 bg-white border border-border/40 rounded-sm text-xs font-bold outline-none focus:border-primary/50 transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2.5 pt-4 border-t border-border/40">
+              <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Role classification</label>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="h-10 w-full bg-white border-border/40 text-xs font-bold rounded-sm focus:ring-primary/20">
+                  <SelectValue placeholder="All Roles" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  {uniqueRoles.map(role => (
+                    <SelectItem key={role} value={role}>{role}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="pt-4 border-t border-border/40">
+              <div className="bg-muted/5 p-4 rounded-sm border border-border/40">
+                <div className="flex items-center gap-2 mb-2 text-primary">
+                  <Shield className="w-4 h-4" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Protocol V01</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground/60 leading-relaxed font-medium italic">
+                  All editorial personnel must undergo background verification before recruitment into the digital mobilization corps.
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Authors Table/Grid */}
+        <div className="panel overflow-hidden">
+          <div className="ph">
+            <h3>Registered personnel</h3>
+            <span className="meta">{filteredAuthors.length} records identified</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="table">
+              <thead>
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-stone-500">
-                    <div className="flex items-center justify-center space-x-2">
-                      <Loader2 className="w-5 h-5 animate-spin text-[var(--brand-red)]" />
-                      <span>Loading editorial profiles...</span>
-                    </div>
-                  </td>
+                  <th>Personnel profile</th>
+                  <th>Role & Authorization</th>
+                  <th>Enlisted</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
-              ) : filteredAuthors.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-stone-100 text-stone-400 mb-3">
-                      <PenTool className="w-6 h-6" />
-                    </div>
-                    <p className="text-stone-500 font-medium">No authors found.</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredAuthors.map((author) => (
-                  <tr key={author.id} className="hover:bg-stone-50/80 transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-stone-200 overflow-hidden shrink-0 border border-stone-300">
-                          {author.imageUrl ? (
-                            <img src={author.imageUrl} alt={author.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-stone-400 bg-stone-100">
-                              <PenTool className="w-5 h-5" />
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <div className="font-bold text-stone-900 group-hover:text-[var(--brand-red)] transition-colors">
-                            {author.name}
-                          </div>
-                          <div className="text-xs text-stone-500 mt-0.5 max-w-[200px] truncate">
-                            {author.bio || 'No biography provided'}
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  Array(5).fill(0).map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-muted/5" />
+                          <div className="space-y-2">
+                            <div className="h-3 w-32 bg-muted/5 rounded" />
+                            <div className="h-2 w-20 bg-muted/5 rounded" />
                           </div>
                         </div>
+                      </td>
+                      <td><div className="h-6 w-24 bg-muted/5 rounded" /></td>
+                      <td><div className="h-3 w-20 bg-muted/5 rounded" /></td>
+                      <td><div className="h-8 w-8 ml-auto bg-muted/5 rounded" /></td>
+                    </tr>
+                  ))
+                ) : filteredAuthors.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-20 text-center">
+                      <div className="w-12 h-12 bg-muted/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <PenTool className="w-6 h-6 text-muted-foreground/20" />
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-stone-100 text-stone-700">
-                        {author.role || 'Contributor'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-stone-500 text-xs font-medium">
-                      {format(new Date(author.createdAt), 'MMM dd, yyyy')}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button 
-                          variant="default" 
-                          size="icon" 
-                          className="h-10 w-10 text-stone-500 hover:text-brand-green border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
-                          onClick={() => setViewingAuthor(author)}
-                          title="View Profile"
-                        >
-                          <Eye className="w-5 h-5" />
-                        </Button>
-                        <Button 
-                          variant="default" 
-                          size="icon" 
-                          className="h-10 w-10 text-stone-500 hover:text-accent border-stone-200 hover:bg-stone-50 rounded-sm transition-all shadow-sm active:scale-95"
-                          onClick={() => window.location.href = `/admin/authors/edit/${author.id}`}
-                          title="Edit Profile"
-                        >
-                          <Edit3 className="w-5 h-5" />
-                        </Button>
-                        <Button 
-                          variant="default" 
-                          size="icon" 
-                          className="h-10 w-10 text-stone-400 hover:text-destructive border-stone-200 hover:bg-destructive/10 rounded-sm transition-all shadow-sm active:scale-95"
-                          onClick={() => setDeleteConfirm({ id: author.id, name: author.name })}
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </Button>
-                      </div>
+                      <p className="text-sm font-bold text-on-surface">No personnel matching search criteria</p>
+                      <Button variant="ghost" onClick={() => {setSearchQuery(''); setRoleFilter('all')}} className="mt-2 text-micro">Reset intelligence filters</Button>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filteredAuthors.map((author) => (
+                    <tr key={author.id}>
+                      <td>
+                        <div className="who">
+                          <div className="w-10 h-10 rounded-full bg-muted/10 border border-border/40 overflow-hidden shrink-0 flex items-center justify-center">
+                            {author.imageUrl ? (
+                              <img src={author.imageUrl} alt={author.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <User className="w-5 h-5 text-muted-foreground/20" />
+                            )}
+                          </div>
+                          <div>
+                            <b className="group-hover:text-primary transition-colors cursor-pointer" onClick={() => setViewingAuthor(author)}>{author.name}</b>
+                            <span className="text-[10px] uppercase font-bold tracking-tighter opacity-50">{author.id.substring(0, 8)}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="pill bg-brand-green/10 text-brand-green border-brand-green/20 px-2.5 py-1">
+                          {author.role || 'Contributor'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="flex items-center gap-1.5 text-muted-foreground/40 font-bold text-[11px]">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {format(new Date(author.createdAt), 'MMM dd, yyyy')}
+                        </div>
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div className="row-actions justify-end">
+                          <button onClick={() => setViewingAuthor(author)} className="ico" title="Intelligence Review">
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => navigate(`/admin/authors/edit/${author.id}`)} className="ico" title="Modify Credentials">
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => setDeleteConfirm({ id: author.id, name: author.name })} className="ico no" title="Decommission">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </Card>
+      </div>
 
       <DeleteConfirmationModal
         isOpen={!!deleteConfirm}
         onClose={() => setDeleteConfirm(null)}
         onConfirm={handleDelete}
         title="Move to Trash Vault?"
-        description={`Are you sure you want to move ${deleteConfirm?.name} to the trash? Their profile will be hidden from the platform but can be restored within 30 days.`}
+        description={`Are you sure you want to decommission "${deleteConfirm?.name}"? Their profile will be moved to the encrypted trash vault and hidden from the mobilization feed.`}
         itemName={deleteConfirm?.name || ''}
-        isLoading={isDeleting === deleteConfirm?.id}
+        isLoading={!!isDeleting}
       />
 
       <AuthorDetailModal 
@@ -263,84 +329,96 @@ function AuthorDetailModal({ author, isOpen, onClose }: { author: Author | null,
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl bg-white border-stone-200 p-0 overflow-hidden rounded-sm shadow-2xl">
-        <div className="h-32 bg-stone-100 relative">
-          <div className="absolute -bottom-12 left-8">
-            <div className="w-24 h-24 rounded-full border-4 border-white bg-stone-200 overflow-hidden shadow-lg">
+      <DialogContent className="max-w-3xl bg-white border-border/40 p-0 overflow-hidden rounded-sm shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="h-32 bg-stone-50/50 relative border-b border-border/10">
+          <div className="absolute -bottom-12 left-10">
+            <div className="w-28 h-28 rounded-sm border-4 border-white bg-white shadow-xl overflow-hidden">
               {author.imageUrl ? (
                 <img src={author.imageUrl} alt={author.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-stone-400 bg-stone-100">
-                  <User className="w-10 h-10" />
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground/10 bg-muted/5">
+                  <User className="w-12 h-12" />
                 </div>
               )}
             </div>
           </div>
         </div>
         
-        <div className="pt-16 px-8 pb-8">
+        <div className="pt-16 px-10 pb-10">
           <DialogHeader className="sr-only">
-            <DialogTitle>{author.name} Profile</DialogTitle>
-            <DialogDescription>Viewing editorial profile for {author.name}</DialogDescription>
+            <DialogTitle>{author.name} Intelligence Review</DialogTitle>
+            <DialogDescription>Accessing verified editorial credentials for personnel ID {author.id}</DialogDescription>
           </DialogHeader>
 
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h2 className="text-3xl font-bold text-stone-900 font-meta tracking-tight">{author.name}</h2>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
-                <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 whitespace-nowrap">
+          <div className="mb-12">
+            <div className="flex flex-col">
+              <h2 className="text-5xl font-black text-on-surface tracking-tighter leading-none mb-6">{author.name}</h2>
+              
+              <div className="flex mb-6">
+                <span className="pill bg-brand-green/10 text-brand-green font-black uppercase tracking-widest text-[9px] border-brand-green/20 px-3 py-1.5 rounded-sm">
                   {author.role || 'Contributor'}
                 </span>
-                <span className="text-xs text-stone-400 flex items-center gap-1.5 font-medium">
-                  <Shield className="w-3.5 h-3.5 text-stone-300" />
-                  Editorial ID: <span className="text-stone-600 font-mono">{author.id.substring(0, 8)}</span>
-                </span>
+              </div>
+
+              <div className="flex items-center gap-2 text-[10px] text-muted-foreground/40 font-black uppercase tracking-widest mb-8">
+                <Shield className="w-3.5 h-3.5 text-primary/30" />
+                ID: <span className="text-on-surface/60 font-mono tracking-normal">{author.id.substring(0, 8).toUpperCase()}</span>
+              </div>
+
+              <div className="flex">
+                <Link to={`/admin/authors/edit/${author.id}`}>
+                  <Button 
+                    variant="primary" 
+                    className="text-[10px] uppercase tracking-widest rounded-sm bg-brand-green hover:bg-brand-green/90"
+                  >
+                    <Edit3 className="w-3.5 h-3.5 mr-2" />
+                    Modify credentials
+                  </Button>
+                </Link>
               </div>
             </div>
-            <Button 
-              variant="default" 
-              className="text-xs font-bold uppercase tracking-wider"
-              onClick={() => window.location.href = `/admin/authors/edit/${author.id}`}
-            >
-              <Edit3 className="w-3.5 h-3.5 mr-2" />
-              Edit Profile
-            </Button>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-10">
             <div>
-              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <Quote className="w-4 h-4 text-stone-300" />
-                Biography & Editorial Mission
+              <h3 className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <Quote className="w-4 h-4 text-primary/20" />
+                Editorial Mission & Biography
               </h3>
-              <div className="text-stone-600 text-base leading-relaxed bg-stone-50/50 p-6 rounded-sm border border-stone-100 italic relative group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-stone-200 group-hover:bg-brand-red transition-colors" />
-                {author.bio || "No biography has been added for this editorial profile. Profiles without biographies may appear less authoritative to the mobilization base."}
+              <div className="text-on-surface/60 text-[15px] leading-relaxed bg-muted/5 p-8 rounded-sm border border-border/40 italic relative group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary/10 group-hover:bg-primary/30 transition-colors" />
+                {author.bio || "No biography has been added for this editorial profile. Strategic intelligence suggests adding a bio to increase perceived authority."}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-stone-50/80 border-t border-stone-100 px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-12">
-            <div className="flex flex-col">
-              <span className="text-micro text-stone-400 uppercase font-bold tracking-tighter mb-0.5">Enlisted Date</span>
-              <span className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
-                <Calendar className="w-3 h-3 text-stone-400" />
-                {format(new Date(author.createdAt), 'MMMM dd, yyyy')}
-              </span>
+        <div className="bg-stone-50/80 border-t border-border/10 px-10 py-6">
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <span className="text-[9px] text-muted-foreground/40 uppercase font-black tracking-widest mb-2">Date Enlisted</span>
+                <div className="flex items-center gap-2.5 text-[11px] font-black text-on-surface/70">
+                  <Calendar className="w-4 h-4 text-primary/30" />
+                  {format(new Date(author.createdAt), 'MMM dd, yyyy').toUpperCase()}
+                </div>
+              </div>
+              
+              <div className="flex flex-col text-right">
+                <span className="text-[9px] text-muted-foreground/40 uppercase font-black tracking-widest mb-2">Security Status</span>
+                <div className="flex items-center justify-end gap-2.5 text-[11px] font-black text-brand-green">
+                  <div className="w-2.5 h-2.5 rounded-full bg-brand-green shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
+                  Authorized Duty
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-micro text-stone-400 uppercase font-bold tracking-tighter mb-0.5">Current Status</span>
-              <span className="text-xs font-bold text-green-600 flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Active Duty
-              </span>
+
+            <div className="pt-5 border-t border-border/10">
+              <div className="flex items-center justify-center gap-2.5 text-[10px] text-muted-foreground/30 font-black uppercase tracking-widest">
+                <Shield className="w-4 h-4" />
+                Verified Editorial Personnel
+              </div>
             </div>
-          </div>
-          <div className="text-micro text-stone-300 font-bold uppercase tracking-widest flex items-center gap-2">
-            <Shield className="w-3 h-3" />
-            Verified Editorial Personnel
           </div>
         </div>
       </DialogContent>

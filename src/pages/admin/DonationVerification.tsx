@@ -3,6 +3,8 @@ import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
 import DonationListCard from '@/components/admin/DonationListCard'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 type StatusFilter = 'Pending' | 'Rejected' | 'Verified' | 'Refunded'
 
@@ -146,6 +148,7 @@ export default function FinancialAudit() {
         <div>
           <div className="crumbs">Money · Donations · Verification queue</div>
           <h2 style={{ margin: '4px 0 0' }}>Donations · verification queue</h2>
+          <BrandLine />
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 2, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Match MoMo transactions, confirm card receipts, and clear pending donations against the chapter ledger.
           </p>
@@ -162,28 +165,31 @@ export default function FinancialAudit() {
         </div>
       </div>
 
-      {/* KPI strip */}
-      <div className="kpis" style={{ marginBottom: 18 }}>
-        <div className="kpi r">
-          <div className="l">Pending review</div>
-          <div className="v">{stats.pendingCount}</div>
-          <div className="d">₵{(stats.pendingCount * 480).toLocaleString()} unverified</div>
-        </div>
-        <div className="kpi g">
-          <div className="l">Cleared today</div>
-          <div className="v">{Math.max(0, stats.totalContributions - stats.pendingCount - stats.flaggedCount)}</div>
-          <div className="d up">₵{stats.approvedAmount.toLocaleString()} · MTD</div>
-        </div>
-        <div className="kpi gr">
-          <div className="l">Auto-matched (MoMo)</div>
-          <div className="v">{autoMatchRate}%</div>
-          <div className="d up">▲ match rate</div>
-        </div>
-        <div className="kpi k">
-          <div className="l">Flagged · review</div>
-          <div className="v">{stats.flaggedCount}</div>
-          <div className="d dn">{stats.flaggedCount > 0 ? 'KYC issues or disputes' : 'All clear'}</div>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Total Contributions"
+          value={stats.totalContributions}
+          description="Gross intake"
+          trend={{ direction: 'up', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Pending Verification"
+          value={stats.pendingCount}
+          description="Awaiting audit"
+          trend={{ direction: stats.pendingCount > 10 ? 'down' : 'neutral', value: 'Queue' }}
+        />
+        <TacticalKPI 
+          label="Cleared Funds"
+          value={`GH₵${(stats.approvedAmount / 1000).toFixed(1)}k`}
+          description="Verified liquidity"
+          trend={{ direction: 'up', value: 'Elite' }}
+        />
+        <TacticalKPI 
+          label="Flagged Events"
+          value={stats.flaggedCount}
+          description="Under investigation"
+          trend={{ direction: stats.flaggedCount > 0 ? 'down' : 'neutral', value: 'Security' }}
+        />
       </div>
 
       {/* Filter bar */}

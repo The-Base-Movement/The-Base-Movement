@@ -25,7 +25,8 @@ import {
 import { cn } from '@/lib/utils'
 import { adminService, type Poll, type PollStats } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 // Mock Data for Polls
 export default function PollsManagement() {
@@ -157,52 +158,29 @@ export default function PollsManagement() {
         </div>
       </div>
 
-      {/* Engagement Stats - Balanced Grid */}
-      <div className="grid-stats mb-10" style={{ '--grid-min-width': '260px' } as React.CSSProperties}>
-        <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center shrink-0">
-              <TrendingUp className="w-6 h-6 text-primary" />
-            </div>
-            <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-              <p className="text-micro font-bold text-muted-foreground/80 m-0 tracking-tight">Total engagements</p>
-              <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.totalEngagements || "..."}<span className="text-micro text-primary ml-2">+15.2%</span></h3>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-on-surface text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50" />
-          <CardContent className="p-6 relative z-10">
-            <p className="text-micro font-bold tracking-tight text-white/40 mb-2 tracking-tight">National sentiment</p>
-            <div className="flex items-end gap-3">
-              <h3 className="text-2xl font-bold text-primary m-0">{stats?.nationalSentimentScore || "..."}%</h3>
-              <span className="text-micro font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full mb-1">Positive</span>
-            </div>
-            <p className="text-micro text-white/20 font-bold tracking-tight mt-3 leading-tight">Live engagement analysis from field chapters</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-sm bg-muted/5 flex items-center justify-center shrink-0 border border-border/10">
-              <Clock className="w-6 h-6 text-muted-foreground/40" />
-            </div>
-            <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-              <p className="text-micro font-bold text-muted-foreground/80 m-0 tracking-tight">Avg response time</p>
-              <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.avgResponseTime || "..."}</h3>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm group hover:border-primary transition-all bg-white">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-sm bg-muted/5 flex items-center justify-center shrink-0 border border-border/10">
-              <MessageSquare className="w-6 h-6 text-muted-foreground/40" />
-            </div>
-            <div className="flow" style={{ '--flow-space': '0.1rem' } as React.CSSProperties}>
-              <p className="text-micro font-bold text-muted-foreground/80 m-0 tracking-tight">Feedback rate</p>
-              <h3 className="text-2xl font-bold text-on-surface m-0">{stats?.feedbackRate || "..."}</h3>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Total engagements"
+          value={stats?.totalEngagements || 0}
+          description="Campaign participation"
+          trend={{ direction: 'up', value: '15.2%' }}
+        />
+        <TacticalKPI 
+          label="National sentiment"
+          value={`${stats?.nationalSentimentScore || 0}%`}
+          description="Positive threshold"
+          trend={{ direction: 'neutral', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Avg response time"
+          value={stats?.avgResponseTime || 'N/A'}
+          description="Engagement velocity"
+        />
+        <TacticalKPI 
+          label="Feedback rate"
+          value={stats?.feedbackRate || '0%'}
+          description="Quality score"
+        />
       </div>
 
       {/* Main Content: Polls Management */}

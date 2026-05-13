@@ -12,7 +12,8 @@ import {
   FileText,
   Download,
 } from 'lucide-react'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { 
   Card, 
   CardContent, 
@@ -107,16 +108,19 @@ export default function LeadershipHub() {
   return (
     <div className="admin-page-container">
       {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <ShieldCheck className="w-8 h-8 text-on-surface" />
+          <div className="crumbs">Admin · Operations · Leadership hub</div>
+          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <ShieldCheck className="w-6 h-6 text-primary" />
             Leadership hub
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Managing the administrative pipeline for local leadership applications.</p>
+          </h2>
+          <BrandLine />
+          <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
+            Managing the administrative pipeline for local leadership applications and regional command appointments.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="actions">
           <Button 
             variant="primary"
             size="lg"
@@ -134,8 +138,32 @@ export default function LeadershipHub() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[14px] mb-[18px]">
+        <TacticalKPI 
+          label="Growth Rate"
+          value="+12%"
+          variant="green"
+          description="Mobilization velocity across all regional sectors"
+          trend={{ direction: 'up', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Pending Requests"
+          value={applications.filter(a => a.status === 'Pending').length}
+          variant="gold"
+          description="Chapter leadership applications awaiting administrative vetting"
+          trend={{ direction: 'neutral', value: 'Vetting' }}
+        />
+        <TacticalKPI 
+          label="Leaders Appointed"
+          value={applications.filter(a => a.status === 'Approved').length}
+          variant="black"
+          description="Verified and authorized officers leading local chapters"
+          trend={{ direction: 'up', value: 'Active' }}
+        />
+      </div>
+
       {/* Intelligence & Filtering */}
-      <div className="bg-white border border-border/60 p-4 flex flex-wrap items-center gap-4">
+      <div className="bg-white border border-border/60 p-4 flex flex-wrap items-center gap-4 mb-6">
         <div className="flex-1 min-w-[240px] relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
           <input 
@@ -154,35 +182,6 @@ export default function LeadershipHub() {
             <Filter className="w-4 h-4 mr-2 text-muted-foreground/40" /> Filter Status
           </Button>
         </div>
-      </div>
-
-      {/* Stats Summary - Balanced Grid */}
-      <div className="grid-stats mb-10" style={{ '--grid-min-width': '240px' } as React.CSSProperties}>
-        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden bg-white">
-          <div className="absolute top-0 left-0 w-1 h-full bg-destructive" />
-          <CardContent className="p-6">
-            <p className="text-micro font-bold text-muted-foreground/40 normal-case tracking-tight">Growth rate</p>
-            <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">+12%</h3>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden bg-white">
-          <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
-          <CardContent className="p-6">
-            <p className="text-micro font-bold text-muted-foreground/40 normal-case tracking-tight">Pending requests</p>
-            <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">
-              {applications.filter(a => a.status === 'Pending').length}
-            </h3>
-          </CardContent>
-        </Card>
-        <Card className="rounded-sm border-border/60 shadow-sm relative overflow-hidden bg-white">
-          <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
-          <CardContent className="p-6">
-            <p className="text-micro font-bold text-muted-foreground/40 normal-case tracking-tight">New leaders appointed</p>
-            <h3 className="text-3xl font-bold font-meta text-on-surface mt-1">
-              {applications.filter(a => a.status === 'Approved').length}
-            </h3>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Applications Table */}

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign, CanvasserLog, GOTVTransportRequest } from '@/types/admin'
 import { toast } from 'sonner'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/admin/BrandLine'
 
 export default function GroundGameCommand() {
   const navigate = useNavigate()
@@ -84,6 +86,7 @@ export default function GroundGameCommand() {
         <div>
           <div className="crumbs">Command → Ground game</div>
           <h2>Ground game · Greater Accra</h2>
+          <BrandLine />
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 2, maxWidth: 560, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Daily field operations — turf assignments, canvasser activity, and route progress for branch 04.</p>
         </div>
         <div className="actions">
@@ -96,28 +99,36 @@ export default function GroundGameCommand() {
         </div>
       </div>
 
-      {/* KPI Strip */}
-      <div className="kpis">
-        <div className="kpi r">
-          <div className="l">Canvassers online</div>
-          <div className="v">{canvassersOnline || 28}</div>
-          <div className="d">of {activeCampaigns.length > 0 ? activeCampaigns.length * 8 : 42} assigned today</div>
-        </div>
-        <div className="kpi g">
-          <div className="l">Doors knocked</div>
-          <div className="v">{doorsKnocked > 0 ? doorsKnocked.toLocaleString() : '1,184'}</div>
-          <div className="d">▲ on track · 64% of day</div>
-        </div>
-        <div className="kpi gr">
-          <div className="l">Sign-ups · today</div>
-          <div className="v">{signupsToday || 214}</div>
-          <div className="d">avg 7.6 per canvasser</div>
-        </div>
-        <div className="kpi k">
-          <div className="l">Route completion</div>
-          <div className="v">{routePct}%</div>
-          <div className="d">{activeCampaigns.length > 0 ? `${activeCampaigns.filter(c => (c.goal_contacts || 0) > 200).length} routes flagged behind` : '2 routes flagged behind'}</div>
-        </div>
+      {/* KPI Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
+        <TacticalKPI 
+          label="Field Operations"
+          value={canvassersOnline || 28}
+          variant="red"
+          description="Canvassers currently active and synchronized with command center"
+          delta={`of ${activeCampaigns.length > 0 ? activeCampaigns.length * 8 : 42} assigned today`}
+        />
+        <TacticalKPI 
+          label="Engagement"
+          value={doorsKnocked > 0 ? doorsKnocked.toLocaleString() : '1,184'}
+          variant="gold"
+          description="Total households reached through door-to-door mobilization"
+          delta="▲ on track · 64% of day"
+        />
+        <TacticalKPI 
+          label="Mobilization"
+          value={signupsToday || 214}
+          variant="green"
+          description="Strategic sign-ups and support commitments secured today"
+          delta="avg 7.6 per canvasser"
+        />
+        <TacticalKPI 
+          label="Intelligence"
+          value={`${routePct}%`}
+          variant="black"
+          description="Overall route completion progress for current tactical assignments"
+          delta={activeCampaigns.length > 0 ? `${activeCampaigns.filter(c => (c.goal_contacts || 0) > 200).length} routes flagged behind` : '2 routes flagged behind'}
+        />
       </div>
 
       {/* Map + Leaderboard */}

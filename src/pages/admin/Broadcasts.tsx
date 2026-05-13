@@ -1,8 +1,25 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
 import type { Broadcast } from '@/services/adminService'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { 
+  Megaphone, 
+  Plus, 
+  Search, 
+  Hourglass, 
+  Clock, 
+  CheckCircle, 
+  RefreshCw, 
+  AlertTriangle, 
+  AlertCircle,
+  BarChart
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/neon-button'
+import { cn } from '@/lib/utils'
 
 export default function Broadcasts() {
   const navigate = useNavigate()
@@ -41,9 +58,9 @@ export default function Broadcasts() {
   )
 
   const priorityPill = (p: string) => {
-    if (p === 'Urgent') return 'pill pill-err'
-    if (p === 'High') return 'pill pill-warn'
-    return 'pill pill-mute'
+    if (p === 'Urgent') return 'bg-destructive/10 text-destructive border-destructive/20'
+    if (p === 'High') return 'bg-accent/10 text-accent border-accent/20'
+    return 'bg-muted/10 text-muted-foreground/60 border-border/20'
   }
 
   const targetLabel = (type: string, value?: string) =>
@@ -57,224 +74,214 @@ export default function Broadcasts() {
   ]
 
   return (
-    <div className="main animate-in fade-in duration-500">
-
-      {/* Top bar */}
-      <div className="top" style={{ marginBottom: 20 }}>
+    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* 🏛️ Communication Header */}
+      <div className="flex-columns items-center flex-between">
         <div>
-          <div className="crumbs" style={{ marginBottom: 6 }}>
-            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>Admin</Link>
-            {' · '}
+          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 m-0">
+            <Megaphone className="w-8 h-8 text-on-surface" />
             Communication hub
-          </div>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>campaign</span>
-            Communication hub
-          </h2>
+          </h1>
+          <BrandLine className="mt-4" />
+          <p className="text-muted-foreground/80 text-sm mt-2 mb-0">Platform-wide transmission and regional mobilization protocols.</p>
         </div>
-        <div className="actions">
-          <button className="btn btn-dest btn-sm" onClick={() => navigate('/admin/broadcasts/new')}>
-            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>add</span>
-            New broadcast
-          </button>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="primary"
+            size="lg"
+            className="rounded-sm text-micro font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
+            onClick={() => navigate('/admin/broadcasts/new')}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Broadcast
+          </Button>
         </div>
       </div>
 
-      {/* KPIs */}
-      <div className="kpis" style={{ marginBottom: 20 }}>
-        <div className="kpi k">
-          <div className="l">Total broadcasts</div>
-          <div className="v tnum">{isLoading ? '—' : broadcasts.length}</div>
-          <div className="d">
-            <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
-              analytics
-            </span>
-            All deployments
-          </div>
-        </div>
-        <div className="kpi r">
-          <div className="l">Urgent alerts</div>
-          <div className="v tnum">{isLoading ? '—' : broadcasts.filter(b => b.priority === 'Urgent').length}</div>
-          <div className="d dn">
-            <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
-              priority_high
-            </span>
-            Critical priority
-          </div>
-        </div>
-        <div className="kpi g">
-          <div className="l">Field saturation</div>
-          <div className="v tnum">100%</div>
-          <div className="d">
-            <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
-              signal_cellular_alt
-            </span>
-            All members reached
-          </div>
-        </div>
-        <div className="kpi gr">
-          <div className="l">HQ connection</div>
-          <div className="v tnum">24/7</div>
-          <div className="d">
-            <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
-              hub
-            </span>
-            Direct uptime
-          </div>
-        </div>
+      {/* KPI Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Communication"
+          value={isLoading ? '—' : broadcasts.length}
+          description="Total deployments"
+          trend={{ direction: 'neutral', value: 'Vault' }}
+        />
+        <TacticalKPI 
+          label="Priority"
+          value={isLoading ? '—' : broadcasts.filter(b => b.priority === 'Urgent').length}
+          description="Urgent alerts"
+          trend={{ direction: 'down', value: 'Critical' }}
+        />
+        <TacticalKPI 
+          label="Saturation"
+          value="100%"
+          description="Member reach"
+          trend={{ direction: 'up', value: 'Pulse' }}
+        />
+        <TacticalKPI 
+          label="HQ Connection"
+          value="24/7"
+          description="Direct uplink"
+          trend={{ direction: 'up', value: 'Online' }}
+        />
       </div>
 
-      {/* Two-column layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 14, alignItems: 'start' }}>
-
-        {/* Broadcast history */}
-        <div className="panel">
-          <div className="ph">
-            <div>
-              <h3>Broadcast history</h3>
-              <div className="meta">HQ-to-field transmission log</div>
-            </div>
-            <div style={{ position: 'relative' }}>
-              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-              <input
-                type="text"
-                placeholder="Search broadcasts..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{
-                  height: 32, paddingLeft: 30, paddingRight: 10,
-                  border: '1px solid hsl(var(--border))', borderRadius: 4,
-                  fontSize: 12, fontFamily: "'Public Sans', sans-serif", fontWeight: 700,
-                  outline: 'none', width: 200, background: '#fff',
-                  color: 'hsl(var(--on-surface))',
-                }}
-              />
-            </div>
-          </div>
-
-          {isLoading ? (
-            <div style={{ padding: '44px 18px', textAlign: 'center' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))' }}>hourglass_empty</span>
-              <p style={{ marginTop: 8, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Retrieving comm logs...</p>
-            </div>
-          ) : filteredBroadcasts.length === 0 ? (
-            <div style={{ padding: '44px 18px', textAlign: 'center' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))' }}>campaign</span>
-              <p style={{ marginTop: 8, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>No broadcasts found</p>
-            </div>
-          ) : (
-            <div>
-              {filteredBroadcasts.map((b, i) => {
-                const metrics = broadcastMetrics[b.id]
-                const readPct = metrics && metrics.total > 0 ? Math.round((metrics.read / metrics.total) * 100) : null
-                return (
-                  <div key={b.id} style={{ padding: '14px 18px', borderBottom: i < filteredBroadcasts.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
-                    <div style={{ display: 'flex', gap: 6, marginBottom: 7, flexWrap: 'wrap' }}>
-                      <span className={priorityPill(b.priority)}>{b.priority}</span>
-                      <span className="pill pill-mute">{targetLabel(b.target_type, b.target_value)}</span>
-                    </div>
-                    <h4 style={{ margin: '0 0 5px', fontSize: 13, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", color: 'hsl(var(--on-surface))' }}>
-                      {b.title}
-                    </h4>
-                    <p style={{ margin: '0 0 10px', fontSize: 12, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.55, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
-                      {b.content}
-                    </p>
-                    <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>schedule</span>
-                        {new Date(b.created_at).toLocaleString()}
-                      </span>
-                      <span style={{ fontSize: 11, color: 'hsl(var(--primary))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>check_circle</span>
-                        Confirmed
-                      </span>
-                      {metrics && readPct !== null && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
-                            {metrics.read}/{metrics.total} read
-                          </span>
-                          <div style={{ width: 56, height: 4, background: 'hsl(var(--border))', borderRadius: 2, overflow: 'hidden' }}>
-                            <div style={{ width: `${readPct}%`, height: '100%', background: 'hsl(var(--primary))', transition: 'width 0.8s' }} />
-                          </div>
-                        </div>
-                      )}
-                      <button
-                        className="btn btn-ghost btn-sm"
-                        style={{ marginLeft: 'auto', fontSize: 11 }}
-                        onClick={() => fetchMetrics(b.id)}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>refresh</span>
-                        Refresh metrics
-                      </button>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-
-          {/* Mobilization presets */}
-          <div className="panel">
-            <div className="ph">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        {/* 📡 Broadcast History */}
+        <div className="xl:col-span-2">
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden h-full">
+            <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h3>Mobilization presets</h3>
-                <div className="meta">Quick-start protocols</div>
+                <CardTitle className="text-sm font-bold tracking-tight">Broadcast history</CardTitle>
+                <p className="text-micro font-bold text-muted-foreground/40 mt-1">HQ-to-field transmission log</p>
               </div>
-            </div>
-            <div style={{ padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search broadcasts..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full md:w-64 h-10 pl-10 pr-4 bg-white border border-border/40 rounded-sm text-xs font-bold text-on-surface focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {isLoading ? (
+                <div className="px-6 py-20 text-center space-y-4">
+                  <Hourglass className="w-12 h-12 text-muted-foreground/10 animate-pulse" />
+                  <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">Retrieving comm logs...</p>
+                </div>
+              ) : filteredBroadcasts.length === 0 ? (
+                <div className="px-6 py-20 text-center space-y-4">
+                  <Megaphone className="w-12 h-12 text-muted-foreground/10" />
+                  <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">No broadcasts found</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-border/40 max-h-[800px] overflow-y-auto custom-scrollbar">
+                  {filteredBroadcasts.map((b) => {
+                    const metrics = broadcastMetrics[b.id]
+                    const readPct = metrics && metrics.total > 0 ? Math.round((metrics.read / metrics.total) * 100) : null
+                    return (
+                      <div key={b.id} className="p-6 hover:bg-muted/30 transition-colors space-y-4">
+                        <div className="flex flex-wrap gap-2">
+                          <span className={cn(
+                            "px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border rounded-md",
+                            priorityPill(b.priority)
+                          )}>
+                            {b.priority}
+                          </span>
+                          <span className="px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border border-border/20 bg-muted/10 text-muted-foreground/60 rounded-md">
+                            {targetLabel(b.target_type, b.target_value)}
+                          </span>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-on-surface m-0">{b.title}</h4>
+                          <p className="text-xs text-muted-foreground/80 leading-relaxed mt-2 font-medium">{b.content}</p>
+                        </div>
+                        <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+                          <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/40 uppercase tracking-tighter">
+                              <Clock className="w-3.5 h-3.5" />
+                              {new Date(b.created_at).toLocaleString()}
+                            </div>
+                            <div className="flex items-center gap-2 text-micro font-bold text-primary uppercase tracking-tighter">
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              Confirmed
+                            </div>
+                            {metrics && readPct !== null && (
+                              <div className="flex items-center gap-3">
+                                <span className="text-micro font-bold text-muted-foreground/60 uppercase tracking-tighter">
+                                  {metrics.read}/{metrics.total} Read
+                                </span>
+                                <div className="w-16 h-1 bg-muted/40 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-primary transition-all duration-1000" 
+                                    style={{ width: `${readPct}%` }} 
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="h-8 text-micro font-bold capitalize tracking-tight px-4 bg-transparent border-border/20 text-muted-foreground/60 hover:bg-muted/40"
+                            onClick={() => fetchMetrics(b.id)}
+                          >
+                            <RefreshCw className="w-3 h-3 mr-1.5" />
+                            Refresh
+                          </Button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 🛠️ Sidebar Protocols */}
+        <div className="xl:col-span-1 space-y-8">
+          {/* Mobilization Presets */}
+          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
+            <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-bold tracking-tight">Mobilization presets</CardTitle>
+                <p className="text-micro font-bold text-muted-foreground/40 mt-1">Quick-start protocols</p>
+              </div>
+              <BarChart className="w-5 h-5 text-muted-foreground/40" />
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
               {templates.map((t, i) => (
                 <div
                   key={i}
-                  style={{
-                    padding: '10px 12px',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                    transition: 'border-color 0.15s, background 0.15s',
-                  }}
+                  className="p-4 border border-border/40 rounded-sm cursor-pointer hover:border-primary hover:bg-muted/10 transition-all group space-y-3"
                   onClick={() => navigate('/admin/broadcasts/new', { state: { template: t } })}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'hsl(var(--primary))'; e.currentTarget.style.background = 'hsl(var(--container-low))' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'hsl(var(--border))'; e.currentTarget.style.background = 'transparent' }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
-                    <span className={priorityPill(t.priority)}>{t.priority}</span>
-                    <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase' }}>{t.type}</span>
+                  <div className="flex justify-between items-center">
+                    <span className={cn(
+                      "px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest border rounded-sm",
+                      priorityPill(t.priority)
+                    )}>
+                      {t.priority}
+                    </span>
+                    <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">{t.type}</span>
                   </div>
-                  <b style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', display: 'block', marginBottom: 3 }}>{t.title}</b>
-                  <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.45, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, maxHeight: 30, overflow: 'hidden' }}>
-                    {t.content}
-                  </p>
+                  <h5 className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors m-0">{t.title}</h5>
+                  <p className="text-[10px] text-muted-foreground/60 leading-relaxed font-medium line-clamp-2 m-0">{t.content}</p>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Protocol Red */}
-          <div className="panel" style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', color: '#fff', overflow: 'hidden', position: 'relative', borderTop: '3px solid hsl(var(--destructive))' }}>
-            <div style={{ position: 'absolute', right: -20, bottom: -20, pointerEvents: 'none', opacity: 0.06 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 130, color: '#fff' }}>campaign</span>
+          <Card className="rounded-sm border-t-4 border-t-destructive bg-on-surface text-white overflow-hidden relative shadow-xl">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
+            <div className="absolute -right-8 -bottom-8 opacity-5">
+              <Megaphone style={{ fontSize: 160 }} />
             </div>
-            <div style={{ padding: '18px', position: 'relative', zIndex: 1 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--destructive))', display: 'block', marginBottom: 10 }}>crisis_alert</span>
-              <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: '#fff', margin: '0 0 8px' }}>Protocol red</h3>
-              <p style={{ margin: '0 0 16px', fontSize: 11.5, color: 'rgba(255,255,255,.55)', lineHeight: 1.55, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
-                Urgent mobilization triggers immediate notifications to all connected field assets. Use only for critical broadcasts.
-              </p>
-              <button
-                className="btn btn-dest"
-                style={{ width: '100%', justifyContent: 'center' }}
+            <CardContent className="p-8 relative z-10 space-y-6 text-center">
+              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-2">
+                <AlertTriangle className="w-10 h-10 text-destructive" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold tracking-tight m-0">Protocol Red</h3>
+                <p className="text-xs text-white/40 leading-relaxed font-medium normal-case">
+                  Urgent mobilization triggers immediate notifications to all connected field assets. Use only for critical broadcasts.
+                </p>
+              </div>
+              <Button
+                variant="primary"
+                className="w-full h-12 text-micro font-bold uppercase tracking-widest bg-destructive hover:bg-destructive/80 text-white shadow-lg shadow-destructive/20"
                 onClick={() => navigate('/admin/broadcasts/new', { state: { template: templates[2] } })}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>warning</span>
-                Trigger tactical alert
-              </button>
-            </div>
-          </div>
-
+                <AlertCircle className="w-4 h-4 mr-2" />
+                Trigger Tactical Alert
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

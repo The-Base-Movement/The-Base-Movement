@@ -13,6 +13,8 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/neon-button'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -619,6 +621,7 @@ export default function AdminBlogs() {
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--on-surface))' }}>article</span>
             Editorial command
           </h2>
+          <BrandLine />
         </div>
         <div className="actions">
           <Button variant="outline" className="h-10 px-4 text-[12px] font-bold tracking-tight rounded-sm border-border/40 gap-2">
@@ -635,27 +638,29 @@ export default function AdminBlogs() {
       </div>
 
       {/* KPI Stats Row */}
-      <div className="kpis">
-        <div className="kpi">
-          <div className="l">Total articles</div>
-          <div className="v">{posts.length}</div>
-          <div className="d">Across all categories</div>
-        </div>
-        <div className="kpi" style={{ '--ac': 'hsl(var(--brand-green))' } as React.CSSProperties}>
-          <div className="l" style={{ color: 'hsl(var(--brand-green))' }}>Authorized</div>
-          <div className="v">{posts.filter(p => p.status === 'Published').length}</div>
-          <div className="d">Live in public feed</div>
-        </div>
-        <div className="kpi" style={{ '--ac': 'hsl(var(--brand-gold))' } as React.CSSProperties}>
-          <div className="l" style={{ color: 'hsl(var(--brand-gold))' }}>Pending review</div>
-          <div className="v">{posts.filter(p => p.status === 'Pending Verification').length}</div>
-          <div className="d">Awaiting editorial clearance</div>
-        </div>
-        <div className="kpi" style={{ '--ac': 'hsl(var(--on-surface-muted))' } as React.CSSProperties}>
-          <div className="l">Drafts</div>
-          <div className="v">{posts.filter(p => p.status === 'Draft').length}</div>
-          <div className="d">Work in progress</div>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Total articles"
+          value={posts.length}
+          description="Across all categories"
+        />
+        <TacticalKPI 
+          label="Authorized"
+          value={posts.filter(p => p.status === 'Published').length}
+          description="Live in public feed"
+          trend={{ direction: 'up', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Pending review"
+          value={posts.filter(p => p.status === 'Pending Verification').length}
+          description="Awaiting editorial clearance"
+          trend={{ direction: 'neutral', value: 'Pending' }}
+        />
+        <TacticalKPI 
+          label="Drafts"
+          value={posts.filter(p => p.status === 'Draft').length}
+          description="Work in progress"
+        />
       </div>
 
       <div className="sidebar-main">

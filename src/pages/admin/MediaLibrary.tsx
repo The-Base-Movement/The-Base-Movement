@@ -19,7 +19,8 @@ import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 export default function MediaLibrary() {
   const [files, setFiles] = useState<string[]>([])
@@ -177,6 +178,32 @@ export default function MediaLibrary() {
         </div>
       </div>
 
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Total assets"
+          value={files.length}
+          description="In current vault"
+          trend={{ direction: 'neutral', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Active folder"
+          value={activeFolder}
+          description="Context segment"
+        />
+        <TacticalKPI 
+          label="Storage usage"
+          value="12%"
+          description="Of 5.0 GB limit"
+          trend={{ direction: 'neutral', value: 'Optimal' }}
+        />
+        <TacticalKPI 
+          label="Sync status"
+          value="Online"
+          description="Supabase connected"
+          trend={{ direction: 'up', value: 'Elite' }}
+        />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Mobile Category Dropdown */}

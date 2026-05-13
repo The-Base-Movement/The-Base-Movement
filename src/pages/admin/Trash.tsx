@@ -7,7 +7,6 @@ import {
   FileText, 
   Package, 
   Image as ImageIcon,
-  ShieldAlert,
   Search,
   AlertCircle,
   Archive,
@@ -20,7 +19,8 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { PenTool } from 'lucide-react'
 
 type TrashTab = 'blogs' | 'products' | 'media' | 'authors'
@@ -152,20 +152,31 @@ export default function TrashPage() {
           <p className="text-muted-foreground/80 text-sm mt-1">Staging area for decommissioned assets and intelligence records awaiting purge.</p>
         </div>
         
-        <div className="bg-stone-50/80 backdrop-blur-sm rounded-sm px-8 py-5 border border-stone-200/60 flex items-center gap-8 shadow-sm">
-          <div className="flex flex-col">
-            <span className="text-xs font-bold tracking-tight text-on-surface/60 uppercase">Retention protocol</span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-on-surface">30</span>
-              <span className="text-micro font-bold text-on-surface/40">Days</span>
-            </div>
-          </div>
-          <div className="w-px h-8 bg-stone-200" />
-          <div className="flex items-center gap-2 text-xs font-bold text-destructive">
-            <ShieldAlert className="w-5 h-5" />
-            Purge sequence active
-          </div>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Total archived"
+          value={blogs.length + products.length + media.length + authors.length}
+          description="Awaiting purge"
+          trend={{ direction: 'neutral', value: 'Vault' }}
+        />
+        <TacticalKPI 
+          label="Retention"
+          value="30 Days"
+          description="Security protocol"
+          trend={{ direction: 'neutral', value: 'Active' }}
+        />
+        <TacticalKPI 
+          label="Active sector"
+          value={activeTab === 'blogs' ? 'Editorial' : activeTab === 'products' ? 'Logistics' : activeTab === 'media' ? 'Assets' : 'Personnel'}
+          description="Context segment"
+        />
+        <TacticalKPI 
+          label="Purge status"
+          value="Online"
+          description="Decommissioning active"
+          trend={{ direction: 'down', value: 'Alert' }}
+        />
+      </div>
       </div>
 
       {/* Main Layout Grid with Sticky Aside */}

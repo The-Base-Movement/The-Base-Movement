@@ -1,4 +1,5 @@
 import type { InventoryItem, ResourceRequest } from '@/services/adminService'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 interface StoreStatsOverviewProps {
   products: InventoryItem[]
@@ -22,32 +23,30 @@ export function StoreStatsOverview({ products, requests, lowStockItems }: StoreS
 
   return (
     <>
-      {/* KPI strip */}
-      <div className="kpis">
-        <div className={lowStockItems.length > 0 ? 'kpi r' : 'kpi k'}>
-          <div className="l">Inventory alerts</div>
-          <div className="v">{lowStockItems.length}</div>
-          <div className="d">
-            {lowStockItems.length > 0 ? 'Replenishment required' : 'Supply chain stable'}
-          </div>
-        </div>
-        <div className={pendingRequests > 0 ? 'kpi g' : 'kpi k'}>
-          <div className="l">Active requests</div>
-          <div className="v">{pendingRequests}</div>
-          <div className="d">
-            {pendingRequests > 0 ? 'Pending HQ approval' : 'All processed'}
-          </div>
-        </div>
-        <div className="kpi k">
-          <div className="l">Stock units</div>
-          <div className="v">{totalStockUnits.toLocaleString()}</div>
-          <div className="d">Across {products.length} catalog items</div>
-        </div>
-        <div className="kpi gr">
-          <div className="l">Stock value</div>
-          <div className="v">₵{stockValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
-          <div className="d">Movement asset valuation</div>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="Inventory alerts"
+          value={lowStockItems.length}
+          description={lowStockItems.length > 0 ? 'Replenishment required' : 'Supply chain stable'}
+          trend={lowStockItems.length > 0 ? { direction: 'down', value: 'Alert' } : { direction: 'neutral', value: 'Optimal' }}
+        />
+        <TacticalKPI 
+          label="Active requests"
+          value={pendingRequests}
+          description={pendingRequests > 0 ? 'Pending HQ approval' : 'All processed'}
+          trend={pendingRequests > 0 ? { direction: 'up', value: 'Action' } : { direction: 'neutral', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Stock units"
+          value={totalStockUnits.toLocaleString()}
+          description={`Across ${products.length} catalog items`}
+        />
+        <TacticalKPI 
+          label="Stock value"
+          value={`₵${stockValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
+          description="Movement asset valuation"
+          trend={{ direction: 'up', value: 'Elite' }}
+        />
       </div>
 
       {/* Fulfillment intelligence */}

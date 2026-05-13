@@ -375,6 +375,11 @@
 .kpi.g { --ac: hsl(var(--accent)); }
 .kpi.k { --ac: var(--charcoal); }
 .kpi.gr { --ac: hsl(var(--primary)); }
+/* BrandLine · Elite Industrial Spec */
+.bl { display:flex; height:6px; width:128px; margin-top:14px; }
+.bl > div:nth-child(1) { background: #CE1126; flex: 1; }
+.bl > div:nth-child(2) { background: #DAA520; flex: 1; }
+.bl > div:nth-child(3) { background: #006B3F; flex: 1; }
 .kpi .l { font-size: 9.5px; color: hsl(var(--on-surface-muted)); font-family: 'Public Sans'; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; line-height: 1; }
 .kpi .v { font-family: 'Public Sans'; font-weight: 800; font-size: 24px; letter-spacing: -.02em; line-height: 1; margin: 8px 0 4px; color: hsl(var(--on-surface)); }
 .kpi .d { font-size: 10.5px; font-family: 'Public Sans'; font-weight: 700; color: hsl(var(--primary)); display: flex; align-items: center; }

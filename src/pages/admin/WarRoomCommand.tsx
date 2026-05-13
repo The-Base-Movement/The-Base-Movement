@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/neon-button'
 import { supabase } from '@/lib/supabase'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const formatGhanaTime = (dateStr: string | Date, options: Intl.DateTimeFormatOptions) => {
   try {
@@ -169,43 +171,6 @@ export default function WarRoomCommand() {
     }
   }
 
-  const kpis = [
-    { 
-      label: 'Sign-ups · today', 
-      value: pulse ? pulse.nationalGrowth.toLocaleString() : '...', 
-      delta: pulse ? `▲ ${pulse.nationalGrowth > 0 ? 'Active' : 'Neutral'}` : '...', 
-      deltaUp: true, 
-      accent: 'hsl(var(--destructive))' 
-    },
-    { 
-      label: 'MoMo donations', 
-      value: donationStats ? `₵${(donationStats.approvedAmount / 1000).toFixed(1)}K` : '...', 
-      delta: donationStats ? `▲ ${donationStats.totalContributions} units` : '...', 
-      deltaUp: true, 
-      accent: 'hsl(var(--accent))' 
-    },
-    { 
-      label: 'Field sectors', 
-      value: String(directives.length), 
-      delta: `${directives.filter(d => d.priority === 'CRITICAL').length} critical`, 
-      deltaUp: true, 
-      accent: 'hsl(var(--primary))' 
-    },
-    { 
-      label: 'Verified patriots', 
-      value: memberCount.toLocaleString(), 
-      delta: `${chapterCount} active chapters`, 
-      deltaUp: true, 
-      accent: 'rgba(255,255,255,.6)' 
-    },
-    { 
-      label: 'Active incidents', 
-      value: String(incidents.length), 
-      delta: incidents.length > 0 ? 'Rapid response' : 'Sectors clear', 
-      deltaUp: incidents.length === 0, 
-      accent: 'hsl(var(--destructive))' 
-    },
-  ]
 
   if (loading) {
     return (
@@ -230,6 +195,7 @@ export default function WarRoomCommand() {
               <h2 className="font-meta font-extrabold text-[22px] text-white tracking-[-0.015em] leading-tight">
                 War Room — live mobilization
               </h2>
+              <BrandLine />
               <span className="inline-flex items-center gap-[6px] font-extrabold text-[10.5px] uppercase tracking-[.06em] px-[10px] py-1 rounded-full border self-start sm:self-auto"
                 style={{ color: 'hsl(var(--destructive))', background: 'rgba(206,17,38,.12)', borderColor: 'rgba(206,17,38,.3)' }}>
                 <span className="w-[6px] h-[6px] rounded-full animate-pulse block" style={{ background: 'hsl(var(--destructive))' }} />
@@ -251,20 +217,38 @@ export default function WarRoomCommand() {
           </div>
         </div>
 
-        {/* ── KPI Strip ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-[8px] sm:gap-[10px] mb-[14px]">
-          {kpis.map((k, i) => (
-            <div key={i} className={`relative rounded-[6px] overflow-hidden px-3 sm:px-4 py-[12px] sm:py-[14px]${i === kpis.length - 1 ? ' col-span-2 sm:col-span-1' : ''}`}
-              style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e', borderLeft: `3px solid ${k.accent}` }}>
-              <div className="text-[8.5px] sm:text-[9.5px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'rgba(255,255,255,.5)' }}>{k.label}</div>
-              <div className="font-extrabold text-[20px] sm:text-[26px] tracking-[-0.02em] leading-none my-1.5 sm:my-2 text-white tabular-nums">{k.value}</div>
-              <div className={cn("text-[9.5px] sm:text-[10.5px] font-extrabold inline-flex items-center gap-1")}
-                style={{ color: k.deltaUp ? 'hsl(var(--primary))' : 'hsl(var(--destructive))' }}>
-                {k.delta}
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+        <TacticalKPI 
+          label="Sign-ups · today"
+          value={pulse ? pulse.nationalGrowth.toLocaleString() : '...'}
+          description="National growth"
+          trend={pulse?.nationalGrowth ? { direction: 'up', value: 'Active' } : { direction: 'neutral', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="MoMo donations"
+          value={donationStats ? `₵${(donationStats.approvedAmount / 1000).toFixed(1)}K` : '...'}
+          description={`${donationStats?.totalContributions || 0} contributions`}
+          trend={{ direction: 'up', value: 'Elite' }}
+        />
+        <TacticalKPI 
+          label="Field sectors"
+          value={directives.length}
+          description={`${directives.filter(d => d.priority === 'CRITICAL').length} critical`}
+          trend={{ direction: 'neutral', value: 'Sync' }}
+        />
+        <TacticalKPI 
+          label="Verified patriots"
+          value={memberCount.toLocaleString()}
+          description={`${chapterCount} active chapters`}
+          trend={{ direction: 'up', value: 'Optimal' }}
+        />
+        <TacticalKPI 
+          label="Active incidents"
+          value={incidents.length}
+          description={incidents.length > 0 ? 'Rapid response' : 'Sectors clear'}
+          trend={incidents.length > 0 ? { direction: 'down', value: 'Alert' } : { direction: 'up', value: 'Elite' }}
+        />
+      </div>
 
         {/* ── 3-column grid: Map · Table · Feed ── */}
         <div className="war-room-main-grid mb-[12px]">

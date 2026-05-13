@@ -15,7 +15,8 @@ import type { MemberFeedback, SentimentIntelligence, ImpactProjection } from '@/
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { useToast } from '@/hooks/use-toast'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 export default function SentimentIntelligence() {
   const [feedback, setFeedback] = useState<MemberFeedback[]>([])
@@ -116,6 +117,33 @@ export default function SentimentIntelligence() {
             </Button>
           </div>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI 
+          label="National Score"
+          value={(nationalScore * 100).toFixed(1)}
+          description="Average sentiment"
+          trend={{ direction: nationalScore >= 0 ? 'up' : 'down', value: 'Live' }}
+        />
+        <TacticalKPI 
+          label="Total Intercepts"
+          value={feedback.length}
+          description="Member feedback"
+          trend={{ direction: 'neutral', value: 'Vault' }}
+        />
+        <TacticalKPI 
+          label="Critical Alerts"
+          value={sentimentMetrics.reduce((s, m) => s + m.negative_count, 0)}
+          description="Requires attention"
+          trend={{ direction: 'down', value: 'Alert' }}
+        />
+        <TacticalKPI 
+          label="Projected Reach"
+          value={projections.reduce((s, p) => s + p.projected_reach_30d, 0).toLocaleString()}
+          description="30-day forecast"
+          trend={{ direction: 'up', value: 'Growth' }}
+        />
       </div>
 
       <div className="flex-columns items-start" style={{ '--column-gap': '2rem', '--column-breakpoint': '120ch' } as React.CSSProperties}>

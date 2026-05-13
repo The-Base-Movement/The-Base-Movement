@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
 import { 
-  Calendar, 
-  MapPin, 
-  Users, 
-  DollarSign, 
   Plus, 
-  TrendingUp, 
   Activity, 
-  ChevronRight,
-  Clock,
+  MapPin,
   BarChart3,
-  Search
+  Search,
+  ChevronRight,
+  Calendar,
+  TrendingUp,
+  Clock,
+  DollarSign
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/neon-button'
@@ -18,7 +17,8 @@ import { adminService } from '@/services/adminService'
 import type { FieldEvent, MobilizationLedger } from '@/services/adminService'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 export default function ChapterLeadHub() {
   const [events, setEvents] = useState<FieldEvent[]>([])
@@ -30,7 +30,6 @@ export default function ChapterLeadHub() {
     const fetchData = async () => {
       setLoading(true)
       try {
-        // In a real scenario, we'd get the chapter from the user's admin profile
         const user = adminService.getCurrentUser()
         const chapter = user?.chapter || 'Greater Accra Central'
         setChapterName(chapter)
@@ -53,11 +52,11 @@ export default function ChapterLeadHub() {
 
   const stats = {
     totalEvents: events.length,
-    activeMembers: 1240, // Mocked for now
+    activeMembers: 1240,
     availableBudget: ledger.reduce((acc, curr) => 
       curr.transaction_type === 'Allocation' ? acc + curr.amount : acc - curr.amount, 0
     ),
-    mobilizationStrength: 88 // Percentage
+    mobilizationStrength: 88
   }
 
   if (loading) {
@@ -100,27 +99,35 @@ export default function ChapterLeadHub() {
       </div>
 
       {/* 📊 Intelligence Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {[
-          { label: 'Mobilization strength', value: `${stats.mobilizationStrength}%`, icon: Activity, color: 'text-destructive', bg: 'bg-destructive/5' },
-          { label: 'Active patriots', value: stats.activeMembers.toLocaleString(), icon: Users, color: 'text-primary', bg: 'bg-primary/5' },
-          { label: 'Operations budget', value: `GH₵${stats.availableBudget.toLocaleString()}`, icon: DollarSign, color: 'text-accent', bg: 'bg-accent/5' },
-          { label: 'Planned events', value: stats.totalEvents.toString(), icon: Calendar, color: 'text-on-surface/60', bg: 'bg-muted/5' },
-        ].map((stat, i) => (
-          <Card key={i} className="rounded-sm border-border/60 shadow-sm group hover:border-on-surface transition-colors overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-micro font-bold normal-case text-muted-foreground/40 mb-1">{stat.label}</p>
-                  <h3 className="text-2xl font-bold font-meta text-on-surface tracking-tighter">{stat.value}</h3>
-                </div>
-                <div className={cn("w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110 rounded-sm", stat.bg)}>
-                  <stat.icon className={cn("w-5 h-5", stat.color)} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[14px] mb-[18px]">
+        <TacticalKPI 
+          label="Mobilization Strength"
+          value={`${stats.mobilizationStrength}%`}
+          variant="red"
+          description="Tactical efficiency score for regional deployment"
+          delta="▲ Strong"
+        />
+        <TacticalKPI 
+          label="Active Patriots"
+          value={stats.activeMembers.toLocaleString()}
+          variant="black"
+          description="Verified citizens currently active in this chapter"
+          delta="+4 today"
+        />
+        <TacticalKPI 
+          label="Operations Budget"
+          value={`GH₵${stats.availableBudget.toLocaleString()}`}
+          variant="gold"
+          description="Available liquidity for regional field operations"
+          delta="Stable"
+        />
+        <TacticalKPI 
+          label="Planned Events"
+          value={stats.totalEvents.toString()}
+          variant="green"
+          description="Upcoming tactical field operations and rallies"
+          delta="Upcoming"
+        />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
