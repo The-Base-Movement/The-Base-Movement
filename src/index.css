@@ -252,6 +252,9 @@
   .pill-warn { background: rgba(218,165,32,.10);  color: #a87d10;                 border-color: rgba(218,165,32,.2); }
   .pill-err  { background: rgba(206,17,38,.08);   color: hsl(var(--destructive)); border-color: rgba(206,17,38,.18); }
   .pill-mute { background: hsl(var(--muted));     color: hsl(var(--on-surface-muted)); border-color: hsl(var(--border)); }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .text-micro { font-size: var(--fs-micro); }
+  .text-tiny { font-size: var(--fs-tiny); }
 }
 
 /* Material Symbols configuration */
@@ -366,7 +369,7 @@
 
 /* KPI strip */
 .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
-.kpi { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 6px; padding: 14px 16px; position: relative; overflow: hidden; }
+.kpi { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 6px; padding: 14px 16px; position: relative; overflow: hidden; --ac: var(--charcoal); }
 .kpi::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--ac); }
 .kpi.r { --ac: hsl(var(--destructive)); }
 .kpi.g { --ac: hsl(var(--accent)); }
@@ -407,6 +410,11 @@
   /* Verification detail panel header */
   .verify-identity-row { flex-wrap: wrap; }
   .verify-field-grid { grid-template-columns: 1fr !important; }
+  /* Chapters page overrides */
+  .chapters-charts-grid { grid-template-columns: 1fr !important; }
+  .chapters-density-split { flex-direction: column !important; }
+  .chapters-density-split > div { width: 100% !important; }
+  .chapters-modal-grid { grid-template-columns: 1fr !important; }
 }
 
 /* Responsive visibility utilities */
@@ -422,10 +430,35 @@
 .donation-split { display: grid; gap: 14px; }
 @media (max-width: 899px) { .donation-split { grid-template-columns: 1fr !important; } }
 
-.member-quick-stats { display: grid; grid-template-columns: repeat(4,1fr); }
+.member-quick-stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 18px; margin-top: 18px; }
+.member-quick-stats > div { border-left: 1px solid rgba(255,255,255,0.08); padding: 0 18px; }
+.member-quick-stats > div:first-child { border-left: none; padding-left: 0; }
+.member-quick-stats .sl { font-size: 9.5px; color: rgba(255,255,255,0.5); font-family: 'Public Sans'; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; line-height: 1; }
+.member-quick-stats .sv { font-family: 'Public Sans'; font-weight: 800; font-size: 22px; letter-spacing: -.015em; margin: 8px 0 4px; color: #fff; line-height: 1; }
+.member-quick-stats .sd { font-size: 10.5px; color: rgba(255,255,255,0.6); font-family: 'Public Sans'; font-weight: 700; }
+.member-quick-stats .sv.accent { color: hsl(var(--accent)); }
 
 .vault-body-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; }
 @media (max-width: 640px) { .vault-body-grid { grid-template-columns: 1fr; gap: 20px; } }
+
+/* Public Footer responsive grid */
+.footer-grid { display: grid; grid-template-columns: 2fr 2fr 1.5fr; gap: 0 48px; align-items: start; }
+@media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr !important; row-gap: 48px; } }
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr !important; row-gap: 0 !important; }
+  .footer-grid > * { padding: 32px 0; }
+  .footer-grid > *:first-child { padding-top: 0; }
+  .footer-grid > * + * { border-top: 1px solid hsl(var(--border)); }
+}
+
+/* Profile Settings page */
+.profile-page { padding: 24px; }
+.profile-cols { display: grid; grid-template-columns: 5fr 7fr; gap: 24px; align-items: start; }
+.profile-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+.profile-form-full { grid-column: 1 / -1; }
+@media (max-width: 960px) { .profile-cols { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .profile-form-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .profile-page { padding: 14px 14px 60px; } }
 
 /* Panels & Tables */
 .panel { background: #fff; border: 1px solid hsl(var(--border)); border-radius: 6px; overflow: hidden; }

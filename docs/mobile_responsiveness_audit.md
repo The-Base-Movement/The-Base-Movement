@@ -6,12 +6,12 @@ This document tracks the hardening and visual synchronization of mobile viewport
 
 | Module | Status | Features Implemented | Refined Typography | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| **Chapters** | ✅ Hardened | Mobile Filter Drawer (Sheet), Sticky Desktop Filter, Terminology Normalized | 11px standardized | Fully responsive 3-column grid (desktop) to single stack (mobile). |
-| **Store** | ✅ Hardened | 2-column mobile grid, Mobile Filter Drawer (Sheet), Pagination Component | 11px standardized | High-density 2-column mobile grid with category drawers. |
+| **Chapters** | ✅ Hardened | Step 5 Filter Pattern, Responsive Geospatial Grid, Chart Stacking | 11px standardized | Fully responsive charts and density maps. KPI cards standardized with .tnum. |
+| **Store** | ✅ Hardened | 2-column mobile grid, KPI strip standardization, Logistics Audit | 11px standardized | High-density 2-column mobile grid. Stats borders fixed. |
 | **Home** | ⏳ Pending | - | - | Initial mobile pass complete; needs typographic hardening. |
 | **Blog** | ⏳ Pending | - | - | Needs transition to high-fidelity mobile card stacks. |
-| **Orders** | ✅ Hardened | Mobile Filter Drawer (Sheet), High-density Typography, Grid Stats | 11px standardized | Optimized mobile feed with details drawer and fulfillment synchronization. |
-| **Dashboard** | ⏳ Pending | - | - | Core layout synchronized; sub-modules need individual audits. |
+| **Orders** | ✅ Hardened | Mobile Filter Pattern, High-density Typography, Grid Stats | 11px standardized | Optimized mobile feed with .tnum KPIs and fulfillment synchronization. |
+| **Dashboard** | ✅ Hardened | Standardized KPI Strip, Operational Telemetry, Verification Queue | 11px standardized | Core layout and stats fully synchronized with design handoff. |
 
 ## Implementation Protocol
 
