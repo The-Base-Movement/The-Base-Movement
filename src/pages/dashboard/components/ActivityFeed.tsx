@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { cn } from '@/lib/utils'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
 import { formatDistanceToNow } from 'date-fns'
@@ -113,10 +112,7 @@ export function ActivityFeed() {
               </div>
               {act.amt && <div className="amt tnum">{act.amt}</div>}
               {act.status && (
-                <span className={cn(
-                  "pill font-meta font-bold uppercase tracking-tight",
-                  act.status === 'Verified' ? "pill-ok" : "pill-mute"
-                )}>
+                <span className={`pill font-meta font-bold uppercase tracking-tight ${act.status === 'Verified' ? 'pill-ok' : 'pill-mute'}`}>
                   {act.status}
                 </span>
               )}

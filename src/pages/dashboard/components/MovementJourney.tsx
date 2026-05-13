@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
 import { format } from 'date-fns'
@@ -92,7 +91,7 @@ export function MovementJourney() {
           {steps.map((step, i) => (
             <div key={i} className="step animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${i * 100}ms` }}>
               <div className="side">
-                <div className={cn("dot", step.type === 'c' ? 'complete' : step.type === 'd' ? 'active' : 'upcoming')}>
+                <div className={`dot ${step.type === 'c' ? 'complete' : step.type === 'd' ? 'active' : 'upcoming'}`}>
                   {step.type === 'd' && <div className="inner-dot" />}
                 </div>
                 {i < steps.length - 1 && <div className="line" />}
@@ -103,11 +102,12 @@ export function MovementJourney() {
                     <b className="font-meta font-extrabold text-[13px] tracking-tight text-on-surface">{step.title}</b>
                     <span className="text-[11px] text-on-surface-muted block mt-0.5">{step.date}</span>
                   </div>
-                  <span className={cn(
-                    "pill font-meta font-bold uppercase tracking-tight text-[9px] px-2 py-0.5 rounded-full border",
-                    step.status === 'Complete' || step.status === 'Verified' ? "bg-brand-green/10 text-brand-green border-brand-green/20" : 
-                    step.status === 'In progress' ? "bg-brand-gold/10 text-brand-gold border-brand-gold/20" : "bg-on-surface/5 text-on-surface/40 border-on-surface/10"
-                  )}>
+                  <span className="pill" style={{
+                    fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.04em', padding: '3px 8px', borderRadius: 4, border: '1px solid',
+                    background: step.status === 'Complete' || step.status === 'Verified' ? 'rgba(0,107,63,0.08)' : step.status === 'In progress' ? 'rgba(var(--accent-rgb),0.08)' : 'rgba(0,0,0,0.04)',
+                    color: step.status === 'Complete' || step.status === 'Verified' ? 'hsl(var(--primary))' : step.status === 'In progress' ? 'hsl(var(--accent))' : 'hsl(var(--on-surface-muted))',
+                    borderColor: step.status === 'Complete' || step.status === 'Verified' ? 'rgba(0,107,63,0.15)' : step.status === 'In progress' ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.08)',
+                  }}>
                     {step.status}
                   </span>
                 </div>

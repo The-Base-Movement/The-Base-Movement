@@ -5,7 +5,6 @@ import MembershipCard from '@/components/MembershipCard'
 import { QuickActions } from './dashboard/components/QuickActions'
 import { ActivityFeed } from './dashboard/components/ActivityFeed'
 import { MovementJourney } from './dashboard/components/MovementJourney'
-import { Button as NeonButton } from '@/components/ui/neon-button'
 import { donationService } from '@/services/donationService'
 import { gamificationService } from '@/services/gamificationService'
 
@@ -92,29 +91,12 @@ export default function Dashboard() {
 
   return (
     <div className="main animate-in fade-in duration-700">
-      <div className="topbar">
-        <div className="greet">
-          <span className="font-meta font-bold uppercase tracking-[0.06em] text-on-surface-muted text-[10px]">Welcome back</span>
-          <h2 className="font-meta font-extrabold text-[28px] text-on-surface m-0 leading-none mt-1">
-            Akwaaba, {member?.full_name?.split(' ')[0] || 'Kwesi'} 👋
-          </h2>
-        </div>
-        <div className="actions flex items-center gap-3">
-          <div className="search relative hidden md:block">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-muted text-[18px]">search</span>
-            <input 
-              className="bg-white border border-border rounded-[4px] pl-10 pr-4 h-[40px] w-[320px] text-[13px] focus:outline-none focus:border-primary transition-all font-meta" 
-              placeholder="Search the movement…" 
-            />
-          </div>
-          <button className="icon-btn w-10 h-10 flex items-center justify-center bg-white border border-border rounded-[4px] text-on-surface relative hover:bg-surface transition-colors">
-            <span className="material-symbols-outlined text-[20px]">notifications</span>
-            <span className="dot absolute top-[8px] right-[8px] w-1.5 h-1.5 bg-destructive rounded-full" />
-          </button>
-          <NeonButton variant="accent" className="h-10 px-5 text-[11px] font-extrabold uppercase tracking-tight shadow-lg shadow-brand-gold/10">
-            Donate ₵
-          </NeonButton>
-        </div>
+      {/* Welcome */}
+      <div style={{ marginBottom: 24 }}>
+        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Welcome back</span>
+        <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--on-surface))', margin: '4px 0 0', lineHeight: 1, letterSpacing: '-0.01em' }}>
+          Akwaaba, {member?.full_name?.split(' ')[0] || 'Kwesi'} 👋
+        </h2>
       </div>
 
       {/* Stat Tiles */}
@@ -161,10 +143,6 @@ export default function Dashboard() {
 
       <style dangerouslySetInnerHTML={{ __html: `
         .main { min-width: 0; padding-bottom: 40px; }
-        .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-        .topbar h2 { font-size: 28px; font-weight: 800; font-family: 'Public Sans', sans-serif; letter-spacing: -0.01em; }
-        .icon-btn .dot { animation: pulse 1.4s infinite; border: 2px solid #fff; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .feed h3 { font-family: 'Public Sans', sans-serif; }
       ` }} />
     </div>
