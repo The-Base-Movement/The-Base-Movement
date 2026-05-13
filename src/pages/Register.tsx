@@ -10,6 +10,7 @@ import { useBranding } from '@/hooks/useBranding'
 import { ChoiceStep } from './register/components/ChoiceStep'
 import { RegistrationForm } from './register/components/RegistrationForm'
 import { SuccessStep } from './register/components/SuccessStep'
+import { adminService } from '@/services/adminService'
 import type { RegistrationFormData, Region, Constituency } from '@/types/registration'
 import SEO from '@/components/SEO'
 
@@ -185,19 +186,25 @@ export default function Register() {
 
         // 2. NOW upload the avatar using the authenticated session
         let finalAvatarUrl = null
-        if (photoUrl && croppedAreaPixels) {
+        if (photoUrl && croppedAreaPixels && authData.user) {
           try {
             const croppedBlob = await getCroppedImg(photoUrl, croppedAreaPixels)
             if (croppedBlob) {
-              const fileName = `${regNo}.jpg`
-              const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, croppedBlob, { upsert: true, contentType: 'image/jpeg' })
+              // Standardize pathing: {userId}/{timestamp}.jpg
+              const fileName = adminService.generateAvatarPath(authData.user.id)
+              const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
+              
               if (!uploadError) {
-                const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(fileName)
-                finalAvatarUrl = urlData.publicUrl
+                finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
                 // Update auth metadata with the new avatar URL
                 await supabase.auth.updateUser({ data: { avatar_url: finalAvatarUrl } })
               } else {
-                console.error("Avatar upload error:", uploadError)
+                console.error("Avatar upload error details:", {
+                  error: uploadError,
+                  fileName,
+                  user: authData.user.id
+                })
+                toast.error("Profile picture upload failed. You can update it in settings later.")
               }
             }
           } catch (err) {

@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
-import type { VoterRegistration, CanvassingCampaign, CanvasserLog, GOTVTransportRequest } from '@/types/admin'
+import type { CanvassingCampaign, CanvasserLog, GOTVTransportRequest } from '@/types/admin'
 import { toast } from 'sonner'
 
 export default function GroundGameCommand() {
   const navigate = useNavigate()
-  const [voterRegs, setVoterRegs] = useState<VoterRegistration[]>([])
   const [campaigns, setCampaigns] = useState<CanvassingCampaign[]>([])
   const [transportReqs, setTransportReqs] = useState<GOTVTransportRequest[]>([])
   const [fieldLogs, setFieldLogs] = useState<CanvasserLog[]>([])
@@ -17,13 +16,12 @@ export default function GroundGameCommand() {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const [v, c, t, l] = await Promise.all([
-        adminService.getVoterRegistrations(),
+      const [c, t, l] = await Promise.all([
         adminService.getCanvassingCampaigns(),
         adminService.getGOTVTransportRequests(),
         adminService.getCanvasserLogs()
       ])
-      setVoterRegs(v); setCampaigns(c); setTransportReqs(t); setFieldLogs(l)
+      setCampaigns(c); setTransportReqs(t); setFieldLogs(l)
     } catch {
       toast.error('Failed to synchronize with Ground Game servers.')
     } finally { setLoading(false) }
@@ -54,18 +52,18 @@ export default function GroundGameCommand() {
   const topScore = leaderboard[0]?.[1] || 1
 
   const PLACEHOLDER_LB = [
-    { name: 'Yaw Kankam',   area: 'Lapaz 04 · 4h 12m',    score: 32, pct: 90 },
-    { name: 'Esi Mensah',   area: 'Lapaz 04 · 3h 48m',    score: 28, pct: 78 },
-    { name: 'Akua Owusu',   area: 'Achimota 07 · 3h 02m', score: 22, pct: 62 },
-    { name: 'Kweku Donkor', area: 'Lapaz 04 · 2h 41m',    score: 18, pct: 50 },
-    { name: 'Ama Sarpong',  area: 'Achimota 07 · 2h 18m', score: 15, pct: 42 },
+    { name: 'Yaw Kankam', area: 'Lapaz 04 · 4h 12m', score: 32, pct: 90 },
+    { name: 'Esi Mensah', area: 'Lapaz 04 · 3h 48m', score: 28, pct: 78 },
+    { name: 'Akua Owusu', area: 'Achimota 07 · 3h 02m', score: 22, pct: 62 },
+    { name: 'Kweku Donkor', area: 'Lapaz 04 · 2h 41m', score: 18, pct: 50 },
+    { name: 'Ama Sarpong', area: 'Achimota 07 · 2h 18m', score: 15, pct: 42 },
   ]
 
   const PLACEHOLDER_ROUTES = [
-    { name: 'Route A-12 · Lapaz market loop',     lead: 'Yaw K.',  knocked: 184, goal: 240, signups: 32, time: '4h 12m',   status: 'ok',   pct: 78 },
-    { name: 'Route A-13 · Lapaz school corridor', lead: 'Esi M.',  knocked: 152, goal: 200, signups: 28, time: '3h 48m',   status: 'ok',   pct: 76 },
-    { name: 'Route B-04 · Achimota north',         lead: 'Akua O.', knocked:  96, goal: 200, signups: 22, time: '3h 02m',   status: 'warn', pct: 48 },
-    { name: 'Route C-09 · Awoshie estates',        lead: 'Naa A.',  knocked:  22, goal: 180, signups:  4, time: 'idle 1h+', status: 'bad',  pct: 12 },
+    { name: 'Route A-12 · Lapaz market loop', lead: 'Yaw K.', knocked: 184, goal: 240, signups: 32, time: '4h 12m', status: 'ok', pct: 78 },
+    { name: 'Route A-13 · Lapaz school corridor', lead: 'Esi M.', knocked: 152, goal: 200, signups: 28, time: '3h 48m', status: 'ok', pct: 76 },
+    { name: 'Route B-04 · Achimota north', lead: 'Akua O.', knocked: 96, goal: 200, signups: 22, time: '3h 02m', status: 'warn', pct: 48 },
+    { name: 'Route C-09 · Awoshie estates', lead: 'Naa A.', knocked: 22, goal: 180, signups: 4, time: 'idle 1h+', status: 'bad', pct: 12 },
   ]
 
   if (loading) {
@@ -86,7 +84,7 @@ export default function GroundGameCommand() {
         <div>
           <div className="crumbs">Command → Ground game</div>
           <h2>Ground game · Greater Accra</h2>
-          <p className="sub">Daily field operations — turf assignments, canvasser activity, and route progress for branch 04.</p>
+          <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 2, maxWidth: 560, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Daily field operations — turf assignments, canvasser activity, and route progress for branch 04.</p>
         </div>
         <div className="actions">
           <button className="btn btn-outline btn-sm">
@@ -123,7 +121,7 @@ export default function GroundGameCommand() {
       </div>
 
       {/* Map + Leaderboard */}
-      <div className="layout" style={{ marginBottom: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 14, marginBottom: 14 }}>
         {/* Live turf map */}
         <div className="panel">
           <div className="ph">
@@ -135,12 +133,12 @@ export default function GroundGameCommand() {
             <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(0,107,63,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,107,63,.04) 1px,transparent 1px)', backgroundSize: '32px 32px' }} />
             {/* Roads */}
             <div style={{ position: 'absolute', left: 0, right: 0, top: '35%', height: 14, background: '#dfe4dd' }} />
-            <div style={{ position: 'absolute', left: 0, right: 0, top: '62%', height: 8,  background: '#dfe4dd' }} />
+            <div style={{ position: 'absolute', left: 0, right: 0, top: '62%', height: 8, background: '#dfe4dd' }} />
             <div style={{ position: 'absolute', top: 0, bottom: 0, left: '28%', width: 12, background: '#dfe4dd' }} />
-            <div style={{ position: 'absolute', top: 0, bottom: 0, left: '68%', width: 8,  background: '#dfe4dd' }} />
+            <div style={{ position: 'absolute', top: 0, bottom: 0, left: '68%', width: 8, background: '#dfe4dd' }} />
             {/* Parks */}
-            <div style={{ position: 'absolute', width: 120, height: 120, left: '10%', top: '8%',  background: 'rgba(0,107,63,.12)', borderRadius: '50%' }} />
-            <div style={{ position: 'absolute', width:  80, height:  80, left: '75%', top: '72%', background: 'rgba(0,107,63,.12)', borderRadius: '50%' }} />
+            <div style={{ position: 'absolute', width: 120, height: 120, left: '10%', top: '8%', background: 'rgba(0,107,63,.12)', borderRadius: '50%' }} />
+            <div style={{ position: 'absolute', width: 80, height: 80, left: '75%', top: '72%', background: 'rgba(0,107,63,.12)', borderRadius: '50%' }} />
             {/* Water */}
             <div style={{ position: 'absolute', right: -40, bottom: -40, width: 200, height: 140, background: 'rgba(0,107,180,.1)', borderRadius: '60% 40% 50% 50%' }} />
             {/* Turf outlines */}
@@ -156,11 +154,11 @@ export default function GroundGameCommand() {
             ))}
             {/* Canvasser pins — use field logs or placeholders */}
             {(fieldLogs.length > 0 ? fieldLogs.slice(0, 5) : [
-              { id: 'yaw',  canvasser_id: 'YAW', interaction_result: 'STRONG_SUPPORT', pos: { left: '40%', top: '48%' }, label: 'Yaw K.',  sub: '32 sign-ups' },
-              { id: 'esi',  canvasser_id: 'ESI', interaction_result: 'STRONG_SUPPORT', pos: { left: '65%', top: '30%' }, label: 'Esi M.',  sub: '28 sign-ups' },
-              { id: 'kofi', canvasser_id: 'KFI', interaction_result: 'UNDECIDED',      pos: { left: '22%', top: '70%' }, label: 'Kofi A.', sub: 'idle · 14 m' },
+              { id: 'yaw', canvasser_id: 'YAW', interaction_result: 'STRONG_SUPPORT', pos: { left: '40%', top: '48%' }, label: 'Yaw K.', sub: '32 sign-ups' },
+              { id: 'esi', canvasser_id: 'ESI', interaction_result: 'STRONG_SUPPORT', pos: { left: '65%', top: '30%' }, label: 'Esi M.', sub: '28 sign-ups' },
+              { id: 'kofi', canvasser_id: 'KFI', interaction_result: 'UNDECIDED', pos: { left: '22%', top: '70%' }, label: 'Kofi A.', sub: 'idle · 14 m' },
               { id: 'akua', canvasser_id: 'AKU', interaction_result: 'STRONG_SUPPORT', pos: { left: '78%', top: '68%' }, label: 'Akua O.', sub: '22 sign-ups' },
-              { id: 'naa',  canvasser_id: 'NAA', interaction_result: 'HOSTILE',        pos: { left: '50%', top: '18%' }, label: 'Naa A.',  sub: 'offline · 1h' },
+              { id: 'naa', canvasser_id: 'NAA', interaction_result: 'HOSTILE', pos: { left: '50%', top: '18%' }, label: 'Naa A.', sub: 'offline · 1h' },
             ] as Array<{ id: string; canvasser_id: string; interaction_result: string; pos?: { left: string; top: string }; label?: string; sub?: string }>).map((log, i) => {
               const positions = [
                 { left: '40%', top: '48%' }, { left: '65%', top: '30%' },
@@ -235,7 +233,7 @@ export default function GroundGameCommand() {
       </div>
 
       {/* Routes + Quick actions */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginTop: 14 }}>
         {/* Routes panel */}
         <div className="panel">
           <div className="ph">
@@ -243,7 +241,7 @@ export default function GroundGameCommand() {
             <span className="meta">{campaigns.length || 8} routes · {activeCampaigns.length || 4} active</span>
           </div>
           <div style={{ padding: '6px 0' }}>
-            {(campaigns.length > 0 ? campaigns.map((c, i) => {
+            {(campaigns.length > 0 ? campaigns.map((c) => {
               const knocked = fieldLogs.filter(l => l.canvasser_id.includes(c.id?.substring(0, 4) ?? '')).length
               const pct = c.goal_contacts > 0 ? Math.min(95, Math.round((knocked / c.goal_contacts) * 100)) : 45
               const status = pct > 60 ? 'ok' : pct > 30 ? 'warn' : 'bad'
@@ -277,7 +275,7 @@ export default function GroundGameCommand() {
             <button className="btn btn-primary" onClick={() => navigate('/admin/ground-game/deploy')}>
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add_location_alt</span>Assign new turf
             </button>
-            <button className="btn" style={{ background: 'hsl(var(--accent))', color: '#fff' }}>
+            <button className="btn" style={{ background: 'hsl(var(--accent))', color: '#000', fontWeight: 800 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>campaign</span>Broadcast to canvassers
             </button>
             <button className="btn btn-outline">

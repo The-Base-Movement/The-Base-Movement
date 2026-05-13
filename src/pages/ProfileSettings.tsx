@@ -24,6 +24,7 @@ export default function ProfileSettings() {
   const [userRegNo] = useState(
     () => localStorage.getItem('userRegNo') || ''
   )
+  const [userAuthId, setUserAuthId] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -83,6 +84,7 @@ export default function ProfileSettings() {
 
       const profile = await adminService.getMemberProfile(regNo)
       if (profile) {
+        setUserAuthId(profile.authId || null)
         setForm({
           fullName: profile.name,
           email: profile.email || '',
@@ -146,9 +148,16 @@ export default function ProfileSettings() {
       try {
         const blob = dataURLtoBlob(avatarUrl)
         if (blob) {
-          const fileName = `${regNo}.jpg`
+          // Standardize pathing: {userId}/{timestamp}.jpg
+          const fileName = adminService.generateAvatarPath(userAuthId || regNo)
           const { error: uploadError } = await adminService.uploadAvatar(fileName, blob)
-          if (uploadError) throw uploadError
+          
+          if (uploadError) {
+            console.error('[STORAGE] Avatar upload failed:', uploadError)
+            toast.error('Failed to upload profile photo. Please try again.')
+            setLoading(false)
+            return
+          }
 
           finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
         }

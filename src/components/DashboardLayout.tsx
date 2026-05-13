@@ -34,25 +34,47 @@ export default function DashboardLayout() {
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
-    const readProfile = () => {
+    const readProfile = async () => {
+      // 1. Try to get the specific member profile from DB first (via regNo in storage)
+      const storedRegNo = localStorage.getItem('userRegNo')
+      if (storedRegNo) {
+        try {
+          const profile = await adminService.getMemberProfile(storedRegNo)
+          if (profile) {
+            setUserName(profile.name)
+            setAvatarUrl(profile.avatarUrl || null)
+            setUserRegNo(profile.id)
+            return // Successfully synced with real member data
+          }
+        } catch (err) {
+          console.warn('[DASHBOARD] Failed to sync member profile:', err)
+        }
+      }
+
+      // 2. Fallback to Auth metadata if no stored member ID or DB fetch fails
       const user = authService.getUser()
       if (user) {
         setUserName(user.user_metadata?.full_name || 'Member')
         setAvatarUrl(user.user_metadata?.avatar_url || null)
       } else {
-        // Fallback to local storage for persistence across reloads if service not ready
+        // 3. Last resort: Local storage raw values
         setAvatarUrl(localStorage.getItem('userAvatar'))
         setUserName(localStorage.getItem('userName') || 'Member')
       }
       
       setUserRegNo(localStorage.getItem('userRegNo') || '')
     }
+    
     readProfile()
     
     // Fetch unread notification count
     const fetchUnread = async () => {
-      const notes = await adminService.getNotifications()
-      setUnreadCount(notes.filter(n => !n.is_read).length)
+      try {
+        const notes = await adminService.getNotifications()
+        setUnreadCount(notes.filter(n => !n.is_read).length)
+      } catch {
+        console.warn('[DASHBOARD] Notification sync failed')
+      }
     }
     fetchUnread()
 
@@ -106,7 +128,7 @@ export default function DashboardLayout() {
     if (path === '/dashboard/chapters') return 'Chapters'
     if (path.startsWith('/dashboard/chapter/')) return 'Chapter Details'
     if (path === '/dashboard/contact') return 'Support'
-    if (path === '/settings') return 'Profile'
+    if (path === '/dashboard/settings') return 'Profile'
     if (path === '/dashboard/wishlist') return 'Wishlist'
     if (path === '/dashboard/cart') return 'Cart'
     if (path === '/dashboard/checkout') return 'Checkout'
@@ -165,7 +187,7 @@ export default function DashboardLayout() {
               { to: '/dashboard/members', icon: 'groups', label: 'Verified Patriots' },
             ]},
             { label: 'Personal', items: [
-              { to: '/settings', icon: 'settings', label: 'Settings' },
+              { to: '/dashboard/settings', icon: 'settings', label: 'Settings' },
             ]},
           ].map((group) => (
             <div key={group.label} className="nav-sec mt-2">

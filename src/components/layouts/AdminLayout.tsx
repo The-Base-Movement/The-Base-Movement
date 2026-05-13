@@ -157,7 +157,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: "Overview",
       icon: LayoutDashboard,
       items: [
-        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Mission control' },
+        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/admin/war-room', icon: Radio, label: 'War Room', pill: 'LIVE' },
         { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Analytics' },
       ]
@@ -166,8 +166,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: "Members",
       icon: Users,
       items: [
-        { to: '/admin/members', icon: Users, label: 'Directory', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-        { to: '/admin/verification', icon: ShieldCheck, label: 'ID verification', pill: '42', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/verification', icon: ShieldCheck, label: 'KYC queue', pill: '42', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/donations', icon: DollarSign, label: 'Donations', pill: '14', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
       ]
     },
@@ -184,6 +184,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       icon: MapPin,
       items: [
         { to: '/admin/chapters', icon: MapPin, label: 'Chapters', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+        { to: '/admin/ground-game', icon: Vote, label: 'Mission Control', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcasts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/directives', icon: Target, label: 'Field directives', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/deploy', icon: Target, label: 'Deploy mission', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },

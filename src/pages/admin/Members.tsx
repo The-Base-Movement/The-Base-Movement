@@ -184,22 +184,30 @@ export default function MembersList() {
 
   const handleSubmitRegistration = async (data: RegistrationSubmission) => {
     setIsSubmittingRegistration(true)
+    const newId = crypto.randomUUID()
     try {
       let finalAvatarUrl = null
       if (data.photoUrl && data.croppedAreaPixels) {
         try {
           const croppedBlob = await getCroppedImg(data.photoUrl, data.croppedAreaPixels)
           if (croppedBlob) {
-            const fileName = `${data.registrationNumber}.jpg`
+            // Standardize pathing: {userId}/{timestamp}.jpg
+            const fileName = adminService.generateAvatarPath(newId)
             const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
-            if (!uploadError) finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
+            
+            if (uploadError) {
+              console.error('[REGISTRATION] Avatar upload failed:', uploadError)
+              toast.error('Member registered, but avatar upload failed due to storage permissions.')
+            } else {
+              finalAvatarUrl = adminService.getAvatarPublicUrl(fileName)
+            }
           }
         } catch (err) {
           console.error('[REGISTRATION] Image processing failed:', err)
         }
       }
       const newUser = {
-        id: crypto.randomUUID(),
+        id: newId,
         full_name: data.fullName,
         email: data.email || null,
         registration_number: data.registrationNumber,

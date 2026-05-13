@@ -227,11 +227,11 @@ class AdminService {
     return result
   }
 
-  async getMemberDonations(memberId: string): Promise<MemberDonation[]> {
+  async getMemberDonations(authId: string): Promise<MemberDonation[]> {
     const { data, error } = await supabase
       .from('donations')
       .select('id, amount, payment_method, reference, created_at, cleared, description')
-      .eq('member_id', memberId)
+      .eq('member_id', authId)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -250,7 +250,7 @@ class AdminService {
     }))
   }
 
-  async getMemberPollVotes(memberId: string): Promise<MemberPollVote[]> {
+  async getMemberPollVotes(authId: string): Promise<MemberPollVote[]> {
     const { data, error } = await supabase
       .from('poll_votes')
       .select(`
@@ -264,7 +264,7 @@ class AdminService {
           label
         )
       `)
-      .eq('user_id', memberId) 
+      .eq('user_id', authId) 
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -293,11 +293,11 @@ class AdminService {
     }))
   }
 
-  async getMemberSessions(memberId: string): Promise<MemberSession[]> {
+  async getMemberSessions(authId: string): Promise<MemberSession[]> {
     const { data, error } = await supabase
       .from('member_sessions')
       .select('id, device_name, location, ip_address, created_at, is_current')
-      .eq('member_id', memberId)
+      .eq('member_id', authId)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -315,11 +315,11 @@ class AdminService {
     }))
   }
 
-  async getMemberNotes(memberId: string): Promise<MemberNote[]> {
+  async getMemberNotes(authId: string): Promise<MemberNote[]> {
     const { data, error } = await supabase
       .from('member_notes')
       .select('id, author_name, author_role, content, created_at, is_system')
-      .eq('member_id', memberId)
+      .eq('member_id', authId)
       .order('created_at', { ascending: true })
 
     if (error) {
@@ -337,11 +337,11 @@ class AdminService {
     }))
   }
 
-  async addMemberNote(memberId: string, authorName: string, authorRole: string, content: string): Promise<MemberNote | null> {
+  async addMemberNote(authId: string, authorName: string, authorRole: string, content: string): Promise<MemberNote | null> {
     const { data, error } = await supabase
       .from('member_notes')
       .insert([{
-        member_id: memberId,
+        member_id: authId,
         author_name: authorName,
         author_role: authorRole,
         content,
@@ -788,7 +788,20 @@ class AdminService {
   async uploadAvatar(fileName: string, blob: Blob): Promise<{ data: { path: string } | null, error: Error | null }> {
     return supabase.storage
       .from('avatars')
-      .upload(fileName, blob, { upsert: true })
+      .upload(fileName, blob, { 
+        upsert: true,
+        contentType: blob.type || 'image/jpeg'
+      })
+  }
+
+  /**
+   * Generates a standardized avatar path following the pattern: {userId}/{timestamp}.jpg
+   * This ensures compliance with RLS policies that often restrict updates to user-owned folders.
+   */
+  generateAvatarPath(userId: string, originalName?: string): string {
+    const timestamp = Date.now()
+    const extension = originalName?.split('.').pop() || 'jpg'
+    return `${userId}/${timestamp}.${extension}`
   }
 
   getAvatarPublicUrl(fileName: string): string {

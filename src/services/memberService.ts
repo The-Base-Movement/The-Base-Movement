@@ -35,6 +35,7 @@ class MemberService {
       .filter((u) => !adminIdSet.has(u.id))
       .map((u) => ({
         id: u.registration_number,
+        authId: u.id,
         name: u.full_name,
         email: u.email,
         phone: u.phone_number || 'N/A',
@@ -112,6 +113,7 @@ class MemberService {
 
     return {
       id: data.registration_number,
+      authId: data.id,
       name: data.full_name,
       email: data.email,
       phone: data.phone_number || 'N/A',
@@ -144,6 +146,7 @@ class MemberService {
 
     return {
       id: data.registration_number,
+      authId: data.id,
       name: data.full_name,
       email: data.email,
       phone: data.phone_number || 'N/A',
@@ -319,6 +322,7 @@ class MemberService {
 
     return (data || []).map((u) => ({
       id: u.registration_number,
+      authId: u.id,
       name: u.full_name,
       email: u.email,
       phone: u.phone_number || 'N/A',
@@ -399,6 +403,7 @@ class MemberService {
 
     const members: Member[] = (data || []).map((u) => ({
       id: u.registration_number,
+      authId: u.id,
       name: u.full_name,
       email: u.email,
       phone: u.phone_number || 'N/A',

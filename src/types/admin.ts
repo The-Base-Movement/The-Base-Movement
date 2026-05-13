@@ -1,6 +1,7 @@
 
 export interface Member {
   id: string
+  authId?: string
   name: string
   email: string
   phone: string
