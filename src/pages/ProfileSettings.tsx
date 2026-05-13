@@ -6,7 +6,6 @@ import { adminService } from '@/services/adminService'
 import { dataURLtoBlob } from '@/lib/imageUtils'
 import { toast } from 'sonner'
 import { usePerformance } from '@/context/PerformanceContext'
-import { Switch } from '@/components/ui/switch'
 
 const labelStyle: React.CSSProperties = {
   fontFamily: "'Public Sans', sans-serif",
@@ -655,7 +654,13 @@ export default function ProfileSettings() {
                     Reduces data usage by hiding heavy background images and optimizing assets. Recommended for slow connections.
                   </p>
                 </div>
-                <Switch checked={lowBandwidthMode} onCheckedChange={setLowBandwidthMode} />
+                <button
+                  type="button"
+                  onClick={() => setLowBandwidthMode(!lowBandwidthMode)}
+                  style={{ width: 36, height: 20, borderRadius: 10, background: lowBandwidthMode ? 'hsl(var(--primary))' : 'hsl(var(--border))', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 3px', justifyContent: lowBandwidthMode ? 'flex-end' : 'flex-start', flexShrink: 0, transition: 'background 0.2s' }}
+                >
+                  <div style={{ width: 14, height: 14, background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                </button>
               </div>
             </div>
           </div>
