@@ -170,6 +170,19 @@ export default function DashboardLayout() {
             </div>
           )}
         </div>
+        
+        {/* Back to Site Action */}
+        {!isSidebarCollapsed && (
+          <div className="px-4 mb-4">
+            <Link 
+              to="/" 
+              className="flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-[4px] transition-all group border border-white/5"
+            >
+              <span className="material-symbols-outlined text-[18px] text-accent">arrow_back</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.06em]">Back to Site</span>
+            </Link>
+          </div>
+        )}
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto sidebar-scroll">
