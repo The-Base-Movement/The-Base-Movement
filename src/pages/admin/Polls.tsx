@@ -6,7 +6,6 @@ import {
   Clock, 
   MoreVertical,
   MessageSquare,
-  TrendingUp,
   ChevronRight,
   X,
   Trash2,

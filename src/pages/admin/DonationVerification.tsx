@@ -136,9 +136,6 @@ export default function FinancialAudit() {
     d.phone?.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const autoMatchRate = stats.totalContributions > 0
-    ? Math.round((1 - stats.pendingCount / Math.max(stats.totalContributions, 1)) * 100)
-    : 94
 
   return (
     <div className="main animate-in fade-in duration-500">

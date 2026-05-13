@@ -4,7 +4,6 @@ import {
   Plus, 
   Search, 
   Clock, 
-  Target,
   Calendar,
   X,
   Trash2,

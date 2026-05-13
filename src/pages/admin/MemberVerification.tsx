@@ -5,6 +5,7 @@ import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import VerificationListCard from '@/components/admin/VerificationListCard'
 import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const PAGE_SIZE = 10
 
