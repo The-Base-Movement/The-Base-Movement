@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback, Fragment } from 'react'
 import { useChapters } from '@/context/ChaptersContext'
 import { usePerformance } from '@/context/PerformanceContext'
+import { cn } from '@/lib/utils'
 import { adminService, type AuditLogEntry, type Member, type MemberDonation, type MemberPollVote, type MemberSession, type MemberNote } from '@/services/adminService'
 import { toast } from 'sonner'
 import RegistrationForm, { type RegistrationSubmission } from '@/components/admin/RegistrationForm'
@@ -391,32 +392,20 @@ export default function MembersList() {
       {/* KPI strip */}
       <div className="kpis">
         <div className="kpi k">
-          <span className="material-symbols-outlined">group</span>
-          <div>
-            <div className="v">{isLoading ? '—' : stats.total.toLocaleString()}</div>
-            <div className="l">Total members</div>
-          </div>
+          <div className="v tnum">{isLoading ? '—' : stats.total.toLocaleString()}</div>
+          <div className="l">Total members</div>
         </div>
         <div className="kpi g">
-          <span className="material-symbols-outlined">verified_user</span>
-          <div>
-            <div className="v">{isLoading ? '—' : stats.active.toLocaleString()}</div>
-            <div className="l">Active status</div>
-          </div>
+          <div className="v tnum">{isLoading ? '—' : stats.active.toLocaleString()}</div>
+          <div className="l">Active status</div>
         </div>
         <div className="kpi gr">
-          <span className="material-symbols-outlined">pending</span>
-          <div>
-            <div className="v">{isLoading ? '—' : stats.pending.toLocaleString()}</div>
-            <div className="l">Pending verification</div>
-          </div>
+          <div className="v tnum">{isLoading ? '—' : stats.pending.toLocaleString()}</div>
+          <div className="l">Pending verification</div>
         </div>
         <div className="kpi g">
-          <span className="material-symbols-outlined">map</span>
-          <div>
-            <div className="v">{isLoading ? '—' : stats.regions.toLocaleString()}</div>
-            <div className="l">Regions represented</div>
-          </div>
+          <div className="v tnum">{isLoading ? '—' : stats.regions.toLocaleString()}</div>
+          <div className="l">Regions represented</div>
         </div>
       </div>
 
@@ -717,17 +706,17 @@ export default function MembersList() {
               </div>
 
               {/* Quick stats */}
-              <div className="member-quick-stats" style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid rgba(255,255,255,.08)' }}>
+              <div className="member-quick-stats">
                 {[
                   { label: 'Lifetime contribution', val: '₵0',  sub: 'No donations yet' },
                   { label: 'Polls voted',            val: memberPollVotes.length || '—', sub: 'Poll activity' },
                   { label: 'Chapter activity',       val: '—',  sub: 'Events attended YTD' },
                   { label: 'Membership tier',        val: selectedMember.type || 'Citizen', sub: 'Active tier', accent: true },
                 ].map((s, i) => (
-                  <div key={i} style={{ borderLeft: i > 0 ? '1px solid rgba(255,255,255,.08)' : 'none', padding: i === 0 ? '0 18px 0 0' : '0 18px' }}>
-                    <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,.5)', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase' }}>{s.label}</div>
-                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: '-.015em', marginTop: 6, fontVariantNumeric: 'tabular-nums', lineHeight: 1, color: s.accent ? 'hsl(var(--accent))' : '#fff' }}>{s.val}</div>
-                    <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,.6)', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, marginTop: 4 }}>{s.sub}</div>
+                  <div key={i}>
+                    <div className="sl">{s.label}</div>
+                    <div className={cn("sv tnum", s.accent && "accent")}>{s.val}</div>
+                    <div className="sd">{s.sub}</div>
                   </div>
                 ))}
               </div>

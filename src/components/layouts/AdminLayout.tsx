@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom'
-import { 
-  LayoutDashboard, 
-  Users, 
-  MapPin, 
-  BarChart3, 
-  Settings, 
-  LogOut, 
-  Menu, 
+import {
+  LayoutDashboard,
+  Users,
+  MapPin,
+  BarChart3,
+  Settings,
+  LogOut,
   Shield,
-  Bell,
-  Search,
   ShieldCheck,
   FileText,
   DollarSign,
@@ -23,23 +20,15 @@ import {
   ChevronDown,
   PenTool,
   Radio,
+  ExternalLink,
   type LucideIcon
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/neon-button'
 import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'
 import type { GlobalSearchResult } from '@/types/admin'
 import { useBranding } from '@/hooks/useBranding'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import type { AdminUser } from '@/types/admin'
 
 
@@ -67,6 +56,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const [searchResults, setSearchResults] = useState<GlobalSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [showSearchResults, setShowSearchResults] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
   useEffect(() => {
     const applyDensity = () => {
@@ -251,7 +241,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             isSidebarOpen ? "px-[18px]" : "px-5"
           )}>
             <Link to="/admin/dashboard" className="flex items-center gap-4 shrink-0">
-              <div className="w-10 h-10 bg-white flex items-center justify-center shadow-2xl p-1.5 shrink-0">
+              <div className="w-10 h-10 bg-background flex items-center justify-center shadow-2xl p-1.5 shrink-0">
                 <img src={settings.logo_url} alt="The Base Logo" className="w-full h-full object-contain"  decoding="async" />
               </div>
               <div className={cn(
@@ -265,6 +255,17 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   <p className="text-white/40 text-[8px] font-bold uppercase leading-none tracking-tight">HQ</p>
                 </div>
               </div>
+            </Link>
+          </div>
+          
+          {/* View Site Action */}
+          <div className={cn("px-3 mb-2 transition-all duration-300", isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden")}>
+            <Link 
+              to="/" 
+              className="flex items-center gap-3 px-3 py-2.5 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-lg transition-all group border border-white/5"
+            >
+              <ExternalLink className="w-4 h-4 text-[hsl(var(--accent))] shrink-0" />
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.06em]">View Site</span>
             </Link>
           </div>
 
@@ -368,103 +369,121 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        {/* Top Utility Bar - Clean, Compact, Functional */}
-        <header className="h-14 bg-white border-b border-border/40 flex items-center justify-between px-6 sticky top-0 z-30 shrink-0">
-          <div className="flex items-center gap-4 flex-1">
-            {/* Sidebar Toggle */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
+
+        {/* Topbar */}
+        <header style={{
+          height: 54,
+          background: '#fff',
+          borderBottom: '1px solid hsl(var(--border))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 18px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 30,
+          flexShrink: 0,
+          gap: 12,
+        }}>
+
+          {/* Left: hamburger + search */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
+            <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="h-9 w-9 text-muted-foreground/80 hover:bg-muted/30 hover:text-[var(--brand-green)] transition-all"
+              className="ico"
+              style={{ width: 32, height: 32, flexShrink: 0 }}
             >
-              <Menu className="w-4 h-4" />
-            </Button>
-            
-            {/* Integrated Command Search */}
-            <div className="max-w-md w-full relative group hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80 group-focus-within:text-[var(--brand-green)] transition-colors z-10" />
-              <input 
-                type="text" 
-                placeholder="Search command center..."
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>menu</span>
+            </button>
+
+            {/* Search — hidden on mobile */}
+            <div className="desktop-only" style={{ position: 'relative', maxWidth: 380, width: '100%' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none', zIndex: 1 }}
+              >search</span>
+              <input
+                type="text"
+                placeholder="Search command center…"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.length >= 2 && setShowSearchResults(true)}
-                className="w-full h-9 pl-9 pr-4 bg-muted/30 border-transparent focus:bg-white focus:border-border/40 focus:ring-0 transition-all text-xs outline-none font-medium placeholder:text-muted-foreground/80 rounded-lg"
+                style={{
+                  width: '100%',
+                  height: 34,
+                  paddingLeft: 30,
+                  paddingRight: 12,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 4,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 700,
+                  fontSize: 12,
+                  background: 'hsl(var(--container-low))',
+                  color: 'hsl(var(--on-surface))',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
               />
 
-              {/* Live Search Results Dropdown */}
+              {/* Search results */}
               {showSearchResults && (
                 <>
-                  <div 
-                    className="fixed inset-0 z-40" 
-                    onClick={() => setShowSearchResults(false)} 
-                  />
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-border/40 shadow-2xl rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-2 border-b border-border/10 bg-muted/5 flex items-center justify-between">
-                      <span className="text-micro font-bold text-muted-foreground/60 tracking-tight px-2">
-                        Global Search results
+                  <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setShowSearchResults(false)} />
+                  <div style={{
+                    position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
+                    background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6,
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.08)', zIndex: 50, overflow: 'hidden',
+                  }}>
+                    <div style={{ padding: '8px 12px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.05em', textTransform: 'uppercase' }}>
+                        Global search
                       </span>
                       {isSearching && (
-                        <div className="w-3 h-3 border-2 border-[var(--brand-green)] border-t-transparent rounded-full animate-spin mr-2" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))', animation: 'spin 1s linear infinite' }}>sync</span>
                       )}
                     </div>
 
-                    <div className="max-h-[400px] overflow-y-auto py-2">
-                      {searchResults.length > 0 ? (
-                        searchResults.map((result) => (
-                          <Link
-                            key={`${result.type}-${result.id}`}
-                            to={result.to}
-                            onClick={() => {
-                              setShowSearchResults(false)
-                              setSearchQuery('')
-                            }}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors group"
-                          >
-                            <div className={cn(
-                              "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all",
-                              result.type === 'Member' && "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white",
-                              result.type === 'Article' && "bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white",
-                              result.type === 'Chapter' && "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white",
-                              result.type === 'Product' && "bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white",
-                              result.type === 'Broadcast' && "bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white",
-                              result.type === 'Author' && "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white"
-                            )}>
-                              {result.type === 'Member' && <Users className="w-4 h-4" />}
-                              {result.type === 'Article' && <FileText className="w-4 h-4" />}
-                              {result.type === 'Chapter' && <MapPin className="w-4 h-4" />}
-                              {result.type === 'Product' && <ShoppingBag className="w-4 h-4" />}
-                              {result.type === 'Broadcast' && <Megaphone className="w-4 h-4" />}
-                              {result.type === 'Author' && <PenTool className="w-4 h-4" />}
+                    <div style={{ maxHeight: 380, overflowY: 'auto' }}>
+                      {searchResults.length > 0 ? searchResults.map(result => (
+                        <Link
+                          key={`${result.type}-${result.id}`}
+                          to={result.to}
+                          onClick={() => { setShowSearchResults(false); setSearchQuery('') }}
+                          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderBottom: '1px solid hsl(var(--border))', textDecoration: 'none', color: 'inherit' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+                          onMouseLeave={e => (e.currentTarget.style.background = '')}
+                        >
+                          <div style={{ width: 30, height: 30, borderRadius: 4, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))' }}>
+                              {result.type === 'Member' ? 'person' : result.type === 'Article' ? 'article' : result.type === 'Chapter' ? 'place' : result.type === 'Product' ? 'shopping_bag' : result.type === 'Broadcast' ? 'campaign' : 'edit'}
+                            </span>
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--on-surface))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {result.title}
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-tiny font-bold text-on-surface truncate leading-none mb-1">
-                                {result.title}
-                              </p>
-                              {result.subtitle && (
-                                <p className="text-micro font-bold text-muted-foreground/60 truncate leading-none">
-                                  {result.subtitle}
-                                </p>
-                              )}
-                            </div>
-                            <div className="text-micro font-bold tracking-tight text-muted-foreground/30 px-1.5 py-0.5 border border-border/10 rounded">
-                              {result.type}
-                            </div>
-                          </Link>
-                        ))
-                      ) : !isSearching ? (
-                        <div className="py-8 px-4 text-center">
-                          <p className="text-micro font-bold text-muted-foreground/40 italic">
-                            No mobilization records found for "{searchQuery}"
-                          </p>
+                            {result.subtitle && (
+                              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
+                                {result.subtitle}
+                              </div>
+                            )}
+                          </div>
+                          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9.5, color: 'hsl(var(--on-surface-muted))', padding: '2px 6px', border: '1px solid hsl(var(--border))', borderRadius: 3, flexShrink: 0 }}>
+                            {result.type}
+                          </span>
+                        </Link>
+                      )) : !isSearching ? (
+                        <div style={{ padding: '28px 16px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                          No records found for "{searchQuery}"
                         </div>
                       ) : null}
                     </div>
 
-                    <div className="p-3 bg-muted/5 border-t border-border/10 flex items-center justify-center">
-                      <span className="text-micro font-bold text-muted-foreground/40 tracking-tight">
-                        Press <kbd className="px-1.5 py-0.5 bg-white border border-border/40 rounded text-micro mx-1">ESC</kbd> to dismiss
+                    <div style={{ padding: '8px 12px', background: 'hsl(var(--container-low))', borderTop: '1px solid hsl(var(--border))', textAlign: 'center' }}>
+                      <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))' }}>
+                        Press{' '}
+                        <kbd style={{ padding: '1px 5px', border: '1px solid hsl(var(--border))', borderRadius: 3, fontFamily: "'Public Sans', sans-serif", fontSize: 10 }}>ESC</kbd>
+                        {' '}to dismiss
                       </span>
                     </div>
                   </div>
@@ -473,85 +492,104 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             </div>
           </div>
 
-          {/* Topbar Actions */}
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground/80 hover:bg-stone-100 hover:text-[var(--brand-green)] transition-all relative group">
-              <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+          {/* Right: notifications + divider + user */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+
+            {/* Notification bell */}
+            <button className="ico" style={{ width: 32, height: 32, position: 'relative' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>notifications</span>
               {unreadCount > 0 && (
-                <>
-                  {/* Pulse effect */}
-                  <span className="absolute top-2 right-2 w-4 h-4 bg-[var(--brand-red)] rounded-full animate-ping opacity-75" />
-                  {/* Luminous Numeric Badge */}
-                  <span className="absolute top-2 right-2 min-w-[16px] h-4 px-1 bg-[var(--brand-red)] rounded-full border-2 border-white shadow-[0_0_8px_rgba(206,17,38,0.8)] flex items-center justify-center text-micro font-extrabold text-white">
-                    {unreadCount > 99 ? '99+' : unreadCount}
-                  </span>
-                </>
+                <span style={{
+                  position: 'absolute', top: 3, right: 3,
+                  minWidth: 14, height: 14, padding: '0 3px',
+                  background: 'hsl(var(--destructive))', color: '#fff',
+                  borderRadius: 99, border: '1.5px solid #fff',
+                  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 8,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
               )}
-            </Button>
-            
-            <div className="h-4 w-px bg-border/40 mx-1" />
-            
-            {/* User Profile Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="flex items-center gap-3 pl-2 py-1 px-2 hover:bg-muted/30 rounded-lg transition-colors cursor-pointer group">
-                  <div className="text-right hidden sm:block pt-3">
-                    <p className="text-tiny font-bold text-on-surface leading-none">{user?.name}</p>
-                    <p className="text-micro font-bold text-muted-foreground/80 mt-1 leading-none tracking-tight">
-                      {user?.role === 'FOUNDER' 
-                        ? 'Movement Founder' 
-                        : user?.role === 'ORGANIZER'
-                          ? 'Strategic Organizer'
-                          : user?.role === 'SUPER_ADMIN' 
-                            ? 'System Admin' 
-                            : user?.role === 'REGIONAL_DIRECTOR'
-                              ? 'Regional Director'
-                              : user?.role === 'CONSTITUENCY_LEAD'
-                                ? 'Constituency Lead'
-                                : 'Staff Verifier'}
-                    </p>
+            </button>
+
+            <div style={{ width: 1, height: 20, background: 'hsl(var(--border))', margin: '0 4px' }} />
+
+            {/* User dropdown */}
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setIsUserMenuOpen(o => !o)}
+                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '5px 8px', border: '1px solid transparent', borderRadius: 4, background: 'none', cursor: 'pointer' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+              >
+                {/* Name + role — hidden on mobile */}
+                <div className="desktop-only" style={{ textAlign: 'right' }}>
+                  <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', lineHeight: 1.3 }}>
+                    {user?.name}
                   </div>
-                  <div className="w-8 h-8 bg-[var(--brand-black)] text-white flex items-center justify-center font-bold text-micro rounded-full ring-2 ring-stone-100 group-hover:ring-[var(--brand-green)] transition-all overflow-hidden">
-                    {avatarUrl ? (
-                      <img src={avatarUrl} alt={user?.name || ''} className="w-full h-full object-cover"  decoding="async" />
-                    ) : (
-                      user?.name.split(' ').map(n => n[0]).join('') || 'HQ'
-                    )}
+                  <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.3 }}>
+                    {user?.role === 'FOUNDER' ? 'Movement Founder'
+                      : user?.role === 'ORGANIZER' ? 'Strategic Organizer'
+                      : user?.role === 'SUPER_ADMIN' ? 'System Admin'
+                      : user?.role === 'REGIONAL_DIRECTOR' ? 'Regional Director'
+                      : user?.role === 'CONSTITUENCY_LEAD' ? 'Constituency Lead'
+                      : 'Staff Verifier'}
                   </div>
                 </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 mt-2">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-bold leading-none">{user?.name}</p>
-                    <p className="text-xs leading-none text-muted-foreground/80">{user?.email}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/admin/settings" className="cursor-pointer w-full flex items-center gap-2">
-                    <Settings className="w-4 h-4" />
-                    <span>Administrative settings</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/admin/logs" className="cursor-pointer w-full flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
-                    <span>View audit logs</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={handleLogout}
-                  className="text-red-600 focus:text-red-600 cursor-pointer flex items-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                {/* Avatar */}
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'hsl(var(--primary))', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, overflow: 'hidden', flexShrink: 0 }}>
+                  {avatarUrl
+                    ? <img src={avatarUrl} alt={user?.name || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" />
+                    : user?.name?.split(' ').map(n => n[0]).join('') || 'HQ'
+                  }
+                </div>
+              </button>
 
+              {/* Dropdown panel */}
+              {isUserMenuOpen && (
+                <>
+                  <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setIsUserMenuOpen(false)} />
+                  <div style={{
+                    position: 'absolute', right: 0, top: 'calc(100% + 6px)', width: 220,
+                    background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6,
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.08)', zIndex: 50, overflow: 'hidden',
+                  }}>
+                    <div style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>{user?.name}</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>{user?.email}</div>
+                    </div>
+                    {[
+                      { to: '/admin/settings', icon: 'settings', label: 'Administrative settings' },
+                      { to: '/admin/logs',     icon: 'history',  label: 'View audit logs' },
+                    ].map(item => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setIsUserMenuOpen(false)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', textDecoration: 'none', color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12 }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+                        onMouseLeave={e => (e.currentTarget.style.background = '')}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>{item.icon}</span>
+                        {item.label}
+                      </Link>
+                    ))}
+                    <div style={{ borderTop: '1px solid hsl(var(--border))' }} />
+                    <button
+                      onClick={handleLogout}
+                      style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', border: 'none', background: 'none', color: 'hsl(var(--destructive))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, cursor: 'pointer', textAlign: 'left' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+                      onMouseLeave={e => (e.currentTarget.style.background = '')}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 15 }}>logout</span>
+                      Sign out
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
+          </div>
         </header>
 
 

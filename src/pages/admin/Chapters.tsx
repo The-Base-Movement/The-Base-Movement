@@ -165,29 +165,29 @@ export default function ChaptersManagement() {
       {/* KPIs */}
       <div className="kpis" style={{ marginBottom: 20 }}>
         <div className="kpi k">
-          <div className="kpi-label">Total chapters</div>
-          <div className="kpi-val">{chapters.length}</div>
-          <div className="kpi-sub">Registered hubs</div>
+          <div className="l">Total chapters</div>
+          <div className="v tnum">{chapters.length}</div>
+          <div className="d">Registered hubs</div>
         </div>
         <div className="kpi g">
-          <div className="kpi-label">Total members</div>
-          <div className="kpi-val">{totalMembers.toLocaleString()}</div>
-          <div className="kpi-sub">Across all chapters</div>
+          <div className="l">Total members</div>
+          <div className="v tnum">{totalMembers.toLocaleString()}</div>
+          <div className="d">Across all chapters</div>
         </div>
         <div className="kpi g">
-          <div className="kpi-label">Active</div>
-          <div className="kpi-val">{activeCount}</div>
-          <div className="kpi-sub">Operational hubs</div>
+          <div className="l">Active</div>
+          <div className="v tnum">{activeCount}</div>
+          <div className="d">Operational hubs</div>
         </div>
         <div className="kpi r">
-          <div className="kpi-label">Pending</div>
-          <div className="kpi-val">{pendingCount}</div>
-          <div className="kpi-sub">Awaiting activation</div>
+          <div className="l">Pending</div>
+          <div className="v tnum">{pendingCount}</div>
+          <div className="d">Awaiting activation</div>
         </div>
       </div>
 
       {/* Charts row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+      <div className="chapters-charts-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
 
         {/* Scatter chart */}
         <div className="panel">
@@ -254,9 +254,9 @@ export default function ChaptersManagement() {
         <div className="ph">
           <div>
             <h3>Regional movement density</h3>
-            <div className="meta">Geospatial distribution of chapters and mobilization strength</div>
+            <div className="meta desktop-only">Geospatial distribution of chapters and mobilization strength</div>
           </div>
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+          <div className="desktop-only" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
             {[
               { color: '#006b3f', label: 'High strength' },
               { color: '#DAA520', label: 'Moderate' },
@@ -269,7 +269,7 @@ export default function ChaptersManagement() {
             ))}
           </div>
         </div>
-        <div style={{ padding: '18px', display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+        <div className="chapters-density-split" style={{ padding: '18px', display: 'flex', gap: 24, alignItems: 'flex-start' }}>
           {/* SVG Map */}
           <div style={{ width: 240, flexShrink: 0, border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden', position: 'relative', aspectRatio: '4/5' }}>
             <svg viewBox="0 0 400 500" style={{ width: '100%', height: '100%', padding: 24 }}>
@@ -309,8 +309,8 @@ export default function ChaptersManagement() {
         </div>
       </div>
 
-      {/* Search + filter */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
+      {/* Search + filter - Desktop */}
+      <div className="desktop-only" style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
         <div style={{ position: 'relative', flex: 1 }}>
           <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
           <input
@@ -330,6 +330,31 @@ export default function ChaptersManagement() {
           <option value="Active">Active</option>
           <option value="Pending">Pending</option>
         </select>
+      </div>
+
+      {/* Search + filter - Mobile (Step 5 Pattern) */}
+      <div className="mobile-only" style={{ marginBottom: 14, display: 'flex', flexDirection: 'column', gap: 8, background: 'hsl(var(--container-low))', padding: '12px', borderRadius: 6, border: '1px solid hsl(var(--border))' }}>
+        <div style={{ position: 'relative' }}>
+          <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15 }}>search</span>
+          <input
+            style={{ ...fieldStyle, width: '100%', height: 38, paddingLeft: 30, boxSizing: 'border-box' }}
+            placeholder="Search chapters..."
+            value={search}
+            onChange={e => { setSearch(e.target.value); setCurrentPage(1) }}
+          />
+        </div>
+        <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 2 }}>
+          {(['All', 'Active', 'Pending'] as const).map(status => (
+            <button
+              key={status}
+              onClick={() => { setStatusFilter(status); setCurrentPage(1) }}
+              className={`btn btn-sm ${statusFilter === status ? 'btn-dest' : 'btn-outline'}`}
+              style={{ flexShrink: 0, fontSize: 10, height: 26 }}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Chapters grid */}
@@ -398,7 +423,7 @@ export default function ChaptersManagement() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 14, borderTop: '1px solid hsl(var(--border))' }}>
+        <div className="pagination-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 14, borderTop: '1px solid hsl(var(--border))' }}>
           <span style={{ fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Showing {((currentPage - 1) * itemsPerPage) + 1}–{Math.min(currentPage * itemsPerPage, filteredChapters.length)} of {filteredChapters.length} chapters
           </span>
@@ -429,7 +454,7 @@ export default function ChaptersManagement() {
           <div className="panel" style={{ width: 520, maxHeight: '90vh', overflowY: 'auto' }}>
 
             {/* Dark header */}
-            <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', borderTop: '3px solid hsl(var(--primary))', borderRadius: '6px 6px 0 0', padding: '16px 18px' }}>
+            <div className="member-detail-header" style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', borderTop: '3px solid hsl(var(--primary))', borderRadius: '6px 6px 0 0', padding: '16px 18px' }}>
               <h3 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>location_on</span>
                 {editingChapterId ? 'Configure regional hub' : 'Add new chapter'}
@@ -443,7 +468,7 @@ export default function ChaptersManagement() {
 
             <form onSubmit={handleSaveChapter}>
               <div style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div className="chapters-modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                   <div>
                     <label style={labelStyle}>Chapter name <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
                     <input type="text" required placeholder="e.g. Adabraka hub" style={fieldStyle}
@@ -455,7 +480,7 @@ export default function ChaptersManagement() {
                       value={formData.city_or_region} onChange={e => setFormData({ ...formData, city_or_region: e.target.value })} />
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div className="chapters-modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                   <div>
                     <label style={labelStyle}>Country <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
                     <input type="text" required placeholder="e.g. Ghana" style={fieldStyle}
