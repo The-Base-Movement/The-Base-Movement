@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'
+import { donationService } from '@/services/donationService'
 import type { GlobalSearchResult } from '@/types/admin'
 import { useBranding } from '@/hooks/useBranding'
 import type { AdminUser } from '@/types/admin'
@@ -50,6 +51,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const [user, setUser] = useState<AdminUser | null>(adminService.getCurrentUser())
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [pendingVerificationsCount, setPendingVerificationsCount] = useState<number>(0)
+  const [pendingDonationsCount, setPendingDonationsCount] = useState<number>(0)
 
   // Search State
   const [searchQuery, setSearchQuery] = useState('')
@@ -98,10 +101,16 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
         // Fetch unread notifications
         try {
-          const notes = await adminService.getNotifications()
+          const [notes, pendingVer, pendingDon] = await Promise.all([
+            adminService.getNotifications(),
+            adminService.getPendingVerifications(),
+            donationService.getPendingDonations()
+          ])
           setUnreadCount(notes.filter(n => !n.is_read).length)
+          setPendingVerificationsCount(pendingVer.length)
+          setPendingDonationsCount(pendingDon.length)
         } catch (err) {
-          console.error("Failed to fetch admin notifications:", err)
+          console.error("Failed to fetch admin notifications/counts:", err)
         }
       }
     }
@@ -157,8 +166,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       icon: Users,
       items: [
         { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-        { to: '/admin/verification', icon: ShieldCheck, label: 'KYC queue', pill: '42', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-        { to: '/admin/donations', icon: DollarSign, label: 'Donations', pill: '14', permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
+        { to: '/admin/verification', icon: ShieldCheck, label: 'KYC queue', pill: pendingVerificationsCount > 0 ? pendingVerificationsCount.toString() : undefined, permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/donations', icon: DollarSign, label: 'Donations', pill: pendingDonationsCount > 0 ? pendingDonationsCount.toString() : undefined, permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
       ]
     },
     {
