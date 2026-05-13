@@ -213,7 +213,7 @@ export function OperationalTransparency({
                         </td>
                         <td className="p-6">
                           <span className="text-sm font-bold text-stone-900 font-meta">
-                            {item.amount.includes('₵') ? item.amount : `₵ ${item.amount.replace(/GHS/i, '').trim()}`}
+                            {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
                           </span>
                         </td>
                         <td className="p-6">
@@ -254,7 +254,7 @@ export function OperationalTransparency({
                           </td>
                           <td className="p-6">
                             <span className="text-sm font-bold text-stone-900 font-meta">
-                              {item.amount.includes('₵') ? item.amount : `₵ ${item.amount.replace(/GHS/i, '').trim()}`}
+                              {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
                             </span>
                           </td>
                           <td className="p-6">
@@ -312,7 +312,7 @@ export function OperationalTransparency({
                         <div>
                           <p className="text-micro font-bold text-stone-400 tracking-tight mb-1">capital deployment</p>
                           <p className="text-xl font-bold text-stone-900 font-meta">
-                            {item.amount.includes('₵') ? item.amount : `₵ ${item.amount.replace(/GHS/i, '').trim()}`}
+                            {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
                           </p>
                         </div>
                         <div className="text-right">

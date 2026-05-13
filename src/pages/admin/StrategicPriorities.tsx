@@ -395,7 +395,7 @@ export default function StrategicPriorities() {
 
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Target Capital (GHS)</label>
+                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Target Capital (₵)</label>
                       <input 
                         type="number" 
                         required

@@ -27,7 +27,7 @@ export default function Impact() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' })
   const [isLoading, setIsLoading] = useState(true)
   const [stats, setStats] = useState({
-    totalDonations: 'GHS 0',
+    totalDonations: '₵0',
     todayDonations: 'No new donations yet today',
     activeChapters: '0',
     totalMembers: '355,482',
@@ -35,7 +35,7 @@ export default function Impact() {
     countriesReached: '1',
     raised: 0,
     goal: 500000,
-    avgDonation: 'GHS 0',
+    avgDonation: '₵0',
     totalContributors: 0
   })
   const [contributions, setContributions] = useState<{ [key: string]: DonationDetail[] }>({
@@ -68,7 +68,7 @@ export default function Impact() {
         const uniqueCountries = new Set(members.map(m => m.country || 'Ghana')).size
         
         setStats({
-          totalDonations: donationStats.approvedAmount > 0 ? `GHS ${donationStats.approvedAmount.toLocaleString()}` : 'GHS 0',
+          totalDonations: donationStats.approvedAmount > 0 ? `₵${donationStats.approvedAmount.toLocaleString()}` : '₵0',
           todayDonations: 'No new donations yet today',
           activeChapters: chapters.filter(c => c.status === 'Active').length.toString(),
           totalMembers: '355,482', // National Scale baseline
@@ -76,7 +76,7 @@ export default function Impact() {
           countriesReached: uniqueCountries.toString(),
           raised: donationStats.approvedAmount,
           goal: 500000,
-          avgDonation: donationStats.approvedAmount > 0 ? `GHS ${(donationStats.approvedAmount / (donationStats.totalContributions || 1)).toFixed(2)}` : 'GHS 0',
+          avgDonation: donationStats.approvedAmount > 0 ? `₵${(donationStats.approvedAmount / (donationStats.totalContributions || 1)).toFixed(2)}` : '₵0',
           totalContributors: donationStats.totalContributions
         })
 
@@ -165,7 +165,7 @@ export default function Impact() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-brand-green">GHS {item.amount}</p>
+                      <p className="text-sm font-bold text-brand-green">₵{item.amount}</p>
                       <p className="text-micro font-semibold text-slate-300">Verified</p>
                     </div>
                   </div>
@@ -260,7 +260,7 @@ export default function Impact() {
                   <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">National Organizing Fund</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-charcoal-dark mb-0">GHS {stats.raised.toLocaleString()} <span className="text-slate-300">/ {stats.goal.toLocaleString()}</span></p>
+                  <p className="text-sm font-bold text-charcoal-dark mb-0">₵{stats.raised.toLocaleString()} <span className="text-slate-300">/ {stats.goal.toLocaleString()}</span></p>
                   <p className="text-micro font-bold text-brand-green mt-1 mb-0 tracking-tight">
                     {Math.round((stats.raised / stats.goal) * 100) >= 1 ? `${Math.round((stats.raised / stats.goal) * 100)}% achieved towards goal` : 'Early momentum toward goal'}
                   </p>
@@ -436,7 +436,7 @@ export default function Impact() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-brand-green">GHS {item.amount}</p>
+                        <p className="text-sm font-bold text-brand-green">₵{item.amount}</p>
                         <p className="text-micro font-semibold text-slate-300">Verified</p>
                       </div>
                     </div>

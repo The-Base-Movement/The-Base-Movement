@@ -58,7 +58,7 @@ export default function Cart() {
                         {item.name}
                       </Link>
                       <p className="font-bold text-[var(--brand-green)] text-sm sm:text-base whitespace-nowrap shrink-0">
-                        {typeof item.price === 'string' && item.price.startsWith('GHS') ? item.price : `GHS ${parseFloat(String(item.price)).toFixed(2)}`}
+                        {typeof item.price === 'string' && item.price.startsWith('₵') ? item.price : `₵${parseFloat(String(item.price)).toFixed(2)}`}
                       </p>
                     </div>
                     
@@ -113,11 +113,11 @@ export default function Cart() {
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
                     <span>Subtotal</span>
-                    <span className="font-bold text-stone-900">GHS {subtotal.toFixed(2)}</span>
+                    <span className="font-bold text-stone-900">₵{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
                     <span>Shipping Estimate</span>
-                    <span className="font-bold text-stone-900">GHS {shipping.toFixed(2)}</span>
+                    <span className="font-bold text-stone-900">₵{shipping.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm text-stone-600 font-meta tracking-tight">
                     <span>Taxes</span>
@@ -125,7 +125,7 @@ export default function Cart() {
                   </div>
                   <div className="pt-4 border-t border-stone-200 flex justify-between items-center">
                     <span className="font-h3 text-lg text-stone-900">Total</span>
-                    <span className="font-h3 text-xl text-[var(--brand-green)]">GHS {total.toFixed(2)}</span>
+                    <span className="font-h3 text-xl text-[var(--brand-green)]">₵{total.toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -143,7 +143,7 @@ export default function Cart() {
                   </div>
                   <div className="flex items-center gap-3 text-stone-500">
                     <span className="material-symbols-outlined text-sm">local_shipping</span>
-                    <span className="text-micro font-bold tracking-tight">Free shipping over GHS 500</span>
+                    <span className="text-micro font-bold tracking-tight">Free shipping over ₵500</span>
                   </div>
                 </div>
               </div>

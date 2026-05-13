@@ -10,6 +10,7 @@ This document tracks the hardening and visual synchronization of mobile viewport
 | **Store** | ✅ Hardened | 2-column mobile grid, Mobile Filter Drawer (Sheet), Pagination Component | 11px standardized | High-density 2-column mobile grid with category drawers. |
 | **Home** | ⏳ Pending | - | - | Initial mobile pass complete; needs typographic hardening. |
 | **Blog** | ⏳ Pending | - | - | Needs transition to high-fidelity mobile card stacks. |
+| **Orders** | ✅ Hardened | Mobile Filter Drawer (Sheet), High-density Typography, Grid Stats | 11px standardized | Optimized mobile feed with details drawer and fulfillment synchronization. |
 | **Dashboard** | ⏳ Pending | - | - | Core layout synchronized; sub-modules need individual audits. |
 
 ## Implementation Protocol

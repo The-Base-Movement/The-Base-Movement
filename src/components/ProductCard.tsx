@@ -157,10 +157,10 @@ export function ProductCard({ product, onShare }: ProductProps) {
 
           <div className="mt-auto pt-[10px] border-t border-border flex items-center justify-between gap-3">
             <div className="font-meta font-extrabold text-[20px] tracking-[-0.015em] text-on-surface">
-              GH₵{product.price.toString().replace('GHS', '').replace('GH₵', '').trim()}
+              ₵{product.price.toString().replace('GHS', '').replace('GH₵', '').replace('₵', '').trim()}
               {product.compare_at_price && (
                 <small className="text-[12px] text-on-surface-muted line-through font-bold ml-1.5">
-                  GH₵{product.compare_at_price}
+                  ₵{product.compare_at_price}
                 </small>
               )}
             </div>

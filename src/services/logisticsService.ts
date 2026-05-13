@@ -94,7 +94,7 @@ class LogisticsService {
       id: i.id,
       name: i.name,
       category: i.category,
-      price: `GHS ${i.price_ghs}`,
+      price: `₵${i.price_ghs}`,
       stock: i.stock_quantity,
       status: i.status,
       image: i.image_emoji || i.image_url || '📦',
@@ -122,7 +122,7 @@ class LogisticsService {
       id: i.id,
       name: i.name,
       slug: i.slug || i.name.toLowerCase().replace(/\s+/g, '-'),
-      price: `GHS ${i.price_ghs}`,
+      price: `₵${i.price_ghs}`,
       description: i.description || 'Official movement gear. Designed for patriots.',
       status: i.status,
       category: i.category,
@@ -163,7 +163,7 @@ class LogisticsService {
       id: typedData.id,
       name: typedData.name,
       slug: typedData.slug,
-      price: `GHS ${typedData.price_ghs}`,
+      price: `₵${typedData.price_ghs}`,
       description: typedData.description || 'Official movement gear. Designed for patriots.',
       status: typedData.status,
       category: typedData.category,
@@ -269,7 +269,7 @@ class LogisticsService {
       id: i.id,
       name: i.name,
       category: i.category,
-      price: `GHS ${i.price_ghs}`,
+      price: `₵${i.price_ghs}`,
       stock: i.stock_quantity,
       status: i.status,
       image: i.image_emoji || i.image_url || '📦',
@@ -348,7 +348,7 @@ class LogisticsService {
       // 1. Fetch current request state
       const { data: currentReq, error: fetchError } = await supabase
         .from('resource_requests')
-        .select('status, updated_at')
+        .select('status, updated_at, region')
         .eq('id', id)
         .single()
 

@@ -83,7 +83,7 @@ export default function Checkout() {
   }, 0)
   const shipping = cart.length > 0 ? 25.00 : 0
   
-  // Point conversion logic: 100 points = 1 GHS
+  // Point conversion logic: 100 points = 1 ₵
   const pointsValue = Math.floor(userPoints / 100)
   const appliedPointsValue = usePoints ? Math.min(pointsValue, subtotal) : 0
   const total = subtotal + shipping - appliedPointsValue
@@ -380,7 +380,7 @@ export default function Checkout() {
                       <p className="text-micro text-stone-500 tracking-tight">Qty: {item.quantity} | {item.selectedSize}</p>
                     </div>
                     <p className="text-xs font-bold text-stone-900">
-                      GHS {(item.quantity * (typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price)).toFixed(2)}
+                      ₵{(item.quantity * (typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price)).toFixed(2)}
                     </p>
                   </div>
                 ))}
@@ -389,11 +389,11 @@ export default function Checkout() {
               <div className="space-y-4 pt-6 border-t border-stone-100 mb-8">
                 <div className="flex justify-between text-xs text-stone-600 tracking-tight">
                   <span>Subtotal</span>
-                  <span className="font-bold text-stone-900">GHS {subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-stone-900">₵{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xs text-stone-600 tracking-tight">
                   <span>Shipping</span>
-                  <span className="font-bold text-stone-900">GHS {shipping.toFixed(2)}</span>
+                  <span className="font-bold text-stone-900">₵{shipping.toFixed(2)}</span>
                 </div>
 
                 {userPoints > 100 && (
@@ -418,7 +418,7 @@ export default function Checkout() {
                     {usePoints && (
                       <div className="flex justify-between text-xs text-[var(--brand-green)] tracking-tight animate-in fade-in slide-in-from-top-1">
                         <span>Points Discount</span>
-                        <span className="font-bold">- GHS {appliedPointsValue.toFixed(2)}</span>
+                        <span className="font-bold">- ₵{appliedPointsValue.toFixed(2)}</span>
                       </div>
                     )}
                   </div>
@@ -426,7 +426,7 @@ export default function Checkout() {
 
                 <div className="pt-4 border-t border-stone-200 flex justify-between items-center">
                   <span className="font-h3 text-lg text-stone-900">Total</span>
-                  <span className="font-h3 text-xl text-[var(--brand-green)]">GHS {total.toFixed(2)}</span>
+                  <span className="font-h3 text-xl text-[var(--brand-green)]">₵{total.toFixed(2)}</span>
                 </div>
               </div>
 

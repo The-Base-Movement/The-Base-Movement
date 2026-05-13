@@ -70,7 +70,7 @@ export function ProductInfo({
           <span className="text-stone-300">|</span>
           <span className="text-sm text-stone-500">{product.reviews || 0} Verified reviews</span>
         </div>
-        <p className="text-2xl font-bold text-brand-green">GH₵{product.price.toString().replace('GHS', '').replace('GH₵', '').trim()}</p>
+        <p className="text-2xl font-bold text-brand-green">₵{product.price.toString().replace('GHS', '').replace('GH₵', '').replace('₵', '').trim()}</p>
       </div>
 
       <p className="text-stone-600 font-body-md leading-relaxed mb-10">

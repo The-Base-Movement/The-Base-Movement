@@ -24,10 +24,12 @@ export function StoreStatsOverview({ products, requests, lowStockItems }: StoreS
     <>
       {/* KPI strip */}
       <div className="kpis">
-        <div className="kpi gr">
-          <div className="l">Stock value</div>
-          <div className="v">GHS {stockValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
-          <div className="d">Movement asset valuation</div>
+        <div className={lowStockItems.length > 0 ? 'kpi r' : 'kpi'}>
+          <div className="l" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>Inventory alerts</div>
+          <div className="v" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>{lowStockItems.length}</div>
+          <div className="d" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>
+            {lowStockItems.length > 0 ? 'Replenishment required' : 'Supply chain stable'}
+          </div>
         </div>
         <div className={pendingRequests > 0 ? 'kpi g' : 'kpi k'}>
           <div className="l">Active requests</div>
@@ -41,12 +43,10 @@ export function StoreStatsOverview({ products, requests, lowStockItems }: StoreS
           <div className="v">{totalStockUnits.toLocaleString()}</div>
           <div className="d">Across {products.length} catalog items</div>
         </div>
-        <div className={lowStockItems.length > 0 ? 'kpi r' : 'kpi'}>
-          <div className="l" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>Inventory alerts</div>
-          <div className="v" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>{lowStockItems.length}</div>
-          <div className="d" style={{ color: lowStockItems.length > 0 ? 'hsl(var(--destructive))' : undefined }}>
-            {lowStockItems.length > 0 ? 'Replenishment required' : 'Supply chain stable'}
-          </div>
+        <div className="kpi gr">
+          <div className="l">Stock value</div>
+          <div className="v">₵{stockValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
+          <div className="d">Movement asset valuation</div>
         </div>
       </div>
 

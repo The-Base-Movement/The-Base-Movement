@@ -60,7 +60,7 @@ export function AuditModal({
                     </td>
                     <td className="p-6">
                       <p className="text-sm font-bold text-stone-900 font-meta">
-                        {item.amount.includes('₵') ? item.amount : `₵ ${item.amount.replace(/GHS/i, '').trim()}`}
+                        {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
                       </p>
                     </td>
                     <td className="p-6">

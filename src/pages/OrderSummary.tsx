@@ -123,7 +123,7 @@ export default function OrderSummary() {
                         <p className="text-micro font-bold text-stone-400 tracking-tight mt-1">Quantity: {item.quantity}</p>
                       </div>
                     </div>
-                    <p className="font-bold text-stone-900 text-sm whitespace-nowrap">GHS {Number(item.price_at_purchase * item.quantity).toFixed(2)}</p>
+                    <p className="font-bold text-stone-900 text-sm whitespace-nowrap">₵{Number(item.price_at_purchase * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -135,15 +135,15 @@ export default function OrderSummary() {
               <div className="space-y-4">
                 <div className="flex justify-between text-xs font-meta tracking-tight opacity-60">
                   <span>Subtotal</span>
-                  <span>GHS {Number(order.subtotal).toFixed(2)}</span>
+                  <span>₵{Number(order.subtotal).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xs font-meta tracking-tight opacity-60">
                   <span>Shipping</span>
-                  <span>GHS {Number(order.shipping_fee).toFixed(2)}</span>
+                  <span>₵{Number(order.shipping_fee).toFixed(2)}</span>
                 </div>
                 <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                   <span className="font-h3 text-lg tracking-tight">Total paid via {order.payment_method?.toUpperCase()}</span>
-                  <span className="font-h3 text-2xl text-brand-green whitespace-nowrap">GHS {Number(order.total_amount).toFixed(2)}</span>
+                  <span className="font-h3 text-2xl text-brand-green whitespace-nowrap">₵{Number(order.total_amount).toFixed(2)}</span>
                 </div>
               </div>
             </div>

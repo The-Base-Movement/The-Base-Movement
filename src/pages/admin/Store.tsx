@@ -75,7 +75,7 @@ export default function AdminStore() {
   useEffect(() => { fetchData() }, [])
 
   const handleOpenModal = (product?: InventoryItem) => {
-    setSelectedProduct(product || { name: '', category: 'Apparel', price: 'GHS 0.00', stock: 0, status: 'Stable', image: '👕', color: '#000000' })
+    setSelectedProduct(product || { name: '', category: 'Apparel', price: '₵0.00', stock: 0, status: 'Stable', image: '👕', color: '#000000' })
     setIsModalOpen(true)
   }
 

@@ -1,31 +1,18 @@
-import { useState, useEffect } from 'react'
-import { 
-  Package, 
-  Clock, 
-  Truck, 
-  CheckCircle2, 
-  XCircle,
-  Search,
-  Filter,
-  RefreshCw,
-  Eye,
-  Download,
-  X
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
-import { cn } from '@/lib/utils'
+import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import { cn } from '@/lib/utils'
+import { OrderListCard } from '@/components/admin/OrderListCard'
 
-const STATUS_CONFIG: Record<Order['status'], { label: string; color: string; bg: string; icon: typeof Package }> = {
-  Pending:    { label: 'Pending',    color: 'text-[var(--brand-gold)]',      bg: 'bg-[var(--brand-gold)]/10 border-[var(--brand-gold)]/20',       icon: Clock },
-  Processing: { label: 'Processing', color: 'text-blue-500',    bg: 'bg-blue-500/10 border-blue-500/20',          icon: Package },
-  Dispatched: { label: 'Dispatched', color: 'text-stone-500',  bg: 'bg-stone-500/10 border-stone-500/20',      icon: Truck },
-  Delivered:  { label: 'Delivered',  color: 'text-[var(--brand-green)]',     bg: 'bg-[var(--brand-green)]/10 border-[var(--brand-green)]/20',     icon: CheckCircle2 },
-  Cancelled:  { label: 'Cancelled',  color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20', icon: XCircle },
+
+const STATUS_CONFIG: Record<Order['status'], { label: string; color: string; bg: string; icon: string; kpiClass: string }> = {
+  Pending:    { label: 'Pending',    color: 'text-[var(--brand-gold)]',      bg: 'bg-[var(--brand-gold)]/10 border-[var(--brand-gold)]/20',       icon: 'schedule', kpiClass: 'g' },
+  Processing: { label: 'Processing', color: 'text-blue-500',    bg: 'bg-blue-500/10 border-blue-500/20',          icon: 'inventory_2', kpiClass: 'k' },
+  Dispatched: { label: 'Dispatched', color: 'text-stone-500',  bg: 'bg-stone-500/10 border-stone-500/20',      icon: 'local_shipping', kpiClass: 'k' },
+  Delivered:  { label: 'Delivered',  color: 'text-[var(--brand-green)]',     bg: 'bg-[var(--brand-green)]/10 border-[var(--brand-green)]/20',     icon: 'check_circle', kpiClass: 'gr' },
+  Cancelled:  { label: 'Cancelled',  color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20', icon: 'cancel', kpiClass: 'r' },
 }
 
 const NEXT_STATUS: Partial<Record<Order['status'], Order['status']>> = {
@@ -96,7 +83,7 @@ export default function AdminOrders() {
     setUpdatingId(null)
   }
 
-  const filtered = orders.filter(o => {
+  const filtered = useMemo(() => orders.filter(o => {
     const matchesStatus = statusFilter === 'ALL' || o.status === statusFilter
     
     const q = search.toLowerCase()
@@ -104,8 +91,9 @@ export default function AdminOrders() {
       o.full_name.toLowerCase().includes(q) || 
       o.email.toLowerCase().includes(q) ||
       o.id.toLowerCase().includes(q)
+
     return matchesStatus && matchesSearch
-  })
+  }), [orders, statusFilter, search])
 
   const handleExport = () => {
     try {
@@ -134,205 +122,218 @@ export default function AdminOrders() {
     }
   }
 
-  const statCards = stats ? [
+  const statCards = useMemo(() => stats ? [
     { 
-      label: 'Total Orders',   
-      value: stats.totalOrders,      
-      color: 'text-on-surface', 
-      sub: `GHS ${stats.totalRevenue.toFixed(2)} total revenue` 
+      label: 'Cancelled',      
+      value: stats.cancelledOrders,  
+      variant: 'r', 
+      sub: 'Terminated manifest flow' 
     },
     { 
-      label: 'Avg Delivery',   
-      value: `${(stats.avgDeliveryDays || 0).toFixed(1)}d`, 
-      color: (stats.avgDeliveryDays ?? 0) === 0 ? 'text-muted-foreground/40' : (stats.avgDeliveryDays ?? 0) <= 3 ? 'text-primary' : (stats.avgDeliveryDays ?? 0) <= 5 ? 'text-accent' : 'text-destructive', 
-      sub: 'Dispatch to Delivery Latency' 
+      label: 'Revenue Today',   
+      value: `₵${stats.revenueToday.toFixed(2)}`, 
+      variant: 'g', 
+      sub: 'Tactical daily inflow' 
     },
     { 
-      label: 'In Transit',     
-      value: stats.dispatchedOrders, 
-      color: stats.dispatchedOrders === 0 ? 'text-muted-foreground/40' : 'text-violet-600',  
-      sub: 'Dispatched to customers' 
+      label: 'Total Orders',     
+      value: stats.totalOrders, 
+      variant: 'k',  
+      sub: `₵${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })} total` 
     },
     { 
       label: 'Delivered',      
       value: stats.deliveredOrders,  
-      color: stats.deliveredOrders === 0 ? 'text-muted-foreground/40' : 'text-primary', 
-      sub: `GHS ${stats.revenueToday.toFixed(2)} today` 
+      variant: 'gr', 
+      sub: 'Successful fulfillment completion' 
     },
-  ] : []
+  ] : [], [stats])
 
   return (
-    <div className="admin-page-container">
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main animate-in fade-in duration-500">
+      {/* Page Header - Industrial Standard */}
+      <div className="top" style={{ marginBottom: 20 }}>
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <Package className="w-10 h-10 text-on-surface" />
-            Order Management
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Live merchandise dispatch and fulfillment intelligence.</p>
+          <div className="crumbs" style={{ marginBottom: 6 }}>
+            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>Admin</Link>
+            {' · '}
+            Store Management
+            {' · '}
+            Orders
+          </div>
+          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>inventory_2</span>
+            Orders Manifest
+          </h2>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="default"
-            size="lg"
-            onClick={handleExport}
-            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-8 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm h-12 active:scale-95"
-          >
-            <Download className="w-4 h-4 mr-2" /> Export Manifest
-          </Button>
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => loadData(true)}
-            className="rounded-sm text-micro px-10 h-12 font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-          >
-            <RefreshCw className={cn('w-4 h-4 mr-2', refreshing && 'animate-spin')} />
+        <div className="actions">
+          <button className="btn btn-outline btn-sm" onClick={handleExport}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>download</span>
+            Export CSV
+          </button>
+          <button className="btn btn-dest btn-sm" onClick={() => loadData(true)}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15, animation: refreshing ? 'spin 2s linear infinite' : 'none' }}>sync</span>
             Synchronize
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* Stats - Balanced Grid */}
-      <div className="grid-stats mb-12" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
+      {/* Stats - Industrial KPIs */}
+      <div className="kpis" style={{ marginBottom: 20 }}>
         {loading ? Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="rounded-sm border-border/40 animate-pulse bg-white shadow-sm">
-            <CardContent className="p-8 h-32" />
-          </Card>
+          <div key={i} className="kpi k animate-pulse h-24" />
         )) : statCards.map(s => (
-          <Card key={s.label} className="rounded-sm border-border/40 shadow-sm bg-white group hover:shadow-md transition-all duration-300">
-            <CardContent className="p-8">
-              <p className="text-micro font-bold text-muted-foreground/40 mb-2 tracking-tight">{s.label}</p>
-              <p className={cn('text-4xl font-bold font-meta tracking-tighter mb-1', s.color)}>{s.value}</p>
-              <p className="text-micro text-muted-foreground/40 font-bold tracking-tight">{s.sub}</p>
-            </CardContent>
-          </Card>
+          <div key={s.label} className={cn("kpi", s.variant)}>
+            <div className="l">{s.label}</div>
+            <div className="v">{s.value}</div>
+            <div className="d">{s.sub}</div>
+          </div>
         ))}
       </div>
 
-      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        {/* Orders Table */}
-        <div className={cn("min-w-0", selectedOrder ? 'flex-[2]' : 'flex-1')}>
-          <Card className="rounded-sm border-border/40 shadow-sm overflow-hidden">
-            <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between gap-4 bg-muted/5">
-              <CardTitle className="text-micro font-bold text-muted-foreground/40 flex items-center gap-2">
-                <Package className="w-4 h-4 text-brand-green" /> Order Feed
-              </CardTitle>
-              <div className="flex items-center gap-4">
-                {/* Search */}
-                <div className="relative w-full md:w-64">
-                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" />
-                  <input
-                    type="text"
-                    placeholder="Search by name, email, or ID..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    className="pl-9 pr-4 h-9 text-tiny font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 w-full rounded-sm placeholder:text-muted-foreground/20"
-                  />
-                </div>
-
-                {/* Desktop Filters */}
-                <div className="hidden md:flex items-center gap-4">
-                  <div className="relative">
-                    <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" />
-                    <select
-                      value={statusFilter}
-                      onChange={e => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
-                      className="pl-9 pr-8 h-9 text-tiny font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 appearance-none rounded-sm cursor-pointer text-muted-foreground/60"
-                    >
-                      <option value="ALL">All Statuses</option>
-                      {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+      <div className="twocol">
+        {/* Orders Feed */}
+        <div className="panel">
+          <div className="ph">
+            <div>
+              <h3>Fulfillment feed</h3>
+              <div className="meta">Real-time merchandise dispatch telemetry</div>
+            </div>
+            <div className="desktop-only flex items-center gap-2">
+              <div className="relative">
+                <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+                <input
+                  type="text"
+                  placeholder="Search manifest..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="pl-9 pr-4 h-9 text-tiny font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 rounded-sm placeholder:text-muted-foreground/20 w-64"
+                />
               </div>
-            </CardHeader>
+
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
+                className="pl-3 pr-8 h-9 text-tiny font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 appearance-none rounded-sm cursor-pointer text-muted-foreground/60"
+              >
+                <option value="ALL">All Statuses</option>
+                {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Mobile Filter & Search Bar — Step 5 Compliance */}
+          <div className="mobile-only" style={{ padding: '10px 14px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: 8, background: 'hsl(var(--container-low))' }}>
+            <div style={{ position: 'relative' }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}>search</span>
+              <input 
+                type="text"
+                placeholder="Search manifest..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{ width: '100%', height: 34, paddingLeft: 30, boxSizing: 'border-box', background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 13, fontFamily: 'inherit' }} 
+              />
+            </div>
+            <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 4 }}>
+              <button 
+                className={cn("pill flex-shrink-0", statusFilter === 'ALL' ? "pill-ok" : "pill-mute")}
+                onClick={() => setStatusFilter('ALL')}
+              >
+                All Statuses
+              </button>
+              {(Object.keys(STATUS_CONFIG) as Order['status'][]).map(s => (
+                <button 
+                  key={s}
+                  className={cn("pill flex-shrink-0", statusFilter === s ? "pill-ok" : "pill-mute")}
+                  onClick={() => setStatusFilter(s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
             <div className="overflow-x-auto">
               {loading ? (
                 <div className="p-20 text-center">
-                  <RefreshCw className="w-8 h-8 animate-spin text-brand-green/20 mx-auto mb-4" />
-                  <p className="text-micro font-bold normal-case tracking-tight text-slate-300">Synchronizing order flow...</p>
+                  <span className="material-symbols-outlined animate-spin text-brand-green/20" style={{ fontSize: 32 }}>sync</span>
+                  <p className="text-micro font-bold mt-4 text-slate-300">Synchronizing order flow...</p>
                 </div>
               ) : filtered.length === 0 ? (
                 <div className="p-20 text-center">
-                  <Package className="w-12 h-12 text-slate-100 mx-auto mb-4" />
-                  <p className="text-micro font-bold normal-case tracking-tight text-slate-400">No orders found</p>
-                  <p className="text-xs text-slate-300 mt-2 max-w-xs mx-auto">The merchandise feed is currently idle. Activity will appear as members complete movement-wide purchases.</p>
+                  <span className="material-symbols-outlined text-slate-100" style={{ fontSize: 48 }}>inventory_2</span>
+                  <p className="text-micro font-bold mt-4 text-slate-400">No orders found</p>
                 </div>
               ) : (
                 <>
-                {/* Desktop Table */}
-                <table className="w-full text-xs hidden md:table">
+                <div className="desktop-only">
+                <table className="table">
                   <thead>
-                    <tr className="border-b border-border/10 bg-muted/5">
-                      {['Order ID', 'Member', 'Region', 'Amount', 'Payment', 'Status', 'Date', 'Actions'].map(h => (
-                        <th key={h} className="px-6 py-4 text-left text-micro font-bold text-muted-foreground/40">{h}</th>
+                    <tr>
+                      {['Order ID', 'Patriot', 'Hub', 'Amount', 'Status', 'Date', 'Actions'].map(h => (
+                        <th key={h}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {filtered.map(order => {
                       const cfg = STATUS_CONFIG[order.status]
-                      const StatusIcon = cfg.icon
                       const nextStatus = NEXT_STATUS[order.status]
                       return (
                         <tr 
                           key={order.id} 
                           className={cn(
-                            'border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group',
-                            selectedOrder?.id === order.id && 'bg-slate-50/50 border-l-2 border-l-brand-green'
+                            'cursor-pointer',
+                            selectedOrder?.id === order.id && 'bg-muted/5'
                           )}
                           onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
                         >
-                          <td className="px-6 py-5 font-mono text-tiny text-slate-400">
+                          <td className="reg">
                             #{order.id.slice(0, 8).toUpperCase()}
                           </td>
-                          <td className="px-6 py-5">
-                            <p className="font-bold text-charcoal-dark text-sm">{order.full_name}</p>
-                            <p className="text-micro font-medium text-slate-400">{order.email}</p>
+                          <td className="who">
+                            <div>
+                              <b>{order.full_name}</b>
+                              <span>{order.email}</span>
+                            </div>
                           </td>
-                          <td className="px-6 py-5 text-tiny font-bold text-slate-500">
-                            {order.region_or_state || '-'}
+                          <td>
+                            <b className="text-[11px] font-bold text-slate-500">
+                              {order.region_or_state || '-'}
+                            </b>
                           </td>
-                          <td className="px-6 py-5 font-bold text-charcoal-dark text-sm">
-                            GHS {Number(order.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          <td>
+                            <b className="font-bold text-on-surface">
+                              ₵{Number(order.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            </b>
                           </td>
-                          <td className="px-6 py-5 text-micro font-bold text-slate-400 normal-case tracking-tight">
-                            {order.payment_method === 'momo' ? 'MoMo' : 'Card'}
-                          </td>
-                          <td className="px-6 py-5">
-                            <span className={cn('inline-flex items-center gap-1.5 px-3 py-1 text-micro font-bold border rounded-full', cfg.bg, cfg.color)}>
-                              <StatusIcon className="w-3 h-3" />
+                          <td>
+                            <span className={cn('pill', order.status === 'Delivered' ? 'pill-ok' : order.status === 'Cancelled' ? 'pill-err' : 'pill-warn')}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>{cfg.icon}</span>
                               {cfg.label}
                             </span>
                           </td>
-                          <td className="px-6 py-5 text-micro font-bold text-slate-400">
+                          <td className="text-micro font-bold text-slate-400">
                             {new Date(order.created_at).toLocaleDateString()}
                           </td>
-                          <td className="px-6 py-5">
-                            <div className="flex items-center gap-3" onClick={e => e.stopPropagation()}>
+                          <td>
+                            <div className="row-actions" onClick={e => e.stopPropagation()}>
                               {nextStatus && (
-                                <Button
-                                  variant="primary"
-                                  size="sm"
+                                <button
+                                  className="btn btn-primary btn-sm h-8"
                                   onClick={() => handleStatusAdvance(order)}
                                   disabled={updatingId === order.id}
-                                  className="h-9 px-6 text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20"
                                 >
                                   {updatingId === order.id ? '...' : `→ ${nextStatus}`}
-                                </Button>
+                                </button>
                               )}
-                              <Button
-                                size="sm"
-                                variant="ghost"
+                              <button
+                                className="ico h-8 w-8"
                                 onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
-                                className="h-9 w-9 p-0 hover:bg-slate-100 rounded-none text-slate-300 hover:text-brand-green transition-all"
                               >
-                                <Eye className="w-4 h-4" />
-                              </Button>
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>visibility</span>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -340,115 +341,66 @@ export default function AdminOrders() {
                     })}
                   </tbody>
                 </table>
+                </div>
 
-                {/* Mobile Order Cards */}
-                <div className="md:hidden divide-y divide-border/40">
-                  {filtered.map(order => {
-                    const cfg = STATUS_CONFIG[order.status]
-                    const StatusIcon = cfg.icon
-                    const nextStatus = NEXT_STATUS[order.status]
-                    return (
-                      <div 
-                        key={order.id} 
-                        className={cn(
-                          "p-6 space-y-6 transition-colors",
-                          selectedOrder?.id === order.id ? "bg-muted/10" : "bg-white"
-                        )}
-                        onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div className="space-y-1">
-                            <p className="text-micro font-mono font-bold text-muted-foreground/60 tracking-tight normal-case">#{order.id.slice(0, 8)}</p>
-                            <h4 className="text-sm font-bold text-on-surface">{order.full_name}</h4>
-                            <p className="text-micro font-bold text-muted-foreground/60">{order.region_or_state || 'Unknown Region'}</p>
-                          </div>
-                          <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-micro font-bold normal-case border rounded-full', cfg.bg, cfg.color)}>
-                            <StatusIcon className="w-2.5 h-2.5" />
-                            {cfg.label}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="p-4 bg-white border border-border/40 rounded-sm shadow-sm">
-                            <p className="text-micro font-bold text-muted-foreground/60 normal-case tracking-tight mb-1">Value</p>
-                            <p className="text-sm font-bold text-on-surface">GHS {Number(order.total_amount).toFixed(2)}</p>
-                          </div>
-                          <div className="p-4 bg-white border border-border/40 rounded-sm shadow-sm">
-                            <p className="text-micro font-bold text-muted-foreground/60 normal-case tracking-tight mb-1">Payment</p>
-                            <p className="text-sm font-bold text-on-surface capitalize">{order.payment_method}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 pt-2">
-                          <Button
-                            variant="gold"
-                            className="flex-1 h-12 rounded-sm text-micro font-bold capitalize tracking-tight shadow-sm transition-all active:scale-95"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedOrder(order);
-                            }}
-                          >
-                            <Eye className="w-4 h-4 mr-2" /> Details
-                          </Button>
-                          {nextStatus && (
-                            <Button
-                              variant="primary"
-                              className="flex-1 h-12 rounded-sm text-micro font-bold capitalize tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                              disabled={updatingId === order.id}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleStatusAdvance(order);
-                              }}
-                            >
-                              {updatingId === order.id ? '...' : `→ ${nextStatus}`}
-                            </Button>
-                          )}                        </div>
-                      </div>
-                    )
-                  })}
+                <div className="mobile-only divide-y divide-border/10">
+                  {filtered.map(order => (
+                    <OrderListCard 
+                      key={order.id}
+                      order={order}
+                      isSelected={selectedOrder?.id === order.id}
+                      onClick={() => setSelectedOrder(prev => prev?.id === order.id ? null : order)}
+                      onAdvance={() => handleStatusAdvance(order)}
+                      updatingId={updatingId}
+                      statusConfig={STATUS_CONFIG}
+                      nextStatus={NEXT_STATUS[order.status]}
+                    />
+                  ))}
                 </div>
                 </>
               )}
             </div>
-          </Card>
-        </div>
+          </div>
 
-        {/* Order Detail Panel */}
+        {/* Order Detail Panel - Industrial Standard */}
         {selectedOrder && (() => {
           const cfg = STATUS_CONFIG[selectedOrder.status]
-          const StatusIcon = cfg.icon
           return (
-            <Card className="rounded-sm border-border/40 shadow-xl flex-1 h-fit sticky top-6 bg-white overflow-hidden animate-in slide-in-from-right-4 duration-500">
-              <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between bg-muted/5">
-                <CardTitle className="text-micro font-bold text-muted-foreground/40">
-                  Order Manifest
-                </CardTitle>
-                <Button 
-                  variant="default"
-                  size="icon"
+            <div className="panel animate-in slide-in-from-right-4 duration-500 h-fit sticky top-6">
+              <div className="ph" style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', borderTop: '3px solid hsl(var(--primary))', borderRadius: '6px 6px 0 0', padding: '16px 18px' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>inventory_2</span>
+                    Order Manifest
+                  </h3>
+                  <div className="meta" style={{ color: 'rgba(255,255,255,.45)', fontSize: 10 }}>Logistics ID: #{selectedOrder.id.toUpperCase()}</div>
+                </div>
+                <button 
                   onClick={() => setSelectedOrder(null)}
-                  className="w-8 h-8 flex items-center justify-center rounded-sm bg-white border border-border/40 text-muted-foreground/40 hover:text-brand-green transition-all active:scale-95"
+                  className="ico"
+                  style={{ background: 'transparent', borderColor: 'rgba(255,255,255,.1)', color: '#fff' }}
                 >
-                  <X className="w-4 h-4" />
-                </Button>
-              </CardHeader>
-              <CardContent className="p-8 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+                </button>
+              </div>
+
+              <div style={{ padding: '24px 20px' }} className="space-y-8">
                 {/* ID & Status */}
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-micro font-bold text-muted-foreground/40 mb-1">Manifest ID</p>
-                    <p className="font-mono text-xs font-bold text-on-surface">#{selectedOrder.id.toUpperCase()}</p>
-                  </div>
-                  <span className={cn('inline-flex items-center gap-1.5 px-3 py-1.5 text-micro font-bold border rounded-full', cfg.bg, cfg.color)}>
-                    <StatusIcon className="w-3 h-3" />
+                  <span className={cn('pill', selectedOrder.status === 'Delivered' ? 'pill-ok' : selectedOrder.status === 'Cancelled' ? 'pill-err' : 'pill-warn')}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 13 }}>{cfg.icon}</span>
                     {cfg.label}
                   </span>
+                  <div className="text-right">
+                    <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-tight mb-1">Manifest Date</p>
+                    <p className="text-tiny font-bold text-on-surface">{new Date(selectedOrder.created_at).toLocaleDateString()}</p>
+                  </div>
                 </div>
 
                 {/* Patriot */}
-                <div className="flow pt-6 border-t border-border/10" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
-                  <p className="text-micro font-bold text-muted-foreground/40">Recipient Details</p>
-                  <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+                <div className="pt-6 border-t border-border/10 space-y-3">
+                  <label className="field-label">Recipient details</label>
+                  <div className="space-y-1">
                     <p className="font-bold text-base text-on-surface">{selectedOrder.full_name}</p>
                     <p className="text-xs font-medium text-muted-foreground/60">{selectedOrder.email}</p>
                     <p className="text-xs font-medium text-muted-foreground/60">{selectedOrder.phone}</p>
@@ -456,9 +408,9 @@ export default function AdminOrders() {
                 </div>
 
                 {/* Shipping */}
-                <div className="flow pt-6 border-t border-border/10" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
-                  <p className="text-micro font-bold text-muted-foreground/40">Logistics Destination</p>
-                  <div className="flow text-xs font-medium text-muted-foreground/60 leading-relaxed" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
+                <div className="pt-6 border-t border-border/10 space-y-3">
+                  <label className="field-label">Logistics destination</label>
+                  <div className="text-xs font-medium text-muted-foreground/60 leading-relaxed">
                     <p>{selectedOrder.shipping_address}</p>
                     <p>{selectedOrder.city}, {selectedOrder.region_or_state}</p>
                     <p className="font-bold text-on-surface pt-1">{selectedOrder.country}</p>
@@ -466,24 +418,24 @@ export default function AdminOrders() {
                 </div>
                 
                 {/* Manifest Items */}
-                <div className="flow pt-6 border-t border-slate-50" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
+                <div className="pt-6 border-t border-border/10 space-y-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-micro font-bold normal-case tracking-tight text-slate-400">Manifest items</p>
+                    <label className="field-label mb-0">Manifest items</label>
                     <span className="text-micro font-bold text-slate-400">{selectedOrder.items.length} Units</span>
                   </div>
-                  <div className="flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
+                  <div className="space-y-2">
                     {selectedOrder.items.map((item, idx) => (
-                      <div key={idx} className="p-4 bg-slate-50/50 border border-slate-100 flex items-center justify-between group">
-                        <div className="flow" style={{ '--flow-space': '0.25rem' } as React.CSSProperties}>
-                          <p className="text-xs font-bold text-charcoal-dark group-hover:text-brand-green transition-colors">
-                            {item.product_name || 'Legacy Movement Asset'}
+                      <div key={idx} className="p-3 bg-muted/5 border border-border/10 flex items-center justify-between group rounded-sm">
+                        <div className="space-y-1">
+                          <p className="text-xs font-bold text-on-surface">
+                            {item.product_name || 'Movement Asset'}
                           </p>
-                          <p className="text-micro font-medium text-slate-400">Unit Price: GHS {Number(item.price_at_purchase).toFixed(2)}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">₵{Number(item.price_at_purchase).toFixed(2)} unit</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs font-bold text-charcoal-dark">x{item.quantity}</p>
-                          <p className="text-micro font-bold text-slate-400 normal-case tracking-tight">
-                            GHS {(item.quantity * item.price_at_purchase).toFixed(2)}
+                          <p className="text-xs font-bold text-on-surface">x{item.quantity}</p>
+                          <p className="text-[10px] font-bold text-brand-green uppercase tracking-tight">
+                            ₵{(item.quantity * item.price_at_purchase).toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -492,46 +444,44 @@ export default function AdminOrders() {
                 </div>
 
                 {/* Totals */}
-                <div className="flow pt-6 border-t border-border/10" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
-                  <div className="flex justify-between text-xs font-medium text-muted-foreground/60">
+                <div className="pt-6 border-t border-border/10 space-y-2">
+                  <div className="flex justify-between text-xs font-bold text-muted-foreground/40">
                     <span>Subtotal</span>
-                    <span className="font-bold text-on-surface">GHS {Number(selectedOrder.subtotal).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span className="text-on-surface">₵{Number(selectedOrder.subtotal).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </div>
-                  <div className="flex justify-between text-xs font-medium text-muted-foreground/60">
-                    <span>Shipping Logistics</span>
-                    <span className="font-bold text-on-surface">GHS {Number(selectedOrder.shipping_fee).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  <div className="flex justify-between text-xs font-bold text-muted-foreground/40">
+                    <span>Logistics Fee</span>
+                    <span className="text-on-surface">₵{Number(selectedOrder.shipping_fee).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between pt-4 border-t border-border/10">
-                    <span className="text-micro font-bold text-on-surface">Total Manifest Value</span>
-                    <span className="text-lg font-bold text-brand-green">GHS {Number(selectedOrder.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span className="text-micro font-bold text-on-surface uppercase tracking-tight">Total Value</span>
+                    <span className="text-lg font-bold text-brand-green">₵{Number(selectedOrder.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="pt-6 flow" style={{ '--flow-space': '0.75rem' } as React.CSSProperties}>
+                <div className="pt-6 space-y-3">
                   {NEXT_STATUS[selectedOrder.status] && (
-                    <Button
-                      variant="primary"
-                      className="w-full h-14 text-tiny font-bold tracking-tight rounded-sm shadow-xl shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                    <button
+                      className="btn btn-primary w-full h-12 rounded-sm"
                       onClick={() => handleStatusAdvance(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
                       {updatingId === selectedOrder.id ? 'Synchronizing...' : `Advance to ${NEXT_STATUS[selectedOrder.status]}`}
-                    </Button>
+                    </button>
                   )}
                   {selectedOrder.status !== 'Cancelled' && selectedOrder.status !== 'Delivered' && (
-                    <Button
-                      variant="destructive"
-                      className="w-full h-14 text-micro font-bold tracking-tight rounded-sm transition-all active:scale-95 shadow-lg shadow-brand-red/20"
+                    <button
+                      className="btn btn-outline w-full h-12 rounded-sm text-destructive hover:border-destructive hover:text-destructive"
                       onClick={() => handleCancel(selectedOrder)}
                       disabled={updatingId === selectedOrder.id}
                     >
                       Terminate Order
-                    </Button>
+                    </button>
                   )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )
         })()}
       </div>
