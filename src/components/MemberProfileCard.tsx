@@ -1,7 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { User, MapPin, Globe, ChevronRight } from 'lucide-react'
 import type { Member } from '@/types/admin'
-import { cn } from '@/lib/utils'
 
 interface MemberProfileCardProps {
   member: Member
@@ -9,64 +6,69 @@ interface MemberProfileCardProps {
 }
 
 export function MemberProfileCard({ member, setSelectedMember }: MemberProfileCardProps) {
-  const isVerified = member.status === 'Active' || member.status === 'Approved' || !member.status;
+  const isVerified = member.status === 'Active' || member.status === 'Approved' || !member.status
 
   return (
-    <article 
-      aria-labelledby={`member-name-${member.id}`}
+    <button
       onClick={() => setSelectedMember(member)}
-      className="group block bg-white border border-stone-100 rounded-[28px] overflow-hidden transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:border-emerald-100 hover:-translate-y-1 cursor-pointer"
+      style={{
+        display: 'flex', flexDirection: 'column', background: '#fff',
+        border: '1px solid hsl(var(--border))', borderRadius: 6,
+        padding: '16px', cursor: 'pointer', textAlign: 'left',
+        width: '100%', transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s',
+        outline: 'none',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.borderColor = 'hsl(var(--primary))'
+        e.currentTarget.style.transform = 'translateY(-2px)'
+        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,107,63,0.1)'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.borderColor = 'hsl(var(--border))'
+        e.currentTarget.style.transform = 'none'
+        e.currentTarget.style.boxShadow = 'none'
+      }}
     >
-      <Card className="border-none shadow-none bg-transparent">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center group-hover:bg-emerald-50 transition-colors duration-500">
-              {member.avatarUrl ? (
-                <img src={member.avatarUrl} alt="" className="w-full h-full rounded-2xl object-cover" />
-              ) : (
-                <User className="w-6 h-6 text-stone-400 group-hover:text-emerald-600 transition-colors duration-500" />
-              )}
-            </div>
-            
-            <div className={cn(
-              "px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1.5",
-              isVerified ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
-            )}>
-              <span className={cn("w-1.5 h-1.5 rounded-full", isVerified ? "bg-emerald-400" : "bg-amber-400")} />
-              {isVerified ? 'Verified' : 'Pending'}
-            </div>
-          </div>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{ width: 44, height: 44, borderRadius: 4, background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+          {member.avatarUrl
+            ? <img src={member.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            : <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--on-surface-muted))' }}>person</span>
+          }
+        </div>
+        <span className={isVerified ? 'pill pill-ok' : 'pill pill-warn'}>
+          {isVerified ? 'Verified' : 'Pending'}
+        </span>
+      </div>
 
-          <div className="mb-6">
-            <h3 
-              id={`member-name-${member.id}`}
-              className="text-stone-900 text-base font-bold group-hover:text-emerald-700 transition-colors duration-300 truncate"
-            >
-              {member.name}
-            </h3>
-            <p className="text-xs text-stone-400 font-medium mt-0.5">{member.profession}</p>
-          </div>
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {member.name}
+        </div>
+        <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+          {member.profession}
+        </div>
+      </div>
 
-          <div className="space-y-3 pt-6 border-t border-stone-50">
-            <div className="flex items-center gap-2 text-stone-500">
-              <MapPin className="w-3.5 h-3.5 text-stone-300" />
-              <span className="text-[11px] font-medium truncate">
-                {member.platform === 'GHANA' ? `${member.constituency}, ${member.region}` : member.country}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-stone-500">
-              <Globe className="w-3.5 h-3.5 text-stone-300" />
-              <span className="text-[11px] font-medium">{member.platform === 'GHANA' ? 'Ghana' : 'Diaspora'} platform</span>
-            </div>
-          </div>
+      <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 5 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 13, color: 'hsl(var(--primary))', flexShrink: 0 }}>location_on</span>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {member.platform === 'GHANA'
+              ? (member.constituency ? `${member.constituency}, ${member.region}` : member.region)
+              : member.country}
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 13, color: 'hsl(var(--primary))', flexShrink: 0 }}>public</span>
+          <span>{member.platform === 'GHANA' ? 'Ghana Network' : 'Diaspora Network'}</span>
+        </div>
+      </div>
 
-          <div className="mt-6 flex items-center justify-between text-emerald-600">
-             <span className="text-[11px] font-bold">View profile</span>
-             <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" />
-          </div>
-        </CardContent>
-      </Card>
-    </article>
+      <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))' }}>View profile</span>
+        <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>arrow_forward</span>
+      </div>
+    </button>
   )
 }
-
