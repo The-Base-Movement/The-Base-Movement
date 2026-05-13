@@ -107,19 +107,22 @@ export default function LogisticsIntelligence() {
   }
 
   return (
-    <div className="main">
+    <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-      {/* Page header */}
-      <div className="ph">
+      {/* Page header — matches .top pattern from design system */}
+      <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>inventory_2</span>
+          <div className="crumbs">Logistics · Intelligence</div>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>inventory_2</span>
             Logistics monitoring
-          </h1>
-          <BrandLine />
-          <p>Automated supply chain monitoring and regional dispatch tracking.</p>
+          </h2>
+          <BrandLine style={{ marginTop: 10, marginBottom: 4 }} />
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, marginBottom: 0 }}>
+            Automated supply chain monitoring and regional dispatch tracking.
+          </p>
         </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div className="actions">
           <button className="btn btn-outline" onClick={handleRouteOptimization} disabled={isOptimizing}>
             <span className="material-symbols-outlined" style={{ fontSize: 15, animation: isOptimizing ? 'spin 1.2s linear infinite' : 'none' }}>
               {isOptimizing ? 'sync' : 'route'}
@@ -136,7 +139,7 @@ export default function LogisticsIntelligence() {
       </div>
 
       {/* KPI strip */}
-      <div className="kpis">
+      <div className="kpis" style={{ marginBottom: 0 }}>
         <div className={`kpi ${health >= 80 ? 'g' : health >= 51 ? '' : 'r'}`}>
           <div className="l">Supply chain health</div>
           <div className="v">{health}%</div>
