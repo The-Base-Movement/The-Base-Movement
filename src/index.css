@@ -386,6 +386,9 @@
 /* Sidebar-Main layout (Sidebar-Main) */
 .sidebar-main { display: grid; grid-template-columns: 280px 1fr; gap: 18px; }
 
+/* Main-Sidebar layout (Main-Sidebar) */
+.main-sidebar { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
+
 /* War Room 3-col main grid — collapses to 1 col on mobile, 3 on desktop */
 .war-room-main-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
 @media (min-width: 1024px) { .war-room-main-grid { grid-template-columns: 1.4fr .8fr 1fr; } }
@@ -396,7 +399,7 @@
   .top { flex-direction: column; align-items: flex-start; gap: 12px; }
   .top .actions { flex-wrap: wrap; }
   .kpis { grid-template-columns: repeat(2, 1fr); }
-  .twocol, .sidebar-main { grid-template-columns: 1fr; }
+  .twocol, .sidebar-main, .main-sidebar { grid-template-columns: 1fr; }
   .compose .toolbar { flex-wrap: wrap; gap: 8px; }
   /* Responsive visibility */
   .desktop-only { display: none !important; }
@@ -443,6 +446,39 @@
 
 .vault-body-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; }
 @media (max-width: 640px) { .vault-body-grid { grid-template-columns: 1fr; gap: 20px; } }
+
+/* Tactical Stats (KPIs) — Synced with stats.html spec */
+.card.green { --accent: #006B3F; }
+.card.gold  { --accent: #DAA520; }
+.card.red   { --accent: #CE1126; }
+.card.black { --accent: #1A1A1A; }
+
+.card { background:#fff; border:1px solid var(--border); border-radius:6px;
+  padding:22px 22px 20px; position:relative; overflow:hidden;
+  box-shadow:0 4px 20px -2px rgba(0,0,0,.04);
+  display:flex; flex-direction:column; gap:14px;
+  transition:transform .18s ease, box-shadow .18s ease; }
+.card:hover { transform:translateY(-2px); box-shadow:0 12px 30px -8px rgba(0,0,0,.1); }
+.card::before { content:""; position:absolute; left:0; right:0; top:0; height:5px; background:var(--accent); }
+.card::after { content:""; position:absolute; top:14px; right:18px; width:6px; height:6px;
+  border-radius:50%; background:var(--accent); }
+.card .row { display:flex; align-items:baseline; justify-content:space-between; }
+.card .eye { font-size:9.5px; font-weight:700; color:var(--on-surface-muted);
+  letter-spacing:.08em; text-transform:uppercase; }
+.card .num { font-family: 'Public Sans', sans-serif; font-weight: 800; font-size: 48px;
+  letter-spacing: -.03em; line-height: .95; color: #181d19; }
+.card .num small { font-size:20px; font-weight:700; color:var(--on-surface-muted);
+  margin-left:2px; letter-spacing:0; }
+.card .lbl { font-size:12px; font-weight:700; color:#181d19; letter-spacing:-.005em;
+  line-height:1.4; }
+.card .foot { display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid var(--border); padding-top:12px; margin-top:auto; }
+.card .delta { display:inline-flex; align-items:center; gap:5px; font-size:10.5px;
+  font-weight:700; color:var(--accent); letter-spacing:-.005em; }
+
+/* Logistics Intelligence two-panel grid */
+.logistics-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start; }
+@media (max-width: 1024px) { .logistics-grid { grid-template-columns: 1fr; } }
 
 /* Public Footer responsive grid */
 .footer-grid { display: grid; grid-template-columns: 2fr 2fr 1.5fr; gap: 0 48px; align-items: start; }

@@ -1,33 +1,7 @@
 import { useState, useEffect } from 'react'
-import { 
-  Package, 
-  AlertTriangle, 
-  TrendingUp, 
-  Clock, 
-  CheckCircle2,
-  BarChart3,
-  Map,
-  Filter,
-  FileText,
-  PackagePlus,
-  Loader2,
-  ShieldCheck,
-  History
-} from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { adminService } from '@/services/adminService'
 import type { LogisticsAuditEntry } from '@/types/admin'
-import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 
@@ -76,17 +50,14 @@ export default function LogisticsIntelligence() {
         setLoading(false)
       }
     }
-
     fetchLogisticsData()
   }, [])
 
   const handleReplenishAll = async () => {
     setIsReplenishing(true)
     const success = await adminService.replenishInventory()
-    
     if (success) {
       toast.success('Replenishment protocol initiated for all low-stock assets.')
-      // Refresh telemetry
       const [updatedAlerts, updatedAudit] = await Promise.all([
         adminService.getInventoryAlerts(),
         adminService.getLogisticsAudit(15)
@@ -96,7 +67,6 @@ export default function LogisticsIntelligence() {
     } else {
       toast.error('Replenishment protocol failed.')
     }
-    
     setIsReplenishing(false)
     setShowReplenishConfirm(false)
   }
@@ -115,405 +85,336 @@ export default function LogisticsIntelligence() {
     setIsOptimizing(false)
   }
 
+  const avgDispatch = velocity.length > 0
+    ? (velocity.reduce((s, v) => s + v.avg_dispatch_hours, 0) / velocity.length).toFixed(1)
+    : '0'
+  const avgFulfillment = velocity.length > 0
+    ? (velocity.reduce((s, v) => s + v.fulfillment_rate, 0) / velocity.length).toFixed(1)
+    : '0'
+  const health = velocity.length > 0
+    ? Math.round(velocity.reduce((s, v) => s + v.fulfillment_rate, 0) / velocity.length)
+    : 0
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-border/40 border-t-primary animate-spin" />
-          <p className="text-micro font-bold normal-case text-primary">Synchronizing supply chain telemetry...</p>
+      <div className="main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 320 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--primary))', animation: 'spin 1.2s linear infinite' }}>sync</span>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--primary))' }}>Synchronizing supply chain telemetry…</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      {/* 🚀 Header & Tactical Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main">
+
+      {/* Page header */}
+      <div className="ph">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <Package className="w-8 h-8 text-on-surface" />
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>inventory_2</span>
             Logistics monitoring
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Automated supply chain monitoring and regional dispatch tracking.</p>
+          <BrandLine />
+          <p>Automated supply chain monitoring and regional dispatch tracking.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="default" 
-            size="lg"
-            onClick={handleRouteOptimization}
-            disabled={isOptimizing}
-            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 font-bold tracking-tight hover:bg-stone-50 h-12 transition-all active:scale-95"
-          >
-            {isOptimizing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Filter className="w-4 h-4 mr-2" />} 
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button className="btn btn-outline" onClick={handleRouteOptimization} disabled={isOptimizing}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15, animation: isOptimizing ? 'spin 1.2s linear infinite' : 'none' }}>
+              {isOptimizing ? 'sync' : 'route'}
+            </span>
             Route Optimization
-          </Button>
-          <Button 
-            variant="primary"
-            size="lg"
-            onClick={() => setShowReplenishConfirm(true)}
-            disabled={isReplenishing}
-            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-          >
-            {isReplenishing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PackagePlus className="w-4 h-4 mr-2" />} 
+          </button>
+          <button className="btn btn-primary" onClick={() => setShowReplenishConfirm(true)} disabled={isReplenishing}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15, animation: isReplenishing ? 'spin 1.2s linear infinite' : 'none' }}>
+              {isReplenishing ? 'sync' : 'add_box'}
+            </span>
             Replenish All
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* 📊 High-Impact Telemetry */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {(() => {
-          const avgDispatch = velocity.length > 0 
-            ? (velocity.reduce((sum, v) => sum + v.avg_dispatch_hours, 0) / velocity.length).toFixed(1) 
-            : '0'
-          const avgFulfillment = velocity.length > 0 
-            ? (velocity.reduce((sum, v) => sum + v.fulfillment_rate, 0) / velocity.length).toFixed(1) 
-            : '0'
-          const health = velocity.length > 0
-            ? Math.round(velocity.reduce((sum, v) => sum + v.fulfillment_rate, 0) / velocity.length)
-            : 0
-
-          return [
-            { 
-              label: 'Supply Chain Health', 
-              value: `${health}%`, 
-              sub: 'Logistics Efficiency', 
-              icon: health >= 80 ? CheckCircle2 : AlertTriangle, 
-              color: health >= 80 ? 'text-primary' : health >= 51 ? 'text-accent' : 'text-destructive',
-              className: 'col-span-2 md:col-span-1'
-            },
-            { label: 'Urgent Alerts', value: alerts.length, sub: 'Inventory Alerts', icon: AlertTriangle, color: alerts.length > 0 ? 'text-destructive' : 'text-muted-foreground/80' },
-            { label: 'Avg Dispatch', value: `${avgDispatch}h`, sub: '30 Day Aggregate', icon: Clock, color: 'text-blue-500' },
-            { 
-              label: 'Fulfillment Rate', 
-              value: `${avgFulfillment}%`, 
-              sub: 'Verified Delivery', 
-              icon: Number(avgFulfillment) >= 80 ? TrendingUp : AlertTriangle, 
-              color: Number(avgFulfillment) >= 80 ? 'text-orange-500' : Number(avgFulfillment) >= 51 ? 'text-accent' : 'text-destructive',
-              className: 'col-span-2 md:col-span-1'
-            },
-          ].map((stat, i) => (
-            <Card key={i} className={cn("rounded-sm border-border/60 shadow-sm bg-white p-6 hover:border-on-surface/40 transition-colors", stat.className)}>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-micro font-bold text-muted-foreground/80">{stat.label}</span>
-                <stat.icon className={cn("w-5 h-5", stat.color)} />
-              </div>
-              <div>
-                <p className="text-xl md:text-3xl font-bold tracking-tighter text-on-surface">{stat.value}</p>
-                <p className="text-tiny font-bold text-muted-foreground/60 mt-1.5">{stat.sub}</p>
-              </div>
-            </Card>
-          ))
-        })()}
+      {/* KPI strip */}
+      <div className="kpis">
+        <div className={`kpi ${health >= 80 ? 'g' : health >= 51 ? '' : 'r'}`}>
+          <div className="l">Supply chain health</div>
+          <div className="v">{health}%</div>
+          <div className="d">Logistics efficiency</div>
+        </div>
+        <div className={`kpi ${alerts.length > 0 ? 'r' : 'k'}`}>
+          <div className="l">Urgent alerts</div>
+          <div className="v">{alerts.length}</div>
+          <div className="d">Inventory alerts</div>
+        </div>
+        <div className="kpi">
+          <div className="l">Avg dispatch</div>
+          <div className="v">{avgDispatch}h</div>
+          <div className="d">30-day aggregate</div>
+        </div>
+        <div className={`kpi ${Number(avgFulfillment) >= 80 ? 'g' : Number(avgFulfillment) >= 51 ? '' : 'r'}`}>
+          <div className="l">Fulfillment rate</div>
+          <div className="v">{avgFulfillment}%</div>
+          <div className="d">Verified delivery</div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* 🚨 Inventory Intelligence (Urgent) */}
-        <Card className="lg:col-span-1 rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
-          <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-bold normal-case font-meta">Inventory alerts</CardTitle>
-              <AlertTriangle className="w-4 h-4 text-destructive" />
+      {/* Two-panel grid — inventory alerts + dispatch table */}
+      <div className="logistics-grid">
+
+        {/* Inventory alerts */}
+        <div className="panel" style={{ padding: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>Inventory alerts</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>Items requiring immediate replenishment</div>
             </div>
-            <CardDescription className="text-micro font-bold normal-case text-muted-foreground/80 mt-1">Items requiring immediate replenishment.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-border/40">
-              {alerts.length === 0 ? (
-                <div className="p-12 text-center">
-                  <Package className="w-8 h-8 text-border/60 mx-auto mb-3" />
-                  <p className="text-micro font-bold text-muted-foreground/80 normal-case">All stock levels normal</p>
-                </div>
-              ) : (
-                alerts.map((item) => (
-                  <div key={item.id} className="p-4 hover:bg-muted/30 transition-colors flex items-center justify-between group">
-                    <div>
-                      <p className="text-micro font-bold normal-case tracking-tight text-on-surface">{item.name}</p>
-                      <p className="text-[8px] text-muted-foreground/80 font-bold normal-case mt-1">{item.category.toLowerCase()}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs font-bold text-destructive">{item.stock_quantity} <span className="text-[8px] text-muted-foreground/40 font-bold normal-case ml-1">in stock</span></p>
-                      <p className="text-[8px] text-muted-foreground/80 font-bold normal-case mt-1">Threshold: {item.low_stock_threshold}</p>
-                    </div>
+            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--destructive))' }}>warning</span>
+          </div>
+
+          <div style={{ flex: 1 }}>
+            {alerts.length === 0 ? (
+              <div style={{ padding: 48, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))' }}>inventory_2</span>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>All stock levels normal</p>
+              </div>
+            ) : (
+              alerts.map(item => (
+                <div key={item.id} style={{ padding: '12px 20px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 2, textTransform: 'lowercase' }}>{item.category}</div>
                   </div>
-                ))
-              )}
-            </div>
-          </CardContent>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--destructive))' }}>
+                      {item.stock_quantity} <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 700 }}>in stock</span>
+                    </div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>Threshold: {item.low_stock_threshold}</div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
           {alerts.length > 0 && (
-            <div className="p-4 bg-muted/30 border-t border-border/40 flex justify-end">
-              <Button 
-                variant="primary"
-                onClick={handleGeneratePurchaseOrder}
-                disabled={isGeneratingPO}
-                className="bg-brand-red text-white hover:bg-brand-red/90 rounded-sm h-11 px-10 font-bold text-micro tracking-tight flex items-center gap-2 shadow-lg shadow-brand-red/20 border-0 transition-all hover:scale-[1.02] active:scale-95"
-              >
-                {isGeneratingPO ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+            <div style={{ padding: '12px 20px', borderTop: '1px solid hsl(var(--border))', display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn btn-dest btn-sm" onClick={handleGeneratePurchaseOrder} disabled={isGeneratingPO}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14, animation: isGeneratingPO ? 'spin 1.2s linear infinite' : 'none' }}>
+                  {isGeneratingPO ? 'sync' : 'description'}
+                </span>
                 Generate Purchase Order
-              </Button>
+              </button>
             </div>
           )}
-        </Card>
-
-        {/* 🚛 Regional Dispatch Velocity */}
-        <Card className="lg:col-span-2 rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
-          <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-xs font-bold normal-case font-meta">Regional dispatch performance</CardTitle>
-              <CardDescription className="text-micro font-bold normal-case text-muted-foreground/80 mt-1">Average processing and transit times by movement jurisdiction.</CardDescription>
-            </div>
-            <BarChart3 className="w-4 h-4 text-muted-foreground/80" />
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              {/* Desktop Table */}
-              <table className="w-full text-left hidden md:table">
-                <thead className="bg-muted/30 border-b border-border/40">
-                  <tr>
-                    <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Jurisdiction</th>
-                    <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Orders</th>
-                    <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Dispatch time</th>
-                    <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Delivery</th>
-                    <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Fulfillment</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {velocity.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-micro font-bold text-muted-foreground/80 normal-case">No dispatch telemetry available</td>
-                    </tr>
-                  ) : (
-                    velocity.map((v, idx) => (
-                      <tr key={idx} className="hover:bg-muted/30 transition-colors group">
-                        <td className="px-6 py-4">
-                          <span className="text-micro font-bold normal-case text-on-surface">{v.region || 'Unknown'}</span>
-                        </td>
-                        <td className="px-6 py-4 text-xs font-bold text-on-surface/80">{v.total_orders}</td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <Clock className="w-3 h-3 text-border/60" />
-                            <span className="text-xs font-bold text-on-surface">{v.avg_dispatch_hours}h</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-xs font-bold text-on-surface/80">{v.avg_delivery_hours}h</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 h-1 bg-muted/10 max-w-[60px] overflow-hidden rounded-full">
-                              <div 
-                                className="h-full bg-primary" 
-                                style={{ width: `${v.fulfillment_rate}%` }} 
-                              />
-                            </div>
-                            <span className="text-micro font-bold text-primary">{v.fulfillment_rate}%</span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-
-              {/* Mobile Jurisdictional Cards */}
-              <div className="md:hidden divide-y divide-border/40">
-                {velocity.length === 0 ? (
-                  <div className="p-12 text-center">
-                    <p className="text-micro font-bold text-muted-foreground/80 normal-case">No dispatch telemetry available</p>
-                  </div>
-                ) : (
-                  velocity.map((v, idx) => (
-                    <div key={idx} className="p-6 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <h4 className="text-sm font-bold text-on-surface">{v.region || 'Unknown'}</h4>
-                        <div className="px-3 py-1 bg-muted/10 rounded-full">
-                          <p className="text-micro font-bold text-on-surface/80 tracking-tight">{v.total_orders} Orders</p>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <p className="text-[8px] font-bold text-muted-foreground/80 tracking-tight">Dispatch Time</p>
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-3 h-3 text-muted-foreground/80" />
-                            <p className="text-xs font-bold text-on-surface">{v.avg_dispatch_hours}h</p>
-                          </div>
-                        </div>
-                        <div className="space-y-1 text-right">
-                          <p className="text-[8px] font-bold text-muted-foreground/80 tracking-tight">Delivery</p>
-                          <p className="text-xs font-bold text-on-surface">{v.avg_delivery_hours}h</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center text-[8px] font-bold text-muted-foreground/80 tracking-tight">
-                          <span>Fulfillment Rate</span>
-                          <span className="text-primary">{v.fulfillment_rate}%</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-muted/10 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary transition-all duration-1000" 
-                            style={{ width: `${v.fulfillment_rate}%` }} 
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 📍 Supply Chain Map (Placeholder for high-fidelity visualization) */}
-      <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden p-0">
-        <div className="bg-on-surface p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div>
-            <h3 className="text-white text-xl font-bold font-meta leading-tight">National supply chain map</h3>
-            <p className="text-micro font-bold normal-case text-white/70 mt-2">Real-time visualization of material flow across the 16 regions.</p>
-          </div>
-          <Button 
-            variant="default" 
-            size="lg"
-            onClick={() => toast.success('Initializing high-fidelity enterprise visualization protocol...')}
-            className="w-full sm:w-auto bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white rounded-sm h-12 px-10 font-bold text-micro tracking-tight shadow-xl shadow-black/20 transition-all active:scale-95"
-          >
-            <Map className="w-4 h-4 mr-2" /> Enterprise View
-          </Button>
         </div>
-        <div className="h-[320px] bg-muted/30 flex items-center justify-center relative overflow-hidden group">
-          {/* Geographic Radar Effect */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,black_1px,transparent_1px)] bg-[size:32px_32px]" />
-          </div>
-          
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-[200px] h-[200px] rounded-full border border-border/40 animate-ping opacity-20" />
-            <div className="absolute w-[350px] h-[350px] rounded-full border border-border/20 animate-pulse" />
-          </div>
 
-          <div className="relative text-center z-10 px-8">
-            <div className="w-16 h-16 bg-white rounded-sm shadow-sm border border-border/40 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
-              <Map className="w-8 h-8 text-border/60" />
-            </div>
-            <h4 className="text-on-surface text-tiny font-bold mb-2">Syncing regional data</h4>
-            <p className="text-micro font-bold normal-case text-muted-foreground/90">No regional data available yet. Waiting for hub connection.</p>
-            <div className="flex items-center justify-center gap-2 mt-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-border/60 animate-bounce" />
-              <span className="w-1.5 h-1.5 rounded-full bg-border/60 animate-bounce delay-150" />
-              <span className="w-1.5 h-1.5 rounded-full bg-border/60 animate-bounce delay-300" />
-            </div>
-          </div>
-
-          {/* Tactical Overlay Lines */}
-          <div className="absolute top-0 left-0 w-full h-full border-[20px] border-transparent border-t-muted/5 border-l-muted/5 pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-full h-full border-[20px] border-transparent border-b-muted/5 border-r-muted/5 pointer-events-none" />
-        </div>
-      </Card>
-
-      {/* 📜 Supply Chain Audit Ledger */}
-      <Card className="rounded-sm border-border/60 shadow-sm bg-white overflow-hidden">
-        <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
-          <div className="flex items-center justify-between">
+        {/* Regional dispatch performance */}
+        <div className="panel" style={{ padding: 0 }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <CardTitle className="text-xs font-bold normal-case font-meta flex items-center gap-2">
-                <History className="w-4 h-4 text-primary" /> Supply chain audit vault
-              </CardTitle>
-              <CardDescription className="text-micro font-bold normal-case text-muted-foreground/80 mt-1">Immutable ledger of replenishment and stock adjustment events.</CardDescription>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>Regional dispatch performance</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>Average processing and transit times by region</div>
             </div>
-            <ShieldCheck className="w-4 h-4 text-primary" />
+            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>bar_chart</span>
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-muted/30 border-b border-border/40">
-                <tr>
-                  <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Timestamp</th>
-                  <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Action</th>
-                  <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Change</th>
-                  <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Source Hub</th>
-                  <th className="px-6 py-4 text-micro font-bold normal-case text-muted-foreground/80">Authorized By</th>
+
+          {/* Desktop table */}
+          <div className="desktop-only" style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+                  {['Jurisdiction', 'Orders', 'Dispatch', 'Delivery', 'Fulfillment'].map(h => (
+                    <th key={h} style={{ padding: '10px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.04em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/40">
-                {auditLogs.length === 0 ? (
+              <tbody>
+                {velocity.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-micro font-bold text-muted-foreground/80 normal-case">No audit entries detected in the ledger.</td>
+                    <td colSpan={5} style={{ padding: '48px 20px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>No dispatch telemetry available</td>
                   </tr>
-                ) : (
-                  auditLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4">
-                        <span className="text-micro font-bold normal-case text-on-surface/80">
-                          {format(new Date(log.timestamp), 'MMM dd, HH:mm')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={cn(
-                          "px-2 py-0.5 text-[8px] font-bold normal-case rounded-full",
-                          log.action === 'REPLENISHED' ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/60"
-                        )}>
-                          {log.action}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-micro font-bold text-on-surface">+{log.quantityChange} units</span>
-                      </td>
-                      <td className="px-6 py-4 text-micro font-bold text-on-surface/80 normal-case">{log.sourceLocation}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center">
-                            <ShieldCheck className="w-2 h-2 text-primary" />
-                          </div>
-                          <span className="text-micro font-bold text-on-surface/80 normal-case">{log.performedBy}</span>
+                ) : velocity.map((v, idx) => (
+                  <tr key={idx} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                    <td style={{ padding: '12px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{v.region || 'Unknown'}</td>
+                    <td style={{ padding: '12px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontVariantNumeric: 'tabular-nums' }}>{v.total_orders}</td>
+                    <td style={{ padding: '12px 20px' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>schedule</span>
+                        {v.avg_dispatch_hours}h
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontVariantNumeric: 'tabular-nums' }}>{v.avg_delivery_hours}h</td>
+                    <td style={{ padding: '12px 20px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ flex: 1, height: 4, background: 'hsl(var(--border))', borderRadius: 2, maxWidth: 60, overflow: 'hidden' }}>
+                          <div style={{ height: '100%', background: 'hsl(var(--primary))', width: `${v.fulfillment_rate}%` }} />
                         </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))', fontVariantNumeric: 'tabular-nums' }}>{v.fulfillment_rate}%</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* 🔐 Replenish All Confirmation */}
-      <AlertDialog open={showReplenishConfirm} onOpenChange={setShowReplenishConfirm}>
-        <AlertDialogContent className="rounded-sm border-border/60">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold tracking-tight flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-muted/30 flex items-center justify-center text-on-surface">
-                <PackagePlus className="w-5 h-5" />
+          {/* Mobile cards */}
+          <div className="mobile-only">
+            {velocity.length === 0 ? (
+              <div style={{ padding: '48px 20px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>No dispatch telemetry available</div>
+            ) : velocity.map((v, idx) => (
+              <div key={idx} style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>{v.region || 'Unknown'}</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', background: 'hsl(var(--container-low))', padding: '2px 8px', borderRadius: 2, fontVariantNumeric: 'tabular-nums' }}>{v.total_orders} orders</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+                  <div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 3 }}>Dispatch</div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', fontVariantNumeric: 'tabular-nums' }}>{v.avg_dispatch_hours}h</div>
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 3 }}>Delivery</div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', fontVariantNumeric: 'tabular-nums' }}>{v.avg_delivery_hours}h</div>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'Public Sans', sans-serif", fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', marginBottom: 4 }}>
+                    <span>Fulfillment</span>
+                    <span style={{ color: 'hsl(var(--primary))', fontVariantNumeric: 'tabular-nums' }}>{v.fulfillment_rate}%</span>
+                  </div>
+                  <div style={{ height: 4, background: 'hsl(var(--border))', borderRadius: 2, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', background: 'hsl(var(--primary))', width: `${v.fulfillment_rate}%` }} />
+                  </div>
+                </div>
               </div>
-              Confirm bulk replenishment?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-tiny font-bold text-muted-foreground/80 leading-relaxed">
-              This action will initiate a movement-wide replenishment protocol for all <span className="text-text-on-surface">low-stock assets</span>. Standard procurement workflows will be triggered for each identified item.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
-            <Button 
-              variant="default" 
-              onClick={() => setShowReplenishConfirm(false)}
-              className="rounded-sm text-micro font-bold tracking-tight h-12 px-8 border-border/40 hover:bg-stone-50 transition-all active:scale-95"
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="primary"
-              onClick={handleReplenishAll}
-              disabled={isReplenishing}
-              className="rounded-sm text-micro font-bold tracking-tight h-12 px-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-            >
-              {isReplenishing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Protocol'}
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Supply chain map */}
+      <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ background: 'hsl(var(--on-surface))', padding: '22px 28px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+          <div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 16, color: '#fff', letterSpacing: '-.01em' }}>National supply chain map</div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'rgba(255,255,255,.55)', marginTop: 4 }}>Real-time visualization of material flow across the 16 regions.</div>
+          </div>
+          <button
+            className="btn btn-outline"
+            onClick={() => toast.success('Initializing high-fidelity enterprise visualization protocol…')}
+            style={{ color: '#fff', borderColor: 'rgba(255,255,255,.2)', background: 'rgba(255,255,255,.06)' }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>map</span>
+            Enterprise View
+          </button>
+        </div>
+
+        <div style={{ height: 280, background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px)', backgroundSize: '28px 28px', opacity: 0.5 }} />
+          <div style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', border: '1px solid hsl(var(--border))', animation: 'ping 2.5s ease-in-out infinite', opacity: 0.25 }} />
+          <div style={{ position: 'absolute', width: 340, height: 340, borderRadius: '50%', border: '1px solid hsl(var(--border))', animation: 'pulse 3s ease-in-out infinite', opacity: 0.15 }} />
+          <div style={{ position: 'relative', textAlign: 'center', zIndex: 10, padding: '0 24px' }}>
+            <div style={{ width: 52, height: 52, background: '#fff', border: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 26, color: 'hsl(var(--border))' }}>map</span>
+            </div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', marginBottom: 4 }}>Syncing regional data</div>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>No regional data available yet. Waiting for hub connection.</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14 }}>
+              {([0, 150, 300] as const).map(d => (
+                <span key={d} style={{ width: 6, height: 6, borderRadius: '50%', background: 'hsl(var(--border))', display: 'inline-block', animationDelay: `${d}ms` }} className="animate-bounce" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Audit ledger */}
+      <div className="panel" style={{ padding: 0 }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>history</span>
+              Supply chain audit vault
+            </div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>Immutable ledger of replenishment and stock adjustment events</div>
+          </div>
+          <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>verified_user</span>
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+                {['Timestamp', 'Action', 'Change', 'Source hub', 'Authorized by'].map(h => (
+                  <th key={h} style={{ padding: '10px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.04em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {auditLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} style={{ padding: '48px 20px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>No audit entries detected in the ledger.</td>
+                </tr>
+              ) : auditLogs.map(log => (
+                <tr key={log.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                  <td style={{ padding: '12px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', whiteSpace: 'nowrap' }}>
+                    {format(new Date(log.timestamp), 'MMM dd, HH:mm')}
+                  </td>
+                  <td style={{ padding: '12px 20px' }}>
+                    <span style={{ padding: '3px 8px', borderRadius: 2, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: '.04em', textTransform: 'uppercase', background: log.action === 'REPLENISHED' ? 'hsl(var(--primary) / 10%)' : 'hsl(var(--container-low))', color: log.action === 'REPLENISHED' ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))' }}>
+                      {log.action}
+                    </span>
+                  </td>
+                  <td style={{ padding: '12px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
+                    +{log.quantityChange} units
+                  </td>
+                  <td style={{ padding: '12px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{log.sourceLocation}</td>
+                  <td style={{ padding: '12px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'hsl(var(--primary) / 10%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 11, color: 'hsl(var(--primary))' }}>verified_user</span>
+                      </div>
+                      <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{log.performedBy}</span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Replenishment confirm modal */}
+      {showReplenishConfirm && (
+        <>
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(2px)' }}
+            onClick={() => setShowReplenishConfirm(false)}
+          />
+          <div style={{ position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', zIndex: 51, width: '100%', maxWidth: 480, margin: '0 16px', background: '#fff', border: '1px solid hsl(var(--border))', boxShadow: '0 32px 64px -16px rgba(0,0,0,.25)', padding: 28 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface))' }}>add_box</span>
+              </div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 16, color: 'hsl(var(--on-surface))', letterSpacing: '-.01em' }}>Confirm bulk replenishment?</div>
+            </div>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.65, marginBottom: 24 }}>
+              This will initiate a movement-wide replenishment protocol for all low-stock assets. Standard procurement workflows will be triggered for each identified item.
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+              <button className="btn btn-outline" onClick={() => setShowReplenishConfirm(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleReplenishAll} disabled={isReplenishing}>
+                {isReplenishing && (
+                  <span className="material-symbols-outlined" style={{ fontSize: 15, animation: 'spin 1.2s linear infinite' }}>sync</span>
+                )}
+                {isReplenishing ? 'Executing…' : 'Confirm Protocol'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
     </div>
   )
 }
