@@ -64,6 +64,7 @@ export default function PollsManagement() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false)
+  const [viewPoll, setViewPoll] = useState<Poll | null>(null)
 
   const fetchData = useCallback(async () => {
     setIsLoading(true)
@@ -84,11 +85,6 @@ export default function PollsManagement() {
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
-
-  const handlePollAction = (action: string, pollTitle: string) => {
-    adminService.logAction(action, `POLLS/${pollTitle}`, 'Success')
-    toast.success(`${action.replace('_', ' ')}: ${pollTitle} updated in Audit Vault`)
-  }
 
   const handleCreatePoll = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -265,7 +261,7 @@ export default function PollsManagement() {
                       <button className="btn btn-dest btn-sm" style={{ width: 34, padding: 0, justifyContent: 'center' }} onClick={() => handleDeletePoll(poll.id, poll.question)}>
                         <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
                       </button>
-                      <button className="btn btn-sm" style={{ background: 'hsl(var(--accent))', color: '#fff', width: 34, padding: 0, justifyContent: 'center' }} onClick={() => handlePollAction('POLL_MANAGE', poll.question)}>
+                      <button className="btn btn-sm" style={{ background: 'hsl(var(--accent))', color: '#fff', width: 34, padding: 0, justifyContent: 'center' }} onClick={() => setViewPoll(poll)}>
                         <span className="material-symbols-outlined" style={{ fontSize: 16 }}>more_vert</span>
                       </button>
                     </div>
@@ -329,7 +325,7 @@ export default function PollsManagement() {
             </div>
 
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn" style={{ flex: 1, justifyContent: 'center', background: 'hsl(var(--accent))', color: '#fff' }} onClick={() => handlePollAction('POLL_MANAGE', poll.question)}>
+              <button className="btn" style={{ flex: 1, justifyContent: 'center', background: 'hsl(var(--accent))', color: '#fff' }} onClick={() => setViewPoll(poll)}>
                 Manage Campaign
               </button>
               <button className="btn btn-dest" style={{ width: 44, padding: 0, justifyContent: 'center' }} onClick={() => handleDeletePoll(poll.id, poll.question)}>
@@ -537,6 +533,114 @@ export default function PollsManagement() {
           </div>
         </div>
       )}
+
+      {/* ── View Poll Modal ── */}
+      {viewPoll && (() => {
+        const sorted = [...viewPoll.options].sort((a, b) => b.votes - a.votes)
+        const leadId = sorted[0]?.id
+        const days = Math.max(0, Math.ceil((new Date(viewPoll.endDate).getTime() - Date.now()) / 86400000))
+        return (
+          <div style={modalBackdrop} onClick={() => setViewPoll(null)}>
+            <div style={modalBox(580)} onClick={e => e.stopPropagation()}>
+
+              {/* Header */}
+              <div className="ph">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15, color: viewPoll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))' }}>bar_chart</span>
+                  Poll Details
+                  {statusPill(viewPoll.status)}
+                </span>
+                <button style={modalCloseBtn} onClick={() => setViewPoll(null)}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+                </button>
+              </div>
+
+              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+                {/* Question + meta row */}
+                <div>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 16, color: 'hsl(var(--on-surface))', lineHeight: 1.45, margin: '0 0 14px' }}>
+                    {viewPoll.question}
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+                    {[
+                      { icon: 'location_on', label: 'Region', value: viewPoll.region },
+                      { icon: 'schedule', label: viewPoll.status === 'Active' ? `Closes in ${days} day${days !== 1 ? 's' : ''}` : 'End date', value: viewPoll.endDate },
+                      { icon: 'group', label: 'Total votes', value: viewPoll.totalVotes.toLocaleString() },
+                    ].map(m => (
+                      <div key={m.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>{m.icon}</span>
+                        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{m.label}:</span>
+                        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))' }}>{m.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Vote breakdown */}
+                <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: 0, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    Vote Breakdown · {viewPoll.options.length} options
+                  </p>
+                  {sorted.map((option, rank) => {
+                    const pct = viewPoll.totalVotes > 0 ? Math.round((option.votes / viewPoll.totalVotes) * 100) : 0
+                    const isLead = option.id === leadId
+                    return (
+                      <div key={option.id}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                            <span style={{
+                              width: 18, height: 18, borderRadius: 3, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10,
+                              background: rank === 0 ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
+                              color: rank === 0 ? '#fff' : 'hsl(var(--on-surface-muted))',
+                              border: rank === 0 ? 'none' : '1px solid hsl(var(--border))',
+                            }}>{rank + 1}</span>
+                            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: isLead ? 800 : 700, fontSize: 12.5, color: isLead ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface))' }}>
+                              {option.label}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{option.votes.toLocaleString()} votes</span>
+                            <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 12, color: isLead ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))', minWidth: 36, textAlign: 'right' }}>{pct}%</span>
+                          </div>
+                        </div>
+                        <div style={{ height: 6, background: 'hsl(var(--container-low))', borderRadius: 3, overflow: 'hidden', border: '1px solid hsl(var(--border))' }}>
+                          <div style={{
+                            height: '100%', width: `${pct}%`, transition: 'width 0.8s ease',
+                            background: rank === 0 ? 'hsl(var(--primary))' : rank === 1 ? 'hsl(var(--accent))' : 'hsl(var(--on-surface-muted))',
+                            opacity: rank === 0 ? 1 : 0.55,
+                            borderRadius: 3,
+                          }} />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Total bar */}
+                <div style={{ background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>Total participation</span>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 13, color: 'hsl(var(--primary))' }}>{viewPoll.totalVotes.toLocaleString()} votes</span>
+                </div>
+              </div>
+
+              {/* Footer actions */}
+              <div style={{ padding: '0 24px 24px', display: 'flex', gap: 10 }}>
+                <button
+                  className="btn btn-dest btn-sm"
+                  style={{ justifyContent: 'center' }}
+                  onClick={() => { setViewPoll(null); handleDeletePoll(viewPoll.id, viewPoll.question) }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>delete</span>
+                  Delete Poll
+                </button>
+                <button className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setViewPoll(null)}>Close</button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* ── Analytics Guide Modal ── */}
       {isAnalyticsModalOpen && (
