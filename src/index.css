@@ -255,6 +255,40 @@
   .tnum { font-variant-numeric: tabular-nums; }
   .text-micro { font-size: var(--fs-micro); }
   .text-tiny { font-size: var(--fs-tiny); }
+
+  /* Responsive Grid Utilities */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 1024px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 640px) {
+    .stat-grid { grid-template-columns: 1fr !important; }
+  }
+
+  .hero-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 640px) {
+    .hero-stats-grid { grid-template-columns: 1fr !important; }
+  }
+
+  .campaign-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  @media (max-width: 1024px) {
+    .campaign-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 768px) {
+    .campaign-grid { grid-template-columns: 1fr !important; }
+  }
 }
 
 /* Material Symbols configuration */
@@ -748,4 +782,57 @@
   margin-top: 14px;
   letter-spacing: .04em;
   text-transform: uppercase;
+}
+
+/* Settings page layout */
+.settings-outer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.settings-tabs {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: hsl(var(--container-low));
+  border: 1px solid hsl(var(--border));
+  border-radius: 4px;
+  padding: 8px;
+}
+.settings-tabs::-webkit-scrollbar { display: none; }
+.settings-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+.settings-form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 20px;
+}
+@media (min-width: 768px) {
+  .settings-outer {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .settings-tabs {
+    flex-direction: column;
+    width: 196px;
+    flex-shrink: 0;
+    overflow-x: visible;
+    position: sticky;
+    top: 80px;
+  }
+}
+@media (max-width: 767px) {
+  .settings-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .settings-form-grid-3 {
+    grid-template-columns: 1fr;
+  }
 }

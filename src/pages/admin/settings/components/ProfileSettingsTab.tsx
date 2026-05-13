@@ -1,14 +1,3 @@
-import { Camera, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle,
-  CardDescription 
-} from '@/components/ui/card'
 import type { AdminUser } from '@/services/adminService'
 
 interface ProfileForm {
@@ -30,111 +19,97 @@ interface ProfileSettingsTabProps {
   handleSaveProfile: () => void
 }
 
+const inputSt: React.CSSProperties = {
+  width: '100%', height: 40, padding: '0 12px',
+  border: '1px solid hsl(var(--border))',
+  background: 'hsl(var(--container-low))',
+  outline: 'none',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 700, fontSize: 12, borderRadius: 4,
+  color: 'hsl(var(--on-surface))', boxSizing: 'border-box',
+}
+
+const labelSt: React.CSSProperties = {
+  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+  color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6,
+}
+
 export function ProfileSettingsTab({
-  profileForm,
-  setProfileForm,
-  isUploading,
-  isSaving,
-  adminData,
-  fileInputRef,
-  handleAvatarClick,
-  handleFileChange,
-  handleSaveProfile
+  profileForm, setProfileForm, isUploading, isSaving, adminData,
+  fileInputRef, handleAvatarClick, handleFileChange, handleSaveProfile
 }: ProfileSettingsTabProps) {
+  const initials = profileForm.fullName.split(' ').map(n => n[0]).join('') || 'HQ'
+  const formatRole = (role: string) =>
+    role.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+
   return (
-    <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
-      <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
-        <CardTitle className="text-sm font-bold text-stone-900">Profile</CardTitle>
-        <CardDescription className="text-tiny font-medium text-stone-400 mt-1">Manage your public and internal administrative identity.</CardDescription>
-      </CardHeader>
-      <CardContent className="p-8">
-        <div className="space-y-10">
-          {/* Avatar Section */}
-          <div className="flex items-center gap-6">
-            <div className="relative group">
-              <div className="w-20 h-20 rounded-full bg-stone-100 flex items-center justify-center border border-stone-200 overflow-hidden relative">
-                {isUploading && (
-                  <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10">
-                    <Loader2 className="w-5 h-5 text-stone-900 animate-spin" />
-                  </div>
-                )}
-                {profileForm.avatarUrl ? (
-                  <img src={profileForm.avatarUrl} alt="Avatar" className="w-full h-full object-cover" decoding="async" loading="lazy" />
-                ) : (
-                  <span className="text-stone-400 font-bold text-sm">
-                    {profileForm.fullName.split(' ').map(n => n[0]).join('') || 'HQ'}
-                  </span>
-                )}
-              </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleFileChange} 
-                accept="image/*" 
-                className="hidden" 
-              />
-              <button 
-                onClick={handleAvatarClick}
-                disabled={isUploading}
-                className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full z-20"
-              >
-                <Camera className="w-4 h-4" />
-              </button>
-            </div>
+    <div className="panel">
+      <div className="ph">
+        <span>Profile</span>
+        <span style={{ fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>Manage your public and internal administrative identity.</span>
+      </div>
+      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 28 }}>
 
-            <div>
-              <p className="text-xs font-bold text-stone-900">Profile Image</p>
-              <p className="text-micro text-stone-400 font-medium mt-1">PNG, JPG up to 2MB</p>
+        {/* Avatar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <div style={{ position: 'relative' }}>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              {isUploading && (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface))' }}>progress_activity</span>
+                </div>
+              )}
+              {profileForm.avatarUrl ? (
+                <img src={profileForm.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+              ) : (
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>{initials}</span>
+              )}
             </div>
-          </div>
-
-          {/* Form Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-2">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Full name</Label>
-              <Input 
-                value={profileForm.fullName} 
-                onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
-                className="h-10 rounded-sm border-stone-200 bg-white focus:ring-[var(--brand-red)]/10 focus:border-[var(--brand-red)] transition-all text-xs font-medium" 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Email address</Label>
-              <Input value={profileForm.email} disabled className="h-10 rounded-sm border-stone-100 bg-stone-50 text-stone-400 text-xs font-medium cursor-not-allowed" />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Administrative role</Label>
-              <div className="h-10 px-3 flex items-center rounded-sm border border-stone-100 bg-stone-50 text-stone-400 text-micro font-bold normal-case">
-                {adminData?.role === 'SUPER_ADMIN' ? 'Super Admin' : 
-                 adminData?.role === 'REGIONAL_DIRECTOR' ? 'Regional Director' :
-                 adminData?.role === 'CONSTITUENCY_LEAD' ? 'Constituency Lead' :
-                 adminData?.role || (adminData ? 'Standard Staff' : 'HQ Officer')}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Phone number</Label>
-              <Input 
-                value={profileForm.phone} 
-                onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                placeholder="+233 XX XXX XXXX"
-                className="h-10 rounded-sm border-stone-200 bg-white focus:ring-[var(--brand-red)]/10 focus:border-[var(--brand-red)] transition-all text-xs font-medium" 
-              />
-            </div>
-          </div>
-
-          <div className="pt-6 flex justify-end border-t border-stone-100">
-            <Button 
-              variant="active-tab"
-              size="lg"
-              onClick={handleSaveProfile}
-              disabled={isSaving}
-              className="rounded-sm text-micro font-bold tracking-tight px-8 h-12 shadow-lg shadow-brand-green/20 transition-all active:scale-95"
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={{ display: 'none' }} />
+            <button
+              onClick={handleAvatarClick}
+              disabled={isUploading}
+              style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', color: '#fff', borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.15s' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
             >
-              {isSaving ? 'Syncing...' : 'Synchronize Profile'}
-            </Button>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>photo_camera</span>
+            </button>
+          </div>
+          <div>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', margin: 0 }}>Profile Image</p>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: '3px 0 0' }}>PNG, JPG up to 2MB</p>
           </div>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Form grid */}
+        <div className="settings-form-grid">
+          <div>
+            <label style={labelSt}>Full name</label>
+            <input style={inputSt} value={profileForm.fullName} onChange={e => setProfileForm({ ...profileForm, fullName: e.target.value })} />
+          </div>
+          <div>
+            <label style={labelSt}>Email address</label>
+            <input style={{ ...inputSt, opacity: 0.5, cursor: 'not-allowed' }} value={profileForm.email} disabled />
+          </div>
+          <div>
+            <label style={labelSt}>Administrative role</label>
+            <div style={{ ...inputSt, display: 'flex', alignItems: 'center', opacity: 0.6, cursor: 'default' }}>
+              {adminData?.role ? formatRole(adminData.role) : 'HQ Officer'}
+            </div>
+          </div>
+          <div>
+            <label style={labelSt}>Phone number</label>
+            <input style={inputSt} value={profileForm.phone} onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })} placeholder="+233 XX XXX XXXX" />
+          </div>
+        </div>
+
+        <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 20, display: 'flex', justifyContent: 'flex-end' }}>
+          <button className="btn btn-primary" onClick={handleSaveProfile} disabled={isSaving} style={{ minWidth: 180, justifyContent: 'center' }}>
+            {isSaving ? 'Syncing…' : 'Synchronize Profile'}
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }

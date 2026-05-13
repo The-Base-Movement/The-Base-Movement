@@ -1,50 +1,45 @@
-import { Shield, Globe, Users, History } from 'lucide-react'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle,
-  CardDescription 
-} from '@/components/ui/card'
-import { cn } from '@/lib/utils'
-
 export function RolesManagementTab() {
   const roles = [
-    { role: 'Super Admin', desc: 'Full system sovereignty and configuration rights.', count: 2, icon: Shield, color: 'text-[var(--brand-red)]' },
-    { role: 'Regional Admin', desc: 'Operational oversight within assigned regional boundaries.', count: 16, icon: Globe, color: 'text-stone-900' },
-    { role: 'Chapter Lead', desc: 'Local verification and mobilization management.', count: 124, icon: Users, color: 'text-stone-900' },
-    { role: 'Audit View', desc: 'Read-only access to financial and telemetry streams.', count: 4, icon: History, color: 'text-stone-500' },
+    { role: 'Super Admin', desc: 'Full system sovereignty and configuration rights.', count: 2, icon: 'shield', color: 'hsl(var(--destructive))' },
+    { role: 'Regional Admin', desc: 'Operational oversight within assigned regional boundaries.', count: 16, icon: 'language', color: 'hsl(var(--on-surface))' },
+    { role: 'Chapter Lead', desc: 'Local verification and mobilization management.', count: 124, icon: 'groups', color: 'hsl(var(--on-surface))' },
+    { role: 'Audit View', desc: 'Read-only access to financial and telemetry streams.', count: 4, icon: 'history', color: 'hsl(var(--on-surface-muted))' },
   ]
 
   return (
-    <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
-      <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
-        <CardTitle className="text-sm font-bold text-stone-900">Administrative Roles</CardTitle>
-        <CardDescription className="text-tiny font-medium text-stone-400 mt-1">Summary of active permission tiers across the movement infrastructure.</CardDescription>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="divide-y divide-stone-50">
-          {roles.map((item) => (
-            <div key={item.role} className="p-6 flex items-center justify-between hover:bg-stone-50/50 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className={cn("w-10 h-10 rounded-sm bg-stone-100 flex items-center justify-center", item.color)}>
-                  <item.icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-stone-900">{item.role}</p>
-                  <p className="text-micro text-stone-400 font-medium mt-0.5">{item.desc}</p>
-                </div>
+    <div className="panel">
+      <div className="ph">
+        <span>Administrative Roles</span>
+        <span style={{ fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>Summary of active permission tiers across the movement.</span>
+      </div>
+      <div>
+        {roles.map((item, i) => (
+          <div
+            key={item.role}
+            style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: i < roles.length - 1 ? '1px solid hsl(var(--border))' : 'none', transition: 'background 0.15s' }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+            onMouseLeave={e => (e.currentTarget.style.background = '')}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 4, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: item.color }}>{item.icon}</span>
               </div>
-              <span className="px-3 py-1 bg-stone-50 border border-stone-100 rounded-full text-micro font-bold text-stone-400 normal-case">
-                {item.count} active
-              </span>
+              <div>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', margin: 0 }}>{item.role}</p>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0' }}>{item.desc}</p>
+              </div>
             </div>
-          ))}
-        </div>
-        <div className="p-8 bg-stone-50/50 border-t border-stone-100 text-center">
-          <p className="text-micro text-stone-400 font-medium italic">Role assignments are managed by System Administrators only.</p>
-        </div>
-      </CardContent>
-    </Card>
+            <span style={{ padding: '3px 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 20, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }}>
+              {item.count} active
+            </span>
+          </div>
+        ))}
+      </div>
+      <div style={{ padding: '14px 20px', background: 'hsl(var(--container-low))', borderTop: '1px solid hsl(var(--border))', textAlign: 'center' }}>
+        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic', margin: 0 }}>
+          Role assignments are managed by System Administrators only.
+        </p>
+      </div>
+    </div>
   )
 }

@@ -1,15 +1,4 @@
-import { Smartphone } from 'lucide-react'
 import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle,
-  CardDescription 
-} from '@/components/ui/card'
-import { cn } from '@/lib/utils'
 
 interface ButtonCustomizerTabProps {
   siteSettings: Record<string, unknown>
@@ -18,300 +7,185 @@ interface ButtonCustomizerTabProps {
   handleSave: () => void
 }
 
-export function ButtonCustomizerTab({
-  siteSettings,
-  setSiteSettings,
-  isSaving,
-  handleSave
-}: ButtonCustomizerTabProps) {
+const inputSt: React.CSSProperties = {
+  width: '100%', height: 40, padding: '0 12px',
+  border: '1px solid hsl(var(--border))',
+  background: 'hsl(var(--container-low))',
+  outline: 'none',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 700, fontSize: 12, borderRadius: 4,
+  color: 'hsl(var(--on-surface))', boxSizing: 'border-box',
+}
+
+const labelSt: React.CSSProperties = {
+  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+  color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6,
+}
+
+const sectionSt: React.CSSProperties = {
+  borderTop: '1px solid hsl(var(--border))', paddingTop: 16,
+}
+
+export function ButtonCustomizerTab({ siteSettings, setSiteSettings, isSaving, handleSave }: ButtonCustomizerTabProps) {
   return (
-    <Card className="rounded-sm border-stone-200 shadow-sm overflow-hidden bg-white">
-      <CardHeader className="p-8 border-b border-stone-100 bg-stone-50/20">
-        <CardTitle className="text-sm font-bold text-stone-900">Button Architecture</CardTitle>
-        <CardDescription className="text-tiny font-medium text-stone-400 mt-1">Configure the movement's global interactive element parameters and visual feedback systems.</CardDescription>
-      </CardHeader>
-      <CardContent className="p-8 space-y-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <div className="flex justify-between items-end">
-                <Label className="text-micro font-bold text-stone-500 normal-case">Global border radius</Label>
-                <span className="text-micro font-mono font-bold text-primary">{(siteSettings.button_border_radius as string) || '0.125rem'}</span>
+    <div className="panel">
+      <div className="ph">
+        <span>Button Architecture</span>
+        <span style={{ fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>Configure the movement's global interactive element parameters.</span>
+      </div>
+      <div style={{ padding: 24 }}>
+        <div className="settings-form-grid" style={{ alignItems: 'start' }}>
+
+          {/* Left: controls */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+            {/* Border radius */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                <label style={labelSt}>Global border radius</label>
+                <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 12, color: 'hsl(var(--primary))' }}>{(siteSettings.button_border_radius as string) || '0.125rem'}</span>
               </div>
-              <div className="grid grid-cols-5 gap-2">
-                {[
-                  { label: 'Square', value: '0px' },
-                  { label: 'XS', value: '0.125rem' },
-                  { label: 'SM', value: '0.25rem' },
-                  { label: 'MD', value: '0.5rem' },
-                  { label: 'Full', value: '9999px' }
-                ].map((radius) => (
-                  <Button
-                    key={radius.value}
-                    variant={siteSettings.button_border_radius === radius.value ? "primary" : "outline"}
-                    onClick={() => setSiteSettings({ ...siteSettings, button_border_radius: radius.value })}
-                    className="h-10 text-[10px] font-bold px-0 rounded-none"
-                  >
-                    {radius.label}
-                  </Button>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
+                {[{ label: 'Square', value: '0px' }, { label: 'XS', value: '0.125rem' }, { label: 'SM', value: '0.25rem' }, { label: 'MD', value: '0.5rem' }, { label: 'Full', value: '9999px' }].map(r => (
+                  <button key={r.value} className={siteSettings.button_border_radius === r.value ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'} style={{ justifyContent: 'center' }} onClick={() => setSiteSettings({ ...siteSettings, button_border_radius: r.value })}>{r.label}</button>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Visual Feedback Systems</Label>
-              <div className="flex items-center justify-between p-4 rounded-sm border border-stone-100 bg-stone-50/50">
+            {/* Neon glow */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Visual Feedback Systems</label>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: 4, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
                 <div>
-                  <p className="text-xs font-bold text-stone-900">Neon Glow Effects</p>
-                  <p className="text-micro text-stone-400 font-medium">Toggle administrative glow signatures on hover.</p>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', margin: 0 }}>Neon Glow Effects</p>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0' }}>Toggle administrative glow signatures on hover.</p>
                 </div>
-                <button 
-                  onClick={() => setSiteSettings({ ...siteSettings, button_neon_enabled: !siteSettings.button_neon_enabled })}
-                  className={cn(
-                    "w-10 h-5 rounded-full flex items-center px-1 transition-colors",
-                    siteSettings.button_neon_enabled ? "bg-[hsl(var(--primary))] justify-end" : "bg-stone-200 justify-start"
-                  )}
-                >
-                  <div className="w-3 h-3 bg-white rounded-full shadow-sm" />
+                <button onClick={() => setSiteSettings({ ...siteSettings, button_neon_enabled: !siteSettings.button_neon_enabled })} style={{ width: 36, height: 20, borderRadius: 10, background: siteSettings.button_neon_enabled ? 'hsl(var(--primary))' : 'hsl(var(--border))', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 3px', justifyContent: siteSettings.button_neon_enabled ? 'flex-end' : 'flex-start', flexShrink: 0, transition: 'background 0.2s' }}>
+                  <div style={{ width: 14, height: 14, background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                 </button>
               </div>
             </div>
 
-            {/* Typography Weight */}
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Typography Weight</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { label: 'Normal', value: '400' },
-                  { label: 'Bold', value: '700' },
-                  { label: 'Black', value: '900' }
-                ].map((weight) => (
-                  <Button
-                    key={weight.value}
-                    variant={siteSettings.button_font_weight === weight.value ? "primary" : "outline"}
-                    onClick={() => setSiteSettings({ ...siteSettings, button_font_weight: weight.value })}
-                    className="h-10 text-[10px] font-bold rounded-none"
-                  >
-                    {weight.label}
-                  </Button>
+            {/* Font weight */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Typography Weight</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+                {[{ label: 'Normal', value: '400' }, { label: 'Bold', value: '700' }, { label: 'Black', value: '900' }].map(w => (
+                  <button key={w.value} className={siteSettings.button_font_weight === w.value ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'} style={{ justifyContent: 'center' }} onClick={() => setSiteSettings({ ...siteSettings, button_font_weight: w.value })}>{w.label}</button>
                 ))}
               </div>
             </div>
 
-            {/* Primary Button Text */}
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Primary Button Text</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: 'Light Text', value: '0 0% 100%' },
-                  { label: 'Dark Text', value: '220 15% 15%' }
-                ].map((option) => (
-                  <Button
-                    key={option.value}
-                    variant={siteSettings.button_primary_text_color === option.value ? "primary" : "outline"}
-                    onClick={() => setSiteSettings({ ...siteSettings, button_primary_text_color: option.value })}
-                    className="h-10 text-[10px] font-bold rounded-none"
-                  >
-                    {option.label}
-                  </Button>
+            {/* Primary text */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Primary Button Text</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                {[{ label: 'Light Text', value: '0 0% 100%' }, { label: 'Dark Text', value: '220 15% 15%' }].map(o => (
+                  <button key={o.value} className={siteSettings.button_primary_text_color === o.value ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'} style={{ justifyContent: 'center' }} onClick={() => setSiteSettings({ ...siteSettings, button_primary_text_color: o.value })}>{o.label}</button>
                 ))}
               </div>
             </div>
 
-            {/* Gold Button Text */}
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Gold Button Text</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: 'Light Text (Recommended)', value: '0 0% 100%' },
-                  { label: 'Dark Text', value: '220 15% 15%' }
-                ].map((option) => (
-                  <Button
-                    key={option.value}
-                    variant={siteSettings.button_gold_text_color === option.value ? "primary" : "outline"}
-                    onClick={() => setSiteSettings({ ...siteSettings, button_gold_text_color: option.value })}
-                    className="h-10 text-[10px] font-bold rounded-none"
-                  >
-                    {option.label}
-                  </Button>
+            {/* Gold text */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Gold Button Text</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                {[{ label: 'Light Text', value: '0 0% 100%' }, { label: 'Dark Text', value: '220 15% 15%' }].map(o => (
+                  <button key={o.value} className={siteSettings.button_gold_text_color === o.value ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'} style={{ justifyContent: 'center' }} onClick={() => setSiteSettings({ ...siteSettings, button_gold_text_color: o.value })}>{o.label}</button>
                 ))}
               </div>
             </div>
 
-            {/* Destructive Button Text */}
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Destructive Button Text</Label>
-              <div className="grid grid-cols-1 gap-2">
-                {[
-                  { label: 'Light Text (Recommended)', value: '0 0% 100%' }
-                ].map((option) => (
-                  <Button
-                    key={option.value}
-                    variant={siteSettings.button_destructive_text_color === option.value ? "primary" : "outline"}
-                    onClick={() => setSiteSettings({ ...siteSettings, button_destructive_text_color: option.value })}
-                    className="h-10 text-[10px] font-bold rounded-none"
-                  >
-                    {option.label}
-                  </Button>
-                ))}
+            {/* Destructive text */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Destructive Button Text</label>
+              <button className={siteSettings.button_destructive_text_color === '0 0% 100%' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'} style={{ justifyContent: 'center', width: '100%' }} onClick={() => setSiteSettings({ ...siteSettings, button_destructive_text_color: '0 0% 100%' })}>Light Text (Recommended)</button>
+            </div>
+
+            {/* Active tab bg */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Active Tab Background</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', flexShrink: 0, background: siteSettings.button_active_tab_bg_color ? `hsl(${siteSettings.button_active_tab_bg_color as string})` : 'hsl(var(--primary))' }} />
+                <input style={inputSt} value={(siteSettings.button_active_tab_bg_color as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, button_active_tab_bg_color: e.target.value })} placeholder="0 0% 0%" />
               </div>
             </div>
 
-            {/* Active Tab Background */}
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Active Tab Background</Label>
-              <div className="flex gap-3">
-                <div 
-                  className="w-11 h-11 rounded-sm border border-stone-200 shrink-0" 
-                  style={{ backgroundColor: `hsl(${(siteSettings.button_active_tab_bg_color as string) || (siteSettings.primary_color as string)})` }}
-                />
-                <Input 
-                  value={(siteSettings.button_active_tab_bg_color as string) || ''} 
-                  onChange={(e) => setSiteSettings({ ...siteSettings, button_active_tab_bg_color: e.target.value })}
-                  className="h-11 rounded-sm border-stone-200 text-xs font-medium font-mono"
-                  placeholder="0 0% 0%"
-                />
+            {/* Active tab text note */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Active Tab Text</label>
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, margin: 0 }}>Always white — ensures readable contrast on any active tab background color.</p>
+            </div>
+
+            {/* Inactive tab bg */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Inactive Tab Background</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', flexShrink: 0, background: siteSettings.button_inactive_tab_bg_color ? `hsl(${siteSettings.button_inactive_tab_bg_color as string})` : '#fff' }} />
+                <input style={inputSt} value={(siteSettings.button_inactive_tab_bg_color as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, button_inactive_tab_bg_color: e.target.value })} placeholder="0 0% 100%" />
               </div>
             </div>
 
-            {/* Active Tab Text — hardcoded white for contrast safety */}
-            <div className="space-y-2 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Active Tab Text</Label>
-              <p className="text-[10px] text-stone-400 leading-relaxed">Always white — ensures readable contrast on any active tab background color.</p>
-            </div>
-
-            {/* Inactive Tab Background */}
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Inactive Tab Background</Label>
-              <div className="flex gap-3">
-                <div 
-                  className="w-11 h-11 rounded-sm border border-stone-200 shrink-0" 
-                  style={{ backgroundColor: `hsl(${(siteSettings.button_inactive_tab_bg_color as string) || '0 0% 100%'})` }}
-                />
-                <Input 
-                  value={(siteSettings.button_inactive_tab_bg_color as string) || ''} 
-                  onChange={(e) => setSiteSettings({ ...siteSettings, button_inactive_tab_bg_color: e.target.value })}
-                  className="h-11 rounded-sm border-stone-200 text-xs font-medium font-mono"
-                  placeholder="0 0% 100%"
-                />
-              </div>
-            </div>
-
-            {/* Inactive Tab Text */}
-            <div className="space-y-4 pt-4 border-t border-stone-100">
-              <Label className="text-micro font-bold text-stone-500 normal-case">Inactive Tab Text</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: 'Light Text', value: '0 0% 100%' },
-                  { label: 'Dark Text', value: '156 100% 21%' }
-                ].map((option) => (
-                  <Button
-                    key={option.value}
-                    variant={siteSettings.button_inactive_tab_text_color === option.value ? "primary" : "outline"}
-                    onClick={() => setSiteSettings({ ...siteSettings, button_inactive_tab_text_color: option.value })}
-                    className="h-10 text-[10px] font-bold rounded-none"
-                  >
-                    {option.label}
-                  </Button>
+            {/* Inactive tab text */}
+            <div style={sectionSt}>
+              <label style={labelSt}>Inactive Tab Text</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                {[{ label: 'Light Text', value: '0 0% 100%' }, { label: 'Dark Text', value: '156 100% 21%' }].map(o => (
+                  <button key={o.value} className={siteSettings.button_inactive_tab_text_color === o.value ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'} style={{ justifyContent: 'center' }} onClick={() => setSiteSettings({ ...siteSettings, button_inactive_tab_text_color: o.value })}>{o.label}</button>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="space-y-8 bg-stone-50/50 p-8 rounded-sm border border-stone-100 relative">
-            <style>
-              {`
-                .preview-gallery-container {
-                  --button-radius: ${siteSettings.button_border_radius || '0.125rem'};
-                  --button-font-weight: ${siteSettings.button_font_weight || '700'};
-                  --primary-foreground: ${siteSettings.button_primary_text_color || '0 0% 100%'};
-                  --accent-foreground: ${siteSettings.button_gold_text_color || '0 0% 100%'};
-                  --destructive-foreground: ${siteSettings.button_destructive_text_color || '0 0% 100%'};
-                  --active-tab-bg: ${siteSettings.button_active_tab_bg_color || siteSettings.primary_color};
-                  --inactive-tab-bg: ${siteSettings.button_inactive_tab_bg_color || '0 0% 100%'};
-                  --inactive-tab-text: ${siteSettings.button_inactive_tab_text_color || '156 100% 21%'};
-                }
-                .preview-gallery-container button {
-                  border-radius: var(--button-radius) !important;
-                  font-weight: var(--button-font-weight) !important;
-                }
-              `}
-            </style>
-
-            <div className="preview-gallery-container space-y-8">
-              <h4 className="text-xs font-bold text-stone-900 tracking-tight flex items-center gap-2 mb-6">
-                <Smartphone className="w-4 h-4 text-primary" />
+          {/* Right: preview */}
+          <div style={{ background: 'hsl(var(--container-low))', padding: 24, borderRadius: 4, border: '1px solid hsl(var(--border))' }}>
+            <style>{`
+              .preview-gallery-container {
+                --button-radius: ${siteSettings.button_border_radius || '0.125rem'};
+                --button-font-weight: ${siteSettings.button_font_weight || '700'};
+                --primary-foreground: ${siteSettings.button_primary_text_color || '0 0% 100%'};
+                --accent-foreground: ${siteSettings.button_gold_text_color || '0 0% 100%'};
+                --destructive-foreground: ${siteSettings.button_destructive_text_color || '0 0% 100%'};
+                --active-tab-bg: ${siteSettings.button_active_tab_bg_color || siteSettings.primary_color};
+                --inactive-tab-bg: ${siteSettings.button_inactive_tab_bg_color || '0 0% 100%'};
+                --inactive-tab-text: ${siteSettings.button_inactive_tab_text_color || '156 100% 21%'};
+              }
+              .preview-gallery-container button {
+                border-radius: var(--button-radius) !important;
+                font-weight: var(--button-font-weight) !important;
+              }
+            `}</style>
+            <div className="preview-gallery-container" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <h4 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 4px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>ads_click</span>
                 Component Preview Gallery (Unsaved)
               </h4>
-              
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Primary / Action</p>
-                  <div className="flex flex-wrap gap-4">
-                    <Button variant="primary" neon={siteSettings.button_neon_enabled as boolean}>Join Movement</Button>
-                    <Button variant="primary" size="sm" neon={siteSettings.button_neon_enabled as boolean}>Action</Button>
+              {[
+                { label: 'Primary / Action', btns: [{ variant: 'primary', label: 'Join Movement' }, { variant: 'primary', label: 'Action', size: 'sm' }] },
+                { label: 'Accent / Gold', btns: [{ variant: 'gold', label: 'Official Vision' }, { variant: 'gold', label: 'Vision', size: 'sm' }] },
+                { label: 'Active Tabs / Navigation', btns: [{ variant: 'active-tab', label: 'Active Tab' }, { variant: 'default', label: 'Inactive Tab' }] },
+                { label: 'Outline / Ghost', btns: [{ variant: 'outline', label: 'Standard Outline' }, { variant: 'ghost', label: 'Ghost Action' }] },
+                { label: 'Destructive / Alert', btns: [{ variant: 'destructive', label: 'Solid Alert' }, { variant: 'outline-destructive', label: 'Outline Alert' }] },
+              ].map(group => (
+                <div key={group.label}>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginBottom: 8, marginTop: 0 }}>{group.label}</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {group.btns.map(btn => (
+                      <Button key={btn.label} variant={btn.variant as Parameters<typeof Button>[0]['variant']} size={btn.size as Parameters<typeof Button>[0]['size']} neon={siteSettings.button_neon_enabled as boolean}>{btn.label}</Button>
+                    ))}
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Accent / Gold</p>
-                  <div className="flex flex-wrap gap-4">
-                    <Button variant="gold" neon={siteSettings.button_neon_enabled as boolean}>Official Vision</Button>
-                    <Button variant="gold" size="sm" neon={siteSettings.button_neon_enabled as boolean}>Vision</Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Active Tabs / Navigation</p>
-                  <div className="flex flex-wrap gap-4">
-                    <Button variant="active-tab" neon={siteSettings.button_neon_enabled as boolean}>Active Tab</Button>
-                    <Button variant="default" neon={siteSettings.button_neon_enabled as boolean}>Inactive Tab</Button>
-                  </div>
-                </div>
-
-
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Outline / Ghost (Interactive)</p>
-                  <div className="flex flex-wrap gap-4">
-                    <Button variant="outline" neon={siteSettings.button_neon_enabled as boolean}>Standard Outline</Button>
-                    <Button variant="ghost" neon={siteSettings.button_neon_enabled as boolean}>Ghost Action</Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-stone-400 tracking-tight">Destructive / Alert</p>
-                  <div className="flex flex-wrap gap-4">
-                    <Button 
-                      variant="destructive"
-                      neon={siteSettings.button_neon_enabled as boolean}
-                    >
-                      Solid Alert
-                    </Button>
-                    <Button 
-                      variant="outline-destructive"
-                      neon={siteSettings.button_neon_enabled as boolean}
-                    >
-                      Outline Alert
-                    </Button>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="pt-8 flex justify-end border-t border-stone-100">
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={handleSave}
-            disabled={isSaving}
-            className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 active:scale-95"
-          >
-            {isSaving ? 'Syncing...' : 'Save Settings'}
-          </Button>
+        <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 20, marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
+          <button className="btn btn-primary" style={{ minWidth: 140, justifyContent: 'center' }} onClick={handleSave} disabled={isSaving}>
+            {isSaving ? 'Syncing…' : 'Save Settings'}
+          </button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
