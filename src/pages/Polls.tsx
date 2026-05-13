@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/neon-button'
-import { BrandLine } from '@/components/ui/BrandLine'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { Vote, ArrowRight, Clock, Lock } from 'lucide-react'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
-import SEO from '@/components/SEO'
 import { adminService } from '@/services/adminService'
 import type { Poll, PollOption } from '@/types/admin'
 import { toast } from 'sonner'
@@ -38,9 +33,7 @@ export default function Polls() {
 
   const handleVote = async (pollId: string, optionId: string) => {
     setVoting(pollId)
-    
     const success = await adminService.voteInPoll(pollId, optionId)
-    
     if (success) {
       setPolls(prev => prev.map(p => {
         if (p.id === pollId) {
@@ -54,181 +47,174 @@ export default function Polls() {
         }
         return p
       }))
-      toast.success('Your vote has been officially recorded. Thank you for your engagement!')
+      toast.success('Your vote has been officially recorded.')
     } else {
       toast.error('Failed to submit vote. Please try again.')
     }
-    
     setVoting(null)
   }
 
   const activePolls = polls.filter(p => p.status === 'Active')
   const closedPolls = polls.filter(p => p.status === 'Closed')
+  const totalVotes = polls.reduce((acc, p) => acc + p.totalVotes, 0)
 
   return (
-    <div className="min-h-screen bg-stone-50/50 pb-20">
-      <SEO 
-        title="Citizen Feedback"
-        description="Your voice shapes the movement. Participate in our regular polls to help prioritize the plan and regional interventions."
-        canonical="/polls"
-      />
-      {/* Header */}
-      <div className="bg-white border-b border-stone-200">
-        <div className="py-24 px-4 md:px-8 max-w-7xl mx-auto">
-          <Breadcrumbs />
-          <div className="mt-8">
-            <h1 className="text-5xl md:text-7xl font-meta font-bold tracking-tighter mb-8 text-stone-900 flex items-center gap-6">
-              <Vote className="w-12 h-12 text-primary" />
-              Feedback Hub
-            </h1>
-            <BrandLine />
-            <p className="text-stone-500 max-w-3xl text-base md:text-lg mt-8 mb-0 leading-relaxed font-medium">
-              Your voice shapes the movement. Participate in our regular polls to help prioritize the plan and regional interventions.
-            </p>
+    <div className="main">
+
+      {/* KPI row */}
+      <div className="kpis" style={{ marginBottom: 24 }}>
+        {[
+          { label: 'Active polls', value: loading ? '—' : activePolls.length, sub: 'Open for voting', bar: 'hsl(var(--primary))', icon: 'how_to_vote' },
+          { label: 'Total responses', value: loading ? '—' : totalVotes.toLocaleString(), sub: 'Across all polls', bar: 'hsl(var(--accent))', icon: 'group' },
+          { label: 'Closed polls', value: loading ? '—' : closedPolls.length, sub: 'Results available', bar: 'hsl(var(--on-surface))', icon: 'lock' },
+          { label: 'Your votes', value: loading ? '—' : polls.filter(p => p.voted).length, sub: 'Participation count', bar: 'hsl(var(--destructive))', icon: 'verified' },
+        ].map(kpi => (
+          <div key={kpi.label} className="panel" style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{kpi.label}</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>{kpi.icon}</span>
+            </div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--on-surface))', lineHeight: 1, marginBottom: 4, letterSpacing: '-0.02em' }}>{kpi.value}</div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{kpi.sub}</div>
           </div>
-        </div>
+        ))}
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+      <div className="sidebar-main" style={{ alignItems: 'start' }}>
 
-          {/* Active Polls Section */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="flex items-center gap-2 mb-6">
-              <Clock className="w-4 h-4 text-primary" />
-              <h2 className="text-base font-bold text-stone-900 tracking-tight mb-0">Active feedback</h2>
+        {/* Sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* Movement voice panel */}
+          <div style={{ background: '#181d19', borderRadius: 6, padding: 20, position: 'relative', overflow: 'hidden' }}>
+            <span className="material-symbols-outlined" style={{ position: 'absolute', right: 12, top: 12, fontSize: 56, color: '#fff', opacity: 0.05, pointerEvents: 'none' }}>how_to_vote</span>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--accent))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>Movement voice</div>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, margin: '0 0 16px' }}>
+              Poll results are presented to the National Steering Committee every month to influence movement strategy.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 4, padding: 12 }}>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>Total votes</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', lineHeight: 1 }}>{totalVotes.toLocaleString()}</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 4, padding: 12 }}>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>Active polls</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', lineHeight: 1 }}>{activePolls.length}</div>
+              </div>
             </div>
-            {loading ? (
-              <div className="space-y-6">
-                {[1, 2].map(i => (
-                  <div key={i} className="h-64 bg-white border border-stone-200 animate-pulse rounded-none" />
-                ))}
-              </div>
-            ) : activePolls.length === 0 ? (
-              <div className="bg-white border border-stone-200 p-12 text-center">
-                <p className="text-stone-400 font-bold tracking-tight mb-0">No active polls at this time.</p>
-              </div>
-            ) : (
-              activePolls.map(poll => (
-                <OpinionPollCard 
-                  key={poll.id} 
-                  poll={poll} 
-                  voting={voting} 
-                  showResults={!!showResults[poll.id]} 
-                  isLoggedIn={isLoggedIn}
-                  handleVote={handleVote} 
-                  toggleResults={toggleResults} 
-                />
-              ))
-            )}
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-8 sticky top-24">
-            {/* Stats Overview */}
-            <div className="bg-charcoal-dark p-8 rounded-none text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Vote className="w-24 h-24 text-brand-green" />
-              </div>
-              <div className="relative z-10">
-                <p className="text-warm-gold text-micro font-bold tracking-tight mb-4">Movement voice</p>
-                <p className="text-stone-300 mb-6 leading-relaxed">
-                  Poll results are presented to the National Steering Committee every month to influence movement strategy.
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 p-4 border border-white/10">
-                    <p className="text-micro font-bold text-white/40 tracking-tight mb-1">Total votes</p>
-                    <h3 className="text-white mb-0">{polls.reduce((acc, p) => acc + p.totalVotes, 0).toLocaleString()}</h3>
-                  </div>
-                  <div className="bg-white/5 p-4 border border-white/10">
-                    <p className="text-micro font-bold text-white/40 tracking-tight mb-1">Active polls</p>
-                    <h3 className="text-white mb-0">{activePolls.length}</h3>
-                  </div>
-                </div>
-              </div>
+          {/* Closed polls */}
+          <div className="panel">
+            <div className="ph">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}>lock</span>
+                Closed polls
+              </span>
             </div>
-
-            {/* Closed Polls */}
-            <div className="bg-white border border-stone-200 p-8 rounded-none">
-              <div className="flex items-center gap-2 mb-8">
-                <Lock className="w-4 h-4 text-stone-400" />
-                <h2 className="text-base font-bold text-stone-900 tracking-tight mb-0">Closed polls</h2>
-              </div>
-              <div className="space-y-6">
-                {closedPolls.map(poll => (
-                  <div key={poll.id} className="group pb-6 border-b border-stone-50 last:border-0 last:pb-0">
-                    <div className="flex justify-between items-center mb-2">
-                      <p className="text-micro font-bold text-red-500 bg-red-500/5 px-2 py-1 rounded-none tracking-tight mb-0">
-                        {poll.category} • Closed
-                      </p>
-                    </div>
-                    <h3 className="text-sm font-bold text-stone-800 leading-snug group-hover:text-brand-green transition-colors mb-0">
-                      {poll.question}
-                    </h3>
-                    
-                    {showResults[poll.id] && (
-                      <div className="mt-4 space-y-2 animate-in fade-in slide-in-from-top-1 duration-300">
-                        {(() => {
-                          const sortedOptions = [...poll.options].sort((a, b) => b.votes - a.votes);
-                          const getRankColor = (optionId: string) => {
-                            const rank = sortedOptions.findIndex(o => o.id === optionId);
-                            if (rank === 0) return 'rgba(0, 107, 60, 0.1)';
-                            if (rank === 1) return 'rgba(212, 160, 23, 0.1)';
-                            if (rank === 2) return 'rgba(245, 158, 11, 0.1)';
-                            return 'rgba(206, 17, 38, 0.05)';
-                          };
-
-                          return poll.options.map((option: PollOption) => {
-                            const percentage = Math.round((option.votes / poll.totalVotes) * 100);
-                            return (
-                              <div key={option.id} className="space-y-1">
-                                <div className="flex justify-between items-center px-3 py-2 bg-stone-50 border border-stone-100 relative z-10 overflow-hidden">
-                                  <span className="text-xs font-medium text-stone-600 truncate mr-2">{option.label}</span>
-                                  <span className="text-micro font-bold text-stone-400 shrink-0 tracking-tight">{percentage}%</span>
-                                  <div 
-                                    className="absolute inset-0 -z-10"
-                                    style={{ 
-                                      width: `${percentage}%`,
-                                      backgroundColor: getRankColor(option.id)
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            );
-                          });
-                        })()}
+            <div style={{ padding: '0 16px 16px' }}>
+              {closedPolls.length === 0 ? (
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>No closed polls yet.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  {closedPolls.map((poll, i) => (
+                    <div key={poll.id} style={{ paddingTop: 14, paddingBottom: 14, borderBottom: i < closedPolls.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--destructive))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                          {poll.category} · Closed
+                        </span>
                       </div>
-                    )}
+                      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--on-surface))', margin: '0 0 8px', lineHeight: 1.35 }}>{poll.question}</p>
 
-                    <div className="flex items-center justify-between mt-4">
-                      <p className="text-tiny font-bold text-stone-400 mb-0 tracking-tight">{poll.totalVotes.toLocaleString()} responses</p>
-                      <Button 
-                        variant="link"
-                        onClick={() => toggleResults(poll.id)}
-                        className="text-brand-green p-0 h-auto"
-                      >
-                        {showResults[poll.id] ? 'Hide Results' : 'Final Results'} <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
-                      </Button>
+                      {showResults[poll.id] && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
+                          {(() => {
+                            const sorted = [...poll.options].sort((a, b) => b.votes - a.votes)
+                            return poll.options.map((option: PollOption) => {
+                              const pct = poll.totalVotes > 0 ? Math.round((option.votes / poll.totalVotes) * 100) : 0
+                              const rank = sorted.findIndex(o => o.id === option.id)
+                              const bg = rank === 0 ? 'rgba(0,107,63,0.1)' : rank === 1 ? 'rgba(212,160,23,0.1)' : 'rgba(0,0,0,0.04)'
+                              return (
+                                <div key={option.id} style={{ position: 'relative', padding: '6px 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
+                                  <div style={{ position: 'absolute', inset: 0, width: `${pct}%`, background: bg }} />
+                                  <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))' }}>{option.label}</span>
+                                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{pct}%</span>
+                                  </div>
+                                </div>
+                              )
+                            })
+                          })()}
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>{poll.totalVotes.toLocaleString()} responses</span>
+                        <button
+                          onClick={() => toggleResults(poll.id)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))' }}
+                        >
+                          {showResults[poll.id] ? 'Hide results' : 'Final results'}
+                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>arrow_forward</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
+          </div>
 
-            {/* Engagement Card */}
-            <div className="bg-primary p-8 rounded-none text-white shadow-xl shadow-primary/20">
-              <h4 className="tracking-tight mb-4 text-white">Suggest a poll</h4>
-              <p className="text-white/80 leading-relaxed mb-6 font-medium text-xs">
-                Have a question you think the movement needs to answer? Submit your proposal for a new opinion poll.
-              </p>
-              <Button className="w-full bg-white text-primary hover:bg-stone-50 rounded-none tracking-tight font-bold">
-                Submit proposal
-              </Button>
-            </div>
+          {/* Suggest a poll */}
+          <div style={{ background: 'hsl(var(--primary))', borderRadius: 6, padding: 20 }}>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: '#fff', marginBottom: 8 }}>Suggest a poll</div>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, margin: '0 0 14px' }}>
+              Have a question you think the movement needs to answer? Submit your proposal.
+            </p>
+            <button className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', background: '#fff', color: 'hsl(var(--primary))', borderColor: 'transparent' }}>
+              Submit proposal
+            </button>
           </div>
 
         </div>
-      </main>
+
+        {/* Main: active polls */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>schedule</span>
+            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Active feedback</span>
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[1, 2].map(i => (
+                <div key={i} style={{ height: 200, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 6, animation: 'pulse 1.5s infinite' }} />
+              ))}
+            </div>
+          ) : activePolls.length === 0 ? (
+            <div className="panel" style={{ padding: 40, textAlign: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--on-surface-muted))', opacity: 0.3, display: 'block', marginBottom: 8 }}>how_to_vote</span>
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>No active polls at this time.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {activePolls.map(poll => (
+                <OpinionPollCard
+                  key={poll.id}
+                  poll={poll}
+                  voting={voting}
+                  showResults={!!showResults[poll.id]}
+                  isLoggedIn={isLoggedIn}
+                  handleVote={handleVote}
+                  toggleResults={toggleResults}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+      </div>
     </div>
   )
 }

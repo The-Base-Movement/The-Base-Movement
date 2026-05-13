@@ -1,4 +1,3 @@
-import { CheckCircle2, Users, BarChart3 } from 'lucide-react'
 import type { Poll } from '@/services/adminService'
 import { toast } from 'sonner'
 
@@ -80,7 +79,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
                           isLead ? 'text-[var(--primary)]' : 'text-[var(--on-surface,#181d19)]'
                         }`}
                       >
-                        {isSelected && <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />}
+                        {isSelected && <span className="material-symbols-outlined" style={{ fontSize: 14, flexShrink: 0 }}>check_circle</span>}
                         {option.label}
                       </span>
                       <span className="text-[12.5px] font-extrabold tabular-nums font-['Public_Sans',sans-serif] text-[var(--on-surface-muted,#6b7280)]">
@@ -120,20 +119,20 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
         <div className="mt-[14px] pt-[14px] border-t border-[var(--border,#e5e7eb)] flex justify-between items-center">
           <div className="flex items-center gap-3 text-[11px] font-bold text-[var(--on-surface-muted,#6b7280)] font-['Public_Sans',sans-serif]">
             <span className="flex items-center gap-1.5">
-              <Users className="w-4 h-4" />
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>group</span>
               {poll.totalVotes.toLocaleString()} Votes
             </span>
             <button
               onClick={() => toggleResults(poll.id)}
               className={`flex items-center gap-1.5 transition-colors hover:text-[var(--primary)] ${showResults ? 'text-[var(--primary)]' : ''}`}
             >
-              <BarChart3 className="w-4 h-4" />
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>bar_chart</span>
               {showResults ? 'Hide results' : 'Live results'}
             </button>
           </div>
           {poll.voted && (
             <span className="text-[10.5px] font-bold text-[var(--primary)] flex items-center gap-1 font-['Public_Sans',sans-serif]">
-              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>check_circle</span>
               Vote recorded
             </span>
           )}
