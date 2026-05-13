@@ -83,24 +83,44 @@ export default function Broadcasts() {
       {/* KPIs */}
       <div className="kpis" style={{ marginBottom: 20 }}>
         <div className="kpi k">
-          <div className="kpi-label">Total broadcasts</div>
-          <div className="kpi-val">{isLoading ? '—' : broadcasts.length}</div>
-          <div className="kpi-sub">All deployments</div>
+          <div className="l">Total broadcasts</div>
+          <div className="v tnum">{isLoading ? '—' : broadcasts.length}</div>
+          <div className="d">
+            <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
+              analytics
+            </span>
+            All deployments
+          </div>
         </div>
         <div className="kpi r">
-          <div className="kpi-label">Urgent alerts</div>
-          <div className="kpi-val">{isLoading ? '—' : broadcasts.filter(b => b.priority === 'Urgent').length}</div>
-          <div className="kpi-sub">Critical priority</div>
+          <div className="l">Urgent alerts</div>
+          <div className="v tnum">{isLoading ? '—' : broadcasts.filter(b => b.priority === 'Urgent').length}</div>
+          <div className="d dn">
+            <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
+              priority_high
+            </span>
+            Critical priority
+          </div>
         </div>
         <div className="kpi g">
-          <div className="kpi-label">Field saturation</div>
-          <div className="kpi-val">100%</div>
-          <div className="kpi-sub">All members reached</div>
+          <div className="l">Field saturation</div>
+          <div className="v tnum">100%</div>
+          <div className="d">
+            <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
+              signal_cellular_alt
+            </span>
+            All members reached
+          </div>
         </div>
         <div className="kpi gr">
-          <div className="kpi-label">HQ connection</div>
-          <div className="kpi-val">24/7</div>
-          <div className="kpi-sub">Direct uptime</div>
+          <div className="l">HQ connection</div>
+          <div className="v tnum">24/7</div>
+          <div className="d">
+            <span className="material-symbols-outlined" style={{ fontSize: '11px', verticalAlign: 'middle', marginRight: '4px' }}>
+              hub
+            </span>
+            Direct uptime
+          </div>
         </div>
       </div>
 
