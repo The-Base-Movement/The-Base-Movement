@@ -1,25 +1,8 @@
 import { useState, useEffect } from 'react'
-import { 
-  Shield, 
-  ShieldCheck, 
-  ShieldAlert, 
-  UserPlus, 
-  Search, 
-  Bolt, 
-  MoreHorizontal, 
-  Trash2, 
-  Activity,
-  UserCheck,
-  MapPin
-} from 'lucide-react'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { toast } from 'sonner'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
 import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { cn } from '@/lib/utils'
-
 
 const formatRole = (role: string) =>
   role.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
@@ -57,170 +40,171 @@ export default function Administrators() {
     )
   })
 
+  const avatarSt = (role: string): React.CSSProperties => ({
+    width: 38, height: 38, borderRadius: 4,
+    background: isHighPrivilege(role) ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))',
+    color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+    overflow: 'hidden', flexShrink: 0,
+  })
+
+  const thSt: React.CSSProperties = {
+    padding: '11px 20px', textAlign: 'left',
+    fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+    color: 'hsl(var(--on-surface-muted))',
+    background: 'hsl(var(--container-low))',
+    borderBottom: '1px solid hsl(var(--border))',
+  }
+
+  const tdSt: React.CSSProperties = {
+    padding: '14px 20px',
+    borderBottom: '1px solid hsl(var(--border))',
+  }
+
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* 🏛️ Header */}
-      <div className="flex-columns items-center">
+    <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      {/* Page header */}
+      <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
-            <Shield className="w-8 h-8 text-on-surface" />
-            Personnel & Security
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Authorized personnel with leadership credentials and platform oversight.</p>
+          <div className="crumbs">Security · Personnel</div>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>shield</span>
+            Administrators
+          </h2>
+          <div style={{ marginTop: 10, marginBottom: 4 }}><BrandLine /></div>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, marginBottom: 0 }}>
+            Authorized personnel with leadership credentials and platform oversight.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
-          >
-            <UserPlus className="w-4 h-4 mr-2" /> Provision Credentials
-          </Button>
+        <div className="actions">
+          <button className="btn btn-primary">
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>person_add</span>
+            Provision Credentials
+          </button>
         </div>
       </div>
 
-      {/* 📊 Intelligence Strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[14px] mb-8">
-        <TacticalKPI 
-          label="Total Admins"
-          value={admins.length}
-          variant="black"
-          description="Authorized platform overseers"
-          delta="▲ Stable"
-        />
-        <TacticalKPI 
-          label="Super Admins"
-          value={admins.filter(a => isHighPrivilege(a.role)).length}
-          variant="red"
-          description="Tier-1 security clearance"
-          delta="High Risk"
-        />
-        <TacticalKPI 
-          label="Regional Leads"
-          value={admins.filter(a => a.role === 'REGIONAL_DIRECTOR').length}
-          variant="gold"
-          description="Zonal operations command"
-          delta="Coordinated"
-        />
-        <TacticalKPI 
-          label="Security Status"
-          value="Online"
-          variant="green"
-          description="Encrypted administrative link"
-          trend={{ direction: 'up', value: 'Active' }}
-        />
+      {/* KPI strip */}
+      <div className="kpis" style={{ marginBottom: 0 }}>
+        <TacticalKPI label="Total Admins" value={admins.length} variant="black" description="Authorized platform overseers" delta="▲ Stable" />
+        <TacticalKPI label="Super Admins" value={admins.filter(a => isHighPrivilege(a.role)).length} variant="red" description="Tier-1 security clearance" delta="High Risk" />
+        <TacticalKPI label="Regional Leads" value={admins.filter(a => a.role === 'REGIONAL_DIRECTOR').length} variant="gold" description="Zonal operations command" delta="Coordinated" />
+        <TacticalKPI label="Security Status" value="Online" variant="green" description="Encrypted administrative link" trend={{ direction: 'up', value: 'Active' }} />
       </div>
 
-      {/* 🔍 Search & Filter */}
-      <Card className="rounded-sm border-border/60 shadow-sm mb-6">
-        <CardContent className="p-4">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-            <input 
-              type="text" 
-              placeholder="Filter by name, ID or role..." 
+      {/* Search */}
+      <div className="panel">
+        <div style={{ padding: '14px 20px' }}>
+          <div style={{ position: 'relative', maxWidth: 400 }}>
+            <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+            <input
+              type="text"
+              placeholder="Filter by name, ID or role…"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-muted/5 border-none text-micro font-bold normal-case rounded-sm focus:ring-1 focus:ring-on-surface shadow-inner"
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{ width: '100%', height: 38, paddingLeft: 34, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, boxSizing: 'border-box', color: 'hsl(var(--on-surface))' }}
             />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* 📋 Roster Table */}
-      <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="bg-muted/5 border-b border-border/10 px-6 py-4">
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-sm font-bold normal-case font-meta">Administrator Roster</CardTitle>
-            <span className="text-micro font-bold normal-case text-muted-foreground/40">{filteredAdmins.length} records active</span>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0 overflow-x-auto">
-          <table className="w-full border-collapse">
+      {/* Desktop table */}
+      <div className="panel desktop-only">
+        <div className="ph">
+          <span>Administrator roster</span>
+          <span style={{ fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>{filteredAdmins.length} records active</span>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="bg-muted/5">
-                <th className="px-6 py-3 text-left text-micro font-bold normal-case text-muted-foreground/60 tracking-wider">Administrator</th>
-                <th className="px-6 py-3 text-left text-micro font-bold normal-case text-muted-foreground/60 tracking-wider">Access level</th>
-                <th className="px-6 py-3 text-left text-micro font-bold normal-case text-muted-foreground/60 tracking-wider">Region</th>
-                <th className="px-6 py-3 text-right text-micro font-bold normal-case text-muted-foreground/60 tracking-wider">Actions</th>
+              <tr>
+                <th style={thSt}>Administrator</th>
+                <th style={thSt}>Access level</th>
+                <th style={thSt}>Region</th>
+                <th style={{ ...thSt, textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/10">
+            <tbody>
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td className="px-6 py-4"><div className="h-10 bg-muted/10 rounded-sm w-48" /></td>
-                    <td className="px-6 py-4"><div className="h-6 bg-muted/10 rounded-full w-24" /></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-muted/10 rounded-sm w-32" /></td>
-                    <td className="px-6 py-4 text-right"><div className="h-8 bg-muted/10 rounded-sm w-8 ml-auto" /></td>
+                  <tr key={i}>
+                    <td style={tdSt}><div style={{ height: 38, background: 'hsl(var(--container-low))', borderRadius: 4, width: 200 }} /></td>
+                    <td style={tdSt}><div style={{ height: 20, background: 'hsl(var(--container-low))', borderRadius: 4, width: 100 }} /></td>
+                    <td style={tdSt}><div style={{ height: 16, background: 'hsl(var(--container-low))', borderRadius: 4, width: 120 }} /></td>
+                    <td style={tdSt}><div style={{ height: 32, background: 'hsl(var(--container-low))', borderRadius: 4, width: 72, marginLeft: 'auto' }} /></td>
                   </tr>
                 ))
-              ) : filteredAdmins.map((admin) => (
-                <tr key={admin.id} className="hover:bg-muted/5 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className={cn(
-                        "w-10 h-10 rounded-sm flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden",
-                        isHighPrivilege(admin.role) ? "bg-destructive text-white" : "bg-on-surface text-white"
-                      )}>
-                        {admin.avatarUrl ? (
-                          <img src={admin.avatarUrl} alt={admin.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-                        ) : admin.name.split(' ').map(n => n[0]).join('')}
+              ) : filteredAdmins.length === 0 ? (
+                <tr>
+                  <td colSpan={4} style={{ ...tdSt, textAlign: 'center', padding: '40px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                    No authorized personnel found.
+                  </td>
+                </tr>
+              ) : filteredAdmins.map(admin => (
+                <tr key={admin.id}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '')}
+                >
+                  <td style={tdSt}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={avatarSt(admin.role)}>
+                        {admin.avatarUrl
+                          ? <img src={admin.avatarUrl} alt={admin.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                          : admin.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div>
-                        <p className="text-sm font-bold tracking-tight text-on-surface">{admin.name}</p>
-                        <p className="text-[10px] font-bold text-muted-foreground/60 font-mono">{admin.id}</p>
+                        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', margin: 0 }}>{admin.name}</p>
+                        <p style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0' }}>{admin.id}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      {isHighPrivilege(admin.role) ? (
-                        <ShieldAlert className="w-3.5 h-3.5 text-destructive" />
-                      ) : (
-                        <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-                      )}
-                      <span className={cn(
-                        "text-micro font-bold normal-case",
-                        isHighPrivilege(admin.role) ? "text-destructive" : "text-primary"
-                      )}>
+                  <td style={tdSt}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 14, color: isHighPrivilege(admin.role) ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' }}>
+                        {isHighPrivilege(admin.role) ? 'gpp_bad' : 'verified_user'}
+                      </span>
+                      <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: isHighPrivilege(admin.role) ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' }}>
                         {formatRole(admin.role)}
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5 text-muted-foreground/80">
-                      <MapPin className="w-3 h-3" />
-                      <span className="text-micro font-bold normal-case">{admin.region || 'National HQ'}</span>
+                  <td style={tdSt}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>location_on</span>
+                      <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>{admin.region || 'National HQ'}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-sm hover:bg-accent hover:text-black">
-                        <Bolt className="w-4 h-4" />
-                      </Button>
-                      <div className="relative">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-8 w-8 p-0 rounded-sm"
+                  <td style={{ ...tdSt, textAlign: 'right' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+                      <button
+                        className="btn btn-sm"
+                        style={{ background: 'hsl(var(--accent))', color: '#000', border: 'none' }}
+                        title="Activity logs"
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>bolt</span>
+                      </button>
+                      <div style={{ position: 'relative' }}>
+                        <button
+                          className="btn btn-sm btn-outline"
                           onClick={() => setOpenMenuId(openMenuId === admin.id ? null : admin.id)}
                         >
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
+                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>more_horiz</span>
+                        </button>
                         {openMenuId === admin.id && (
-                          <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-border/10 rounded-sm shadow-xl z-50 py-1 animate-in fade-in zoom-in-95 duration-200">
-                            <button className="w-full text-left px-4 py-2 text-micro font-bold hover:bg-muted/5 flex items-center gap-2">
-                              <Activity className="w-3.5 h-3.5" /> View Activity
-                            </button>
-                            <button className="w-full text-left px-4 py-2 text-micro font-bold hover:bg-muted/5 flex items-center gap-2">
-                              <UserCheck className="w-3.5 h-3.5" /> Edit Permissions
-                            </button>
-                            <div className="h-px bg-border/5 my-1" />
-                            <button className="w-full text-left px-4 py-2 text-micro font-bold text-destructive hover:bg-destructive/5 flex items-center gap-2">
-                              <Trash2 className="w-3.5 h-3.5" /> Revoke Access
-                            </button>
+                          <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 4px)', background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 4, zIndex: 50, minWidth: 172, boxShadow: '0 4px 16px rgba(0,0,0,0.10)' }}>
+                            <div style={{ padding: '4px 0' }}>
+                              <button style={{ display: 'block', width: '100%', padding: '9px 16px', textAlign: 'left', background: 'none', border: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, cursor: 'pointer', color: 'hsl(var(--on-surface))' }}>
+                                Edit permissions
+                              </button>
+                              <button style={{ display: 'block', width: '100%', padding: '9px 16px', textAlign: 'left', background: 'none', border: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, cursor: 'pointer', color: 'hsl(var(--on-surface))' }}>
+                                Activity logs
+                              </button>
+                              <hr style={{ margin: '4px 0', border: 'none', borderTop: '1px solid hsl(var(--border))' }} />
+                              <button style={{ display: 'block', width: '100%', padding: '9px 16px', textAlign: 'left', background: 'none', border: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, cursor: 'pointer', color: 'hsl(var(--destructive))' }}>
+                                Revoke access
+                              </button>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -230,24 +214,92 @@ export default function Administrators() {
               ))}
             </tbody>
           </table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* 🛡️ Security Footer */}
-      <div className="mt-8 p-6 rounded-sm border border-border/40 bg-muted/5 flex items-start gap-4">
-        <div className="w-12 h-12 bg-on-surface/5 rounded-sm flex items-center justify-center flex-shrink-0">
-          <ShieldCheck className="w-6 h-6 text-primary" />
+      {/* Mobile cards */}
+      <div className="mobile-only" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="panel" style={{ padding: 20 }}>
+              <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 4, background: 'hsl(var(--container-low))' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                  <div style={{ height: 14, background: 'hsl(var(--container-low))', borderRadius: 2, width: '60%' }} />
+                  <div style={{ height: 11, background: 'hsl(var(--container-low))', borderRadius: 2, width: '40%' }} />
+                </div>
+              </div>
+              <div style={{ height: 36, background: 'hsl(var(--container-low))', borderRadius: 4 }} />
+            </div>
+          ))
+        ) : filteredAdmins.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px 20px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+            No authorized personnel found.
+          </div>
+        ) : filteredAdmins.map(admin => (
+          <div key={admin.id} className="panel" style={{ padding: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ ...avatarSt(admin.role), width: 44, height: 44, fontSize: 13 }}>
+                  {admin.avatarUrl
+                    ? <img src={admin.avatarUrl} alt={admin.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                    : admin.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', margin: 0 }}>{admin.name}</p>
+                  <p style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0' }}>{admin.id}</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 20, flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 12, color: isHighPrivilege(admin.role) ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' }}>
+                  {isHighPrivilege(admin.role) ? 'gpp_bad' : 'verified_user'}
+                </span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: isHighPrivilege(admin.role) ? 'hsl(var(--destructive))' : 'hsl(var(--primary))' }}>
+                  {formatRole(admin.role)}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, marginBottom: 12 }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>Region</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>location_on</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))' }}>{admin.region || 'National HQ'}</span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn" style={{ flex: 1, background: 'hsl(var(--accent))', color: '#000', border: 'none', justifyContent: 'center' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>bolt</span>
+                Activity
+              </button>
+              <button className="btn btn-outline" style={{ justifyContent: 'center' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>lock</span>
+              </button>
+              <button className="btn btn-dest" style={{ justifyContent: 'center' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>block</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Security advisory */}
+      <div className="panel" style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: 20 }}>
+        <div style={{ width: 44, height: 44, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>verified_user</span>
         </div>
         <div>
-          <h3 className="text-sm font-bold tracking-tight mb-1">Administrative Security Protocol</h3>
-          <p className="text-xs text-muted-foreground/60 leading-relaxed max-w-2xl">
-            Access to these credentials is restricted to authorized personnel. Every action performed in this command center is recorded in the permanent audit ledger for movement integrity.
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', margin: '0 0 4px' }}>Security protocol</p>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.65, margin: 0 }}>
+            Administrative access is governed by movement encryption standards. All actions within the command center are logged in the audit vault for transparency and security. Unauthorized access attempts will be intercepted.
           </p>
         </div>
       </div>
-      
+
+      {/* Dropdown backdrop */}
       {openMenuId && (
-        <div className="fixed inset-0 z-40" onClick={() => setOpenMenuId(null)} />
+        <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setOpenMenuId(null)} />
       )}
     </div>
   )
