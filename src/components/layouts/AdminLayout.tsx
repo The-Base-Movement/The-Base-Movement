@@ -381,7 +381,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
         {/* Topbar */}
         <header style={{
-          height: 54,
+          height: 80,
           background: '#fff',
           borderBottom: '1px solid hsl(var(--border))',
           display: 'flex',
@@ -611,6 +611,17 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             fontSize: `calc(1rem * var(--admin-font-scale, 1))` 
           }}
         >
+          <div className="max-w-7xl mx-auto w-full">
+            {children || <Outlet />}
+
+            {/* Movement Slogan Footer */}
+            <footer className="mt-20 py-12 border-t border-border/10 flex flex-col items-center justify-center gap-4 opacity-50 hover:opacity-100 transition-opacity duration-500">
+              <div className="flex items-center gap-0">
+                <div className="h-1 w-10 bg-[hsl(var(--destructive))]" />
+                <div className="h-1 w-10 bg-[hsl(var(--accent))]" />
+                <div className="h-1 w-10 bg-[hsl(var(--primary))]" />
+              </div>
+              <div className="text-center space-y-1">
                 <p className="text-micro font-extrabold text-on-surface/60 uppercase tracking-[.06em]">
                   Ghana First, Jobs for the Youth!
                 </p>

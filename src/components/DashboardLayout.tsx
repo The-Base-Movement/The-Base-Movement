@@ -260,11 +260,11 @@ export default function DashboardLayout() {
       </aside>
 
       {/* Main Content Canvas */}
-      <main className={`min-h-screen bg-muted/10 flex flex-col pt-16 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'}`}>
+      <main className={`min-h-screen bg-muted/10 flex flex-col pt-20 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'}`}>
 
         {/* ── Topbar ── fixed, clears the sidebar */}
-        <div className={`fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-border/40 shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-60'}`}>
-          <div className="flex items-center justify-between px-6 md:px-10 h-16">
+        <div className={`fixed top-0 left-0 right-0 z-40 bg-white border-b border-border shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-60'}`}>
+          <div className="flex items-center justify-between px-6 md:px-10 h-20">
 
             {/* Left: Hamburger (Mobile) + Current Page Title */}
             <div className="flex items-center gap-6">
