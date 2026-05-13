@@ -180,36 +180,22 @@ export default function Members() {
         </div>
       </div>
 
-      {/* KPIs */}
+      {/* KPIs — brand-color left bars: charcoal · green · gold · red */}
       <div className="kpis">
-        <div className="panel" style={{ padding: '14px 18px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ borderLeft: '3px solid hsl(var(--primary))', paddingLeft: 12 }}>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Total patriots</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--on-surface))', lineHeight: 1 }}>{members.length}</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Across all networks</div>
-          </div>
-        </div>
-        <div className="panel" style={{ padding: '14px 18px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ borderLeft: '3px solid hsl(var(--primary))', paddingLeft: 12 }}>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Ghana network</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--on-surface))', lineHeight: 1 }}>{ghanaCount}</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Registered in Ghana</div>
-          </div>
-        </div>
-        <div className="panel" style={{ padding: '14px 18px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ borderLeft: '3px solid hsl(var(--accent))', paddingLeft: 12 }}>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Diaspora network</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--on-surface))', lineHeight: 1 }}>{diasporaCount}</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>International patriots</div>
-          </div>
-        </div>
-        <div className="panel" style={{ padding: '14px 18px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ borderLeft: '3px solid hsl(var(--primary))', paddingLeft: 12 }}>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Verified</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--primary))', lineHeight: 1 }}>{verifiedCount}</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 12 }}>verified</span>
-              ID confirmed
+        {([
+          { label: 'Total patriots',    value: members.length, sub: 'Across all networks',    bar: 'hsl(var(--on-surface))',    val: 'hsl(var(--on-surface))',   icon: 'groups'    },
+          { label: 'Ghana network',     value: ghanaCount,     sub: 'Registered in Ghana',    bar: 'hsl(var(--primary))',       val: 'hsl(var(--on-surface))',   icon: 'flag'      },
+          { label: 'Diaspora network',  value: diasporaCount,  sub: 'International patriots', bar: 'hsl(var(--accent))',        val: 'hsl(var(--on-surface))',   icon: 'public'    },
+          { label: 'Verified',          value: verifiedCount,  sub: 'ID confirmed',           bar: 'hsl(var(--destructive))',   val: 'hsl(var(--destructive))',  icon: 'verified'  },
+        ] as { label: string; value: number; sub: string; bar: string; val: string; icon: string }[]).map(kpi => (
+          <div key={kpi.label} className="panel" style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}>
+            {/* Coloured left accent bar */}
+            <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{kpi.label}</div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 30, color: kpi.val, lineHeight: 1, marginBottom: 6 }}>{kpi.value}</div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 12, color: kpi.bar }}>{kpi.icon}</span>
+              {kpi.sub}
             </div>
           </div>
         </div>
@@ -412,90 +398,111 @@ function FilterControls({
   isFiltered, clearFilters,
   inputSt, selectSt, labelSt,
 }: FilterControlsProps) {
+  const sectionSt: React.CSSProperties = { paddingTop: 16, marginTop: 16, borderTop: '1px solid hsl(var(--border))' }
+  const sectionHeadSt: React.CSSProperties = {
+    display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10,
+    fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+    color: 'hsl(var(--on-surface))',
+  }
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
 
       {/* Search */}
-      <div>
-        <label style={labelSt}>Search patriots</label>
-        <div style={{ position: 'relative' }}>
-          <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-          <input
-            type="text"
-            placeholder="Name or profession…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ ...inputSt, paddingLeft: 34 }}
-          />
-        </div>
+      <div style={{ position: 'relative' }}>
+        <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+        <input
+          type="text"
+          placeholder="Search by name or profession…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{ ...inputSt, paddingLeft: 34, height: 40 }}
+        />
       </div>
 
-      {/* Platform toggle */}
-      <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 14 }}>
-        <label style={labelSt}>Movement network</label>
-        <div style={{ display: 'flex', border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
+      {/* Network */}
+      <div style={sectionSt}>
+        <div style={sectionHeadSt}>
+          <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))' }}>hub</span>
+          Network
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
           {(['GHANA', 'DIASPORA'] as const).map(p => (
             <button
               key={p}
               onClick={() => setActivePlatform(p)}
               style={{
-                flex: 1, padding: '8px 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 800,
-                fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', border: 'none',
-                cursor: 'pointer', transition: 'all 0.15s',
-                background: activePlatform === p ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
+                padding: '9px 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 800,
+                fontSize: 11, border: `1px solid ${activePlatform === p ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
+                borderRadius: 4, cursor: 'pointer', transition: 'all 0.15s', letterSpacing: '0.04em',
+                background: activePlatform === p ? 'hsl(var(--primary))' : '#fff',
                 color: activePlatform === p ? '#fff' : 'hsl(var(--on-surface-muted))',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
               }}
             >
+              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>{p === 'GHANA' ? 'flag' : 'public'}</span>
               {p === 'GHANA' ? 'Ghana' : 'Diaspora'}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Location filters */}
-      <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <label style={labelSt}>Location</label>
-
-        {activePlatform === 'GHANA' ? (
-          <>
+      {/* Location */}
+      <div style={sectionSt}>
+        <div style={sectionHeadSt}>
+          <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))' }}>location_on</span>
+          Location
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {activePlatform === 'GHANA' ? (
+            <>
+              <div>
+                <label style={{ ...labelSt, marginBottom: 5 }}>Region</label>
+                <select value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} style={selectSt}>
+                  <option value="all">All regions</option>
+                  {ghanaRegions.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ ...labelSt, marginBottom: 5 }}>Constituency</label>
+                <select value={selectedConstituency} onChange={e => setSelectedConstituency(e.target.value)}
+                  style={{ ...selectSt, opacity: selectedRegion === 'all' ? 0.45 : 1 }}
+                  disabled={selectedRegion === 'all'}>
+                  <option value="all">All constituencies</option>
+                  {constituencies.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+            </>
+          ) : (
             <div>
-              <label style={{ ...labelSt, marginBottom: 4, fontSize: 9 }}>Region</label>
-              <select value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} style={selectSt}>
-                <option value="all">All regions</option>
-                {ghanaRegions.map(r => <option key={r} value={r}>{r}</option>)}
+              <label style={{ ...labelSt, marginBottom: 5 }}>Country</label>
+              <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)} style={selectSt}>
+                <option value="all">All countries</option>
+                {diasporaCountries.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
-            <div>
-              <label style={{ ...labelSt, marginBottom: 4, fontSize: 9 }}>Constituency</label>
-              <select value={selectedConstituency} onChange={e => setSelectedConstituency(e.target.value)} style={{ ...selectSt, opacity: selectedRegion === 'all' ? 0.5 : 1 }} disabled={selectedRegion === 'all'}>
-                <option value="all">All constituencies</option>
-                {constituencies.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-          </>
-        ) : (
-          <div>
-            <label style={{ ...labelSt, marginBottom: 4, fontSize: 9 }}>Country</label>
-            <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)} style={selectSt}>
-              <option value="all">All countries</option>
-              {diasporaCountries.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Profession */}
-      <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 14 }}>
-        <label style={labelSt}>Professional field</label>
+      <div style={sectionSt}>
+        <div style={sectionHeadSt}>
+          <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))' }}>work</span>
+          Profession
+        </div>
         <select value={selectedProfession} onChange={e => setSelectedProfession(e.target.value)} style={selectSt}>
           <option value="all">All professions</option>
           {professions.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
       </div>
 
-      {/* Clear */}
       {isFiltered && (
-        <button className="btn btn-dest btn-sm" style={{ justifyContent: 'center' }} onClick={clearFilters}>
+        <button
+          className="btn btn-dest btn-sm"
+          style={{ justifyContent: 'center', marginTop: 16 }}
+          onClick={clearFilters}
+        >
           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
           Clear all filters
         </button>

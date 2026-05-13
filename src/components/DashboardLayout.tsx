@@ -1,24 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { 
-  LogOut, 
-  User as UserIcon, 
-  Search 
-} from 'lucide-react'
 import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
-import { Button } from './ui/neon-button'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
 import { useBranding } from '@/hooks/useBranding'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 export default function DashboardLayout() {
   const { settings } = useBranding()
@@ -32,6 +18,7 @@ export default function DashboardLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [openUserMenu, setOpenUserMenu] = useState(false)
 
   useEffect(() => {
     const readProfile = async () => {
@@ -225,17 +212,30 @@ export default function DashboardLayout() {
           ))}
 
           <div className={`mt-8 mb-8 px-4 ${isSidebarCollapsed ? 'flex flex-col items-center' : ''}`}>
-             <Button 
-                variant="primary"
-                onClick={() => setIsShareModalOpen(true)}
-                className={`w-full font-bold tracking-tight shadow-2xl shadow-primary/20 flex items-center justify-center overflow-hidden ${isSidebarCollapsed ? 'h-12 w-12 rounded-full' : 'h-12 text-tiny'}`}
-              >
-                {isSidebarCollapsed ? (
-                  <span className="material-symbols-outlined">share</span>
-                ) : (
-                  <span>Invite & Share</span>
-                )}
-              </Button>
+            <button
+              onClick={() => setIsShareModalOpen(true)}
+              style={{
+                width: isSidebarCollapsed ? 44 : '100%',
+                height: 44,
+                borderRadius: isSidebarCollapsed ? '50%' : 4,
+                background: 'hsl(var(--primary))',
+                color: '#fff',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 800,
+                fontSize: 12,
+                letterSpacing: '0.02em',
+                boxShadow: '0 4px 16px rgba(0,107,63,0.25)',
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>share</span>
+              {!isSidebarCollapsed && 'Invite & Share'}
+            </button>
           </div>
         </div>
 
@@ -287,73 +287,92 @@ export default function DashboardLayout() {
             </div>
 
             {/* Right: Actions + Avatar */}
-            <div className="flex items-center gap-4">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
 
-              {/* Search */}
-              <div className="relative hidden lg:block">
-                <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface/30 group-focus-within:text-primary transition-colors" />
-                    <input 
-                      type="text" 
-                      placeholder="Search infrastructure..." 
-                      className="w-[280px] pl-10 pr-4 py-2 bg-on-surface/5 border border-transparent focus:border-primary/20 focus:bg-white rounded-none text-xs font-medium transition-all outline-none"
-                    />
-                  </div>
+              {/* Search — desktop only */}
+              <div className="hidden lg:block" style={{ position: 'relative' }}>
+                <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4, pointerEvents: 'none' }}>search</span>
+                <input
+                  type="text"
+                  placeholder="Search the movement…"
+                  style={{ width: 240, height: 36, paddingLeft: 34, paddingRight: 14, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}
+                />
               </div>
 
+              {/* Donate shortcut */}
+              <Link
+                to="/dashboard/donate"
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 14px', height: 36, background: 'hsl(var(--accent))', color: 'hsl(var(--on-surface))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, textDecoration: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}
+                className="hidden md:flex"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>volunteer_activism</span>
+                Donate ₵
+              </Link>
+
               {/* Notification Bell */}
-              <button className="relative p-2.5 rounded-sm hover:bg-muted/10 transition-all group">
-                <span
-                  className="material-symbols-outlined text-on-surface/40 group-hover:text-primary transition-colors text-[22px]"
-                  style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
-                >notifications</span>
+              <button style={{ position: 'relative', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: '1px solid hsl(var(--border))', borderRadius: 4, cursor: 'pointer', color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>notifications</span>
                 {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] bg-destructive rounded-full ring-2 ring-white text-micro flex items-center justify-center text-white font-bold tracking-tight">
-                    {unreadCount}
-                  </span>
+                  <span style={{ position: 'absolute', top: 6, right: 6, width: 7, height: 7, background: 'hsl(var(--destructive))', borderRadius: '50%', border: '1.5px solid #fff' }} />
                 )}
               </button>
 
-              {/* User Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-4 group outline-none">
-                    <div className="w-10 h-10 rounded-sm overflow-hidden ring-4 ring-primary/5 group-hover:ring-primary/20 transition-all shadow-2xl shrink-0">
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" decoding="async" />
-                      ) : (
-                        <div className="w-full h-full bg-primary flex items-center justify-center text-white text-tiny font-bold tracking-tight">
-                          {initials || 'M'}
-                        </div>
-                      )}
+              {/* User dropdown */}
+              <div style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setOpenUserMenu(v => !v)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '4px 10px 4px 4px', cursor: 'pointer', outline: 'none' }}
+                >
+                  <div style={{ width: 28, height: 28, borderRadius: 4, overflow: 'hidden', background: 'hsl(var(--primary))', flexShrink: 0 }}>
+                    {avatarUrl
+                      ? <img src={avatarUrl} alt={userName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" />
+                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11 }}>{initials || 'M'}</div>
+                    }
+                  </div>
+                  <span className="hidden md:block" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textTransform: 'capitalize' }}>{userName?.toLowerCase()}</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>expand_more</span>
+                </button>
+
+                {openUserMenu && (
+                  <>
+                    <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setOpenUserMenu(false)} />
+                    <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', zIndex: 50, background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, minWidth: 210, boxShadow: '0 8px 24px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+                      {/* Identity header */}
+                      <div style={{ padding: '12px 14px', background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
+                        <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'capitalize', marginBottom: 2 }}>{userName?.toLowerCase()}</div>
+                        <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>ID: {userRegNo?.slice(0, 10) || 'Unverified'}</div>
+                      </div>
+                      {/* Menu items */}
+                      {[
+                        { icon: 'person', label: 'Member Profile', to: '/dashboard/settings' },
+                        { icon: 'settings', label: 'Settings', to: '/dashboard/settings' },
+                      ].map(item => (
+                        <Link
+                          key={item.to + item.label}
+                          to={item.to}
+                          onClick={() => setOpenUserMenu(false)}
+                          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', textDecoration: 'none' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>{item.icon}</span>
+                          {item.label}
+                        </Link>
+                      ))}
+                      <div style={{ height: 1, background: 'hsl(var(--border))' }} />
+                      <button
+                        onClick={() => { setOpenUserMenu(false); handleLogout() }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--destructive))', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>logout</span>
+                        Sign out
+                      </button>
                     </div>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 mt-2 bg-white border-border/40 shadow-2xl rounded-none">
-                  <DropdownMenuLabel className="p-4">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-xs font-bold text-on-surface leading-none capitalize">{userName?.toLowerCase()}</p>
-                      <p className="text-tiny font-bold text-muted-foreground/60 tracking-tight truncate">{userRegNo || 'Unverified Account'}</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-border/10" />
-                  <DropdownMenuItem asChild className="cursor-pointer p-3 focus:bg-primary/5 transition-colors group">
-                    <Link to="/dashboard/settings" className="flex items-center gap-3 w-full">
-                      <UserIcon className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-                      <span className="text-tiny font-bold tracking-tight text-on-surface/70 group-hover:text-on-surface">Member Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={handleLogout}
-                    className="cursor-pointer p-3 focus:bg-destructive/5 transition-colors group text-destructive"
-                  >
-                    <div className="flex items-center gap-3 w-full">
-                      <LogOut className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-                      <span className="text-tiny font-bold tracking-tight">Sign out</span>
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
