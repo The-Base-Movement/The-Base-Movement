@@ -101,10 +101,11 @@ export default function WarRoomCommand() {
     }
   }
 
-  const handleDispatchNarrative = async (id: string) => {
-    const success = await adminService.updateMediaCounterNarrative(id, 'DEPLOYED')
+  const handleDispatchNarrative = async (id: string, currentStatus: MediaCounterNarrative['dispatch_status']) => {
+    const nextStatus: MediaCounterNarrative['dispatch_status'] = currentStatus === 'PENDING' ? 'DEPLOYED' : 'PENDING'
+    const success = await adminService.updateMediaCounterNarrative(id, nextStatus)
     if (success) {
-      toast.success('Digital strike narrative deployed to all platforms.')
+      toast.success(nextStatus === 'DEPLOYED' ? 'Digital strike narrative deployed' : 'Narrative recalled to pending')
       fetchWarRoomIntelligence(true)
     }
   }
@@ -482,18 +483,16 @@ export default function WarRoomCommand() {
                               {nar.dispatch_status.toLowerCase()}
                             </span>
                           </div>
-                          {nar.dispatch_status === 'PENDING' ? (
-                            <button 
-                              onClick={() => handleDispatchNarrative(nar.id)}
-                              className="text-[10px] font-extrabold px-3 rounded-[3px] shrink-0 h-7 transition-all active:scale-95"
-                              style={{ background: 'rgba(206,17,38,.15)', color: 'hsl(var(--destructive))', border: '1px solid rgba(206,17,38,.3)' }}>
-                              Dispatch
-                            </button>
-                          ) : (
-                            <div className="flex items-center px-3 h-7 rounded-[3px]" style={{ background: 'hsla(var(--primary), .1)', border: '1px solid hsla(var(--primary), .2)' }}>
-                              <span className="text-[9px] font-extrabold text-primary uppercase">Deployed</span>
-                            </div>
-                          )}
+                          <button 
+                            onClick={() => handleDispatchNarrative(nar.id, nar.dispatch_status)}
+                            className="text-[10px] font-extrabold px-3 rounded-[3px] shrink-0 h-7 transition-all active:scale-95"
+                            style={{ 
+                              background: nar.dispatch_status === 'PENDING' ? 'rgba(206,17,38,.15)' : 'rgba(255,255,255,.05)', 
+                              color: nar.dispatch_status === 'PENDING' ? 'hsl(var(--destructive))' : 'white', 
+                              border: nar.dispatch_status === 'PENDING' ? '1px solid rgba(206,17,38,.3)' : '1px solid rgba(255,255,255,.1)' 
+                            }}>
+                            {nar.dispatch_status === 'PENDING' ? 'Dispatch' : 'Recall'}
+                          </button>
                         </div>
                       ))}
                     </>
