@@ -1,46 +1,60 @@
 import { useState, useEffect, useCallback } from 'react'
-import { 
-  BarChart3, 
-  Plus, 
-  Search, 
-  Clock, 
-  MoreVertical,
-  MessageSquare,
-  ChevronRight,
-  X,
-  Trash2,
-  Users,
-  Calendar
-} from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { Badge } from "@/components/ui/badge"
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card'
-import { cn } from '@/lib/utils'
 import { adminService, type Poll, type PollStats } from '@/services/adminService'
 import { toast } from 'sonner'
 import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
-// Mock Data for Polls
+const inputSt: React.CSSProperties = {
+  width: '100%', height: 40, padding: '0 12px',
+  border: '1px solid hsl(var(--border))',
+  background: 'hsl(var(--container-low))',
+  outline: 'none',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 700, fontSize: 12, borderRadius: 4,
+  color: 'hsl(var(--on-surface))', boxSizing: 'border-box',
+}
+
+const selectSt: React.CSSProperties = {
+  ...inputSt, cursor: 'pointer',
+}
+
+const labelSt: React.CSSProperties = {
+  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+  color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6,
+}
+
+const thSt: React.CSSProperties = {
+  padding: '11px 20px', textAlign: 'left',
+  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+  color: 'hsl(var(--on-surface-muted))',
+  background: 'hsl(var(--container-low))',
+  borderBottom: '1px solid hsl(var(--border))',
+}
+
+const tdSt: React.CSSProperties = {
+  padding: '14px 20px',
+  borderBottom: '1px solid hsl(var(--border))',
+}
+
+function statusPill(status: string) {
+  if (status === 'Active') return <span className="pill pill-ok">{status}</span>
+  if (status === 'Draft') return <span className="pill pill-warn">{status}</span>
+  return <span className="pill pill-mute">{status}</span>
+}
+
 export default function PollsManagement() {
   const [polls, setPolls] = useState<Poll[]>([])
   const [stats, setStats] = useState<PollStats | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
-  
+
   const [availableRegions, setAvailableRegions] = useState<{ id: string, name: string }[]>([])
   const [availableCountries, setAvailableCountries] = useState<{ name: string, dialing_code: string, is_diaspora: boolean }[]>([])
 
   const [newPoll, setNewPoll] = useState({
     question: '',
-    targetBase: 'GHANA', // GHANA or DIASPORA
+    targetBase: 'GHANA',
     region: 'National',
     country: 'International',
     status: 'Active',
@@ -69,9 +83,7 @@ export default function PollsManagement() {
     }
   }, [])
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  useEffect(() => { fetchData() }, [fetchData])
 
   const handlePollAction = (action: string, pollTitle: string) => {
     adminService.logAction(action, `POLLS/${pollTitle}`, 'Success')
@@ -84,7 +96,6 @@ export default function PollsManagement() {
       toast.error('Please provide at least 2 options.')
       return
     }
-
     setIsSubmitting(true)
     try {
       const targetRegion = newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country
@@ -97,10 +108,7 @@ export default function PollsManagement() {
         toast.success('Poll created successfully!')
         setShowCreateModal(false)
         setNewPoll({
-          question: '',
-          targetBase: 'GHANA',
-          region: 'National',
-          country: 'International',
+          question: '', targetBase: 'GHANA', region: 'National', country: 'International',
           status: 'Active',
           endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
           options: ['', '']
@@ -116,7 +124,6 @@ export default function PollsManagement() {
 
   const handleDeletePoll = async (id: string, question: string) => {
     if (!window.confirm(`Are you sure you want to delete the poll: "${question}"?`)) return
-
     try {
       const success = await adminService.deletePoll(id)
       if (success) {
@@ -131,565 +138,437 @@ export default function PollsManagement() {
     }
   }
 
-  const filteredPolls = polls.filter(p => p.question.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredPolls = polls.filter(p =>
+    p.question.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const modalBackdrop: React.CSSProperties = {
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100,
+    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+  }
+
+  const modalBox = (maxW: number): React.CSSProperties => ({
+    background: '#fff', borderRadius: 6, border: '1px solid hsl(var(--border))',
+    width: '100%', maxWidth: maxW, maxHeight: '90vh', overflowY: 'auto',
+  })
+
+  const modalCloseBtn: React.CSSProperties = {
+    background: 'none', border: '1px solid hsl(var(--border))', borderRadius: 4,
+    width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
+    cursor: 'pointer', color: 'hsl(var(--on-surface-muted))', flexShrink: 0,
+  }
 
   return (
-    <div className="admin-page-container">
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      {/* Page header */}
+      <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <BarChart3 className="w-8 h-8 text-on-surface" />
-            Engagement hub
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Manage movement-wide opinion polls, surveys, and live member feedback intercepts.</p>
+          <div className="crumbs">Engagement · Campaigns</div>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>bar_chart</span>
+            Engagement Hub
+          </h2>
+          <div style={{ marginTop: 10, marginBottom: 4 }}><BrandLine /></div>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, marginBottom: 0 }}>
+            Manage movement-wide opinion polls, surveys, and live member feedback intercepts.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-            onClick={() => setShowCreateModal(true)}
-          >
-            <Plus className="w-4 h-4 mr-2" /> Create Campaign
-          </Button>
+        <div className="actions">
+          <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
+            Create Campaign
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <TacticalKPI 
-          label="Total engagements"
-          value={stats?.totalEngagements || 0}
-          description="Campaign participation"
-          trend={{ direction: 'up', value: '15.2%' }}
-        />
-        <TacticalKPI 
-          label="National sentiment"
-          value={`${stats?.nationalSentimentScore || 0}%`}
-          description="Positive threshold"
-          trend={{ direction: 'neutral', value: 'Live' }}
-        />
-        <TacticalKPI 
-          label="Avg response time"
-          value={stats?.avgResponseTime || 'N/A'}
-          description="Engagement velocity"
-        />
-        <TacticalKPI 
-          label="Feedback rate"
-          value={stats?.feedbackRate || '0%'}
-          description="Quality score"
-        />
+      {/* KPIs */}
+      <div className="kpis">
+        <TacticalKPI label="Total engagements" value={stats?.totalEngagements || 0} description="Campaign participation" trend={{ direction: 'up', value: '15.2%' }} />
+        <TacticalKPI label="National sentiment" value={`${stats?.nationalSentimentScore || 0}%`} description="Positive threshold" trend={{ direction: 'neutral', value: 'Live' }} variant="gold" />
+        <TacticalKPI label="Avg response time" value={stats?.avgResponseTime || 'N/A'} description="Engagement velocity" variant="green" />
+        <TacticalKPI label="Feedback rate" value={stats?.feedbackRate || '0%'} description="Quality score" />
       </div>
 
-      {/* Main Content: Polls Management */}
-      <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-destructive" />
+      {/* Desktop table */}
+      <div className="panel desktop-only">
+        <div className="ph">
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>bar_chart</span>
             Campaign Management
-          </CardTitle>
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80" />
-            <Input 
-              placeholder="Search polls..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 text-xs rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
-            />
+            {!isLoading && <span className="meta">{filteredPolls.length} record{filteredPolls.length !== 1 ? 's' : ''}</span>}
+          </span>
+          <div style={{ position: 'relative' }}>
+            <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+            <input style={{ ...inputSt, paddingLeft: 34, width: 210, height: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          {/* Desktop Table */}
-          <div className="overflow-x-auto hidden md:block">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-border/40 bg-muted/20">
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Campaign title</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight text-center">Responses</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Region</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Status</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">End date</th>
-                  <th className="px-6 py-4 text-right"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {isLoading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td className="px-6 py-5">
-                        <div className="space-y-2">
-                          <div className="h-4 bg-muted/30 w-3/4 rounded" />
-                          <div className="h-2 bg-muted/20 w-1/2 rounded" />
-                        </div>
-                      </td>
-                      <td className="px-6 py-5"><div className="h-4 bg-muted/20 w-full rounded" /></td>
-                      <td className="px-6 py-5"><div className="h-4 bg-muted/20 w-full rounded" /></td>
-                      <td className="px-6 py-5"><div className="h-6 bg-muted/20 w-16 rounded" /></td>
-                      <td className="px-6 py-5"><div className="h-4 bg-muted/20 w-full rounded" /></td>
-                      <td className="px-6 py-5 text-right"><div className="h-8 w-8 bg-muted/20 ml-auto rounded" /></td>
-                    </tr>
-                  ))
-                ) : filteredPolls.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground/80 text-xs font-bold tracking-tight">
-                      No matching polls found in the campaign hub.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredPolls.map((poll) => (
-                  <tr key={poll.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-on-surface tracking-tight">{poll.question}</span>
-                        <span className="text-micro font-bold text-muted-foreground/80 mt-0.5">{poll.id}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-center">
-                      <div className="flex flex-col items-center">
-                        <span className="text-xs font-bold text-on-surface">{poll.totalVotes.toLocaleString()}</span>
-                        <div className="w-20 h-1 bg-muted/30 mt-2 overflow-hidden">
-                          <div 
-                            className="h-full transition-all duration-1000" 
-                            style={{ 
-                              width: poll.totalVotes > 10000 ? '90%' : poll.totalVotes > 5000 ? '60%' : '30%', 
-                              backgroundColor: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))' 
-                            }} 
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="text-xs font-bold text-on-surface/80 tracking-tight">{poll.region}</span>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))' }} />
-                        <span className={cn(
-                          "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-md",
-                          poll.status === 'Active' 
-                            ? "bg-primary/10 text-primary border-primary/20" 
-                            : poll.status === 'Draft'
-                            ? "bg-accent/10 text-accent border-accent/20"
-                            : "bg-muted/30 text-on-surface border-border/60"
-                        )}>
-                          {poll.status}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/80">
-                        <Clock className="w-3 h-3" />
-                        {poll.endDate}
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-right">
-                      <div className="flex items-center gap-1 justify-end">
-                        <Button 
-                          variant="destructive" 
-                          size="icon" 
-                          className="h-9 w-9 rounded-sm transition-all shadow-sm active:scale-95"
-                          onClick={() => handleDeletePoll(poll.id, poll.question)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          variant="gold" 
-                          size="icon" 
-                          className="h-9 w-9 rounded-sm transition-all shadow-sm active:scale-95"
-                          onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
-                        >
-                          <MoreVertical className="w-5 h-5" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Cards */}
-          <div className="md:hidden divide-y divide-border/40">
-            {isLoading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="p-6 animate-pulse space-y-4">
-                  <div className="h-4 bg-muted/30 w-3/4 rounded" />
-                  <div className="h-3 bg-muted/20 w-1/2 rounded" />
-                  <div className="h-8 bg-muted/30 w-full rounded-sm" />
-                </div>
-              ))
-            ) : filteredPolls.length === 0 ? (
-              <div className="p-12 text-center text-muted-foreground/80 text-xs font-bold">
-                No matching polls found.
-              </div>
-            ) : (
-              filteredPolls.map((poll) => (
-                <div key={poll.id} className="p-6 space-y-6">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-bold text-on-surface leading-tight">{poll.question}</h4>
-                      <p className="text-micro font-bold text-muted-foreground/80 normal-case tracking-tight">{poll.id}</p>
-                    </div>
-                    <div className={cn(
-                      "px-2 py-0.5 text-micro font-bold tracking-tight border rounded-full",
-                      poll.status === 'Active' ? "bg-primary/10 text-primary border-primary/20" : "bg-accent/10 text-accent border-accent/20"
-                    )}>
-                      {poll.status}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-muted/5 rounded-sm border border-border/10">
-                        <Users className="w-5 h-5 text-on-surface" />
-                      </div>
-                      <div>
-                        <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Field participants</p>
-                        <span className="text-sm font-bold text-on-surface">{poll.totalVotes.toLocaleString()}</span>
-                      </div>
-                    </div>
-                    <div className="w-full h-1.5 bg-muted/30 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full transition-all duration-1000" 
-                        style={{ 
-                          width: poll.totalVotes > 10000 ? '90%' : poll.totalVotes > 5000 ? '60%' : '30%', 
-                          backgroundColor: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))' 
-                        }} 
-                      />
-                    </div>
-
-                  <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-micro font-bold text-muted-foreground/80 tracking-tight">Global engagement</span>
-                        <Badge variant="default" className="px-2 py-0.5 text-micro font-bold tracking-tight border rounded-full">HQ Verified</Badge>
-                      </div>
-                    <div className="space-y-1 text-right">
-                      <p className="text-micro font-bold text-muted-foreground/80 tracking-tight">Expires</p>
-                      <p className="text-xs font-bold text-on-surface/80">{poll.endDate}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-2">
-                    <Button 
-                      variant="gold" 
-                      className="flex-1 h-11 rounded-sm text-micro font-bold tracking-tight transition-all shadow-sm active:scale-95"
-                      onClick={() => handlePollAction('POLL_MANAGE', poll.question)}
-                    >
-                      Manage Campaign
-                    </Button>
-                    <Button 
-                      variant="destructive" 
-                      size="icon" 
-                      className="h-11 w-11 rounded-sm transition-all shadow-sm active:scale-95"
-                      onClick={() => handleDeletePoll(poll.id, poll.question)}
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Quick Tips Section */}
-      <div className="flex-columns items-stretch" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        <div className="p-8 bg-on-surface text-white relative overflow-hidden rounded-sm shadow-xl border border-white/5 flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
-            <h4 className="text-lg font-bold tracking-tight">Maximize engagement</h4>
-            <p className="text-sm text-white/60 leading-relaxed max-w-sm">
-              Use regional-specific polls to gather more precise data. Our research shows chapters with localized campaigns see 40% higher member participation.
-            </p>
-            <Button 
-              variant="default"
-              size="sm"
-              className="h-11 px-10 text-micro font-bold tracking-tight border-white/20 bg-transparent text-white hover:bg-white hover:text-on-surface rounded-sm transition-all shadow-lg active:scale-95"
-              onClick={() => setIsAnalyticsModalOpen(true)}
-            >
-              Scan Analytics Guide
-            </Button>
-            <BarChart3 className="absolute -bottom-4 -right-4 w-32 h-32 text-white/5 rotate-12" />
         </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={thSt}>Campaign title</th>
+                <th style={{ ...thSt, textAlign: 'center' }}>Responses</th>
+                <th style={thSt}>Region</th>
+                <th style={thSt}>Status</th>
+                <th style={thSt}>End date</th>
+                <th style={{ ...thSt, textAlign: 'right' }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i}>
+                    <td style={tdSt}><div style={{ height: 13, borderRadius: 3, background: 'hsl(var(--container-low))', width: '75%' }} /></td>
+                    <td style={tdSt}><div style={{ height: 13, borderRadius: 3, background: 'hsl(var(--container-low))' }} /></td>
+                    <td style={tdSt}><div style={{ height: 13, borderRadius: 3, background: 'hsl(var(--container-low))' }} /></td>
+                    <td style={tdSt}><div style={{ height: 22, borderRadius: 3, background: 'hsl(var(--container-low))', width: 60 }} /></td>
+                    <td style={tdSt}><div style={{ height: 13, borderRadius: 3, background: 'hsl(var(--container-low))' }} /></td>
+                    <td style={{ ...tdSt, textAlign: 'right' }}><div style={{ height: 30, width: 70, borderRadius: 4, background: 'hsl(var(--container-low))', marginLeft: 'auto' }} /></td>
+                  </tr>
+                ))
+              ) : filteredPolls.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ padding: '48px 20px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                    No matching polls found in the campaign hub.
+                  </td>
+                </tr>
+              ) : filteredPolls.map(poll => (
+                <tr key={poll.id} style={{ transition: 'background 0.15s' }} onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')} onMouseLeave={e => (e.currentTarget.style.background = '')}>
+                  <td style={tdSt}>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--on-surface))', lineHeight: 1.4 }}>{poll.question}</div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>{poll.id}</div>
+                  </td>
+                  <td style={{ ...tdSt, textAlign: 'center' }}>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>{poll.totalVotes.toLocaleString()}</div>
+                    <div style={{ width: 80, height: 3, background: 'hsl(var(--border))', borderRadius: 2, margin: '6px auto 0', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: poll.totalVotes > 10000 ? '90%' : poll.totalVotes > 5000 ? '60%' : '30%', background: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))', transition: 'width 1s' }} />
+                    </div>
+                  </td>
+                  <td style={tdSt}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{poll.region}</span>
+                  </td>
+                  <td style={tdSt}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))' }} />
+                      {statusPill(poll.status)}
+                    </div>
+                  </td>
+                  <td style={tdSt}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>schedule</span>
+                      {poll.endDate}
+                    </div>
+                  </td>
+                  <td style={{ ...tdSt, textAlign: 'right' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
+                      <button className="btn btn-dest btn-sm" style={{ width: 34, padding: 0, justifyContent: 'center' }} onClick={() => handleDeletePoll(poll.id, poll.question)}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                      </button>
+                      <button className="btn btn-sm" style={{ background: 'hsl(var(--accent))', color: '#fff', width: 34, padding: 0, justifyContent: 'center' }} onClick={() => handlePollAction('POLL_MANAGE', poll.question)}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>more_vert</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-        <div className="p-8 border border-border/60 bg-white flow rounded-sm shadow-sm" style={{ '--flow-space': '1.5rem' } as React.CSSProperties}>
-          <h4 className="text-lg font-bold tracking-tight text-on-surface">Recent feedback highlights</h4>
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-muted/10 border border-border/40 flex items-center justify-center shrink-0 rounded-sm">
-                <MessageSquare className="w-5 h-5 text-muted-foreground/80" />
+      {/* Mobile cards */}
+      <div className="mobile-only" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="panel">
+          <div style={{ padding: 12, position: 'relative' }}>
+            <span className="material-symbols-outlined" style={{ position: 'absolute', left: 22, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+            <input style={{ ...inputSt, paddingLeft: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          </div>
+        </div>
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="panel" style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ height: 14, background: 'hsl(var(--container-low))', borderRadius: 3, width: '75%' }} />
+              <div style={{ height: 10, background: 'hsl(var(--container-low))', borderRadius: 3, width: '50%' }} />
+              <div style={{ height: 34, background: 'hsl(var(--container-low))', borderRadius: 4 }} />
+            </div>
+          ))
+        ) : filteredPolls.length === 0 ? (
+          <div className="panel" style={{ padding: 40, textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+            No matching polls found.
+          </div>
+        ) : filteredPolls.map(poll => (
+          <div key={poll.id} className="panel" style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+              <div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', lineHeight: 1.4, marginBottom: 3 }}>{poll.question}</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))' }}>{poll.id}</div>
+              </div>
+              {statusPill(poll.status)}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 36, height: 36, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>group</span>
               </div>
               <div>
-                <p className="text-sm text-on-surface/80 italic leading-relaxed">"The new regional chapter meetings have significantly improved communication between constituency leads..."</p>
-                <p className="text-micro font-bold text-muted-foreground/80 mt-2">- Member feedback from Ashanti Region</p>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))' }}>Field participants</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))' }}>{poll.totalVotes.toLocaleString()}</div>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
-              className="h-9 px-0 text-micro font-bold tracking-tight text-accent hover:bg-transparent hover:text-accent/80 transition-colors group/btn active:scale-95"
+            <div style={{ height: 4, background: 'hsl(var(--border))', borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: poll.totalVotes > 10000 ? '90%' : poll.totalVotes > 5000 ? '60%' : '30%', background: poll.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))', transition: 'width 1s' }} />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>HQ Verified</span>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))' }}>Expires</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{poll.endDate}</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn" style={{ flex: 1, justifyContent: 'center', background: 'hsl(var(--accent))', color: '#fff' }} onClick={() => handlePollAction('POLL_MANAGE', poll.question)}>
+                Manage Campaign
+              </button>
+              <button className="btn btn-dest" style={{ width: 44, padding: 0, justifyContent: 'center' }} onClick={() => handleDeletePoll(poll.id, poll.question)}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom panels */}
+      <div className="settings-form-grid" style={{ alignItems: 'stretch' }}>
+        {/* Maximize engagement dark panel */}
+        <div style={{ background: 'hsl(var(--on-surface))', borderRadius: 6, padding: 28, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <h4 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, color: '#fff', margin: 0 }}>Maximize engagement</h4>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, margin: 0 }}>
+            Use regional-specific polls to gather more precise data. Our research shows chapters with localized campaigns see 40% higher member participation.
+          </p>
+          <button
+            className="btn btn-sm"
+            style={{ alignSelf: 'flex-start', background: 'transparent', border: '1px solid rgba(255,255,255,0.25)', color: '#fff' }}
+            onClick={() => setIsAnalyticsModalOpen(true)}
+          >
+            Scan Analytics Guide
+          </button>
+          <span className="material-symbols-outlined" style={{ position: 'absolute', bottom: -10, right: -10, fontSize: 110, color: 'rgba(255,255,255,0.04)', transform: 'rotate(12deg)', pointerEvents: 'none' }}>bar_chart</span>
+        </div>
+
+        {/* Recent feedback highlights */}
+        <div className="panel">
+          <div className="ph">
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>forum</span>
+              Recent feedback highlights
+            </span>
+          </div>
+          <div style={{ padding: '16px 18px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+              <div style={{ width: 38, height: 38, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>forum</span>
+              </div>
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', lineHeight: 1.7, fontStyle: 'italic', margin: 0 }}>
+                "The new regional chapter meetings have significantly improved communication between constituency leads…"
+              </p>
+            </div>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+              — Member feedback from Ashanti Region
+            </p>
+            <button
+              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--accent))', padding: 0 }}
               onClick={() => setIsFeedbackModalOpen(true)}
             >
-              Scan Feedback Vault <ChevronRight className="w-4 h-4 ml-1 transition-transform group-hover/btn:translate-x-1" />
-            </Button>
+              Scan Feedback Vault
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+            </button>
           </div>
         </div>
       </div>
-      {/* Create Poll Modal */}
+
+      {/* ── Create Poll Modal ── */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-2xl rounded-sm border-border/60 bg-white shadow-2xl animate-in zoom-in-95 duration-300">
-            <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
-              <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-                <Plus className="w-4 h-4 text-destructive" />
+        <div style={modalBackdrop}>
+          <div style={modalBox(720)}>
+            <div className="ph">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>add</span>
                 Create Campaign
-              </CardTitle>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground/80 hover:text-destructive"
-                onClick={() => setShowCreateModal(false)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </CardHeader>
+              </span>
+              <button style={modalCloseBtn} onClick={() => setShowCreateModal(false)}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+              </button>
+            </div>
             <form onSubmit={handleCreatePoll}>
-              <CardContent className="p-6 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Left Column: Core Details */}
-                  <div className="space-y-6">
-                    {/* Question */}
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80">Campaign question / topic</label>
-                      <Input 
-                        required
-                        placeholder="e.g. Should we increase regional chapter funding?" 
-                        value={newPoll.question}
-                        onChange={e => setNewPoll({...newPoll, question: e.target.value})}
-                        className="rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
-                      />
+              <div style={{ padding: 24 }}>
+                <div className="settings-form-grid">
+                  {/* Left: core details */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    <div>
+                      <label style={labelSt}>Campaign question / topic</label>
+                      <input style={inputSt} required placeholder="e.g. Should we increase regional chapter funding?" value={newPoll.question} onChange={e => setNewPoll({ ...newPoll, question: e.target.value })} />
                     </div>
-
-                    {/* Target Base & Location */}
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <label className="text-micro font-bold tracking-tight text-muted-foreground/80">Target Audience Base</label>
-                        <select
-                          value={newPoll.targetBase}
-                          onChange={e => {
-                            const val = e.target.value
-                            setNewPoll({
-                              ...newPoll, 
-                              targetBase: val,
-                              region: val === 'GHANA' ? 'National' : 'International'
-                            })
-                          }}
-                          className="w-full h-10 px-3 text-xs border border-border/60 rounded-sm focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
-                        >
-                          <option value="GHANA">Ghana Local Base</option>
-                          <option value="DIASPORA">Diaspora Global Base</option>
-                        </select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-micro font-bold tracking-tight text-muted-foreground/80">
-                          {newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}
-                        </label>
-                        <select
-                          value={newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country}
-                          onChange={e => {
-                            if (newPoll.targetBase === 'GHANA') {
-                              setNewPoll({...newPoll, region: e.target.value})
-                            } else {
-                              setNewPoll({...newPoll, country: e.target.value})
-                            }
-                          }}
-                          className="w-full h-10 px-3 text-xs border border-border/60 rounded-sm focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
-                        >
-                          {newPoll.targetBase === 'GHANA' ? (
-                            <>
-                              <option value="National">All Regions (National)</option>
-                              {availableRegions.map(r => (
-                                <option key={r.id} value={r.name}>{r.name}</option>
-                              ))}
-                            </>
-                          ) : (
-                            <>
-                              <option value="International">All Countries (Global)</option>
-                              {availableCountries.map(c => (
-                                <option key={c.name} value={c.name}>{c.name}</option>
-                              ))}
-                            </>
-                          )}
-                        </select>
-                      </div>
+                    <div>
+                      <label style={labelSt}>Target Audience Base</label>
+                      <select
+                        style={selectSt}
+                        value={newPoll.targetBase}
+                        onChange={e => {
+                          const val = e.target.value
+                          setNewPoll({ ...newPoll, targetBase: val, region: val === 'GHANA' ? 'National' : 'International' })
+                        }}
+                      >
+                        <option value="GHANA">Ghana Local Base</option>
+                        <option value="DIASPORA">Diaspora Global Base</option>
+                      </select>
                     </div>
-
-                    {/* End Date */}
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80">Operational title</label>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80 pointer-events-none" />
-                        <Input 
-                          type="date"
-                          value={newPoll.endDate}
-                          onChange={e => setNewPoll({...newPoll, endDate: e.target.value})}
-                          className="pl-9 h-10 text-xs rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
-                        />
+                    <div>
+                      <label style={labelSt}>{newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}</label>
+                      <select
+                        style={selectSt}
+                        value={newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country}
+                        onChange={e => {
+                          if (newPoll.targetBase === 'GHANA') setNewPoll({ ...newPoll, region: e.target.value })
+                          else setNewPoll({ ...newPoll, country: e.target.value })
+                        }}
+                      >
+                        {newPoll.targetBase === 'GHANA' ? (
+                          <>
+                            <option value="National">All Regions (National)</option>
+                            {availableRegions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+                          </>
+                        ) : (
+                          <>
+                            <option value="International">All Countries (Global)</option>
+                            {availableCountries.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                          </>
+                        )}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={labelSt}>Operational end date</label>
+                      <div style={{ position: 'relative' }}>
+                        <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>calendar_today</span>
+                        <input type="date" style={{ ...inputSt, paddingLeft: 34 }} value={newPoll.endDate} onChange={e => setNewPoll({ ...newPoll, endDate: e.target.value })} />
                       </div>
                     </div>
                   </div>
 
-                  {/* Right Column: Poll Options */}
-                  <div className="space-y-4">
-                    <label className="text-micro font-bold tracking-tight text-muted-foreground/80 flex justify-between">
-                      Engagement Options
-                      <span className="text-muted-foreground/40">Min 2 Required</span>
-                    </label>
-                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                  {/* Right: poll options */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <label style={{ ...labelSt, marginBottom: 0 }}>Engagement Options</label>
+                      <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>Min 2 Required</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 260, overflowY: 'auto' }}>
                       {newPoll.options.map((opt, idx) => (
-                        <div key={idx} className="flex gap-2">
-                          <Input 
-                            placeholder={`Option ${idx + 1}`} 
+                        <div key={idx} style={{ display: 'flex', gap: 8 }}>
+                          <input
+                            style={inputSt}
+                            placeholder={`Option ${idx + 1}`}
                             value={opt}
                             onChange={e => {
                               const updated = [...newPoll.options]
                               updated[idx] = e.target.value
-                              setNewPoll({...newPoll, options: updated})
+                              setNewPoll({ ...newPoll, options: updated })
                             }}
-                            className="rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
                           />
                           {newPoll.options.length > 2 && (
-                            <Button 
+                            <button
                               type="button"
-                              variant="ghost" 
-                              size="icon" 
-                              className="shrink-0 text-muted-foreground/40 hover:text-red-500"
-                              onClick={() => {
-                                const updated = newPoll.options.filter((_, i) => i !== idx)
-                                setNewPoll({...newPoll, options: updated})
-                              }}
+                              style={{ flexShrink: 0, width: 40, height: 40, border: '1px solid hsl(var(--border))', borderRadius: 4, background: 'hsl(var(--container-low))', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'hsl(var(--destructive))' }}
+                              onClick={() => setNewPoll({ ...newPoll, options: newPoll.options.filter((_, i) => i !== idx) })}
                             >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                            </button>
                           )}
                         </div>
                       ))}
                     </div>
-                    <Button 
-                      type="button"
-                      variant="primary" 
-                      className="w-full h-11 text-micro font-bold tracking-tight rounded-sm transition-all shadow-sm active:scale-95"
-                      onClick={() => setNewPoll({...newPoll, options: [...newPoll.options, '']})}
-                    >
-                      <Plus className="w-4 h-4 mr-2" /> Add Selection
-                    </Button>
+                    <button type="button" className="btn btn-primary" style={{ justifyContent: 'center' }} onClick={() => setNewPoll({ ...newPoll, options: [...newPoll.options, ''] })}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
+                      Add Selection
+                    </button>
                   </div>
                 </div>
-              </CardContent>
-              <div className="p-6 pt-0 flex gap-4">
-                <Button 
-                  type="button"
-                  variant="default" 
-                  className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  Discard
-                </Button>
-                <Button 
-                  type="submit"
-                  variant="primary"
-                  disabled={isSubmitting}
-                  className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                >
-                  {isSubmitting ? 'Launching...' : 'Deploy Campaign'}
-                </Button>
+              </div>
+              <div style={{ padding: '0 24px 24px', display: 'flex', gap: 12 }}>
+                <button type="button" className="btn btn-outline" style={{ flex: 1, justifyContent: 'center', height: 44 }} onClick={() => setShowCreateModal(false)}>Discard</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', height: 44 }} disabled={isSubmitting}>
+                  {isSubmitting ? 'Launching…' : 'Deploy Campaign'}
+                </button>
               </div>
             </form>
-          </Card>
+          </div>
         </div>
       )}
 
-      {/* Feedback Vault Modal */}
+      {/* ── Feedback Vault Modal ── */}
       {isFeedbackModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-2xl rounded-sm border-border/60 bg-white shadow-2xl overflow-hidden">
-            <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
-              <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-destructive" />
+        <div style={modalBackdrop}>
+          <div style={modalBox(600)}>
+            <div className="ph">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>forum</span>
                 Movement Feedback Vault
-              </CardTitle>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground/80 hover:text-destructive"
-                onClick={() => setIsFeedbackModalOpen(false)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+              </span>
+              <button style={modalCloseBtn} onClick={() => setIsFeedbackModalOpen(false)}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+              </button>
+            </div>
+            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
                 { author: 'Ashanti Member', region: 'Ashanti', text: 'The new regional chapter meetings have significantly improved communication between constituency leads.' },
                 { author: 'Greater Accra Lead', region: 'Greater Accra', text: 'Requesting more mobilization materials for the upcoming town hall sessions.' },
                 { author: 'Western Member', region: 'Western', text: 'The digital strategy polls are a great way to stay engaged with the leadership.' }
               ].map((fb, idx) => (
-                <div key={idx} className="p-4 bg-muted/10 border border-border/40 rounded-sm space-y-2">
-                  <p className="text-sm text-on-surface/80 italic leading-relaxed">"{fb.text}"</p>
-                  <p className="text-micro font-bold text-muted-foreground/80">- {fb.author} from {fb.region} Region</p>
+                <div key={idx} style={{ padding: 16, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface))', lineHeight: 1.7, fontStyle: 'italic', margin: 0 }}>"{fb.text}"</p>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>— {fb.author} from {fb.region} Region</p>
                 </div>
               ))}
-            </CardContent>
-            <div className="p-6 pt-0 border-t border-border/40 bg-muted/5 flex justify-end mt-4">
-              <Button 
-                variant="primary"
-                className="h-12 text-micro font-bold tracking-tight rounded-sm w-full shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                onClick={() => setIsFeedbackModalOpen(false)}
-              >
-                Close Vault
-              </Button>
             </div>
-          </Card>
+            <div style={{ padding: '0 24px 24px' }}>
+              <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', height: 44 }} onClick={() => setIsFeedbackModalOpen(false)}>Close Vault</button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Analytics Guide Modal */}
+      {/* ── Analytics Guide Modal ── */}
       {isAnalyticsModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-lg rounded-sm border-border/60 bg-white shadow-2xl overflow-hidden">
-            <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
-              <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-destructive" />
+        <div style={modalBackdrop}>
+          <div style={modalBox(480)}>
+            <div className="ph">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>bar_chart</span>
                 Engagement Analytics Guide
-              </CardTitle>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground/80 hover:text-destructive"
-                onClick={() => setIsAnalyticsModalOpen(false)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="space-y-4 text-sm text-on-surface/80 leading-relaxed">
-                <p>Learn how to interpret movement engagement data to drive more effective mobilization campaigns.</p>
-                <ul className="list-disc pl-5 space-y-2 text-xs">
-                  <li>Analyze regional participation rates to identify high-growth areas.</li>
-                  <li>Monitor sentiment scores to proactively address movement concerns.</li>
-                  <li>Use average response times to optimize survey length and timing.</li>
-                </ul>
-              </div>
-            </CardContent>
-            <div className="p-6 pt-0">
-              <Button 
-                variant="primary"
-                className="h-12 text-micro font-bold tracking-tight rounded-sm w-full shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                onClick={() => setIsAnalyticsModalOpen(false)}
-              >
-                Got It
-              </Button>
+              </span>
+              <button style={modalCloseBtn} onClick={() => setIsAnalyticsModalOpen(false)}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+              </button>
             </div>
-          </Card>
+            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface))', lineHeight: 1.7, margin: 0 }}>
+                Learn how to interpret movement engagement data to drive more effective mobilization campaigns.
+              </p>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingLeft: 20, margin: 0 }}>
+                {[
+                  'Analyze regional participation rates to identify high-growth areas.',
+                  'Monitor sentiment scores to proactively address movement concerns.',
+                  'Use average response times to optimize survey length and timing.'
+                ].map((item, i) => (
+                  <li key={i} style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', lineHeight: 1.6 }}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div style={{ padding: '0 24px 24px' }}>
+              <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', height: 44 }} onClick={() => setIsAnalyticsModalOpen(false)}>Got It</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
