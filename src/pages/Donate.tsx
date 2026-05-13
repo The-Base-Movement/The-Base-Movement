@@ -111,7 +111,7 @@ export default function Donate() {
         setPublicHistory(publicHistoryData.map(d => ({
           ...d,
           date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          amount: `ghs ${Number(d.amount).toLocaleString()}`
+          amount: `₵${Number(d.amount).toLocaleString()}`
         })))
         setSpendingHistory(ledgerData)
         setGlobalStats({ 
@@ -121,11 +121,11 @@ export default function Donate() {
 
         const savedPhone = localStorage.getItem('userPhone')
         if (savedPhone) {
-          const personalData = await adminService.getMemberDonations(savedPhone)
+          const personalData = await adminService.getMemberDonationsByPhone(savedPhone)
           setPersonalHistory(personalData.map(d => ({
             ...d,
             date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            amount: `ghs ${Number(d.amount).toLocaleString()}`
+            amount: `₵${Number(d.amount).toLocaleString()}`
           })))
         }
         
@@ -159,7 +159,7 @@ export default function Donate() {
         const formatted = {
           ...newDonation,
           date: new Date(newDonation.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          amount: `ghs ${Number(newDonation.amount).toLocaleString()}`
+          amount: `₵${Number(newDonation.amount).toLocaleString()}`
         };
         return [formatted, ...prev].slice(0, 50);
       });
