@@ -380,8 +380,11 @@
 .kpi .d { font-size: 10.5px; font-family: 'Public Sans'; font-weight: 700; color: hsl(var(--primary)); display: flex; align-items: center; }
 .kpi .d.dn { color: hsl(var(--destructive)); }
 
-/* Two-col layout */
+/* Two-col layout (Main-Sidebar) */
 .twocol { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; }
+
+/* Sidebar-Main layout (Sidebar-Main) */
+.sidebar-main { display: grid; grid-template-columns: 280px 1fr; gap: 18px; }
 
 /* War Room 3-col main grid — collapses to 1 col on mobile, 3 on desktop */
 .war-room-main-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
@@ -393,7 +396,7 @@
   .top { flex-direction: column; align-items: flex-start; gap: 12px; }
   .top .actions { flex-wrap: wrap; }
   .kpis { grid-template-columns: repeat(2, 1fr); }
-  .twocol { grid-template-columns: 1fr; }
+  .twocol, .sidebar-main { grid-template-columns: 1fr; }
   .compose .toolbar { flex-wrap: wrap; gap: 8px; }
   /* Responsive visibility */
   .desktop-only { display: none !important; }

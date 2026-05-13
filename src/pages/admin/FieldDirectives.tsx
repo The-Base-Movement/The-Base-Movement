@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
-import type { FieldDirective, FieldReport } from '@/services/adminService'
+import type { FieldDirective, FieldReport } from '@/types/admin'
 import { toast } from 'sonner'
 
 export default function FieldDirectives() {
@@ -60,10 +61,23 @@ export default function FieldDirectives() {
   const handleVerify = async (reportId: string, status: 'Verified' | 'Rejected') => {
     const success = await adminService.verifyFieldReport(reportId, status)
     if (success) {
-      toast.success(`Report ${status.toLowerCase()}.`)
-      setReports(prev => prev.map(r => r.id === reportId ? { ...r, status } : r))
+      toast.success(`Report ${status.toLowerCase()} successfully.`)
+      const updated = await adminService.getFieldReports()
+      setReports(updated)
+    } else {
+      toast.error('Failed to update report status.')
     }
   }
+
+  const activeDirectives = directives.filter(d => d.status === 'Active')
+  const pendingReports = reports.filter(r => r.status === 'Pending')
+  const verifiedReports = reports.filter(r => r.status === 'Verified')
+  
+  // Calculate total points earned by summing points_awarded of directives for each verified report
+  const totalPointsEarned = verifiedReports.reduce((sum, report) => {
+    const directive = directives.find(d => d.id === report.directive_id);
+    return sum + (directive?.points_awarded || 0);
+  }, 0);
 
   const priorityPill = (p: string) => {
     if (p === 'Urgent') return <span className="pill pill-err">{p}</span>
@@ -101,10 +115,6 @@ export default function FieldDirectives() {
     marginBottom: 5,
   }
 
-  const activeDirectives = directives.filter(d => d.status !== 'Completed')
-  const pendingReports   = reports.filter(r => r.status === 'Pending')
-  const verifiedReports  = reports.filter(r => r.status === 'Verified')
-  const totalPoints      = directives.reduce((s, d) => s + (d.points_awarded || 0), 0)
 
   if (loading) {
     return (
@@ -130,9 +140,9 @@ export default function FieldDirectives() {
           </h2>
         </div>
         <div className="actions">
-          <button className="btn btn-outline btn-sm">
+          <Link to="/admin/mobilization-metrics" className="btn btn-outline btn-sm">
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>bar_chart</span>Analytics
-          </button>
+          </Link>
           <button className="btn btn-dest btn-sm" onClick={() => setIsCreating(true)}>
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>add</span>Issue directive
           </button>
@@ -143,23 +153,23 @@ export default function FieldDirectives() {
       <div className="kpis">
         <div className="kpi r">
           <div className="l">Active directives</div>
-          <div className="v">{activeDirectives.length}</div>
+          <div className="v tnum font-extrabold">{activeDirectives.length}</div>
           <div className="d">{directives.length} total issued</div>
         </div>
         <div className="kpi g">
           <div className="l">Pending reports</div>
-          <div className="v">{pendingReports.length}</div>
+          <div className="v tnum font-extrabold">{pendingReports.length}</div>
           <div className="d dn">{pendingReports.length > 0 ? 'Awaiting review' : 'Queue clear'}</div>
         </div>
         <div className="kpi gr">
           <div className="l">Verified actions</div>
-          <div className="v">{verifiedReports.length}</div>
+          <div className="v tnum font-extrabold">{verifiedReports.length}</div>
           <div className="d">of {reports.length} reports</div>
         </div>
         <div className="kpi k">
-          <div className="l">Points in circulation</div>
-          <div className="v">{totalPoints.toLocaleString()}</div>
-          <div className="d">across all directives</div>
+          <div className="l">Points earned</div>
+          <div className="v tnum font-extrabold">{totalPointsEarned.toLocaleString()}</div>
+          <div className="d">across all patriots</div>
         </div>
       </div>
 
@@ -262,7 +272,7 @@ export default function FieldDirectives() {
                     </div>
 
                     <p style={{ margin: '0 0 12px', fontSize: 12.5, color: 'hsl(var(--on-surface))', lineHeight: 1.55 }}>
-                      "{report.report_text || 'Completed tactical directive as requested. Awaiting point verification.'}"
+                      {report.report_text ? `"${report.report_text}"` : <span style={{ color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}>No field commentary provided.</span>}
                     </p>
 
                     {report.status === 'Pending' && (

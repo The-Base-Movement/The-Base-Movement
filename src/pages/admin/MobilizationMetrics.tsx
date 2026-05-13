@@ -1,29 +1,16 @@
 import { useState, useEffect } from 'react'
-import { 
-  Trophy, 
-  Target, 
-  Users, 
-  Zap, 
-  TrendingUp, 
-  MapPin, 
-  Filter,
-  Download,
-  Award,
-  Shield
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/types/admin'
-import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/ui/BrandLine'
+import MobilizationLeaderboardCard from '@/components/admin/MobilizationLeaderboardCard'
 
 export default function MobilizationMetrics() {
   const [leaderboard, setLeaderboard] = useState<ChapterLeaderboard[]>([])
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const [pulse, setPulse] = useState<MovementPulse | null>(null)
   const [loading, setLoading] = useState(true)
+  const [regionFilter, setRegionFilter] = useState('All')
+  const [isFilterVisible, setIsFilterVisible] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,272 +34,285 @@ export default function MobilizationMetrics() {
     fetchData()
   }, [])
 
+  const handleExport = () => {
+    if (!leaderboard.length) {
+      toast.error('No data available to export.')
+      return
+    }
+    
+    const headers = ['Rank', 'Chapter', 'Region', 'Members', 'Badges', 'Impact Points']
+    const csvContent = [
+      headers.join(','),
+      ...leaderboard.map((entry, index) => [
+        index + 1,
+        `"${entry.chapter}"`,
+        `"${entry.region}"`,
+        entry.total_patriots,
+        entry.achievements_unlocked,
+        entry.total_mobilization_points
+      ].join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `mobilization_metrics_${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    toast.success('Tactical metrics exported successfully.')
+  }
+
+  const regions = ['All', ...new Set(leaderboard.map(e => e.region?.trim()).filter(Boolean).sort())]
+  
+  const filteredLeaderboard = regionFilter === 'All' 
+    ? leaderboard 
+    : leaderboard.filter(e => e.region === regionFilter)
+
+  if (loading) {
+    return (
+      <div className="main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 320 }}>
+        <div style={{ textAlign: 'center' }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--border))', display: 'block', marginBottom: 8, animation: 'spin 1s linear infinite' }}>analytics</span>
+          <p style={{ margin: 0, fontSize: 11, fontFamily: "'Public Sans'", fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>Synchronizing mobilization metrics…</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="admin-page-container">
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main animate-in fade-in duration-500">
+      
+      {/* Top section */}
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <Trophy className="w-8 h-8 text-on-surface" />
+          <div className="crumbs">Admin · Intelligence · Mobilization metrics</div>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--on-surface))' }}>trophy</span>
             Mobilization metrics
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Performance tracking and impact analytics for regional chapters across the movement's jurisdictional boundaries.</p>
+          </h2>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="default" 
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+        <div className="actions">
+          <button 
+            className={`btn btn-sm ${isFilterVisible ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setIsFilterVisible(!isFilterVisible)}
           >
-            <Filter className="w-4 h-4 mr-2" /> Filter metrics
-          </Button>
-          <Button 
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-          >
-            <Download className="w-4 h-4 mr-2" /> Export intelligence
-          </Button>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>filter_list</span>
+            {isFilterVisible ? 'Hide Filters' : 'Filter'}
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={handleExport}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>download</span>Export
+          </button>
         </div>
       </div>
 
-      {/* National Intelligence Summary - Balanced Grid */}
-      <div className="grid-stats mb-12" style={{ '--grid-min-width': '220px' } as React.CSSProperties}>
-        {[
-          { label: 'Impact Points', value: pulse?.totalMobilizationPoints?.toLocaleString() || '0', sub: 'Total performance score', icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
-          { label: 'Active Chapters', value: pulse?.activeChapters || '0', sub: 'Verified chapters', icon: Shield, color: 'text-blue-500', bg: 'bg-blue-50' },
-          { label: 'Top Region', value: pulse?.topPerformingRegion || 'N/A', sub: 'Highest performing area', icon: Trophy, color: 'text-accent', bg: 'bg-accent/10' },
-          { label: 'Growth Rate', value: `${pulse?.nationalGrowth || 0}%`, sub: 'Quarterly increase', icon: TrendingUp, color: 'text-orange-500', bg: 'bg-orange-50' },
-        ].map((stat, i) => (
-          <Card key={i} className="rounded-sm border-border/40 shadow-sm bg-white group hover:border-border/60 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">{stat.label}</span>
-                <div className={cn("w-10 h-10 rounded-sm flex items-center justify-center transition-transform group-hover:scale-110", stat.bg)}>
-                  <stat.icon className={cn("w-5 h-5", stat.color)} />
-                </div>
-              </div>
-              <p className="text-3xl font-bold tracking-tight text-on-surface mb-1">{stat.value}</p>
-              <p className="text-micro font-bold text-muted-foreground/40 tracking-tight">{stat.sub}</p>
-            </CardContent>
-          </Card>
-        ))}
+      {isFilterVisible && (
+        <div style={{ 
+          marginBottom: 20, padding: '12px 16px', background: 'hsl(var(--container-low))', 
+          border: '1px solid hsl(var(--border))', borderRadius: 4, display: 'flex', gap: 12, alignItems: 'center' 
+        }} className="animate-in slide-in-from-top-2">
+          <span style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Region Filter:</span>
+          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', flex: 1 }}>
+            {regions.map(r => (
+              <button
+                key={r}
+                onClick={() => setRegionFilter(r)}
+                style={{
+                  padding: '4px 12px', borderRadius: 20, fontSize: 11, fontWeight: 700,
+                  background: regionFilter === r ? 'hsl(var(--on-surface))' : 'transparent',
+                  color: regionFilter === r ? '#fff' : 'hsl(var(--on-surface))',
+                  border: `1px solid ${regionFilter === r ? 'hsl(var(--on-surface))' : 'hsl(var(--border))'}`,
+                  cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s'
+                }}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p style={{ margin: '-8px 0 24px', fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', maxWidth: 700, lineHeight: 1.5 }}>
+        Performance tracking and impact analytics for regional chapters across the movement's jurisdictional boundaries.
+      </p>
+
+      {/* KPI strip */}
+      <div className="kpis">
+        <div className="kpi gr">
+          <div className="l">Impact Points</div>
+          <div className="v tnum font-extrabold">{pulse?.totalMobilizationPoints?.toLocaleString() || '0'}</div>
+          <div className="d">Total performance score</div>
+        </div>
+        <div className="kpi k">
+          <div className="l">Active Chapters</div>
+          <div className="v tnum font-extrabold">{pulse?.activeChapters || '0'}</div>
+          <div className="d">Verified chapters</div>
+        </div>
+        <div className="kpi g">
+          <div className="l">Top Region</div>
+          <div className="v tnum font-extrabold" style={{ fontSize: 18 }}>{pulse?.topPerformingRegion || 'N/A'}</div>
+          <div className="d">Highest performing area</div>
+        </div>
+        <div className="kpi r">
+          <div className="l">Growth Rate</div>
+          <div className="v tnum font-extrabold">{pulse?.nationalGrowth || 0}%</div>
+          <div className="d">Quarterly increase</div>
+        </div>
       </div>
 
-      <div className="flex-columns items-start" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
-        {/* 🥇 Primary Leaderboard */}
-        <Card className="lg:col-span-2 rounded-sm border-border/60 shadow-sm bg-background overflow-hidden">
-          <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between">
+      <div className="twocol" style={{ gridTemplateColumns: '1.6fr 1fr' }}>
+        
+        {/* Leaderboard panel */}
+        <div className="panel">
+          <div className="ph">
             <div>
-              <CardTitle className="text-xl font-bold tracking-tight">Regional power rankings</CardTitle>
-              <CardDescription className="text-micro font-bold text-muted-foreground/80 mt-1">Aggregated mobilization points by jurisdictional chapter.</CardDescription>
+              <h3>Regional power rankings</h3>
+              <div className="meta">Aggregated mobilization points</div>
             </div>
-            <TrendingUp className="w-6 h-6 text-border/60" />
-          </CardHeader>
-          <CardContent className="p-0">
-            {/* Desktop Table */}
-            <div className="overflow-x-auto hidden md:block">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-muted/30 border-b border-border/10">
-                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight">Rank</th>
-                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight">Chapter / region</th>
-                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight text-center">Members</th>
-                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight text-center">Achievements</th>
-                    <th className="p-6 text-micro font-bold text-muted-foreground/80 tracking-tight text-right">Impact points</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/5">
-                  {loading ? (
-                    Array(5).fill(0).map((_, i) => (
-                      <tr key={i} className="animate-pulse">
-                        <td colSpan={5} className="p-6 h-16 bg-muted/20" />
-                      </tr>
-                    ))
-                  ) : leaderboard.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="p-20 text-center text-muted-foreground/80 font-bold normal-case text-micro">
-                        No regional mobilization data for this period.
-                      </td>
-                    </tr>
-                  ) : (
-                    leaderboard.map((entry, index) => (
-                      <tr key={entry.chapter} className="hover:bg-muted/30 transition-colors group cursor-pointer">
-                        <td className="p-6">
-                          <div className={cn(
-                            "w-8 h-8 flex items-center justify-center font-bold text-xs rounded-full",
-                            index === 0 ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20" : 
-                            index === 1 ? "bg-muted/60 text-on-surface/80" : 
-                            index === 2 ? "bg-orange-300 text-orange-900" :
-                            "bg-muted/30 text-muted-foreground/80"
-                          )}>
-                            {index + 1}
-                          </div>
-                        </td>
-                        <td className="p-6">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-bold tracking-tight text-on-surface">{entry.chapter}</span>
-                            <span className="text-micro font-bold text-muted-foreground/80 flex items-center gap-1 mt-0.5">
-                              <MapPin className="w-3 h-3" /> {entry.region}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-6 text-center">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-muted/30 rounded-full">
-                            <Users className="w-3 h-3 text-on-surface/60" />
-                            <span className="text-xs font-bold text-on-surface/80">{entry.total_patriots}</span>
-                          </div>
-                        </td>
-                        <td className="p-6 text-center">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-muted/30 rounded-full">
-                            <Zap className="w-3 h-3 text-primary" />
-                            <span className="text-xs font-bold text-on-surface/80">{entry.achievements_unlocked}</span>
-                          </div>
-                        </td>
-                        <td className="p-6 text-right">
-                          <span className="text-lg font-bold tracking-tight text-on-surface">
-                            {entry.total_mobilization_points.toLocaleString()}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <span className="material-symbols-outlined" style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 20 }}>trending_up</span>
+          </div>
 
-            {/* Mobile Leaderboard Cards */}
-            <div className="md:hidden divide-y divide-border/10">
-              {loading ? (
-                Array(3).fill(0).map((_, i) => (
-                  <div key={i} className="p-6 animate-pulse space-y-4">
-                    <div className="h-4 bg-muted/30 w-3/4 rounded" />
-                    <div className="h-12 bg-muted/20 w-full rounded-sm" />
-                  </div>
-                ))
-              ) : leaderboard.length === 0 ? (
-                <div className="p-12 text-center text-muted-foreground/80 font-bold text-micro">
-                  No regional mobilization data.
-                </div>
-              ) : (
-                leaderboard.map((entry, index) => (
-                  <div key={entry.chapter} className="p-6 space-y-6">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-4">
-                        <div className={cn(
-                          "w-10 h-10 flex items-center justify-center font-bold text-sm rounded-sm shadow-md",
-                          index === 0 ? "bg-accent text-accent-foreground" : 
-                          index === 1 ? "bg-muted/60 text-on-surface/80" : 
-                          index === 2 ? "bg-orange-300 text-orange-900" :
-                          "bg-muted/30 text-muted-foreground/80"
-                        )}>
+          {/* Desktop Table */}
+          <div className="desktop-only">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th style={{ width: 60 }}>Rank</th>
+                  <th>Chapter / region</th>
+                  <th style={{ textAlign: 'center' }}>Members</th>
+                  <th style={{ textAlign: 'center' }}>Badges</th>
+                  <th style={{ textAlign: 'right' }}>Impact points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLeaderboard.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ padding: 40, textAlign: 'center', color: 'hsl(var(--on-surface-muted))', fontWeight: 700 }}>
+                      No regional mobilization data for the selected filter.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredLeaderboard.map((entry, index) => (
+                    <tr key={entry.chapter}>
+                      <td>
+                        <div style={{ 
+                          width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                          borderRadius: '50%', fontSize: 12, fontWeight: 800,
+                          background: index === 0 ? 'hsl(var(--accent))' : index === 1 ? 'hsl(var(--container-low))' : 'transparent',
+                          color: index === 0 ? '#fff' : 'inherit',
+                          border: index > 1 ? '1px solid hsl(var(--border))' : 'none'
+                        }}>
                           {index + 1}
                         </div>
-                        <div>
-                          <h4 className="text-sm font-bold text-on-surface tracking-tight">{entry.chapter}</h4>
-                          <p className="text-micro font-bold text-muted-foreground/80 flex items-center gap-1 mt-0.5 normal-case tracking-tight">
-                            <MapPin className="w-3 h-3" /> {entry.region}
-                          </p>
+                      </td>
+                      <td>
+                        <div className="who">
+                          <div>
+                            <b>{entry.chapter}</b>
+                            <span>{entry.region}</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-micro font-bold text-muted-foreground/70 tracking-tight">Points</p>
-                        <p className="text-lg font-bold text-on-surface tracking-tighter">{entry.total_mobilization_points.toLocaleString()}</p>
-                      </div>
-                    </div>
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span className="pill pill-mute">{entry.total_patriots}</span>
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span className="pill pill-warn">{entry.achievements_unlocked}</span>
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <span className="reg">{entry.total_mobilization_points.toLocaleString()}</span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-sm border border-border/10">
-                        <div className="w-8 h-8 rounded-sm bg-background flex items-center justify-center border border-border/10">
-                          <Users className="w-4 h-4 text-muted-foreground/80" />
-                        </div>
-                        <div>
-                          <p className="text-micro font-bold text-muted-foreground/70">Members</p>
-                          <p className="text-xs font-bold text-on-surface">{entry.total_patriots}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-sm border border-border/10">
-                        <div className="w-8 h-8 rounded-sm bg-background flex items-center justify-center border border-border/10">
-                          <Zap className="w-4 h-4 text-accent" />
-                        </div>
-                        <div>
-                          <p className="text-micro font-bold text-muted-foreground/70">Badges</p>
-                          <p className="text-xs font-bold text-on-surface">{entry.achievements_unlocked}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
+          {/* Mobile Card List */}
+          <div className="mobile-only">
+            {filteredLeaderboard.length === 0 ? (
+              <div style={{ padding: 40, textAlign: 'center', color: 'hsl(var(--on-surface-muted))', fontWeight: 700 }}>
+                No regional data found.
+              </div>
+            ) : (
+              filteredLeaderboard.map((entry, index) => (
+                <MobilizationLeaderboardCard key={entry.chapter} entry={entry} index={index} />
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Right column: Milestones & Pulse */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          
+          {/* Milestones panel */}
+          <div className="panel">
+            <div className="ph">
+              <div>
+                <h3>Available milestones</h3>
+                <div className="meta">Recognition badges</div>
+              </div>
+              <span className="material-symbols-outlined" style={{ color: 'hsl(var(--accent))', fontSize: 20 }}>award_star</span>
             </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex-1 min-w-0 flow" style={{ '--flow-space': '2rem' } as React.CSSProperties}>
-          {/* 🏅 Movement Milestones */}
-          <Card className="rounded-sm border-border/60 shadow-sm bg-background overflow-hidden">
-            <CardHeader className="p-6 border-b border-border/10 bg-muted/30">
-              <CardTitle className="text-xs font-bold tracking-tight flex items-center gap-2 text-on-surface">
-                <Award className="w-4 h-4 text-accent" /> Available milestones
-              </CardTitle>
-              <CardDescription className="text-micro font-bold text-muted-foreground/80 mt-1">Recognition badges for chapter growth.</CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 space-y-3">
+            <div style={{ padding: 18 }}>
               {achievements.map((achievement) => (
-                <div key={achievement.id} className="p-4 bg-muted/5 border border-border/10 hover:border-border/40 transition-all group cursor-pointer relative overflow-hidden">
-                  <div className="flex gap-4 relative z-10">
-                    <div className="p-3 bg-muted/10 rounded-sm self-start group-hover:scale-110 transition-transform">
-                      <Target className="w-5 h-5 text-accent" />
-                    </div>
-                    <div className="space-y-1">
-                      <h4 className="text-tiny font-bold leading-none">{achievement.name}</h4>
-                      <p className="text-micro text-muted-foreground/80 font-medium leading-tight">{achievement.description}</p>
-                      <div className="flex items-center gap-2 pt-1">
-                        <span className="text-micro font-bold text-accent">{achievement.points_awarded} points</span>
-                        <span className="text-micro font-bold text-muted-foreground/80">• {(achievement.category || 'General').toLowerCase()}</span>
-                      </div>
-                    </div>
+                <div key={achievement.id} style={{ 
+                  padding: '12px 14px', background: 'hsl(var(--container-low))', borderRadius: 4, 
+                  marginBottom: 10, borderLeft: '3px solid hsl(var(--accent))'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <b style={{ fontSize: 13, fontFamily: "'Public Sans'", fontWeight: 800 }}>{achievement.name}</b>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--accent))' }}>+{achievement.points_awarded}</span>
                   </div>
+                  <p style={{ margin: 0, fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.4 }}>{achievement.description}</p>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* ⚡ Movement Pulse */}
-          <Card className="rounded-sm border-border/60 shadow-sm bg-background p-8 space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-micro font-bold text-muted-foreground/80">Movement velocity</h3>
-              <Zap className="w-4 h-4 text-accent fill-accent" />
+          {/* Pulse panel */}
+          <div className="panel" style={{ padding: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <h3 style={{ margin: 0, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '.05em' }}>Movement velocity</h3>
+              <span className="material-symbols-outlined" style={{ color: 'hsl(var(--accent))', fontSize: 18 }}>bolt</span>
             </div>
-            <div className="space-y-6">
-               <div className="space-y-2">
-                <div className="flex justify-between items-end">
-                  <span className="text-micro font-bold text-on-surface/80">Mobilization efficiency</span>
-                  <span className="text-sm font-bold">87%</span>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+               <div style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 6 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800 }}>Mobilization efficiency</span>
+                  <span className="tnum" style={{ fontSize: 13, fontWeight: 800 }}>87%</span>
                 </div>
-                <div className="h-1.5 bg-muted/30 overflow-hidden rounded-full">
-                  <div className="h-full bg-on-surface w-[87%] transition-all duration-1000" />
+                <div style={{ height: 6, background: 'hsl(var(--border))', borderRadius: 10, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', background: 'hsl(var(--on-surface))', width: '87%' }} />
                 </div>
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-end">
-                  <span className="text-micro font-bold text-on-surface/80">Recruitment conversion</span>
-                  <span className="text-sm font-bold">62%</span>
+
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 6 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800 }}>Recruitment conversion</span>
+                  <span className="tnum" style={{ fontSize: 13, fontWeight: 800 }}>62%</span>
                 </div>
-                <div className="h-1.5 bg-muted/30 overflow-hidden rounded-full">
-                  <div className="h-full bg-on-surface w-[62%] transition-all duration-1000" />
+                <div style={{ height: 6, background: 'hsl(var(--border))', borderRadius: 10, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', background: 'hsl(var(--on-surface))', width: '62%' }} />
                 </div>
               </div>
             </div>
-            <div className="pt-4 border-t border-border/10">
-              <p className="text-micro font-bold text-muted-foreground/80 leading-relaxed text-center">
-                Currently tracking activity across 12 active chapters and 4 key regions.
-              </p>
+
+            <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 14, marginTop: 14, textAlign: 'center' }}>
+               <p style={{ margin: 0, fontSize: 10.5, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.4 }}>
+                 Currently tracking activity across {pulse?.activeChapters || 0} active chapters and {leaderboard.length} regions.
+               </p>
             </div>
-          </Card>
+          </div>
+
         </div>
+
       </div>
+
     </div>
   )
 }
