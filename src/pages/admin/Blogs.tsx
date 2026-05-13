@@ -1,41 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import {
-  FileText,
-  Plus,
-  Search,
-  MoreVertical,
-  Edit2,
-  Trash2,
-  Eye,
-  Calendar,
-  Clock,
-  Download,
-} from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/neon-button'
-import { BrandLine } from '@/components/admin/BrandLine'
-import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select'
 import { Editor } from '@tinymce/tinymce-react'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import type { BlogPost, AdminUser, Author } from '@/types/admin'
-import { useToast } from '@/hooks/use-toast'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
-import { toast as sonnerToast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
+import { BrandLine } from '@/components/admin/BrandLine'
+import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const CATEGORY_PLACEHOLDERS: Record<string, string> = {
   'Movement': 'https://images.unsplash.com/photo-1540910419842-dfb322c98b3c?q=80&w=1200&auto=format&fit=crop',
@@ -46,21 +18,46 @@ const CATEGORY_PLACEHOLDERS: Record<string, string> = {
   'Community': 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop',
   'Impact': 'https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?q=80&w=1200&auto=format&fit=crop'
 }
-
 const DEFAULT_PLACEHOLDER = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1200&auto=format&fit=crop'
+const CATEGORIES = ['Movement', 'Youth', 'Economy', 'Diaspora', 'Integrity', 'Community']
+
+const selectSt: React.CSSProperties = {
+  width: '100%', height: 40, padding: '0 12px',
+  border: '1px solid hsl(var(--border))',
+  background: 'hsl(var(--container-low))',
+  outline: 'none', cursor: 'pointer',
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 700, fontSize: 12, borderRadius: 4,
+  color: 'hsl(var(--on-surface))', boxSizing: 'border-box',
+}
+
+const labelSt: React.CSSProperties = {
+  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10,
+  color: 'hsl(var(--on-surface-muted))', display: 'block',
+  textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8,
+}
+
+const metaSt: React.CSSProperties = {
+  fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11,
+  color: 'hsl(var(--on-surface-muted))',
+}
+
+function statusPill(status: string) {
+  if (status === 'Published') return <span className="pill pill-ok">{status}</span>
+  if (status === 'Pending Verification') return <span className="pill pill-warn">Pending</span>
+  return <span className="pill pill-mute">{status}</span>
+}
 
 export default function AdminBlogs() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [authors, setAuthors] = useState<Author[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(adminService.getCurrentUser())
-  
   const editorRef = useRef<{ getContent: () => string } | null>(null)
 
-  // Persist view state
-  const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(() => {
-    return (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
-  })
+  const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(() =>
+    (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
+  )
   const [isDeleting, setIsDeleting] = useState(false)
   const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null)
   const [editingPost, setEditPost] = useState<BlogPost | null>(() => {
@@ -74,35 +71,23 @@ export default function AdminBlogs() {
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
-  const { toast } = useToast()
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
 
-  // Persist form state so drafts aren't lost on reload
   const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>(() => {
     const saved = sessionStorage.getItem('blogs_formData')
     if (saved) return JSON.parse(saved)
     return {
-      title: '',
-      slug: '',
-      excerpt: '',
-      content: '',
-      authorId: 'USR-001',
-      category: 'Movement',
-      imageUrl: '',
-      readTime: '5 min read',
-      isFeatured: false,
-      publishedAt: new Date().toISOString(),
-      status: 'Draft',
-      tags: [],
-      seoTitle: '',
-      metaDescription: '',
-      authorName: '',
-      authorRole: '',
-      authorImage: '',
-      authorBio: ''
+      title: '', slug: '', excerpt: '', content: '',
+      authorId: 'USR-001', category: 'Movement', imageUrl: '',
+      readTime: '5 min read', isFeatured: false,
+      publishedAt: new Date().toISOString(), status: 'Draft',
+      tags: [], seoTitle: '', metaDescription: '',
+      authorName: '', authorRole: '', authorImage: '', authorBio: ''
     }
   })
 
-  // Initialize current user
+  const [mediaFiles, setMediaFiles] = useState<string[]>([])
+
   useEffect(() => {
     const initUser = async () => {
       const user = await adminService.initialize()
@@ -111,26 +96,17 @@ export default function AdminBlogs() {
     if (!currentUser) initUser()
   }, [currentUser])
 
-  // Sync state to sessionStorage
-  useEffect(() => {
-    sessionStorage.setItem('blogs_currentView', currentView)
-  }, [currentView])
-
+  useEffect(() => { sessionStorage.setItem('blogs_currentView', currentView) }, [currentView])
   useEffect(() => {
     if (editingPost) sessionStorage.setItem('blogs_editingPost', JSON.stringify(editingPost))
     else sessionStorage.removeItem('blogs_editingPost')
   }, [editingPost])
-
   useEffect(() => {
     if (viewPost) sessionStorage.setItem('blogs_viewPost', JSON.stringify(viewPost))
     else sessionStorage.removeItem('blogs_viewPost')
   }, [viewPost])
+  useEffect(() => { sessionStorage.setItem('blogs_formData', JSON.stringify(formData)) }, [formData])
 
-  useEffect(() => {
-    sessionStorage.setItem('blogs_formData', JSON.stringify(formData))
-  }, [formData])
-
-  const [mediaFiles, setMediaFiles] = useState<string[]>([])
   const fetchMedia = useCallback(async () => {
     try {
       const files = await contentService.getMediaFiles('blog-images')
@@ -140,10 +116,6 @@ export default function AdminBlogs() {
     }
   }, [])
 
-  useEffect(() => {
-    fetchMedia()
-  }, [fetchMedia])
-
   const fetchPosts = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -151,15 +123,11 @@ export default function AdminBlogs() {
       setPosts(data)
     } catch (error) {
       console.error('[SYSTEM] Failed to fetch posts:', error)
-      toast({
-        title: "FETCH ERROR",
-        description: "Could not retrieve blog intelligence from vault.",
-        variant: "destructive",
-      })
+      toast.error('Could not retrieve blog intelligence from vault.')
     } finally {
       setIsLoading(false)
     }
-  }, [toast])
+  }, [])
 
   const fetchAuthors = useCallback(async () => {
     try {
@@ -170,55 +138,30 @@ export default function AdminBlogs() {
     }
   }, [])
 
-  useEffect(() => {
-    fetchAuthors()
-    fetchPosts()
-  }, [fetchAuthors, fetchPosts])
+  useEffect(() => { fetchMedia() }, [fetchMedia])
+  useEffect(() => { fetchAuthors(); fetchPosts() }, [fetchAuthors, fetchPosts])
 
   const handleEditPost = (post?: BlogPost) => {
     if (post) {
       setEditPost(post)
       setFormData({
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        content: post.content,
-        authorId: post.authorId,
-        category: post.category,
-        imageUrl: post.imageUrl || '',
-        readTime: post.readTime,
-        isFeatured: post.isFeatured,
-        publishedAt: post.publishedAt,
-        status: post.status,
-        tags: post.tags,
-        seoTitle: post.seoTitle ?? '',
-        metaDescription: post.metaDescription ?? '',
-        authorName: post.authorName ?? '',
-        authorRole: post.authorRole ?? '',
-        authorImage: post.authorImage ?? '',
-        authorBio: post.authorBio ?? ''
+        title: post.title, slug: post.slug, excerpt: post.excerpt, content: post.content,
+        authorId: post.authorId, category: post.category, imageUrl: post.imageUrl || '',
+        readTime: post.readTime, isFeatured: post.isFeatured, publishedAt: post.publishedAt,
+        status: post.status, tags: post.tags,
+        seoTitle: post.seoTitle ?? '', metaDescription: post.metaDescription ?? '',
+        authorName: post.authorName ?? '', authorRole: post.authorRole ?? '',
+        authorImage: post.authorImage ?? '', authorBio: post.authorBio ?? ''
       })
     } else {
       setEditPost(null)
       setFormData({
-        title: '',
-        slug: '',
-        excerpt: '',
-        content: '',
-        authorId: 'USR-001',
-        category: 'Movement',
-        imageUrl: '',
-        readTime: '5 min read',
-        isFeatured: false,
-        publishedAt: new Date().toISOString(),
-        status: 'Draft',
-        tags: [],
-        seoTitle: '',
-        metaDescription: '',
-        authorName: '',
-        authorRole: '',
-        authorImage: '',
-        authorBio: ''
+        title: '', slug: '', excerpt: '', content: '',
+        authorId: 'USR-001', category: 'Movement', imageUrl: '',
+        readTime: '5 min read', isFeatured: false,
+        publishedAt: new Date().toISOString(), status: 'Draft',
+        tags: [], seoTitle: '', metaDescription: '',
+        authorName: '', authorRole: '', authorImage: '', authorBio: ''
       })
     }
     setCurrentView('edit')
@@ -229,65 +172,50 @@ export default function AdminBlogs() {
     setCurrentView('view')
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e?: React.MouseEvent) => {
+    e?.preventDefault()
     setIsLoading(true)
-
     try {
       const editorContent = editorRef.current ? editorRef.current.getContent() : formData.content
       const postData = { ...formData, content: editorContent }
-
       let success = false
       if (editingPost) {
         success = await adminService.updateBlogPost(editingPost.id, postData)
       } else {
-        if (!postData.slug) {
-          postData.slug = postData.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
-        }
+        if (!postData.slug) postData.slug = postData.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
         success = await adminService.createBlogPost(postData)
       }
-
       if (success) {
-        const actionLabel = formData.status === 'Published' 
-          ? "Intelligence Authorized & Published" 
-          : formData.status === 'Pending Verification'
-          ? "Submitted for Strategic Verification"
-          : "Intelligence Saved as Draft"
-          
-        sonnerToast.success(actionLabel, {
-          description: `"${formData.title}" has been processed successfully.`,
-        })
+        const label = formData.status === 'Published' ? 'Intelligence Authorized & Published'
+          : formData.status === 'Pending Verification' ? 'Submitted for Strategic Verification'
+          : 'Intelligence Saved as Draft'
+        toast.success(label, { description: `"${formData.title}" has been processed successfully.` })
         setCurrentView('list')
         fetchPosts()
       }
     } catch {
-      sonnerToast.error("Operational Error", {
-        description: "Failed to sync intelligence with the field database."
-      })
+      toast.error('Operational Error', { description: 'Failed to sync intelligence with the field database.' })
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleDelete = (post: BlogPost) => {
-    setPostToDelete(post)
-  }
+  const handleDelete = (post: BlogPost) => { setPostToDelete(post) }
 
   const handleConfirmedDelete = async () => {
     if (!postToDelete) return
-
     setIsDeleting(true)
     try {
       const success = await contentService.deleteBlogPost(postToDelete.id)
       if (success) {
-        sonnerToast.success(`"${postToDelete.title}" moved to trash`)
+        toast.success(`"${postToDelete.title}" moved to trash`)
         setPostToDelete(null)
         fetchPosts()
       } else {
-        sonnerToast.error("Failed to move post to trash")
+        toast.error('Failed to move post to trash')
       }
     } catch {
-      sonnerToast.error("An error occurred during deletion")
+      toast.error('An error occurred during deletion')
     } finally {
       setIsDeleting(false)
     }
@@ -295,13 +223,13 @@ export default function AdminBlogs() {
 
   const filteredPosts = posts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         post.category.toLowerCase().includes(searchQuery.toLowerCase())
+      post.category.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCategory = categoryFilter === 'all' || post.category === categoryFilter
     const matchesStatus = statusFilter === 'all' || post.status === statusFilter
-    
     return matchesSearch && matchesCategory && matchesStatus
   })
 
+  // ── EDIT VIEW ────────────────────────────────────────────────────────────
   if (currentView === 'edit') {
     const seoChecks = [
       { ok: (formData.title?.length || 0) > 10 && (formData.title?.length || 0) <= 64, label: `Title ${formData.title?.length || 0}ch · ${(formData.title?.length || 0) <= 64 ? 'within limit' : 'too long'}` },
@@ -311,166 +239,154 @@ export default function AdminBlogs() {
       { ok: !!(formData.excerpt && formData.excerpt.length > 80), label: `Excerpt ${formData.excerpt?.length || 0}ch · ${(formData.excerpt?.length || 0) > 80 ? 'good length' : 'too short'}` },
     ]
     const seoScore = Math.round((seoChecks.filter(c => c.ok).length / seoChecks.length) * 100)
-
-    const MEDIA_IMAGES = [
-      CATEGORY_PLACEHOLDERS['Movement'], CATEGORY_PLACEHOLDERS['Youth'],
-      CATEGORY_PLACEHOLDERS['Economy'], CATEGORY_PLACEHOLDERS['Diaspora'],
-      CATEGORY_PLACEHOLDERS['Integrity'], CATEGORY_PLACEHOLDERS['Community'],
-      CATEGORY_PLACEHOLDERS['Impact'], DEFAULT_PLACEHOLDER,
-    ]
+    const MEDIA_IMAGES = Object.values(CATEGORY_PLACEHOLDERS).concat(DEFAULT_PLACEHOLDER)
 
     return (
       <div className="main animate-in fade-in duration-500 !p-0 !max-w-none flex flex-col" style={{ height: 'calc(100vh - 4rem)', overflow: 'hidden', background: 'hsl(var(--background))' }}>
+        {/* Top bar */}
         <div className="top !mb-0 px-6 py-3 border-b border-border/40 bg-white shrink-0">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <button onClick={() => setCurrentView('list')} className="material-symbols-outlined text-muted-foreground/60 hover:text-on-surface transition-colors">arrow_back</button>
-            <div className="flex flex-col">
-              <div className="crumbs !mb-0">
-                <button onClick={() => setCurrentView('list')} className="hover:underline">Editorial</button>
-                {' · '}
-                {editingPost ? 'Refining intelligence' : 'Drafting dispatch'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
+            <button onClick={() => setCurrentView('list')} className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))', background: 'none', border: 'none', cursor: 'pointer' }}>arrow_back</button>
+            <div>
+              <div className="crumbs" style={{ marginBottom: 2 }}>
+                <button onClick={() => setCurrentView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', fontWeight: 700, fontSize: 10, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Editorial</button>
+                {' · '}{editingPost ? 'Refining intelligence' : 'Drafting dispatch'}
               </div>
-              <h2 className="!text-sm !font-black !m-0 flex items-center gap-2">
+              <h2 className="!text-sm !font-black !m-0" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {formData.title || 'Untitled Dispatch'}
-                <span className="pill" style={{ 
-                  background: formData.status === 'Published' ? 'hsl(var(--brand-green))' : 'hsl(var(--brand-gold))',
+                <span className="pill" style={{
+                  background: formData.status === 'Published' ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
                   color: formData.status === 'Published' ? '#fff' : 'hsl(var(--on-surface))',
                   fontSize: 10
-                }}>
-                  {formData.status}
-                </span>
+                }}>{formData.status}</span>
               </h2>
             </div>
           </div>
           <div className="actions !gap-2">
-            <Button variant="outline" className="h-9 px-4 text-[11px] font-bold rounded-sm border-border/40 hidden md:flex">
-              <Eye className="w-3.5 h-3.5 mr-2" /> Preview
-            </Button>
-            <Button variant="primary" className="h-9 px-6 text-[11px] font-bold rounded-sm shadow-sm"
-              disabled={isLoading}
-              onClick={handleSubmit as unknown as React.MouseEventHandler<HTMLButtonElement>}
-            >
-              {isLoading ? 'Saving...' : formData.status === 'Published' ? 'Authorize' : 'Save draft'}
-            </Button>
+            <button className="btn btn-outline btn-sm" style={{ display: 'none' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>visibility</span>
+              Preview
+            </button>
+            <button className="btn btn-primary btn-sm" disabled={isLoading} onClick={handleSubmit}>
+              {isLoading ? 'Saving…' : formData.status === 'Published' ? 'Authorize' : 'Save draft'}
+            </button>
           </div>
         </div>
 
-        <div className="flex flex-1 overflow-hidden relative">
-          <aside className="hidden lg:flex w-[240px] shrink-0 border-r border-border/40 flex-col bg-white">
-            <div className="p-4 border-b border-border/40 bg-muted/5">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Tactical Assets</h3>
+        <div style={{ display: 'flex', flex: 1, overflow: 'hidden', position: 'relative' }}>
+          {/* Left: media library */}
+          <aside style={{ display: 'none', width: 240, flexShrink: 0, borderRight: '1px solid hsl(var(--border))', flexDirection: 'column', background: '#fff' }} className="lg:!flex">
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Tactical Assets</span>
             </div>
-            <div className="p-3 border-b border-border/40">
-              <label className="flex flex-col items-center justify-center border-2 border-dashed border-border/40 rounded-sm py-4 cursor-pointer hover:bg-muted/5 transition-colors">
-                <input type="file" className="hidden" onChange={async (e) => {
+            <div style={{ padding: 12, borderBottom: '1px solid hsl(var(--border))' }}>
+              <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed hsl(var(--border))', borderRadius: 4, padding: '14px 0', cursor: 'pointer' }}>
+                <input type="file" style={{ display: 'none' }} onChange={async (e) => {
                   const file = e.target.files?.[0]
                   if (!file) return
                   const url = await contentService.uploadImage(file, 'blog-images')
-                  if (url) {
-                    setFormData({...formData, imageUrl: url})
-                    fetchMedia()
-                  }
+                  if (url) { setFormData({ ...formData, imageUrl: url }); fetchMedia() }
                 }} />
-                <span className="material-symbols-outlined text-muted-foreground/30">upload_file</span>
-                <span className="text-[10px] font-bold mt-1">Upload Assets</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>upload_file</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, marginTop: 4, color: 'hsl(var(--on-surface-muted))' }}>Upload Assets</span>
               </label>
             </div>
-            <div className="flex-1 overflow-y-auto p-3 grid grid-cols-2 gap-2">
+            <div style={{ flex: 1, overflowY: 'auto', padding: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               {[...mediaFiles, ...MEDIA_IMAGES].map((url, i) => (
-                <button key={i} onClick={() => setFormData({...formData, imageUrl: url})}
-                  className={cn(
-                    "aspect-square rounded-sm border-2 transition-all overflow-hidden",
-                    formData.imageUrl === url ? "border-primary" : "border-transparent hover:border-border/60"
-                  )}>
-                  <img src={url} className="w-full h-full object-cover" alt="" />
+                <button key={i} onClick={() => setFormData({ ...formData, imageUrl: url })}
+                  style={{ aspectRatio: '1', borderRadius: 4, border: `2px solid ${formData.imageUrl === url ? 'hsl(var(--primary))' : 'transparent'}`, overflow: 'hidden', padding: 0, cursor: 'pointer', background: 'none', transition: 'border-color 0.15s' }}>
+                  <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                 </button>
               ))}
             </div>
           </aside>
 
-          <main className="flex-1 min-w-0 flex flex-col bg-muted/5 overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12">
-              <div className="max-w-[800px] mx-auto">
-                <div className="panel !p-0 overflow-hidden shadow-2xl shadow-on-surface/5">
-                  <div className="bg-white px-8 md:px-16 py-12 md:py-20 min-h-[900px]">
-                    <div className="flex flex-col gap-6">
-                      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/40 pb-6 mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-black overflow-hidden shadow-inner">
-                            {formData.authorImage ? <img src={formData.authorImage} className="w-full h-full object-cover" alt="" /> : (formData.authorName?.[0] || 'A')}
-                          </div>
-                          <div className="flex flex-col">
-                            <Select value={formData.authorId || authors[0]?.id} onValueChange={(val) => {
-                              const author = authors.find(a => a.id === val)
-                              if (author) setFormData({...formData, authorId: author.id, authorName: author.name, authorRole: author.role || '', authorImage: author.imageUrl || '', authorBio: author.bio || ''})
-                            }}>
-                              <SelectTrigger className="h-auto p-0 border-0 bg-transparent font-black text-sm shadow-none focus:ring-0">
-                                <SelectValue placeholder="Select Author" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {authors.map(a => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
-                              </SelectContent>
-                            </Select>
-                            <span className="text-[11px] font-bold text-muted-foreground/50 tracking-tight">{formData.authorRole || 'Contributor'}</span>
-                          </div>
+          {/* Center: article canvas */}
+          <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'hsl(var(--container-low))', overflow: 'hidden' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '32px 20px' }}>
+              <div style={{ maxWidth: 800, margin: '0 auto' }}>
+                <div className="panel !p-0 overflow-hidden" style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}>
+                  <div style={{ background: '#fff', padding: '48px 64px', minHeight: 900 }}>
+                    {/* Author + category row */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16, borderBottom: '1px solid hsl(var(--border))', paddingBottom: 20, marginBottom: 24 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'hsl(var(--primary))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, overflow: 'hidden', flexShrink: 0 }}>
+                          {formData.authorImage ? <img src={formData.authorImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : (formData.authorName?.[0] || 'A')}
                         </div>
-                        <Select value={formData.category} onValueChange={(val) => setFormData({...formData, category: val})}>
-                          <SelectTrigger className="w-[140px] h-9 bg-muted/5 border-border/40 text-xs font-black rounded-sm uppercase tracking-wider">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {['Movement','Youth','Economy','Diaspora','Integrity','Community'].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-4">
-                        <textarea
-                          placeholder="Article Title..."
-                          className="w-full text-3xl md:text-5xl font-black tracking-tight leading-[1.1] outline-none border-0 bg-transparent placeholder:text-muted-foreground/20 resize-none min-h-[100px]"
-                          value={formData.title}
-                          onChange={(e) => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g,'-').replace(/[^\w-]+/g,'')})}
-                        />
-                        <textarea
-                          placeholder="Compelling opening hook or summary..."
-                          className="w-full text-lg md:text-xl font-medium leading-relaxed outline-none border-0 bg-transparent placeholder:text-muted-foreground/20 italic text-muted-foreground/60 resize-none min-h-[80px]"
-                          value={formData.excerpt}
-                          onChange={(e) => setFormData({...formData, excerpt: e.target.value})}
-                        />
-                      </div>
-
-                      {formData.imageUrl && (
-                        <div className="relative group rounded-sm overflow-hidden aspect-video border border-border/40 mb-4">
-                          <img src={formData.imageUrl} className="w-full h-full object-cover" alt="" />
-                          <button onClick={() => setFormData({...formData, imageUrl: ''})} className="absolute top-4 right-4 w-10 h-10 bg-on-surface/80 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                        <div>
+                          <select
+                            value={formData.authorId || authors[0]?.id}
+                            onChange={e => {
+                              const author = authors.find(a => a.id === e.target.value)
+                              if (author) setFormData({ ...formData, authorId: author.id, authorName: author.name, authorRole: author.role || '', authorImage: author.imageUrl || '', authorBio: author.bio || '' })
+                            }}
+                            style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer', padding: 0 }}
+                          >
+                            {authors.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                          </select>
+                          <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{formData.authorRole || 'Contributor'}</div>
                         </div>
-                      )}
-
-                      <div className="min-h-[500px]">
-                        <Editor
-                          key={editingPost?.id ?? 'new'}
-                          apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-                          onInit={(_, editor) => (editorRef.current = editor)}
-                          initialValue={formData.content ?? ''}
-                          init={{
-                            height: 600,
-                            menubar: false,
-                            plugins: ['advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'searchreplace', 'visualblocks', 'insertdatetime', 'table', 'wordcount'],
-                            toolbar: 'undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright | bullist numlist | link image | removeformat',
-                            statusbar: false,
-                            content_style: 'body { font-family: "Inter", sans-serif; font-size:16px; color:#1f2520; line-height:1.7; background:white; }',
-                            branding: false,
-                            images_upload_handler: async (blobInfo: { blob: () => Blob; filename: () => string }) => {
-                              const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type })
-                              const url = await contentService.uploadImage(file, 'editor-content')
-                              if (!url) throw new Error('Upload failed')
-                              return url
-                            },
-                          }}
-                        />
                       </div>
+                      <select
+                        value={formData.category}
+                        onChange={e => setFormData({ ...formData, category: e.target.value })}
+                        style={{ height: 34, padding: '0 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', outline: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface))' }}
+                      >
+                        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+
+                    {/* Title + excerpt */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}>
+                      <textarea
+                        placeholder="Article Title…"
+                        style={{ width: '100%', fontSize: 36, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1, outline: 'none', border: 'none', background: 'transparent', resize: 'none', minHeight: 80, color: 'hsl(var(--on-surface))' }}
+                        value={formData.title}
+                        onChange={e => setFormData({ ...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '') })}
+                      />
+                      <textarea
+                        placeholder="Compelling opening hook or summary…"
+                        style={{ width: '100%', fontSize: 17, fontFamily: "'Public Sans', sans-serif", fontWeight: 500, lineHeight: 1.65, outline: 'none', border: 'none', background: 'transparent', resize: 'none', minHeight: 70, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}
+                        value={formData.excerpt}
+                        onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
+                      />
+                    </div>
+
+                    {formData.imageUrl && (
+                      <div style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '16/9', border: '1px solid hsl(var(--border))', marginBottom: 20 }}
+                        onMouseEnter={e => { const btn = e.currentTarget.querySelector('button') as HTMLElement | null; if (btn) btn.style.opacity = '1' }}
+                        onMouseLeave={e => { const btn = e.currentTarget.querySelector('button') as HTMLElement | null; if (btn) btn.style.opacity = '0' }}>
+                        <img src={formData.imageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        <button
+                          onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                          style={{ position: 'absolute', top: 12, right: 12, width: 36, height: 36, background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: 0, transition: 'opacity 0.2s' }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                        </button>
+                      </div>
+                    )}
+
+                    <div style={{ minHeight: 500 }}>
+                      <Editor
+                        key={editingPost?.id ?? 'new'}
+                        apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
+                        onInit={(_, editor) => (editorRef.current = editor)}
+                        initialValue={formData.content ?? ''}
+                        init={{
+                          height: 600, menubar: false,
+                          plugins: ['advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'searchreplace', 'visualblocks', 'insertdatetime', 'table', 'wordcount'],
+                          toolbar: 'undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright | bullist numlist | link image | removeformat',
+                          statusbar: false,
+                          content_style: 'body { font-family: "Inter", sans-serif; font-size:16px; color:#1f2520; line-height:1.7; background:white; }',
+                          branding: false,
+                          images_upload_handler: async (blobInfo: { blob: () => Blob; filename: () => string }) => {
+                            const file = new File([blobInfo.blob()], blobInfo.filename(), { type: blobInfo.blob().type })
+                            const url = await contentService.uploadImage(file, 'editor-content')
+                            if (!url) throw new Error('Upload failed')
+                            return url
+                          },
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -478,55 +394,57 @@ export default function AdminBlogs() {
             </div>
           </main>
 
-          <aside className="hidden xl:flex w-[300px] shrink-0 border-l border-border/40 flex-col bg-white overflow-y-auto">
-            <div className="p-4 border-b border-border/40 bg-muted/5">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Post Intelligence</h3>
+          {/* Right: post intelligence */}
+          <aside style={{ display: 'none', width: 300, flexShrink: 0, borderLeft: '1px solid hsl(var(--border))', flexDirection: 'column', background: '#fff', overflowY: 'auto' }} className="xl:!flex">
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Post Intelligence</span>
             </div>
-            <div className="p-5 space-y-8">
+            <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* SEO */}
               <div>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">SEO Quality</span>
-                  <span className="text-xl font-black font-meta text-primary">{seoScore}%</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 8 }}>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>SEO Quality</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: 'hsl(var(--primary))' }}>{seoScore}%</span>
                 </div>
-                <div className="h-1 bg-muted/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary transition-all duration-700" style={{ width: `${seoScore}%` }} />
+                <div style={{ height: 4, background: 'hsl(var(--container-low))', borderRadius: 2, overflow: 'hidden', marginBottom: 12 }}>
+                  <div style={{ height: '100%', background: 'hsl(var(--primary))', width: `${seoScore}%`, transition: 'width 0.7s' }} />
                 </div>
-                <div className="mt-3 space-y-1.5">
-                  {seoChecks.map((chk, i) => (
-                    <div key={i} className="flex items-center gap-2 text-[10px] font-bold">
-                      <span className={cn("w-1.5 h-1.5 rounded-full", chk.ok ? "bg-brand-green" : "bg-muted-foreground/20")} />
-                      <span className={chk.ok ? "text-on-surface" : "text-muted-foreground/40"}>{chk.label}</span>
-                    </div>
-                  ))}
+                {seoChecks.map((chk, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: chk.ok ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))', opacity: chk.ok ? 1 : 0.3 }} />
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: chk.ok ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))', opacity: chk.ok ? 1 : 0.5 }}>{chk.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Slug */}
+              <div>
+                <label style={labelSt}>Resource Slug</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 10px', height: 36 }}>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>/blog/</span>
+                  <input value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} style={{ background: 'transparent', border: 'none', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', flex: 1 }} />
                 </div>
               </div>
 
+              {/* Tags */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 block mb-2">Resource Slug</label>
-                <div className="flex items-center gap-2 bg-muted/5 border border-border/40 rounded-sm p-2">
-                  <span className="text-muted-foreground/30 text-[10px]">/blog/</span>
-                  <input value={formData.slug} onChange={(e) => setFormData({...formData, slug: e.target.value})} className="bg-transparent border-0 outline-none text-[11px] font-bold w-full" />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 block mb-2">Tactical Tags</label>
-                <div className="flex flex-wrap gap-1.5 mb-2">
+                <label style={labelSt}>Tactical Tags</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
                   {formData.tags.map(tag => (
-                    <span key={tag} className="pill bg-muted/10 text-muted-foreground/60 !py-0.5">
+                    <span key={tag} className="pill pill-mute" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                       {tag}
-                      <button onClick={() => setFormData({...formData, tags: formData.tags.filter(t => t !== tag)})} className="ml-1 hover:text-destructive">×</button>
+                      <button onClick={() => setFormData({ ...formData, tags: formData.tags.filter(t => t !== tag) })} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: 12, lineHeight: 1, color: 'hsl(var(--on-surface-muted))' }}>×</button>
                     </span>
                   ))}
                 </div>
-                <input 
-                  placeholder="Type and press Enter..." 
-                  className="w-full h-8 px-3 bg-muted/5 border border-border/40 rounded-sm text-[11px] font-bold outline-none focus:border-primary/50"
-                  onKeyDown={(e) => {
+                <input
+                  placeholder="Type and press Enter…"
+                  style={{ width: '100%', height: 32, padding: '0 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
+                  onKeyDown={e => {
                     if (e.key === 'Enter') {
                       const val = e.currentTarget.value.trim()
                       if (val && !formData.tags.includes(val)) {
-                        setFormData({...formData, tags: [...formData.tags, val]})
+                        setFormData({ ...formData, tags: [...formData.tags, val] })
                         e.currentTarget.value = ''
                       }
                     }
@@ -534,13 +452,14 @@ export default function AdminBlogs() {
                 />
               </div>
 
+              {/* Meta description */}
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 block mb-2">Strategic Summary</label>
-                <textarea 
-                  value={formData.metaDescription} 
-                  onChange={(e) => setFormData({...formData, metaDescription: e.target.value})}
-                  className="w-full min-h-[100px] p-3 bg-muted/5 border border-border/40 rounded-sm text-[11px] font-medium leading-relaxed outline-none focus:border-primary/50 resize-none"
-                  placeholder="Search engine summary..."
+                <label style={labelSt}>Strategic Summary</label>
+                <textarea
+                  value={formData.metaDescription}
+                  onChange={e => setFormData({ ...formData, metaDescription: e.target.value })}
+                  style={{ width: '100%', minHeight: 90, padding: 10, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, lineHeight: 1.6, outline: 'none', resize: 'none', boxSizing: 'border-box', color: 'hsl(var(--on-surface))' }}
+                  placeholder="Search engine summary…"
                 />
               </div>
             </div>
@@ -550,275 +469,368 @@ export default function AdminBlogs() {
     )
   }
 
+  // ── VIEW PAGE ────────────────────────────────────────────────────────────
   if (currentView === 'view' && viewPost) {
+    const metaRowSt: React.CSSProperties = {
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))', marginBottom: 0,
+    }
+    const metaLabelSt: React.CSSProperties = { ...metaSt, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 800 }
+    const metaValueSt: React.CSSProperties = { fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }
+
     return (
-      <div className="main animate-in fade-in duration-500">
-        <div className="top">
+      <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+        {/* Header */}
+        <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
           <div>
             <div className="crumbs">
-              <button onClick={() => setCurrentView('list')} className="hover:underline">Editorial</button>
-              {' · '}
-              Intelligence Review
+              <button onClick={() => setCurrentView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', fontWeight: 700, fontSize: 10, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Editorial</button>
+              {' · '} Intelligence Review
             </div>
-            <h2 className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-primary">visibility</span>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6, maxWidth: 600, lineHeight: 1.2 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, flexShrink: 0 }}>visibility</span>
               {viewPost.title}
             </h2>
           </div>
           <div className="actions">
-            <Button onClick={() => handleEditPost(viewPost)} variant="primary" className="h-10 px-6 font-bold rounded-sm shadow-sm">
-              <Edit2 className="w-4 h-4 mr-2" /> Modify dispatch
-            </Button>
+            <button className="btn btn-outline btn-sm" onClick={() => setCurrentView('list')}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>arrow_back</span>
+              Back
+            </button>
+            <button className="btn btn-primary" onClick={() => handleEditPost(viewPost)}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>
+              Modify dispatch
+            </button>
           </div>
         </div>
 
-        <div className="panel max-w-4xl mx-auto overflow-hidden">
-          {viewPost.imageUrl && (
-            <div className="w-full h-[400px]">
-              <img src={viewPost.imageUrl} alt="" className="w-full h-full object-cover" />
+        <div className="main-sidebar" style={{ alignItems: 'start' }}>
+
+          {/* Article content */}
+          <div className="panel" style={{ overflow: 'hidden' }}>
+            {viewPost.imageUrl && (
+              <div style={{ height: 300, overflow: 'hidden' }}>
+                <img src={viewPost.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            )}
+            <div style={{ padding: '32px 40px' }}>
+              {/* Category + date */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+                <span className="pill pill-ok" style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 10 }}>{viewPost.category}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5, ...metaSt }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>calendar_today</span>
+                  {new Date(viewPost.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5, ...metaSt }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>schedule</span>
+                  {viewPost.readTime}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 30, color: 'hsl(var(--on-surface))', letterSpacing: '-0.02em', lineHeight: 1.2, margin: '0 0 18px' }}>
+                {viewPost.title}
+              </h1>
+
+              {/* Excerpt */}
+              {viewPost.excerpt && (
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 15, color: 'hsl(var(--on-surface))', lineHeight: 1.75, fontStyle: 'italic', borderLeft: '4px solid hsl(var(--primary))', paddingLeft: 20, marginBottom: 28, opacity: 0.65 }}>
+                  {viewPost.excerpt}
+                </div>
+              )}
+
+              {/* Author strip */}
+              {viewPost.authorName && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 0', borderTop: '1px solid hsl(var(--border))', borderBottom: '1px solid hsl(var(--border))', marginBottom: 28 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 4, background: 'hsl(var(--primary))', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                    {viewPost.authorImage
+                      ? <img src={viewPost.authorImage} alt={viewPost.authorName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, color: '#fff' }}>{viewPost.authorName[0]}</span>
+                    }
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>{viewPost.authorName}</div>
+                    <div style={metaSt}>{viewPost.authorRole || 'Contributor'}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Body content */}
+              <div
+                className="prose prose-on-surface max-w-none prose-p:text-on-surface/70 prose-p:leading-relaxed prose-p:text-[16px] prose-headings:text-on-surface prose-headings:font-black prose-headings:tracking-tight"
+                dangerouslySetInnerHTML={{ __html: viewPost.content }}
+              />
+
+              {/* Tags */}
+              {viewPost.tags?.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 28, paddingTop: 20, borderTop: '1px solid hsl(var(--border))' }}>
+                  {viewPost.tags.map(tag => (
+                    <span key={tag} className="pill pill-mute" style={{ fontSize: 11 }}>#{tag}</span>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-          <div className="p-8 md:p-16">
-            <div className="flex items-center gap-4 mb-8">
-              <span className="pill bg-primary/10 text-primary font-black uppercase tracking-widest text-[10px]">{viewPost.category}</span>
-              <div className="flex items-center gap-2 text-muted-foreground/40 text-xs font-bold">
-                <Calendar className="w-3.5 h-3.5" />
-                {new Date(viewPost.publishedAt).toLocaleDateString()}
+          </div>
+
+          {/* Sidebar */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 80 }}>
+
+            {/* Post intelligence */}
+            <div className="panel">
+              <div className="ph">
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>article</span>
+                  Post Intelligence
+                </span>
+              </div>
+              <div style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={metaRowSt}>
+                  <span style={metaLabelSt}>Status</span>
+                  {statusPill(viewPost.status)}
+                </div>
+                <div style={metaRowSt}>
+                  <span style={metaLabelSt}>Category</span>
+                  <span style={metaValueSt}>{viewPost.category}</span>
+                </div>
+                <div style={metaRowSt}>
+                  <span style={metaLabelSt}>Read time</span>
+                  <span style={metaValueSt}>{viewPost.readTime}</span>
+                </div>
+                <div style={metaRowSt}>
+                  <span style={metaLabelSt}>Published</span>
+                  <span style={metaValueSt}>{new Date(viewPost.publishedAt).toLocaleDateString()}</span>
+                </div>
+                {viewPost.isFeatured && (
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <span className="pill pill-ok" style={{ fontSize: 10, fontWeight: 800 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 12, marginRight: 3 }}>star</span>
+                      Featured
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black text-on-surface tracking-tight leading-tight mb-8">
-              {viewPost.title}
-            </h1>
+            {/* SEO */}
+            {(viewPost.metaDescription || viewPost.seoTitle) && (
+              <div className="panel">
+                <div className="ph">
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>search</span>
+                    SEO Data
+                  </span>
+                </div>
+                <div style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {viewPost.seoTitle && (
+                    <div>
+                      <div style={metaLabelSt}>SEO Title</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', lineHeight: 1.5 }}>{viewPost.seoTitle}</div>
+                    </div>
+                  )}
+                  {viewPost.metaDescription && (
+                    <div>
+                      <div style={metaLabelSt}>Meta Description</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6 }}>{viewPost.metaDescription}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
-            <div className="text-xl text-muted-foreground/60 leading-relaxed mb-12 border-l-4 border-primary/20 pl-8 font-medium italic">
-              {viewPost.excerpt}
+            {/* Quick actions */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button className="btn btn-primary" style={{ justifyContent: 'center' }} onClick={() => handleEditPost(viewPost)}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>
+                Edit Post
+              </button>
+              <button className="btn btn-dest btn-sm" style={{ justifyContent: 'center' }} onClick={() => { setCurrentView('list'); handleDelete(viewPost) }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>delete</span>
+                Delete Post
+              </button>
             </div>
-
-            <div 
-              className="prose prose-on-surface max-w-none 
-                prose-p:text-on-surface/70 prose-p:leading-relaxed prose-p:text-[17px]
-                prose-headings:text-on-surface prose-headings:font-black prose-headings:tracking-tight"
-              dangerouslySetInnerHTML={{ __html: viewPost.content }}
-            />
           </div>
         </div>
       </div>
     )
   }
 
+  // ── LIST VIEW ────────────────────────────────────────────────────────────
   return (
     <div className="main animate-in fade-in duration-500">
-      {/* Top Header */}
       <div className="top">
         <div>
           <div className="crumbs">
             <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>Admin</Link>
-            {' · '}
-            Blog intelligence
+            {' · '} Blog intelligence
           </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--on-surface))' }}>article</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>article</span>
             Editorial command
           </h2>
           <BrandLine />
         </div>
         <div className="actions">
-          <Button variant="outline" className="h-10 px-4 text-[12px] font-bold tracking-tight rounded-sm border-border/40 gap-2">
-            <Download className="w-4 h-4" /> Export
-          </Button>
-          <Button 
-            onClick={() => handleEditPost()}
-            variant="primary"
-            className="h-10 px-6 text-[12px] font-bold tracking-tight rounded-sm shadow-sm"
-          >
-            <Plus className="w-4 h-4 mr-2" /> Dispatch new article
-          </Button>
+          <button className="btn btn-outline">
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>download</span>
+            Export
+          </button>
+          <button className="btn btn-primary" onClick={() => handleEditPost()}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
+            Dispatch new article
+          </button>
         </div>
       </div>
 
-      {/* KPI Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <TacticalKPI 
-          label="Total articles"
-          value={posts.length}
-          description="Across all categories"
-        />
-        <TacticalKPI 
-          label="Authorized"
-          value={posts.filter(p => p.status === 'Published').length}
-          description="Live in public feed"
-          trend={{ direction: 'up', value: 'Live' }}
-        />
-        <TacticalKPI 
-          label="Pending review"
-          value={posts.filter(p => p.status === 'Pending Verification').length}
-          description="Awaiting editorial clearance"
-          trend={{ direction: 'neutral', value: 'Pending' }}
-        />
-        <TacticalKPI 
-          label="Drafts"
-          value={posts.filter(p => p.status === 'Draft').length}
-          description="Work in progress"
-        />
+      {/* KPIs */}
+      <div className="kpis">
+        <TacticalKPI label="Total articles" value={posts.length} description="Across all categories" />
+        <TacticalKPI label="Authorized" value={posts.filter(p => p.status === 'Published').length} description="Live in public feed" trend={{ direction: 'up', value: 'Live' }} variant="green" />
+        <TacticalKPI label="Pending review" value={posts.filter(p => p.status === 'Pending Verification').length} description="Awaiting editorial clearance" trend={{ direction: 'neutral', value: 'Pending' }} variant="gold" />
+        <TacticalKPI label="Drafts" value={posts.filter(p => p.status === 'Draft').length} description="Work in progress" />
       </div>
 
       <div className="sidebar-main">
-        {/* Sidebar Filters */}
+        {/* Sidebar */}
         <aside className="panel h-fit sticky top-20">
           <div className="ph">
-            <h3 className="flex items-center gap-2">
-              <Search className="w-4 h-4" />
+            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>filter_list</span>
               Intelligence filters
-            </h3>
+            </span>
           </div>
-          <div className="p-5 flex flex-col gap-6">
-            <div className="space-y-2.5">
-              <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Search feed</label>
-              <div className="relative group">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
-                <input 
-                  type="text" 
-                  placeholder="Keywords..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-10 pl-9 pr-4 bg-white border border-border/40 rounded-sm text-xs font-bold outline-none focus:border-primary/50 transition-all"
+          <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div>
+              <label style={labelSt}>Search feed</label>
+              <div style={{ position: 'relative' }}>
+                <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+                <input
+                  type="text" placeholder="Keywords…"
+                  value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                  style={{ ...selectSt, paddingLeft: 34 }}
                 />
               </div>
             </div>
-
-            <div className="space-y-2.5 pt-4 border-t border-border/40">
-              <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Status</label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="h-10 w-full bg-white border-border/40 text-xs font-bold rounded-sm focus:ring-primary/20">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="Published">Published</SelectItem>
-                  <SelectItem value="Pending Verification">Pending</SelectItem>
-                  <SelectItem value="Draft">Drafts</SelectItem>
-                </SelectContent>
-              </Select>
+            <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
+              <label style={labelSt}>Status</label>
+              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={selectSt}>
+                <option value="all">All Statuses</option>
+                <option value="Published">Published</option>
+                <option value="Pending Verification">Pending</option>
+                <option value="Draft">Drafts</option>
+              </select>
             </div>
-
-            <div className="space-y-2.5 pt-4 border-t border-border/40">
-              <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Category</label>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="h-10 w-full bg-white border-border/40 text-xs font-bold rounded-sm focus:ring-primary/20">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {['Movement','Youth','Economy','Diaspora','Integrity','Community'].map(c => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
+              <label style={labelSt}>Category</label>
+              <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} style={selectSt}>
+                <option value="all">All Categories</option>
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
             </div>
           </div>
         </aside>
 
-        {/* Articles Grid */}
-        <div className="min-w-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {/* Articles grid */}
+        <div style={{ minWidth: 0 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
             {isLoading ? (
               Array(6).fill(0).map((_, i) => (
-                <div key={i} className="panel animate-pulse h-[320px]">
-                  <div className="h-[160px] bg-muted/5" />
-                  <div className="p-4 space-y-3">
-                    <div className="h-4 bg-muted/5 w-4/5" />
-                    <div className="h-3 bg-muted/5 w-2/3" />
+                <div key={i} className="panel" style={{ height: 320 }}>
+                  <div style={{ height: 160, background: 'hsl(var(--container-low))' }} />
+                  <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div style={{ height: 13, background: 'hsl(var(--container-low))', borderRadius: 3, width: '80%' }} />
+                    <div style={{ height: 10, background: 'hsl(var(--container-low))', borderRadius: 3, width: '60%' }} />
                   </div>
                 </div>
               ))
             ) : filteredPosts.length === 0 ? (
-              <div className="panel col-span-full py-20 text-center">
-                <div className="w-16 h-16 bg-muted/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-muted-foreground/20" />
-                </div>
-                <h3 className="text-lg font-bold text-on-surface">No posts found</h3>
-                <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or create a new blog post to get started.</p>
-                <Button 
-                  variant="default" 
-                  onClick={() => setSearchQuery('')}
-                  className="mt-6 rounded-sm border-border/40 font-bold text-micro tracking-tight px-10 h-10 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-                >
-                  Clear search
-                </Button>
+              <div className="panel" style={{ gridColumn: '1/-1', padding: '60px 20px', textAlign: 'center' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', opacity: 0.25, display: 'block', marginBottom: 12 }}>article</span>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))', marginBottom: 6 }}>No posts found</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginBottom: 20 }}>Try refining your search or dispatch a new article.</div>
+                <button className="btn btn-outline btn-sm" onClick={() => { setSearchQuery(''); setCategoryFilter('all'); setStatusFilter('all') }}>Clear filters</button>
               </div>
-            ) : (
-              filteredPosts.map((post) => (
-                <div key={post.id} className="panel group flex flex-col overflow-hidden hover:shadow-xl hover:shadow-on-surface/5 transition-all duration-300">
-                  <div className="h-[160px] relative overflow-hidden bg-muted/5">
-                    <img 
-                      src={post.imageUrl || CATEGORY_PLACEHOLDERS[post.category] || DEFAULT_PLACEHOLDER} 
-                      alt={post.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <span className="pill bg-white/90 text-on-surface font-black backdrop-blur-sm">
-                        {post.category}
-                      </span>
-                    </div>
-                    <div className="absolute top-3 right-3">
-                      <span className={cn(
-                        "pill shadow-sm font-black text-[9px]",
-                        post.status === 'Published' ? "bg-brand-green text-white" : 
-                        post.status === 'Pending Verification' ? "bg-brand-gold text-on-surface" :
-                        "bg-amber-500 text-white"
-                      )}>
-                        {post.status}
-                      </span>
-                    </div>
+            ) : filteredPosts.map(post => (
+              <div key={post.id} className="panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <div style={{ height: 160, position: 'relative', overflow: 'hidden', background: 'hsl(var(--container-low))', flexShrink: 0 }}>
+                  <img
+                    src={post.imageUrl || CATEGORY_PLACEHOLDERS[post.category] || DEFAULT_PLACEHOLDER}
+                    alt={post.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <div style={{ position: 'absolute', top: 10, left: 10 }}>
+                    <span className="pill" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(4px)', color: 'hsl(var(--on-surface))', fontWeight: 800 }}>{post.category}</span>
                   </div>
-                  <div className="p-4 flex-1 flex flex-col">
-                    <div className="flex justify-between items-start gap-2 mb-2">
-                      <h3 className="text-sm font-black text-on-surface leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                        {post.title}
-                      </h3>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/5 shrink-0 transition-colors">
-                            <MoreVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="p-2 w-48">
-                          <DropdownMenuItem onClick={() => handleEditPost(post)} className="gap-3 py-2.5">
-                            <Edit2 className="w-4 h-4" /> Edit post
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleViewPost(post)} className="gap-3 py-2.5">
-                            <Eye className="w-4 h-4" /> View post
-                          </DropdownMenuItem>
-                          <div className="h-px bg-border/40 my-1" />
-                          <DropdownMenuItem disabled={isDeleting} onClick={() => handleDelete(post)} className="gap-3 py-2.5 text-destructive">
-                            <Trash2 className="w-4 h-4" /> Delete post
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                    <p className="text-[12px] text-muted-foreground/60 line-clamp-2 mb-4 font-medium leading-relaxed flex-1">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between pt-4 border-t border-border/40 mt-auto">
-                      <div className="flex items-center gap-1.5 text-muted-foreground/40">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-bold">{new Date(post.publishedAt).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-muted-foreground/40">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-bold">{post.readTime}</span>
-                      </div>
-                    </div>
+                  <div style={{ position: 'absolute', top: 10, right: 10 }}>
+                    {statusPill(post.status)}
                   </div>
                 </div>
-              ))
-            )}
+
+                <div style={{ padding: 16, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+                    <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', lineHeight: 1.35, margin: 0, flex: 1, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
+                      {post.title}
+                    </h3>
+                    {/* Dropdown */}
+                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                      <button
+                        style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', border: 'none', background: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface-muted))' }}
+                        onClick={e => { e.stopPropagation(); setOpenMenuId(openMenuId === post.id ? null : post.id) }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 17 }}>more_vert</span>
+                      </button>
+                      {openMenuId === post.id && (
+                        <>
+                          <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setOpenMenuId(null)} />
+                          <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 4px)', zIndex: 50, background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, minWidth: 168, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+                            {([
+                              { icon: 'edit', label: 'Edit post', action: () => handleEditPost(post), dest: false },
+                              { icon: 'visibility', label: 'View post', action: () => handleViewPost(post), dest: false },
+                              null,
+                              { icon: 'delete', label: 'Delete post', action: () => handleDelete(post), dest: true },
+                            ] as ({ icon: string; label: string; action: () => void; dest: boolean } | null)[]).map((item, idx) =>
+                              item === null ? (
+                                <div key={idx} style={{ height: 1, background: 'hsl(var(--border))' }} />
+                              ) : (
+                                <button key={idx}
+                                  style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: item.dest ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+                                  onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
+                                  onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                                  onClick={() => { setOpenMenuId(null); item.action() }}
+                                >
+                                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>{item.icon}</span>
+                                  {item.label}
+                                </button>
+                              )
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, margin: '0 0 14px', flex: 1, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as React.CSSProperties}>
+                    {post.excerpt}
+                  </p>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTop: '1px solid hsl(var(--border))' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 5, ...metaSt, fontSize: 10.5 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>calendar_today</span>
+                      {new Date(post.publishedAt).toLocaleDateString()}
+                    </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 5, ...metaSt, fontSize: 10.5 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>schedule</span>
+                      {post.readTime}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      <DeleteConfirmationModal 
+      <DeleteConfirmationModal
         isOpen={!!postToDelete}
         onClose={() => setPostToDelete(null)}
         onConfirm={handleConfirmedDelete}
