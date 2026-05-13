@@ -295,24 +295,34 @@ export default function WarRoomCommand() {
               </svg>
 
               {/* Animated pins for regions */}
-              {regionalStats.filter(r => REGION_COORDS[r.region]).map(r => {
-                const coords = REGION_COORDS[r.region]
-                const color = r.performance === 'High' ? 'hsl(var(--primary))' : r.performance === 'Medium' ? 'hsl(var(--accent))' : 'hsl(var(--destructive))'
-                return (
-                  <div key={r.region} className="absolute" style={{ left: coords.x, top: coords.y, transform: 'translate(-50%,-50%)' }}>
-                    <div className="relative">
-                      <div className="w-[8px] h-[8px] rounded-full absolute" style={{ background: color, boxShadow: `0 0 0 2px rgba(0,0,0,.6), 0 0 12px ${color}` }} />
-                      {r.performance === 'Low' && (
-                        <div className="absolute rounded-full border border-current animate-ping" style={{ inset: -8, color: color, opacity: 0.6 }} />
-                      )}
-                      <div className="absolute left-[12px] top-[-10px] text-white text-[8px] font-extrabold tracking-[.05em] uppercase whitespace-nowrap px-1.5 py-0.5 rounded-[2px] border"
-                        style={{ background: 'rgba(0,0,0,.8)', borderColor: '#1c221e' }}>
-                        <span style={{ color }}>{r.region}</span> · {r.memberCount.toLocaleString()}
+              {(() => {
+                const seen = new Set();
+                return regionalStats
+                  .filter(r => REGION_COORDS[r.region])
+                  .filter(r => {
+                    if (seen.has(r.region)) return false;
+                    seen.add(r.region);
+                    return true;
+                  })
+                  .map(r => {
+                    const coords = REGION_COORDS[r.region]
+                    const color = r.performance === 'High' ? 'hsl(var(--primary))' : r.performance === 'Medium' ? 'hsl(var(--accent))' : 'hsl(var(--destructive))'
+                    return (
+                      <div key={r.region} className="absolute" style={{ left: coords.x, top: coords.y, transform: 'translate(-50%,-50%)' }}>
+                        <div className="relative">
+                          <div className="w-[8px] h-[8px] rounded-full absolute" style={{ background: color, boxShadow: `0 0 0 2px rgba(0,0,0,.6), 0 0 12px ${color}` }} />
+                          {r.performance === 'Low' && (
+                            <div className="absolute rounded-full border border-current animate-ping" style={{ inset: -8, color: color, opacity: 0.6 }} />
+                          )}
+                          <div className="absolute left-[12px] top-[-10px] text-white text-[8px] font-extrabold tracking-[.05em] uppercase whitespace-nowrap px-1.5 py-0.5 rounded-[2px] border"
+                            style={{ background: 'rgba(0,0,0,.8)', borderColor: '#1c221e' }}>
+                            <span style={{ color }}>{r.region}</span> · {r.memberCount.toLocaleString()}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                )
-              })}
+                    )
+                  })
+              })()}
 
               {/* Legend */}
               <div className="absolute bottom-3 left-3 right-3 flex gap-[14px] px-3 py-[10px] text-[9.5px] font-extrabold uppercase tracking-[.05em] rounded-[4px] border"
@@ -362,20 +372,28 @@ export default function WarRoomCommand() {
                   </tr>
                 </thead>
                 <tbody>
-                  {regionalStats.map((r, i) => (
-                    <tr key={r.region} style={{ borderBottom: i < regionalStats.length - 1 ? '1px solid #1c221e' : 'none' }}>
-                      <td className="px-4 py-2 font-extrabold" style={{ color: '#e8ece7' }}>{r.region}</td>
-                      <td className="px-4 py-2 text-right font-extrabold tabular-nums" style={{ color: '#e8ece7' }}>{r.memberCount.toLocaleString()}</td>
-                      <td className="px-4 py-2">
-                        <div className="w-20 h-1 rounded-full overflow-hidden" style={{ background: '#1c221e' }}>
-                          <div className="h-full rounded-full" style={{
-                            width: `${Math.min(100, Math.floor((r.memberCount / 5000) * 100))}%`,
-                            background: r.performance === 'High' ? 'hsl(var(--primary))' : r.performance === 'Medium' ? 'hsl(var(--accent))' : 'hsl(var(--destructive))'
-                          }} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {(() => {
+                    const seen = new Set();
+                    const filtered = regionalStats.filter(r => {
+                      if (seen.has(r.region)) return false;
+                      seen.add(r.region);
+                      return true;
+                    });
+                    return filtered.map((r, i) => (
+                      <tr key={r.region} style={{ borderBottom: i < filtered.length - 1 ? '1px solid #1c221e' : 'none' }}>
+                        <td className="px-4 py-2 font-extrabold" style={{ color: '#e8ece7' }}>{r.region}</td>
+                        <td className="px-4 py-2 text-right font-extrabold tabular-nums" style={{ color: '#e8ece7' }}>{r.memberCount.toLocaleString()}</td>
+                        <td className="px-4 py-2">
+                          <div className="w-20 h-1 rounded-full overflow-hidden" style={{ background: '#1c221e' }}>
+                            <div className="h-full rounded-full" style={{
+                              width: `${Math.min(100, Math.floor((r.memberCount / 5000) * 100))}%`,
+                              background: r.performance === 'High' ? 'hsl(var(--primary))' : r.performance === 'Medium' ? 'hsl(var(--accent))' : 'hsl(var(--destructive))'
+                            }} />
+                          </div>
+                        </td>
+                      </tr>
+                    ));
+                  })()}
                 </tbody>
               </table>
             </div>
@@ -523,7 +541,7 @@ export default function WarRoomCommand() {
                   <line x1="0" x2="600" y1="90" y2="90"/>
                   <line x1="0" x2="600" y1="140" y2="140"/>
                 </g>
-                {growthTrends.length > 0 && (() => {
+                {growthTrends.length > 1 && (() => {
                   const max = Math.max(...growthTrends.map(t => t.count), 1)
                   const points = growthTrends.map((t, i) => {
                     const x = (i / (growthTrends.length - 1)) * 600
@@ -542,6 +560,9 @@ export default function WarRoomCommand() {
                     </>
                   )
                 })()}
+                {growthTrends.length === 1 && (
+                   <circle cx="300" cy="90" r="4" fill="hsl(var(--destructive))" />
+                )}
               </svg>
             </div>
           </div>
