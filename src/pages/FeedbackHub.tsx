@@ -1,8 +1,5 @@
 import { useState } from 'react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { BrandLine } from '@/components/ui/BrandLine'
-import { MessageSquare, Send, Brain, Target } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
@@ -76,10 +73,10 @@ export default function FeedbackHub() {
               <span className="text-micro font-bold text-[var(--brand-red)] tracking-tight">Direct line to HQ</span>
             </div>
             <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
-              <MessageSquare className="w-10 h-10 text-brand-red" />
+              <span className="material-symbols-outlined text-brand-red" style={{ fontSize: 40 }}>chat_bubble</span>
               Feedback Hub
             </h1>
-            <BrandLine />
+            <div className="bl"><div /><div /><div /></div>
             <p className="text-stone-500 max-w-2xl mt-6 leading-relaxed font-medium text-sm md:text-base">
               Your ground-level intelligence powers our national strategy. Submit raw, unfiltered feedback directly to the movement's AI sentiment engine.
             </p>
@@ -94,7 +91,7 @@ export default function FeedbackHub() {
             {/* Category Selection */}
             <div className="space-y-4">
               <label className="text-micro font-bold text-stone-900 flex items-center gap-2 tracking-tight">
-                <Target className="w-4 h-4 text-[var(--brand-red)]" /> Strategic category
+                <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'var(--brand-red)' }}>track_changes</span> Strategic category
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {['Policy', 'Logistics', 'Leadership', 'Local Action'].map((cat) => (
@@ -124,7 +121,7 @@ export default function FeedbackHub() {
             <div className="space-y-4">
               <label className="text-micro font-bold text-stone-900 flex items-center justify-between tracking-tight">
                 <span className="flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-[var(--brand-red)]" /> Raw intelligence report
+                  <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'var(--brand-red)' }}>chat_bubble</span> Raw intelligence report
                 </span>
                 <span className={cn(
                   "text-micro text-stone-400",
@@ -142,7 +139,7 @@ export default function FeedbackHub() {
                   required
                 />
                 <div className="absolute bottom-4 right-4 flex items-center gap-2 text-micro font-bold text-stone-400 bg-white/80 px-2 py-1 tracking-tight">
-                  <Brain className="w-3 h-3 text-[var(--brand-red)]" /> Secure channel
+                  <span className="material-symbols-outlined" style={{ fontSize: 12, color: 'var(--brand-red)' }}>psychology</span> Secure channel
                 </div>
               </div>
             </div>
@@ -151,14 +148,14 @@ export default function FeedbackHub() {
               <p className="text-micro font-bold text-stone-400 tracking-tight max-w-[200px] leading-tight">
                 All transmissions are securely logged and analyzed by the National Steering Committee.
               </p>
-              <Button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={submitting || !feedback.trim()}
-                className="bg-[var(--brand-red)] text-white hover:bg-red-700 h-14 px-8 rounded-none text-tiny font-bold tracking-tight shadow-xl group"
+                className="bg-[var(--brand-red)] text-white hover:bg-red-700 h-14 px-8 rounded-none text-tiny font-bold tracking-tight shadow-xl flex items-center gap-3 cursor-pointer border-none disabled:opacity-60"
               >
                 {submitting ? 'Transmitting...' : 'Dispatch intelligence'}
-                {!submitting && <Send className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" />}
-              </Button>
+                {!submitting && <span className="material-symbols-outlined" style={{ fontSize: 16 }}>send</span>}
+              </button>
             </div>
           </form>
         </div>

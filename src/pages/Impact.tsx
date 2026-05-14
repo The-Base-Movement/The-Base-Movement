@@ -1,13 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import {
-  Target, Users, Heart, Globe, ArrowUpRight,
-  MapPin, Activity, Calendar, X
-} from 'lucide-react'
-import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SEO from '@/components/SEO'
-import { Button } from '../components/ui/neon-button'
 import { cn } from '@/lib/utils'
 import { donationService } from '@/services/donationService'
 import { memberService } from '@/services/memberService'
@@ -336,7 +330,7 @@ export default function Impact() {
                 <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">Verified movement contributions</p>
               </div>
               <button onClick={() => setShowFullActivity(false)} className="w-8 h-8 bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-brand-green transition-colors">
-                <X className="w-4 h-4" />
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
               </button>
             </div>
             <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4">
@@ -356,7 +350,7 @@ export default function Impact() {
                 </div>
               )) : (
                 <div className="py-20 text-center">
-                  <Activity className="w-12 h-12 text-slate-100 mx-auto mb-4" />
+                  <span className="material-symbols-outlined text-slate-100 block mx-auto mb-4" style={{ fontSize: 48 }}>monitoring</span>
                   <p className="text-sm font-bold text-slate-400 tracking-tight">No activity recorded yet</p>
                 </div>
               )}
@@ -370,10 +364,10 @@ export default function Impact() {
           <Breadcrumbs />
           <div className="mt-6">
             <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
-              <Activity className="w-10 h-10 text-brand-green" />
+              <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 40 }}>monitoring</span>
               Our Collective Impact
             </h1>
-            <BrandLine />
+            <div className="bl"><div /><div /><div /></div>
             <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
               Live analytics reflecting our collective momentum across the nation.
             </p>
@@ -384,12 +378,11 @@ export default function Impact() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
           {[
-            { label: 'Donations received', value: stats.totalDonations, icon: Heart, trend: '+12%', color: '#006B3F', status: 'No new donations yet today' },
-            { label: 'Chapters active', value: stats.activeChapters, icon: Target, trend: '+2', color: '#DAA520', status: 'Verified' },
-            { label: 'Registered Patriots', value: stats.totalMembers, icon: Users, trend: '+15%', color: '#22C55E', status: 'National scale' },
-            { label: 'Countries reached', value: stats.countriesReached, icon: Globe, trend: 'Global', color: '#3B82F6', status: 'Global' }
+            { label: 'Donations received', value: stats.totalDonations, icon: 'volunteer_activism', trend: '+12%', color: '#006B3F', status: 'No new donations yet today' },
+            { label: 'Chapters active', value: stats.activeChapters, icon: 'track_changes', trend: '+2', color: '#DAA520', status: 'Verified' },
+            { label: 'Registered Patriots', value: stats.totalMembers, icon: 'groups', trend: '+15%', color: '#22C55E', status: 'National scale' },
+            { label: 'Countries reached', value: stats.countriesReached, icon: 'public', trend: 'Global', color: '#3B82F6', status: 'Global' }
           ].map((stat, i) => {
-            const Icon = stat.icon
             return (
               <div key={i} className="group hover:shadow-2xl transition-all duration-500 bg-white border border-stone-200 p-8 hover:-translate-y-1">
                 {isLoading ? (
@@ -402,14 +395,14 @@ export default function Impact() {
                   <>
                     <div className="flex justify-between items-start mb-4">
                       <p className="text-micro font-bold text-slate-400 tracking-tight mb-0">{stat.status}</p>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-stone-300 group-hover:text-brand-green transition-colors" />
+                      <span className="material-symbols-outlined text-stone-300 group-hover:text-brand-green transition-colors" style={{ fontSize: 14 }}>open_in_new</span>
                     </div>
                     <div className="flex justify-between items-end mb-4">
                       <div className="w-12 h-12 flex items-center justify-center" style={{ backgroundColor: `${stat.color}15` }}>
-                        <Icon className="w-6 h-6" style={{ color: stat.color }} />
+                        <span className="material-symbols-outlined" style={{ fontSize: 24, color: stat.color }}>{stat.icon}</span>
                       </div>
                       <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-1 flex items-center gap-1">
-                        {stat.trend} <ArrowUpRight className="w-3 h-3" />
+                        {stat.trend} <span className="material-symbols-outlined" style={{ fontSize: 12 }}>open_in_new</span>
                       </span>
                     </div>
                     <h3 className="text-stone-900 font-bold tracking-tighter leading-tight mb-0">{stat.value}</h3>
@@ -427,7 +420,7 @@ export default function Impact() {
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                   <h2 className="text-charcoal-dark flex items-center gap-2 mb-0">
-                    <Activity className="w-5 h-5 text-brand-green" /> Campaign progress
+                    <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>monitoring</span> Campaign progress
                   </h2>
                   <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">National Organizing Fund</p>
                 </div>
@@ -457,7 +450,7 @@ export default function Impact() {
 
             <section className="bg-white border border-slate-100 p-8">
               <h2 className="text-charcoal-dark mb-6 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-warm-gold" /> Regional engagement
+                <span className="material-symbols-outlined text-warm-gold" style={{ fontSize: 20 }}>location_on</span> Regional engagement
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {regions.map(region => (
@@ -504,15 +497,15 @@ export default function Impact() {
                   </div>
                 )) : (
                   <div className="flex flex-col items-center justify-center py-12 border border-dashed border-slate-200">
-                    <Activity className="w-8 h-8 text-slate-200 mb-3" />
+                    <span className="material-symbols-outlined text-slate-200 mb-3" style={{ fontSize: 32 }}>monitoring</span>
                     <p className="text-micro font-bold text-slate-400">No activity in this period</p>
                   </div>
                 )}
               </div>
               <div className="mt-6 pt-4 border-t border-slate-50">
-                <Button variant="ghost" onClick={() => setShowFullActivity(true)} className="w-full h-10 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green text-micro font-bold tracking-tight border border-transparent transition-all">
-                  View full activity log <ArrowUpRight className="w-3.5 h-3.5 ml-2" />
-                </Button>
+                <button onClick={() => setShowFullActivity(true)} className="w-full h-10 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green text-micro font-bold tracking-tight border border-transparent transition-all flex items-center justify-center cursor-pointer">
+                  View full activity log <span className="material-symbols-outlined" style={{ fontSize: 14, marginLeft: 8 }}>open_in_new</span>
+                </button>
               </div>
             </section>
           </div>

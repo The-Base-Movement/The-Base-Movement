@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { ClipboardList, MapPin, User, FileText, CheckCircle2, ChevronRight, AlertCircle } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
 import { toast } from 'sonner'
@@ -95,7 +93,7 @@ export default function CanvasserClipboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <div className="flex flex-col items-center gap-4">
-          <ClipboardList className="w-12 h-12 text-primary animate-bounce" />
+          <span className="material-symbols-outlined text-primary animate-bounce" style={{ fontSize: 48 }}>assignment</span>
           <p className="text-micro font-bold tracking-tight text-primary">Loading canvassing protocols...</p>
         </div>
       </div>
@@ -129,7 +127,7 @@ export default function CanvasserClipboard() {
             <h2 className="text-tiny font-bold tracking-tight text-stone-400">Select active campaign</h2>
             {activeCampaigns.length === 0 ? (
               <div className="bg-white border border-stone-200 p-12 text-center shadow-sm">
-                <AlertCircle className="w-8 h-8 text-stone-300 mx-auto mb-3" />
+                <span className="material-symbols-outlined text-stone-300 block mx-auto mb-3" style={{ fontSize: 32 }}>warning</span>
                 <p className="text-micro font-bold text-stone-400 tracking-tight">No active canvassing missions in your sector.</p>
               </div>
             ) : (
@@ -147,7 +145,7 @@ export default function CanvasserClipboard() {
                     <h3 className="text-sm font-bold text-stone-900 tracking-tight mb-1">{camp.title}</h3>
                     <p className="text-tiny text-stone-500 line-clamp-1">{camp.description}</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  <span className="material-symbols-outlined text-stone-300 group-hover:text-primary group-hover:translate-x-1 transition-all" style={{ fontSize: 20 }}>chevron_right</span>
                 </button>
               ))
             )}
@@ -158,7 +156,7 @@ export default function CanvasserClipboard() {
             {/* Red canvasser header */}
             <div className="text-white p-5 pb-[18px] relative overflow-hidden" style={{ background: 'hsl(var(--destructive))' }}>
               <div className="absolute top-0 right-0 p-4 opacity-10">
-                <MapPin className="w-24 h-24" />
+                <span className="material-symbols-outlined" style={{ fontSize: 96 }}>location_on</span>
               </div>
               <div className="relative z-10">
                 <button
@@ -171,7 +169,7 @@ export default function CanvasserClipboard() {
                 <h2 className="font-meta font-extrabold text-[18px] tracking-tight leading-tight mb-2">{selectedCampaign.title}</h2>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <span className="inline-flex items-center gap-1 px-[10px] py-[4px] bg-white/10 border border-white/18 rounded-full font-meta font-extrabold text-[9.5px] uppercase tracking-[.04em]">
-                    <MapPin className="w-2.5 h-2.5" /> {selectedCampaign.target_constituency}
+                    <span className="material-symbols-outlined" style={{ fontSize: 10 }}>location_on</span> {selectedCampaign.target_constituency}
                   </span>
                 </div>
               </div>
@@ -202,7 +200,7 @@ export default function CanvasserClipboard() {
               
               <div className="space-y-4">
                 <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
-                  <User className="w-4 h-4 text-primary" /> Constituent data
+                  <span className="material-symbols-outlined text-primary" style={{ fontSize: 16 }}>person</span> Constituent data
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <input
@@ -225,7 +223,7 @@ export default function CanvasserClipboard() {
 
               <div className="space-y-4">
                 <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-primary" /> Interaction result
+                  <span className="material-symbols-outlined text-primary" style={{ fontSize: 16 }}>description</span> Interaction result
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[
@@ -260,7 +258,7 @@ export default function CanvasserClipboard() {
               {interactionResult !== 'NOT_HOME' && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
                   <label className="text-micro font-bold tracking-tight text-stone-900 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary" /> Key issues raised
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 16 }}>check_circle</span> Key issues raised
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {issueOptions.map(issue => (
@@ -296,13 +294,13 @@ export default function CanvasserClipboard() {
                   </div>
                 </label>
 
-                <Button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={submitting || !addressNotes}
-                  className="bg-primary text-white hover:bg-green-700 h-12 px-6 rounded-none text-micro font-bold tracking-tight shadow-lg"
+                  className="bg-primary text-white hover:bg-green-700 h-12 px-6 rounded-none text-micro font-bold tracking-tight shadow-lg border-none cursor-pointer disabled:opacity-60"
                 >
                   {submitting ? 'Logging...' : 'Log interaction'}
-                </Button>
+                </button>
               </div>
 
             </form>
