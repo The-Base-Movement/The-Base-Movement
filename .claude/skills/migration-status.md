@@ -1,6 +1,6 @@
 ---
 name: migration-status
-description: Live tracking of the design-system migration — which pages are done, which are pending, and the exact workflow to follow each session
+description: Live tracking of the design-system migration — admin is 100% done; public pages are pending.
 ---
 
 # Migration Status — The Base Movement
@@ -14,84 +14,74 @@ description: Live tracking of the design-system migration — which pages are do
 
 ## Done ✅
 
+### Admin pages (100% — confirmed clean by grep)
+- `Dashboard.tsx`, `WarRoomCommand.tsx`, `MobilizationMetrics.tsx`
+- `Members.tsx`, `MemberVerification.tsx`, `Administrators.tsx`
+- `Chapters.tsx`, `ChapterLeadHub.tsx`, `Regions.tsx`
+- `Broadcasts.tsx`, `NewBroadcast.tsx`, `RallyCommand.tsx`
+- `LogisticsIntelligence.tsx`, `SentimentIntelligence.tsx`, `StrategicPriorities.tsx`
+- `Store.tsx`, `Orders.tsx`, `EditAuthor.tsx`, `Authors.tsx`
+- `Settings.tsx`, `GroundGameCommand.tsx`, `Trash.tsx`, `Roadmap.tsx`
+- `FieldDirectives.tsx`, `DonationVerification.tsx`
+
+### Admin components (100%)
+- `TacticalKPI.tsx`, `BrandLine.tsx` (deleted), `SystemHealthDashboard.tsx` (deleted)
+- `RegistrationForm.tsx`, `PulseReport.tsx`
+
 ### Infrastructure
-- `src/components/DashboardLayout.tsx` — topbar, nav, user dropdown
-- `src/components/MemberProfileCard.tsx` — card, pills, material symbols
-- `src/components/OpinionPollCard.tsx` — replaced lucide (CheckCircle2→check_circle, Users→group, BarChart3→bar_chart)
-- `src/components/BlogPostCard.tsx` — replaced ArrowRight with Material Symbol + Tailwind hover classes
-- `src/components/LiveContributionFeed.tsx` — clean
-- `src/components/layouts/AdminLayout.tsx` — lucide nav icons replaced with Material Symbols string names; icon field changed from `LucideIcon` to `string`
+- `src/components/DashboardLayout.tsx`
+- `src/components/layouts/AdminLayout.tsx`
+- `src/components/MemberProfileCard.tsx`
+- `src/components/OpinionPollCard.tsx`
+- `src/components/BlogPostCard.tsx`
+- `src/components/LiveContributionFeed.tsx`
 
-### Dashboard Pages
-- `src/pages/Dashboard.tsx` — removed duplicate topbar section
-- `src/pages/ProfileSettings.tsx` — native toggle replaces shadcn Switch
-- `src/pages/Polls.tsx` — full dashboard rewrite with KPIs + .sidebar-main
-- `src/pages/Blog.tsx` — isDashboard branch added; public layout preserved
-- `src/pages/Impact.tsx` — isDashboard branch; KPIs + .main-sidebar; custom ActivityModal
-- `src/pages/Chapters.tsx` — isDashboard branch; 4 KPIs; mobile filter modal; DashboardFilterControls; native pagination; public layout preserved
-- `src/pages/ChapterDetails.tsx` — fully migrated (dashboard-only route); .main + .main-sidebar; sonner toast replaces useToast
-- `src/pages/Donate.tsx` — isDashboard branch; dashboard gets .main wrapper without public header/SEO/Breadcrumbs
-- `src/pages/Members.tsx` — .kpis + .sidebar-main + member profile modal
-
-### Dashboard Sub-components
-- `src/pages/donate/components/HeroStats.tsx` ✅
-- `src/pages/donate/components/StrategicPriorities.tsx` ✅
-- `src/pages/donate/components/MobilizationProtocol.tsx` ✅
-- `src/pages/donate/components/VictoriesSection.tsx` ✅
-- `src/pages/donate/components/OperationalTransparency.tsx` ✅
-- `src/pages/donate/components/AuditModal.tsx` ✅
-- `src/pages/dashboard/components/ActivityFeed.tsx` — removed cn() calls
-- `src/pages/dashboard/components/MovementJourney.tsx` — removed cn() calls
-
-### Admin Pages
-- `src/pages/admin/Blogs.tsx` — media library wired, TinyMCE full width
-- `src/pages/admin/Administrators.tsx` ✅
-- `src/pages/admin/MediaLibrary.tsx` — shadcn Card/Button/Input + lucide replaced; TacticalKPI kept
+### Dashboard pages (member-facing, dashboard branch)
+- `Dashboard.tsx`, `ProfileSettings.tsx`, `Polls.tsx`, `Blog.tsx` (dashboard branch)
+- `Impact.tsx` (dashboard branch), `Chapters.tsx` (dashboard branch)
+- `ChapterDetails.tsx`, `Donate.tsx`, `Members.tsx`
 
 ---
 
-## Pending ❌ (priority order)
+## Pending ❌ (public pages — all confirmed by grep)
 
-### Admin pages — most-used first
-1. `src/pages/admin/Members.tsx` (admin member management — heavily used)
-2. `src/pages/admin/Chapters.tsx`
-3. `src/pages/admin/Broadcasts.tsx` (lucide + shadcn Card + neon-button)
-4. `src/pages/admin/FieldDirectives.tsx` (lucide + Card + Dialog + Input + Textarea)
-5. `src/pages/admin/Authors.tsx` (lucide + neon-button + Select)
-6. `src/pages/admin/Regions.tsx` (lucide + neon-button + Input + Card)
-7. `src/pages/admin/Roadmap.tsx` (lucide + neon-button + Input + Card)
-8. `src/pages/admin/LogisticsIntelligence.tsx` (lucide + Card + neon-button)
-9. `src/pages/admin/MobilizationMetrics.tsx` (lucide + Card + neon-button)
-10. `src/pages/admin/SentimentIntelligence.tsx` (lucide + Card + neon-button)
-11. `src/pages/admin/StrategicPriorities.tsx` (lucide + Card + neon-button)
-12. `src/pages/admin/ChapterLeadHub.tsx` (lucide + Card + neon-button)
-13. `src/pages/admin/LeadershipHub.tsx` (lucide + Card + neon-button)
-14. `src/pages/admin/RallyCommand.tsx` (lucide + Card + neon-button)
-15. `src/pages/admin/WarRoomCommand.tsx` (lucide + neon-button)
-16. `src/pages/admin/Trash.tsx` (lucide + Card + neon-button)
-17. `src/pages/admin/Dashboard.tsx`
-18. `src/pages/admin/Settings.tsx`
-19. `src/pages/admin/store/components/ProductFormDialog.tsx` (Dialog + Label + Input + Select + Button + lucide)
-20. `src/pages/admin/EditAuthor.tsx` (lucide + neon-button)
+> Public pages: preserve public layout, modernize icons/buttons only (replace lucide → Material Symbols, neon-button → `.btn`).
 
-### Dashboard sub-components
-- `src/pages/dashboard/components/AchievementsAndLeaderboard.tsx` (Trophy, Medal, Star lucide)
+### Priority 1 — user-entry pages
+1. `src/pages/Login.tsx`
+2. `src/pages/Register.tsx` + `src/pages/register/components/`
+3. `src/pages/VerifyID.tsx`
 
-### Public pages (lower priority — public layout should be preserved as-is)
-- `src/pages/BlogPost.tsx`
-- `src/pages/Login.tsx`
-- `src/pages/Register.tsx` + register sub-components
-- `src/pages/CanvasserClipboard.tsx`
-- `src/pages/VerifyID.tsx`
-- `src/pages/Contact.tsx`, `FeedbackHub.tsx`, `OurAgenda.tsx`
-- Store pages (`Cart.tsx`, `Checkout.tsx`, `Wishlist.tsx`, `ProductDetails.tsx`, etc.)
+### Priority 2 — content pages
+4. `src/pages/BlogPost.tsx`
+5. `src/pages/OurAgenda.tsx`
+6. `src/pages/Impact.tsx` (public branch only — dashboard branch done)
+7. `src/pages/CanvasserClipboard.tsx`
+8. `src/pages/FeedbackHub.tsx`
+
+### Priority 3 — store & transactional
+9. `src/pages/Store.tsx`
+10. `src/pages/Cart.tsx`
+11. `src/pages/Checkout.tsx`
+12. `src/pages/ProductDetails.tsx` + `src/pages/product-details/components/`
+13. `src/pages/OrderSummary.tsx`
+14. `src/pages/Wishlist.tsx`
+
+### Priority 4 — static / lower traffic
+15. `src/pages/Chapters.tsx` (public branch only — dashboard branch done)
+16. `src/pages/Blog.tsx` (public branch only — dashboard branch done)
+17. `src/pages/Contact.tsx`
+18. `src/pages/NotFound.tsx`
+19. `src/pages/Press.tsx`
+20. `src/pages/Privacy.tsx`
+21. `src/pages/Terms.tsx`
+22. `src/pages/RegistrationFormPreview.tsx`
 
 ---
 
 ## Key Patterns
 
 ### isDashboard dual-route pages
-Pages on both `/page` and `/dashboard/page` routes:
 ```tsx
 const location = useLocation()
 const isDashboard = location.pathname.startsWith('/dashboard')
@@ -100,15 +90,15 @@ if (isDashboard) { return <div className="main">...</div> }
 ```
 
 ### TacticalKPI (admin-only component)
-`import { TacticalKPI } from '@/components/admin/TacticalKPI'` — keep as-is in admin pages.
-
-### BrandLine from admin folder
-`import { BrandLine } from '@/components/admin/BrandLine'` — DELETE, not part of design system.
+`import { TacticalKPI } from '@/components/admin/TacticalKPI'` — keep as-is.
 
 ### useToast → sonner
 Replace `import { useToast } from '@/hooks/use-toast'` + `const { toast } = useToast()` with:
 `import { toast } from 'sonner'` then `toast.success(...)` / `toast.error(...)`
 
-### AdminLayout nav icons
-Icon field is now `string` (Material Symbol name), rendered as:
-`<span className="material-symbols-outlined" style={{ fontSize: 16 }}>{item.icon}</span>`
+### Public page icon swap
+Replace every `<SomeIcon className="w-N h-N ..." />` with:
+`<span className="material-symbols-outlined" style={{ fontSize: N }}>icon_name</span>`
+
+### Public page button swap
+Replace `<Button variant="..." ...>` with `<button className="btn btn-primary btn-sm">` etc.
