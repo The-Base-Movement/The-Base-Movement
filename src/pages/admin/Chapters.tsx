@@ -8,7 +8,6 @@ import { adminService } from '@/services/adminService'
 import type { RegionalStat, Chapter } from '@/services/adminService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const fieldStyle: React.CSSProperties = {
@@ -149,7 +148,6 @@ export default function ChaptersManagement() {
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>location_on</span>
             Chapters
           </h2>
-          <BrandLine />
         </div>
         <div className="actions">
           <button className="btn btn-outline btn-sm" onClick={() => toast.info('Accessing audit vault...')}>

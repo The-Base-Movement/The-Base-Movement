@@ -1,13 +1,9 @@
 import { useState, useEffect } from 'react'
-import { MapPin, ChevronRight, ChevronDown, Plus, Search, Edit2, Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
 import { adminService, type Region } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+
+const inputSt: React.CSSProperties = { width: '100%', height: 36, padding: '0 10px 0 32px', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', background: '#fff', color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }
 
 export default function AdminRegions() {
   const [regions, setRegions] = useState<Region[]>([])
@@ -48,85 +44,51 @@ export default function AdminRegions() {
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-      {/* Page Header */}
-      <div className="flex-columns items-center">
+    <div className="admin-page-container">
+      {/* Header */}
+      <div className="ph" style={{ marginBottom: 32 }}>
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
-            <MapPin className="w-8 h-8 text-on-surface" />
-            Regions & constituencies
+          <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 24, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>location_on</span>
+            Regions &amp; constituencies
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Manage administrative regions and regional jurisdictions.</p>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Manage administrative regions and regional jurisdictions.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="primary" 
-            size="lg"
-            className="rounded-sm text-micro font-bold capitalize tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-          >
-            <Plus className="w-4 h-4 mr-2" /> Define New Region
-          </Button>
-        </div>
+        <button className="btn btn-primary btn-sm">
+          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>add</span>
+          Define new region
+        </button>
       </div>
 
+      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <TacticalKPI 
-          label="Regions"
-          value="16"
-          description="Ghana administrative zones"
-          trend={{ direction: 'neutral', value: 'National' }}
-        />
-        <TacticalKPI 
-          label="Constituencies"
-          value={totalConstituencies}
-          description="Electoral jurisdictions"
-          trend={{ direction: 'up', value: 'Sync' }}
-        />
-        <TacticalKPI 
-          label="Avg. per region"
-          value={Math.round(totalConstituencies / 16)}
-          description="Constituency density"
-        />
-        <TacticalKPI 
-          label="Sync status"
-          value="Active"
-          description="Geographical data live"
-          trend={{ direction: 'up', value: 'Elite' }}
-        />
+        <TacticalKPI label="Regions" value="16" description="Ghana administrative zones" trend={{ direction: 'neutral', value: 'National' }} />
+        <TacticalKPI label="Constituencies" value={totalConstituencies} description="Electoral jurisdictions" trend={{ direction: 'up', value: 'Sync' }} />
+        <TacticalKPI label="Avg. per region" value={Math.round(totalConstituencies / 16)} description="Constituency density" />
+        <TacticalKPI label="Sync status" value="Active" description="Geographical data live" trend={{ direction: 'up', value: 'Elite' }} />
       </div>
 
-      {/* Global Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/80" />
-        <Input
+      {/* Global search */}
+      <div style={{ position: 'relative', marginBottom: 20 }}>
+        <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+        <input
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Search regions or constituencies..."
-          className="pl-10 h-11 rounded-sm border-border/40 shadow-sm"
+          placeholder="Search regions or constituencies…"
+          style={{ ...inputSt, paddingLeft: 34, height: 40, width: '100%' }}
         />
       </div>
 
-      {/* Regions List */}
-      <div className="space-y-3">
+      {/* Regions list */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="rounded-none border-border/40 shadow-none animate-pulse">
-              <div className="px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 bg-muted/10" />
-                  <div className="space-y-2">
-                    <div className="h-4 bg-muted/10 w-24" />
-                    <div className="h-2 bg-muted/5 w-16" />
-                  </div>
-                </div>
-                <div className="h-6 w-6 bg-muted/5" />
-              </div>
-            </Card>
+            <div key={i} className="panel" style={{ padding: '16px 24px', animation: 'pulse 2s infinite' }}>
+              <div style={{ height: 16, background: 'hsl(var(--border))', borderRadius: 4, width: 120 }} />
+            </div>
           ))
         ) : filteredRegions.length === 0 ? (
-          <div className="py-20 text-center text-muted-foreground/80 text-sm font-bold tracking-tight border border-dashed border-border/40 rounded-sm bg-muted/5">
+          <div style={{ padding: '48px 24px', textAlign: 'center', border: '1px dashed hsl(var(--border))', borderRadius: 6, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13 }}>
             No matching geographical data found.
           </div>
         ) : (
@@ -138,104 +100,83 @@ export default function AdminRegions() {
             )
 
             return (
-              <Card key={region.id} className="rounded-sm border-border/40 shadow-sm overflow-hidden bg-white">
-                {/* Region Header Row */}
+              <div key={region.id} className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+                {/* Region header row */}
                 <button
-                  className="w-full flex items-center justify-between px-6 py-4 hover:bg-muted/10 transition-colors group"
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
                   onClick={() => toggleRegion(region.id)}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={cn(
-                      "w-8 h-8 flex items-center justify-center transition-colors rounded-sm",
-                      isExpanded ? "bg-on-surface text-white" : "bg-muted/10 text-muted-foreground/80 group-hover:bg-muted/20"
-                    )}>
-                      <MapPin className="w-4 h-4" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 4, background: isExpanded ? 'hsl(var(--on-surface))' : 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 17, color: isExpanded ? '#fff' : 'hsl(var(--on-surface-muted))' }}>location_on</span>
                     </div>
-                    <div className="text-left">
-                      <p className="text-sm font-bold tracking-tight text-on-surface">
-                        {region.name}
-                      </p>
-                      <p className="text-micro text-muted-foreground/80 font-bold tracking-tight">
-                        {region.constituencies.length} constituencies
-                      </p>
+                    <div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>{region.name}</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>{region.constituencies.length} constituencies</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    {/* Action buttons - stop propagation so they don't toggle expand */}
-                    <Button
-                      variant="gold"
-                      size="icon"
-                      className="h-10 w-10 rounded-sm transition-all shadow-sm active:scale-95"
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <button
+                      className="btn btn-sm"
+                      style={{ background: 'hsl(var(--accent))', color: '#fff', border: 'none', width: 34, height: 34, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       onClick={e => { e.stopPropagation(); handleAction('REGION_EDIT', region.name) }}
                     >
-                      <Edit2 className="w-5 h-5" />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="h-10 w-10 rounded-sm transition-all shadow-sm active:scale-95"
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>
+                    </button>
+                    <button
+                      className="btn btn-dest btn-sm"
+                      style={{ width: 34, height: 34, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       onClick={e => { e.stopPropagation(); handleAction('REGION_DELETE', region.name) }}
                     >
-                      <Trash2 className="w-5 h-5" />
-                    </Button>
-                    {isExpanded
-                      ? <ChevronDown className="w-4 h-4 text-muted-foreground/80" />
-                      : <ChevronRight className="w-4 h-4 text-muted-foreground/80" />
-                    }
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                    </button>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))', transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'none' }}>chevron_right</span>
                   </div>
                 </button>
 
-                {/* Expanded: Constituency Grid */}
+                {/* Expanded: constituency grid */}
                 {isExpanded && (
-                  <div className="border-t border-border/40 bg-muted/5 px-6 py-5 space-y-4">
-                    {/* Constituency search */}
-                    <div className="flex items-center gap-3">
-                      <div className="relative flex-1 max-w-xs">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80" />
-                        <Input
+                  <div style={{ borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', padding: '16px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                      <div style={{ position: 'relative', flex: 1, maxWidth: 280 }}>
+                        <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+                        <input
                           value={cSearch}
                           onChange={e => setConstituencySearch(prev => ({ ...prev, [region.id]: e.target.value }))}
-                          placeholder="Filter constituencies..."
-                          className="pl-9 h-9 rounded-sm border-border/40 text-xs shadow-sm"
+                          placeholder="Filter constituencies…"
+                          style={inputSt}
                         />
                       </div>
-                      <Button
-                        variant="primary"
-                        className="h-10 px-8 text-micro font-bold capitalize tracking-tight rounded-sm transition-all shadow-lg shadow-brand-green/20 active:scale-95"
-                      >
-                        <Plus className="w-4 h-4 mr-2" /> Define Constituency
-                      </Button>
+                      <button className="btn btn-primary btn-sm">
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>add</span>
+                        Define constituency
+                      </button>
                     </div>
 
-                    {/* Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8 }}>
                       {visibleConstituencies.map(con => (
                         <div
                           key={con}
-                          className="group flex items-center justify-between gap-1 px-3 py-2 bg-white border border-border/40 hover:border-on-surface/40 transition-colors rounded-sm"
+                          className="group"
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6, padding: '8px 12px', background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 4 }}
                         >
-                          <span className="text-micro font-bold tracking-tight text-on-surface/80 group-hover:text-on-surface truncate">
-                            {con}
-                          </span>
-                          <Button
-                            variant="gold"
-                            size="icon"
-                            className="h-8 w-8 rounded-sm opacity-0 group-hover:opacity-100 transition-all shrink-0 shadow-sm active:scale-95"
+                          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{con}</span>
+                          <button
+                            className="btn btn-sm"
+                            style={{ background: 'hsl(var(--accent))', color: '#fff', border: 'none', width: 28, height: 28, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
                             onClick={() => handleAction('CONSTITUENCY_EDIT', region.name, con)}
                           >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </Button>
+                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>edit</span>
+                          </button>
                         </div>
                       ))}
                       {visibleConstituencies.length === 0 && (
-                        <p className="col-span-full text-center text-micro text-muted-foreground/60 font-bold tracking-tight py-4">
-                          No match found.
-                        </p>
+                        <p style={{ gridColumn: '1/-1', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', padding: '16px 0' }}>No match found.</p>
                       )}
                     </div>
                   </div>
                 )}
-              </Card>
+              </div>
             )
           })
         )}

@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback, Fragment } from 'react'
 import { useChapters } from '@/context/ChaptersContext'
 import { usePerformance } from '@/context/PerformanceContext'
-import { cn } from '@/lib/utils'
 import { adminService, type AuditLogEntry, type Member, type MemberDonation, type MemberPollVote, type MemberSession, type MemberNote } from '@/services/adminService'
 import { toast } from 'sonner'
 import RegistrationForm, { type RegistrationSubmission } from '@/components/admin/RegistrationForm'
@@ -11,7 +10,6 @@ import MemberListCard from '@/components/admin/MemberListCard'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/admin/BrandLine'
 
 const thStyle: React.CSSProperties = {
   padding: '10px 16px',
@@ -375,7 +373,6 @@ export default function MembersList() {
         <div>
           <div className="crumbs">Members · Directory</div>
           <h2 style={{ margin: '4px 0 0' }}>Member directory</h2>
-          <BrandLine />
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Movement registration database, identity verification, and regional deployment oversight.
           </p>
@@ -726,7 +723,7 @@ export default function MembersList() {
                 ].map((s, i) => (
                   <div key={i}>
                     <div className="sl">{s.label}</div>
-                    <div className={cn("sv tnum", s.accent && "accent")}>{s.val}</div>
+                    <div className={`sv tnum${s.accent ? ' accent' : ''}`}>{s.val}</div>
                     <div className="sd">{s.sub}</div>
                   </div>
                 ))}

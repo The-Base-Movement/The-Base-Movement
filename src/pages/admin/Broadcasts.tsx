@@ -4,22 +4,6 @@ import { toast } from 'sonner'
 import { adminService } from '@/services/adminService'
 import type { Broadcast } from '@/services/adminService'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/admin/BrandLine'
-import { 
-  Megaphone, 
-  Plus, 
-  Search, 
-  Hourglass, 
-  Clock, 
-  CheckCircle, 
-  RefreshCw, 
-  AlertTriangle, 
-  AlertCircle,
-  BarChart
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
-import { cn } from '@/lib/utils'
 
 export default function Broadcasts() {
   const navigate = useNavigate()
@@ -57,10 +41,10 @@ export default function Broadcasts() {
     b.content.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const priorityPill = (p: string) => {
-    if (p === 'Urgent') return 'bg-destructive/10 text-destructive border-destructive/20'
-    if (p === 'High') return 'bg-accent/10 text-accent border-accent/20'
-    return 'bg-muted/10 text-muted-foreground/60 border-border/20'
+  const priorityStyle = (p: string): React.CSSProperties => {
+    if (p === 'Urgent') return { background: 'rgba(239,68,68,0.1)', color: 'hsl(var(--destructive))', border: '1px solid rgba(239,68,68,0.2)' }
+    if (p === 'High') return { background: 'rgba(245,158,11,0.1)', color: 'hsl(var(--accent))', border: '1px solid rgba(245,158,11,0.2)' }
+    return { background: 'hsl(var(--container-low))', color: 'hsl(var(--on-surface-muted))', border: '1px solid hsl(var(--border))' }
   }
 
   const targetLabel = (type: string, value?: string) =>
@@ -73,215 +57,163 @@ export default function Broadcasts() {
     { title: 'Constituency Outreach', type: 'CONSTITUENCY', priority: 'Normal', content: 'Local chapter engagement initiative starting in your area. Please coordinate with regional leads.' },
   ]
 
+  const pillBase: React.CSSProperties = { padding: '2px 10px', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', borderRadius: 4, fontFamily: "'Public Sans', sans-serif" }
+
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* 🏛️ Communication Header */}
-      <div className="flex-columns items-center flex-between">
+    <div className="admin-page-container">
+      {/* Header */}
+      <div className="ph" style={{ marginBottom: 32 }}>
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 m-0">
-            <Megaphone className="w-8 h-8 text-on-surface" />
+          <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 24, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>campaign</span>
             Communication hub
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-2 mb-0">Platform-wide transmission and regional mobilization protocols.</p>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Platform-wide transmission and regional mobilization protocols.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
-            onClick={() => navigate('/admin/broadcasts/new')}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Broadcast
-          </Button>
-        </div>
+        <button className="btn btn-primary btn-sm" onClick={() => navigate('/admin/broadcasts/new')}>
+          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>add</span>
+          New broadcast
+        </button>
       </div>
 
-      {/* KPI Stats Row */}
+      {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <TacticalKPI 
-          label="Communication"
-          value={isLoading ? '—' : broadcasts.length}
-          description="Total deployments"
-          trend={{ direction: 'neutral', value: 'Vault' }}
-        />
-        <TacticalKPI 
-          label="Priority"
-          value={isLoading ? '—' : broadcasts.filter(b => b.priority === 'Urgent').length}
-          description="Urgent alerts"
-          trend={{ direction: 'down', value: 'Critical' }}
-        />
-        <TacticalKPI 
-          label="Saturation"
-          value="100%"
-          description="Member reach"
-          trend={{ direction: 'up', value: 'Pulse' }}
-        />
-        <TacticalKPI 
-          label="HQ Connection"
-          value="24/7"
-          description="Direct uplink"
-          trend={{ direction: 'up', value: 'Online' }}
-        />
+        <TacticalKPI label="Communication" value={isLoading ? '—' : broadcasts.length} description="Total deployments" trend={{ direction: 'neutral', value: 'Vault' }} />
+        <TacticalKPI label="Priority" value={isLoading ? '—' : broadcasts.filter(b => b.priority === 'Urgent').length} description="Urgent alerts" trend={{ direction: 'down', value: 'Critical' }} />
+        <TacticalKPI label="Saturation" value="100%" description="Member reach" trend={{ direction: 'up', value: 'Pulse' }} />
+        <TacticalKPI label="HQ Connection" value="24/7" description="Direct uplink" trend={{ direction: 'up', value: 'Online' }} />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        {/* 📡 Broadcast History */}
-        <div className="xl:col-span-2">
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden h-full">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <CardTitle className="text-sm font-bold tracking-tight">Broadcast history</CardTitle>
-                <p className="text-micro font-bold text-muted-foreground/40 mt-1">HQ-to-field transmission log</p>
-              </div>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search broadcasts..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full md:w-64 h-10 pl-10 pr-4 bg-white border border-border/40 rounded-sm text-xs font-bold text-on-surface focus:outline-none focus:border-primary transition-colors"
-                />
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              {isLoading ? (
-                <div className="px-6 py-20 text-center space-y-4">
-                  <Hourglass className="w-12 h-12 text-muted-foreground/10 animate-pulse" />
-                  <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">Retrieving comm logs...</p>
-                </div>
-              ) : filteredBroadcasts.length === 0 ? (
-                <div className="px-6 py-20 text-center space-y-4">
-                  <Megaphone className="w-12 h-12 text-muted-foreground/10" />
-                  <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">No broadcasts found</p>
-                </div>
-              ) : (
-                <div className="divide-y divide-border/40 max-h-[800px] overflow-y-auto custom-scrollbar">
-                  {filteredBroadcasts.map((b) => {
-                    const metrics = broadcastMetrics[b.id]
-                    const readPct = metrics && metrics.total > 0 ? Math.round((metrics.read / metrics.total) * 100) : null
-                    return (
-                      <div key={b.id} className="p-6 hover:bg-muted/30 transition-colors space-y-4">
-                        <div className="flex flex-wrap gap-2">
-                          <span className={cn(
-                            "px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border rounded-md",
-                            priorityPill(b.priority)
-                          )}>
-                            {b.priority}
-                          </span>
-                          <span className="px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border border-border/20 bg-muted/10 text-muted-foreground/60 rounded-md">
-                            {targetLabel(b.target_type, b.target_value)}
-                          </span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-bold text-on-surface m-0">{b.title}</h4>
-                          <p className="text-xs text-muted-foreground/80 leading-relaxed mt-2 font-medium">{b.content}</p>
-                        </div>
-                        <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-                          <div className="flex items-center gap-6">
-                            <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/40 uppercase tracking-tighter">
-                              <Clock className="w-3.5 h-3.5" />
-                              {new Date(b.created_at).toLocaleString()}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }} className="xl:grid-cols-[1fr_320px]">
+        {/* Broadcast history */}
+        <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Broadcast history</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>HQ-to-field transmission log</div>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+              <input
+                type="text"
+                placeholder="Search broadcasts…"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ height: 36, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', background: '#fff', color: 'hsl(var(--on-surface))', width: 220, boxSizing: 'border-box' }}
+              />
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 12 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'hsl(var(--border))', animation: 'spin 1s linear infinite' }}>hourglass_empty</span>
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Retrieving comm logs…</p>
+            </div>
+          ) : filteredBroadcasts.length === 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', gap: 12 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'hsl(var(--border))' }}>campaign</span>
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>No broadcasts found</p>
+            </div>
+          ) : (
+            <div style={{ maxHeight: 800, overflowY: 'auto' }}>
+              {filteredBroadcasts.map((b) => {
+                const metrics = broadcastMetrics[b.id]
+                const readPct = metrics && metrics.total > 0 ? Math.round((metrics.read / metrics.total) * 100) : null
+                return (
+                  <div key={b.id} style={{ padding: '20px 24px', borderBottom: '1px solid hsl(var(--border))' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                      <span style={{ ...pillBase, ...priorityStyle(b.priority) }}>{b.priority}</span>
+                      <span style={{ ...pillBase, background: 'hsl(var(--container-low))', color: 'hsl(var(--on-surface-muted))', border: '1px solid hsl(var(--border))' }}>
+                        {targetLabel(b.target_type, b.target_value)}
+                      </span>
+                    </div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', marginBottom: 6 }}>{b.title}</div>
+                    <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 12, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, marginBottom: 12 }}>{b.content}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>schedule</span>
+                          {new Date(b.created_at).toLocaleString()}
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--primary))' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>check_circle</span>
+                          Confirmed
+                        </span>
+                        {metrics && readPct !== null && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{metrics.read}/{metrics.total} Read</span>
+                            <div style={{ width: 64, height: 4, background: 'hsl(var(--border))', borderRadius: 99, overflow: 'hidden' }}>
+                              <div style={{ height: '100%', background: 'hsl(var(--primary))', width: `${readPct}%`, transition: 'width 1s ease' }} />
                             </div>
-                            <div className="flex items-center gap-2 text-micro font-bold text-primary uppercase tracking-tighter">
-                              <CheckCircle className="w-3.5 h-3.5" />
-                              Confirmed
-                            </div>
-                            {metrics && readPct !== null && (
-                              <div className="flex items-center gap-3">
-                                <span className="text-micro font-bold text-muted-foreground/60 uppercase tracking-tighter">
-                                  {metrics.read}/{metrics.total} Read
-                                </span>
-                                <div className="w-16 h-1 bg-muted/40 rounded-full overflow-hidden">
-                                  <div 
-                                    className="h-full bg-primary transition-all duration-1000" 
-                                    style={{ width: `${readPct}%` }} 
-                                  />
-                                </div>
-                              </div>
-                            )}
                           </div>
-                          <Button
-                            variant="default"
-                            size="sm"
-                            className="h-8 text-micro font-bold capitalize tracking-tight px-4 bg-transparent border-border/20 text-muted-foreground/60 hover:bg-muted/40"
-                            onClick={() => fetchMetrics(b.id)}
-                          >
-                            <RefreshCw className="w-3 h-3 mr-1.5" />
-                            Refresh
-                          </Button>
-                        </div>
+                        )}
                       </div>
-                    )
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                      <button className="btn btn-outline btn-sm" onClick={() => fetchMetrics(b.id)}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>refresh</span>
+                        Refresh
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
-        {/* 🛠️ Sidebar Protocols */}
-        <div className="xl:col-span-1 space-y-8">
-          {/* Mobilization Presets */}
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-row items-center justify-between">
+        {/* Sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Mobilization presets */}
+          <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <CardTitle className="text-sm font-bold tracking-tight">Mobilization presets</CardTitle>
-                <p className="text-micro font-bold text-muted-foreground/40 mt-1">Quick-start protocols</p>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Mobilization presets</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>Quick-start protocols</div>
               </div>
-              <BarChart className="w-5 h-5 text-muted-foreground/40" />
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
+              <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>bar_chart</span>
+            </div>
+            <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {templates.map((t, i) => (
                 <div
                   key={i}
-                  className="p-4 border border-border/40 rounded-sm cursor-pointer hover:border-primary hover:bg-muted/10 transition-all group space-y-3"
                   onClick={() => navigate('/admin/broadcasts/new', { state: { template: t } })}
+                  style={{ padding: '12px 14px', border: '1px solid hsl(var(--border))', borderRadius: 4, cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 6, transition: 'border-color 0.15s' }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = 'hsl(var(--border))')}
                 >
-                  <div className="flex justify-between items-center">
-                    <span className={cn(
-                      "px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest border rounded-sm",
-                      priorityPill(t.priority)
-                    )}>
-                      {t.priority}
-                    </span>
-                    <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">{t.type}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ ...pillBase, ...priorityStyle(t.priority) }}>{t.priority}</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t.type}</span>
                   </div>
-                  <h5 className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors m-0">{t.title}</h5>
-                  <p className="text-[10px] text-muted-foreground/60 leading-relaxed font-medium line-clamp-2 m-0">{t.content}</p>
+                  <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{t.title}</div>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 11, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{t.content}</p>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Protocol Red */}
-          <Card className="rounded-sm border-t-4 border-t-destructive bg-on-surface text-white overflow-hidden relative shadow-xl">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-            <div className="absolute -right-8 -bottom-8 opacity-5">
-              <Megaphone style={{ fontSize: 160 }} />
+          <div style={{ background: 'hsl(var(--on-surface))', borderRadius: 6, borderTop: '4px solid hsl(var(--destructive))', padding: 28, position: 'relative', overflow: 'hidden', textAlign: 'center' }}>
+            <div style={{ position: 'absolute', right: -20, bottom: -20, opacity: 0.05 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 160, color: '#fff' }}>campaign</span>
             </div>
-            <CardContent className="p-8 relative z-10 space-y-6 text-center">
-              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-2">
-                <AlertTriangle className="w-10 h-10 text-destructive" />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(239,68,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--destructive))' }}>warning</span>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold tracking-tight m-0">Protocol Red</h3>
-                <p className="text-xs text-white/40 leading-relaxed font-medium normal-case">
-                  Urgent mobilization triggers immediate notifications to all connected field assets. Use only for critical broadcasts.
-                </p>
-              </div>
-              <Button
-                variant="primary"
-                className="w-full h-12 text-micro font-bold uppercase tracking-widest bg-destructive hover:bg-destructive/80 text-white shadow-lg shadow-destructive/20"
+              <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 18, color: '#fff', marginBottom: 10 }}>Protocol Red</h3>
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 20 }}>
+                Urgent mobilization triggers immediate notifications to all connected field assets. Use only for critical broadcasts.
+              </p>
+              <button
+                className="btn btn-dest"
+                style={{ width: '100%' }}
                 onClick={() => navigate('/admin/broadcasts/new', { state: { template: templates[2] } })}
               >
-                <AlertCircle className="w-4 h-4 mr-2" />
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>error</span>
                 Trigger Tactical Alert
-              </Button>
-            </CardContent>
-          </Card>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
