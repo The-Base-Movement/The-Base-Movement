@@ -1,5 +1,3 @@
-import { Activity, X, ArrowDownToLine, Heart } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import type { DonationDetail } from '@/types/admin'
 
 interface AuditModalProps {
@@ -22,52 +20,82 @@ export function AuditModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-md" onClick={onClose}></div>
-      <div className="relative w-full max-w-4xl bg-white border border-stone-200 shadow-2xl overflow-hidden rounded-none flex flex-col max-h-[85vh]">
-        <div className="p-8 border-b border-stone-100 flex items-center justify-between bg-white sticky top-0 z-10">
-          <div className="flex items-center gap-4">
-            <Activity className="w-6 h-6 text-brand-green shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" />
-            <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl leading-none">Capital deployment ledger</h3>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div 
+        style={{ position: 'absolute', inset: 0, background: 'hsla(var(--on-surface-rgb), 0.6)', backdropFilter: 'blur(8px)' }} 
+        onClick={onClose}
+      ></div>
+      <div style={{ 
+        position: 'relative', 
+        width: '100%', 
+        maxWidth: 896, 
+        background: '#fff', 
+        border: '1px solid hsl(var(--border))', 
+        boxShadow: 'var(--shadow-xl)', 
+        overflow: 'hidden', 
+        borderRadius: 4, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        maxHeight: '85vh' 
+      }}>
+        <div style={{ 
+          padding: 32, 
+          borderBottom: '1px solid hsl(var(--border))', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          background: '#fff', 
+          position: 'sticky', 
+          top: 0, 
+          zIndex: 10 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--primary))' }}>vital_signs</span>
+            <h3 style={{ fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.02em', fontSize: 20, lineHeight: 1, margin: 0 }}>Capital deployment ledger</h3>
           </div>
-          <Button 
-            variant="ghost"
-            size="icon"
+          <button 
             onClick={onClose}
-            className="text-stone-300 hover:text-brand-red hover:bg-brand-red/5 transition-all"
+            style={{
+              width: 44, height: 44, borderRadius: 4, border: 'none', background: 'transparent', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'hsl(var(--on-surface-muted))', transition: 'all 0.2s ease'
+            }}
+            className="hover:bg-destructive/10 hover:text-destructive"
           >
-            <X className="w-6 h-6" />
-          </Button>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>close</span>
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-0">
+        <div style={{ flex: 1, overflowY: 'auto', padding: 0 }}>
           {publicHistory.length > 0 ? (
-            <table className="w-full text-left border-collapse">
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr className="bg-stone-50 border-b border-stone-200">
-                  <th className="p-6 text-micro font-medium text-stone-400 tracking-tight">Contributor</th>
-                  <th className="p-6 text-micro font-medium text-stone-400 tracking-tight">Capital</th>
-                  <th className="p-6 text-micro font-medium text-stone-400 tracking-tight">Cell</th>
-                  <th className="p-6 text-micro font-medium text-stone-400 tracking-tight text-right">Verification</th>
+                <tr style={{ background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
+                  <th style={{ padding: 24, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left' }}>Contributor</th>
+                  <th style={{ padding: 24, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left' }}>Capital</th>
+                  <th style={{ padding: 24, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left' }}>Cell</th>
+                  <th style={{ padding: 24, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'right' }}>Verification</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody>
                 {publicHistory.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-stone-50 transition-colors group">
-                    <td className="p-6">
-                      <p className="text-sm font-bold text-stone-900 tracking-tight">{item.fullName}</p>
-                      <p className="text-micro text-stone-400 font-medium tracking-tight mt-1">{item.date}</p>
+                  <tr key={idx} style={{ borderBottom: '1px solid hsla(var(--border), 0.5)' }} className="hover:bg-stone-50">
+                    <td style={{ padding: 24 }}>
+                      <p style={{ fontSize: 14, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0, letterSpacing: '-0.01em' }}>{item.fullName}</p>
+                      <p style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 700, marginTop: 4, margin: 0 }}>{item.date}</p>
                     </td>
-                    <td className="p-6">
-                      <p className="text-sm font-bold text-stone-900 font-meta">
+                    <td style={{ padding: 24 }}>
+                      <p style={{ fontSize: 14, fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", margin: 0 }}>
                         {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
                       </p>
                     </td>
-                    <td className="p-6">
-                      <p className="text-micro font-medium text-stone-500 tracking-tight">{item.campaignTitle || 'Strategic Fund'}</p>
+                    <td style={{ padding: 24 }}>
+                      <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', margin: 0 }}>{item.campaignTitle || 'Strategic Fund'}</p>
                     </td>
-                    <td className="p-6 text-right">
-                      <span className="inline-flex items-center gap-2 px-3 py-1 text-micro font-medium tracking-tight rounded-none bg-brand-green/10 text-brand-green">
+                    <td style={{ padding: 24, textAlign: 'right' }}>
+                      <span style={{ 
+                        display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 2,
+                        fontSize: 10, fontWeight: 900, textTransform: 'uppercase', background: 'hsla(var(--primary), 0.08)', color: 'hsl(var(--primary))'
+                      }}>
                         Verified
                       </span>
                     </td>
@@ -76,38 +104,43 @@ export function AuditModal({
               </tbody>
             </table>
           ) : (
-            <div className="py-32 px-8 text-center bg-stone-50/50">
-              <div className="w-20 h-20 bg-white shadow-sm border border-stone-100 flex items-center justify-center mx-auto mb-8 rounded-none">
-                <Activity className="w-8 h-8 text-stone-200" />
+            <div style={{ padding: '128px 32px', textAlign: 'center', background: 'hsl(var(--container-low))' }}>
+              <div style={{ 
+                width: 80, height: 80, background: '#fff', border: '1px solid hsl(var(--border))', 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px' 
+              }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))' }}>vital_signs</span>
               </div>
-              <h4 className="text-xl font-bold text-stone-900 mb-3 font-meta tracking-tight">Deployment records inactive</h4>
-              <p className="text-tiny text-stone-400 max-w-sm mx-auto mb-8 font-medium tracking-tight leading-relaxed">
+              <h4 style={{ fontSize: 20, fontWeight: 900, color: 'hsl(var(--on-surface))', marginBottom: 12, fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.01em' }}>Deployment records inactive</h4>
+              <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', maxWidth: 384, margin: '0 auto 32px', fontWeight: 700, lineHeight: 1.5 }}>
                 No capital deployment detected for this session. Support the movement cells to build a technically robust Ghana.
               </p>
             </div>
           )}
         </div>
 
-        <div className="p-8 border-t border-stone-100 flex items-center justify-between bg-stone-50 sticky bottom-0 z-10">
-          <div className="flex items-center gap-3 text-micro font-medium text-stone-400 tracking-tight">
-            <span className="w-2 h-2 rounded-full bg-brand-green shadow-[0_0_8px_var(--brand-green-full)]"></span>
+        <div style={{ 
+          padding: 32, 
+          borderTop: '1px solid hsl(var(--border))', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          background: 'hsl(var(--container-low))', 
+          position: 'sticky', 
+          bottom: 0, 
+          zIndex: 10 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'hsl(var(--primary))', boxShadow: '0 0 8px hsl(var(--primary))' }}></span>
             {contributionsCount} Deployment records secured
           </div>
-          <div className="flex gap-4">
-            <Button 
-              variant="default"
-              onClick={onDownload}
-              className="px-6 h-12 border-stone-200 font-bold text-tiny tracking-tight rounded-none hover:bg-stone-50 transition-all flex items-center gap-2 shadow-sm active:scale-95"
-            >
-              <ArrowDownToLine className="w-4 h-4" /> Download audit
-            </Button>
-            <Button 
-              variant="primary"
-              onClick={onContribute}
-              className="px-8 h-12 font-bold text-tiny tracking-tight rounded-none transition-all flex items-center gap-2 shadow-lg shadow-brand-green/10"
-            >
-              <Heart className="w-4 h-4" /> Contribute
-            </Button>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <button onClick={onDownload} className="btn btn-outline" style={{ height: 48, padding: '0 24px', fontSize: 12 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>download</span> Download audit
+            </button>
+            <button onClick={onContribute} className="btn btn-primary" style={{ height: 48, padding: '0 32px', fontSize: 12 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>favorite</span> Contribute
+            </button>
           </div>
         </div>
       </div>

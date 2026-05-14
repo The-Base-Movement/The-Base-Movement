@@ -1,6 +1,3 @@
-import { Activity, ArrowRight } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
 import type { DonationCampaign } from '@/types/admin'
 
 interface StrategicPrioritiesProps {
@@ -11,61 +8,144 @@ interface StrategicPrioritiesProps {
 
 export function StrategicPriorities({ loading, campaigns, onSelectCampaign }: StrategicPrioritiesProps) {
   return (
-    <section className="mt-20">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <div>
-          <h2 className="text-3xl font-bold text-stone-900 tracking-tight font-meta">Strategic priorities</h2>
-          <p className="text-xs font-medium text-stone-400 tracking-tight mt-2">Deploy capital to critical movement units.</p>
-        </div>
+    <section style={{ marginTop: 80 }}>
+      <div style={{ marginBottom: 48 }}>
+        <h2 style={{ 
+          fontSize: 'clamp(26px, 5vw, 44px)', 
+          fontWeight: 900, 
+          color: 'hsl(var(--on-surface))', 
+          fontFamily: "'Public Sans', sans-serif",
+          letterSpacing: '-0.02em',
+          lineHeight: 1.1,
+          margin: 0
+        }}>Strategic priorities</h2>
+        <p style={{ 
+          fontSize: 10.5, 
+          fontWeight: 800, 
+          color: 'hsl(var(--on-surface-muted))', 
+          textTransform: 'uppercase', 
+          letterSpacing: '0.05em', 
+          marginTop: 8,
+          fontFamily: "'Public Sans', sans-serif"
+        }}>Deploy capital to critical movement units.</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="campaign-grid">
         {loading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="aspect-[4/5] bg-stone-100 animate-pulse rounded-none border border-stone-200" />
+            <div key={i} style={{ aspectRatio: '4/5', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', animation: 'pulse 2s infinite' }} />
           ))
         ) : campaigns.map(c => (
-          <Card key={c.id} className="rounded-none border-stone-200 shadow-sm flex flex-col group hover:shadow-xl transition-all duration-500 overflow-hidden bg-white">
-            <div className="aspect-[16/10] bg-stone-100 overflow-hidden relative">
+          <div key={c.id} style={{ 
+            background: '#fff', 
+            border: '1px solid hsl(var(--border))', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            transition: 'all 0.3s ease',
+            position: 'relative'
+          }}>
+            <div style={{ aspectRatio: '16/10', background: 'hsl(var(--container-low))', overflow: 'hidden', position: 'relative' }}>
               {c.imageUrl ? (
-                <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000" decoding="async" loading="lazy" />
+                <img 
+                  src={c.imageUrl} 
+                  alt={c.title} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(0.3)' }} 
+                  decoding="async" 
+                  loading="lazy" 
+                />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-stone-50">
-                   <Activity className="w-12 h-12 text-stone-200 group-hover:text-brand-green/30 transition-colors duration-500" />
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                   <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))' }}>vital_signs</span>
                 </div>
               )}
-              <div className="absolute top-4 right-4">
-                <span className="bg-brand-green text-white text-[10px] font-bold tracking-tight px-3 py-1.5 shadow-xl">live mobilization</span>
+              <div style={{ position: 'absolute', top: 16, right: 16 }}>
+                <span style={{ 
+                  background: 'hsl(var(--primary))', 
+                  color: '#fff', 
+                  fontSize: 9.5, 
+                  fontWeight: 900, 
+                  padding: '6px 12px', 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.05em',
+                  fontFamily: "'Public Sans', sans-serif"
+                }}>Live Mobilization</span>
               </div>
             </div>
-            <CardContent className="p-8 flex flex-col flex-1">
-              <h3 className="font-bold text-stone-900 font-meta text-xl mb-3 group-hover:text-brand-green transition-colors tracking-tight">{c.title}</h3>
-              <p className="text-sm text-stone-500 mb-8 line-clamp-3 leading-relaxed font-medium">{c.description}</p>
+            
+            <div style={{ padding: 32, display: 'flex', flexDirection: 'column', flex: 1 }}>
+              <h3 style={{ 
+                fontSize: 18, 
+                fontWeight: 900, 
+                color: 'hsl(var(--on-surface))', 
+                marginBottom: 12, 
+                fontFamily: "'Public Sans', sans-serif",
+                letterSpacing: '-0.01em'
+              }}>{c.title}</h3>
+              <p style={{ 
+                fontSize: 14, 
+                color: 'hsl(var(--on-surface-muted))', 
+                lineHeight: 1.6, 
+                marginBottom: 32,
+                fontWeight: 700,
+                fontFamily: "'Public Sans', sans-serif",
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              }}>{c.description}</p>
               
-              <div className="mt-auto space-y-6">
-                <div>
-                  <div className="flex justify-between items-end mb-3">
-                     <span className="text-micro font-medium text-stone-400 tracking-tight">strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
-                    <span className="text-sm font-bold font-meta text-stone-900">₵ {c.raisedAmount.toLocaleString()}</span>
+              <div style={{ marginTop: 'auto' }}>
+                <div style={{ marginBottom: 24 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 8 }}>
+                    <span style={{ 
+                      fontSize: 10, 
+                      fontWeight: 800, 
+                      color: 'hsl(var(--on-surface-muted))', 
+                      textTransform: 'uppercase', 
+                      letterSpacing: '0.05em',
+                      fontFamily: "'Public Sans', sans-serif"
+                    }}>strength at {Math.round((c.raisedAmount / c.targetAmount) * 100)}%</span>
+                    <span style={{ 
+                      fontSize: 14, 
+                      fontWeight: 900, 
+                      color: 'hsl(var(--on-surface))',
+                      fontFamily: "'Public Sans', sans-serif"
+                    }}>₵ {c.raisedAmount.toLocaleString()}</span>
                   </div>
-                  <div className="h-2 w-full bg-stone-100 overflow-hidden rounded-full border border-stone-50">
+                  <div style={{ height: 8, width: '100%', background: 'hsl(var(--container-low))', borderRadius: 99, overflow: 'hidden', border: '1px solid hsl(var(--border))' }}>
                     <div 
-                      className="h-full bg-brand-green transition-all duration-1000 shadow-[0_0_10px_rgba(var(--brand-green-rgb),0.3)]" 
-                      style={{ width: `${Math.min(100, (c.raisedAmount / c.targetAmount) * 100)}%` }}
+                      style={{ 
+                        height: '100%', 
+                        background: 'hsl(var(--primary))', 
+                        transition: 'all 1s ease-out',
+                        width: `${Math.min(100, (c.raisedAmount / c.targetAmount) * 100)}%` 
+                      }}
                     />
                   </div>
                 </div>
                 
-                <Button 
-                  variant="default"
+                <button 
                   onClick={() => onSelectCampaign(c.id)}
-                  className="w-full h-12 rounded-none text-tiny font-medium tracking-tight border-stone-200 hover:border-brand-green/40 hover:text-brand-green hover:bg-stone-50 transition-all shadow-sm active:scale-95"
+                  style={{
+                    width: '100%',
+                    height: 48,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    padding: '0 24px',
+                    background: 'transparent',
+                    color: 'hsl(var(--on-surface))',
+                    border: '1px solid hsl(var(--border))',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 800, fontSize: 13,
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    textTransform: 'lowercase'
+                  }}
                 >
-                  direct capital <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                  direct capital <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
+                </button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
     </section>

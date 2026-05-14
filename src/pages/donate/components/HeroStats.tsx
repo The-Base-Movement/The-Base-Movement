@@ -5,36 +5,74 @@ interface HeroStatsProps {
 
 export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
   return (
-    <div className="bg-on-surface text-white relative overflow-hidden py-12">
-      <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--brand-green)_0%,_transparent_70%)]"></div>
-      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-          <div className="md:col-span-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--brand-green-full)]"></span>
-              <span className="text-micro font-bold text-white/90 tracking-tight">Financial mobilization unit</span>
+    <div style={{ background: 'hsl(var(--on-surface))', color: '#fff', position: 'relative', overflow: 'hidden', padding: '48px 0' }}>
+      <div style={{ 
+        position: 'absolute', 
+        inset: 0, 
+        zIndex: 0, 
+        opacity: 0.1, 
+        background: 'radial-gradient(circle at center, hsl(var(--primary)) 0%, transparent 70%)' 
+      }}></div>
+      
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 clamp(16px, 4vw, 32px)', position: 'relative', zIndex: 10 }}>
+        <div className="hero-stats-grid" style={{ alignItems: 'center', gap: 32 }}>
+          <div>
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: 8, 
+              padding: '4px 12px', 
+              borderRadius: 99, 
+              background: 'rgba(255,255,255,0.05)', 
+              border: '1px solid rgba(255,255,255,0.1)', 
+              marginBottom: 24,
+              backdropFilter: 'blur(4px)'
+            }}>
+              <span style={{ 
+                width: 6, 
+                height: 6, 
+                borderRadius: '50%', 
+                background: 'hsl(var(--primary))', 
+                boxShadow: '0 0 8px hsl(var(--primary))' 
+              }}></span>
+              <span style={{ fontSize: 10.5, fontWeight: 800, color: 'rgba(255,255,255,0.9)', letterSpacing: '0.05em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif" }}>Financial mobilization unit</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-meta font-bold tracking-tight mb-4">
-              Total mobilized: <span className="text-primary">₵ {totalRaised.toLocaleString()}</span>
+            
+            <h2 style={{ 
+              fontSize: 'clamp(24px, 4vw, 36px)', 
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 900, 
+              letterSpacing: '-0.02em', 
+              marginBottom: 16,
+              lineHeight: 1.2
+            }}>
+              Total mobilized: <span style={{ color: 'hsl(var(--primary))' }}>₵ {totalRaised.toLocaleString()}</span>
             </h2>
-            <div className="max-w-md">
-              <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden border border-white/5 mb-2">
+            
+            <div style={{ maxWidth: 448 }}>
+              <div style={{ height: 8, width: '100%', background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', marginBottom: 8 }}>
                 <div 
-                  className="h-full bg-primary shadow-[0_0_15px_rgba(var(--brand-green-rgb),0.5)] transition-all duration-1000"
-                  style={{ width: '68%' }} 
+                  style={{ 
+                    height: '100%', 
+                    background: 'hsl(var(--primary))', 
+                    boxShadow: '0 0 15px rgba(0,107,63,0.5)', 
+                    transition: 'all 1s ease-out',
+                    width: '68%' 
+                  }} 
                 />
               </div>
-              <p className="text-micro font-bold text-white/40 tracking-tight">68% of quarterly tactical goal achieved</p>
+              <p style={{ fontSize: 10.5, fontWeight: 800, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif" }}>68% of quarterly tactical goal achieved</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white/5 p-6 border border-white/10 backdrop-blur-md rounded-sm">
-              <p className="text-micro font-bold text-white/40 tracking-tight mb-2">Active patriots</p>
-              <h3 className="text-2xl font-bold text-white mb-0">{totalMembers.toLocaleString()}</h3>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+            <div style={{ background: 'rgba(255,255,255,0.05)', padding: 24, border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', borderRadius: 4 }}>
+              <p style={{ fontSize: 10.5, fontWeight: 800, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 8, fontFamily: "'Public Sans', sans-serif" }}>Active patriots</p>
+              <h3 style={{ fontSize: 24, fontWeight: 900, color: '#fff', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>{totalMembers.toLocaleString()}</h3>
             </div>
-            <div className="bg-white/5 p-6 border border-white/10 backdrop-blur-md rounded-sm">
-              <p className="text-micro font-bold text-white/40 tracking-tight mb-2">Regions covered</p>
-              <h3 className="text-2xl font-bold text-white mb-0">16/16</h3>
+            <div style={{ background: 'rgba(255,255,255,0.05)', padding: 24, border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', borderRadius: 4 }}>
+              <p style={{ fontSize: 10.5, fontWeight: 800, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 8, fontFamily: "'Public Sans', sans-serif" }}>Regions covered</p>
+              <h3 style={{ fontSize: 24, fontWeight: 900, color: '#fff', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>16/16</h3>
             </div>
           </div>
         </div>

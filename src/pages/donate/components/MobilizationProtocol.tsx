@@ -1,7 +1,4 @@
 import type { FormEvent } from 'react'
-import { Phone, Check, Activity, Globe, ArrowDownToLine, Heart } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/neon-button'
 import type { DonationCampaign } from '@/types/admin'
 
 interface FormData {
@@ -33,6 +30,22 @@ interface MobilizationProtocolProps {
   onSubmit: (e: FormEvent) => void
 }
 
+function SelIcon() {
+  return (
+    <span
+      className="material-symbols-outlined"
+      style={{
+        position: 'absolute', right: 0, top: '50%',
+        transform: 'translateY(-50%)',
+        fontSize: 18, color: 'hsl(var(--on-surface-muted))',
+        pointerEvents: 'none',
+      }}
+    >
+      expand_more
+    </span>
+  )
+}
+
 export function MobilizationProtocol({
   activeStep,
   setActiveStep,
@@ -45,42 +58,77 @@ export function MobilizationProtocol({
   onSubmit
 }: MobilizationProtocolProps) {
   const steps = [
-    { step: 1, label: 'Capital transfer', id: 'payment-section', color: 'bg-brand-red' },
-    { step: 2, label: 'Profile details', id: 'donor-section', color: 'bg-brand-gold' },
-    { step: 3, label: 'Patriot link', id: 'link-section', color: 'bg-brand-green' },
-    { step: 4, label: 'Verification', id: 'receipt-section', color: 'bg-brand-green' }
+    { step: 1, label: 'Capital transfer', id: 'payment-section', color: 'hsl(var(--destructive))' },
+    { step: 2, label: 'Profile details', id: 'donor-section', color: 'hsl(var(--accent))' },
+    { step: 3, label: 'Patriot link', id: 'link-section', color: 'hsl(var(--primary))' },
+    { step: 4, label: 'Verification', id: 'receipt-section', color: 'hsl(var(--primary))' }
   ]
 
   return (
-    <div className="flex flex-col lg:flex-row gap-16 items-start pt-20">
+    <div style={{ display: 'flex', flexDirection: 'row', gap: 64, alignItems: 'flex-start', paddingTop: 80 }} className="lg:flex-row flex-col">
       {/* sidebar navigation */}
-      <aside className="hidden lg:block w-[280px] shrink-0 sticky top-24">
-        <div className="bg-white border border-stone-100 p-8 shadow-sm">
-          <h4 className="text-[10px] font-bold text-stone-400 mb-8 tracking-widest">deployment protocol</h4>
-          <div className="space-y-8">
+      <aside className="desktop-only" style={{ width: 280, flexShrink: 0, position: 'sticky', top: 96 }}>
+        <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', padding: 32 }}>
+          <h4 style={{ 
+            fontSize: 10, 
+            fontWeight: 800, 
+            color: 'hsl(var(--on-surface-muted))', 
+            marginBottom: 32, 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.15em',
+            fontFamily: "'Public Sans', sans-serif"
+          }}>Deployment Protocol</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
             {steps.map((s) => (
               <button 
                 key={s.step}
-                onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                className="flex items-center gap-4 group w-full text-left"
+                onClick={() => {
+                  const el = document.getElementById(s.id)
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                  setActiveStep(s.step)
+                }}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 16, 
+                  width: '100%', 
+                  textAlign: 'left', 
+                  background: 'none', 
+                  border: 'none', 
+                  padding: 0, 
+                  cursor: 'pointer' 
+                }}
               >
-                <div className={cn(
-                  "w-10 h-10 flex items-center justify-center text-xs font-bold transition-all",
-                  activeStep === s.step 
-                    ? `${s.color} text-white shadow-lg scale-110` 
-                    : "bg-stone-50 text-stone-400 group-hover:bg-stone-100 group-hover:text-stone-600"
-                )}>
+                <div style={{ 
+                  width: 40, 
+                  height: 40, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: 12, 
+                  fontWeight: 900, 
+                  transition: 'all 0.3s ease',
+                  background: activeStep === s.step ? s.color : 'hsl(var(--container-low))',
+                  color: activeStep === s.step ? '#fff' : 'hsl(var(--on-surface-muted))',
+                  borderRadius: 4,
+                  transform: activeStep === s.step ? 'scale(1.1)' : 'scale(1)'
+                }}>
                   {s.step}
                 </div>
                 <div>
-                  <span className={cn(
-                    "text-xs font-bold tracking-tight block transition-colors",
-                    activeStep === s.step ? "text-stone-900" : "text-stone-400"
-                  )}>
+                  <span style={{ 
+                    fontSize: 12, 
+                    fontWeight: 800, 
+                    letterSpacing: '-0.01em', 
+                    display: 'block', 
+                    transition: 'colors 0.3s ease',
+                    color: activeStep === s.step ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif"
+                  }}>
                     {s.label}
                   </span>
                   {activeStep === s.step && (
-                    <span className="text-[9px] font-medium text-emerald-600 animate-pulse">in progress</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>In Progress</span>
                   )}
                 </div>
               </button>
@@ -89,60 +137,104 @@ export function MobilizationProtocol({
         </div>
       </aside>
 
-      <div className="flex-1 space-y-12 w-full">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 48, width: '100%' }}>
         {/* step 1: capital transfer */}
-        <div id="payment-section" className="bg-stone-900 text-white p-8 md:p-10 shadow-2xl relative overflow-hidden flex flex-col scroll-mt-[180px] rounded-none">
-          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transform translate-x-4 -translate-y-4">
-            <Phone className="w-32 h-32 text-brand-green" />
+        <div id="payment-section" style={{ 
+          background: 'hsl(var(--on-surface))', 
+          color: '#fff', 
+          padding: 'clamp(24px, 5vw, 40px)', 
+          position: 'relative', 
+          overflow: 'hidden', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          scrollMarginTop: 180 
+        }}>
+          <div style={{ 
+            position: 'absolute', 
+            top: 0, 
+            right: 0, 
+            padding: 16, 
+            opacity: 0.05, 
+            pointerEvents: 'none', 
+            transform: 'translateX(16px) translateY(-16px)' 
+          }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 128, color: 'hsl(var(--primary))' }}>call</span>
           </div>
           
-          <div className="flex items-center gap-4 mb-10">
-            <span className="w-8 h-8 bg-brand-red text-white flex items-center justify-center font-meta font-bold text-xs">01</span>
-            <h3 className="font-bold text-white font-meta tracking-tight text-xl">Capital transfer</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
+            <span style={{ 
+              width: 32, 
+              height: 32, 
+              background: 'hsl(var(--destructive))', 
+              color: '#fff', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontWeight: 900, 
+              fontSize: 12,
+              fontFamily: "'Public Sans', sans-serif"
+            }}>01</span>
+            <h3 style={{ fontWeight: 900, color: '#fff', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.02em', fontSize: 20 }}>Capital transfer</h3>
           </div>
           
-          <div className="space-y-10 flex-1">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 40, flex: 1 }}>
             <div>
-              <p className="text-micro font-medium tracking-tight text-white/30 font-meta mb-2">account holder</p>
-              <p className="font-bold text-brand-green text-2xl tracking-tight leading-none font-meta">Paul Kofi Agyekum</p>
+              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontFamily: "'Public Sans', sans-serif", marginBottom: 8 }}>account holder</p>
+              <p style={{ fontWeight: 900, color: 'hsl(var(--primary))', fontSize: 24, letterSpacing: '-0.02em', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>Paul Kofi Agyekum</p>
             </div>
             <div>
-              <p className="text-micro font-medium tracking-tight text-white/30 font-meta mb-2">momo identifier</p>
-              <p className="font-bold font-meta tracking-tight text-white text-2xl">+233 538 873 569</p>
+              <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontFamily: "'Public Sans', sans-serif", marginBottom: 8 }}>momo identifier</p>
+              <p style={{ fontWeight: 900, color: '#fff', fontSize: 24, letterSpacing: '-0.02em', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>+233 538 873 569</p>
             </div>
-            <div className="grid grid-cols-1 gap-8 pt-10 border-t border-white/10">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32, paddingTop: 40, borderTop: '1px solid rgba(255,255,255,0.1)' }} className="md:grid-cols-2">
               <div>
-                <p className="text-micro font-medium tracking-tight text-white/30 font-meta mb-2">network hub</p>
-                <p className="text-white/90 font-bold font-meta text-base">MTN Mobile Money</p>
+                <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontFamily: "'Public Sans', sans-serif", marginBottom: 8 }}>network hub</p>
+                <p style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 800, fontFamily: "'Public Sans', sans-serif", fontSize: 16 }}>MTN Mobile Money</p>
               </div>
               <div>
-                <p className="text-micro font-medium tracking-tight text-white/30 font-meta mb-2">deployment reference</p>
-                <p className="text-brand-gold font-bold font-meta text-base italic border-b border-brand-gold/30 pb-1">"the base"</p>
+                <p style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontFamily: "'Public Sans', sans-serif", marginBottom: 8 }}>deployment reference</p>
+                <p style={{ color: 'hsl(var(--accent))', fontWeight: 800, fontFamily: "'Public Sans', sans-serif", fontSize: 16, fontStyle: 'italic', borderBottom: '1px solid rgba(218,165,32,0.3)', paddingBottom: 4 }}>"the base"</p>
               </div>
             </div>
           </div>
 
-          <div className="mt-12 p-6 bg-white/5 border border-white/10 flex items-start gap-4">
-            <div className="text-brand-green mt-1">
-              <Check className="w-4 h-4" />
-            </div>
-            <p className="text-xs text-white/40 leading-relaxed font-bold tracking-tight">
+          <div style={{ marginTop: 48, padding: 24, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))', marginTop: 2 }}>check</span>
+            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, fontWeight: 800, letterSpacing: '-0.01em', fontFamily: "'Public Sans', sans-serif" }}>
               Complete transfer protocol first, then capture receipt for verification.
             </p>
           </div>
         </div>
 
         {/* step 2: contributor profile */}
-        <div id="donor-section" className="bg-white border border-stone-200 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px]">
-          <div className="flex items-center gap-4 mb-10">
-            <span className="w-8 h-8 bg-brand-gold text-[#92400e] flex items-center justify-center font-meta font-bold text-xs">02</span>
-            <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl">Contributor profile</h3>
+        <div id="donor-section" style={{ 
+          background: '#fff', 
+          border: '1px solid hsl(var(--border))', 
+          padding: 'clamp(24px, 5vw, 40px)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          scrollMarginTop: 180 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
+            <span style={{ 
+              width: 32, 
+              height: 32, 
+              background: 'hsl(var(--accent))', 
+              color: '#fff', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontWeight: 900, 
+              fontSize: 12,
+              fontFamily: "'Public Sans', sans-serif"
+            }}>02</span>
+            <h3 style={{ fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.02em', fontSize: 20 }}>Contributor profile</h3>
           </div>
 
-          <form onSubmit={onSubmit} id="donationForm" className="space-y-8 flex-1">
-            <div className="space-y-2">
-              <label htmlFor="fullName" className="text-micro font-medium text-stone-400 font-meta tracking-tight">
-                identification <span className="text-brand-red">*</span>
+          <form onSubmit={onSubmit} id="donationForm" style={{ display: 'flex', flexDirection: 'column', gap: 32, flex: 1 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label htmlFor="fullName" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
+                identification <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
               <input 
                 id="fullName" 
@@ -151,13 +243,25 @@ export function MobilizationProtocol({
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 onFocus={() => setActiveStep(2)} 
-                className="w-full h-12 px-0 text-stone-900 text-sm bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition-all font-medium placeholder:text-stone-200" 
+                style={{ 
+                  width: '100%', 
+                  height: 48, 
+                  background: 'transparent', 
+                  border: 'none', 
+                  borderBottom: '1px solid hsl(var(--border))', 
+                  color: 'hsl(var(--on-surface))', 
+                  fontSize: 14, 
+                  fontWeight: 700, 
+                  fontFamily: "'Public Sans', sans-serif",
+                  outline: 'none',
+                  padding: 0
+                }} 
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="phone" className="text-micro font-medium text-stone-400 font-meta tracking-tight">
-                contact line <span className="text-brand-red">*</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label htmlFor="phone" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
+                contact line <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
               <input 
                 id="phone" 
@@ -166,14 +270,26 @@ export function MobilizationProtocol({
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 onFocus={() => setActiveStep(2)} 
-                className="w-full h-12 px-0 text-stone-900 text-sm bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition-all font-medium placeholder:text-stone-200" 
+                style={{ 
+                  width: '100%', 
+                  height: 48, 
+                  background: 'transparent', 
+                  border: 'none', 
+                  borderBottom: '1px solid hsl(var(--border))', 
+                  color: 'hsl(var(--on-surface))', 
+                  fontSize: 14, 
+                  fontWeight: 700, 
+                  fontFamily: "'Public Sans', sans-serif",
+                  outline: 'none',
+                  padding: 0
+                }} 
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label htmlFor="amount" className="text-micro font-medium text-stone-400 font-meta tracking-tight">
-                  Amount (₵) <span className="text-brand-red">*</span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label htmlFor="amount" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
+                  Amount (₵) <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
                 <input 
                   id="amount" 
@@ -183,80 +299,146 @@ export function MobilizationProtocol({
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   onFocus={() => setActiveStep(2)} 
-                  className="w-full h-12 px-0 text-stone-900 text-sm bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition-all font-medium font-meta placeholder:text-stone-200" 
+                  style={{ 
+                    width: '100%', 
+                    height: 48, 
+                    background: 'transparent', 
+                    border: 'none', 
+                    borderBottom: '1px solid hsl(var(--border))', 
+                    color: 'hsl(var(--on-surface))', 
+                    fontSize: 14, 
+                    fontWeight: 700, 
+                    fontFamily: "'Public Sans', sans-serif",
+                    outline: 'none',
+                    padding: 0
+                  }} 
                 />
               </div>
-              <div className="space-y-2">
-                <label htmlFor="country" className="text-micro font-medium text-stone-400 font-meta tracking-tight">
-                  jurisdiction <span className="text-brand-red">*</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label htmlFor="country" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
+                  jurisdiction <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
-                <select 
-                  id="country" 
-                  required 
-                  value={formData.country}
-                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                  onFocus={() => setActiveStep(2)} 
-                  disabled={countriesLoading}
-                  className="w-full h-12 px-0 text-stone-900 text-sm bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition-all font-medium appearance-none disabled:opacity-50"
-                >
-                  {countriesLoading ? (
-                    <option>synchronizing...</option>
-                  ) : countries.length > 0 ? (
-                    countries.map((c) => (
-                      <option key={c.id} value={c.name}>{c.name}</option>
-                    ))
-                  ) : (
-                    <option value="ghana">ghana</option>
-                  )}
-                </select>
+                <div style={{ position: 'relative' }}>
+                  <select 
+                    id="country" 
+                    required 
+                    value={formData.country}
+                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                    onFocus={() => setActiveStep(2)} 
+                    disabled={countriesLoading}
+                    style={{ 
+                      width: '100%', 
+                      height: 48, 
+                      background: 'transparent', 
+                      border: 'none', 
+                      borderBottom: '1px solid hsl(var(--border))', 
+                      color: 'hsl(var(--on-surface))', 
+                      fontSize: 14, 
+                      fontWeight: 700, 
+                      fontFamily: "'Public Sans', sans-serif",
+                      outline: 'none',
+                      appearance: 'none',
+                      paddingRight: 32,
+                      paddingLeft: 0,
+                      borderRadius: 0
+                    }}
+                  >
+                    {countriesLoading ? (
+                      <option>synchronizing...</option>
+                    ) : countries.length > 0 ? (
+                      countries.map((c) => (
+                        <option key={c.id} value={c.name}>{c.name}</option>
+                      ))
+                    ) : (
+                      <option value="ghana">ghana</option>
+                    )}
+                  </select>
+                  <SelIcon />
+                </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="campaign" className="text-micro font-medium text-stone-400 font-meta tracking-tight">
-                target cell <span className="text-brand-red">*</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label htmlFor="campaign" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
+                target cell <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
-              <select 
-                id="campaign" 
-                required 
-                value={formData.campaignId}
-                onChange={(e) => setFormData({ ...formData, campaignId: e.target.value })}
-                onFocus={() => setActiveStep(2)} 
-                className="w-full h-12 px-0 text-stone-900 text-sm bg-transparent border-b border-stone-200 focus:border-stone-900 outline-none transition-all font-medium appearance-none"
-              >
-                {campaigns.map(c => (
-                  <option key={c.id} value={c.id}>{c.title}</option>
-                ))}
-              </select>
+              <div style={{ position: 'relative' }}>
+                <select 
+                  id="campaign" 
+                  required 
+                  value={formData.campaignId}
+                  onChange={(e) => setFormData({ ...formData, campaignId: e.target.value })}
+                  onFocus={() => setActiveStep(2)} 
+                  style={{ 
+                    width: '100%', 
+                    height: 48, 
+                    background: 'transparent', 
+                    border: 'none', 
+                    borderBottom: '1px solid hsl(var(--border))', 
+                    color: 'hsl(var(--on-surface))', 
+                    fontSize: 14, 
+                    fontWeight: 700, 
+                    fontFamily: "'Public Sans', sans-serif",
+                    outline: 'none',
+                    appearance: 'none',
+                    paddingRight: 32,
+                    paddingLeft: 0,
+                    borderRadius: 0
+                  }}
+                >
+                  {campaigns.map(c => (
+                    <option key={c.id} value={c.id}>{c.title}</option>
+                  ))}
+                </select>
+                <SelIcon />
+              </div>
             </div>
           </form>
         </div>
 
         {/* step 3: link patriot */}
-        <div id="link-section" className="bg-white border border-stone-200 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px]">
-          <div className="flex items-center gap-4 mb-10">
-            <span className="w-8 h-8 bg-stone-900 text-white flex items-center justify-center font-meta font-bold text-xs">03</span>
-            <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl">
+        <div id="link-section" style={{ 
+          background: '#fff', 
+          border: '1px solid hsl(var(--border))', 
+          padding: 'clamp(24px, 5vw, 40px)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          scrollMarginTop: 180 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
+            <span style={{ 
+              width: 32, 
+              height: 32, 
+              background: 'hsl(var(--on-surface))', 
+              color: '#fff', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontWeight: 900, 
+              fontSize: 12,
+              fontFamily: "'Public Sans', sans-serif"
+            }}>03</span>
+            <h3 style={{ fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.02em', fontSize: 20 }}>
               {isLoggedIn ? 'Patriot profile' : 'Link patriot'}
             </h3>
           </div>
 
-          <div className="space-y-8 flex-1 flex flex-col">
-              <div className="bg-stone-50 border border-stone-100 p-8 rounded-none space-y-8">
-                <div className="flex items-center gap-3">
-                  <Activity className="w-5 h-5 text-brand-green" />
-                  <h4 className="font-bold text-stone-900 font-meta tracking-tight text-sm">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 32, flex: 1 }}>
+              <div style={{ background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', padding: 32, display: 'flex', flexDirection: 'column', gap: 32 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--primary))' }}>vital_signs</span>
+                  <h4 style={{ fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.01em', fontSize: 14, margin: 0 }}>
                     {isLoggedIn ? 'active session' : 'movement id'}
                   </h4>
                 </div>
-                <p className="text-xs text-stone-500 font-medium leading-relaxed tracking-tight">
+                <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontWeight: 700, lineHeight: 1.6, letterSpacing: '-0.01em', fontFamily: "'Public Sans', sans-serif", margin: 0 }}>
                   {isLoggedIn 
-                    ? 'automatic recognition active. this deployment will be linked to your patriot profile.'
-                    : 'enter your movement identification number to synchronize this capital with your profile.'
+                    ? 'Automatic recognition active. This deployment will be linked to your patriot profile.'
+                    : 'Enter your movement identification number to synchronize this capital with your profile.'
                   }
                 </p>
-                <div className="space-y-2">
-                  <label htmlFor="membershipNumber" className="text-micro font-medium text-stone-400 font-meta tracking-tight">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label htmlFor="membershipNumber" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                     movement id
                   </label>
                   <input 
@@ -265,70 +447,143 @@ export function MobilizationProtocol({
                     value={formData.membershipNumber}
                     onChange={(e) => setFormData({ ...formData, membershipNumber: e.target.value })}
                     onFocus={() => setActiveStep(3)}
-                    className="w-full bg-white px-4 h-12 text-stone-900 text-sm border border-stone-200 focus:border-stone-900 outline-none transition-all font-medium shadow-sm" 
+                    style={{ 
+                      width: '100%', 
+                      height: 48, 
+                      background: '#fff', 
+                      border: '1px solid hsl(var(--border))', 
+                      color: 'hsl(var(--on-surface))', 
+                      fontSize: 14, 
+                      fontWeight: 700, 
+                      fontFamily: "'Public Sans', sans-serif",
+                      outline: 'none',
+                      padding: '0 16px'
+                    }} 
                   />
                 </div>
-                <label className="flex items-center gap-4 cursor-pointer group pt-2">
-                  <div className="relative flex items-center">
+                <label style={{ display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', paddingTop: 8 }}>
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                     <input 
                       type="checkbox" 
                       checked={formData.showOnDashboard}
                       onChange={(e) => setFormData({ ...formData, showOnDashboard: e.target.checked })}
                       onFocus={() => setActiveStep(3)}
-                      className="peer h-5 w-5 cursor-pointer appearance-none border border-stone-300 rounded-none checked:bg-brand-green checked:border-brand-green transition-all" 
+                      style={{ 
+                        height: 20, 
+                        width: 20, 
+                        cursor: 'pointer', 
+                        appearance: 'none', 
+                        border: '1px solid hsl(var(--on-surface-muted))', 
+                        borderRadius: 0,
+                        background: formData.showOnDashboard ? 'hsl(var(--primary))' : 'transparent',
+                        borderColor: formData.showOnDashboard ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))'
+                      }} 
                     />
-                    <Check className="absolute h-4 w-4 text-white opacity-0 peer-checked:opacity-100 left-0.5 pointer-events-none transition-opacity" />
+                    {formData.showOnDashboard && (
+                      <span className="material-symbols-outlined" style={{ position: 'absolute', color: '#fff', fontSize: 16, left: 2, pointerEvents: 'none' }}>check</span>
+                    )}
                   </div>
-                  <span className="text-xs text-stone-600 font-medium tracking-tight group-hover:text-stone-900 transition-colors">Publish to personal dossier</span>
+                  <span style={{ fontSize: 12, color: 'hsl(var(--on-surface))', fontWeight: 800, letterSpacing: '-0.01em', fontFamily: "'Public Sans', sans-serif" }}>Publish to personal dossier</span>
                 </label>
               </div>
           </div>
         </div>
 
         {/* step 4: audit trail */}
-        <div id="receipt-section" className="bg-white border border-stone-200 shadow-sm p-8 md:p-10 flex flex-col scroll-mt-[180px]">
-          <div className="flex items-center gap-4 mb-10">
-            <span className="w-8 h-8 bg-brand-green text-white flex items-center justify-center font-meta font-bold text-xs">04</span>
-            <h3 className="font-bold text-stone-900 font-meta tracking-tight text-xl">Audit trail</h3>
+        <div id="receipt-section" style={{ 
+          background: '#fff', 
+          border: '1px solid hsl(var(--border))', 
+          padding: 'clamp(24px, 5vw, 40px)', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          scrollMarginTop: 180 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
+            <span style={{ 
+              width: 32, 
+              height: 32, 
+              background: 'hsl(var(--primary))', 
+              color: '#fff', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontWeight: 900, 
+              fontSize: 12,
+              fontFamily: "'Public Sans', sans-serif"
+            }}>04</span>
+            <h3 style={{ fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.02em', fontSize: 20 }}>Audit trail</h3>
           </div>
 
-          <div className="space-y-8 flex-1 flex flex-col">
-              <div className="border-2 border-dashed border-stone-200 bg-stone-50 p-12 text-center hover:bg-stone-100 hover:border-stone-400 transition-all group cursor-pointer relative flex-1 flex flex-col justify-center">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 32, flex: 1 }}>
+              <div style={{ 
+                border: '2px dashed hsl(var(--border))', 
+                background: 'hsl(var(--container-low))', 
+                padding: 48, 
+                textAlign: 'center', 
+                transition: 'all 0.3s ease', 
+                position: 'relative', 
+                flex: 1, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                justifyContent: 'center' 
+              }}>
                 <input 
                   type="file" 
                   form="donationForm" 
                   accept=".jpg,.jpeg,.png,.pdf" 
                   onFocus={() => setActiveStep(4)}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer', zIndex: 10 }} 
                   id="receipt" 
                   required 
                 />
-                <div className="w-16 h-16 bg-white shadow-sm border border-stone-100 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
-                  <ArrowDownToLine className="w-6 h-6 text-stone-300 group-hover:text-brand-green transition-colors" />
+                <div style={{ 
+                  width: 64, 
+                  height: 64, 
+                  background: '#fff', 
+                  border: '1px solid hsl(var(--border))', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  margin: '0 auto 24px', 
+                  transition: 'transform 0.5s ease' 
+                }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--on-surface-muted))' }}>download</span>
                 </div>
-                <p className="text-tiny text-stone-900 font-bold tracking-tight mb-1 font-meta">synchronize receipt</p>
-                <p className="text-micro text-stone-400 font-bold tracking-tight">jpg, png, or pdf</p>
+                <p style={{ fontSize: 13, color: 'hsl(var(--on-surface))', fontWeight: 900, letterSpacing: '-0.01em', marginBottom: 4, fontFamily: "'Public Sans', sans-serif" }}>synchronize receipt</p>
+                <p style={{ fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', fontWeight: 900, letterSpacing: '0.05em', margin: 0, textTransform: 'uppercase' }}>jpg, png, or pdf</p>
               </div>
 
-              <div className="bg-stone-50 p-6 border border-stone-100">
-                <div className="flex items-center gap-3 mb-3">
-                  <Globe className="w-5 h-5 text-brand-green" />
-                  <h4 className="font-bold text-stone-900 font-meta tracking-tight text-micro">global diaspora hub</h4>
+              <div style={{ background: 'hsl(var(--container-low))', padding: 24, border: '1px solid hsl(var(--border))' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--primary))' }}>language</span>
+                  <h4 style={{ fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.01em', fontSize: 10.5, margin: 0, textTransform: 'uppercase' }}>global diaspora hub</h4>
                 </div>
-                <p className="text-xs text-stone-500 leading-relaxed font-medium tracking-tight">
-                  use deployment code <span className="text-brand-green font-bold">thebasem</span> on taptap for resource scaling bonus.
+                <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, fontWeight: 700, letterSpacing: '-0.01em', fontFamily: "'Public Sans', sans-serif", margin: 0 }}>
+                  Use deployment code <span style={{ color: 'hsl(var(--primary))', fontWeight: 900 }}>thebasem</span> on taptap for resource scaling bonus.
                 </p>
               </div>
 
-              <Button
+              <button
                 type="submit"
                 form="donationForm"
-                variant="primary"
-                className="w-full h-14 flex items-center justify-center gap-3 rounded-none shadow-xl shadow-brand-green/10 text-tiny font-bold tracking-tight"
+                style={{
+                  width: '100%',
+                  height: 56,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+                  padding: '0 32px',
+                  background: 'hsl(var(--primary))',
+                  color: '#fff',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 900, fontSize: 13,
+                  borderRadius: 4, border: 'none',
+                  cursor: 'pointer',
+                  textTransform: 'lowercase',
+                  boxShadow: '0 12px 32px -12px rgba(0,107,63,0.3)'
+                }}
               >
-                <Heart className="w-5 h-5" />
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>favorite</span>
                 Authorize contribution
-              </Button>
+              </button>
           </div>
         </div>
       </div>

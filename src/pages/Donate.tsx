@@ -1,8 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
-import { Heart, Check } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
 import { BrandLine } from '@/components/ui/BrandLine'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail, DonationCampaign } from '@/types/admin'
 import type { RealtimeChannel } from '@supabase/supabase-js'
@@ -20,6 +18,8 @@ import { OperationalTransparency } from './donate/components/OperationalTranspar
 import { AuditModal } from './donate/components/AuditModal'
 
 export default function Donate() {
+  const location = useLocation()
+  const isDashboard = location.pathname.startsWith('/dashboard')
   const [submitted, setSubmitted] = useState(false)
   const [activeStep, setActiveStep] = useState(1)
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
@@ -214,23 +214,124 @@ export default function Donate() {
     }
   }
 
+  if (isDashboard) {
+    return (
+      <div className="main">
+        <div style={{ marginBottom: 24 }}>
+          <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 26, color: 'hsl(var(--on-surface))', letterSpacing: '-0.02em', marginBottom: 4 }}>Support the Movement</h1>
+          <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 600 }}>Your contributions fuel the growth and sustainability of the movement.</p>
+        </div>
+
+        <HeroStats totalRaised={globalStats.totalRaised} totalMembers={globalStats.totalMembers} />
+
+        <div style={{ marginTop: 40 }}>
+          {submitted ? (
+            <div className="panel" style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center' }}>
+              <div style={{ width: 72, height: 72, background: 'rgba(0,107,63,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', borderRadius: '50%' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--primary))' }}>check</span>
+              </div>
+              <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 22, color: 'hsl(var(--on-surface))', marginBottom: 12, letterSpacing: '-0.02em' }}>Contribution Secured</h2>
+              <p style={{ color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, marginBottom: 28, fontFamily: "'Public Sans', sans-serif", fontSize: 13 }}>
+                Your capital has been recorded in the mobilization queue. Verification is in progress.
+              </p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={() => setSubmitted(false)} className="btn btn-primary">New Contribution</button>
+                <Link to="/dashboard" className="btn btn-outline" style={{ textDecoration: 'none' }}>View Dossier</Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <StrategicPriorities
+                loading={loading}
+                campaigns={campaigns}
+                onSelectCampaign={(id) => {
+                  setFormData(prev => ({ ...prev, campaignId: id }))
+                  document.getElementById('donor-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }}
+              />
+              <MobilizationProtocol
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+                formData={formData}
+                setFormData={setFormData}
+                isLoggedIn={isLoggedIn}
+                countriesLoading={countriesLoading}
+                countries={countries}
+                campaigns={campaigns}
+                onSubmit={handleSubmit}
+              />
+              <VictoriesSection pastCampaigns={pastCampaigns} />
+              <OperationalTransparency
+                globalStats={globalStats}
+                historyTab={historyTab}
+                setHistoryTab={setHistoryTab}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                contributionFilter={contributionFilter}
+                setContributionFilter={setContributionFilter}
+                loading={loading}
+                publicHistory={publicHistory}
+                personalHistory={personalHistory}
+                spendingHistory={spendingHistory}
+                onDownload={handleDownload}
+                onOpenAudit={() => setIsHistoryModalOpen(true)}
+              />
+            </>
+          )}
+        </div>
+
+        <AuditModal
+          isOpen={isHistoryModalOpen}
+          onClose={() => setIsHistoryModalOpen(false)}
+          publicHistory={publicHistory}
+          contributionsCount={globalStats.totalMembers}
+          onDownload={handleDownload}
+          onContribute={() => {
+            setIsHistoryModalOpen(false)
+            document.getElementById('payment-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }}
+        />
+      </div>
+    )
+  }
+
   return (
-    <main className="bg-background min-h-screen pb-24">
-      <SEO 
-        title="support the movement"
-        description="your contributions for the growth and sustainability of the base movement. join citizens in ghana and across the diaspora working for a more productive future."
+    <main style={{ background: '#fff', minHeight: '100vh', paddingBottom: 96 }}>
+      <SEO
+        title="Support the Movement"
+        description="Your contributions fuel the growth and sustainability of the movement. Join citizens in Ghana and across the diaspora working for a more productive future."
         canonical="/donate"
       />
-      <header className="bg-white border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+      
+      <header style={{ background: '#fff', borderBottom: '1px solid hsl(var(--border))' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: 'clamp(48px, 8vw, 64px) clamp(16px, 4vw, 32px)' }}>
           <Breadcrumbs />
-          <div className="mt-6">
-            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
-              <Heart className="w-10 h-10 text-brand-red" />
-              Support the movement
+          <div style={{ marginTop: 24 }}>
+            <h1 style={{ 
+              color: 'hsl(var(--on-surface))', 
+              fontSize: 'clamp(32px, 8vw, 64px)', 
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 900, 
+              letterSpacing: '-0.04em', 
+              marginBottom: 24, 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 16,
+              lineHeight: 1.05
+            }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 'clamp(32px, 8vw, 48px)', color: 'hsl(var(--destructive))' }}>favorite</span>
+              Support the Movement
             </h1>
             <BrandLine />
-            <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
+            <p style={{ 
+              color: 'hsl(var(--on-surface-muted))', 
+              maxWidth: 768, 
+              marginTop: 24, 
+              lineHeight: 1.6, 
+              fontWeight: 700, 
+              fontSize: 'clamp(14px, 2vw, 16px)',
+              fontFamily: "'Public Sans', sans-serif"
+            }}>
               Your contributions fuel the growth and sustainability of the movement. Join citizens across Ghana and the diaspora in building a more productive and transparent future.
             </p>
           </div>
@@ -242,31 +343,59 @@ export default function Donate() {
         totalMembers={globalStats.totalMembers} 
       />
 
-      <section className="max-w-7xl mx-auto px-4 md:px-8">
+      <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 clamp(16px, 4vw, 32px)' }}>
         {submitted ? (
-          <section className="max-w-2xl mx-auto bg-white border border-stone-200 rounded-none shadow-sm p-16 text-center mt-20">
-            <div className="w-24 h-24 bg-brand-green/10 flex items-center justify-center mx-auto mb-8 rounded-full">
-              <Check className="w-12 h-12 text-brand-green" />
+          <section style={{ 
+            maxWidth: 640, 
+            margin: '80px auto 0', 
+            background: '#fff', 
+            border: '1px solid hsl(var(--border))', 
+            padding: 'clamp(32px, 8vw, 64px)', 
+            textAlign: 'center' 
+          }}>
+            <div style={{ 
+              width: 96, 
+              height: 96, 
+              background: 'rgba(0,107,63,0.1)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              margin: '0 auto 32px', 
+              borderRadius: '50%' 
+            }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--primary))' }}>check</span>
             </div>
-            <h2 className="text-3xl font-bold text-stone-900 mb-4 font-meta">contribution secured</h2>
-            <p className="text-stone-500 leading-relaxed mb-10 font-medium">
-              your capital has been recorded in the mobilization queue. verification is in progress. thank you for your commitment to the movement.
+            <h2 style={{ 
+              fontSize: 'clamp(24px, 5vw, 32px)', 
+              fontWeight: 900, 
+              color: 'hsl(var(--on-surface))', 
+              marginBottom: 16,
+              fontFamily: "'Public Sans', sans-serif",
+              letterSpacing: '-0.02em'
+            }}>Contribution Secured</h2>
+            <p style={{ 
+              color: 'hsl(var(--on-surface-muted))', 
+              lineHeight: 1.6, 
+              marginBottom: 40, 
+              fontWeight: 700,
+              fontFamily: "'Public Sans', sans-serif"
+            }}>
+              Your capital has been recorded in the mobilization queue. Verification is in progress. Thank you for your commitment to the movement.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                variant="solid" 
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, justifyContent: 'center', alignItems: 'center' }} className="md:flex-row">
+              <button 
                 onClick={() => setSubmitted(false)}
-                className="px-8 h-12 lowercase"
+                className="btn btn-primary"
+                style={{ minWidth: 200, height: 48, textTransform: 'lowercase' }}
               >
-                new contribution
-              </Button>
-              <Link to="/dashboard">
-                <Button 
-                  variant="outline" 
-                  className="px-8 h-12 w-full lowercase"
-                >
-                  view dossier
-                </Button>
+                New Contribution
+              </button>
+              <Link 
+                to="/dashboard"
+                className="btn btn-outline"
+                style={{ minWidth: 200, height: 48, textTransform: 'lowercase', textDecoration: 'none' }}
+              >
+                View Dossier
               </Link>
             </div>
           </section>

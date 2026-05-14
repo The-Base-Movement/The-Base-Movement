@@ -1,9 +1,3 @@
-import { Activity, Search, Download, Check } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
-import { ButtonActiveTab } from '@/components/buttons/ButtonActiveTab'
-import { ButtonInactiveTab } from '@/components/buttons/ButtonInactiveTab'
-import { Card } from '@/components/ui/card'
 import { LiveContributionFeed } from '@/components/LiveContributionFeed'
 import type { DonationDetail } from '@/types/admin'
 
@@ -49,148 +43,234 @@ export function OperationalTransparency({
   onOpenAudit
 }: OperationalTransparencyProps) {
   return (
-    <section className="mt-32">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+    <section style={{ marginTop: 128 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32, marginBottom: 48 }} className="md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-stone-900 tracking-tight font-meta flex items-center gap-4">
-            <Activity className="w-8 h-8 text-brand-green" />
+          <h2 style={{ 
+            fontSize: 'clamp(26px, 5vw, 44px)', 
+            fontWeight: 900, 
+            color: 'hsl(var(--on-surface))', 
+            fontFamily: "'Public Sans', sans-serif",
+            letterSpacing: '-0.02em',
+            lineHeight: 1.1,
+            margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16
+          }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 'clamp(32px, 5vw, 48px)', color: 'hsl(var(--primary))' }}>vital_signs</span>
             Capital deployment history
           </h2>
-          <p className="text-sm font-bold text-stone-400 tracking-tight mt-2">Live immutable record of member mobilization.</p>
+          <p style={{ 
+            fontSize: 10.5, 
+            fontWeight: 800, 
+            color: 'hsl(var(--on-surface-muted))', 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.05em', 
+            marginTop: 8,
+            fontFamily: "'Public Sans', sans-serif"
+          }}>Live immutable record of member mobilization.</p>
         </div>
-        <div className="flex gap-4">
-          <div className="px-8 py-4 bg-white border border-stone-200 text-center rounded-none shadow-sm min-w-[160px]">
-            <p className="text-micro font-medium text-stone-400 tracking-tight mb-1">Movement reserves</p>
-            <p className="text-xl font-bold text-stone-900 tracking-tight font-meta">₵ {globalStats.totalRaised.toLocaleString()}</p>
+        <div style={{ display: 'flex', gap: 16 }}>
+          <div style={{ 
+            padding: '16px 32px', 
+            background: '#fff', 
+            border: '1px solid hsl(var(--border))', 
+            textAlign: 'center', 
+            borderRadius: 4,
+            minWidth: 160
+          }}>
+            <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4, fontFamily: "'Public Sans', sans-serif" }}>Movement reserves</p>
+            <p style={{ fontSize: 20, fontWeight: 900, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>₵ {globalStats.totalRaised.toLocaleString()}</p>
           </div>
-          <div className="px-8 py-4 bg-brand-green/10 border border-brand-green/20 text-center rounded-none shadow-sm min-w-[160px]">
-            <p className="text-micro font-medium text-brand-green tracking-tight mb-1">Active patriots</p>
-            <p className="text-xl font-bold text-brand-green tracking-tight font-meta">{globalStats.totalMembers}</p>
+          <div style={{ 
+            padding: '16px 32px', 
+            background: 'hsla(var(--primary), 0.08)', 
+            border: '1px solid hsla(var(--primary), 0.18)', 
+            textAlign: 'center', 
+            borderRadius: 4,
+            minWidth: 160
+          }}>
+            <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4, fontFamily: "'Public Sans', sans-serif" }}>Active patriots</p>
+            <p style={{ fontSize: 20, fontWeight: 900, color: 'hsl(var(--primary))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>{globalStats.totalMembers.toLocaleString()}</p>
           </div>
         </div>
       </div>
 
-      {/* advanced controls & filters */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-8 p-3 bg-stone-50 border border-stone-200 mb-8">
-        <div className="flex bg-stone-100 p-1 rounded-none border border-stone-200 shadow-inner">
-          {historyTab === 'contributions' ? (
-            <ButtonActiveTab 
-              onClick={() => setHistoryTab('contributions')}
-              className="px-10 h-12 text-tiny tracking-tight flex items-center justify-between gap-3"
-            >
-              Mobilization history
-              <div className="w-1.5 h-1.5 bg-white rounded-full" />
-            </ButtonActiveTab>
-          ) : (
-            <ButtonInactiveTab 
-              onClick={() => setHistoryTab('contributions')}
-              className="px-10 h-12 text-tiny tracking-tight border-stone-200 hover:bg-stone-50 shadow-sm"
-            >
-              Mobilization history
-            </ButtonInactiveTab>
-          )}
-          {historyTab === 'spending' ? (
-            <ButtonActiveTab 
-              onClick={() => setHistoryTab('spending')}
-              className="px-10 h-12 text-tiny tracking-tight flex items-center justify-between gap-3"
-            >
-              Spending & allocation
-              <div className="w-1.5 h-1.5 bg-white rounded-full" />
-            </ButtonActiveTab>
-          ) : (
-            <ButtonInactiveTab 
-              onClick={() => setHistoryTab('spending')}
-              className="px-10 h-12 text-tiny tracking-tight border-stone-200 hover:bg-stone-50 shadow-sm"
-            >
-              Spending & allocation
-            </ButtonInactiveTab>
-          )}
+      {/* controls & filters */}
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: 32, 
+        padding: 12, 
+        background: 'hsl(var(--container-low))', 
+        border: '1px solid hsl(var(--border))', 
+        marginBottom: 32,
+        borderRadius: 4
+      }} className="md:flex-row md:items-center md:justify-between">
+        <div style={{ 
+          display: 'flex', 
+          background: 'hsl(var(--container-hi))', 
+          padding: 4, 
+          borderRadius: 4, 
+          border: '1px solid hsl(var(--border))' 
+        }}>
+          <button 
+            onClick={() => setHistoryTab('contributions')}
+            style={{
+              padding: '0 24px',
+              height: 48,
+              fontSize: 12,
+              fontWeight: 800,
+              fontFamily: "'Public Sans', sans-serif",
+              border: 'none',
+              borderRadius: 4,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              background: historyTab === 'contributions' ? 'hsl(var(--primary))' : 'transparent',
+              color: historyTab === 'contributions' ? '#fff' : 'hsl(var(--on-surface-muted))',
+              minWidth: 180
+            }}
+          >
+            Mobilization history
+            {historyTab === 'contributions' && <div style={{ width: 6, height: 6, background: '#fff', borderRadius: '50%' }} />}
+          </button>
+          <button 
+            onClick={() => setHistoryTab('spending')}
+            style={{
+              padding: '0 24px',
+              height: 48,
+              fontSize: 12,
+              fontWeight: 800,
+              fontFamily: "'Public Sans', sans-serif",
+              border: 'none',
+              borderRadius: 4,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              background: historyTab === 'spending' ? 'hsl(var(--primary))' : 'transparent',
+              color: historyTab === 'spending' ? '#fff' : 'hsl(var(--on-surface-muted))',
+              minWidth: 180
+            }}
+          >
+            Spending & allocation
+            {historyTab === 'spending' && <div style={{ width: 6, height: 6, background: '#fff', borderRadius: '50%' }} />}
+          </button>
         </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-6 flex-1 justify-end">
-            <div className="relative w-full max-w-md">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
-              <input 
-                type="text"
-                placeholder="Search mobilization ledger..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 pl-12 pr-4 bg-white border border-stone-200 rounded-none text-sm font-bold tracking-tight focus:border-stone-900 outline-none transition-all placeholder:text-stone-300"
-              />
-            </div>
-            {historyTab === 'contributions' && (
-              <div className="flex items-center gap-2">
-                {contributionFilter === 'all' ? (
-                  <ButtonActiveTab 
-                    onClick={() => setContributionFilter('all')}
-                    className="px-6 h-12 text-tiny tracking-tight transition-all shadow-sm active:scale-95 flex items-center gap-3"
-                  >
-                    All records
-                    <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                  </ButtonActiveTab>
-                ) : (
-                  <ButtonInactiveTab 
-                    onClick={() => setContributionFilter('all')}
-                    className="px-6 h-12 text-tiny tracking-tight transition-all shadow-sm active:scale-95 border-stone-200 hover:bg-stone-50"
-                  >
-                    All records
-                  </ButtonInactiveTab>
-                )}
-                {contributionFilter === 'me' ? (
-                  <ButtonActiveTab 
-                    onClick={() => setContributionFilter('me')}
-                    className="px-6 h-12 text-tiny tracking-tight transition-all shadow-sm active:scale-95 flex items-center gap-3"
-                  >
-                    My records
-                    <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                  </ButtonActiveTab>
-                ) : (
-                  <ButtonInactiveTab 
-                    onClick={() => setContributionFilter('me')}
-                    className="px-6 h-12 text-tiny tracking-tight transition-all shadow-sm active:scale-95 border-stone-200 hover:bg-stone-50"
-                  >
-                    My records
-                  </ButtonInactiveTab>
-                )}
-              </div>
-            )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, flex: 1, justifyContent: 'flex-end' }} className="sm:flex-row sm:items-center">
+          <div style={{ position: 'relative', width: '100%', maxWidth: 448 }}>
+            <span className="material-symbols-outlined" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>search</span>
+            <input 
+              type="text"
+              placeholder="Search mobilization ledger..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ 
+                width: '100%', 
+                height: 48, 
+                paddingLeft: 48, 
+                paddingRight: 16, 
+                background: '#fff', 
+                border: '1px solid hsl(var(--border))', 
+                borderRadius: 4, 
+                fontSize: 13, 
+                fontWeight: 700, 
+                fontFamily: "'Public Sans', sans-serif",
+                outline: 'none'
+              }}
+            />
           </div>
+          {historyTab === 'contributions' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button 
+                onClick={() => setContributionFilter('all')}
+                style={{
+                  height: 48,
+                  padding: '0 20px',
+                  fontSize: 12,
+                  fontWeight: 800,
+                  fontFamily: "'Public Sans', sans-serif",
+                  borderRadius: 4,
+                  cursor: 'pointer',
+                  border: contributionFilter === 'all' ? 'none' : '1px solid hsl(var(--border))',
+                  background: contributionFilter === 'all' ? 'hsl(var(--primary))' : '#fff',
+                  color: contributionFilter === 'all' ? '#fff' : 'hsl(var(--on-surface-muted))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12
+                }}
+              >
+                All records
+                {contributionFilter === 'all' && <div style={{ width: 6, height: 6, background: '#fff', borderRadius: '50%' }} />}
+              </button>
+              <button 
+                onClick={() => setContributionFilter('me')}
+                style={{
+                  height: 48,
+                  padding: '0 20px',
+                  fontSize: 12,
+                  fontWeight: 800,
+                  fontFamily: "'Public Sans', sans-serif",
+                  borderRadius: 4,
+                  cursor: 'pointer',
+                  border: contributionFilter === 'me' ? 'none' : '1px solid hsl(var(--border))',
+                  background: contributionFilter === 'me' ? 'hsl(var(--primary))' : '#fff',
+                  color: contributionFilter === 'me' ? '#fff' : 'hsl(var(--on-surface-muted))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12
+                }}
+              >
+                My records
+                {contributionFilter === 'me' && <div style={{ width: 6, height: 6, background: '#fff', borderRadius: '50%' }} />}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       
-      <div className="flex flex-col gap-12">
-        <div className="w-full">
-          <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white">
-            <div className="p-8">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+        <div style={{ width: '100%' }}>
+          <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
+            <div style={{ padding: 32 }}>
               <LiveContributionFeed />
             </div>
-          </Card>
+          </div>
         </div>
         
-        <div className="w-full">
-          <Card className="rounded-none border-stone-200 shadow-sm overflow-hidden bg-white h-full">
-            <div className="flex items-center justify-between p-8 border-b border-stone-100">
-              <h3 className="font-bold text-stone-900 font-meta tracking-tight text-lg">Tactical deployment ledger</h3>
-              <ButtonPrimary size="sm" onClick={onDownload} className="text-tiny">
-                <Download className="w-4 h-4 mr-2" /> Export CSV
-              </ButtonPrimary>
+        <div style={{ width: '100%' }}>
+          <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 32, borderBottom: '1px solid hsl(var(--border))' }}>
+              <h3 style={{ fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.01em', fontSize: 18, margin: 0, flex: 1 }}>Tactical deployment ledger</h3>
+              <button onClick={onDownload} className="btn btn-primary btn-sm">
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>download</span> Export CSV
+              </button>
             </div>
 
-            {/* desktop table view */}
-            <div className="hidden sm:block overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            {/* desktop table */}
+            <div className="desktop-only" style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }} className="table">
                 <thead>
-                  <tr className="bg-stone-50 border-b border-stone-200">
-                    <th className="p-6 text-micro font-medium text-stone-400 tracking-tight">deployment details</th>
-                    <th className="p-6 text-micro font-medium text-stone-400 tracking-tight">capital</th>
-                    <th className="p-6 text-micro font-medium text-stone-400 tracking-tight">channel</th>
-                    <th className="p-6 text-micro font-medium text-stone-400 tracking-tight">verification</th>
-                    <th className="p-6 text-micro font-medium text-stone-400 tracking-tight text-right">audit</th>
+                  <tr>
+                    <th style={{ padding: 24 }}>deployment details</th>
+                    <th style={{ padding: 24 }}>capital</th>
+                    <th style={{ padding: 24 }}>channel</th>
+                    <th style={{ padding: 24 }}>verification</th>
+                    <th style={{ padding: 24, textAlign: 'right' }}>audit</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-stone-100">
+                <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={5} className="p-16 text-center text-stone-400 text-tiny font-medium tracking-tight italic">
+                      <td colSpan={5} style={{ padding: 64, textAlign: 'center', color: 'hsl(var(--on-surface-muted))', fontSize: 12, fontWeight: 700, fontStyle: 'italic' }}>
                         synchronizing tactical ledger...
                       </td>
                     </tr>
@@ -203,39 +283,40 @@ export function OperationalTransparency({
                       )
                       return filtered.length > 0 ? (
                         filtered.map((item, idx) => (
-                      <tr key={idx} className="hover:bg-stone-50/50 transition-colors group">
-                        <td className="p-6">
-                          <div className="flex flex-col">
-                            <p className="text-sm font-bold text-stone-900 tracking-tight mb-1">{item.fullName}</p>
-                            <p className="text-micro font-medium text-brand-green tracking-tight">{item.campaignTitle || 'Strategic Fund'}</p>
-                            <p className="text-[10px] text-stone-400 font-medium mt-1">{item.date}</p>
+                      <tr key={idx}>
+                        <td style={{ padding: 24 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <p style={{ fontSize: 14, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: '0 0 4px', letterSpacing: '-0.01em' }}>{item.fullName}</p>
+                            <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--primary))', textTransform: 'uppercase', margin: 0 }}>{item.campaignTitle || 'Strategic Fund'}</p>
+                            <p style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 700, margin: '4px 0 0' }}>{item.date}</p>
                           </div>
                         </td>
-                        <td className="p-6">
-                          <span className="text-sm font-bold text-stone-900 font-meta">
+                        <td style={{ padding: 24 }}>
+                          <span style={{ fontSize: 14, fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>
                             {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
                           </span>
                         </td>
-                        <td className="p-6">
-                          <span className="text-xs font-bold text-stone-500">{item.method}</span>
+                        <td style={{ padding: 24 }}>
+                          <span style={{ fontSize: 12, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}>{item.method}</span>
                         </td>
-                        <td className="p-6">
-                          <div className="flex items-center gap-2">
-                            <span className={cn(
-                              "w-2 h-2 rounded-full",
-                              item.status === 'Verified' ? "bg-brand-green shadow-[0_0_8px_var(--brand-green-full)]" : "bg-brand-gold shadow-[0_0_8px_var(--brand-gold-full)]"
-                            )} />
-                            <span className="text-tiny font-medium text-stone-700">{item.status}</span>
+                        <td style={{ padding: 24 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ 
+                              width: 8, height: 8, borderRadius: '50%', 
+                              background: item.status === 'Verified' ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
+                              boxShadow: item.status === 'Verified' ? '0 0 8px hsl(var(--primary))' : '0 0 8px hsl(var(--accent))'
+                            }} />
+                            <span style={{ fontSize: 12, fontWeight: 700, color: 'hsl(var(--on-surface))' }}>{item.status}</span>
                           </div>
                         </td>
-                        <td className="p-6 text-right">
-                          <span className="text-micro font-bold text-stone-300 font-mono">{item.reference}</span>
+                        <td style={{ padding: 24, textAlign: 'right' }}>
+                          <span style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--border))', fontFamily: 'monospace' }}>{item.reference}</span>
                         </td>
                       </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={5} className="p-16 text-center text-stone-400 text-tiny font-bold tracking-tight italic">
+                          <td colSpan={5} style={{ padding: 64, textAlign: 'center', color: 'hsl(var(--on-surface-muted))', fontSize: 12, fontWeight: 700, fontStyle: 'italic' }}>
                             no records found matching search.
                           </td>
                         </tr>
@@ -244,41 +325,42 @@ export function OperationalTransparency({
                   ) : (
                     spendingHistory.length > 0 ? (
                       spendingHistory.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-stone-50/50 transition-colors group">
-                          <td className="p-6">
-                            <div className="flex flex-col">
-                              <p className="text-sm font-bold text-stone-900 tracking-tight mb-1">{item.description}</p>
-                              <p className="text-micro font-bold text-brand-red tracking-tight">{item.chapter} Hub • {item.category}</p>
-                              <p className="text-[10px] text-stone-400 font-medium mt-1">{item.date}</p>
+                        <tr key={idx}>
+                          <td style={{ padding: 24 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                              <p style={{ fontSize: 14, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: '0 0 4px', letterSpacing: '-0.01em' }}>{item.description}</p>
+                              <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--destructive))', textTransform: 'uppercase', margin: 0 }}>{item.chapter} Hub • {item.category}</p>
+                              <p style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 700, margin: '4px 0 0' }}>{item.date}</p>
                             </div>
                           </td>
-                          <td className="p-6">
-                            <span className="text-sm font-bold text-stone-900 font-meta">
+                          <td style={{ padding: 24 }}>
+                            <span style={{ fontSize: 14, fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>
                               {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
                             </span>
                           </td>
-                          <td className="p-6">
-                            <span className={cn(
-                              "text-micro font-bold px-2 py-1 rounded-sm",
-                              item.type === 'Expenditure' ? "bg-brand-red/10 text-brand-red" : "bg-brand-green/10 text-brand-green"
-                            )}>
+                          <td style={{ padding: 24 }}>
+                            <span style={{ 
+                              fontSize: 10, fontWeight: 900, padding: '4px 8px', borderRadius: 2, textTransform: 'uppercase',
+                              background: item.type === 'Expenditure' ? 'hsla(var(--destructive), 0.1)' : 'hsla(var(--primary), 0.1)',
+                              color: item.type === 'Expenditure' ? 'hsl(var(--destructive))' : 'hsl(var(--primary))'
+                            }}>
                               {item.type}
                             </span>
                           </td>
-                          <td className="p-6">
-                            <div className="flex items-center gap-2">
-                              <Check className="w-4 h-4 text-brand-green" />
-                              <span className="text-tiny font-bold text-stone-700">Audited</span>
+                          <td style={{ padding: 24 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>verified</span>
+                              <span style={{ fontSize: 12, fontWeight: 800, color: 'hsl(var(--on-surface))' }}>Audited</span>
                             </div>
                           </td>
-                          <td className="p-6 text-right">
-                            <span className="text-micro font-bold text-stone-300 font-mono">{item.id}</span>
+                          <td style={{ padding: 24, textAlign: 'right' }}>
+                            <span style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--border))', fontFamily: 'monospace' }}>{item.id}</span>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="p-16 text-center text-stone-400 text-tiny font-bold tracking-tight italic">
+                        <td colSpan={5} style={{ padding: 64, textAlign: 'center', color: 'hsl(var(--on-surface-muted))', fontSize: 12, fontWeight: 700, fontStyle: 'italic' }}>
                           no allocation records found.
                         </td>
                       </tr>
@@ -289,7 +371,7 @@ export function OperationalTransparency({
             </div>
 
             {/* mobile card view */}
-            <div className="sm:hidden divide-y divide-stone-100">
+            <div className="mobile-only" style={{ display: 'flex', flexDirection: 'column' }}>
               {(() => {
                 const data = contributionFilter === 'all' ? publicHistory : personalHistory
                 const filtered = data.filter(item => 
@@ -298,49 +380,48 @@ export function OperationalTransparency({
                 )
                 return filtered.length > 0 ? (
                   filtered.map((item, idx) => (
-                    <div key={idx} className="p-8 bg-white space-y-6">
-                      <div className="flex justify-between items-start">
+                    <div key={idx} style={{ padding: 32, borderBottom: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: 24 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <p className="text-sm font-bold text-stone-900 tracking-tight normal-case lowercase">{item.fullName}</p>
-                          <p className="text-micro text-stone-400 font-bold tracking-tight mt-1">{item.date}</p>
+                          <p style={{ fontSize: 14, fontWeight: 900, color: 'hsl(var(--on-surface))', margin: 0, textTransform: 'lowercase' }}>{item.fullName}</p>
+                          <p style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 800, textTransform: 'uppercase', marginTop: 4 }}>{item.date}</p>
                         </div>
-                        <span className="px-3 py-1 text-micro font-bold tracking-tight rounded-none bg-brand-green/10 text-brand-green">
+                        <span style={{ 
+                          padding: '4px 10px', fontSize: 10, fontWeight: 900, textTransform: 'uppercase', borderRadius: 4,
+                          background: 'hsla(var(--primary), 0.08)', color: 'hsl(var(--primary))'
+                        }}>
                           Verified
                         </span>
                       </div>
-                      <div className="flex justify-between items-end">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                         <div>
-                          <p className="text-micro font-bold text-stone-400 tracking-tight mb-1">capital deployment</p>
-                          <p className="text-xl font-bold text-stone-900 font-meta">
+                          <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', marginBottom: 4 }}>capital deployment</p>
+                          <p style={{ fontSize: 20, fontWeight: 900, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>
                             {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-micro font-bold text-stone-400 tracking-tight mb-1">channel</p>
-                          <p className="text-micro font-bold text-stone-900 tracking-tight">{item.method}</p>
+                        <div style={{ textAlign: 'right' }}>
+                          <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', marginBottom: 4 }}>channel</p>
+                          <p style={{ fontSize: 10.5, fontWeight: 900, color: 'hsl(var(--on-surface))', margin: 0 }}>{item.method}</p>
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="p-12 text-center text-stone-400 text-tiny font-bold tracking-tight italic">
+                  <div style={{ padding: 64, textAlign: 'center', color: 'hsl(var(--on-surface-muted))', fontSize: 12, fontWeight: 700, fontStyle: 'italic' }}>
                     no records matching search.
                   </div>
                 )
               })()}
             </div>
 
-            <div className="p-8 bg-stone-50 border-t border-stone-100 flex justify-between items-center">
-              <p className="text-micro font-bold text-stone-400 tracking-tight">live mobilization ledger</p>
-              <ButtonPrimary 
-                size="sm"
-                onClick={onOpenAudit}
-                className="text-micro"
-              >
+            <div style={{ padding: 32, background: 'hsl(var(--container-low))', borderTop: '1px solid hsl(var(--border))', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>live mobilization ledger</p>
+              <button onClick={onOpenAudit} className="btn btn-primary btn-sm">
                 Full operational audit
-              </ButtonPrimary>
+              </button>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </section>
