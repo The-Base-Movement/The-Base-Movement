@@ -3,20 +3,15 @@ import { adminService } from '@/services/adminService'
 import type { ChapterLeaderboard, Achievement, MovementPulse } from '@/types/admin'
 import { toast } from 'sonner'
 import MobilizationLeaderboardCard from '@/components/admin/MobilizationLeaderboardCard'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { 
-  Trophy, 
-  Download, 
-  Filter, 
-  TrendingUp, 
-  Award, 
-  Zap,
-  RefreshCw
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
-import { cn } from '@/lib/utils'
+
+const pillBase: React.CSSProperties = { padding: '2px 10px', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', borderRadius: 4, fontFamily: "'Public Sans', sans-serif" }
+
+const rankStyle = (index: number): React.CSSProperties => {
+  if (index === 0) return { background: 'hsl(var(--accent))', color: '#fff' }
+  if (index === 1) return { background: 'rgba(34,197,94,0.2)', color: 'hsl(var(--primary))' }
+  return { background: 'hsl(var(--container-low))', color: 'hsl(var(--on-surface-muted))', border: '1px solid hsl(var(--border))' }
+}
 
 export default function MobilizationMetrics() {
   const [leaderboard, setLeaderboard] = useState<ChapterLeaderboard[]>([])
@@ -49,24 +44,15 @@ export default function MobilizationMetrics() {
   }, [])
 
   const handleExport = () => {
-    if (!leaderboard.length) {
-      toast.error('No data available to export.')
-      return
-    }
-    
+    if (!leaderboard.length) { toast.error('No data available to export.'); return }
     const headers = ['Rank', 'Chapter', 'Region', 'Members', 'Badges', 'Impact Points']
     const csvContent = [
       headers.join(','),
       ...leaderboard.map((entry, index) => [
-        index + 1,
-        `"${entry.chapter}"`,
-        `"${entry.region}"`,
-        entry.total_patriots,
-        entry.achievements_unlocked,
-        entry.total_mobilization_points
+        index + 1, `"${entry.chapter}"`, `"${entry.region}"`,
+        entry.total_patriots, entry.achievements_unlocked, entry.total_mobilization_points
       ].join(','))
     ].join('\n')
-
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
     const url = URL.createObjectURL(blob)
@@ -80,241 +66,183 @@ export default function MobilizationMetrics() {
   }
 
   const regions = ['All', ...new Set(leaderboard.map(e => e.region?.trim()).filter(Boolean).sort())]
-  
-  const filteredLeaderboard = regionFilter === 'All' 
-    ? leaderboard 
-    : leaderboard.filter(e => e.region === regionFilter)
+  const filteredLeaderboard = regionFilter === 'All' ? leaderboard : leaderboard.filter(e => e.region === regionFilter)
 
   if (loading) {
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center py-20 space-y-4">
-        <RefreshCw className="w-12 h-12 text-muted-foreground/20 animate-spin" />
-        <p className="text-micro font-bold normal-case text-muted-foreground/40">Synchronizing mobilization metrics...</p>
+      <div className="admin-page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', gap: 12 }}>
+        <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))', animation: 'spin 1s linear infinite' }}>refresh</span>
+        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Synchronizing mobilization metrics…</p>
       </div>
     )
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* 🏛️ Metrics Header */}
-      <div className="flex-columns items-center flex-between">
+    <div className="admin-page-container">
+      {/* Header */}
+      <div className="ph" style={{ marginBottom: 32 }}>
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 m-0">
-            <Trophy className="w-8 h-8 text-on-surface" />
+          <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 24, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>emoji_events</span>
             Mobilization metrics
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-2 mb-0">Performance tracking and impact analytics for regional chapters across the movement's jurisdictional boundaries.</p>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Performance tracking and impact analytics for regional chapters.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant={isFilterVisible ? "primary" : "default"} 
-            size="lg"
-            className="rounded-sm border-border/40 text-micro px-8 h-10 font-bold capitalize tracking-tight hover:bg-stone-100 transition-all active:scale-95"
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            className={isFilterVisible ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
             onClick={() => setIsFilterVisible(!isFilterVisible)}
           >
-            <Filter className="w-4 h-4 mr-2" />
-            {isFilterVisible ? 'Hide Filters' : 'Filter'}
-          </Button>
-          <Button 
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
-            onClick={handleExport}
-          >
-            <Download className="w-4 h-4 mr-2" /> Export
-          </Button>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>filter_list</span>
+            {isFilterVisible ? 'Hide filters' : 'Filter'}
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={handleExport}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>download</span>
+            Export
+          </button>
         </div>
       </div>
 
+      {/* Filter bar */}
       {isFilterVisible && (
-        <Card className="mb-8 p-4 rounded-sm border-border/60 bg-muted/10 animate-in slide-in-from-top-2 duration-300">
-          <div className="flex items-center gap-4">
-            <span className="text-micro font-bold uppercase tracking-widest text-muted-foreground/60">Region Filter:</span>
-            <div className="flex gap-2 overflow-x-auto flex-1 no-scrollbar">
-              {regions.map(r => (
-                <Button
-                  key={r}
-                  variant={regionFilter === r ? "primary" : "default"}
-                  size="sm"
-                  className={cn(
-                    "rounded-full px-4 h-8 text-micro font-bold capitalize tracking-tight transition-all",
-                    regionFilter !== r && "bg-transparent border-border/60"
-                  )}
-                  onClick={() => setRegionFilter(r)}
-                >
-                  {r}
-                </Button>
+        <div className="panel" style={{ padding: '14px 18px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>Region:</span>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {regions.map(r => (
+              <button
+                key={r}
+                onClick={() => setRegionFilter(r)}
+                style={{ ...pillBase, cursor: 'pointer', border: 'none', ...(regionFilter === r ? { background: 'hsl(var(--primary))', color: '#fff' } : { background: 'hsl(var(--container-low))', color: 'hsl(var(--on-surface-muted))', border: '1px solid hsl(var(--border))' }) }}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* KPIs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <TacticalKPI label="Impact Points" value={pulse?.totalMobilizationPoints || 0} description="Total performance score" trend={{ direction: 'up', value: 'Live' }} />
+        <TacticalKPI label="Active Chapters" value={pulse?.activeChapters || 0} description="Verified chapters" />
+        <TacticalKPI label="Top Region" value={pulse?.topPerformingRegion || 'N/A'} description="Highest performing area" trend={{ direction: 'neutral', value: 'Lead' }} />
+        <TacticalKPI label="Growth Rate" value={`${pulse?.nationalGrowth || 0}%`} description="Quarterly increase" trend={{ direction: (pulse?.nationalGrowth || 0) > 0 ? 'up' : 'neutral', value: 'Pulse' }} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }} className="xl:grid-cols-[2fr_1fr]">
+        {/* Leaderboard */}
+        <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Regional power rankings</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>Aggregated mobilization points</div>
+            </div>
+            <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>trending_up</span>
+          </div>
+          {/* Desktop table */}
+          <div className="hidden md:block" style={{ overflowX: 'auto' }}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th style={{ width: 60 }}>Rank</th>
+                  <th>Chapter / Region</th>
+                  <th style={{ textAlign: 'center' }}>Members</th>
+                  <th style={{ textAlign: 'center' }}>Badges</th>
+                  <th style={{ textAlign: 'right' }}>Impact points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLeaderboard.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ padding: '48px 24px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>No regional mobilization data available.</td>
+                  </tr>
+                ) : filteredLeaderboard.map((entry, index) => (
+                  <tr key={entry.chapter}>
+                    <td>
+                      <div style={{ width: 30, height: 30, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, ...rankStyle(index) }}>
+                        {index + 1}
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', marginBottom: 2 }}>{entry.chapter}</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{entry.region}</div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span style={{ ...pillBase, background: 'hsl(var(--container-low))', color: 'hsl(var(--on-surface-muted))', border: '1px solid hsl(var(--border))' }}>{entry.total_patriots}</span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span style={{ ...pillBase, background: 'rgba(245,158,11,0.1)', color: 'hsl(var(--accent))', border: '1px solid rgba(245,158,11,0.2)' }}>{entry.achievements_unlocked}</span>
+                    </td>
+                    <td style={{ textAlign: 'right', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
+                      {entry.total_mobilization_points.toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Mobile card list */}
+          <div className="md:hidden" style={{ borderTop: '1px solid hsl(var(--border))' }}>
+            {filteredLeaderboard.length === 0 ? (
+              <div style={{ padding: '48px 24px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>No regional data found.</div>
+            ) : filteredLeaderboard.map((entry, index) => (
+              <MobilizationLeaderboardCard key={entry.chapter} entry={entry} index={index} />
+            ))}
+          </div>
+        </div>
+
+        {/* Right sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Milestones */}
+          <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Available milestones</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>Recognition badges</div>
+              </div>
+              <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--accent))' }}>military_tech</span>
+            </div>
+            <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 400, overflowY: 'auto' }}>
+              {achievements.map(achievement => (
+                <div key={achievement.id} style={{ padding: '12px 14px 12px 18px', background: 'hsl(var(--container-low))', borderLeft: '4px solid hsl(var(--accent))', borderRadius: 4 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{achievement.name}</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--accent))' }}>+{achievement.points_awarded} pts</span>
+                  </div>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.5, margin: 0 }}>{achievement.description}</p>
+                </div>
               ))}
             </div>
           </div>
-        </Card>
-      )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <TacticalKPI 
-          label="Impact Points"
-          value={pulse?.totalMobilizationPoints || 0}
-          description="Total performance score"
-          trend={{ direction: 'up', value: 'Live' }}
-        />
-        <TacticalKPI 
-          label="Active Chapters"
-          value={pulse?.activeChapters || 0}
-          description="Verified chapters"
-        />
-        <TacticalKPI 
-          label="Top Region"
-          value={pulse?.topPerformingRegion || 'N/A'}
-          description="Highest performing area"
-          trend={{ direction: 'neutral', value: 'Lead' }}
-        />
-        <TacticalKPI 
-          label="Growth Rate"
-          value={`${pulse?.nationalGrowth || 0}%`}
-          description="Quarterly increase"
-          trend={{ direction: (pulse?.nationalGrowth || 0) > 0 ? 'up' : 'neutral', value: 'Pulse' }}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        {/* 🏆 Leaderboard Panel */}
-        <div className="xl:col-span-2">
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden h-full">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-bold tracking-tight">Regional power rankings</CardTitle>
-                <p className="text-micro font-bold text-muted-foreground/40 mt-1">Aggregated mobilization points</p>
-              </div>
-              <TrendingUp className="w-5 h-5 text-muted-foreground/40" />
-            </CardHeader>
-            <CardContent className="p-0">
-              {/* Desktop Table */}
-              <div className="hidden md:block overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="border-b border-border/40 bg-muted/20">
-                      <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 uppercase tracking-widest w-16">Rank</th>
-                      <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 uppercase tracking-widest">Chapter / Region</th>
-                      <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 uppercase tracking-widest text-center">Members</th>
-                      <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 uppercase tracking-widest text-center">Badges</th>
-                      <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 uppercase tracking-widest text-right">Impact Points</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/40">
-                    {filteredLeaderboard.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="px-6 py-12 text-center text-micro font-bold text-muted-foreground/40">No regional mobilization data available.</td>
-                      </tr>
-                    ) : (
-                      filteredLeaderboard.map((entry, index) => (
-                        <tr key={entry.chapter} className="hover:bg-muted/30 transition-colors">
-                          <td className="px-6 py-5">
-                            <div className={cn(
-                              "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold",
-                              index === 0 ? "bg-accent text-white shadow-lg" : 
-                              index === 1 ? "bg-primary/20 text-primary" : "bg-muted/10 border border-border/40 text-muted-foreground/60"
-                            )}>
-                              {index + 1}
-                            </div>
-                          </td>
-                          <td className="px-6 py-5">
-                            <div className="flex flex-col">
-                              <span className="text-xs font-bold text-on-surface">{entry.chapter}</span>
-                              <span className="text-micro font-bold text-muted-foreground/40 mt-0.5 uppercase tracking-tighter">{entry.region}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-5 text-center">
-                            <span className="px-2.5 py-1 text-micro font-bold bg-muted/10 border border-border/20 rounded-md text-muted-foreground/60">{entry.total_patriots}</span>
-                          </td>
-                          <td className="px-6 py-5 text-center">
-                            <span className="px-2.5 py-1 text-micro font-bold bg-accent/10 border border-accent/20 rounded-md text-accent">{entry.achievements_unlocked}</span>
-                          </td>
-                          <td className="px-6 py-5 text-right">
-                            <span className="text-xs font-bold text-on-surface">{entry.total_mobilization_points.toLocaleString()}</span>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Mobile Card List */}
-              <div className="md:hidden divide-y divide-border/40">
-                {filteredLeaderboard.length === 0 ? (
-                  <div className="px-6 py-12 text-center text-micro font-bold text-muted-foreground/40">No regional data found.</div>
-                ) : (
-                  filteredLeaderboard.map((entry, index) => (
-                    <MobilizationLeaderboardCard key={entry.chapter} entry={entry} index={index} />
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* 🌟 Milestones & Pulse Panel */}
-        <div className="xl:col-span-1 space-y-8">
-          {/* Milestones */}
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-bold tracking-tight">Available milestones</CardTitle>
-                <p className="text-micro font-bold text-muted-foreground/40 mt-1">Recognition badges</p>
-              </div>
-              <Award className="w-5 h-5 text-accent" />
-            </CardHeader>
-            <CardContent className="p-6 space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">
-              {achievements.map((achievement) => (
-                <div key={achievement.id} className="p-4 bg-muted/10 border-l-4 border-accent rounded-sm space-y-1 hover:bg-muted/20 transition-all">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-on-surface">{achievement.name}</span>
-                    <span className="text-micro font-bold text-accent">+{achievement.points_awarded} pts</span>
+          {/* Movement velocity */}
+          <div style={{ background: 'hsl(var(--on-surface))', borderRadius: 6, overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Movement velocity</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--accent))' }}>bolt</span>
+            </div>
+            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {[
+                { label: 'Mobilization efficiency', pct: 87, color: 'hsl(var(--accent))' },
+                { label: 'Recruitment conversion', pct: 62, color: 'hsl(var(--primary))' },
+              ].map(bar => (
+                <div key={bar.label}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{bar.label}</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: '#fff' }}>{bar.pct}%</span>
                   </div>
-                  <p className="text-micro font-bold text-muted-foreground/60 leading-relaxed normal-case">{achievement.description}</p>
+                  <div style={{ height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', background: bar.color, width: `${bar.pct}%`, transition: 'width 1s ease' }} />
+                  </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
-
-          {/* Pulse */}
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-on-surface text-white relative">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-            <CardHeader className="p-6 border-b border-white/5 relative z-10 flex flex-row items-center justify-between">
-              <h3 className="text-micro font-bold uppercase tracking-widest text-white/40 m-0">Movement velocity</h3>
-              <Zap className="w-5 h-5 text-accent" />
-            </CardHeader>
-            <CardContent className="p-6 space-y-8 relative z-10">
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between items-end mb-2">
-                    <span className="text-micro font-bold uppercase tracking-widest text-white/60">Mobilization efficiency</span>
-                    <span className="text-xs font-bold text-white">87%</span>
-                  </div>
-                  <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent" style={{ width: '87%' }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-end mb-2">
-                    <span className="text-micro font-bold uppercase tracking-widest text-white/60">Recruitment conversion</span>
-                    <span className="text-xs font-bold text-white">62%</span>
-                  </div>
-                  <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary" style={{ width: '62%' }} />
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-white/5 text-center">
-                <p className="text-micro font-bold text-white/30 leading-relaxed normal-case tracking-tight italic">
+              <div style={{ paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'rgba(255,255,255,0.3)', lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>
                   Currently tracking activity across {pulse?.activeChapters || 0} active chapters and {leaderboard.length} regions.
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>
