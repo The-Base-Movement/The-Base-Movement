@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { GraduationCap, Building2, Factory, Construction, Landmark, Sprout, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
+import { cn } from '@/lib/utils'
 import { useBranding } from '@/hooks/useBranding'
 import { useIsClient } from '@/hooks/useIsClient'
-import { BrandLine } from '@/components/ui/BrandLine'
 import SEO from '@/components/SEO'
 
 const agendaPillars = [
@@ -12,7 +10,7 @@ const agendaPillars = [
     id: 'education',
     number: '01',
     title: 'Quality Education for Every Ghanaian',
-    icon: GraduationCap,
+    icon: 'school',
     color: 'hsl(var(--primary))',
     summary: 'Ensure universal access to quality formal and informal education that produces informed, capable, and civically responsible Ghanaian citizens at every level of society.',
     objectives: [
@@ -44,7 +42,7 @@ const agendaPillars = [
     id: 'government',
     number: '02',
     title: 'Lean, Accountable Government',
-    icon: Building2,
+    icon: 'account_balance',
     color: 'hsl(var(--destructive))',
     summary: 'Build a right-sized, fiscally disciplined government where public office is a service to the nation, not a path to personal enrichment, and where every cedi of public money is accounted for.',
     objectives: [
@@ -71,7 +69,7 @@ const agendaPillars = [
     id: 'industry',
     number: '03',
     title: 'Industrialisation, Tourism & Agro-Processing',
-    icon: Factory,
+    icon: 'factory',
     color: 'hsl(var(--accent))',
     summary: 'Drive economic growth and mass employment through three powerful engines: building factories and industries across all 16 regions, developing Ghana into a world-class tourism destination, and transforming raw agricultural produce into high-value processed goods that keep wealth and jobs inside Ghana.',
     objectives: [
@@ -107,7 +105,7 @@ const agendaPillars = [
     id: 'infrastructure',
     number: '04',
     title: 'Quality Infrastructure From Cities to Villages',
-    icon: Construction,
+    icon: 'construction',
     color: 'hsl(var(--primary))',
     summary: 'Deliver world-class roads, energy, water, and digital infrastructure across Ghana, with deliberate priority given to rural and village communities that have been left behind.',
     objectives: [
@@ -139,7 +137,7 @@ const agendaPillars = [
     id: 'reform',
     number: '05',
     title: 'Comprehensive Institutional Reform',
-    icon: Landmark,
+    icon: 'monument',
     color: 'hsl(var(--destructive))',
     summary: 'Restructure, streamline, and strengthen all public institutions so that government serves the people efficiently, transparently, and without unnecessary duplication or waste.',
     objectives: [
@@ -172,7 +170,7 @@ const agendaPillars = [
     id: 'agriculture',
     number: '06',
     title: 'Expertise-Led Agriculture Sector',
-    icon: Sprout,
+    icon: 'eco',
     color: 'hsl(var(--accent))',
     summary: 'Place qualified agricultural experts, scientists, and practitioners in charge of Ghana\'s food and farming sector, driving evidence-based policy, agro-processing, and genuine food security.',
     objectives: [
@@ -238,7 +236,7 @@ export default function OurAgenda() {
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
         <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
           <h1 className="tracking-tighter mb-4">The Plan</h1>
-          <BrandLine className="mx-auto" />
+          <div className={cn("bl", "mx-auto")}><div /><div /><div /></div>
           <p className="text-slate-300 max-w-2xl mx-auto prose-standard">
             The Six Aims of The Base. A detailed, actionable blueprint to build a stronger, more prosperous nation through patriotism, honesty, and discipline.
           </p>
@@ -314,7 +312,7 @@ export default function OurAgenda() {
                 <div className="space-y-6 mb-8">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 shrink-0 flex items-center justify-center bg-surface-warm" style={{ color: pillar.color }}>
-                      <pillar.icon className="w-6 h-6" />
+                      <span className="material-symbols-outlined" style={{ fontSize: 24 }}>{pillar.icon}</span>
                     </div>
                     <p className="text-micro font-bold tracking-tight mb-0" style={{ color: pillar.color }}>Aim {pillar.number}</p>
                   </div>
@@ -347,7 +345,7 @@ export default function OurAgenda() {
             {/* Covenant CTA */}
             <section aria-labelledby="covenant-heading" className="bg-charcoal-dark text-white p-6 md:p-12 text-center mt-24">
               <div className="w-16 h-16 bg-primary mx-auto mb-6 flex items-center justify-center">
-                <Landmark className="w-8 h-8 text-white" />
+                <span className="material-symbols-outlined text-white" style={{ fontSize: 32 }}>monument</span>
               </div>
               <h2 id="covenant-heading" className="mb-6">Our Covenant with Ghana</h2>
               <div className="max-w-2xl mx-auto space-y-4 text-slate-300 mb-8">
@@ -356,17 +354,13 @@ export default function OurAgenda() {
                 <p className="text-accent font-bold tracking-tight mt-4 mb-0">Ghana First. Always.</p>
               </div>
               {isLoggedIn ? (
-                <Button asChild variant="primary" size="lg">
-                  <Link to="/dashboard/members">
-                    View Members <ArrowRight className="w-5 h-5 ml-2" />
-                  </Link>
-                </Button>
+                <Link to="/dashboard/members" className="inline-flex items-center gap-2 h-14 px-10 bg-primary text-white font-bold border-none cursor-pointer hover:opacity-90 transition-opacity">
+                  View Members <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
+                </Link>
               ) : (
-                <Button asChild variant="primary" size="lg">
-                  <Link to="/register">
-                    Join The Movement <ArrowRight className="w-5 h-5 ml-2" />
-                  </Link>
-                </Button>
+                <Link to="/register" className="inline-flex items-center gap-2 h-14 px-10 bg-primary text-white font-bold border-none cursor-pointer hover:opacity-90 transition-opacity">
+                  Join The Movement <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
+                </Link>
               )}
             </section>
 
