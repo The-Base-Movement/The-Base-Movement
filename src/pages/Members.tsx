@@ -198,7 +198,7 @@ export default function Members() {
               {kpi.sub}
             </div>
           </div>
-        </div>
+        ))}
       </div>
 
       {/* Mobile filter panel */}

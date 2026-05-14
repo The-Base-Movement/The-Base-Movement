@@ -1,25 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { 
-  Upload, 
-  Search, 
-  Copy, 
-  Check, 
-  Image as ImageIcon,
-  FileText,
-  Filter,
-  ExternalLink,
-  Trash2,
-  Loader2
-} from 'lucide-react'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 export default function MediaLibrary() {
@@ -32,32 +15,22 @@ export default function MediaLibrary() {
   const [assetToDelete, setAssetToDelete] = useState<string | null>(null)
 
   const folders = [
-    { id: 'branding', label: 'Branding Assets', icon: ImageIcon },
-    { id: 'blog-images', label: 'Blog Posts', icon: ImageIcon },
-    { id: 'author-images', label: 'Authors', icon: ImageIcon },
-    { id: 'product-images', label: 'Product Images', icon: ImageIcon },
-    { id: 'logos-favicons', label: 'Logos & Favicons', icon: ImageIcon },
-    { id: 'public-assets', label: 'Public Assets', icon: ImageIcon },
-    { id: 'editor-content', label: 'Editor Media', icon: FileText },
+    { id: 'branding', label: 'Branding Assets', icon: 'image' },
+    { id: 'blog-images', label: 'Blog Posts', icon: 'image' },
+    { id: 'author-images', label: 'Authors', icon: 'image' },
+    { id: 'product-images', label: 'Product Images', icon: 'image' },
+    { id: 'logos-favicons', label: 'Logos & Favicons', icon: 'image' },
+    { id: 'public-assets', label: 'Public Assets', icon: 'image' },
+    { id: 'editor-content', label: 'Editor Media', icon: 'description' },
   ]
 
   const loadFiles = useCallback(async () => {
     setIsLoading(true)
     try {
-      if (activeFolder === 'logos-favicons') {
-        // Local-only: never query the DB for logos/favicons
-        const localUrls = await contentService.getLocalAssets('logos-favicons')
-        setFiles(localUrls)
-      } else {
-        // Load from Supabase
-        const cloudUrls = await contentService.getMediaFiles(activeFolder)
-        // Supplement with local manifest for public-assets
-        let localUrls: string[] = []
-        if (activeFolder === 'public-assets') {
-          localUrls = await contentService.getLocalAssets('public-assets')
-        }
-        setFiles([...cloudUrls, ...localUrls])
-      }
+      // Load files through the centralized service which handles local-only,
+      // cloud-only, and hybrid folders automatically.
+      const mediaFiles = await contentService.getMediaFiles(activeFolder)
+      setFiles(mediaFiles)
     } catch {
       toast.error('Failed to load media files')
     } finally {
@@ -128,260 +101,177 @@ export default function MediaLibrary() {
 
   return (
     <div className="admin-page-container">
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+      {/* Header */}
+      <div className="ph" style={{ marginBottom: 32 }}>
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <ImageIcon className="w-8 h-8 text-on-surface" />
+          <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 24, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>image</span>
             Media library
           </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Central repository for movement assets and deployment media.</p>
+          <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>Central repository for movement assets and deployment media.</p>
         </div>
-        
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="default" 
-            size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-10 h-12 font-bold tracking-tight hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-            onClick={loadFiles}
-          >
-            Refresh Vault
-          </Button>
-
-          <div className="relative">
-            <input
-              type="file"
-              id="media-upload"
-              className="hidden"
-              onChange={handleUpload}
-              accept="image/*"
-              disabled={isUploading}
-            />
-            <Button 
-              variant="primary"
-              size="lg"
-              className="rounded-sm text-micro font-bold tracking-tight px-10 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-              asChild
-              disabled={isUploading}
-            >
-              <label htmlFor="media-upload" className="cursor-pointer">
-                {isUploading ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Upload className="w-4 h-4 mr-2" />
-                )}
-                {isUploading ? 'Ingesting...' : 'Ingest Asset'}
-              </label>
-            </Button>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button className="btn btn-outline btn-sm" onClick={loadFiles}>Refresh vault</button>
+          <input type="file" id="media-upload" style={{ display: 'none' }} onChange={handleUpload} accept="image/*" disabled={isUploading} />
+          <label htmlFor="media-upload" className={`btn btn-primary btn-sm${isUploading ? ' opacity-60' : ''}`} style={{ cursor: isUploading ? 'not-allowed' : 'pointer' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>{isUploading ? 'sync' : 'upload'}</span>
+            {isUploading ? 'Ingesting…' : 'Ingest asset'}
+          </label>
         </div>
       </div>
 
-
+      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <TacticalKPI 
-          label="Total assets"
-          value={files.length}
-          description="In current vault"
-          trend={{ direction: 'neutral', value: 'Live' }}
-        />
-        <TacticalKPI 
-          label="Active folder"
-          value={activeFolder}
-          description="Context segment"
-        />
-        <TacticalKPI 
-          label="Storage usage"
-          value="12%"
-          description="Of 5.0 GB limit"
-          trend={{ direction: 'neutral', value: 'Optimal' }}
-        />
-        <TacticalKPI 
-          label="Sync status"
-          value="Online"
-          description="Supabase connected"
-          trend={{ direction: 'up', value: 'Elite' }}
-        />
+        <TacticalKPI label="Total assets" value={files.length} description="In current vault" trend={{ direction: 'neutral', value: 'Live' }} />
+        <TacticalKPI label="Active folder" value={activeFolder} description="Context segment" />
+        <TacticalKPI label="Storage usage" value="12%" description="Of 5.0 GB limit" trend={{ direction: 'neutral', value: 'Optimal' }} />
+        <TacticalKPI label="Sync status" value="Online" description="Supabase connected" trend={{ direction: 'up', value: 'Elite' }} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Mobile Category Dropdown */}
-        <div className="lg:hidden mb-6">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }} className="lg:grid-cols-[220px_1fr]">
+        {/* Mobile folder selector */}
+        <div className="mobile-only" style={{ marginBottom: 8 }}>
           <select
             value={activeFolder}
             onChange={(e) => setActiveFolder(e.target.value)}
-            className="w-full h-12 bg-white border border-border/60 rounded-sm px-4 text-sm font-bold focus:border-on-surface outline-none shadow-sm"
+            style={{ width: '100%', height: 40, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}
           >
             {folders.map((folder) => (
-              <option key={folder.id} value={folder.id}>
-                {folder.label}
-              </option>
+              <option key={folder.id} value={folder.id}>{folder.label}</option>
             ))}
           </select>
         </div>
 
-        {/* Sidebar - Folders (Desktop Only) */}
-        <div className="hidden lg:flex lg:flex-col space-y-4 lg:sticky lg:top-24 self-start">
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-border/10 bg-muted/5">
-              <h3 className="font-bold text-on-surface text-xs normal-case">Search assets</h3>
+        {/* Desktop sidebar */}
+        <div className="desktop-only" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* Search */}
+          <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 14px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Search assets</span>
             </div>
-            <CardContent className="p-3">
-              <div className="relative group">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-on-surface transition-colors z-10" />
-                <Input
-                  placeholder="Search your assets..."
-                  className="pl-10 h-10 rounded-sm border-border/60 focus:ring-0 focus:border-on-surface transition-all bg-white text-xs"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
+            <div style={{ padding: 12, position: 'relative' }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 22, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+              <input
+                placeholder="Search your assets…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ width: '100%', height: 36, paddingLeft: 32, paddingRight: 10, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}
+              />
+            </div>
+          </div>
 
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-border/10 bg-muted/5">
-              <h3 className="font-bold text-on-surface text-xs normal-case">Asset categories</h3>
+          {/* Folders */}
+          <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 14px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Asset categories</span>
             </div>
-            <CardContent className="p-2">
-              <div className="space-y-1">
-                {folders.map((folder) => (
-                  <Button
+            <div style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {folders.map((folder) => {
+                const active = activeFolder === folder.id
+                return (
+                  <button
                     key={folder.id}
-                    variant={activeFolder === folder.id ? "primary" : "ghost"}
                     onClick={() => setActiveFolder(folder.id)}
-                    className={cn(
-                      "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
-                      activeFolder === folder.id 
-                        ? "shadow-lg shadow-brand-green/20" 
-                        : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
-                    )}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', border: 'none', borderRadius: 4, background: active ? 'hsl(var(--primary))' : 'transparent', color: active ? '#fff' : 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}
                   >
-                    <folder.icon className={cn("w-4 h-4", activeFolder === folder.id ? "text-white" : "text-muted-foreground/40")} />
+                    <span className="material-symbols-outlined" style={{ fontSize: 16, flexShrink: 0 }}>{folder.icon}</span>
                     {folder.label}
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </div>
 
-        {/* Main Content - File Grid */}
-        <div className="lg:col-span-3 space-y-6">
-          <Card className="rounded-sm border-border/60 shadow-sm min-h-[500px] overflow-hidden bg-white">
-            <CardContent className="p-8">
-              {isLoading ? (
-                <div className="flex flex-col items-center justify-center h-[400px] space-y-4">
-                  <div className="w-10 h-10 border-3 border-border/10 border-t-on-surface rounded-full animate-spin" />
-                  <p className="text-muted-foreground/40 text-sm font-medium">Scanning repository...</p>
-                </div>
-              ) : filteredFiles.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[400px] space-y-4 text-center">
-                  <div className="w-16 h-16 rounded-sm bg-muted/5 flex items-center justify-center mb-2">
-                    <ImageIcon className="w-8 h-8 text-muted-foreground/20" />
-                  </div>
-                  <h3 className="font-bold text-on-surface text-lg">No assets found</h3>
-                  <p className="text-muted-foreground/80 text-sm max-w-xs">
-                    {searchQuery 
-                      ? `No results match "${searchQuery}". Try a different term.` 
-                      : `Your ${activeFolder.replace('-', ' ')} folder is currently empty.`}
-                  </p>
-                  <Button 
-                    variant="primary" 
-                    className="mt-6 rounded-sm px-12 h-14 text-micro font-bold tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                    asChild
-                  >
-                    <label htmlFor="media-upload" className="cursor-pointer">
-                      Initialize Repository
-                    </label>
-                  </Button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-                  {filteredFiles.map((url, idx) => (
-                    <div key={idx} className="group relative">
-                      <div className="aspect-square rounded-sm overflow-hidden bg-muted/5 border border-border/10 shadow-sm transition-all group-hover:shadow-md group-hover:-translate-y-1">
-                        <img src={url} 
-                          alt="Media asset" 
-                          className="w-full h-full object-cover"
-                         decoding="async" loading="lazy" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                          <Button 
-                            size="icon" 
-                            variant="primary" 
-                            className="h-10 w-10 rounded-sm shadow-2xl transition-all hover:scale-110 active:scale-95"
-                            onClick={() => copyToClipboard(url)}
-                          >
-                            {copiedUrl === url ? <Check className="w-5 h-5 text-white" /> : <Copy className="w-5 h-5" />}
-                          </Button>
-                          <Button 
-                            size="icon" 
-                            variant="gold" 
-                            className="h-10 w-10 rounded-sm shadow-2xl transition-all hover:scale-110 active:scale-95"
-                            asChild
-                          >
-                            <a href={url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-5 h-5" />
-                            </a>
-                          </Button>
-                          <Button 
-                            size="icon" 
-                            variant="destructive" 
-                            className="h-10 w-10 rounded-sm shadow-2xl transition-all hover:scale-110 active:scale-95"
-                            onClick={() => setAssetToDelete(url)}
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="mt-2 px-1">
-                        <p className="text-micro font-bold text-on-surface truncate">
-                          {url.split('/').pop()}
-                        </p>
-                        <p className="text-micro text-muted-foreground/40 font-medium normal-case mt-0.5">
-                          {activeFolder.replace('-', ' ')}
-                        </p>
+        {/* Main grid */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="panel" style={{ minHeight: 500 }}>
+            {isLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 400, gap: 12 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--on-surface-muted))', animation: 'spin 1s linear infinite' }}>sync</span>
+                <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>Scanning repository…</p>
+              </div>
+            ) : filteredFiles.length === 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 400, gap: 12, textAlign: 'center' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))' }}>image</span>
+                <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 16, color: 'hsl(var(--on-surface))' }}>No assets found</h3>
+                <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", maxWidth: 280 }}>
+                  {searchQuery ? `No results match "${searchQuery}". Try a different term.` : `Your ${activeFolder.replace('-', ' ')} folder is currently empty.`}
+                </p>
+                <label htmlFor="media-upload" className="btn btn-primary btn-sm" style={{ marginTop: 8, cursor: 'pointer' }}>Initialize repository</label>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 12 }}>
+                {filteredFiles.map((url, idx) => (
+                  <div key={idx} className="group" style={{ position: 'relative' }}>
+                    <div style={{ aspectRatio: '1', borderRadius: 4, overflow: 'hidden', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', position: 'relative' }}>
+                      <img src={url} alt="Media asset" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} decoding="async" loading="lazy" />
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                        <button
+                          onClick={() => copyToClipboard(url)}
+                          style={{ width: 32, height: 32, borderRadius: 4, background: 'hsl(var(--primary))', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}
+                          title="Copy URL"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{copiedUrl === url ? 'check' : 'content_copy'}</span>
+                        </button>
+                        <a href={url} target="_blank" rel="noopener noreferrer"
+                          style={{ width: 32, height: 32, borderRadius: 4, background: 'hsl(var(--accent))', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', textDecoration: 'none' }}
+                          title="Open in new tab"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>open_in_new</span>
+                        </a>
+                        <button
+                          onClick={() => setAssetToDelete(url)}
+                          style={{ width: 32, height: 32, borderRadius: 4, background: 'hsl(var(--destructive))', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}
+                          title="Delete"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                        </button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Storage Usage Section (Moved to Bottom) */}
-          <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden p-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-              <div className="flex items-center gap-6">
-                <div className="w-14 h-14 rounded-sm bg-primary/20 flex items-center justify-center shrink-0">
-                  <Filter className="w-7 h-7 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-lg">Cloud storage intelligence</h4>
-                  <p className="text-xs text-white/60 normal-case mt-1">Real-time usage monitoring for Supabase storage buckets.</p>
-                </div>
+                    <div style={{ marginTop: 6, paddingInline: 2 }}>
+                      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {url.split('/').pop()}
+                      </p>
+                      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
+                        {activeFolder.replace('-', ' ')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              
-              <div className="flex-1 max-w-md space-y-4">
-                <div className="flex justify-between text-tiny font-bold text-white/40 tracking-tight">
-                  <span>Capacity utilization</span>
-                  <span className="text-primary">12%</span>
-                </div>
-                <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary w-[12%] shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]" />
-                </div>
-                <div className="flex justify-between text-micro font-bold text-white/20 tracking-tight">
-                  <span className="normal-case">0.6 GB consumed</span>
-                  <span className="normal-case">5.0 GB limit</span>
-                </div>
+            )}
+          </div>
+
+          {/* Storage panel */}
+          <div style={{ background: 'hsl(var(--on-surface))', borderRadius: 6, padding: '24px 28px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 6, background: 'rgba(0,107,63,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--primary))' }}>storage</span>
+              </div>
+              <div>
+                <h4 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: '#fff', marginBottom: 2 }}>Cloud storage intelligence</h4>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Real-time usage monitoring for Supabase storage buckets.</p>
               </div>
             </div>
-          </Card>
+            <div style={{ flex: 1, minWidth: 220, maxWidth: 400 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>Capacity utilization</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))' }}>12%</span>
+              </div>
+              <div style={{ height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: '12%', background: 'hsl(var(--primary))', borderRadius: 99 }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>0.6 GB consumed</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>5.0 GB limit</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <DeleteConfirmationModal 
+      <DeleteConfirmationModal
         isOpen={!!assetToDelete}
         onClose={() => setAssetToDelete(null)}
         onConfirm={handleConfirmedDelete}

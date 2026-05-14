@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, Globe, Shield, Activity } from 'lucide-react'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/types/admin'
-
-
 
 export function LiveContributionFeed() {
   const [donations, setDonations] = useState<DonationDetail[]>([])
@@ -49,34 +46,35 @@ export function LiveContributionFeed() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-16 bg-muted/20 animate-pulse rounded-sm border border-border/40" />
+          <div key={i} style={{ height: 64, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4 }} className="animate-pulse" />
         ))}
       </div>
     )
   }
 
   return (
-    <div className="relative overflow-hidden lowercase">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Activity className="w-5 h-5 text-primary" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-ping"></span>
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
+    <div style={{ position: 'relative', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ position: 'relative' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--primary))' }}>vital_signs</span>
+            <span style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, background: 'hsl(var(--primary))', borderRadius: '50%' }} className="animate-ping"></span>
+            <span style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, background: 'hsl(var(--primary))', borderRadius: '50%' }}></span>
           </div>
-          <h3 className="font-bold text-on-surface font-meta tracking-tight text-base">global deployment feed</h3>
+          <h3 style={{ fontSize: 16, fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.01em', margin: 0, textTransform: 'lowercase' }}>global deployment feed</h3>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
-          <Globe className="w-3 h-3 text-primary" />
-          <span className="text-micro font-bold text-primary tracking-tight">live uplink active</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 12px', background: 'hsla(var(--primary), 0.08)', border: '1px solid hsla(var(--primary), 0.18)', borderRadius: 20 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))' }}>public</span>
+          <span style={{ fontSize: 10, fontWeight: 900, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>live uplink active</span>
         </div>
       </div>
 
       <div 
         ref={feedRef}
-        className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar"
+        style={{ display: 'flex', flexDirection: 'column', gap: 12, maxHeight: 600, overflowY: 'auto', paddingRight: 8 }}
+        className="custom-scrollbar"
       >
         <AnimatePresence initial={false}>
           {donations.map((donation) => (
@@ -86,37 +84,57 @@ export function LiveContributionFeed() {
               animate={{ opacity: 1, x: 0, height: 'auto' }}
               exit={{ opacity: 0, x: 20, height: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="group"
             >
-              <div className="p-5 bg-white/60 backdrop-blur-xl border border-border/40 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 rounded-sm relative overflow-hidden group/item">
-                {/* Dynamic Energy Accent */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 -mr-16 -mt-16 blur-3xl group-hover/item:bg-primary/20 transition-all duration-700"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-accent/5 -ml-8 -mb-8 blur-2xl transition-all"></div>
+              <div style={{ 
+                padding: 20, 
+                background: '#fff', 
+                border: '1px solid hsl(var(--border))', 
+                borderRadius: 4, 
+                position: 'relative', 
+                overflow: 'hidden',
+                transition: 'all 0.3s ease'
+              }} className="hover:border-primary/50 hover:shadow-xl">
+                {/* Accent */}
+                <div style={{ 
+                  position: 'absolute', top: 0, right: 0, width: 128, height: 128, 
+                  background: 'hsla(var(--primary), 0.05)', marginRight: -64, marginTop: -64, 
+                  filter: 'blur(40px)', pointerEvents: 'none' 
+                }}></div>
                 
-                <div className="flex items-center justify-between relative z-10">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white shadow-sm flex items-center justify-center rounded-sm border border-border/10 group-hover/item:scale-110 group-hover/item:border-primary/30 transition-all duration-500">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ 
+                      width: 48, height: 48, background: 'hsl(var(--container-low))', 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                      borderRadius: 4, border: '1px solid hsl(var(--border))' 
+                    }}>
                       {donation.fullName !== 'anonymous patriot' ? (
-                        <Globe className="w-6 h-6 text-primary/60 group-hover/item:text-primary transition-colors" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsla(var(--primary), 0.6)' }}>public</span>
                       ) : (
-                        <Shield className="w-6 h-6 text-accent/60 group-hover/item:text-accent transition-colors" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsla(var(--on-surface-muted), 0.4)' }}>shield_person</span>
                       )}
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-on-surface tracking-tight leading-tight lowercase first-letter:uppercase">
+                      <p style={{ 
+                        fontSize: 13, fontWeight: 800, color: 'hsl(var(--on-surface))', 
+                        margin: 0, textTransform: 'lowercase', lineHeight: 1.2, fontFamily: "'Public Sans', sans-serif"
+                      }}>
                         {donation.fullName}
                       </p>
-                      <p className="text-micro text-muted-foreground/60 font-bold tracking-tight mt-1">
-                        mobilizing <span className="text-primary font-meta">{donation.campaignTitle || 'strategic fund'}</span>
+                      <p style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 4 }}>
+                        mobilizing <span style={{ color: 'hsl(var(--primary))' }}>{donation.campaignTitle || 'strategic fund'}</span>
                       </p>
                     </div>
                   </div>
                   
-                  <div className="text-right">
-                    <p className="text-base font-bold text-on-surface font-meta tracking-tight">
-                      gh₵ {Number(donation.amount).toLocaleString()}
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ fontSize: 16, fontWeight: 900, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>
+                      ₵ {Number(donation.amount).toLocaleString()}
                     </p>
-                    <p className="text-micro text-muted-foreground/40 font-bold tracking-tight mt-1 tabular-nums bg-muted/20 px-2 py-0.5 rounded-full inline-block">
+                    <p style={{ 
+                      fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 900, 
+                      marginTop: 4, background: 'hsl(var(--container-low))', padding: '2px 8px', borderRadius: 20, display: 'inline-block' 
+                    }}>
                       {new Date(donation.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -127,21 +145,21 @@ export function LiveContributionFeed() {
         </AnimatePresence>
         
         {donations.length === 0 && (
-          <div className="py-20 text-center border border-dashed border-border/40 rounded-sm">
-            <Heart className="w-8 h-8 text-muted-foreground/20 mx-auto mb-4" />
-            <p className="text-micro font-bold text-muted-foreground/40 tracking-tight">awaiting mobilization uplink...</p>
+          <div style={{ padding: 80, textAlign: 'center', border: '1px dashed hsl(var(--border))', borderRadius: 4 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))', marginBottom: 16 }}>sensors_off</span>
+            <p style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.1em' }}>awaiting mobilization uplink...</p>
           </div>
         )}
       </div>
       
-      <div className="mt-6 pt-6 border-t border-border/40 flex items-center justify-between">
-        <p className="text-micro font-bold text-muted-foreground/40 tracking-tight italic">
+      <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic', margin: 0 }}>
           * immutable strategic ledger. redacted entries respect patriot privacy.
         </p>
-        <div className="flex items-center gap-1">
-          <span className="w-1 h-1 bg-primary rounded-full"></span>
-          <span className="w-1 h-1 bg-primary/40 rounded-full"></span>
-          <span className="w-1 h-1 bg-primary/20 rounded-full"></span>
+        <div style={{ display: 'flex', gap: 4 }}>
+          <div style={{ width: 4, height: 4, background: 'hsl(var(--primary))', borderRadius: '50%' }}></div>
+          <div style={{ width: 4, height: 4, background: 'hsla(var(--primary), 0.4)', borderRadius: '50%' }}></div>
+          <div style={{ width: 4, height: 4, background: 'hsla(var(--primary), 0.2)', borderRadius: '50%' }}></div>
         </div>
       </div>
     </div>

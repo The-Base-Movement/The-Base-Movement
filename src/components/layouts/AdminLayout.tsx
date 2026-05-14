@@ -1,29 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom'
-import {
-  LayoutDashboard,
-  Users,
-  MapPin,
-  BarChart3,
-  Settings,
-  LogOut,
-  Shield,
-  ShieldCheck,
-  FileText,
-  DollarSign,
-  ShoppingBag,
-  Package,
-  Truck,
-  Megaphone,
-  Target,
-  Vote,
-  ChevronDown,
-  PenTool,
-  Radio,
-  ExternalLink,
-  type LucideIcon
-} from 'lucide-react'
-
 import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'
@@ -142,7 +118,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
 
   interface NavItem {
     to: string;
-    icon: LucideIcon;
+    icon: string;
     label: string;
     pill?: string;
     permission?: {
@@ -151,59 +127,68 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     };
   }
 
-  const navGroups: { label: string; icon: LucideIcon; items: NavItem[] }[] = [
+  const navGroups: { label: string; icon: string; items: NavItem[] }[] = [
     {
       label: "Overview",
-      icon: LayoutDashboard,
+      icon: 'dashboard',
       items: [
-        { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-        { to: '/admin/war-room', icon: Radio, label: 'War Room', pill: 'LIVE' },
-        { to: '/admin/logistics-intelligence', icon: BarChart3, label: 'Analytics' },
+        { to: '/admin/dashboard', icon: 'dashboard', label: 'Dashboard' },
+        { to: '/admin/war-room', icon: 'radio', label: 'War Room', pill: 'LIVE' },
+        { to: '/admin/logistics-intelligence', icon: 'bar_chart', label: 'Analytics' },
+        { to: '/admin/mobilization-metrics', icon: 'my_location', label: 'Deployment metrics' },
+        { to: '/admin/sentiment-intelligence', icon: 'psychology', label: 'Sentiment AI' },
       ]
     },
     {
       label: "Members",
-      icon: Users,
+      icon: 'group',
       items: [
-        { to: '/admin/members', icon: Users, label: 'Members', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-        { to: '/admin/verification', icon: ShieldCheck, label: 'KYC queue', pill: pendingVerificationsCount > 0 ? pendingVerificationsCount.toString() : undefined, permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
-        { to: '/admin/donations', icon: DollarSign, label: 'Donations', pill: pendingDonationsCount > 0 ? pendingDonationsCount.toString() : undefined, permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
+        { to: '/admin/members', icon: 'group', label: 'Patriot directory', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/verification', icon: 'verified_user', label: 'KYC queue', pill: pendingVerificationsCount > 0 ? pendingVerificationsCount.toString() : undefined, permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/donations', icon: 'payments', label: 'Contribution desk', pill: pendingDonationsCount > 0 ? pendingDonationsCount.toString() : undefined, permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
+        { to: '/admin/leadership', icon: 'shield', label: 'Leadership hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
       ]
     },
     {
       label: "Logistics",
-      icon: Package,
+      icon: 'inventory_2',
       items: [
-        { to: '/admin/store', icon: ShoppingBag, label: 'Store inventory', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/orders', icon: Truck, label: 'Member orders', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/store', icon: 'shopping_bag', label: 'Store inventory', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/orders', icon: 'local_shipping', label: 'Member orders', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/regions', icon: 'location_on', label: 'Jurisdictions', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     },
     {
       label: "Field",
-      icon: MapPin,
+      icon: 'location_on',
       items: [
-        { to: '/admin/chapters', icon: MapPin, label: 'Chapters', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
-        { to: '/admin/ground-game', icon: Vote, label: 'Mission Control', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/broadcasts', icon: Megaphone, label: 'Broadcasts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/directives', icon: Target, label: 'Field directives', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/deploy', icon: Target, label: 'Deploy mission', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/chapters', icon: 'location_on', label: 'Chapter management', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+        { to: '/admin/chapter-hub', icon: 'shield', label: 'Regional hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
+        { to: '/admin/ground-game', icon: 'how_to_vote', label: 'Mission control', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/broadcasts', icon: 'campaign', label: 'Mass mobilization', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/directives', icon: 'my_location', label: 'Tactical directives', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/deploy', icon: 'my_location', label: 'Deploy asset', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/priorities', icon: 'shield', label: 'Strategic focus', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     },
     {
       label: "Content",
-      icon: FileText,
+      icon: 'description',
       items: [
-        { to: '/admin/blogs', icon: FileText, label: 'Blog posts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/authors', icon: PenTool, label: 'Authors', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/polls', icon: Vote, label: 'Polls', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
+        { to: '/admin/blogs', icon: 'description', label: 'Blog posts', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/authors', icon: 'edit', label: 'Authors', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/media', icon: 'image', label: 'Media library', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/polls', icon: 'how_to_vote', label: 'Polls', permission: { action: 'MANAGE_POLLS', resource: 'POLLS' } },
       ]
     },
     {
       label: "System",
-      icon: Settings,
+      icon: 'settings',
       items: [
-        { to: '/admin/administrators', icon: Shield, label: 'Administrators', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
-        { to: '/admin/settings', icon: Settings, label: 'Settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/administrators', icon: 'shield', label: 'Staff command', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/roadmap', icon: 'route', label: 'Mission roadmap', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/settings', icon: 'settings', label: 'Core settings', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/trash', icon: 'delete', label: 'Audit trash', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
       ]
     }
   ]
@@ -273,7 +258,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
               to="/" 
               className="flex items-center gap-3 px-3 py-2.5 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-lg transition-all group border border-white/5"
             >
-              <ExternalLink className="w-4 h-4 text-[hsl(var(--accent))] shrink-0" />
+              <span className="material-symbols-outlined shrink-0" style={{ fontSize: 16, color: 'hsl(var(--accent))' }}>open_in_new</span>
               <span className="text-[11px] font-extrabold uppercase tracking-[0.06em]">View Site</span>
             </Link>
           </div>
@@ -301,14 +286,14 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                           {group.label}
                         </span>
                       ) : (
-                        <group.icon className="w-4 h-4 text-white/40 shrink-0" />
+                        <span className="material-symbols-outlined shrink-0" style={{ fontSize: 16, color: 'rgba(255,255,255,0.4)' }}>{group.icon}</span>
                       )}
                     </div>
                     {isSidebarOpen && (
-                      <ChevronDown className={cn(
-                        "w-3 h-3 text-white/30 transition-transform duration-200",
+                      <span className={cn(
+                        "material-symbols-outlined text-white/30 transition-transform duration-200",
                         isOpen ? "rotate-180" : ""
-                      )} />
+                      )} style={{ fontSize: 14 }}>expand_more</span>
                     )}
                   </button>
 
@@ -319,7 +304,6 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                   )}>
                     {group.items.map((item) => {
                       const isActive = location.pathname === item.to
-                      const Icon = item.icon
                       return (
                         <Link
                           key={item.to}
@@ -334,7 +318,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                             if (window.innerWidth < 1024) setIsSidebarOpen(false)
                           }}
                         >
-                          <Icon className="w-4 h-4 shrink-0" />
+                          <span className="material-symbols-outlined shrink-0" style={{ fontSize: 16 }}>{item.icon}</span>
                           <span className="whitespace-nowrap flex-1">
                             {item.label}
                           </span>
@@ -364,7 +348,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 isSidebarOpen ? "" : "justify-center"
               )}
             >
-              <LogOut className="w-5 h-5 group-hover:text-[var(--brand-gold)] shrink-0 transition-colors" />
+              <span className="material-symbols-outlined shrink-0 transition-colors" style={{ fontSize: 20 }}>logout</span>
               <span className={cn(
                 "text-tiny font-bold tracking-tight whitespace-nowrap transition-all duration-300",
                 isSidebarOpen ? "opacity-100" : "opacity-0 w-0"
@@ -569,7 +553,6 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                     </div>
                     {[
                       { to: '/admin/settings', icon: 'settings', label: 'Administrative settings' },
-                      { to: '/admin/logs',     icon: 'history',  label: 'View audit logs' },
                     ].map(item => (
                       <Link
                         key={item.to}

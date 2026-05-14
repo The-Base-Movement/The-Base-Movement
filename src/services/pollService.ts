@@ -14,6 +14,9 @@ class PollService {
   }
 
   async getPolls(): Promise<Poll[]> {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    // Fetch polls with options
     const { data, error } = await supabase
       .from('polls')
       .select(`
@@ -27,16 +30,32 @@ class PollService {
       return []
     }
 
+    // If logged in, fetch user's votes to set 'voted' status
+    let userVotes: Record<string, string> = {}
+    if (user) {
+      const { data: votesData } = await supabase
+        .from('poll_votes')
+        .select('poll_id, option_id')
+        .eq('user_id', user.id)
+      
+      if (votesData) {
+        userVotes = votesData.reduce((acc, v) => ({ ...acc, [v.poll_id]: v.option_id }), {})
+      }
+    }
+
     return (data || []).map((p: Record<string, unknown>) => {
       const rawOptions = (p.poll_options as Record<string, unknown>[] | null) || []
+      const pollId = p.id as string
       return {
-        id: p.id as string,
+        id: pollId,
         question: p.question as string,
         status: p.status as Poll['status'],
         totalVotes: (p.total_votes as number) || 0,
         region: (p.region as string) || 'National',
         category: (p.category as string) || 'General',
         endDate: (p.end_date as string) || 'N/A',
+        voted: !!userVotes[pollId],
+        userSelection: userVotes[pollId],
         options: rawOptions.map((o: Record<string, unknown>) => ({
           id: o.id as string,
           label: o.label as string,
@@ -96,31 +115,27 @@ class PollService {
 
   async voteInPoll(pollId: string, optionId: string): Promise<boolean> {
     try {
-      const { data: optionData } = await supabase
-        .from('poll_options')
-        .select('votes')
-        .eq('id', optionId)
-        .single()
-      
-      const { data: pollData } = await supabase
-        .from('polls')
-        .select('total_votes')
-        .eq('id', pollId)
-        .single()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('User must be logged in to vote')
 
-      const { error: optError } = await supabase
-        .from('poll_options')
-        .update({ votes: (optionData?.votes || 0) + 1 })
-        .eq('id', optionId)
+      // 1. Record the vote in the junction table
+      // Database triggers handle incrementing poll_options.votes and polls.total_votes
+      const { error: voteError } = await supabase
+        .from('poll_votes')
+        .insert({
+          poll_id: pollId,
+          option_id: optionId,
+          user_id: user.id
+        })
 
-      if (optError) throw optError
-
-      const { error: pollError } = await supabase
-        .from('polls')
-        .update({ total_votes: (pollData?.total_votes || 0) + 1 })
-        .eq('id', pollId)
-
-      if (pollError) throw pollError
+      if (voteError) {
+        // Handle unique constraint violation (user already voted)
+        if (voteError.code === '23505') {
+          console.warn('[POLL] User has already voted in this poll')
+          return false
+        }
+        throw voteError
+      }
 
       return true
     } catch (err) {

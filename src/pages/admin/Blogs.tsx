@@ -90,6 +90,18 @@ export default function AdminBlogs() {
   })
 
   const [mediaFiles, setMediaFiles] = useState<string[]>([])
+  const [activeMediaFolder, setActiveMediaFolder] = useState('blog-images')
+  const [isMediaLoading, setIsMediaLoading] = useState(false)
+
+  const mediaFolders = [
+    { id: 'blog-images', label: 'Blog Posts' },
+    { id: 'editor-content', label: 'Editor Media' },
+    { id: 'branding', label: 'Branding Assets' },
+    { id: 'author-images', label: 'Authors' },
+    { id: 'product-images', label: 'Product Images' },
+    { id: 'logos-favicons', label: 'Logos & Favicons' },
+    { id: 'public-assets', label: 'Public Assets' },
+  ]
 
   useEffect(() => {
     const initUser = async () => {
@@ -111,13 +123,16 @@ export default function AdminBlogs() {
   useEffect(() => { sessionStorage.setItem('blogs_formData', JSON.stringify(formData)) }, [formData])
 
   const fetchMedia = useCallback(async () => {
+    setIsMediaLoading(true)
     try {
-      const files = await contentService.getMediaFiles('blog-images')
+      const files = await contentService.getMediaFiles(activeMediaFolder)
       setMediaFiles(files)
     } catch (err) {
       console.error('[MEDIA] Failed to fetch library:', err)
+    } finally {
+      setIsMediaLoading(false)
     }
-  }, [])
+  }, [activeMediaFolder])
 
   const fetchPosts = useCallback(async () => {
     setIsLoading(true)
@@ -291,9 +306,30 @@ export default function AdminBlogs() {
           {showMediaPanel && (
             <aside style={{ width: 240, flexShrink: 0, borderRight: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', background: '#fff' }}>
               {/* Header */}
-              <div style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', gap: 7 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>photo_library</span>
-                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Blog Media</span>
+              <div style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>photo_library</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Library</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', background: 'hsl(var(--border))', padding: '1px 5px', borderRadius: 10 }}>{mediaFiles.length}</span>
+                  <button onClick={() => fetchMedia()} title="Refresh library" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', color: 'hsl(var(--on-surface-muted))' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>refresh</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Folder Selector */}
+              <div style={{ padding: '10px 12px', borderBottom: '1px solid hsl(var(--border))' }}>
+                <select 
+                  value={activeMediaFolder}
+                  onChange={e => setActiveMediaFolder(e.target.value)}
+                  style={{ ...selectSt, height: 32, fontSize: 11, background: 'hsl(var(--background))' }}
+                >
+                  {mediaFolders.map(f => (
+                    <option key={f.id} value={f.id}>{f.label}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Search + upload */}
@@ -304,15 +340,15 @@ export default function AdminBlogs() {
                     placeholder="Search…"
                     value={mediaSearch}
                     onChange={e => setMediaSearch(e.target.value)}
-                    style={{ width: '100%', height: 32, paddingLeft: 28, paddingRight: 8, border: '1px solid hsl(var(--border))', borderRadius: 4, background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }}
+                    style={{ width: '100%', height: 32, paddingLeft: 28, paddingRight: 8, border: '1px solid hsl(var(--border))', borderRadius: 4, background: 'hsl(var(--background))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }}
                   />
                 </div>
-                <label title="Upload to Blog Media" style={{ width: 32, height: 32, borderRadius: 4, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                <label title={`Upload to ${activeMediaFolder}`} style={{ width: 32, height: 32, borderRadius: 4, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={async (e) => {
                     const file = e.target.files?.[0]
                     if (!file) return
-                    const url = await contentService.uploadImage(file, 'blog-images')
-                    if (url) { toast.success('Uploaded to blog media'); fetchMedia() }
+                    const url = await contentService.uploadImage(file, activeMediaFolder)
+                    if (url) { toast.success(`Uploaded to ${activeMediaFolder}`); fetchMedia() }
                     e.target.value = ''
                   }} />
                   <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>upload</span>
@@ -320,7 +356,12 @@ export default function AdminBlogs() {
               </div>
 
               {/* Image grid */}
-              <div style={{ flex: 1, overflowY: 'auto', padding: 10, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
+              <div style={{ flex: 1, overflowY: 'auto', padding: 10, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4, alignContent: 'start', position: 'relative' }}>
+                {isMediaLoading && (
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 20, height: 20, border: '2px solid hsl(var(--border))', borderTopColor: 'hsl(var(--primary))', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                  </div>
+                )}
                 {mediaFiles
                   .filter(url => !mediaSearch || url.toLowerCase().includes(mediaSearch.toLowerCase()))
                   .map((url, i) => (

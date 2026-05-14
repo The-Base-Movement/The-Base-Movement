@@ -265,8 +265,12 @@ class ContentService {
   }
 
   async getMediaFiles(path: string): Promise<string[]> {
-    // We now query the media_library table instead of just listing storage
-    // to support soft deletes and metadata.
+    // 1. Handle local-only folders
+    if (path === 'logos-favicons' || path === 'branding') {
+      return this.getLocalAssets(path)
+    }
+
+    // 2. Query the media_library table
     const { data, error } = await supabase
       .from('media_library')
       .select('url')
@@ -276,11 +280,38 @@ class ContentService {
 
     if (error) {
       console.error('[DATABASE] Failed to fetch media from library:', error)
-      // Fallback to storage list if database fails
       return this.getMediaFilesFromStorage(path)
     }
 
-    return (data || []).map(item => item.url)
+    // 3. If no DB results, fallback to storage direct list
+    if (!data || data.length === 0) {
+      const storageFiles = await this.getMediaFilesFromStorage(path)
+      // Special case: append local public assets if needed
+      if (path === 'public-assets') {
+        const localPublic = await this.getLocalAssets('public-assets')
+        return [...storageFiles, ...localPublic]
+      }
+      return storageFiles
+    }
+
+    // 4. Normalize URLs (ensure full public URL if relative)
+    const normalizedUrls = data.map(item => {
+      if (item.url.startsWith('http')) return item.url
+      // If relative, it's likely /folder/filename.ext or folder/filename.ext
+      const cleanPath = item.url.startsWith('/') ? item.url.substring(1) : item.url
+      const { data: { publicUrl } } = supabase.storage
+        .from('media')
+        .getPublicUrl(cleanPath)
+      return publicUrl
+    })
+
+    // 5. Append local public assets if needed
+    if (path === 'public-assets') {
+      const localPublic = await this.getLocalAssets('public-assets')
+      return [...normalizedUrls, ...localPublic]
+    }
+
+    return normalizedUrls
   }
 
   private async getMediaFilesFromStorage(path: string): Promise<string[]> {
@@ -383,6 +414,12 @@ class ContentService {
     switch (category) {
       case 'logos-favicons':
         return mediaManifest.branding || []
+      case 'branding':
+        // Combine all branding assets for the library view
+        return [
+          ...(mediaManifest.branding || []),
+          ...(mediaManifest.publicAssets || [])
+        ]
       case 'public-assets':
         return mediaManifest.publicAssets || []
       default:
