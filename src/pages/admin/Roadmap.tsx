@@ -1,27 +1,24 @@
 import { useState, useEffect, useCallback } from 'react'
-import { 
-  Flag, 
-  Plus, 
-  Search, 
-  Clock, 
-  Calendar,
-  X,
-  Trash2,
-  Edit2
-} from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
-import { Input } from '@/components/ui/input'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card'
-import { cn } from '@/lib/utils'
 import { adminService, type Milestone } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
+
+const inputSt: React.CSSProperties = { width: '100%', height: 40, padding: '0 12px', border: '1px solid hsl(var(--border))', background: '#fff', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }
+const selectSt: React.CSSProperties = { ...inputSt, appearance: 'none' }
+const labelSt: React.CSSProperties = { fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }
+const pillBase: React.CSSProperties = { padding: '2px 10px', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', borderRadius: 4, fontFamily: "'Public Sans', sans-serif" }
+
+const statusStyle = (s: Milestone['status']): React.CSSProperties => {
+  if (s === 'Completed') return { background: 'rgba(34,197,94,0.1)', color: 'hsl(var(--primary))', border: '1px solid rgba(34,197,94,0.2)' }
+  if (s === 'In Progress') return { background: 'rgba(245,158,11,0.1)', color: 'hsl(var(--accent))', border: '1px solid rgba(245,158,11,0.2)' }
+  return { background: 'rgba(239,68,68,0.1)', color: 'hsl(var(--destructive))', border: '1px solid rgba(239,68,68,0.2)' }
+}
+
+const statusDot = (s: Milestone['status']): string => {
+  if (s === 'Completed') return 'hsl(var(--primary))'
+  if (s === 'In Progress') return 'hsl(var(--accent))'
+  return 'hsl(var(--destructive))'
+}
 
 export default function RoadmapManagement() {
   const [milestones, setMilestones] = useState<Milestone[]>([])
@@ -29,7 +26,7 @@ export default function RoadmapManagement() {
   const [isLoading, setIsLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null)
-  
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -51,9 +48,7 @@ export default function RoadmapManagement() {
     }
   }, [])
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  useEffect(() => { fetchData() }, [fetchData])
 
   const handleOpenModal = (milestone: Milestone | null = null) => {
     if (milestone) {
@@ -69,15 +64,7 @@ export default function RoadmapManagement() {
       })
     } else {
       setEditingMilestone(null)
-      setFormData({
-        title: '',
-        description: '',
-        target_date: new Date().toISOString().split('T')[0],
-        status: 'Upcoming',
-        category: 'Mobilization',
-        importance_level: 'Normal',
-        target_members: 0
-      })
+      setFormData({ title: '', description: '', target_date: new Date().toISOString().split('T')[0], status: 'Upcoming', category: 'Mobilization', importance_level: 'Normal', target_members: 0 })
     }
     setShowModal(true)
   }
@@ -88,22 +75,12 @@ export default function RoadmapManagement() {
     try {
       if (editingMilestone) {
         const success = await adminService.updateMilestone(editingMilestone.id, formData)
-        if (success) {
-          toast.success('Strategic milestone updated.')
-          setShowModal(false)
-          fetchData()
-        } else {
-          toast.error('Failed to update milestone.')
-        }
+        if (success) { toast.success('Strategic milestone updated.'); setShowModal(false); fetchData() }
+        else toast.error('Failed to update milestone.')
       } else {
         const success = await adminService.createMilestone(formData)
-        if (success) {
-          toast.success('Strategic milestone added.')
-          setShowModal(false)
-          fetchData()
-        } else {
-          toast.error('Failed to add milestone.')
-        }
+        if (success) { toast.success('Strategic milestone added.'); setShowModal(false); fetchData() }
+        else toast.error('Failed to add milestone.')
       }
     } finally {
       setIsSubmitting(false)
@@ -111,338 +88,209 @@ export default function RoadmapManagement() {
   }
 
   const handleDelete = async (id: string, title: string) => {
-    if (!window.confirm(`Are you sure you want to remove this milestone: "${title}"?`)) return
-
+    if (!window.confirm(`Remove milestone: "${title}"?`)) return
     try {
       const success = await adminService.deleteMilestone(id, title)
-      if (success) {
-        toast.success('Milestone removed from roadmap.')
-        fetchData()
-      } else {
-        toast.error('Failed to remove milestone.')
-      }
+      if (success) { toast.success('Milestone removed from roadmap.'); fetchData() }
+      else toast.error('Failed to remove milestone.')
     } catch (err) {
-      console.error('[ROADMAP] Delete operation failed:', err)
+      console.error('[ROADMAP] Delete failed:', err)
       toast.error('An error occurred during removal.')
     }
   }
 
-  const filteredMilestones = milestones.filter(m => 
+  const filteredMilestones = milestones.filter(m =>
     m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     m.category.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const getStatusColor = (status: Milestone['status']) => {
-    switch (status) {
-      case 'Completed': return 'var(--brand-green)'
-      case 'In Progress': return 'var(--brand-gold)'
-      default: return 'var(--brand-red)'
-    }
-  }
-
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Page Header */}
-      <div className="flex-columns items-center">
-        <div className="flow" style={{ '--flow-space': '0.5rem' } as React.CSSProperties}>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
-            <Flag className="w-8 h-8 text-on-surface" />
-            National Strategic Roadmap
+    <div className="admin-page-container">
+      {/* Header */}
+      <div className="ph" style={{ marginBottom: 32 }}>
+        <div>
+          <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 24, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>flag</span>
+            National strategic roadmap
           </h1>
-          <BrandLine />
-          <p className="text-muted-foreground/80 text-sm mb-0">Manage movement objectives, mobilization phases, and strategic timelines.</p>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Manage movement objectives, mobilization phases, and strategic timelines.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-            onClick={() => handleOpenModal()}
-          >
-            <Plus className="w-4 h-4 mr-2" /> Add Milestone
-          </Button>
-        </div>
+        <button className="btn btn-primary btn-sm" onClick={() => handleOpenModal()}>
+          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>add</span>
+          Add milestone
+        </button>
       </div>
 
+      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <TacticalKPI 
-          label="Total Milestones"
-          value={milestones.length}
-          description="Strategic objectives"
-          trend={{ direction: 'neutral', value: 'Live' }}
-        />
-        <TacticalKPI 
-          label="Completion Rate"
-          value={`${milestones.length ? Math.round((milestones.filter(m => m.status === 'Completed').length / milestones.length) * 100) : 0}%`}
-          description="Verified achieved"
-          trend={{ direction: 'up', value: 'Optimal' }}
-        />
-        <TacticalKPI 
-          label="Active Operations"
-          value={milestones.filter(m => m.status === 'In Progress').length}
-          description="In mobilization"
-          trend={{ direction: 'up', value: 'Active' }}
-        />
-        <TacticalKPI 
-          label="Upcoming Phases"
-          value={milestones.filter(m => m.status === 'Upcoming').length}
-          description="Strategic pipeline"
-        />
+        <TacticalKPI label="Total Milestones" value={milestones.length} description="Strategic objectives" trend={{ direction: 'neutral', value: 'Live' }} />
+        <TacticalKPI label="Completion Rate" value={`${milestones.length ? Math.round((milestones.filter(m => m.status === 'Completed').length / milestones.length) * 100) : 0}%`} description="Verified achieved" trend={{ direction: 'up', value: 'Optimal' }} />
+        <TacticalKPI label="Active Operations" value={milestones.filter(m => m.status === 'In Progress').length} description="In mobilization" trend={{ direction: 'up', value: 'Active' }} />
+        <TacticalKPI label="Upcoming Phases" value={milestones.filter(m => m.status === 'Upcoming').length} description="Strategic pipeline" />
       </div>
 
-      {/* Main Content: Roadmap Management */}
-      <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-        <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-            <Clock className="w-4 h-4 text-destructive" />
-            National Objective Timeline
-          </CardTitle>
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/80" />
-            <Input 
-              placeholder="Search milestones..." 
+      {/* Table panel */}
+      <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '14px 20px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--destructive))' }}>schedule</span>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>National objective timeline</div>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+            <input
+              placeholder="Search milestones…"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 text-xs rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
+              onChange={e => setSearchQuery(e.target.value)}
+              style={{ height: 36, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', background: '#fff', color: 'hsl(var(--on-surface))', width: 220, boxSizing: 'border-box' }}
             />
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-border/40 bg-muted/20">
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Milestone Objective</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Category</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Status</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Target Date</th>
-                  <th className="px-6 py-4 text-micro font-bold text-muted-foreground/80 tracking-tight">Priority</th>
-                  <th className="px-6 py-4 text-right"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {isLoading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td className="px-6 py-5">
-                        <div className="space-y-2">
-                          <div className="h-4 bg-muted/30 w-3/4 rounded" />
-                          <div className="h-2 bg-muted/20 w-1/2 rounded" />
-                        </div>
-                      </td>
-                      <td className="px-6 py-5"><div className="h-4 bg-muted/20 w-16 rounded" /></td>
-                      <td className="px-6 py-5"><div className="h-6 bg-muted/20 w-24 rounded" /></td>
-                      <td className="px-6 py-5"><div className="h-4 bg-muted/20 w-24 rounded" /></td>
-                      <td className="px-6 py-5"><div className="h-4 bg-muted/20 w-16 rounded" /></td>
-                      <td className="px-6 py-5 text-right"><div className="h-8 w-16 bg-muted/20 ml-auto rounded" /></td>
-                    </tr>
-                  ))
-                ) : filteredMilestones.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground/80 text-xs font-bold tracking-tight">
-                      No strategic objectives found.
-                    </td>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Milestone objective</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Target date</th>
+                <th>Priority</th>
+                <th style={{ textAlign: 'right' }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} style={{ animation: 'pulse 2s infinite' }}>
+                    <td><div style={{ height: 14, background: 'hsl(var(--border))', borderRadius: 4, width: 200 }} /></td>
+                    <td><div style={{ height: 14, background: 'hsl(var(--border))', borderRadius: 4, width: 80 }} /></td>
+                    <td><div style={{ height: 22, background: 'hsl(var(--border))', borderRadius: 4, width: 90 }} /></td>
+                    <td><div style={{ height: 14, background: 'hsl(var(--border))', borderRadius: 4, width: 90 }} /></td>
+                    <td><div style={{ height: 14, background: 'hsl(var(--border))', borderRadius: 4, width: 60 }} /></td>
+                    <td><div style={{ height: 28, background: 'hsl(var(--border))', borderRadius: 4, width: 70, marginLeft: 'auto' }} /></td>
                   </tr>
-                ) : (
-                  filteredMilestones.map((milestone) => (
-                  <tr key={milestone.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-6 py-5">
-                      <div className="flex flex-col max-w-md">
-                        <span className="text-xs font-bold text-on-surface tracking-tight">{milestone.title}</span>
-                        <span className="text-micro font-bold text-muted-foreground/60 mt-0.5 line-clamp-1">{milestone.description}</span>
+                ))
+              ) : filteredMilestones.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ padding: '48px 24px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
+                    No strategic objectives found.
+                  </td>
+                </tr>
+              ) : (
+                filteredMilestones.map(milestone => (
+                  <tr key={milestone.id}>
+                    <td>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', marginBottom: 3 }}>{milestone.title}</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 280 }}>{milestone.description}</div>
+                    </td>
+                    <td style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{milestone.category}</td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: statusDot(milestone.status), flexShrink: 0 }} />
+                        <span style={{ ...pillBase, ...statusStyle(milestone.status) }}>{milestone.status}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
-                      <span className="text-xs font-bold text-on-surface/80 tracking-tight">{milestone.category}</span>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className={cn("w-1.5 h-1.5 rounded-full", milestone.status === 'In Progress' && "animate-pulse")} 
-                          style={{ backgroundColor: getStatusColor(milestone.status) }} 
-                        />
-                        <span className={cn(
-                          "px-2.5 py-1 text-micro font-bold tracking-tight border rounded-md capitalize",
-                          milestone.status === 'Completed' ? "bg-[var(--brand-green)]/10 text-[var(--brand-green)] border-[var(--brand-green)]/20" :
-                          milestone.status === 'In Progress' ? "bg-[var(--brand-gold)]/10 text-[var(--brand-gold)] border-[var(--brand-gold)]/20" :
-                          "bg-[var(--brand-red)]/10 text-[var(--brand-red)] border-[var(--brand-red)]/20"
-                        )}>
-                          {milestone.status}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/80">
-                        <Calendar className="w-3 h-3" />
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>calendar_today</span>
                         {new Date(milestone.target_date!).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
                     </td>
-                    <td className="px-6 py-5">
-                      <span className={cn(
-                        "text-micro font-bold normal-case tracking-tight",
-                        milestone.importance_level === 'Critical' ? "text-[var(--brand-red)]" : "text-on-surface/40"
-                      )}>
-                        {milestone.importance_level}
-                      </span>
+                    <td style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: milestone.importance_level === 'Critical' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))' }}>
+                      {milestone.importance_level}
                     </td>
-                    <td className="px-6 py-5 text-right">
-                      <div className="flex items-center gap-1 justify-end">
-                        <Button 
-                          variant="gold" 
-                          size="icon" 
-                          className="h-9 w-9 rounded-sm transition-all shadow-sm active:scale-95"
-                          onClick={() => handleOpenModal(milestone)}
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          variant="destructive" 
-                          size="icon" 
-                          className="h-9 w-9 rounded-sm transition-all shadow-sm active:scale-95"
-                          onClick={() => handleDelete(milestone.id, milestone.title)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
+                        <button className="btn btn-sm" style={{ background: 'hsl(var(--accent))', color: '#fff', border: 'none', width: 34, height: 34, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => handleOpenModal(milestone)}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>
+                        </button>
+                        <button className="btn btn-dest btn-sm" style={{ width: 34, height: 34, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => handleDelete(milestone.id, milestone.title)}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                        </button>
                       </div>
                     </td>
                   </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-2xl rounded-sm border-border/60 bg-white shadow-2xl animate-in zoom-in-95 duration-300">
-            <CardHeader className="p-6 border-b border-border/40 flex flex-row items-center justify-between bg-muted/30">
-              <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2">
-                {editingMilestone ? <Edit2 className="w-4 h-4 text-destructive" /> : <Plus className="w-4 h-4 text-destructive" />}
-                {editingMilestone ? 'Refine Objective' : 'Add Milestone'}
-              </CardTitle>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground/80 hover:text-destructive"
-                onClick={() => setShowModal(false)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </CardHeader>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+             onClick={() => setShowModal(false)}>
+          <div style={{ background: '#fff', borderRadius: 6, width: '100%', maxWidth: 680, maxHeight: '90vh', overflowY: 'auto' }}
+               onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, color: 'hsl(var(--on-surface))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--destructive))' }}>{editingMilestone ? 'edit' : 'add'}</span>
+                {editingMilestone ? 'Refine objective' : 'Add milestone'}
+              </div>
+              <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowModal(false)}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}>close</span>
+              </button>
+            </div>
             <form onSubmit={handleSubmit}>
-              <CardContent className="p-6 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Left Column */}
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Objective Title</label>
-                      <Input 
-                        required
-                        placeholder="e.g. National Logistics Hub" 
-                        value={formData.title}
-                        onChange={e => setFormData({...formData, title: e.target.value})}
-                        className="rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Strategic Category</label>
-                      <select
-                        value={formData.category}
-                        onChange={e => setFormData({...formData, category: e.target.value})}
-                        className="w-full h-10 px-3 text-xs border border-border/60 rounded-sm focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
-                      >
-                        <option value="Mobilization">Mobilization</option>
-                        <option value="Infrastructure">Infrastructure</option>
-                        <option value="Policy">Policy</option>
-                        <option value="Logistics">Logistics</option>
-                        <option value="Communication">Communication</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Target Date</label>
-                      <Input 
-                        required
-                        type="date"
-                        value={formData.target_date}
-                        onChange={e => setFormData({...formData, target_date: e.target.value})}
-                        className="rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Target Member Count</label>
-                      <Input 
-                        type="number"
-                        placeholder="0" 
-                        value={formData.target_members}
-                        onChange={e => setFormData({...formData, target_members: parseInt(e.target.value) || 0})}
-                        className="rounded-sm border-border/60 focus:ring-on-surface/20 focus:border-on-surface"
-                      />
-                    </div>
+              <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                {/* Left */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div>
+                    <label style={labelSt}>Objective title</label>
+                    <input required style={inputSt} placeholder="e.g. National Logistics Hub" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                   </div>
-
-                  {/* Right Column */}
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Status</label>
-                      <select
-                        value={formData.status}
-                        onChange={e => setFormData({...formData, status: e.target.value as Milestone['status']})}
-                        className="w-full h-10 px-3 text-xs border border-border/60 rounded-sm focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
-                      >
-                        <option value="Upcoming">Upcoming</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Importance Level</label>
-                      <select
-                        value={formData.importance_level}
-                        onChange={e => setFormData({...formData, importance_level: e.target.value as Milestone['importance_level']})}
-                        className="w-full h-10 px-3 text-xs border border-border/60 rounded-sm focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white"
-                      >
-                        <option value="Normal">Normal</option>
-                        <option value="High">High</option>
-                        <option value="Critical">Critical</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/80 normal-case">Objective Description</label>
-                      <textarea
-                        required
-                        rows={4}
-                        placeholder="Detailed breakdown of the milestone..."
-                        value={formData.description}
-                        onChange={e => setFormData({...formData, description: e.target.value})}
-                        className="w-full p-3 text-xs border border-border/60 rounded-sm focus:ring-on-surface/20 focus:border-on-surface focus:outline-none bg-white resize-none"
-                      />
-                    </div>
+                  <div>
+                    <label style={labelSt}>Strategic category</label>
+                    <select style={selectSt} value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
+                      <option>Mobilization</option>
+                      <option>Infrastructure</option>
+                      <option>Policy</option>
+                      <option>Logistics</option>
+                      <option>Communication</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelSt}>Target date</label>
+                    <input required type="date" style={inputSt} value={formData.target_date} onChange={e => setFormData({ ...formData, target_date: e.target.value })} />
+                  </div>
+                  <div>
+                    <label style={labelSt}>Target member count</label>
+                    <input type="number" style={inputSt} placeholder="0" value={formData.target_members} onChange={e => setFormData({ ...formData, target_members: parseInt(e.target.value) || 0 })} />
                   </div>
                 </div>
-              </CardContent>
-              <div className="p-6 pt-0 flex gap-4">
-                <Button 
-                  type="button"
-                  variant="default" 
-                  className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm border-border/40 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
-                  onClick={() => setShowModal(false)}
-                >
-                  Discard
-                </Button>
-                <Button 
-                  type="submit"
-                  variant="primary"
-                  disabled={isSubmitting}
-                  className="flex-1 h-12 text-micro font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                >
-                  {isSubmitting ? 'Syncing...' : editingMilestone ? 'Commit Changes' : 'Add Milestone'}
-                </Button>
+                {/* Right */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div>
+                    <label style={labelSt}>Status</label>
+                    <select style={selectSt} value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value as Milestone['status'] })}>
+                      <option>Upcoming</option>
+                      <option>In Progress</option>
+                      <option>Completed</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelSt}>Importance level</label>
+                    <select style={selectSt} value={formData.importance_level} onChange={e => setFormData({ ...formData, importance_level: e.target.value as Milestone['importance_level'] })}>
+                      <option>Normal</option>
+                      <option>High</option>
+                      <option>Critical</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelSt}>Objective description</label>
+                    <textarea required rows={5} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.6 }} placeholder="Detailed breakdown of the milestone…" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                  </div>
+                </div>
+              </div>
+              <div style={{ padding: '16px 24px', borderTop: '1px solid hsl(var(--border))', display: 'flex', gap: 12 }}>
+                <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Discard</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={isSubmitting}>
+                  {isSubmitting ? 'Syncing…' : editingMilestone ? 'Commit changes' : 'Add milestone'}
+                </button>
               </div>
             </form>
-          </Card>
+          </div>
         </div>
       )}
     </div>
