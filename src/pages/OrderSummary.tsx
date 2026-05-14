@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ArrowRight, Printer, Share2, ShoppingBag, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderItem } from '@/types/admin'
 import SEO from '@/components/SEO'
@@ -32,7 +30,7 @@ export default function OrderSummary() {
       <div className="min-h-screen flex items-center justify-center bg-off-white">
         <SEO title="Syncing Order..." noindex />
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 text-[var(--brand-green)] animate-spin" />
+          <span className="material-symbols-outlined animate-spin" style={{ fontSize: 40, color: 'var(--brand-green)' }}>progress_activity</span>
           <p className="text-micro font-bold tracking-tight text-stone-400">Retrieving transaction data...</p>
         </div>
       </div>
@@ -44,12 +42,10 @@ export default function OrderSummary() {
       <div className="min-h-screen flex items-center justify-center bg-off-white">
         <SEO title="Order Not Found" noindex />
         <div className="max-w-md w-full p-8 text-center bg-white border border-stone-200">
-          <ShoppingBag className="w-12 h-12 text-stone-200 mx-auto mb-4" />
+          <span className="material-symbols-outlined text-stone-200 block mx-auto mb-4" style={{ fontSize: 48 }}>shopping_bag</span>
           <h2 className="text-xl font-bold font-meta tracking-tight text-stone-900">Order not found</h2>
           <p className="text-xs text-stone-500 mt-2 mb-6 tracking-tight">The requested order could not be synchronized with the vault.</p>
-          <Button asChild className="w-full h-12 bg-stone-900 text-white rounded-none">
-            <Link to="/store">Back to store</Link>
-          </Button>
+          <Link to="/store" className="w-full h-12 bg-stone-900 text-white rounded-none flex items-center justify-center font-bold text-xs">Back to store</Link>
         </div>
       </div>
     )
@@ -116,7 +112,7 @@ export default function OrderSummary() {
                   <div key={item.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 bg-stone-50 px-4 rounded-sm">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-white flex items-center justify-center border border-stone-100 shrink-0">
-                        <ShoppingBag className="w-6 h-6 text-stone-300" />
+                        <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 24 }}>shopping_bag</span>
                       </div>
                       <div>
                         <p className="font-bold text-stone-900 text-sm leading-tight tracking-tight">{item.product_name || 'Official gear'}</p>
@@ -161,20 +157,18 @@ export default function OrderSummary() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="default" className="flex-1 h-12 border-stone-200 text-micro font-bold tracking-tight rounded-sm transition-all duration-300">
-                  <Printer className="w-4 h-4 mr-2" /> Print invoice
-                </Button>
-                <Button variant="default" className="flex-1 h-12 border-stone-200 text-micro font-bold tracking-tight rounded-sm transition-all duration-300">
-                  <Share2 className="w-4 h-4 mr-2" /> Share support
-                </Button>
+                <button onClick={() => window.print()} className="flex-1 h-12 border border-stone-200 text-micro font-bold tracking-tight rounded-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white cursor-pointer hover:bg-stone-50">
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>print</span> Print invoice
+                </button>
+                <button onClick={() => navigator.share?.({ title: 'The Base Store', url: window.location.href })} className="flex-1 h-12 border border-stone-200 text-micro font-bold tracking-tight rounded-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white cursor-pointer hover:bg-stone-50">
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>share</span> Share support
+                </button>
               </div>
 
-              <Button asChild variant="primary" className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20">
-                <Link to="/dashboard">
-                  Back to dashboard
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
+              <Link to="/dashboard" className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 bg-primary text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                Back to dashboard
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,5 +1,3 @@
-import { Star, ShoppingBag, Plus, Minus, ShieldCheck, Truck, RefreshCw, Heart, Share2 } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import type { Product } from '@/types/product'
@@ -63,7 +61,7 @@ export function ProductInfo({
         <div className="flex items-center gap-4 mb-6">
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map(i => (
-              <Star key={i} className={`w-4 h-4 ${i <= (product.rating || 4.8) ? 'fill-warm-gold text-warm-gold' : 'text-stone-300'}`} />
+              <span key={i} className="material-symbols-outlined" style={{ fontSize: 16, color: i <= (product.rating || 4.8) ? '#DAA520' : '#d6d3d1', fontVariationSettings: i <= (product.rating || 4.8) ? "'FILL' 1" : "'FILL' 0" }}>star</span>
             ))}
             <span className="ml-2 text-sm font-bold text-stone-900">{product.rating || '4.8'}</span>
           </div>
@@ -173,14 +171,13 @@ export function ProductInfo({
                 <option key={r} value={r}>{r}</option>
               ))}
             </select>
-            <Button 
+            <button
               onClick={checkRegionalAvailability}
               disabled={checkingAvailability}
-              variant="primary"
-              className="h-10 px-4 !text-white text-micro font-bold tracking-tight rounded-sm transition-all"
+              className="h-10 px-4 bg-primary text-white text-micro font-bold tracking-tight rounded-sm transition-all border-none cursor-pointer disabled:opacity-60 hover:opacity-90"
             >
               {checkingAvailability ? 'Checking...' : 'Check'}
-            </Button>
+            </button>
           </div>
 
           {availability && (
@@ -206,14 +203,14 @@ export function ProductInfo({
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="flex-1 h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
               >
-                <Minus className="w-4 h-4 text-stone-500" />
+                <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 16 }}>remove</span>
               </button>
               <span className="flex-1 text-center font-bold text-stone-900">{quantity}</span>
               <button 
                 onClick={() => setQuantity(quantity + 1)}
                 className="flex-1 h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
               >
-                <Plus className="w-4 h-4 text-stone-500" />
+                <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 16 }}>add</span>
               </button>
             </div>
           </div>
@@ -235,23 +232,22 @@ export function ProductInfo({
       </div>
 
       <div className="flex gap-4 mb-12">
-        <Button 
+        <button
           onClick={handleAddToCart}
           disabled={isComingSoon}
-          variant={isComingSoon ? "outline" : "primary"}
           className={cn(
-            "flex-1 h-14 text-xs font-bold tracking-tight rounded-sm",
-            isComingSoon ? "bg-stone-100 text-stone-400 border-stone-200" : "shadow-lg shadow-brand-green/20 !text-white"
+            "flex-1 h-14 text-xs font-bold tracking-tight rounded-sm border-none cursor-pointer transition-opacity flex items-center justify-center gap-2",
+            isComingSoon ? "bg-stone-100 text-stone-400 border border-stone-200" : "bg-primary text-white shadow-lg shadow-brand-green/20 hover:opacity-90"
           )}
         >
           {isComingSoon ? 'Coming soon' : (
-            <div className="flex items-center justify-center gap-2">
-              <ShoppingBag className="w-4 h-4" />
+            <>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>shopping_bag</span>
               Add to bag
-            </div>
+            </>
           )}
-        </Button>
-        <button 
+        </button>
+        <button
           onClick={() => {
             if (product) {
               if (isWishlisted) {
@@ -263,30 +259,30 @@ export function ProductInfo({
           }}
           className={`w-14 h-14 border flex items-center justify-center transition-all rounded-sm ${isWishlisted ? 'border-brand-red bg-brand-red/5 text-brand-red shadow-lg shadow-brand-red/10' : 'border-stone-200 text-stone-400 hover:border-brand-red hover:text-brand-red'}`}
         >
-          <Heart className={`w-6 h-6 transition-all ${isWishlisted ? 'fill-brand-red text-brand-red' : ''}`} />
+          <span className="material-symbols-outlined transition-all" style={{ fontSize: 24, fontVariationSettings: isWishlisted ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
         </button>
-        <button 
+        <button
           onClick={() => setIsShareModalOpen(true)}
           className="w-14 h-14 border border-stone-200 text-stone-400 hover:border-brand-green hover:text-brand-green transition-all rounded-sm flex items-center justify-center"
         >
-          <Share2 className="w-6 h-6" />
+          <span className="material-symbols-outlined" style={{ fontSize: 24 }}>share</span>
         </button>
       </div>
 
       {/* Delivery & Returns Info */}
       <div className="grid grid-cols-3 gap-2 sm:gap-6 py-8 border-t border-stone-200">
         <div className="flex flex-col items-center text-center gap-2">
-          <Truck className="w-5 h-5 text-brand-green" />
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>local_shipping</span>
           <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Fast delivery</p>
           <p className="text-sm text-stone-500 font-medium leading-tight">2-3 Days</p>
         </div>
         <div className="flex flex-col items-center text-center gap-2 border-x border-stone-100 px-2">
-          <ShieldCheck className="w-5 h-5 text-brand-green" />
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>verified_user</span>
           <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Secure pay</p>
           <p className="text-sm text-stone-500 font-medium leading-tight">Verified</p>
         </div>
         <div className="flex flex-col items-center text-center gap-2">
-          <RefreshCw className="w-5 h-5 text-brand-green" />
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>autorenew</span>
           <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Easy returns</p>
           <p className="text-sm text-stone-500 font-medium leading-tight">7-Day Policy</p>
         </div>

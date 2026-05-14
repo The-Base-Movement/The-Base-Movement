@@ -1,4 +1,3 @@
-import { ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
 
@@ -17,7 +16,7 @@ export function ImageGallery({ product, activeImage, setActiveImage, isComingSoo
           {activeImage ? (
             <img src={activeImage} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"  decoding="async" loading="lazy" />
           ) : (
-            <ShoppingBag className="w-32 h-32 text-stone-300" />
+            <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 128 }}>shopping_bag</span>
           )}
           {isComingSoon && (
             <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-[2px] flex items-center justify-center">

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CreditCard, Smartphone, CheckCircle, Truck, ShieldCheck, Globe } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
 import { adminService } from '@/services/adminService'
@@ -181,11 +179,11 @@ export default function Checkout() {
             to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/cart' : '/store/cart'}
             className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mb-4 group"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform" style={{ fontSize: 16 }}>arrow_back</span>
             <span className="font-meta text-micro font-bold tracking-tight">Back to bag</span>
           </Link>
           <h1 className="font-h1 text-2xl sm:text-h2 text-stone-900 flex items-center gap-3">
-            <CheckCircle className="w-8 h-8 text-[var(--brand-green)] shrink-0" />
+            <span className="material-symbols-outlined shrink-0" style={{ fontSize: 32, color: 'var(--brand-green)' }}>check_circle</span>
             <span>Secure Checkout</span>
           </h1>
         </header>
@@ -197,7 +195,7 @@ export default function Checkout() {
             <div className="bg-white border border-stone-200 p-8 rounded-sm shadow-sm">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-[var(--brand-green)]/10 rounded-full flex items-center justify-center">
-                  <Truck className="w-5 h-5 text-[var(--brand-green)]" />
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--brand-green)' }}>local_shipping</span>
                 </div>
                 <h2 className="font-h3 text-xl text-stone-900">1. Delivery Information</h2>
               </div>
@@ -300,7 +298,7 @@ export default function Checkout() {
             <div className="bg-white border border-stone-200 p-8 rounded-sm shadow-sm">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-[var(--brand-green)]/10 rounded-full flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-[var(--brand-green)]" />
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--brand-green)' }}>credit_card</span>
                 </div>
                 <h2 className="font-h3 text-xl text-stone-900">2. Payment Method</h2>
               </div>
@@ -316,7 +314,7 @@ export default function Checkout() {
                   }`}
                 >
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${paymentMethod === 'momo' ? 'bg-[var(--brand-green)] text-white' : 'bg-stone-200 text-stone-500'}`}>
-                    <Smartphone className="w-6 h-6" />
+                    <span className="material-symbols-outlined" style={{ fontSize: 24 }}>smartphone</span>
                   </div>
                   <div>
                     <p className="font-bold text-stone-900 text-sm">Mobile money</p>
@@ -334,7 +332,7 @@ export default function Checkout() {
                   }`}
                 >
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${paymentMethod === 'card' ? 'bg-[var(--brand-green)] text-white' : 'bg-stone-200 text-stone-500'}`}>
-                    <CreditCard className="w-6 h-6" />
+                    <span className="material-symbols-outlined" style={{ fontSize: 24 }}>credit_card</span>
                   </div>
                   <div>
                     <p className="font-bold text-stone-900 text-sm">Credit / debit card</p>
@@ -430,22 +428,21 @@ export default function Checkout() {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isSubmitting}
-                variant="primary"
-                className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20"
+                className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-60"
               >
                 {isSubmitting ? 'Processing Order...' : 'Complete Purchase'}
-              </Button>
+              </button>
 
               <div className="mt-8 space-y-4">
                 <div className="flex items-center gap-3 text-stone-500">
-                  <ShieldCheck className="w-4 h-4" />
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>verified_user</span>
                   <span className="text-micro font-bold tracking-tight">Encrypted checkout</span>
                 </div>
                 <div className="flex items-center gap-3 text-stone-500">
-                  <Globe className="w-4 h-4" />
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>public</span>
                   <span className="text-micro font-bold tracking-tight">Worldwide shipping</span>
                 </div>
               </div>

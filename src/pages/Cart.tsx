@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom'
-import { ShoppingBag, ArrowLeft, Trash2, Plus, Minus, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { useStore } from '@/hooks/useStore'
 import SEO from '@/components/SEO'
@@ -27,7 +25,7 @@ export default function Cart() {
         <Breadcrumbs />
         <header className="mb-12">
           <h1 className="font-h1 text-2xl sm:text-h2 text-stone-900 mb-2 flex items-center gap-3">
-            <ShoppingBag className="w-8 h-8 text-[var(--brand-green)] shrink-0" />
+            <span className="material-symbols-outlined shrink-0" style={{ fontSize: 32, color: 'var(--brand-green)' }}>shopping_bag</span>
             <span>Your Shopping Bag</span>
           </h1>
           <p className="text-muted-gray font-body-md">
@@ -45,7 +43,7 @@ export default function Cart() {
                     {item.image ? (
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
                     ) : (
-                      <ShoppingBag className="w-10 h-10 text-stone-300" />
+                      <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 40 }}>shopping_bag</span>
                     )}
                   </div>
                   
@@ -73,14 +71,14 @@ export default function Cart() {
                           onClick={() => updateCartQuantity(item.id, Math.max(1, item.quantity - 1))}
                           className="w-9 h-full flex items-center justify-center hover:bg-stone-50"
                         >
-                          <Minus className="w-3 h-3 text-stone-500" />
+                          <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 12 }}>remove</span>
                         </button>
                         <span className="w-10 text-center text-xs font-bold text-stone-900">{item.quantity}</span>
                         <button 
                           onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
                           className="w-9 h-full flex items-center justify-center hover:bg-stone-50"
                         >
-                          <Plus className="w-3 h-3 text-stone-500" />
+                          <span className="material-symbols-outlined text-stone-500" style={{ fontSize: 12 }}>add</span>
                         </button>
                       </div>
 
@@ -88,7 +86,7 @@ export default function Cart() {
                         onClick={() => removeFromCart(item.id)}
                         className="flex items-center gap-2 text-stone-400 hover:text-[var(--brand-red)] transition-colors text-micro font-bold tracking-tight"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
                         Remove
                       </button>
                     </div>
@@ -100,7 +98,7 @@ export default function Cart() {
                 to="/store"
                 className="inline-flex items-center gap-2 text-stone-500 hover:text-[var(--brand-green)] transition-colors mt-4 group"
               >
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform" style={{ fontSize: 16 }}>arrow_back</span>
                 <span className="font-meta text-micro font-bold tracking-tight">Continue shopping</span>
               </Link>
             </div>
@@ -129,12 +127,13 @@ export default function Cart() {
                   </div>
                 </div>
 
-                <Button asChild variant="primary" className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20">
-                  <Link to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/checkout' : '/store/checkout'}>
-                    Proceed to Checkout
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </Button>
+                <Link
+                  to={window.location.pathname.includes('/dashboard') ? '/dashboard/store/checkout' : '/store/checkout'}
+                  className="w-full h-14 text-xs font-bold tracking-tight rounded-sm shadow-lg shadow-brand-green/20 bg-primary text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                >
+                  Proceed to Checkout
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
+                </Link>
 
                 <div className="mt-8 space-y-4">
                   <div className="flex items-center gap-3 text-stone-500">
@@ -152,13 +151,13 @@ export default function Cart() {
         ) : (
           <div className="bg-white border border-stone-200 py-24 px-6 rounded-sm text-center shadow-sm max-w-2xl mx-auto">
             <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShoppingBag className="w-10 h-10 text-stone-300" />
+              <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 40 }}>shopping_bag</span>
             </div>
             <h2 className="font-h3 text-2xl text-stone-900 mb-2">Your bag is empty</h2>
             <p className="text-muted-gray font-body-md mb-8">Looks like you haven't added anything to your bag yet.</p>
-            <Button asChild variant="primary" className="px-8 h-12 text-xs font-bold tracking-tight rounded-sm">
-              <Link to="/store">Explore the Store</Link>
-            </Button>
+            <Link to="/store" className="inline-flex items-center px-8 h-12 text-xs font-bold tracking-tight rounded-sm bg-primary text-white hover:opacity-90 transition-opacity">
+              Explore the Store
+            </Link>
           </div>
         )}
       </div>

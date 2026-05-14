@@ -1,5 +1,3 @@
-import { Star, ShieldCheck } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import type { Product } from '@/types/product'
 
 interface ReviewsProps {
@@ -20,9 +18,9 @@ export function Reviews({ product }: ReviewsProps) {
             <p className="text-micro font-bold text-stone-400 tracking-tight">Average patriot rating</p>
           </div>
           <div className="w-px h-12 bg-stone-200" />
-          <Button variant="primary" className="h-12 text-micro font-bold tracking-tight px-8 rounded-none !text-white">
+          <button className="h-12 text-micro font-bold tracking-tight px-8 rounded-none bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity">
             Write a review
-          </Button>
+          </button>
         </div>
       </div>
 
@@ -33,12 +31,12 @@ export function Reviews({ product }: ReviewsProps) {
               <div className="flex justify-between items-start">
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map(i => (
-                    <Star key={i} className={`w-3 h-3 ${i <= review.rating ? 'fill-warm-gold text-warm-gold' : 'text-stone-200'}`} />
+                    <span key={i} className="material-symbols-outlined" style={{ fontSize: 12, color: i <= review.rating ? '#DAA520' : '#e7e5e4', fontVariationSettings: i <= review.rating ? "'FILL' 1" : "'FILL' 0" }}>star</span>
                   ))}
                 </div>
                 {review.is_verified && (
                   <span className="text-[8px] font-bold text-brand-green tracking-tight bg-brand-green/5 px-2 py-1 flex items-center gap-1">
-                    <ShieldCheck className="w-2.5 h-2.5" /> Verified patriot
+                    <span className="material-symbols-outlined" style={{ fontSize: 10 }}>verified_user</span> Verified patriot
                   </span>
                 )}
               </div>

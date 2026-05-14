@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Heart, ShoppingBag as ShoppingBagIcon } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ShareModal } from '@/components/ShareModal'
 import type { Product } from '@/types/product'
@@ -167,7 +165,7 @@ export default function ProductDetails() {
               to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store/wishlist' : '/store/wishlist'}
               className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-red transition-all rounded-sm bg-white shadow-sm"
             >
-              <Heart className="w-4 h-4 text-stone-500 group-hover:text-brand-red transition-all" />
+              <span className="material-symbols-outlined text-stone-500 group-hover:text-brand-red transition-all" style={{ fontSize: 16 }}>favorite</span>
               <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-red">Wishlist</span>
               {wishlistCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-brand-red text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
@@ -179,7 +177,7 @@ export default function ProductDetails() {
               to={(typeof window !== 'undefined' && window.location.pathname.includes('/dashboard')) ? '/dashboard/store/cart' : '/store/cart'}
               className="relative group flex items-center gap-2 px-4 py-2.5 border border-stone-200 hover:border-brand-green transition-all rounded-sm bg-white shadow-sm"
             >
-              <ShoppingBagIcon className="w-4 h-4 text-stone-500 group-hover:text-brand-green transition-all" />
+              <span className="material-symbols-outlined text-stone-500 group-hover:text-brand-green transition-all" style={{ fontSize: 16 }}>shopping_bag</span>
               <span className="font-meta text-micro font-bold tracking-tight text-stone-600 group-hover:text-brand-green">Bag</span>
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-brand-green text-white text-micro font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">
@@ -259,7 +257,7 @@ export default function ProductDetails() {
                   <div className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Supporting local production
                 </li>
               </ul>
-              <ShoppingBagIcon className="absolute -bottom-10 -right-10 w-48 h-48 text-white/5 -rotate-12" />
+              <span className="material-symbols-outlined absolute -bottom-10 -right-10 -rotate-12 text-white/5" style={{ fontSize: 192 }}>shopping_bag</span>
             </div>
           </section>
         )}
@@ -320,12 +318,12 @@ export default function ProductDetails() {
                 <p className="mt-8 text-sm text-stone-400 leading-relaxed italic">
                   * Please note that these are approximate measurements. For a more relaxed fit, we recommend ordering one size up.
                 </p>
-                <Button 
+                <button
                   onClick={() => setShowSizeGuide(false)}
-                  className="w-full mt-8 bg-stone-900 hover:bg-stone-800 text-white text-micro font-bold tracking-tight rounded-none h-12"
+                  className="w-full mt-8 bg-stone-900 hover:bg-stone-800 text-white text-micro font-bold tracking-tight rounded-none h-12 border-none cursor-pointer transition-colors"
                 >
                   Close guide
-                </Button>
+                </button>
               </div>
             </div>
           </div>

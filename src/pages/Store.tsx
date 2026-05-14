@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react'
-import { Button } from '../components/ui/neon-button'
 import { ProductCard } from '@/components/ProductCard'
 import { ShareModal } from '@/components/ShareModal'
 import SEO from '@/components/SEO'
@@ -9,14 +7,6 @@ import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'
 import { adminService } from '@/services/adminService'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 
 const categories = ['All', 'Apparel', 'Accessories', 'Books', 'Print']
 
@@ -145,43 +135,42 @@ export default function Store() {
                 ))
               ) : (
                 <div className="col-span-full py-24 text-center bg-white border border-stone-200 rounded-[6px]">
-                  <ShoppingBag className="w-16 h-16 text-stone-100 mx-auto mb-4" />
+                  <span className="material-symbols-outlined text-stone-100 block mx-auto mb-4" style={{ fontSize: 64 }}>shopping_bag</span>
                   <h3 className="text-stone-400 font-bold tracking-tight">No products found.</h3>
                 </div>
               )}
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-8 pt-8 border-t border-stone-100">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious 
-                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                        className={cn("cursor-pointer", currentPage === 1 && "opacity-30 pointer-events-none")}
-                      />
-                    </PaginationItem>
-                    
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                      <PaginationItem key={i}>
-                        <PaginationLink 
-                          isActive={currentPage === i + 1}
-                          onClick={() => setCurrentPage(i + 1)}
-                          className="cursor-pointer font-bold tracking-tight"
-                        >
-                          {i + 1}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-
-                    <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                        className={cn("cursor-pointer", currentPage === totalPages && "opacity-30 pointer-events-none")}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+              <div className="mt-8 pt-8 border-t border-stone-100 flex items-center justify-center gap-1">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="h-9 px-3 border border-border rounded-sm text-xs font-bold cursor-pointer disabled:opacity-30 hover:border-primary hover:text-primary transition-colors bg-white"
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>chevron_left</span>
+                </button>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={cn(
+                      "w-9 h-9 border rounded-sm text-xs font-bold cursor-pointer transition-colors",
+                      currentPage === i + 1
+                        ? "bg-on-surface text-white border-on-surface"
+                        : "bg-white border-border hover:border-primary hover:text-primary"
+                    )}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="h-9 px-3 border border-border rounded-sm text-xs font-bold cursor-pointer disabled:opacity-30 hover:border-primary hover:text-primary transition-colors bg-white"
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>chevron_right</span>
+                </button>
               </div>
             )}
           </section>
@@ -199,7 +188,7 @@ export default function Store() {
               <div className="items px-[18px] max-h-[320px] overflow-y-auto">
                 {cart.length === 0 ? (
                   <div className="py-12 text-center">
-                    <ShoppingBag className="w-8 h-8 text-stone-200 mx-auto mb-2" />
+                    <span className="material-symbols-outlined text-stone-200 block mx-auto mb-2" style={{ fontSize: 32 }}>shopping_bag</span>
                     <p className="text-micro font-bold text-stone-400 m-0">Your bag is empty</p>
                   </div>
                 ) : (
@@ -222,14 +211,14 @@ export default function Store() {
                             className="w-[22px] h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
                             onClick={() => updateCartQuantity(item.id, item.quantity - 1, item.selectedSize, item.selectedColor)}
                           >
-                            <Minus className="w-2.5 h-2.5" />
+                            <span className="material-symbols-outlined" style={{ fontSize: 10 }}>remove</span>
                           </button>
                           <span className="px-2 font-meta font-extrabold text-[11px]">{item.quantity}</span>
                           <button 
                             className="w-[22px] h-full flex items-center justify-center hover:bg-stone-50 transition-colors"
                             onClick={() => updateCartQuantity(item.id, item.quantity + 1, item.selectedSize, item.selectedColor)}
                           >
-                            <Plus className="w-2.5 h-2.5" />
+                            <span className="material-symbols-outlined" style={{ fontSize: 10 }}>add</span>
                           </button>
                         </div>
                       </div>
@@ -241,7 +230,7 @@ export default function Store() {
                           className="text-destructive hover:text-red-700 p-1"
                           onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedColor)}
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <span className="material-symbols-outlined" style={{ fontSize: 12 }}>delete</span>
                         </button>
                       </div>
                     </div>
@@ -266,9 +255,7 @@ export default function Store() {
               </div>
 
               <div className="p-[18px] pt-3.5 pb-4">
-                <Button asChild variant="accent" size="lg" className="w-full h-14 font-extrabold">
-                  <Link to="/store/checkout">Checkout securely →</Link>
-                </Button>
+                <Link to="/store/checkout" className="w-full h-14 font-extrabold bg-accent text-white flex items-center justify-center text-sm tracking-tight rounded-sm hover:opacity-90 transition-opacity">Checkout securely →</Link>
                 <div className="flex gap-1.5 justify-center mt-3 opacity-40">
                   {['MoMo', 'Visa', 'Mastercard', 'PayPal'].map(m => (
                     <span key={m} className="text-[9px] font-extrabold font-meta uppercase border border-border px-1.5 py-0.5 rounded-[2px]">{m}</span>
