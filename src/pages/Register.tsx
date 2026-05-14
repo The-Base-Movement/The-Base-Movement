@@ -1,7 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import { ArrowLeft, CheckCircle } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import type { Area } from 'react-easy-crop'
 import { getCroppedImg } from '@/lib/imageUtils'
 import { supabase } from '@/lib/supabase'
@@ -251,7 +249,7 @@ export default function Register() {
       <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
         <div className="max-w-[480px] w-full auth-frame p-10 text-center animate-in fade-in zoom-in duration-500">
           <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10" />
+            <span className="material-symbols-outlined" style={{ fontSize: 40 }}>check_circle</span>
           </div>
           <h2 className="text-2xl font-extrabold text-on-surface mb-3 tracking-tight">Form Received, Patriot!</h2>
           <p className="text-[14px] text-on-surface-muted leading-relaxed mb-8">
@@ -261,9 +259,9 @@ export default function Register() {
             <Link to="/" className="block w-full py-4 bg-primary text-white font-bold uppercase tracking-widest text-[12px] rounded-sm hover:opacity-90 transition-all">
               Return Home
             </Link>
-            <Button variant="ghost" onClick={() => setPhysicalSubmitted(false)} className="w-full text-xs font-bold">
+            <button onClick={() => setPhysicalSubmitted(false)} className="w-full text-xs font-bold bg-transparent border-none cursor-pointer text-on-surface-muted hover:text-on-surface transition-colors py-2">
               Upload Another Form
-            </Button>
+            </button>
           </div>
         </div>
       </main>
@@ -299,9 +297,9 @@ export default function Register() {
             <img src={settings.logo_url} alt="Logo" className="h-10 w-auto" />
             <h1 className="text-lg font-extrabold tracking-tight text-on-surface">The Base</h1>
           </Link>
-          <Button variant="ghost" onClick={() => setStep('choice')} className="text-xs font-bold gap-2">
-            <ArrowLeft className="w-3.5 h-3.5" /> Back
-          </Button>
+          <button onClick={() => setStep('choice')} className="text-xs font-bold gap-2 flex items-center bg-transparent border-none cursor-pointer text-on-surface-muted hover:text-on-surface transition-colors">
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>arrow_back</span> Back
+          </button>
         </div>
 
         <RegistrationForm 

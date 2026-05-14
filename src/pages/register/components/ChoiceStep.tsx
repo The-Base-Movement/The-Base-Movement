@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Globe, ArrowRight } from 'lucide-react'
 import SEO from '@/components/SEO'
 import type { BrandingSettings } from '@/types/branding'
 import { cn } from '@/lib/utils'
@@ -28,7 +27,7 @@ export function ChoiceStep({ settings, onSelect }: ChoiceStepProps) {
           title="Base Ghana"
           subtitle="Local membership"
           description="Designed for patriots currently living within the 16 regions of Ghana."
-          icon={<MapPin className="w-6 h-6" />}
+          icon={<span className="material-symbols-outlined" style={{ fontSize: 24 }}>location_on</span>}
           variant="primary"
           onClick={() => onSelect('GHANA')}
         />
@@ -37,7 +36,7 @@ export function ChoiceStep({ settings, onSelect }: ChoiceStepProps) {
           title="Base Diaspora"
           subtitle="Global membership"
           description="Tailored for Ghanaians and supporters living abroad."
-          icon={<Globe className="w-6 h-6" />}
+          icon={<span className="material-symbols-outlined" style={{ fontSize: 24 }}>public</span>}
           variant="gold"
           onClick={() => onSelect('DIASPORA')}
         />
@@ -130,7 +129,7 @@ function PlatformCard({ title, subtitle, description, icon, variant, onClick }: 
           "flex items-center gap-2 text-[12px] font-bold tracking-tight transition-colors",
           variant === 'primary' ? "text-primary group-hover:text-primary/80" : "text-brand-gold group-hover:text-brand-gold/80"
         )}>
-          Join platform <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          Join platform <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
         </div>
       </div>
     </button>

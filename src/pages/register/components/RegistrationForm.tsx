@@ -1,5 +1,3 @@
-import { Loader2, Upload, MapPin, Globe, CheckCircle, RotateCw, X } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import { cn } from '@/lib/utils'
@@ -126,7 +124,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       onClick={() => onPlatformChange('GHANA')}
                     >
                       <div className={cn("w-8 h-8 rounded-sm flex items-center justify-center mb-2", platform === 'GHANA' ? "bg-primary text-white" : "bg-container-low text-primary")}>
-                        <MapPin className="w-4 h-4" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>location_on</span>
                       </div>
                       <b className="text-[13px] block">Base Ghana</b>
                       <span className="text-[11px]">Living in Ghana</span>
@@ -142,7 +140,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       onClick={() => onPlatformChange('DIASPORA')}
                     >
                       <div className={cn("w-8 h-8 rounded-sm flex items-center justify-center mb-2", platform === 'DIASPORA' ? "bg-brand-gold text-white" : "bg-container-low text-brand-gold")}>
-                        <Globe className="w-4 h-4" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>public</span>
                       </div>
                       <b className="text-[13px] block">Base Diaspora</b>
                       <span className="text-[11px]">Living abroad</span>
@@ -276,7 +274,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 {!photoUrl ? (
                   <div className="p-10 border-2 border-dashed border-border/60 rounded-sm bg-container-low text-center relative hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group">
                     <input type="file" accept="image/*" onChange={onIdScan} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                    <Upload className="w-10 h-10 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                    <span className="material-symbols-outlined text-primary mx-auto mb-3 group-hover:scale-110 transition-transform block" style={{ fontSize: 40 }}>upload</span>
                     <b className="text-[13px] block font-extrabold">Upload photo of Ghana Card</b>
                     <span className="text-[11px] text-on-surface-muted">JPG or PNG, up to 8 MB</span>
                   </div>
@@ -307,7 +305,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         onClick={onClearPhoto}
                         className="ml-2 p-1.5 hover:bg-white/10 rounded-full text-white/60 hover:text-white transition-colors"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
                       </button>
                     </div>
                   </div>
@@ -315,16 +313,16 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
                 <div className="verify-checks">
                   <div className="check-row">
-                    <CheckCircle className="w-4 h-4 mr-2 text-primary" />
+                    <span className="material-symbols-outlined" style={{ fontSize: 16, marginRight: 8, color: 'hsl(var(--primary))' }}>check_circle</span>
                     <span>Photo is clear and unobstructed</span>
                   </div>
                   <div className="check-row">
-                    <CheckCircle className="w-4 h-4 mr-2 text-primary" />
+                    <span className="material-symbols-outlined" style={{ fontSize: 16, marginRight: 8, color: 'hsl(var(--primary))' }}>check_circle</span>
                     <span>Name matches your registration</span>
                   </div>
                   {isScanningId && (
                     <div className="check-row pending">
-                      <RotateCw className="w-4 h-4 mr-2 text-brand-gold animate-spin" />
+                      <span className="material-symbols-outlined animate-spin" style={{ fontSize: 16, marginRight: 8, color: 'hsl(var(--accent))' }}>progress_activity</span>
                       <span>AI Analysis running — checking document…</span>
                     </div>
                   )}
@@ -448,24 +446,24 @@ export function RegistrationForm(props: RegistrationFormProps) {
           {/* Footer Navigation */}
           <div className="px-7 py-6 border-t border-border bg-container-low flex gap-2">
             {formStep > 1 && (
-              <Button type="button" variant="outline" onClick={onBack} className="w-1/3 h-[46px] font-bold">
+              <button type="button" onClick={onBack} className="w-1/3 h-[46px] font-bold border border-border bg-white text-on-surface cursor-pointer hover:bg-container-low transition-colors">
                 ← Back
-              </Button>
+              </button>
             )}
-            <Button 
-              type="submit" 
-              variant={formStep === 4 ? "gold" : "primary"}
-              disabled={(formStep === 4 && !agreed) || isLoading} 
-              className="flex-1 h-[46px] font-bold text-sm tracking-tight"
+            <button
+              type="submit"
+              disabled={(formStep === 4 && !agreed) || isLoading}
+              className={cn(
+                "flex-1 h-[46px] font-bold text-sm tracking-tight border-none cursor-pointer transition-all flex items-center justify-center gap-2 disabled:opacity-60",
+                formStep === 4 ? "bg-accent text-white" : "bg-primary text-white"
+              )}
             >
               {isLoading ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
+                <><span className="material-symbols-outlined" style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}>progress_activity</span> Processing...</>
               ) : (
-                <>
-                  {formStep < 4 ? "Continue to verify ID →" : "Submit registration →"}
-                </>
+                <>{formStep < 4 ? "Continue to verify ID →" : "Submit registration →"}</>
               )}
-            </Button>
+            </button>
           </div>
         </form>
       </div>

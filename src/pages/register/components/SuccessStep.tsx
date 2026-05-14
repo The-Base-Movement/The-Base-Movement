@@ -1,10 +1,9 @@
-import { CheckCircle2, ArrowLeft, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import MembershipCard from '@/components/MembershipCard'
 import { useNavigate } from 'react-router-dom'
 import { useRef } from 'react'
 import html2canvas from 'html2canvas'
 import type { RegistrationFormData } from '@/types/registration'
+
 
 interface SuccessStepProps {
   formData: RegistrationFormData
@@ -84,7 +83,7 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
     <div className="max-w-3xl mx-auto">
       <div className="text-center mb-10">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-6 animate-bounce">
-          <CheckCircle2 className="w-8 h-8" />
+          <span className="material-symbols-outlined" style={{ fontSize: 32 }}>check_circle</span>
         </div>
         <h1 className="text-3xl font-bold text-on-surface tracking-tighter font-meta mb-2">Registration complete</h1>
         <p className="text-muted-foreground/90 font-meta tracking-tight text-xs">Welcome to the movement, patriot.</p>
@@ -120,21 +119,19 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
                 <p className="font-meta font-bold text-xl text-primary tracking-tight">{regNumber}</p>
               </div>
               <div className="flex items-center gap-3">
-                <Button
-                  variant="gold"
+                <button
                   onClick={handlePrint}
-                  className="flex items-center justify-center gap-2 px-6 py-3 h-auto shadow-md hover:scale-[1.02] active:scale-95 transition-all"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-white font-bold text-sm shadow-md hover:scale-[1.02] active:scale-95 transition-all border-none cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[18px]">print</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>print</span>
                   Print card
-                </Button>
-                <Button
-                  variant="default"
+                </button>
+                <button
                   onClick={onEdit}
-                  className="flex items-center justify-center gap-2 px-6 py-3 h-auto text-stone-500 border-stone-200 hover:text-brand-green hover:bg-stone-50 transition-all active:scale-95 shadow-sm"
+                  className="flex items-center justify-center gap-2 px-6 py-3 text-stone-500 border border-stone-200 bg-white hover:text-primary hover:bg-stone-50 transition-all active:scale-95 shadow-sm font-bold text-sm cursor-pointer"
                 >
-                  <ArrowLeft className="w-4 h-4" /> Edit info
-                </Button>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_back</span> Edit info
+                </button>
               </div>
             </div>
           </div>
@@ -157,13 +154,12 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
               <h4 className="font-meta font-bold text-micro text-primary-foreground/90 tracking-tight mb-4 normal-case">Next step</h4>
               <p className="text-sm font-bold font-meta leading-tight mb-4">Access your portal to join a chapter.</p>
             </div>
-            <Button
-              variant="default"
+            <button
               onClick={() => navigate('/dashboard')}
-              className="w-full inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border-white/20 text-primary-foreground h-auto p-3 text-center justify-center font-bold transition-all active:scale-95 shadow-sm"  
+              className="w-full inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white h-auto p-3 text-center justify-center font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
             >
-              Enter Overview <ArrowRight className="w-4 h-4" />
-            </Button>
+              Enter Overview <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
+            </button>
           </div>
         </div>
       </div>
