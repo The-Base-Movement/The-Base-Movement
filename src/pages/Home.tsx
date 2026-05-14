@@ -4,6 +4,7 @@ import { adminService, type BlogPost, type Milestone, type Chapter, type Poll } 
 import { usePerformance } from '@/context/PerformanceContext'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
+import { cn } from '@/lib/utils'
 
 function Sparkline({ heights, accent }: { heights: number[]; accent: string }) {
   return (
