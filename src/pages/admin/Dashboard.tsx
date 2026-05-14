@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { adminService } from '@/services/adminService'
 import { tacticalService } from '@/services/tacticalService'
-import { useToast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 
 import type { 
   AuditLogEntry, 
@@ -47,7 +47,6 @@ export default function AdminDashboard() {
   const [globalStats, setGlobalStats] = useState<{ label: string, value: string, change: string }[]>([])
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const navigate = useNavigate()
-  const { toast } = useToast()
   const [isExporting, setIsExporting] = useState(false)
   
   // Broadcast State
@@ -100,11 +99,7 @@ export default function AdminDashboard() {
 
   const handleSendBroadcast = async () => {
     if (!broadcast.title || !broadcast.content) {
-      toast({
-        title: "Validation Error",
-        description: "Please provide both a headline and message content.",
-        variant: "destructive"
-      })
+      toast.error("Please provide both a headline and message content.")
       return
     }
 
@@ -121,21 +116,14 @@ export default function AdminDashboard() {
       })
 
       if (success) {
-        toast({
-          title: "Broadcast Dispatched",
-          description: `Message sent to targeted ${broadcast.target_type.toLowerCase()} audience.`,
-        })
+        toast.success(`Message sent to targeted ${broadcast.target_type.toLowerCase()} audience.`)
         // Reset form or keep for next? Let's clear content but keep target for speed
         setBroadcast(prev => ({ ...prev, content: '' }))
       } else {
         throw new Error('Service response failed')
       }
     } catch {
-      toast({
-        title: "Dispatch Failure",
-        description: "Strategic communication layer encountered an error.",
-        variant: "destructive"
-      })
+      toast.error("Strategic communication layer encountered an error.")
     } finally {
       setIsSending(false)
     }
@@ -143,19 +131,12 @@ export default function AdminDashboard() {
 
   const handleExport = async () => {
     if (regionalStats.length === 0) {
-      toast({
-        title: "No data available",
-        description: "There is no regional data to export at this time.",
-        variant: "destructive"
-      })
+      toast.error("There is no regional data to export at this time.")
       return
     }
 
     setIsExporting(true)
-    toast({
-      title: "Generating export",
-      description: "Aggregating regional performance telemetry...",
-    })
+    toast.info("Aggregating regional performance telemetry...")
     
     try {
       // Aggregate real regional data
@@ -191,18 +172,11 @@ export default function AdminDashboard() {
       }, 100)
 
       setIsExporting(false)
-      toast({
-        title: "Export complete",
-        description: "The regional performance report has been successfully generated.",
-      })
+      toast.success("The regional performance report has been successfully generated.")
     } catch (error) {
       console.error('[DASHBOARD] Export failure:', error)
       setIsExporting(false)
-      toast({
-        title: "Export failed",
-        description: "A critical error occurred during data aggregation.",
-        variant: "destructive"
-      })
+      toast.error("A critical error occurred during data aggregation.")
     }
   }
 

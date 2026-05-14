@@ -1,31 +1,9 @@
 import { useState, useEffect } from 'react'
-import { 
-  Target, 
-  Plus, 
-  Search, 
-  Edit2, 
-  Trash2, 
-  Calendar, 
-  Image as ImageIcon,
-  Clock,
-  TrendingUp,
-  X,
-  Loader2
-} from 'lucide-react'
 import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle,
-  CardDescription
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
 
 export default function StrategicPriorities() {
   const [campaigns, setCampaigns] = useState<DonationCampaign[]>([])
@@ -129,29 +107,29 @@ export default function StrategicPriorities() {
 
   if (loading) {
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-        <p className="text-micro font-bold tracking-tight text-muted-foreground/40">Synchronizing tactical priorities...</p>
+      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
+        <span className="material-symbols-outlined animate-spin" style={{ fontSize: 48, color: 'hsl(var(--primary))' }}>sync</span>
+        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginTop: 16 }}>Synchronizing tactical priorities...</p>
       </div>
     )
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main animate-in fade-in duration-500">
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <Target className="w-8 h-8 text-on-surface" />
+          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>target</span>
             Strategic priorities
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Manage movement-wide mobilization goals, financial targets, and operational milestones.</p>
+          </h2>
+          <div style={{ marginTop: 12 }}><BrandLine /></div>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
+            Manage movement-wide mobilization goals, financial targets, and operational milestones.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="primary"
-            size="lg"
+        <div className="actions">
+          <button 
+            className="btn btn-primary"
             onClick={() => {
               setFormData({
                 title: '',
@@ -163,161 +141,160 @@ export default function StrategicPriorities() {
               })
               setIsCreating(true)
             }}
-            className="rounded-sm text-micro font-bold tracking-tight px-12 h-12 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
           >
-            <Plus className="w-4 h-4 mr-2" /> Add Priority
-          </Button>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
+            Add Priority
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div className="kpis">
         <TacticalKPI 
           label="Active priorities"
           value={campaigns.filter(c => c.status === 'Active').length}
           description="Operational goals"
-          trend={{ direction: 'neutral', value: 'Active' }}
+          variant="black"
         />
         <TacticalKPI 
           label="Total Mobilized"
           value={`$${campaigns.reduce((acc, c) => acc + c.raisedAmount, 0).toLocaleString()}`}
           description="Gross resource intake"
-          trend={{ direction: 'up', value: 'Elite' }}
+          variant="green"
         />
         <TacticalKPI 
           label="Average progress"
           value={`${campaigns.length > 0 ? (campaigns.reduce((acc, c) => acc + (c.raisedAmount / c.targetAmount), 0) / campaigns.length * 100).toFixed(0) : 0}%`}
           description="Mission completion"
-          trend={{ direction: 'up', value: 'Advancing' }}
+          variant="gold"
         />
         <TacticalKPI 
           label="Upcoming deadlines"
           value={campaigns.filter(c => new Date(c.endDate) > new Date()).length}
           description="Time-sensitive goals"
+          variant="red"
         />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start relative">
-        {/* Sticky Filter Sidebar */}
-        <aside className="w-full lg:w-80 sticky lg:top-32 space-y-6 shrink-0 z-30">
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-white">
-            <div className="p-4 border-b border-border/10 bg-muted/5">
-              <h3 className="font-bold text-on-surface text-xs normal-case">Tactical filters</h3>
+      <div className="sidebar-main" style={{ alignItems: 'start' }}>
+        {/* Sidebar */}
+        <aside style={{ display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 80, width: 280, flexShrink: 0 }}>
+          <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="ph" style={{ padding: '12px 18px' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Tactical filters</span>
             </div>
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-3">
-                <label className="text-micro font-bold text-stone-500 uppercase tracking-widest">Search priorities</label>
-                <div className="relative group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
+            <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Search priorities</label>
+                <div style={{ position: 'relative' }}>
+                  <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
                   <input 
                     placeholder="Keywords..." 
-                    className="w-full pl-11 pr-4 h-11 bg-white border border-border/60 focus:ring-1 focus:ring-primary focus:border-transparent rounded-sm text-tiny font-bold outline-none"
+                    style={{ width: '100%', height: 38, paddingLeft: 34, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', borderRadius: 4, outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, boxSizing: 'border-box', color: 'hsl(var(--on-surface))' }}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-border/10 space-y-4">
-                <div className="flex items-center justify-between text-micro font-bold text-muted-foreground/60 uppercase tracking-widest">
-                  <span>Intelligence Summary</span>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
-                    <span className="text-micro font-bold text-on-surface/60">Total Active</span>
-                    <span className="text-xs font-bold text-primary">{campaigns.filter(c => c.status === 'Active').length}</span>
+              <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Intelligence Summary</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'hsl(var(--container-low))', borderRadius: 4, border: '1px solid hsl(var(--border))' }}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>Total Active</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--primary))' }}>{campaigns.filter(c => c.status === 'Active').length}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/5 rounded-sm border border-border/10">
-                    <span className="text-micro font-bold text-on-surface/60">Success Rate</span>
-                    <span className="text-xs font-bold text-accent">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'hsl(var(--container-low))', borderRadius: 4, border: '1px solid hsl(var(--border))' }}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>Success Rate</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--accent))' }}>
                       {campaigns.length > 0 ? (campaigns.filter(c => (c.raisedAmount / c.targetAmount) >= 1).length / campaigns.length * 100).toFixed(0) : 0}%
                     </span>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden bg-on-surface text-white p-6 group">
-            <h4 className="text-micro font-bold tracking-tight text-white/40 uppercase mb-4">Tactical Awareness</h4>
-            <p className="text-tiny font-medium text-white/60 leading-relaxed">
+          <div className="panel" style={{ background: 'hsl(var(--on-surface))', color: '#fff' }}>
+            <h4 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.4)', margin: '0 0 12px' }}>Tactical Awareness</h4>
+            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, margin: 0 }}>
               Setting strategic priorities allows the movement to synchronize resource allocation across multiple regional cells.
             </p>
-            <Button variant="ghost" className="w-full justify-between h-9 mt-4 px-0 text-micro font-bold tracking-tight text-white hover:bg-transparent group-hover:text-primary transition-colors">
-              Operational Handbook <TrendingUp className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Card>
+          </div>
         </aside>
 
         {/* Main Priorities Grid */}
-        <div className="flex-1 min-h-[500px]">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <main style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 20 }}>
             {filteredCampaigns.length === 0 ? (
-              <div className="col-span-full py-24 text-center border-2 border-dashed border-border/20 rounded-sm bg-white">
-                <Target className="w-12 h-12 text-muted mx-auto mb-4 opacity-10" />
-                <h3 className="text-lg font-bold text-on-surface">No priorities found</h3>
-                <p className="text-sm text-muted-foreground/40 mt-1 max-w-xs mx-auto">Try refining your search or add a new strategic priority.</p>
-                <Button 
-                  variant="default" 
+              <div style={{ gridColumn: '1/-1', padding: '100px 0', textAlign: 'center', border: '2px dashed hsl(var(--border))', borderRadius: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', opacity: 0.2 }}>target</span>
+                <div>
+                  <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 20, color: 'hsl(var(--on-surface))', margin: 0 }}>No priorities found</h3>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>Try refining your search or add a new strategic priority.</p>
+                </div>
+                <button 
+                  className="btn btn-outline"
                   onClick={() => setSearchQuery('')}
-                  className="mt-6 rounded-sm border-border/40 font-bold text-micro tracking-tight px-10 h-12 hover:bg-stone-50 transition-all shadow-sm active:scale-95"
                 >
                   Reset Filter
-                </Button>
+                </button>
               </div>
             ) : (
               filteredCampaigns.map((campaign) => (
-                <Card key={campaign.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden group hover:border-on-surface/40 transition-all bg-white flex flex-col">
-                  <div className="relative h-48 bg-stone-100 overflow-hidden shrink-0 border-b border-border/10">
+                <div key={campaign.id} className="panel" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ height: 180, position: 'relative', overflow: 'hidden', background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
                     {campaign.imageUrl ? (
-                      <img src={campaign.imageUrl} alt={campaign.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" decoding="async" loading="lazy" />
+                      <img src={campaign.imageUrl} alt={campaign.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ImageIcon className="w-12 h-12 text-muted-foreground/20" />
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', opacity: 0.1 }}>image</span>
                       </div>
                     )}
-                    <div className="absolute top-4 right-4">
-                      <span className={cn(
-                        "px-3 py-1 text-micro font-bold tracking-tight rounded-full border shadow-sm backdrop-blur-md",
-                        campaign.status === 'Active' ? "bg-primary text-white border-primary/20" : "bg-white text-on-surface border-border/60"
-                      )}>
+                    <div style={{ position: 'absolute', top: 12, right: 12 }}>
+                      <span className="pill" style={{ 
+                        background: campaign.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))', 
+                        color: '#fff', 
+                        fontSize: 9, 
+                        fontWeight: 900, 
+                        textTransform: 'uppercase' 
+                      }}>
                         {campaign.status}
                       </span>
                     </div>
                   </div>
-                  <CardContent className="p-6 flex-1 flex flex-col justify-between space-y-6">
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-bold text-on-surface leading-tight tracking-tight m-0">{campaign.title}</h3>
-                      <p className="text-xs text-muted-foreground/80 leading-relaxed m-0 line-clamp-3 font-medium">{campaign.description}</p>
+                  
+                  <div style={{ padding: 24, flex: 1, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 16, color: 'hsl(var(--on-surface))', margin: 0, lineHeight: 1.3 }}>{campaign.title}</h3>
+                      <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: 0, lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{campaign.description}</p>
                     </div>
 
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-end">
-                          <span className="text-micro font-bold text-muted-foreground/40 normal-case">Progress</span>
-                          <span className="text-sm font-bold text-on-surface">{((campaign.raisedAmount / campaign.targetAmount) * 100).toFixed(0)}%</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'hsl(var(--on-surface-muted))' }}>Progress</span>
+                          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 14, color: 'hsl(var(--on-surface))' }}>{((campaign.raisedAmount / campaign.targetAmount) * 100).toFixed(0)}%</span>
                         </div>
-                        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div style={{ height: 6, background: 'hsl(var(--container-low))', borderRadius: 3, overflow: 'hidden' }}>
                           <div 
-                            className="h-full bg-primary transition-all duration-1000 ease-out" 
-                            style={{ width: `${Math.min((campaign.raisedAmount / campaign.targetAmount) * 100, 100)}%` }}
+                            style={{ height: '100%', background: 'hsl(var(--primary))', width: `${Math.min((campaign.raisedAmount / campaign.targetAmount) * 100, 100)}%`, transition: 'width 1s' }}
                           />
                         </div>
-                        <div className="flex justify-between text-micro font-bold tracking-tight">
-                          <span className="text-primary">${campaign.raisedAmount.toLocaleString()}</span>
-                          <span className="text-muted-foreground/40 normal-case">of ${campaign.targetAmount.toLocaleString()}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10 }}>
+                          <span style={{ color: 'hsl(var(--primary))' }}>${campaign.raisedAmount.toLocaleString()}</span>
+                          <span style={{ color: 'hsl(var(--on-surface-muted))' }}>of ${campaign.targetAmount.toLocaleString()}</span>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-border/10">
-                        <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/60 uppercase">
-                          <Calendar className="w-3 h-3" />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 16, borderTop: '1px solid hsl(var(--border))' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>calendar_today</span>
                           <span>Ends: {new Date(campaign.endDate).toLocaleDateString()}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8 text-muted-foreground/40 hover:text-on-surface hover:bg-stone-50 rounded-sm transition-all"
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <button 
+                            className="btn btn-outline btn-sm" 
+                            style={{ width: 34, padding: 0, justifyContent: 'center' }}
                             onClick={() => {
                               setEditingCampaign(campaign)
                               setFormData({
@@ -330,143 +307,148 @@ export default function StrategicPriorities() {
                               })
                             }}
                           >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 rounded-sm transition-all"
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>
+                          </button>
+                          <button 
+                            className="btn btn-dest btn-sm" 
+                            style={{ width: 34, padding: 0, justifyContent: 'center' }}
                             onClick={() => handleDelete(campaign.id, campaign.title)}
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </Button>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                          </button>
                         </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))
             )}
           </div>
-        </div>
+        </main>
       </div>
 
       {/* 📝 Create/Edit Modal */}
       {(isCreating || editingCampaign) && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-surface/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <Card className="w-full max-w-xl rounded-sm border-border/60 shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden bg-white">
-            <CardHeader className="p-8 border-b border-border/10 bg-muted/5">
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-xl font-bold tracking-tight font-meta">
-                    {isCreating ? 'Deploy New Priority' : 'Adjust Strategic Protocol'}
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground/80 text-micro font-bold tracking-tight mt-1">
-                    Defining critical resource allocation for the movement.
-                  </CardDescription>
-                </div>
-                <Button variant="ghost" onClick={() => { setIsCreating(false); setEditingCampaign(null); }} className="h-8 w-8 p-0 rounded-sm hover:bg-muted/10">
-                  <X className="w-5 h-5 text-muted-foreground/40" />
-                </Button>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div 
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} 
+            onClick={() => { setIsCreating(false); setEditingCampaign(null); }}
+          />
+          <div className="panel" style={{ position: 'relative', width: '100%', maxWidth: 560, padding: 0, overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+            <div style={{ padding: '24px 32px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h3 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 18, color: 'hsl(var(--on-surface))' }}>
+                  {isCreating ? 'Deploy New Priority' : 'Adjust Strategic Protocol'}
+                </h3>
+                <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Defining critical resource allocation for the movement.
+                </p>
               </div>
-            </CardHeader>
+              <button onClick={() => { setIsCreating(false); setEditingCampaign(null); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'hsl(var(--on-surface-muted))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 24 }}>close</span>
+              </button>
+            </div>
+            
             <form onSubmit={isCreating ? handleCreate : handleUpdate}>
-              <CardContent className="p-8 space-y-6 max-h-[60vh] overflow-y-auto">
-                <div className="space-y-5">
-                  <div className="space-y-2">
-                    <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Priority Title</label>
+              <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 24, maxHeight: '60vh', overflowY: 'auto' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Priority Title</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="e.g. Ashanti Region Media Blitz" 
+                    style={{ width: '100%', height: 48, background: 'hsl(var(--container-low))', border: 'none', borderBottom: '2px solid hsl(var(--border))', padding: '0 16px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, outline: 'none', color: 'hsl(var(--on-surface))' }}
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  />
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Mission Description</label>
+                  <textarea 
+                    rows={3} 
+                    required
+                    placeholder="Define the scope and impact of this priority..." 
+                    style={{ width: '100%', background: 'hsl(var(--container-low))', border: 'none', borderBottom: '2px solid hsl(var(--border))', padding: 16, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 14, outline: 'none', color: 'hsl(var(--on-surface))', resize: 'none' }}
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Target Capital (₵)</label>
                     <input 
-                      type="text" 
+                      type="number" 
                       required
-                      placeholder="e.g. Ashanti Region Media Blitz" 
-                      className="w-full h-12 bg-muted/5 border-b border-border/60 text-sm font-bold px-4 focus:border-on-surface outline-none transition-all"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      style={{ width: '100%', height: 48, background: 'hsl(var(--container-low))', border: 'none', borderBottom: '2px solid hsl(var(--border))', padding: '0 16px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, outline: 'none', color: 'hsl(var(--on-surface))' }}
+                      value={formData.targetAmount}
+                      onChange={(e) => setFormData({ ...formData, targetAmount: Number(e.target.value) })}
                     />
                   </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Mission Description</label>
-                    <textarea 
-                      rows={3} 
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Mission Deadline</label>
+                    <input 
+                      type="date" 
                       required
-                      placeholder="Define the scope and impact of this priority..." 
-                      className="w-full bg-muted/5 border-b border-border/60 text-sm font-bold p-4 focus:border-on-surface outline-none resize-none transition-all"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      style={{ width: '100%', height: 48, background: 'hsl(var(--container-low))', border: 'none', borderBottom: '2px solid hsl(var(--border))', padding: '0 16px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, outline: 'none', color: 'hsl(var(--on-surface))' }}
+                      value={formData.endDate}
+                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                     />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Target Capital (₵)</label>
-                      <input 
-                        type="number" 
-                        required
-                        className="w-full h-12 bg-muted/5 border-b border-border/60 text-sm font-bold font-meta px-4 focus:border-on-surface outline-none transition-all"
-                        value={formData.targetAmount}
-                        onChange={(e) => setFormData({ ...formData, targetAmount: Number(e.target.value) })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Mission Deadline</label>
-                      <input 
-                        type="date" 
-                        required
-                        className="w-full h-12 bg-muted/5 border-b border-border/60 text-sm font-bold px-4 focus:border-on-surface outline-none transition-all"
-                        value={formData.endDate}
-                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Status</label>
-                      <select 
-                        className="w-full h-12 bg-muted/5 border-b border-border/60 text-sm font-bold px-4 focus:border-on-surface outline-none appearance-none transition-all"
-                        value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value as 'Active' | 'Closed' })}
-                      >
-                        <option value="Active">Active Mobilization</option>
-                        <option value="Closed">Mission Completed</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-micro font-bold tracking-tight text-muted-foreground/40">Visual URL (Optional)</label>
-                      <input 
-                        type="url" 
-                        placeholder="https://..." 
-                        className="w-full h-12 bg-muted/5 border-b border-border/60 text-sm font-bold px-4 focus:border-on-surface outline-none transition-all"
-                        value={formData.imageUrl}
-                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      />
-                    </div>
                   </div>
                 </div>
-              </CardContent>
-              <div className="p-8 border-t border-border/10 bg-muted/5 flex gap-4">
-                <Button 
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Status</label>
+                    <select 
+                      style={{ width: '100%', height: 48, background: 'hsl(var(--container-low))', border: 'none', borderBottom: '2px solid hsl(var(--border))', padding: '0 16px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, outline: 'none', color: 'hsl(var(--on-surface))' }}
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value as 'Active' | 'Closed' })}
+                    >
+                      <option value="Active">Active Mobilization</option>
+                      <option value="Closed">Mission Completed</option>
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Visual URL (Optional)</label>
+                    <input 
+                      type="url" 
+                      placeholder="https://..." 
+                      style={{ width: '100%', height: 48, background: 'hsl(var(--container-low))', border: 'none', borderBottom: '2px solid hsl(var(--border))', padding: '0 16px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, outline: 'none', color: 'hsl(var(--on-surface))' }}
+                      value={formData.imageUrl}
+                      onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ padding: 32, borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', gap: 12 }}>
+                <button 
                   type="button"
-                  variant="default" 
+                  className="btn btn-outline" 
+                  style={{ flex: 1, height: 48 }}
                   onClick={() => { setIsCreating(false); setEditingCampaign(null); }} 
-                  className="flex-1 h-12 rounded-sm border-border/40 font-bold text-micro tracking-tight hover:bg-stone-50 transition-all active:scale-95"
                   disabled={isSubmitting}
                 >
                   Abort Mission
-                </Button>
-                <Button 
+                </button>
+                <button 
                   type="submit"
-                  variant="primary"
-                  className="flex-1 h-12 rounded-sm font-bold text-micro tracking-tight shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                  className="btn btn-primary"
+                  style={{ flex: 1, height: 48 }}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Clock className="w-4 h-4 mr-2" />}
+                  {isSubmitting ? (
+                    <span className="material-symbols-outlined animate-spin" style={{ fontSize: 18 }}>sync</span>
+                  ) : (
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>history</span>
+                  )}
                   {isCreating ? 'Deploy Protocol' : 'Sync Adjustments'}
-                </Button>
+                </button>
               </div>
             </form>
-          </Card>
+          </div>
         </div>
       )}
     </div>

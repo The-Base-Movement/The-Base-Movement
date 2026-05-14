@@ -366,6 +366,20 @@ class ChapterService {
     return true
   }
 
+  async rejectChapterApplication(applicationId: string, notes: string = ''): Promise<boolean> {
+    const { error } = await supabase
+      .from('chapter_applications')
+      .update({ status: 'Rejected', notes: notes })
+      .eq('id', applicationId)
+
+    if (error) {
+      console.error('[DATABASE] Rejection failed:', error)
+      return false
+    }
+
+    return true
+  }
+
   async getRegionalLeaderboard(): Promise<ChapterLeaderboard[]> {
     try {
       const { data, error } = await supabase

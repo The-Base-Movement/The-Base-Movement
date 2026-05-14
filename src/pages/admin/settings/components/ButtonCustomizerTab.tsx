@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/neon-button'
+import React from 'react'
 
 interface ButtonCustomizerTabProps {
   siteSettings: Record<string, unknown>
@@ -171,7 +171,12 @@ export function ButtonCustomizerTab({ siteSettings, setSiteSettings, isSaving, h
                   <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginBottom: 8, marginTop: 0 }}>{group.label}</p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {group.btns.map(btn => (
-                      <Button key={btn.label} variant={btn.variant as Parameters<typeof Button>[0]['variant']} size={btn.size as Parameters<typeof Button>[0]['size']} neon={siteSettings.button_neon_enabled as boolean}>{btn.label}</Button>
+                      <button 
+                        key={btn.label} 
+                        className={`btn ${btn.variant === 'primary' ? 'btn-primary' : btn.variant === 'gold' ? 'btn-accent' : btn.variant === 'destructive' ? 'btn-dest' : btn.variant === 'outline' ? 'btn-outline' : btn.variant === 'ghost' ? 'btn-ghost' : ''} ${btn.size === 'sm' ? 'btn-sm' : ''}`}
+                      >
+                        {btn.label}
+                      </button>
                     ))}
                   </div>
                 </div>

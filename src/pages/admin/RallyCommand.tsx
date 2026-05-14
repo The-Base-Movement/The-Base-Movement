@@ -1,21 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { 
-  Users, 
-  MapPin, 
-  ShieldCheck, 
-  Plus, 
-  Search,
-  Filter,
-  Activity,
-  Clock,
-  Navigation,
-  AlertCircle
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { FieldAction, RallyAttendance } from '@/types/admin'
-import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { BrandLine } from '@/components/admin/BrandLine'
@@ -82,281 +67,262 @@ export default function RallyCommand() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-border/40 border-t-destructive animate-spin" />
-          <p className="text-micro font-bold normal-case text-primary">Initializing mobilization command...</p>
-        </div>
+      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
+        <span className="material-symbols-outlined animate-spin" style={{ fontSize: 48, color: 'hsl(var(--primary))' }}>sync</span>
+        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginTop: 16 }}>Initializing mobilization command...</p>
       </div>
     )
   }
 
   return (
-    <div className="admin-page-container animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="main animate-in fade-in duration-500">
       {/* 🏛️ Rally Header */}
-      <div className="flex-columns items-center flex-between">
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 m-0">
-            <Users className="w-8 h-8 text-on-surface" />
+          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>groups</span>
             Rally command
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-2 mb-0">Real-time attendance operational metrics and geo-fenced verification for field actions.</p>
+          </h2>
+          <div style={{ marginTop: 12 }}><BrandLine /></div>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
+            Real-time attendance operational metrics and geo-fenced verification for field actions.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="default" 
-            size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-8 font-bold tracking-tight bg-white hover:bg-muted/30 transition-all h-10 shadow-sm active:scale-95"
-          >
-            <Filter className="w-4 h-4 mr-2" /> Global Manifest
-          </Button>
-          <Button 
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold tracking-tight px-10 h-10 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-          >
-            <Plus className="w-4 h-4 mr-2" /> Schedule Action
-          </Button>
+        <div className="actions">
+          <button className="btn btn-outline">
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>assignment</span>
+            Global Manifest
+          </button>
+          <button className="btn btn-primary">
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add_circle</span>
+            Schedule Action
+          </button>
         </div>
       </div>
 
       {/* KPI Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 mt-12">
+      <div className="kpis">
         <TacticalKPI 
           label="Field Actions"
           value={actions.length}
           description="Scheduled & live"
-          trend={{ direction: 'neutral', value: 'Vault' }}
+          variant="black"
         />
         <TacticalKPI 
           label="Live Now"
           value={actions.filter(a => a.status === 'Live').length}
           description="Active points"
-          trend={{ direction: 'neutral', value: 'Live' }}
+          variant="red"
         />
         <TacticalKPI 
           label="Attendance"
           value={attendance.length}
           description="Manifested patriots"
-          trend={{ direction: 'up', value: 'Pulse' }}
+          variant="gold"
         />
         <TacticalKPI 
           label="Verified"
           value={`${attendance.length > 0 ? Math.round((attendance.filter(a => a.is_verified).length / attendance.length) * 100) : 0}%`}
           description="Identity match rate"
-          trend={{ direction: 'up', value: 'Elite' }}
+          variant="green"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* 🗺️ Action List & Activation States */}
-        <div className="lg:col-span-1 space-y-6">
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden h-fit">
-            <CardHeader className="p-6 border-b border-border/40 bg-muted/30">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-bold tracking-tight uppercase">Field actions</CardTitle>
-                <Activity className="w-5 h-5 text-muted-foreground/40" />
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-border/40 max-h-[600px] overflow-y-auto custom-scrollbar">
-                {actions.map((action) => (
-                  <div 
-                    key={action.id} 
-                    onClick={() => setSelectedAction(action)}
-                    className={cn(
-                      "p-6 cursor-pointer transition-all border-l-4",
-                      selectedAction?.id === action.id 
-                        ? "bg-muted/30 border-destructive" 
-                        : "hover:bg-muted/10 border-transparent"
-                    )}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <span className={cn(
-                        "text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm border",
-                        action.status === 'Live' 
-                          ? "bg-destructive/10 text-destructive border-destructive/20 animate-pulse" 
-                          : "bg-muted/10 text-muted-foreground/40 border-border/20"
-                      )}>
-                        {action.status}
-                      </span>
-                      <span className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">{format(new Date(action.start_time), 'MMM dd, HH:mm')}</span>
-                    </div>
-                    <h3 className="text-sm font-bold text-on-surface leading-tight m-0">{action.title}</h3>
-                    <div className="flex items-center gap-2 mt-3">
-                      <MapPin className="w-3.5 h-3.5 text-muted-foreground/40" />
-                      <p className="text-micro font-bold text-muted-foreground/60 uppercase tracking-tighter truncate m-0">{action.location_name}</p>
-                    </div>
+      <div className="sidebar-main" style={{ alignItems: 'start' }}>
+        {/* 🗺️ Action List */}
+        <aside style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="ph" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Field actions</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}>bolt</span>
+            </div>
+            <div style={{ maxHeight: 600, overflowY: 'auto' }}>
+              {actions.map((action) => (
+                <div 
+                  key={action.id} 
+                  onClick={() => setSelectedAction(action)}
+                  style={{ 
+                    padding: 24, 
+                    cursor: 'pointer', 
+                    borderLeft: `4px solid ${selectedAction?.id === action.id ? 'hsl(var(--destructive))' : 'transparent'}`,
+                    background: selectedAction?.id === action.id ? 'hsl(var(--container-low))' : 'transparent',
+                    borderBottom: '1px solid hsl(var(--border))'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                    <span className="pill" style={{ 
+                      background: action.status === 'Live' ? 'rgba(206, 17, 38, 0.1)' : 'hsl(var(--container-low))', 
+                      color: action.status === 'Live' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))',
+                      fontSize: 8,
+                      fontWeight: 900,
+                      textTransform: 'uppercase'
+                    }}>
+                      {action.status}
+                    </span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>{format(new Date(action.start_time), 'MMM dd, HH:mm')}</span>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                  <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))', margin: 0 }}>{action.title}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>location_on</span>
+                    <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{action.location_name}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
 
-        {/* 📟 Tactical Operations & Attendance Manifest */}
-        <div className="lg:col-span-2 space-y-8">
+        {/* 📟 Tactical Operations */}
+        <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
           {selectedAction ? (
             <>
-              {/* Live operational metrics Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="rounded-sm border-border/60 shadow-sm p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">Verified strength</span>
-                    <Users className="w-4 h-4 text-muted-foreground/40" />
+              {/* Operational metrics */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
+                <div className="panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Verified strength</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>verified</span>
                   </div>
                   <div>
-                    <p className="text-3xl font-black text-on-surface m-0 leading-none">{attendance.filter(a => a.is_verified).length}</p>
-                    <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-tighter mt-2 m-0">Confirmed field personnel</p>
+                    <p style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>{attendance.filter(a => a.is_verified).length}</p>
+                    <p style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Confirmed field personnel</p>
                   </div>
-                </Card>
-                <Card className="rounded-sm border-border/60 shadow-sm p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">Check-in velocity</span>
-                    <Clock className="w-4 h-4 text-muted-foreground/40" />
-                  </div>
-                  <div>
-                    <p className="text-3xl font-black text-on-surface m-0 leading-none">{attendance.length}</p>
-                    <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-tighter mt-2 m-0">Total signals received</p>
-                  </div>
-                </Card>
-                <Card className="rounded-sm border-border/60 shadow-sm p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">Target achievement</span>
-                    <Navigation className="w-4 h-4 text-muted-foreground/40" />
+                </div>
+                <div className="panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Check-in velocity</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>timer</span>
                   </div>
                   <div>
-                    <p className="text-3xl font-black text-on-surface m-0 leading-none">
-                      {Math.round((attendance.length / selectedAction.target_attendance) * 100)}%
+                    <p style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>{attendance.length}</p>
+                    <p style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Total signals received</p>
+                  </div>
+                </div>
+                <div className="panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Target achievement</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>flag</span>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>
+                      {Math.round((attendance.length / (selectedAction.target_attendance || 1)) * 100)}%
                     </p>
-                    <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-tighter mt-2 m-0">Goal: {selectedAction.target_attendance}</p>
+                    <p style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Goal: {selectedAction.target_attendance}</p>
                   </div>
-                </Card>
+                </div>
               </div>
 
-              {/* Attendance Manifest Table */}
-               <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden h-full">
-                <CardHeader className="p-6 border-b border-border/40 bg-muted/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* Attendance Table */}
+              <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="ph" style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <CardTitle className="text-sm font-bold tracking-tight uppercase">Attendance manifest</CardTitle>
-                    <CardDescription className="text-micro font-bold text-muted-foreground/40 uppercase tracking-tighter mt-1">Verified check-ins via geo-fenced mobile operational metrics.</CardDescription>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', color: 'hsl(var(--on-surface))' }}>Attendance manifest</span>
+                    <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Verified check-ins via geo-fenced signals</p>
                   </div>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 pointer-events-none" />
+                  <div style={{ position: 'relative' }}>
+                    <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>search</span>
                     <input 
-                      className="w-full md:w-64 h-10 pl-10 pr-4 bg-white border border-border/40 rounded-sm text-xs font-bold text-on-surface focus:outline-none focus:border-primary transition-colors"
+                      style={{ height: 38, width: 240, paddingLeft: 34, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', borderRadius: 4, outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12 }}
                       placeholder="Search member..."
                     />
                   </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                      <thead className="bg-muted/10 border-b border-border/40">
-                        <tr>
-                          <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Member</th>
-                          <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Signal time</th>
-                          <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">Status</th>
-                          <th className="px-6 py-4 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60 text-right">Actions</th>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead style={{ background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
+                    <tr>
+                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Member</th>
+                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Signal time</th>
+                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Status</th>
+                      <th style={{ padding: '14px 24px', textAlign: 'right', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {attendance.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} style={{ padding: 60, textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>No signals detected for this action</td>
+                      </tr>
+                    ) : (
+                      attendance.map((entry) => (
+                        <tr key={entry.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                          <td style={{ padding: '14px 24px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <div style={{ width: 32, height: 32, borderRadius: 4, background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 12 }}>
+                                {entry.user_name?.charAt(0)}
+                              </div>
+                              <span style={{ fontSize: 13, fontWeight: 800 }}>{entry.user_name}</span>
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px 24px', fontSize: 12, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}>
+                            {format(new Date(entry.check_in_time), 'HH:mm:ss')}
+                          </td>
+                          <td style={{ padding: '14px 24px' }}>
+                            {entry.is_verified ? (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'hsl(var(--primary))' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>verified_user</span>
+                                <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase' }}>Verified</span>
+                              </div>
+                            ) : (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'hsl(var(--accent))' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>hourglass_empty</span>
+                                <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase' }}>Pending</span>
+                              </div>
+                            )}
+                          </td>
+                          <td style={{ padding: '14px 24px', textAlign: 'right' }}>
+                            {!entry.is_verified && (
+                              <button 
+                                className="btn btn-primary btn-sm"
+                                onClick={() => handleVerify(entry.id)}
+                                disabled={verifying === entry.id}
+                              >
+                                {verifying === entry.id ? 'Verifying...' : 'Manual Verify'}
+                              </button>
+                            )}
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border/40">
-                        {attendance.length === 0 ? (
-                          <tr>
-                            <td colSpan={4} className="px-6 py-20 text-center text-micro font-bold text-muted-foreground/40 uppercase tracking-widest">No signals detected for this action</td>
-                          </tr>
-                        ) : (
-                          attendance.map((entry) => (
-                            <tr key={entry.id} className="hover:bg-muted/30 transition-colors">
-                              <td className="px-6 py-4">
-                                <div className="flex items-center gap-4">
-                                  <div className="w-9 h-9 bg-muted/40 border border-border/20 rounded-sm flex items-center justify-center font-bold text-xs text-on-surface">
-                                    {entry.user_name?.charAt(0)}
-                                  </div>
-                                  <span className="text-xs font-bold text-on-surface">{entry.user_name}</span>
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 text-xs font-bold text-muted-foreground/60 uppercase">
-                                {format(new Date(entry.check_in_time), 'HH:mm:ss')}
-                              </td>
-                              <td className="px-6 py-4">
-                                {entry.is_verified ? (
-                                  <div className="flex items-center gap-2 text-primary">
-                                    <ShieldCheck className="w-4 h-4" />
-                                    <span className="text-micro font-bold uppercase tracking-widest">Verified</span>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-2 text-accent">
-                                    <Clock className="w-4 h-4" />
-                                    <span className="text-micro font-bold uppercase tracking-widest text-accent">Pending</span>
-                                  </div>
-                                )}
-                              </td>
-                              <td className="px-6 py-4 text-right">
-                                {!entry.is_verified && (
-                                  <Button 
-                                    variant="primary"
-                                    size="sm"
-                                    className="rounded-sm text-micro font-bold capitalize tracking-tight h-8 px-5 shadow-lg shadow-brand-green/20 transition-all hover:scale-[1.02] active:scale-95"
-                                    onClick={() => handleVerify(entry.id)}
-                                    disabled={verifying === entry.id}
-                                  >
-                                    {verifying === entry.id ? 'Verifying...' : 'Manual Verify'}
-                                  </Button>
-                                )}
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
-              {/* Location Verification Map Placeholder */}
-              <Card className="rounded-sm border-border/60 shadow-lg bg-on-surface overflow-hidden relative group h-80">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
+              {/* Geo-fence Visualization */}
+              <div className="panel" style={{ background: 'hsl(var(--on-surface))', color: '#fff', position: 'relative', overflow: 'hidden', height: 320 }}>
+                <div style={{ position: 'absolute', inset: 0, opacity: 0.1, background: 'radial-gradient(circle at center, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
                 
-                <div className="absolute top-0 inset-x-0 p-6 bg-black/40 backdrop-blur-sm z-20 flex items-center justify-between border-b border-white/5">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-destructive animate-bounce" />
+                <div style={{ position: 'relative', zIndex: 1, padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span className="material-symbols-outlined" style={{ color: 'hsl(var(--destructive))' }}>location_on</span>
                     <div>
-                      <h3 className="text-white text-xs font-bold uppercase tracking-widest m-0 leading-none">Geo-fence verification</h3>
-                      <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest mt-1.5 m-0">{selectedAction.location_name}</p>
+                      <h3 style={{ margin: 0, fontSize: 10, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Geo-fence verification</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>{selectedAction.location_name}</p>
                     </div>
                   </div>
-                  <span className="text-micro font-bold text-white/40 uppercase tracking-widest border border-white/10 px-2.5 py-1 rounded-sm">{selectedAction.geofence_radius_meters}m radius</span>
+                  <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: 2 }}>{selectedAction.geofence_radius_meters}m radius</span>
                 </div>
 
-                <div className="h-full flex items-center justify-center relative z-20 pt-20">
-                  <div className="relative text-center">
-                    <Navigation className="w-16 h-16 text-white/10 mx-auto mb-4 group-hover:rotate-45 transition-transform duration-1000" />
-                    <p className="text-micro font-bold uppercase tracking-widest text-white/40">Satellite Engagement Visualization</p>
+                <div style={{ height: 'calc(100% - 65px)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                  <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 64, color: 'rgba(255,255,255,0.05)' }}>explore</span>
+                    <p style={{ margin: '12px 0 0', fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.1em' }}>Satellite Engagement Visualization</p>
                   </div>
                   
-                  {/* Visual Geofence Circle */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none mt-12">
-                    <div className="w-48 h-48 rounded-full border-2 border-dashed border-destructive/20 animate-ping opacity-30" />
-                    <div className="w-24 h-24 rounded-full bg-destructive/5 border border-destructive/20 flex items-center justify-center">
-                       <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
-                    </div>
-                  </div>
+                  {/* Visual pulses */}
+                  <div style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', border: '1px dashed rgba(206, 17, 38, 0.2)', animation: 'ping 3s infinite' }} />
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'hsl(var(--destructive))', boxShadow: '0 0 20px hsl(var(--destructive))' }} />
                 </div>
-              </Card>
+              </div>
             </>
           ) : (
-            <div className="h-[600px] flex flex-col items-center justify-center border-2 border-dashed border-border/40 rounded-sm bg-muted/10 space-y-6">
-              <AlertCircle className="w-16 h-16 text-muted-foreground/10" />
-              <div className="text-center max-w-sm px-6">
-                <p className="text-sm font-bold text-on-surface uppercase tracking-tight">Deployment Pending</p>
-                <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-widest mt-2 leading-relaxed">Select a field action from the operational log to view tactical metrics and member manifests.</p>
+            <div className="panel" style={{ height: 600, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, borderStyle: 'dashed' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 64, color: 'hsl(var(--on-surface-muted))', opacity: 0.1 }}>priority_high</span>
+              <div style={{ textAlign: 'center', maxWidth: 320 }}>
+                <p style={{ fontSize: 14, fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>Deployment Pending</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', marginTop: 8, lineHeight: 1.6 }}>Select a field action from the operational log to view tactical metrics and member manifests.</p>
               </div>
             </div>
           )}
-        </div>
+        </main>
       </div>
     </div>
   )

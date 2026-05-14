@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Send, CheckCircle2, AlertTriangle, MessageSquareWarning, Radio, Activity } from 'lucide-react'
 import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
 import type { RapidResponseDirective, CrisisIncident, MediaCounterNarrative, RegionalStat, MovementPulse, GrowthTrend, Broadcast } from '@/types/admin'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/neon-button'
 import { supabase } from '@/lib/supabase'
 import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
@@ -176,7 +174,7 @@ export default function WarRoomCommand() {
     return (
       <div className="-mx-[28px] -mt-[24px] bg-[#0a0d0b] flex items-center justify-center" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-[rgba(206,17,38,.3)] border-t-destructive rounded-full animate-spin" />
+          <span className="material-symbols-outlined text-destructive" style={{ fontSize: 40, animation: 'spin 1.5s linear infinite' }}>sync</span>
           <p className="text-[11px] font-extrabold text-destructive uppercase tracking-[.06em] animate-pulse">Initializing war room protocols…</p>
         </div>
       </div>
@@ -206,13 +204,11 @@ export default function WarRoomCommand() {
           <div className="flex items-center gap-2 sm:gap-3 sm:mt-1 flex-wrap w-full sm:w-auto">
             <LiveClock />
             <button
-              className="h-8 px-3 text-[10px] sm:text-[11px] font-extrabold rounded-[4px] border flex items-center gap-1.5 transition-colors flex-1 sm:flex-none justify-center"
-              style={{ background: 'transparent', color: 'rgba(255,255,255,.8)', borderColor: 'rgba(255,255,255,.18)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'hsl(var(--destructive))'; (e.currentTarget as HTMLElement).style.color = 'hsl(var(--destructive))' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,.18)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,.8)' }}
+              className="btn btn-outline"
+              style={{ height: 32, fontSize: 11, padding: '0 12px' }}
               onClick={() => window.location.href = '/admin/broadcasts/new'}
             >
-              <Send className="w-3 h-3" /> Broadcast
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>send</span> Broadcast
             </button>
           </div>
         </div>
@@ -429,7 +425,7 @@ export default function WarRoomCommand() {
             <div className="overflow-y-auto flex-1 px-4 sidebar-scroll">
               {(activeTab === 'activity' ? (directives.length === 0 && broadcasts.length === 0) : (incidents.length === 0 && narratives.length === 0)) ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-3">
-                  <CheckCircle2 className="w-8 h-8" style={{ color: 'hsl(var(--primary))' }} />
+                  <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--primary))' }}>check_circle</span>
                   <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>Sector clear</p>
                 </div>
               ) : (
@@ -439,7 +435,7 @@ export default function WarRoomCommand() {
                       {directives.slice(0, 10).map(dir => (
                         <div key={dir.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--primary))' }}>
-                            <Activity className="w-3.5 h-3.5 text-white" />
+                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>activity</span>
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
@@ -454,7 +450,7 @@ export default function WarRoomCommand() {
                       {broadcasts.slice(0, 10).map(b => (
                         <div key={b.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: b.priority === 'Urgent' ? 'hsl(var(--destructive))' : 'rgba(255,255,255,.1)' }}>
-                            <Radio className="w-3.5 h-3.5 text-white" />
+                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>radio</span>
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
@@ -473,7 +469,7 @@ export default function WarRoomCommand() {
                       {incidents.map(inc => (
                         <div key={inc.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: inc.severity === 'DEFCON1' || inc.severity === 'SEVERE' ? 'hsl(var(--destructive))' : 'hsl(var(--accent))' }}>
-                            <AlertTriangle className="w-3.5 h-3.5 text-white" />
+                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>warning</span>
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
@@ -488,19 +484,20 @@ export default function WarRoomCommand() {
                             </div>
                           </div>
                           {inc.status !== 'RESOLVED' && (
-                            <button 
-                              onClick={() => handleUpdateIncidentStatus(inc.id, inc.status)}
-                              className="text-[10px] font-extrabold px-3 rounded-[3px] shrink-0 h-7 transition-all active:scale-95"
-                              style={{ background: 'rgba(255,255,255,.05)', color: 'white', border: '1px solid rgba(255,255,255,.1)' }}>
-                              {inc.status === 'INVESTIGATING' ? 'Contain' : 'Resolve'}
-                            </button>
+                              <button 
+                                onClick={() => handleUpdateIncidentStatus(inc.id, inc.status)}
+                                className="btn btn-outline"
+                                style={{ height: 28, fontSize: 10, padding: '0 8px' }}
+                              >
+                                {inc.status === 'INVESTIGATING' ? 'Contain' : 'Resolve'}
+                              </button>
                           )}
                         </div>
                       ))}
                       {narratives.slice(0, 5).map(nar => (
                         <div key={nar.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--accent))' }}>
-                            <MessageSquareWarning className="w-3.5 h-3.5 text-white" />
+                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>chat</span>
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
@@ -514,12 +511,9 @@ export default function WarRoomCommand() {
                           </div>
                           <button 
                             onClick={() => handleDispatchNarrative(nar.id, nar.dispatch_status)}
-                            className="text-[10px] font-extrabold px-3 rounded-[3px] shrink-0 h-7 transition-all active:scale-95"
-                            style={{ 
-                              background: nar.dispatch_status === 'PENDING' ? 'rgba(206,17,38,.15)' : 'rgba(255,255,255,.05)', 
-                              color: nar.dispatch_status === 'PENDING' ? 'hsl(var(--destructive))' : 'white', 
-                              border: nar.dispatch_status === 'PENDING' ? '1px solid rgba(206,17,38,.3)' : '1px solid rgba(255,255,255,.1)' 
-                            }}>
+                            className={nar.dispatch_status === 'PENDING' ? "btn btn-dest" : "btn btn-outline"}
+                            style={{ height: 28, fontSize: 10, padding: '0 8px' }}
+                          >
                             {nar.dispatch_status === 'PENDING' ? 'Dispatch' : 'Recall'}
                           </button>
                         </div>
@@ -608,7 +602,7 @@ export default function WarRoomCommand() {
           <div className="rounded-[6px] overflow-hidden" style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}>
             <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid #1c221e' }}>
               <h3 className="font-extrabold text-[12.5px] text-white flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4" style={{ color: 'hsl(var(--accent))' }} /> Crisis incidents
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--accent))' }}>warning</span> Crisis incidents
               </h3>
               <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>
                 {incidents.filter(i => i.status === 'INVESTIGATING').length} active
@@ -617,7 +611,7 @@ export default function WarRoomCommand() {
             <div>
               {incidents.length === 0 ? (
                 <div className="p-10 text-center">
-                  <CheckCircle2 className="w-7 h-7 mx-auto mb-3" style={{ color: 'hsl(var(--primary))' }} />
+                  <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--primary))', display: 'block', margin: '0 auto 12px' }}>check_circle</span>
                   <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>No active incidents. All sectors secure.</p>
                 </div>
               ) : incidents.map(inc => (
@@ -651,8 +645,9 @@ export default function WarRoomCommand() {
                     </span>
                     <button 
                       onClick={() => handleUpdateIncidentStatus(inc.id, inc.status)}
-                      className="text-[10px] font-extrabold px-4 h-8 rounded-[3px] transition-all active:scale-95"
-                      style={{ background: 'rgba(0,107,63,.15)', color: 'hsl(var(--primary))', border: '1px solid rgba(0,107,63,.3)' }}>
+                      className="btn btn-outline"
+                      style={{ height: 32, fontSize: 10, padding: '0 16px' }}
+                    >
                       Update status
                     </button>
                   </div>
@@ -665,9 +660,9 @@ export default function WarRoomCommand() {
           <div className="rounded-[6px] overflow-hidden relative" style={{ background: '#0d1510', border: '1px solid #1c221e' }}>
             <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid #1c221e' }}>
               <h3 className="font-extrabold text-[12.5px] text-white flex items-center gap-2">
-                <MessageSquareWarning className="w-4 h-4 text-blue-400" /> Digital strike directives
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#60a5fa' }}>chat</span> Digital strike directives
               </h3>
-              <Radio className="w-4 h-4" style={{ color: 'rgba(255,255,255,.4)' }} />
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,.4)' }}>radio</span>
             </div>
             <div>
               {narratives.length === 0 ? (
@@ -689,12 +684,13 @@ export default function WarRoomCommand() {
                   <div className="flex items-center justify-between pt-1">
                     <p className="text-[10px] font-bold" style={{ color: 'rgba(255,255,255,.4)' }}>{nar.hashtags}</p>
                     {nar.dispatch_status === 'PENDING' && (
-                      <Button 
-                        variant="primary" 
+                      <button 
                         onClick={() => handleDispatchNarrative(nar.id, nar.dispatch_status)}
-                        className="h-8 px-4 text-[10px] font-extrabold tracking-tight rounded-[3px] gap-1.5 bg-blue-600 hover:bg-blue-700 border-0 transition-all active:scale-95">
-                        <Send className="w-3 h-3" /> Dispatch
-                      </Button>
+                        className="btn btn-primary"
+                        style={{ height: 32, fontSize: 10, padding: '0 16px' }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>send</span> Dispatch
+                      </button>
                     )}
                   </div>
                 </div>

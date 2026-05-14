@@ -1,18 +1,4 @@
 import { useState, useEffect } from 'react'
-import { 
-  Plus, 
-  Activity, 
-  MapPin,
-  BarChart3,
-  Search,
-  ChevronRight,
-  Calendar,
-  TrendingUp,
-  Clock,
-  DollarSign
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import type { FieldEvent, MobilizationLedger } from '@/services/adminService'
 import { cn } from '@/lib/utils'
@@ -61,9 +47,9 @@ export default function ChapterLeadHub() {
 
   if (loading) {
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center py-20 space-y-4">
-        <Activity className="w-12 h-12 text-muted-foreground/20 animate-pulse" />
-        <p className="text-micro font-bold normal-case text-muted-foreground/40">Synchronizing chapter hub...</p>
+      <div style={{ height: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+        <span className="material-symbols-outlined text-primary" style={{ fontSize: 40, animation: 'spin 1.5s linear infinite' }}>sync</span>
+        <p style={{ fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'hsl(var(--on-surface-muted))' }}>Synchronizing chapter hub...</p>
       </div>
     )
   }
@@ -73,28 +59,20 @@ export default function ChapterLeadHub() {
       {/* 🏛️ Hub Header */}
       <div className="flex-columns items-center">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3">
-            <MapPin className="w-8 h-8 text-on-surface" />
+          <h1 style={{ fontSize: 32, fontWeight: 800, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 12, margin: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 32 }}>location_on</span>
             {chapterName} hub
           </h1>
           <BrandLine className="mt-4" />
           <p className="text-muted-foreground/80 text-sm mt-1">Empowering regional autonomy through tactical coordination.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="default" 
-            size="lg"
-            className="rounded-sm border-border/40 text-on-surface/80 text-micro px-8 font-bold capitalize tracking-tight hover:bg-stone-100 h-10 transition-all active:scale-95"
-          >
-            <BarChart3 className="w-4 h-4 mr-2" /> Local operational metrics
-          </Button>
-          <Button 
-            variant="primary"
-            size="lg"
-            className="rounded-sm text-micro font-bold capitalize tracking-tight px-8 h-10 transition-all shadow-lg shadow-brand-green/20 active:scale-95"
-          >
-            <Plus className="w-4 h-4 mr-2" /> New Field Event
-          </Button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button className="btn btn-outline" style={{ height: 40, padding: '0 24px' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>bar_chart</span> Operational metrics
+          </button>
+          <button className="btn btn-primary" style={{ height: 40, padding: '0 24px' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span> New Field Event
+          </button>
         </div>
       </div>
 
@@ -134,20 +112,20 @@ export default function ChapterLeadHub() {
         {/* 📅 Field Operations (Events) */}
         <div className="xl:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold normal-case tracking-tight font-meta flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-destructive" /> Upcoming field operations
+            <h2 style={{ fontSize: 18, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+              <span className="material-symbols-outlined text-destructive" style={{ fontSize: 20 }}>location_on</span> Upcoming field operations
             </h2>
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
-                <input type="text" placeholder="Filter events..." className="pl-9 pr-4 py-2 bg-muted/5 border-none text-micro font-bold normal-case rounded-sm focus:ring-1 focus:ring-on-surface w-48 shadow-inner" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ position: 'relative' }}>
+                <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>search</span>
+                <input type="text" placeholder="Filter events..." style={{ width: 200, height: 36, paddingLeft: 36, paddingRight: 12, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 12, fontWeight: 700, outline: 'none' }} />
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
             {events.length > 0 ? events.map((event) => (
-              <Card key={event.id} className="rounded-sm border-border/60 shadow-sm overflow-hidden group hover:shadow-md transition-all">
+              <div key={event.id} className="panel" style={{ overflow: 'hidden' }}>
                 <div className="h-1.5 w-full bg-muted/5 relative overflow-hidden">
                   <div className={cn(
                     "h-full transition-all duration-1000",
@@ -155,75 +133,67 @@ export default function ChapterLeadHub() {
                     event.status === 'In Progress' ? "bg-accent" : "bg-destructive"
                   )} style={{ width: `${(event.budget_spent / event.budget_allocated) * 100}%` }} />
                 </div>
-                <CardHeader className="p-6 pb-2">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-micro font-bold normal-case text-muted-foreground/40">{event.type}</span>
-                    <div className={cn(
-                      "px-2 py-0.5 text-[8px] font-bold normal-case border rounded-full",
-                      event.status === 'Completed' ? "bg-primary/10 text-primary border-primary/20" :
-                      event.status === 'In Progress' ? "bg-accent/10 text-accent border-accent/20" :
-                      "bg-muted/5 text-muted-foreground/60 border-border/10"
-                    )}>
-                      {event.status.toLowerCase()}
+                <div style={{ padding: 24, paddingBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                    <span style={{ fontSize: 10, fontWeight: 900, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>{event.type}</span>
+                    <span className={cn("pill", 
+                      event.status === 'Completed' ? "pill-ok" : 
+                      event.status === 'In Progress' ? "pill-warn" : ""
+                    )} style={{ fontSize: 8 }}>
+                      {event.status}
+                    </span>
+                  </div>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0 }}>{event.title}</h3>
+                </div>
+                <div style={{ padding: 24, paddingTop: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: 'hsl(var(--on-surface-muted))', marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>calendar_today</span>
+                      <span style={{ fontSize: 11, fontWeight: 700 }}>{new Date(event.date).toLocaleDateString()}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>location_on</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 120 }}>{event.location}</span>
                     </div>
                   </div>
-                  <CardTitle className="text-base font-bold normal-case tracking-tight text-on-surface leading-tight group-hover:text-destructive transition-colors">
-                    {event.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-4 space-y-4">
-                  <div className="flex items-center gap-4 text-muted-foreground/80">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span className="text-micro font-bold normal-case">{new Date(event.date).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span className="text-micro font-bold normal-case truncate max-w-[120px]">{event.location}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-border/10">
-                    <div className="flex -space-x-2">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 16, borderTop: '1px solid hsl(var(--border))', opacity: 0.2 }}>
+                    <div style={{ display: 'flex', marginLeft: 8 }}>
                       {[1, 2, 3].map(i => (
-                        <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-muted/10 flex items-center justify-center text-[8px] font-bold overflow-hidden">
-                          <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="attendee" className="w-full h-full object-cover"  decoding="async" loading="lazy" />
+                        <div key={i} style={{ width: 28, height: 28, borderRadius: '50%', border: '2px solid #fff', background: 'hsl(var(--container-low))', marginLeft: -8, overflow: 'hidden' }}>
+                          <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="attendee" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                       ))}
-                      <div className="w-7 h-7 rounded-full border-2 border-white bg-on-surface flex items-center justify-center text-[8px] font-bold text-white">
+                      <div style={{ width: 28, height: 28, borderRadius: '50%', border: '2px solid #fff', background: 'hsl(var(--on-surface))', marginLeft: -8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 900, color: '#fff' }}>
                         +{event.attendees_expected - 3}
                       </div>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      className="h-9 px-4 text-micro font-bold capitalize tracking-tight hover:bg-muted/5 group-hover:text-destructive rounded-sm active:scale-95"
-                    >
-                      Logistics Hub <ChevronRight className="w-3.5 h-3.5 ml-2" />
-                    </Button>
+                    <button className="btn btn-ghost btn-sm" style={{ padding: '0 12px' }}>
+                      Logistics Hub <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+                    </button>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )) : (
-              <div className="col-span-2 border-2 border-dashed border-border/60 rounded-sm p-12 flex flex-col items-center justify-center text-muted-foreground/40 bg-muted/5">
-                <Calendar className="w-12 h-12 mb-4 opacity-20" />
-                <p className="text-micro font-bold normal-case">No field operations scheduled.</p>
+              <div style={{ gridColumn: 'span 2', padding: 48, border: '2px dashed hsl(var(--border))', borderRadius: 4, textAlign: 'center', background: 'hsl(var(--container-low))', opacity: 0.5 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', marginBottom: 16 }}>calendar_today</span>
+                <p style={{ fontSize: 12, fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>No field operations scheduled.</p>
               </div>
             )}
           </div>
         </div>
 
         {/* 💳 Mobilization Ledger */}
-        <Card className="rounded-sm border-border/60 shadow-sm bg-on-surface text-white overflow-hidden flex flex-col h-full relative">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-          <CardHeader className="p-8 border-b border-white/5 bg-white/5 relative z-10">
-            <div className="flex items-center justify-between mb-2">
-              <CardTitle className="text-sm font-bold normal-case flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-accent" /> Regional ledger
-              </CardTitle>
-              <Activity className="w-4 h-4 text-white/20" />
+        <div className="panel" style={{ background: 'hsl(var(--on-surface))', color: '#fff', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: 32, borderBottom: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+                <span className="material-symbols-outlined text-accent" style={{ fontSize: 20 }}>payments</span> Regional ledger
+              </h3>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, opacity: 0.3 }}>activity</span>
             </div>
-            <CardDescription className="text-white/40 text-micro font-bold normal-case">Real-time mobilization expenditures.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0 flex-1 overflow-y-auto max-h-[600px] sidebar-scroll relative z-10">
+            <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.5)', margin: 0 }}>Real-time mobilization expenditures.</p>
+          </div>
+          <div style={{ padding: 0, flex: 1, overflowY: 'auto', maxHeight: 600 }}>
             {ledger.length > 0 ? ledger.map((item, i) => (
               <div key={item.id} className={cn(
                 "p-6 border-b border-white/5 hover:bg-white/5 transition-colors group",
@@ -246,25 +216,22 @@ export default function ChapterLeadHub() {
                 </div>
               </div>
             )) : (
-              <div className="p-12 text-center text-white/20">
-                <TrendingUp className="w-12 h-12 mx-auto mb-4 opacity-10" />
-                <p className="text-micro font-bold normal-case">Ledger manifest empty.</p>
+              <div style={{ padding: 48, textAlign: 'center', opacity: 0.2 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 48, marginBottom: 16 }}>trending_up</span>
+                <p style={{ fontSize: 12, fontWeight: 700 }}>Ledger manifest empty.</p>
               </div>
             )}
-          </CardContent>
-          <div className="p-8 mt-auto border-t border-white/5 bg-white/5 relative z-10">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-micro font-bold normal-case text-white/40">Total allocation</span>
-              <span className="text-lg font-bold font-meta text-primary">GH₵{ledger.filter(l => l.transaction_type === 'Allocation').reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
-            </div>
-            <Button 
-              variant="default" 
-              className="w-full h-12 border-white/20 text-white font-bold text-micro capitalize tracking-tight hover:bg-white/10 rounded-sm transition-all active:scale-95"
-            >
-              Request Additional Funds
-            </Button>
           </div>
-        </Card>
+          <div style={{ padding: 32, borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', marginTop: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <span style={{ fontSize: 11, fontWeight: 900, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>Total allocation</span>
+              <span style={{ fontSize: 20, fontWeight: 800, color: 'hsl(var(--primary))' }}>GH₵{ledger.filter(l => l.transaction_type === 'Allocation').reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
+            </div>
+            <button className="btn btn-outline" style={{ width: '100%', height: 48, borderColor: 'rgba(255,255,255,0.2)', color: '#fff' }}>
+              Request Additional Funds
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )

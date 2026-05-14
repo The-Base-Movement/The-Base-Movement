@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import { Upload, Loader2, Save, Image as ImageIcon, Search, User, Check, Shield, ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
@@ -166,10 +164,10 @@ export default function AdminEditAuthor() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <div className="text-center">
-          <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Synchronizing Archives</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <span className="material-symbols-outlined text-primary" style={{ fontSize: 40, animation: 'spin 1.5s linear infinite' }}>sync</span>
+          <p style={{ fontSize: 10, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'hsl(var(--on-surface-muted))', marginTop: 16 }}>Synchronizing Archives</p>
         </div>
       </div>
     )
@@ -179,9 +177,9 @@ export default function AdminEditAuthor() {
     <div className="main animate-in fade-in duration-500">
       {/* Top Header */}
       <div className="top">
-        <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/admin/authors')} className="w-10 h-10 flex items-center justify-center rounded-sm border border-border/40 bg-white hover:bg-muted/5 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <button onClick={() => navigate('/admin/authors')} className="btn btn-outline" style={{ width: 40, height: 40, padding: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_back</span>
           </button>
           <div>
             <div className="crumbs uppercase font-black tracking-widest text-[9px]">
@@ -197,32 +195,30 @@ export default function AdminEditAuthor() {
           </div>
         </div>
         <div className="actions">
-          <Button 
+          <button 
             type="button" 
-            variant="outline" 
+            className="btn btn-outline"
             onClick={() => navigate('/admin/authors')}
-            className="font-bold tracking-tight rounded-sm border-border/40"
           >
             Abort
-          </Button>
-          <Button 
+          </button>
+          <button 
             onClick={handleSubmit as unknown as React.MouseEventHandler<HTMLButtonElement>}
-            variant="primary"
+            className="btn btn-primary"
             disabled={isSaving}
-            className="font-bold tracking-tight rounded-sm shadow-sm"
           >
             {isSaving ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span className="material-symbols-outlined" style={{ fontSize: 18, animation: 'spin 1.5s linear infinite' }}>sync</span>
                 Syncing...
               </>
             ) : (
               <>
-                <Save className="w-4 h-4 mr-2" />
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>save</span>
                 {isEditing ? 'Authorize changes' : 'Finalize recruitment'}
               </>
             )}
-          </Button>
+          </button>
         </div>
       </div>
 
@@ -239,17 +235,17 @@ export default function AdminEditAuthor() {
               </div>
               <div className="p-6">
                 {!selectedMember ? (
-                  <div className="relative group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
+                  <div style={{ position: 'relative' }}>
+                    <span className="material-symbols-outlined" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', fontSize: 20, color: 'hsl(var(--on-surface-muted))', opacity: 0.3 }}>search</span>
                     <input 
                       placeholder="Identify movement personnel by name or ID..." 
-                      className="w-full h-12 pl-12 pr-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-bold outline-none focus:border-primary/50 transition-all placeholder:italic"
+                      style={{ width: '100%', height: 48, paddingLeft: 48, paddingRight: 16, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 13, fontWeight: 700, outline: 'none' }}
                       value={memberSearchQuery}
                       onChange={(e) => handleMemberSearch(e.target.value)}
                     />
                     {isSearchingMembers && (
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      <div style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)' }}>
+                        <span className="material-symbols-outlined text-primary" style={{ fontSize: 20, animation: 'spin 1.5s linear infinite' }}>sync</span>
                       </div>
                     )}
                     
@@ -263,11 +259,11 @@ export default function AdminEditAuthor() {
                               onClick={() => selectMember(member)}
                               className="w-full flex items-center gap-3 p-4 hover:bg-muted/5 transition-colors text-left border-b border-border/5 last:border-0"
                             >
-                              <div className="w-10 h-10 rounded-full bg-muted/10 border border-border/10 flex items-center justify-center shrink-0 overflow-hidden">
+                              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
                                 {member.avatarUrl ? (
-                                  <img src={member.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                  <img src={member.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 ) : (
-                                  <User className="w-5 h-5 text-muted-foreground/20" />
+                                  <span className="material-symbols-outlined" style={{ fontSize: 20, opacity: 0.2, margin: 'auto' }}>person</span>
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
@@ -282,24 +278,24 @@ export default function AdminEditAuthor() {
                     )}
                   </div>
                 ) : (
-                  <div className="flex items-center gap-4 p-4 rounded-sm bg-brand-green/5 border border-brand-green/20 animate-in zoom-in-95 duration-300">
-                    <div className="w-12 h-12 rounded-full bg-brand-green/10 border border-brand-green/20 flex items-center justify-center overflow-hidden shrink-0">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: 16, borderRadius: 4, background: 'hsla(var(--primary), 0.05)', border: '1px solid hsla(var(--primary), 0.15)' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'hsla(var(--primary), 0.1)', border: '1px solid hsla(var(--primary), 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
                       {selectedMember.avatarUrl ? (
-                        <img src={selectedMember.avatarUrl} alt="" className="w-full h-full object-cover" />
+                        <img src={selectedMember.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
-                        <User className="w-6 h-6 text-brand-green" />
+                        <span className="material-symbols-outlined text-primary" style={{ fontSize: 24 }}>person</span>
                       )}
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-bold text-on-surface flex items-center gap-2 leading-none mb-1">
                         {selectedMember.name}
-                        <span className="pill bg-brand-green/10 text-brand-green !py-0.5 border-brand-green/20">
-                          <Check className="w-2 h-2" /> Identified
+                        <span className="pill pill-ok">
+                          <span className="material-symbols-outlined" style={{ fontSize: 12 }}>check</span> Identified
                         </span>
                       </p>
-                      <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">{selectedMember.id.substring(0,16)}</p>
+                      <p style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{selectedMember.id.substring(0,16)}</p>
                     </div>
-                    <p className="text-[10px] font-black text-primary uppercase tracking-widest italic">Target Mapped</p>
+                    <p style={{ fontSize: 10, fontWeight: 900, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em', fontStyle: 'italic', margin: 0 }}>Target Mapped</p>
                   </div>
                 )}
               </div>
@@ -313,47 +309,47 @@ export default function AdminEditAuthor() {
             </div>
             <div className="p-8 space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-2.5">
-                  <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Full Professional Name</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label className="field-label">Full Professional Name</label>
                   <input 
                     placeholder="e.g. Kwame Patriot"
                     value={formData.name || ''}
                     onChange={handleNameChange}
-                    className="w-full h-11 px-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-bold outline-none focus:border-primary/50 transition-all"
+                    style={{ width: '100%', height: 44, padding: '0 16px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 14, fontWeight: 700, outline: 'none' }}
                     required
                   />
                 </div>
                 
-                <div className="space-y-2.5">
-                  <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Tactical Slug</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label className="field-label">Tactical Slug</label>
                   <input 
                     placeholder="kwame-patriot"
                     value={formData.slug || ''}
                     onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                    className="w-full h-11 px-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-bold outline-none focus:border-primary/50 transition-all"
+                    style={{ width: '100%', height: 44, padding: '0 16px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 14, fontWeight: 700, outline: 'none' }}
                     required
                   />
                   <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-tighter italic">Used for URI resolution. Must be unique.</p>
                 </div>
               </div>
 
-              <div className="space-y-2.5">
-                <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Official Title / Authorization Role</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label className="field-label">Official Title / Authorization Role</label>
                 <input 
                   placeholder="e.g. Senior Regional Correspondent"
                   value={formData.role || ''}
                   onChange={(e) => setFormData({...formData, role: e.target.value})}
-                  className="w-full h-11 px-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-bold outline-none focus:border-primary/50 transition-all"
+                  style={{ width: '100%', height: 44, padding: '0 16px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 14, fontWeight: 700, outline: 'none' }}
                 />
               </div>
 
-              <div className="space-y-2.5">
-                <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Professional Biography</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label className="field-label">Professional Biography</label>
                 <textarea 
                   placeholder="Provide a comprehensive biography detailing editorial history and movement contributions..."
                   value={formData.bio || ''}
                   onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                  className="w-full min-h-[160px] p-4 bg-muted/5 border border-border/40 rounded-sm text-sm font-medium leading-relaxed outline-none focus:border-primary/50 transition-all resize-y"
+                  style={{ width: '100%', minHeight: 160, padding: 16, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 14, fontWeight: 500, outline: 'none', lineHeight: 1.6, resize: 'vertical' }}
                 />
               </div>
             </div>
@@ -368,35 +364,35 @@ export default function AdminEditAuthor() {
               <span className="meta">Visual identification</span>
             </div>
             <div className="p-8 space-y-6">
-              <div className="aspect-square w-full max-w-[200px] mx-auto rounded-sm bg-muted/5 border-2 border-dashed border-border/40 flex items-center justify-center overflow-hidden relative group shadow-inner">
+              <div style={{ aspectRatio: '1/1', width: '100%', maxWidth: 200, margin: '0 auto', borderRadius: 4, background: 'hsl(var(--container-low))', border: '2px dashed hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
                 {formData.imageUrl ? (
                   <>
-                    <img src={formData.imageUrl} alt="Profile" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-on-surface/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ImageIcon className="w-8 h-8 text-white opacity-80" />
+                    <img src={formData.imageUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }}>
+                      <span className="material-symbols-outlined text-white" style={{ fontSize: 32 }}>image</span>
                     </div>
                   </>
                 ) : (
-                  <div className="text-center text-muted-foreground/20 p-6">
-                    <User className="w-12 h-12 mx-auto mb-2" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">No Portrait Mapped</span>
+                  <div style={{ textAlign: 'center', color: 'hsl(var(--on-surface-muted))', opacity: 0.3 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 48 }}>person</span>
+                    <p style={{ fontSize: 10, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', margin: '8px 0 0' }}>No Portrait Mapped</p>
                   </div>
                 )}
                 {isUploading && (
-                  <div className="absolute inset-0 bg-white/90 flex items-center justify-center backdrop-blur-sm z-10">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', zIndex: 10 }}>
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 32, animation: 'spin 1.5s linear infinite' }}>sync</span>
                   </div>
                 )}
               </div>
               
               <div className="space-y-4">
-                <div className="space-y-2.5">
-                  <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/50">Portrait Resource URI</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label className="field-label">Portrait Resource URI</label>
                   <input 
                     placeholder="https://..."
                     value={formData.imageUrl || ''}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                    className="w-full h-10 px-4 bg-muted/5 border border-border/40 rounded-sm text-xs font-bold outline-none focus:border-primary/50 transition-all"
+                    style={{ width: '100%', height: 40, padding: '0 16px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 12, fontWeight: 700, outline: 'none' }}
                   />
                 </div>
                 
@@ -411,9 +407,10 @@ export default function AdminEditAuthor() {
                   />
                   <label 
                     htmlFor="author-image-upload" 
-                    className="flex items-center justify-center gap-2 w-full h-12 bg-on-surface text-white hover:bg-on-surface/90 rounded-sm text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer active:scale-95"
+                    className="btn btn-primary"
+                    style={{ width: '100%', height: 44 }}
                   >
-                    <Upload className="w-4 h-4" />
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>upload</span>
                     {isUploading ? 'Uploading...' : 'Transmit Portrait'}
                   </label>
                 </div>
@@ -424,9 +421,9 @@ export default function AdminEditAuthor() {
 
           <div className="panel bg-muted/5 border-dashed">
             <div className="p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Shield className="w-5 h-5 text-primary/40" />
-                <h4 className="text-[11px] font-black uppercase tracking-widest text-on-surface">Security Protocol</h4>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--primary))', opacity: 0.4 }}>shield</span>
+                <h4 style={{ fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'hsl(var(--on-surface))', margin: 0 }}>Security Protocol</h4>
               </div>
               <p className="text-[11px] text-muted-foreground/60 leading-relaxed font-medium">
                 Author profiles are publicly accessible. Ensure all biographical information complies with movement security guidelines and contains no sensitive logistical data.

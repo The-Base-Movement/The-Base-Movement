@@ -969,6 +969,14 @@ class AdminService {
     return success
   }
 
+  async rejectChapterApplication(applicationId: string, notes: string = ''): Promise<boolean> {
+    const success = await chapterService.rejectChapterApplication(applicationId, notes)
+    if (success) {
+      await this.logAction('CHAPTER_REJECT', `CHAPTERS/${applicationId}`, 'Warning')
+    }
+    return success
+  }
+
   async getDonations(status?: string): Promise<DonationDetail[]> {
     return donationService.getDonations(status)
   }

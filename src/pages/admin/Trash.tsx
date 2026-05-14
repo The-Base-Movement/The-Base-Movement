@@ -1,18 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
-import { 
-  Trash2, 
-  RotateCcw, 
-  FileText, 
-  Package, 
-  Image as ImageIcon,
-  Search,
-  AlertCircle,
-  Archive,
-  Clock,
-  History
-} from 'lucide-react'
 import { contentService } from '@/services/contentService'
 import { logisticsService } from '@/services/logisticsService'
 import { toast } from 'sonner'
@@ -21,7 +7,6 @@ import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationMo
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
 import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { PenTool } from 'lucide-react'
 
 type TrashTab = 'blogs' | 'products' | 'media' | 'authors'
 
@@ -56,10 +41,10 @@ export default function TrashPage() {
         contentService.getTrashedMedia(),
         contentService.getTrashedAuthors()
       ])
-      setBlogs(trashedBlogs)
-      setProducts(trashedProducts)
-      setMedia(trashedMedia)
-      setAuthors(trashedAuthors)
+      setBlogs(trashedBlogs || [])
+      setProducts(trashedProducts || [])
+      setMedia(trashedMedia || [])
+      setAuthors(trashedAuthors || [])
     } catch {
       toast.error('Failed to load trash contents')
     } finally {
@@ -140,179 +125,149 @@ export default function TrashPage() {
   const filteredItems = getFilteredItems()
 
   return (
-    <div className="admin-page-container">
-      {/* Page Header - Standardized */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="main animate-in fade-in duration-500">
+      <div className="top">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight flex items-center gap-3 font-meta">
-            <Trash2 className="w-8 h-8 text-on-surface" />
+          <div className="crumbs">Platform · Strategic Oversight</div>
+          <h2 style={{ margin: '4px 0 0', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>delete</span>
             Trash vault
-          </h1>
-          <BrandLine className="mt-4" />
-          <p className="text-muted-foreground/80 text-sm mt-1">Staging area for decommissioned assets and intelligence records awaiting purge.</p>
+          </h2>
+          <div style={{ marginTop: 12 }}><BrandLine /></div>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
+            Staging area for decommissioned assets and intelligence records awaiting purge.
+          </p>
         </div>
-        
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      </div>
+
+      <div className="kpis">
         <TacticalKPI 
           label="Total archived"
           value={blogs.length + products.length + media.length + authors.length}
           description="Awaiting purge"
-          trend={{ direction: 'neutral', value: 'Vault' }}
+          variant="black"
         />
         <TacticalKPI 
           label="Retention"
           value="30 Days"
           description="Security protocol"
-          trend={{ direction: 'neutral', value: 'Active' }}
+          variant="red"
         />
         <TacticalKPI 
           label="Active sector"
           value={activeTab === 'blogs' ? 'Editorial' : activeTab === 'products' ? 'Logistics' : activeTab === 'media' ? 'Assets' : 'Personnel'}
           description="Context segment"
+          variant="gold"
         />
         <TacticalKPI 
           label="Purge status"
           value="Online"
           description="Decommissioning active"
-          trend={{ direction: 'down', value: 'Alert' }}
+          variant="green"
         />
       </div>
-      </div>
 
-      {/* Main Layout Grid with Sticky Aside */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start relative">
-        
-        {/* Sticky Filter Sidebar */}
-        <aside className="w-full lg:w-72 sticky lg:top-32 space-y-6 shrink-0 z-30">
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-border/10 bg-muted/5">
-              <h3 className="font-bold text-on-surface text-xs normal-case">Vault sectors</h3>
+      <div className="sidebar-main" style={{ alignItems: 'start' }}>
+        {/* Sidebar */}
+        <aside style={{ display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 80, width: 280, flexShrink: 0 }}>
+          <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="ph" style={{ padding: '12px 18px' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Vault sectors</span>
             </div>
-            <CardContent className="p-2">
-              <div className="space-y-1">
-                <Button
-                  variant={activeTab === 'blogs' ? "primary" : "ghost"}
-                  onClick={() => setActiveTab('blogs')}
-                  className={cn(
-                    "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
-                    activeTab === 'blogs'
-                      ? "shadow-lg shadow-brand-green/20"
-                      : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
-                  )}
-                >
-                  <FileText className={cn("w-4 h-4", activeTab === 'blogs' ? "text-white" : "text-muted-foreground/40")} />
-                  <span className="flex-1 text-left">Blog intelligence</span>
-                  <span className={cn("text-micro font-bold", activeTab === 'blogs' ? "text-white/70" : "text-muted-foreground/40")}>{blogs.length}</span>
-                </Button>
-                <Button
-                  variant={activeTab === 'products' ? "primary" : "ghost"}
-                  onClick={() => setActiveTab('products')}
-                  className={cn(
-                    "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
-                    activeTab === 'products'
-                      ? "shadow-lg shadow-brand-green/20"
-                      : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
-                  )}
-                >
-                  <Package className={cn("w-4 h-4", activeTab === 'products' ? "text-white" : "text-muted-foreground/40")} />
-                  <span className="flex-1 text-left">Logistics store</span>
-                  <span className={cn("text-micro font-bold", activeTab === 'products' ? "text-white/70" : "text-muted-foreground/40")}>{products.length}</span>
-                </Button>
-                <Button
-                  variant={activeTab === 'media' ? "primary" : "ghost"}
-                  onClick={() => setActiveTab('media')}
-                  className={cn(
-                    "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
-                    activeTab === 'media'
-                      ? "shadow-lg shadow-brand-green/20"
-                      : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
-                  )}
-                >
-                  <ImageIcon className={cn("w-4 h-4", activeTab === 'media' ? "text-white" : "text-muted-foreground/40")} />
-                  <span className="flex-1 text-left">Visual assets</span>
-                  <span className={cn("text-micro font-bold", activeTab === 'media' ? "text-white/70" : "text-muted-foreground/40")}>{media.length}</span>
-                </Button>
-                <Button
-                  variant={activeTab === 'authors' ? "primary" : "ghost"}
-                  onClick={() => setActiveTab('authors')}
-                  className={cn(
-                    "w-full flex items-center justify-start gap-4 px-6 py-3 rounded-sm text-micro font-bold tracking-tight transition-all h-14 active:scale-95",
-                    activeTab === 'authors'
-                      ? "shadow-lg shadow-brand-green/20"
-                      : "text-on-surface/60 hover:bg-stone-50 hover:text-on-surface border border-transparent hover:border-stone-100"
-                  )}
-                >
-                  <PenTool className={cn("w-4 h-4", activeTab === 'authors' ? "text-white" : "text-muted-foreground/40")} />
-                  <span className="flex-1 text-left">Editorial roster</span>
-                  <span className={cn("text-micro font-bold", activeTab === 'authors' ? "text-white/70" : "text-muted-foreground/40")}>{authors.length}</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            <div style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <button
+                onClick={() => setActiveTab('blogs')}
+                className={cn("btn w-full", activeTab === 'blogs' ? "btn-primary" : "btn-outline")}
+                style={{ justifyContent: 'flex-start', padding: '0 16px', height: 48 }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>article</span>
+                <span style={{ flex: 1, textAlign: 'left' }}>Blog intelligence</span>
+                <span className="pill" style={{ background: 'rgba(0,0,0,0.1)', fontSize: 10 }}>{blogs.length}</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('products')}
+                className={cn("btn w-full", activeTab === 'products' ? "btn-primary" : "btn-outline")}
+                style={{ justifyContent: 'flex-start', padding: '0 16px', height: 48 }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>inventory_2</span>
+                <span style={{ flex: 1, textAlign: 'left' }}>Logistics store</span>
+                <span className="pill" style={{ background: 'rgba(0,0,0,0.1)', fontSize: 10 }}>{products.length}</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('media')}
+                className={cn("btn w-full", activeTab === 'media' ? "btn-primary" : "btn-outline")}
+                style={{ justifyContent: 'flex-start', padding: '0 16px', height: 48 }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>image</span>
+                <span style={{ flex: 1, textAlign: 'left' }}>Visual assets</span>
+                <span className="pill" style={{ background: 'rgba(0,0,0,0.1)', fontSize: 10 }}>{media.length}</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('authors')}
+                className={cn("btn w-full", activeTab === 'authors' ? "btn-primary" : "btn-outline")}
+                style={{ justifyContent: 'flex-start', padding: '0 16px', height: 48 }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>history_edu</span>
+                <span style={{ flex: 1, textAlign: 'left' }}>Editorial roster</span>
+                <span className="pill" style={{ background: 'rgba(0,0,0,0.1)', fontSize: 10 }}>{authors.length}</span>
+              </button>
+            </div>
+          </div>
 
-          <Card className="rounded-sm border-border/60 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-border/10 bg-muted/5">
-              <h3 className="font-bold text-on-surface text-xs normal-case">Vault scanner</h3>
+          <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="ph" style={{ padding: '12px 18px' }}>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Vault scanner</span>
             </div>
-            <CardContent className="p-4 space-y-4">
-              <div className="relative group/search">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 group-focus-within/search:text-on-surface transition-colors z-10" />
+            <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ position: 'relative' }}>
+                <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
                 <input
                   type="text"
                   placeholder="Scan keywords..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-10 pl-10 pr-4 bg-muted/30 border border-border/40 focus:bg-white focus:border-border/60 rounded-sm text-xs font-medium outline-none transition-all"
+                  style={{ width: '100%', height: 38, paddingLeft: 34, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', borderRadius: 4, outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, boxSizing: 'border-box', color: 'hsl(var(--on-surface))' }}
                 />
               </div>
-              <div className="bg-destructive/5 rounded-sm p-4 border border-destructive/10 space-y-2">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
-                  <p className="text-micro font-bold text-destructive tracking-tight uppercase">Critical awareness</p>
+              <div style={{ background: 'rgba(206, 17, 38, 0.05)', borderRadius: 4, padding: 14, border: '1px solid rgba(206, 17, 38, 0.1)', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--destructive))' }}>report_problem</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, color: 'hsl(var(--destructive))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Critical awareness</span>
                 </div>
-                <p className="text-micro font-medium text-destructive/80 leading-relaxed">
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--destructive))', opacity: 0.8, lineHeight: 1.5, margin: 0 }}>
                   Permanent deletion occurs at T-0. Records cannot be recovered once purged.
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </aside>
 
-        {/* Main Content Sector */}
-        <div className="flex-1 min-h-[500px]">
+        {/* Main Content Area */}
+        <main style={{ flex: 1, minWidth: 0 }}>
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-40 space-y-6">
-              <div className="relative w-16 h-16">
-                <div className="absolute inset-0 border-4 border-stone-100 rounded-none"></div>
-                <div className="absolute inset-0 border-4 border-destructive border-t-transparent rounded-none animate-spin"></div>
-              </div>
-              <div className="space-y-1 text-center">
-                <p className="text-xs font-bold tracking-tight text-on-surface/20">Syncing vault sectors</p>
-                <p className="text-micro font-bold text-on-surface/40">Accessing restricted archival blocks...</p>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '100px 0', gap: 20 }}>
+              <div className="animate-spin" style={{ width: 40, height: 40, border: '3px solid hsl(var(--border))', borderTopColor: 'hsl(var(--destructive))', borderRadius: '50%' }} />
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', margin: 0 }}>Syncing vault sectors</p>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Accessing restricted archival blocks...</p>
               </div>
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className="glass-card rounded-sm p-24 text-center space-y-8 border-dashed border-2 border-stone-200 animate-in zoom-in-95 duration-500 bg-white">
-              <div className="w-24 h-24 rounded-sm bg-stone-50 flex items-center justify-center mx-auto border border-stone-100 shadow-inner group-hover:scale-110 transition-transform">
-                <Archive className="w-10 h-10 text-stone-200" />
+            <div className="panel" style={{ padding: '80px 40px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, borderStyle: 'dashed', background: 'transparent' }}>
+              <div style={{ width: 80, height: 80, borderRadius: 4, background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid hsl(var(--border))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))', opacity: 0.3 }}>archive</span>
               </div>
-              <div className="space-y-3">
-                <h3 className="text-3xl font-bold text-on-surface tracking-tight">Vault sector clear</h3>
-                <p className="text-on-surface/40 text-sm max-w-sm mx-auto font-medium leading-relaxed">
+              <div style={{ maxWidth: 360 }}>
+                <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 24, color: 'hsl(var(--on-surface))', margin: 0 }}>Vault sector clear</h3>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 14, color: 'hsl(var(--on-surface-muted))', marginTop: 8, lineHeight: 1.6 }}>
                   No records currently match your scan parameters. The sector is clear or filters are overly restrictive.
                 </p>
               </div>
-              <Button 
-                variant="default" 
-                onClick={() => setSearchQuery('')}
-                className="h-12 px-10 rounded-sm text-micro font-bold tracking-tight border-stone-200 hover:border-destructive/30 hover:bg-destructive/5 transition-all shadow-sm"
-              >
-                Reset scanner filters
-              </Button>
+              <button className="btn btn-outline" onClick={() => setSearchQuery('')}>Reset scanner filters</button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 animate-in slide-in-from-right-4 duration-700">
-              {activeTab === 'blogs' && blogs.map(post => (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: 20 }}>
+              {activeTab === 'blogs' && (filteredItems as BlogPost[]).map(post => (
                 <TrashCard 
                   key={post.id}
                   title={post.title}
@@ -322,11 +277,11 @@ export default function TrashPage() {
                   daysLeft={formatDaysRemaining(post.deletedAt || new Date().toISOString())}
                   onRestore={() => handleRestore('blogs', post.id)}
                   onDelete={() => setDeleteModal({ isOpen: true, type: 'blogs', id: post.id, name: post.title })}
-                  icon={<FileText className="w-6 h-6" />}
+                  icon="article"
                   accent="red"
                 />
               ))}
-              {activeTab === 'products' && products.map(product => (
+              {activeTab === 'products' && (filteredItems as InventoryItem[]).map(product => (
                 <TrashCard 
                   key={product.id}
                   title={product.name}
@@ -336,11 +291,11 @@ export default function TrashPage() {
                   daysLeft={formatDaysRemaining(product.deletedAt || new Date().toISOString())}
                   onRestore={() => handleRestore('products', product.id)}
                   onDelete={() => setDeleteModal({ isOpen: true, type: 'products', id: product.id, name: product.name })}
-                  icon={<Package className="w-6 h-6" />}
+                  icon="inventory_2"
                   accent="gold"
                 />
               ))}
-              {activeTab === 'media' && media.map(item => (
+              {activeTab === 'media' && (filteredItems as MediaAsset[]).map(item => (
                 <TrashCard 
                   key={item.id}
                   title={item.filename}
@@ -354,7 +309,7 @@ export default function TrashPage() {
                   accent="green"
                 />
               ))}
-              {activeTab === 'authors' && authors.map(author => (
+              {activeTab === 'authors' && (filteredItems as Author[]).map(author => (
                 <TrashCard
                   key={author.id}
                   title={author.name}
@@ -365,13 +320,13 @@ export default function TrashPage() {
                   daysLeft={formatDaysRemaining(author.deletedAt || new Date().toISOString())}
                   onRestore={() => handleRestore('authors', author.id)}
                   onDelete={() => setDeleteModal({ isOpen: true, type: 'authors', id: author.id, name: author.name })}
-                  icon={<PenTool className="w-6 h-6" />}
+                  icon="history_edu"
                   accent="red"
                 />
               ))}
             </div>
           )}
-        </div>
+        </main>
       </div>
 
       <DeleteConfirmationModal
@@ -386,7 +341,6 @@ export default function TrashPage() {
     </div>
   )
 }
-
 
 function TrashCard({ 
   title, 
@@ -407,92 +361,72 @@ function TrashCard({
   onRestore: () => void; 
   onDelete: () => void;
   daysLeft: number;
-  icon?: React.ReactNode;
+  icon?: string;
   image?: string;
   accent?: 'red' | 'gold' | 'green'
 }) {
   const isExpiringSoon = daysLeft <= 7;
 
   return (
-    <Card className="rounded-sm border border-stone-200/60 overflow-hidden bg-white hover:shadow-2xl hover:border-stone-400 transition-all duration-500 group relative">
-      <CardContent className="p-0">
-        <div className="flex flex-col sm:flex-row min-h-[160px]">
-          {/* Visual ID Overlay */}
-          <div className="w-full sm:w-40 relative overflow-hidden bg-stone-50 border-r border-stone-100 flex items-center justify-center shrink-0">
-            {image ? (
-              <img src={image} alt="" className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"  decoding="async" loading="lazy" />
-            ) : (
-              <div className="text-on-surface/10 group-hover:text-on-surface/30 transition-colors transform group-hover:scale-125 duration-500">{icon}</div>
-            )}
-            <div className={cn(
-              "absolute top-0 left-0 w-full h-1 transition-all duration-500 group-hover:h-1.5",
-              accent === 'red' ? "bg-destructive" : accent === 'gold' ? "bg-accent" : "bg-primary"
-            )} />
-            <div className="absolute top-4 left-4">
-              <span className="text-micro font-bold tracking-tight text-white bg-on-surface/90 px-3 py-1 rounded-none backdrop-blur-sm border border-white/10 uppercase">
-                {type}
-              </span>
+    <div className="panel" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', minHeight: 160 }}>
+        {/* Visual ID Overlay */}
+        <div style={{ width: 140, position: 'relative', overflow: 'hidden', background: 'hsl(var(--container-low))', borderRight: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          {image ? (
+            <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.4 }} />
+          ) : (
+            <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))', opacity: 0.1 }}>{icon}</span>
+          )}
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 4, background: accent === 'red' ? 'hsl(var(--destructive))' : accent === 'gold' ? 'hsl(var(--accent))' : 'hsl(var(--primary))' }} />
+          <div style={{ position: 'absolute', top: 12, left: 12 }}>
+            <span className="pill" style={{ background: 'hsl(var(--on-surface))', color: '#fff', fontSize: 9, fontWeight: 900, textTransform: 'uppercase', padding: '2px 8px' }}>
+              {type}
+            </span>
+          </div>
+        </div>
+        
+        <div style={{ flex: 1, padding: 20, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{subtitle}</p>
+                <h4 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 16, color: 'hsl(var(--on-surface))', margin: '4px 0 0', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h4>
+              </div>
+              
+              <div style={{ padding: '8px 12px', borderRadius: 4, background: isExpiringSoon ? 'hsl(var(--destructive))' : 'hsl(var(--container-low))', border: `1px solid ${isExpiringSoon ? 'hsl(var(--destructive))' : 'hsl(var(--border))'}`, textAlign: 'center', minWidth: 70 }}>
+                <div style={{ fontSize: 24, fontWeight: 900, color: isExpiringSoon ? '#fff' : 'hsl(var(--on-surface))', lineHeight: 1 }}>{daysLeft}</div>
+                <div style={{ fontSize: 8, fontWeight: 900, textTransform: 'uppercase', color: isExpiringSoon ? 'rgba(255,255,255,0.8)' : 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Days left</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>history</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>Deleted {new Date(deletedAt).toLocaleDateString()}</span>
+              </div>
             </div>
           </div>
           
-          <div className="flex-1 p-6 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <p className="text-micro font-bold text-on-surface/30 tracking-tight">{subtitle}</p>
-                  <h4 className="text-lg font-bold text-on-surface leading-tight tracking-tight">{title}</h4>
-                </div>
-                
-                <div className={cn(
-                  "px-4 py-3 rounded-sm flex flex-col items-center justify-center min-w-[80px] border transition-all duration-300",
-                  isExpiringSoon 
-                    ? "bg-destructive border-destructive text-white shadow-lg shadow-destructive/20" 
-                    : "bg-stone-50 border-stone-200 text-on-surface"
-                )}>
-                  <span className={cn(
-                    "text-3xl font-bold tabular-nums leading-none tracking-tighter",
-                    isExpiringSoon ? "text-white" : "text-on-surface"
-                  )}>{daysLeft}</span>
-                  <span className={cn(
-                    "text-micro font-bold tracking-tight uppercase mt-1",
-                    isExpiringSoon ? "text-white/80" : "text-on-surface/40"
-                  )}>Days left</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 text-micro font-bold text-on-surface/30">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  Deleted {new Date(deletedAt).toLocaleDateString()}
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <History className="w-3.5 h-3.5" />
-                  ID: {title.substring(0, 8).toUpperCase()}
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 mt-8 pt-6 border-t border-stone-50">
-              <Button 
-                onClick={onRestore}
-                variant="primary" 
-                className="flex-1 h-12 rounded-sm text-micro font-bold tracking-tight gap-2 transition-all active:scale-95 group/btn shadow-lg shadow-brand-green/20"
-              >
-                <RotateCcw className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" />
-                Restore record
-              </Button>
-              <Button 
-                onClick={onDelete}
-                variant="destructive" 
-                className="h-12 w-12 rounded-sm transition-all active:scale-95"
-                title="Permanent purge"
-              >
-                <AlertCircle className="w-5 h-5" />
-              </Button>
-            </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 20, paddingTop: 16, borderTop: '1px solid hsl(var(--border))' }}>
+            <button 
+              onClick={onRestore}
+              className="btn btn-primary btn-sm"
+              style={{ flex: 1, justifyContent: 'center' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>settings_backup_restore</span>
+              Restore
+            </button>
+            <button 
+              onClick={onDelete}
+              className="btn btn-dest btn-sm"
+              style={{ width: 40, padding: 0, justifyContent: 'center' }}
+              title="Permanent purge"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete_forever</span>
+            </button>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
