@@ -239,34 +239,39 @@ export default function WarRoomCommand() {
         </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-        <TacticalKPI 
+        <TacticalKPI
           label="Sign-ups · today"
           value={pulse ? pulse.nationalGrowth.toLocaleString() : '...'}
           description="National growth"
+          variant="green"
           trend={pulse?.nationalGrowth ? { direction: 'up', value: 'Active' } : { direction: 'neutral', value: 'Live' }}
         />
-        <TacticalKPI 
+        <TacticalKPI
           label="MoMo donations"
           value={donationStats ? `₵${(donationStats.approvedAmount / 1000).toFixed(1)}K` : '...'}
           description={`${donationStats?.totalContributions || 0} contributions`}
+          variant="gold"
           trend={{ direction: 'up', value: 'Elite' }}
         />
-        <TacticalKPI 
+        <TacticalKPI
           label="Field sectors"
           value={directives.length}
           description={`${directives.filter(d => d.priority === 'CRITICAL').length} critical`}
+          variant="black"
           trend={{ direction: 'neutral', value: 'Sync' }}
         />
-        <TacticalKPI 
+        <TacticalKPI
           label="Verified patriots"
           value={memberCount.toLocaleString()}
           description={`${chapterCount} active chapters`}
+          variant="green"
           trend={{ direction: 'up', value: 'Optimal' }}
         />
-        <TacticalKPI 
+        <TacticalKPI
           label="Active incidents"
           value={incidents.length}
           description={incidents.length > 0 ? 'Rapid response' : 'Sectors clear'}
+          variant={incidents.length > 0 ? 'red' : 'green'}
           trend={incidents.length > 0 ? { direction: 'down', value: 'Alert' } : { direction: 'up', value: 'Elite' }}
         />
       </div>
@@ -460,7 +465,7 @@ export default function WarRoomCommand() {
                       {directives.slice(0, 10).map(dir => (
                         <div key={dir.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--primary))' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>activity</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>bolt</span>
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
@@ -475,7 +480,7 @@ export default function WarRoomCommand() {
                       {broadcasts.slice(0, 10).map(b => (
                         <div key={b.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: b.priority === 'Urgent' ? 'hsl(var(--destructive))' : 'rgba(255,255,255,.1)' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>radio</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>campaign</span>
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
@@ -687,7 +692,7 @@ export default function WarRoomCommand() {
               <h3 className="font-extrabold text-[12.5px] text-white flex items-center gap-2">
                 <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#60a5fa' }}>chat</span> Digital strike directives
               </h3>
-              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,.4)' }}>radio</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,.4)' }}>campaign</span>
             </div>
             <div>
               {narratives.length === 0 ? (
