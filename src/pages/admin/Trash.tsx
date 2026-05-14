@@ -5,7 +5,6 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 type TrashTab = 'blogs' | 'products' | 'media' | 'authors'
@@ -133,7 +132,7 @@ export default function TrashPage() {
             <span className="material-symbols-outlined" style={{ fontSize: 24 }}>delete</span>
             Trash vault
           </h2>
-          <div style={{ marginTop: 12 }}><BrandLine /></div>
+          <div style={{ marginTop: 12 }}><div className="bl"><div /><div /><div /></div></div>
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
             Staging area for decommissioned assets and intelligence records awaiting purge.
           </p>

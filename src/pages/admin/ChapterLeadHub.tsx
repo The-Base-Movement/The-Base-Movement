@@ -3,7 +3,6 @@ import { adminService } from '@/services/adminService'
 import type { FieldEvent, MobilizationLedger } from '@/services/adminService'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 export default function ChapterLeadHub() {
@@ -63,7 +62,7 @@ export default function ChapterLeadHub() {
             <span className="material-symbols-outlined" style={{ fontSize: 32 }}>location_on</span>
             {chapterName} hub
           </h1>
-          <BrandLine className="mt-4" />
+          <div className={cn("bl", "mt-4")}><div /><div /><div /></div>
           <p className="text-muted-foreground/80 text-sm mt-1">Empowering regional autonomy through tactical coordination.</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

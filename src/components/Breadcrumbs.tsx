@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ChevronRight, Home } from 'lucide-react'
 
 // Human-readable label overrides for path segments
 const LABEL_OVERRIDES: Record<string, string> = {
@@ -61,7 +60,7 @@ export function Breadcrumbs({ currentLabel }: BreadcrumbsProps = {}) {
         to={root.to}
         className="text-stone-400 hover:text-[var(--brand-green)] transition-colors flex items-center gap-1.5"
       >
-        <Home className="w-3.5 h-3.5" />
+        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>home</span>
         <span className="text-xs font-semibold font-meta">{root.label}</span>
       </Link>
 
@@ -78,7 +77,7 @@ export function Breadcrumbs({ currentLabel }: BreadcrumbsProps = {}) {
 
         return (
           <React.Fragment key={to}>
-            <ChevronRight className="w-3 h-3 text-stone-300" />
+            <span className="material-symbols-outlined text-stone-300" style={{ fontSize: 12 }}>chevron_right</span>
             {last ? (
               <span className="text-xs font-semibold text-[var(--brand-green)] font-meta max-w-[200px] truncate">
                 {label}

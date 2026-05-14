@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { adminService } from '@/services/adminService'
 import type { ChapterApplication } from '@/services/adminService'
@@ -92,7 +91,7 @@ export default function LeadershipHub() {
             <span className="material-symbols-outlined" style={{ fontSize: 24 }}>stars</span>
             Leadership hub
           </h2>
-          <div style={{ marginTop: 12 }}><BrandLine /></div>
+          <div style={{ marginTop: 12 }}><div className="bl"><div /><div /><div /></div></div>
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
             Vetting and authorization for movement chapter leadership and regional operations.
           </p>

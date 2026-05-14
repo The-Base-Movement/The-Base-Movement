@@ -4,7 +4,6 @@ import type { Factor, AuthError, Session, User } from '@supabase/supabase-js'
 import { authService } from '@/services/authService'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { useSearchParams } from 'react-router-dom'
 
 import { ProfileSettingsTab } from './settings/components/ProfileSettingsTab'
@@ -295,7 +294,7 @@ export default function AdminSettings() {
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>settings</span>
             System settings
           </h2>
-          <div style={{ marginTop: 10, marginBottom: 4 }}><BrandLine /></div>
+          <div style={{ marginTop: 10, marginBottom: 4 }}><div className="bl"><div /><div /><div /></div></div>
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, marginBottom: 0 }}>
             Manage your administrative identity and platform configuration.
           </p>

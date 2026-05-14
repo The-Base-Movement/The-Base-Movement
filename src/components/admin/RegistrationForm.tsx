@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
-import { X, ArrowRight, ArrowLeft, Upload, Eye, EyeOff, CheckCircle2 } from 'lucide-react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
+
 
 const ageRanges = ['16-25', '26-40', '41-60', '60+']
 const educationLevels = [
@@ -149,7 +149,6 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
       const randomNum = String(Math.floor(1000 + Math.random() * 9000))
       const regNo = `TBM-${platform === 'GHANA' ? 'GH' : 'DI'}-${yearStr}${randomNum}`
 
-      // Pass the complete submission back to the parent before closing
       if (onSubmitData) {
         onSubmitData({
           ...formData,
@@ -170,27 +169,31 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
   }
 
   return (
-    <div className="bg-white max-w-5xl w-full max-h-[90vh] overflow-hidden relative animate-in fade-in zoom-in-95 duration-300 shadow-2xl flex flex-col font-meta">
+    <div className="panel" style={{ maxWidth: '1000px', width: '100%', maxHeight: '90vh', display: 'flex', flexDirection: 'column', margin: '0 auto', background: '#fff' }}>
       {/* Header */}
-      <div className="bg-on-surface p-8 flex items-center justify-between shrink-0">
+      <div className="ph" style={{ padding: '24px 32px', background: 'hsl(var(--on-surface))' }}>
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Register new member</h2>
-          <p className="text-accent text-micro mt-1 tracking-tight font-bold opacity-80">Admin override workflow</p>
+          <h2 style={{ color: '#fff', fontSize: '24px', margin: 0 }}>Register new member</h2>
+          <div className="meta" style={{ color: 'hsl(var(--accent))', marginTop: '4px' }}>Admin override workflow</div>
         </div>
         <button 
           onClick={onClose}
-          className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/20 transition-all"
+          className="ico"
+          style={{ background: 'rgba(255,255,255,0.1)', borderColor: 'transparent', color: '#fff' }}
         >
-          <X className="w-6 h-6" />
+          <span className="material-symbols-outlined">close</span>
         </button>
       </div>
 
       {/* Body */}
-      <div id="registration-modal-content" className="flex-1 overflow-y-auto p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Vertical Sidebar Navigation */}
-          <div className="lg:col-span-4 space-y-2 sticky top-0 bg-white z-10 pb-4">
-            <p className="text-micro font-bold text-muted-foreground/40 tracking-tight mb-8 pl-4">Registration progress</p>
+      <div id="registration-modal-content" style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '32px' }}>
+          
+          {/* Progress Sidebar */}
+          <div style={{ position: 'sticky', top: 0, height: 'fit-content' }}>
+            <div style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '24px' }}>
+              Registration progress
+            </div>
             
             <div className="space-y-2">
               {[
@@ -201,12 +204,36 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               ].map((item) => (
                 <div 
                   key={item.step}
-                  className={`flex items-center gap-5 p-5 transition-all border-l-4 rounded-r-2xl ${formStep === item.step ? 'bg-muted/5 border-primary shadow-sm' : 'border-transparent text-muted-foreground/40 opacity-60'}`}
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '16px', 
+                    padding: '16px', 
+                    borderRadius: '8px',
+                    background: formStep === item.step ? 'hsl(var(--container-low))' : 'transparent',
+                    borderLeft: `4px solid ${formStep === item.step ? 'hsl(var(--primary))' : 'transparent'}`,
+                    transition: 'all 0.2s ease'
+                  }}
                 >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${formStep >= item.step ? 'bg-primary text-white scale-110 shadow-lg shadow-primary/20' : 'bg-muted/10 text-muted-foreground/60'}`}>
-                    {formStep > item.step ? <CheckCircle2 className="w-6 h-6" /> : item.step}
+                  <div style={{ 
+                    width: '32px', 
+                    height: '32px', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    fontSize: '11px', 
+                    fontWeight: 800,
+                    background: formStep >= item.step ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
+                    color: formStep >= item.step ? '#fff' : 'hsl(var(--on-surface-muted))'
+                  }}>
+                    {formStep > item.step ? <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>check</span> : item.step}
                   </div>
-                  <span className={`text-tiny font-bold tracking-tight ${formStep === item.step ? 'text-on-surface' : ''}`}>
+                  <span style={{ 
+                    fontSize: '12px', 
+                    fontWeight: 700, 
+                    color: formStep === item.step ? 'hsl(var(--on-surface))' : 'hsl(var(--on-surface-muted))'
+                  }}>
                     {item.label}
                   </span>
                 </div>
@@ -214,114 +241,138 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
             </div>
           </div>
 
-          <div className="lg:col-span-8">
-            <form onSubmit={handleSubmit} className="bg-white border border-border/40 p-10 shadow-sm rounded-sm">
+          {/* Form Content */}
+          <div className="panel" style={{ padding: '40px' }}>
+            <form onSubmit={handleSubmit}>
               {formStep === 1 && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-on-surface pb-4 mb-8">
-                    <h3 className="text-on-surface font-bold text-xl tracking-tight">Step 1: Primary details</h3>
-                    <p className="text-muted-foreground/60 mt-1 mb-0 text-sm">Basic information required for your membership profile.</p>
+                <div className="space-y-8">
+                  <div style={{ borderBottom: '2px solid hsl(var(--on-surface))', paddingBottom: '16px', marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 800, margin: 0 }}>Step 1: Primary details</h3>
+                    <p style={{ fontSize: '13px', color: 'hsl(var(--on-surface-muted))', marginTop: '4px' }}>Basic information required for the membership profile.</p>
                   </div>
- 
-                  <div className="space-y-3">
-                    <label htmlFor="fullName" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                      Full name <span className="text-destructive">*</span>
+  
+                  <div className="space-y-2">
+                    <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Full name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
                     <input
-                      id="fullName"
                       placeholder="As it appears on official ID"
                       required
                       value={formData.fullName}
                       onChange={(e) => handleChange('fullName', e.target.value)}
-                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                      style={{ 
+                        width: '100%', padding: '14px 18px', fontSize: '14px', 
+                        background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                        borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                      }}
                     />
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-micro font-bold text-on-surface/60 tracking-tight block mb-4">
-                      Select platform <span className="text-destructive">*</span>
+                    <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '12px' }}>
+                      Select platform <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
-                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-sm font-bold tracking-tight text-micro ${platform === 'GHANA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
-                        <input type="radio" name="platform" value="GHANA" checked={platform === 'GHANA'} onChange={() => handlePlatformChange('GHANA')} className="hidden" />
-                        Base Ghana
-                      </label>
-                      <label className={`cursor-pointer border p-4 text-center transition-all rounded-sm font-bold tracking-tight text-micro ${platform === 'DIASPORA' ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
-                        <input type="radio" name="platform" value="DIASPORA" checked={platform === 'DIASPORA'} onChange={() => handlePlatformChange('DIASPORA')} className="hidden" />
-                        Base Diaspora
-                      </label>
+                      {['GHANA', 'DIASPORA'].map(p => (
+                        <label key={p} style={{ 
+                          cursor: 'pointer', border: '1px solid hsl(var(--border))', padding: '16px', 
+                          textAlign: 'center', borderRadius: '4px', fontWeight: 800, fontSize: '11px',
+                          textTransform: 'uppercase', letterSpacing: '0.05em',
+                          background: platform === p ? 'hsla(var(--primary), 0.05)' : 'transparent',
+                          borderColor: platform === p ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                          color: platform === p ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                          transition: 'all 0.15s ease'
+                        }}>
+                          <input type="radio" name="platform" value={p} checked={platform === p} onChange={() => handlePlatformChange(p)} style={{ display: 'none' }} />
+                          Base {p === 'GHANA' ? 'Ghana' : 'Diaspora'}
+                        </label>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-8">
-                    {platform === 'DIASPORA' ? (
-                      <div className="space-y-3">
-                        <label htmlFor="selectedCountry" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                          Country of residence <span className="text-destructive">*</span>
+                  <div className="grid grid-cols-2 gap-6">
+                    {platform === 'DIASPORA' && (
+                      <div className="space-y-2">
+                        <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          Country of residence <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                         </label>
                         <select 
-                          id="selectedCountry"
                           required
                           value={formData.country} 
                           onChange={(e) => handleChange('country', e.target.value)}
-                          className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
-                          style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                          className="reg"
+                          style={{ 
+                            width: '100%', padding: '14px 18px', fontSize: '14px', 
+                            background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                            borderRadius: '4px', color: 'hsl(var(--on-surface))' 
+                          }}
                         >
                           {diasporaCountries.map((country) => (
                             <option key={country} value={country}>{country}</option>
                           ))}
                         </select>
                       </div>
-                    ) : null}
+                    )}
 
-                    <div className="space-y-3">
-                      <label htmlFor="contactNumber" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                        Contact number <span className="text-destructive">*</span>
+                    <div className="space-y-2">
+                      <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Contact number <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <div className="flex gap-2">
+                      <div style={{ display: 'flex', gap: '8px' }}>
                         <select
                           value={formData.countryCode}
                           onChange={(e) => handleChange('countryCode', e.target.value)}
-                          className="flex items-center px-4 bg-muted/5 border border-border/60 rounded-sm font-bold text-on-surface text-micro appearance-none focus:outline-none"
+                          className="reg"
+                          style={{ 
+                            width: '80px', padding: '14px 8px', fontSize: '12px', fontWeight: 800,
+                            background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                            borderRadius: '4px', color: 'hsl(var(--on-surface))' 
+                          }}
                         >
                           {Array.from(new Set(Object.values(countryCodes))).sort().map((code) => (
                             <option key={code} value={code}>{code}</option>
                           ))}
                         </select>
                         <input
-                          id="contactNumber"
                           type="tel"
                           placeholder="Phone number"
                           required
                           value={formData.contactNumber}
                           onChange={(e) => handleChange('contactNumber', e.target.value)}
-                          className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                          style={{ 
+                            flex: 1, padding: '14px 18px', fontSize: '14px', 
+                            background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                            borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                          }}
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <label htmlFor="password" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                      Account password <span className="text-destructive">*</span>
+                  <div className="space-y-2">
+                    <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Account password <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
-                    <div className="relative">
+                    <div style={{ position: 'relative' }}>
                       <input
-                        id="password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Minimum 6 characters"
                         required
                         minLength={6}
                         value={formData.password}
                         onChange={(e) => handleChange('password', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                        style={{ 
+                          width: '100%', padding: '14px 18px', fontSize: '14px', 
+                          background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                          borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                        }}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary"
+                        style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface-muted))' }}
                       >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
                       </button>
                     </div>
                   </div>
@@ -329,35 +380,51 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               )}
 
               {formStep === 2 && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-on-surface pb-4 mb-8">
-                    <h3 className="text-on-surface font-bold text-xl tracking-tight">Step 2: Demographic details</h3>
-                    <p className="text-muted-foreground/60 mt-1 mb-0 text-sm">Further details to finalize your membership chapter.</p>
+                <div className="space-y-8">
+                  <div style={{ borderBottom: '2px solid hsl(var(--on-surface))', paddingBottom: '16px', marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 800, margin: 0 }}>Step 2: Demographic details</h3>
+                    <p style={{ fontSize: '13px', color: 'hsl(var(--on-surface-muted))', marginTop: '4px' }}>Further details to finalize the membership chapter.</p>
                   </div>
- 
-                   <div className="grid md:grid-cols-2 gap-8">
+  
+                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-micro font-bold text-on-surface/60 tracking-tight block mb-4">
-                        Age range <span className="text-destructive">*</span>
+                      <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '12px' }}>
+                        Age range <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {ageRanges.map(range => (
-                          <label key={range} className={`cursor-pointer border p-3 text-center transition-all rounded-sm font-bold tracking-tight text-micro ${formData.ageRange === range ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
-                            <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} className="hidden" />
+                          <label key={range} style={{ 
+                            cursor: 'pointer', border: '1px solid hsl(var(--border))', padding: '12px', 
+                            textAlign: 'center', borderRadius: '4px', fontWeight: 800, fontSize: '10px',
+                            textTransform: 'uppercase', letterSpacing: '0.05em',
+                            background: formData.ageRange === range ? 'hsla(var(--primary), 0.05)' : 'transparent',
+                            borderColor: formData.ageRange === range ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                            color: formData.ageRange === range ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                            transition: 'all 0.15s ease'
+                          }}>
+                            <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} style={{ display: 'none' }} />
                             {range}
                           </label>
                         ))}
                       </div>
                     </div>
- 
+  
                     <div className="space-y-3">
-                      <label className="text-micro font-bold text-on-surface/60 tracking-tight block mb-4">
-                        Gender <span className="text-destructive">*</span>
+                      <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '12px' }}>
+                        Gender <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {['Male', 'Female'].map(g => (
-                          <label key={g} className={`cursor-pointer border p-3 text-center transition-all rounded-sm font-bold tracking-tight text-micro ${formData.gender === g ? 'border-primary bg-primary/5 text-primary' : 'border-border/60 text-muted-foreground/40 hover:bg-muted/5'}`}>
-                            <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} className="hidden" />
+                          <label key={g} style={{ 
+                            cursor: 'pointer', border: '1px solid hsl(var(--border))', padding: '12px', 
+                            textAlign: 'center', borderRadius: '4px', fontWeight: 800, fontSize: '10px',
+                            textTransform: 'uppercase', letterSpacing: '0.05em',
+                            background: formData.gender === g ? 'hsla(var(--primary), 0.05)' : 'transparent',
+                            borderColor: formData.gender === g ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                            color: formData.gender === g ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                            transition: 'all 0.15s ease'
+                          }}>
+                            <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} style={{ display: 'none' }} />
                             {g}
                           </label>
                         ))}
@@ -365,34 +432,40 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <label htmlFor="residentialAddress" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                      Residential address <span className="text-destructive">*</span>
+                  <div className="space-y-2">
+                    <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Residential address <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
                     <input
-                      id="residentialAddress"
                       placeholder="Street, House Number, City"
                       required
                       value={formData.residentialAddress}
                       onChange={(e) => handleChange('residentialAddress', e.target.value)}
-                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                      style={{ 
+                        width: '100%', padding: '14px 18px', fontSize: '14px', 
+                        background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                        borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                      }}
                     />
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-2 gap-8">
                     {platform === 'GHANA' ? (
                       <>
-                        <div className="space-y-3">
-                          <label htmlFor="region" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                            Region <span className="text-destructive">*</span>
+                        <div className="space-y-2">
+                          <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Region <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                           </label>
                           <select 
-                            id="region"
                             required
                             value={formData.region} 
                             onChange={(e) => handleChange('region', e.target.value)}
-                            className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
-                            style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                            className="reg"
+                            style={{ 
+                              width: '100%', padding: '14px 18px', fontSize: '14px', 
+                              background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                              borderRadius: '4px', color: 'hsl(var(--on-surface))' 
+                            }}
                           >
                             <option value="">Select Region</option>
                             {ghanaRegions.map((region) => (
@@ -400,18 +473,21 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             ))}
                           </select>
                         </div>
-                        <div className="space-y-3">
-                          <label htmlFor="constituency" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                            Constituency <span className="text-destructive">*</span>
+                        <div className="space-y-2">
+                          <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                           </label>
                           <select 
-                            id="constituency"
                             required
                             disabled={!formData.region}
                             value={formData.constituency} 
                             onChange={(e) => handleChange('constituency', e.target.value)}
-                            className="w-full p-4 text-on-surface text-sm appearance-none disabled:opacity-50 bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
-                            style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                            className="reg"
+                            style={{ 
+                              width: '100%', padding: '14px 18px', fontSize: '14px', 
+                              background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                              borderRadius: '4px', color: 'hsl(var(--on-surface))', opacity: !formData.region ? 0.5 : 1
+                            }}
                           >
                             <option value="">Select Constituency</option>
                             {formData.region && regionConstituencies[formData.region]?.map((con) => (
@@ -421,17 +497,20 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         </div>
                       </>
                     ) : (
-                      <div className="space-y-3">
-                        <label htmlFor="chapter" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                          Assigned chapter <span className="text-destructive">*</span>
+                      <div className="space-y-2">
+                        <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          Assigned chapter <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                         </label>
                         <input
-                          id="chapter"
                           placeholder="E.g. UK Chapter - London"
                           required
                           value={formData.chapter}
                           onChange={(e) => handleChange('chapter', e.target.value)}
-                          className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                          style={{ 
+                            width: '100%', padding: '14px 18px', fontSize: '14px', 
+                            background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                            borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                          }}
                         />
                       </div>
                     )}
@@ -440,81 +519,96 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               )}
 
               {formStep === 3 && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-on-surface pb-4 mb-8">
-                    <h3 className="text-on-surface font-bold text-xl tracking-tight">Step 3: Emergency & profession details</h3>
-                    <p className="text-muted-foreground/60 mt-1 mb-0 text-sm">Crucial for member safety and institutional records.</p>
+                <div className="space-y-8">
+                  <div style={{ borderBottom: '2px solid hsl(var(--on-surface))', paddingBottom: '16px', marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 800, margin: 0 }}>Step 3: Emergency & profession details</h3>
+                    <p style={{ fontSize: '13px', color: 'hsl(var(--on-surface-muted))', marginTop: '4px' }}>Crucial for member safety and institutional records.</p>
                   </div>
- 
-                  <div className="space-y-3">
-                    <label htmlFor="emergencyContactName" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                      Emergency contact name <span className="text-destructive">*</span>
+  
+                  <div className="space-y-2">
+                    <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Emergency contact name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
                     <input
-                      id="emergencyContactName"
                       placeholder="Full Name"
                       required
                       value={formData.emergencyContactName}
                       onChange={(e) => handleChange('emergencyContactName', e.target.value)}
-                      className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                      style={{ 
+                        width: '100%', padding: '14px 18px', fontSize: '14px', 
+                        background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                        borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                      }}
                     />
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label htmlFor="emergencyRelationship" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                        Relationship <span className="text-destructive">*</span>
+                  <div className="grid grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                      <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Relationship <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
                       <input
-                        id="emergencyRelationship"
                         placeholder="E.g. Spouse, Parent, Brother"
                         required
                         value={formData.emergencyRelationship}
                         onChange={(e) => handleChange('emergencyRelationship', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                        style={{ 
+                          width: '100%', padding: '14px 18px', fontSize: '14px', 
+                          background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                          borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                        }}
                       />
                     </div>
-                    <div className="space-y-3">
-                      <label htmlFor="emergencyNumber" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                        Emergency contact number <span className="text-destructive">*</span>
+                    <div className="space-y-2">
+                      <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Emergency contact number <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
                       <input
-                        id="emergencyNumber"
                         type="tel"
                         placeholder="Phone number"
                         required
                         value={formData.emergencyNumber}
                         onChange={(e) => handleChange('emergencyNumber', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                        style={{ 
+                          width: '100%', padding: '14px 18px', fontSize: '14px', 
+                          background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                          borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                        }}
                       />
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label htmlFor="profession" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                        Profession / occupation <span className="text-destructive">*</span>
+                  <div className="grid grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                      <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Profession / occupation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
                       <input
-                        id="profession"
                         placeholder="E.g. Teacher, Nurse, Student"
                         required
                         value={formData.profession}
                         onChange={(e) => handleChange('profession', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
+                        style={{ 
+                          width: '100%', padding: '14px 18px', fontSize: '14px', 
+                          background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                          borderRadius: '4px', outline: 'none', color: 'hsl(var(--on-surface))' 
+                        }}
                       />
                     </div>
-                    <div className="space-y-3">
-                      <label htmlFor="educationLevel" className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                        Education level <span className="text-destructive">*</span>
+                    <div className="space-y-2">
+                      <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Education level <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
                       <select 
-                        id="educationLevel"
                         required
                         value={formData.educationLevel} 
                         onChange={(e) => handleChange('educationLevel', e.target.value)}
-                        className="w-full p-4 text-on-surface text-sm appearance-none bg-muted/5 border border-border/60 focus:border-primary rounded-sm focus:outline-none transition-colors"
-                        style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a1a1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem top 50%', backgroundSize: '.65rem auto' }}
+                        className="reg"
+                        style={{ 
+                          width: '100%', padding: '14px 18px', fontSize: '14px', 
+                          background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', 
+                          borderRadius: '4px', color: 'hsl(var(--on-surface))' 
+                        }}
                       >
                         <option value="">Select Level</option>
                         {educationLevels.map(lvl => (
@@ -527,33 +621,37 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
               )}
 
               {formStep === 4 && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="border-b-2 border-on-surface pb-4 mb-8">
-                    <h3 className="text-on-surface font-bold text-xl tracking-tight">Step 4: Final verification</h3>
-                    <p className="text-muted-foreground/60 mt-1 mb-0 text-sm">Identity confirmation and oath of commitment.</p>
+                <div className="space-y-8">
+                  <div style={{ borderBottom: '2px solid hsl(var(--on-surface))', paddingBottom: '16px', marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 800, margin: 0 }}>Step 4: Final verification</h3>
+                    <p style={{ fontSize: '13px', color: 'hsl(var(--on-surface-muted))', marginTop: '4px' }}>Identity confirmation and oath of commitment.</p>
                   </div>
 
-                  <div className="space-y-6">
-                    <label className="text-micro font-bold text-on-surface/60 tracking-tight block">
-                      Passport photo <span className="text-destructive">*</span>
+                  <div className="space-y-4">
+                    <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Passport photo <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
                     
                     {!photoUrl ? (
-                      <div className="border-2 border-dashed border-border/40 p-16 text-center bg-muted/5 relative group transition-all hover:border-primary rounded-sm overflow-hidden">
+                      <div style={{ 
+                        border: '2px dashed hsl(var(--border))', padding: '60px', 
+                        textAlign: 'center', background: 'hsl(var(--container-low))', 
+                        position: 'relative', borderRadius: '4px', cursor: 'pointer' 
+                      }}>
                         <input
                           type="file"
                           accept="image/*"
                           onChange={handlePhotoUpload}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
                         />
-                        <div className="w-20 h-20 bg-primary/10 rounded-sm flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all">
-                          <Upload className="w-10 h-10 text-primary transition-colors" />
+                        <div style={{ width: '60px', height: '60px', background: 'hsla(var(--primary), 0.1)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: '32px', color: 'hsl(var(--primary))' }}>upload</span>
                         </div>
-                        <p className="font-bold text-on-surface/60 tracking-tight text-micro">Click to upload passport photo</p>
+                        <p style={{ fontSize: '11px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Click to upload passport photo</p>
                       </div>
                     ) : (
-                      <div className="relative bg-muted/5 p-6 border border-border/40 rounded-sm overflow-hidden">
-                        <div className="relative h-[400px] w-full bg-on-surface rounded-sm overflow-hidden shadow-2xl">
+                      <div className="panel" style={{ padding: '24px', background: 'hsl(var(--container-low))' }}>
+                        <div style={{ position: 'relative', height: '400px', width: '100%', background: 'hsl(var(--on-surface))', borderRadius: '4px', overflow: 'hidden' }}>
                           <Cropper
                             image={photoUrl}
                             crop={crop}
@@ -564,7 +662,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             onZoomChange={setZoom}
                           />
                         </div>
-                        <div className="flex items-center gap-6 mt-8 px-4 pb-2">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginTop: '24px' }}>
                           <input
                             type="range"
                             value={zoom}
@@ -573,72 +671,78 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             step={0.1}
                             aria-labelledby="Zoom"
                             onChange={(e) => setZoom(Number(e.target.value))}
-                            className="w-full accent-primary h-2 rounded-lg bg-muted/20"
+                            style={{ flex: 1, accentColor: 'hsl(var(--primary))' }}
                           />
                           <button
                             type="button"
                             onClick={() => setPhotoUrl(null)}
-                            className="shrink-0 w-12 h-12 rounded-sm bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all flex items-center justify-center shadow-lg shadow-destructive/10"
+                            className="ico no"
+                            style={{ width: '40px', height: '40px' }}
                             title="Remove photo"
                           >
-                            <X className="w-6 h-6" />
+                            <span className="material-symbols-outlined">close</span>
                           </button>
                         </div>
-                        <p className="text-micro text-muted-foreground/40 tracking-tight mt-4 text-center font-bold">Position your face within the frame</p>
+                        <p style={{ fontSize: '10px', fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textAlign: 'center', marginTop: '16px' }}>Position the face within the frame</p>
                       </div>
                     )}
                   </div>
 
-                  <div className="bg-on-surface text-white p-10 mt-10 border-l-8 border-primary rounded-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                    <h5 className="text-accent mb-4 font-bold tracking-tight text-xs">The Base declaration</h5>
-                    <p className="text-white/80 mb-8 leading-relaxed text-sm font-medium">
-                      I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong className="text-white">THE BASE</strong>: Patriotism, Honesty, and Discipline and pledge to advance the cause of <strong className="text-accent">GHANA FIRST</strong> in all my actions.
+                  <div style={{ 
+                    background: 'hsl(var(--on-surface))', color: '#fff', padding: '32px', 
+                    marginTop: '40px', borderLeft: '8px solid hsl(var(--primary))', borderRadius: '4px',
+                    position: 'relative', overflow: 'hidden' 
+                  }}>
+                    <h5 style={{ color: 'hsl(var(--accent))', marginBottom: '12px', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>The Base declaration</h5>
+                    <p style={{ fontSize: '13px', lineHeight: 1.6, color: 'rgba(255,255,255,0.8)', marginBottom: '24px' }}>
+                      I hereby declare that the information provided is accurate to the best of my knowledge. I commit to uphold the core values of <strong>THE BASE</strong>: Patriotism, Honesty, and Discipline and pledge to advance the cause of <strong style={{ color: 'hsl(var(--accent))' }}>GHANA FIRST</strong> in all my actions.
                     </p>
                     
-                    <div className="flex items-start gap-5">
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
                       <input
                         type="checkbox"
                         id="privacy"
                         checked={agreed}
                         onChange={(e) => setAgreed(e.target.checked)}
-                        className="mt-1 w-6 h-6 shrink-0 accent-primary bg-on-surface border-white/20 rounded-lg cursor-pointer"
+                        style={{ marginTop: '4px', width: '20px', height: '20px', accentColor: 'hsl(var(--primary))' }}
                       />
-                      <label htmlFor="privacy" className="text-sm text-white/70 cursor-pointer leading-tight font-bold">
-                        I accept this declaration on behalf of the member and agree to the <span className="text-accent font-bold underline underline-offset-4 decoration-accent/20">Privacy Policy</span> <span className="text-destructive">*</span>
+                      <label htmlFor="privacy" style={{ fontSize: '13px', fontWeight: 700, color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}>
+                        I accept this declaration on behalf of the member and agree to the <span style={{ color: 'hsl(var(--accent))', textDecoration: 'underline' }}>Privacy Policy</span> <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
                     </div>
                   </div>
                 </div>
               )}
 
-              <div className="pt-10 mt-10 border-t border-border/10 flex justify-between gap-6">
-                {formStep > 1 ? (
+              <div style={{ display: 'flex', gap: '16px', marginTop: '40px', paddingTop: '32px', borderTop: '1px solid hsl(var(--border))' }}>
+                {formStep > 1 && (
                   <button
                     type="button"
                     onClick={goBack}
-                    className="w-1/3 h-16 bg-muted/10 hover:bg-muted/20 text-on-surface font-bold tracking-tight text-micro rounded-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                    className="btn btn-outline"
+                    style={{ flex: 1, height: '54px' }}
                   >
-                    <ArrowLeft className="w-5 h-5" /> Back
+                    <span className="material-symbols-outlined">arrow_back</span>
+                    Back
                   </button>
-                ) : (
-                  <div className="w-1/3"></div>
                 )}
                 
-                 <button
+                <button
                   type="submit"
                   disabled={(formStep === 4 && !agreed) || isSubmitting}
-                  className={`h-16 font-bold tracking-tight text-micro rounded-sm flex items-center justify-center gap-4 transition-all flex-1 shadow-2xl active:scale-[0.98] ${((formStep === 4 && !agreed) || isSubmitting) ? 'bg-muted/20 text-muted-foreground/40 cursor-not-allowed' : 'bg-primary text-white hover:shadow-primary/40'}`}
+                  className="btn btn-primary"
+                  style={{ flex: 2, height: '54px', opacity: ((formStep === 4 && !agreed) || isSubmitting) ? 0.5 : 1 }}
                 >
                   {isSubmitting ? (
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <span className="material-symbols-outlined animate-spin" style={{ fontSize: '20px' }}>refresh</span>
                       <span>Processing...</span>
                     </div>
-                  ) : formStep < 4 ? (
-                    <>Next step <ArrowRight className="w-5 h-5" /></>
                   ) : (
-                    <>Submit registration <ArrowRight className="w-5 h-5" /></>
+                    <>
+                      {formStep < 4 ? 'Next step' : 'Submit registration'}
+                      <span className="material-symbols-outlined">arrow_forward</span>
+                    </>
                   )}
                 </button>
               </div>

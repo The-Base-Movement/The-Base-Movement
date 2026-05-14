@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { adminService, type Poll, type PollStats } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const inputSt: React.CSSProperties = {
@@ -165,7 +164,7 @@ export default function PollsManagement() {
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>bar_chart</span>
             Engagement Hub
           </h2>
-          <div style={{ marginTop: 10, marginBottom: 4 }}><BrandLine /></div>
+          <div style={{ marginTop: 10, marginBottom: 4 }}><div className="bl"><div /><div /><div /></div></div>
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, marginBottom: 0 }}>
             Manage movement-wide opinion polls, surveys, and live member feedback intercepts.
           </p>

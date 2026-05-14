@@ -1,6 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { BrandLine } from '@/components/ui/BrandLine'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail, DonationCampaign } from '@/types/admin'
 import type { RealtimeChannel } from '@supabase/supabase-js'
@@ -322,7 +321,7 @@ export default function Donate() {
               <span className="material-symbols-outlined" style={{ fontSize: 'clamp(32px, 8vw, 48px)', color: 'hsl(var(--destructive))' }}>favorite</span>
               Support the Movement
             </h1>
-            <BrandLine />
+            <div className="bl"><div /><div /><div /></div>
             <p style={{ 
               color: 'hsl(var(--on-surface-muted))', 
               maxWidth: 768, 

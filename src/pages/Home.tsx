@@ -4,7 +4,6 @@ import { adminService, type BlogPost, type Milestone, type Chapter, type Poll } 
 import { usePerformance } from '@/context/PerformanceContext'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
-import { BrandLine } from '@/components/ui/BrandLine'
 
 function Sparkline({ heights, accent }: { heights: number[]; accent: string }) {
   return (
@@ -225,7 +224,7 @@ export default function Home() {
               Ghana First,<br />Jobs for the youth!
             </h1>
             <div className="flex justify-center md:justify-start">
-              <BrandLine />
+              <div className="bl"><div /><div /><div /></div>
             </div>
             <p className="text-white/90 text-sm md:text-base font-body-md max-w-xl mt-4 mb-6 leading-relaxed">
               We are a grassroots movement committed to youth jobs, accountable leadership, and national development. Join citizens in Ghana and across the diaspora working for a more productive future.
@@ -318,7 +317,7 @@ export default function Home() {
             >
               Our Foundation
             </h2>
-            <BrandLine />
+            <div className="bl"><div /><div /><div /></div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 md:gap-12">
@@ -621,7 +620,7 @@ export default function Home() {
               <span className="text-primary font-bold tracking-tight text-micro mb-3 block">Updates</span>
               <h2 id="updates-heading" className="text-2xl md:text-3xl font-meta font-bold text-on-surface tracking-tight">Latest updates</h2>
               <p className="text-xs text-muted-foreground/60 mt-2">Stories from our communities, branches, and partners.</p>
-              <BrandLine className="mt-4" />
+              <div className={cn("bl", "mt-4")}><div /><div /><div /></div>
             </div>
             <Link
               to="/blog"

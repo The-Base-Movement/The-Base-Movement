@@ -4,7 +4,6 @@ import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationMo
 import { adminService, type InventoryItem, type ResourceRequest, type LogisticsAuditEntry } from '@/services/adminService'
 import { toast } from 'sonner'
 import { contentService } from '@/services/contentService'
-import { BrandLine } from '@/components/admin/BrandLine'
 
 import { StoreStatsOverview } from './store/components/StoreStatsOverview'
 import { InventoryTable } from './store/components/InventoryTable'
@@ -204,7 +203,7 @@ export default function AdminStore() {
         <div>
           <div className="crumbs">Store · Logistics</div>
           <h2 style={{ margin: '4px 0 0' }}>Logistics and supply</h2>
-          <BrandLine />
+          <div className="bl"><div /><div /><div /></div>
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Movement inventory, merchandising, and regional distribution infrastructure.
           </p>

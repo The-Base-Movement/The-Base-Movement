@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { OrderListCard } from '@/components/admin/OrderListCard'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/admin/BrandLine'
 
 
 const STATUS_CONFIG: Record<Order['status'], { label: string; color: string; bg: string; icon: string; kpiClass: string }> = {
@@ -167,7 +166,7 @@ export default function AdminOrders() {
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>inventory_2</span>
             Orders Manifest
           </h2>
-          <BrandLine />
+          <div className="bl"><div /><div /><div /></div>
         </div>
         <div className="actions">
           <button className="btn btn-outline btn-sm" onClick={handleExport}>

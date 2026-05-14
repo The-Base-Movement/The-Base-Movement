@@ -6,7 +6,6 @@ import { contentService } from '@/services/contentService'
 import type { BlogPost, AdminUser, Author } from '@/types/admin'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const CATEGORY_PLACEHOLDERS: Record<string, string> = {
@@ -769,7 +768,7 @@ export default function AdminBlogs() {
             <span className="material-symbols-outlined" style={{ fontSize: 22 }}>article</span>
             Editorial command
           </h2>
-          <BrandLine />
+          <div className="bl"><div /><div /><div /></div>
         </div>
         <div className="actions">
           <button className="btn btn-outline">

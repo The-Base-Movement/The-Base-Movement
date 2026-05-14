@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 
 export default function DeployMission() {
   const navigate = useNavigate()
@@ -111,7 +110,7 @@ export default function DeployMission() {
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--destructive))' }}>sports_kabaddi</span>
             Deploy canvassing mission
           </h2>
-          <BrandLine />
+          <div className="bl"><div /><div /><div /></div>
         </div>
         <div className="actions">
           <Link to="/admin/ground-game">

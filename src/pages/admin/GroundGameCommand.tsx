@@ -4,7 +4,6 @@ import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign, CanvasserLog, GOTVTransportRequest } from '@/types/admin'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { BrandLine } from '@/components/admin/BrandLine'
 
 export default function GroundGameCommand() {
   const navigate = useNavigate()
@@ -86,7 +85,7 @@ export default function GroundGameCommand() {
         <div>
           <div className="crumbs">Command → Ground game</div>
           <h2>Ground game · Greater Accra</h2>
-          <BrandLine />
+          <div className="bl"><div /><div /><div /></div>
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 2, maxWidth: 560, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>Daily field operations — turf assignments, canvasser activity, and route progress for branch 04.</p>
         </div>
         <div className="actions">

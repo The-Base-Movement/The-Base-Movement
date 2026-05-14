@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { adminService, type AdminUser } from '@/services/adminService'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { auditService } from '@/services/auditService'
 import type { AuditLogEntry } from '@/types/admin'
@@ -95,7 +94,7 @@ export default function Administrators() {
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>shield</span>
             Administrators
           </h2>
-          <div style={{ marginTop: 10, marginBottom: 4 }}><BrandLine /></div>
+          <div style={{ marginTop: 10, marginBottom: 4 }}><div className="bl"><div /><div /><div /></div></div>
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, marginBottom: 0 }}>
             Authorized personnel with leadership credentials and platform oversight.
           </p>

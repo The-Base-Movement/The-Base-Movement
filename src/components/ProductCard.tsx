@@ -1,7 +1,4 @@
 import { Link } from 'react-router-dom'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/neon-button'
-import { ShoppingBag, ArrowRight, Star, Heart, Share2, Plus } from 'lucide-react'
 import type { Product } from '@/types/product'
 import { useStore } from '@/hooks/useStore'
 import { motion } from 'framer-motion'
@@ -40,6 +37,8 @@ export function ProductCard({ product, onShare }: ProductProps) {
     })
   }
 
+  const productUrl = window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`
+
   return (
     <motion.article
       aria-labelledby={`product-name-${product.id}`}
@@ -49,107 +48,63 @@ export function ProductCard({ product, onShare }: ProductProps) {
       transition={{ duration: 0.5 }}
       className="h-full"
     >
-      <Card className="group border border-border bg-white hover:border-primary hover:-translate-y-0.5 hover:shadow-[0_16px_32px_-8px_rgba(0,107,63,0.15)] transition-all duration-200 rounded-[6px] overflow-hidden flex flex-col h-full relative">
-        {/* Product Image Container */}
+      <div className="group border border-border bg-white hover:border-primary hover:-translate-y-0.5 hover:shadow-[0_16px_32px_-8px_rgba(0,107,63,0.15)] transition-all duration-200 rounded-[6px] overflow-hidden flex flex-col h-full relative">
+        {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-stone-100">
-          <Link to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}>
+          <Link to={productUrl}>
             {product.image ? (
-              <img src={product.image} 
-                alt={product.name} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-               decoding="async" loading="lazy" />
+              <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" decoding="async" loading="lazy" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <ShoppingBag className="w-16 h-16 text-stone-300 group-hover:scale-110 transition-transform duration-500" />
+                <span className="material-symbols-outlined text-stone-300 group-hover:scale-110 transition-transform duration-500" style={{ fontSize: 64 }}>shopping_bag</span>
               </div>
             )}
           </Link>
-          
-          {/* Status Badge */}
+
           <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-            {isComingSoon && (
-              <span className="bg-[#181d19] text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">
-                Coming soon
-              </span>
-            )}
-            {!isComingSoon && product.category === 'Limited Edition' && (
-              <span className="bg-accent text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">
-                Limited
-              </span>
-            )}
-            {!isComingSoon && product.category !== 'Limited Edition' && product.stock_quantity && product.stock_quantity > 0 && (
-              <span className="bg-destructive text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">
-                Bestseller
-              </span>
-            )}
+            {isComingSoon && <span className="bg-[#181d19] text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">Coming soon</span>}
+            {!isComingSoon && product.category === 'Limited Edition' && <span className="bg-accent text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">Limited</span>}
+            {!isComingSoon && product.category !== 'Limited Edition' && product.stock_quantity && product.stock_quantity > 0 && <span className="bg-destructive text-white text-[9px] font-bold font-meta tracking-[0.05em] uppercase px-[10px] py-1 rounded-[2px]">Bestseller</span>}
           </div>
 
           <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300">
-            <Button 
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault();
-                if (isWishlisted) {
-                  removeFromWishlist(product.id)
-                } else {
-                  addToWishlist(product)
-                }
-              }}
-              className={`w-10 h-10 bg-white shadow-md flex items-center justify-center transition-all duration-300 group/heart ${isWishlisted ? 'text-[var(--brand-red)]' : 'text-stone-400 hover:text-[var(--brand-red)]'}`}
+            <button
+              onClick={(e: React.MouseEvent) => { e.preventDefault(); if (isWishlisted) { removeFromWishlist(product.id) } else { addToWishlist(product) } }}
+              className={`w-10 h-10 bg-white shadow-md flex items-center justify-center transition-all duration-300 border-none cursor-pointer ${isWishlisted ? 'text-[var(--brand-red)]' : 'text-stone-400 hover:text-[var(--brand-red)]'}`}
             >
-              <Heart className={`w-5 h-5 transition-all ${isWishlisted ? 'fill-brand-red text-[var(--brand-red)]' : 'group-hover/heart:fill-brand-red group-hover/heart:text-[var(--brand-red)]'}`} />
-            </Button>
-            <Button 
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onShare?.(product);
-              }}
-              className="w-10 h-10 bg-white shadow-md flex items-center justify-center text-stone-400 hover:text-[var(--brand-green)] transition-all duration-300"
+              <span className="material-symbols-outlined" style={{ fontSize: 20, fontVariationSettings: isWishlisted ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+            </button>
+            <button
+              onClick={(e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); onShare?.(product) }}
+              className="w-10 h-10 bg-white shadow-md flex items-center justify-center text-stone-400 hover:text-[var(--brand-green)] transition-all duration-300 border-none cursor-pointer"
             >
-              <Share2 className="w-5 h-5" />
-            </Button>
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>share</span>
+            </button>
           </div>
 
-          {/* Quick Add Bottom Bar */}
           {!isComingSoon && (
             <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/60 to-transparent z-10">
-              <Button 
-                onClick={handleQuickAdd}
-                variant="primary"
-                className="w-full h-10"
-              >
-                <Plus className="w-3.5 h-3.5 mr-2" /> Quick Add
-              </Button>
+              <button onClick={handleQuickAdd} className="w-full h-10 bg-primary text-white font-bold text-xs flex items-center justify-center gap-2 border-none cursor-pointer hover:opacity-90 transition-opacity">
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>add</span> Quick Add
+              </button>
             </div>
           )}
         </div>
 
-        <CardContent className="p-4 flex flex-col flex-1 gap-[6px]">
-          <span className="text-[10px] font-bold text-primary font-meta uppercase tracking-[0.06em]">
-            {product.category || 'General'}
-          </span>
+        <div className="p-4 flex flex-col flex-1 gap-[6px]">
+          <span className="text-[10px] font-bold text-primary font-meta uppercase tracking-[0.06em]">{product.category || 'General'}</span>
 
-          <Link 
-            to={window.location.pathname.includes('/dashboard') ? `/dashboard/store/product/${product.slug}` : `/store/product/${product.slug}`}
-            className="group/title flex items-start justify-between gap-3"
-          >
-            <h5
-              id={`product-name-${product.id}`}
-              className="font-meta text-[15px] font-extrabold tracking-[-0.005em] leading-[1.3] text-on-surface group-hover/title:text-primary transition-colors line-clamp-2 mb-0"
-            >
+          <Link to={productUrl} className="group/title flex items-start justify-between gap-3">
+            <h5 id={`product-name-${product.id}`} className="font-meta text-[15px] font-extrabold tracking-[-0.005em] leading-[1.3] text-on-surface group-hover/title:text-primary transition-colors line-clamp-2 mb-0">
               {product.name}
             </h5>
-            <ArrowRight className="w-4 h-4 text-primary shrink-0 mt-0.5 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300" />
+            <span className="material-symbols-outlined text-primary shrink-0 mt-0.5 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300" style={{ fontSize: 16 }}>arrow_forward</span>
           </Link>
 
           <div className="flex items-center gap-1.5 text-[11px] text-on-surface-muted">
             <div className="flex items-center gap-0.5">
               {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} className="w-3 h-3 fill-accent text-accent" />
+                <span key={s} className="material-symbols-outlined text-accent" style={{ fontSize: 12, fontVariationSettings: "'FILL' 1" }}>star</span>
               ))}
             </div>
             <span className="font-bold">{product.rating || '4.8'}</span>
@@ -159,22 +114,15 @@ export function ProductCard({ product, onShare }: ProductProps) {
             <div className="font-meta font-extrabold text-[20px] tracking-[-0.015em] text-on-surface">
               ₵{product.price.toString().replace('GHS', '').replace('GH₵', '').replace('₵', '').trim()}
               {product.compare_at_price && (
-                <small className="text-[12px] text-on-surface-muted line-through font-bold ml-1.5">
-                  ₵{product.compare_at_price}
-                </small>
+                <small className="text-[12px] text-on-surface-muted line-through font-bold ml-1.5">₵{product.compare_at_price}</small>
               )}
             </div>
-            <Button
-              onClick={handleQuickAdd}
-              variant="primary"
-              size="sm"
-              className="h-8 px-4 text-[12px] font-bold shrink-0"
-            >
+            <button onClick={handleQuickAdd} className="h-8 px-4 text-[12px] font-bold shrink-0 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity rounded-[4px]">
               Add
-            </Button>
+            </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.article>
   )
 }

@@ -65,7 +65,7 @@ export default function Dashboard() {
         try {
           const [donations, rank] = await Promise.all([
             donationService.getMemberDonationStats(liveMember.phone),
-            gamificationService.getMemberRank(liveMember.id)
+            gamificationService.getMemberRank(liveMember.authId || liveMember.id)
           ])
           setContributionStats({ total: donations.total, lastMonth: donations.lastMonth })
           setRankInfo({ rank: rank.rank, delta: rank.delta })

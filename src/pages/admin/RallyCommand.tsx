@@ -3,7 +3,6 @@ import { adminService } from '@/services/adminService'
 import type { FieldAction, RallyAttendance } from '@/types/admin'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 export default function RallyCommand() {
@@ -83,7 +82,7 @@ export default function RallyCommand() {
             <span className="material-symbols-outlined" style={{ fontSize: 24 }}>groups</span>
             Rally command
           </h2>
-          <div style={{ marginTop: 12 }}><BrandLine /></div>
+          <div style={{ marginTop: 12 }}><div className="bl"><div /><div /><div /></div></div>
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
             Real-time attendance operational metrics and geo-fenced verification for field actions.
           </p>

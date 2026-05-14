@@ -5,7 +5,6 @@ import type { RapidResponseDirective, CrisisIncident, MediaCounterNarrative, Reg
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const formatGhanaTime = (dateStr: string | Date, options: Intl.DateTimeFormatOptions) => {
@@ -193,7 +192,7 @@ export default function WarRoomCommand() {
               <h2 className="font-meta font-extrabold text-[22px] text-white tracking-[-0.015em] leading-tight">
                 War Room — live mobilization
               </h2>
-              <BrandLine />
+              <div className="bl"><div /><div /><div /></div>
               <span className="inline-flex items-center gap-[6px] font-extrabold text-[10.5px] uppercase tracking-[.06em] px-[10px] py-1 rounded-full border self-start sm:self-auto"
                 style={{ color: 'hsl(var(--destructive))', background: 'rgba(206,17,38,.12)', borderColor: 'rgba(206,17,38,.3)' }}>
                 <span className="w-[6px] h-[6px] rounded-full animate-pulse block" style={{ background: 'hsl(var(--destructive))' }} />

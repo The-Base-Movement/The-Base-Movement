@@ -3,7 +3,6 @@ import { adminService } from '@/services/adminService'
 import type { MemberFeedback, SentimentIntelligence as SentimentMetrics, ImpactProjection } from '@/types/admin'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 export default function SentimentIntelligence() {
@@ -66,7 +65,7 @@ export default function SentimentIntelligence() {
             <span className="material-symbols-outlined" style={{ fontSize: 24 }}>psychology</span>
             Sentiment intelligence
           </h2>
-          <div style={{ marginTop: 12 }}><BrandLine /></div>
+          <div style={{ marginTop: 12 }}><div className="bl"><div /><div /><div /></div></div>
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
             AI-powered member sentiment tracking and mobilization impact forecasting.
           </p>

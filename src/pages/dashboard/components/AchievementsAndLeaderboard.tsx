@@ -1,6 +1,4 @@
-import { Trophy, Medal, Star } from 'lucide-react'
 import type { LeaderboardEntry, Achievement } from '@/types/admin'
-import { cn } from '@/lib/utils'
 
 interface AchievementsAndLeaderboardProps {
   leaderboard: LeaderboardEntry[]
@@ -9,35 +7,42 @@ interface AchievementsAndLeaderboardProps {
 }
 
 export function AchievementsAndLeaderboard({ leaderboard, achievements, region }: AchievementsAndLeaderboardProps) {
+
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Regional Leaderboard */}
-      <div className="bg-white border border-border/40 rounded-sm shadow-sm overflow-hidden flex flex-col">
-        <div className="bg-on-surface/5 border-b border-border/10 p-4 flex items-center justify-between">
-          <h3 className="text-xs font-bold tracking-tight text-primary flex items-center gap-2 m-0">
-            <Trophy className="w-4 h-4" />
-            Regional Patriots - {region || 'National'}
+      <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--primary))', display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>emoji_events</span>
+            Regional patriots — {region || 'National'}
           </h3>
-          <span className="text-micro font-bold text-on-surface/30 tracking-tight">Top 5 Members</span>
+          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Top 5 Members</span>
         </div>
-        <div className="divide-y divide-border/10">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           {leaderboard.length === 0 ? (
-            <div className="p-8 text-center text-on-surface/30 italic text-xs">
+            <div style={{ padding: '48px 24px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}>
               No regional data available yet.
             </div>
           ) : (
             leaderboard.slice(0, 5).map((entry, index) => (
-              <div key={entry.name} className="p-4 flex items-center justify-between hover:bg-on-surface/5 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className={cn(
-                    "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold",
-                    index === 0 ? "bg-accent text-accent-foreground" : "bg-on-surface/5 text-on-surface/40"
-                  )}>
+              <div key={entry.name} 
+                   style={{ padding: '14px 18px', borderBottom: index < 4 ? '1px solid hsl(var(--border))' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'background 0.15s' }}
+                   className="hover:bg-on-surface/5">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ 
+                    width: 26, height: 26, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                    fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
+                    background: index === 0 ? 'hsl(var(--accent))' : 'hsl(var(--container-low))',
+                    color: index === 0 ? '#fff' : 'hsl(var(--on-surface-muted))',
+                    border: index === 0 ? 'none' : '1px solid hsl(var(--border))'
+                  }}>
                     {index + 1}
                   </div>
-                  <span className="text-sm font-bold text-on-surface tracking-tight">{entry.name}</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>{entry.name}</span>
                 </div>
-                <span className="text-xs font-bold italic text-primary">{entry.points.toLocaleString()} pts</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--primary))', fontStyle: 'italic' }}>{entry.points.toLocaleString()} pts</span>
               </div>
             ))
           )}
@@ -45,26 +50,36 @@ export function AchievementsAndLeaderboard({ leaderboard, achievements, region }
       </div>
 
       {/* Unlocked Achievements */}
-      <div className="bg-surface-warm border border-border/40 rounded-sm shadow-sm overflow-hidden flex flex-col">
-        <div className="bg-on-surface/5 border-b border-border/10 p-4 flex items-center justify-between">
-          <h3 className="text-xs font-bold tracking-tight text-accent flex items-center gap-2 m-0">
-            <Medal className="w-4 h-4" />
-            Unlocked Achievements
+      <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--accent))', display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>military_tech</span>
+            Unlocked achievements
           </h3>
-          <span className="text-micro font-bold text-on-surface/30 tracking-tight">{achievements.length} Unlocked</span>
+          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{achievements.length} Unlocked</span>
         </div>
-        <div className="p-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div style={{ padding: 24, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
           {achievements.length === 0 ? (
-            <div className="col-span-full p-4 text-center text-on-surface/30 italic text-xs">
+            <div style={{ gridColumn: '1 / -1', padding: '24px', textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}>
               No achievements unlocked yet.
             </div>
           ) : (
             achievements.map((achievement) => (
-              <div key={achievement.id} className="flex flex-col items-center text-center p-3 bg-white/50 border border-border/10 rounded-sm hover:border-accent/40 transition-all group">
-                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                  <Star className="w-5 h-5 text-accent" />
+              <div key={achievement.id} 
+                   style={{ 
+                     display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '16px 12px', 
+                     background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4,
+                     transition: 'all 0.2s'
+                   }}
+                   className="group hover:border-accent/40">
+                <div style={{ 
+                  width: 44, height: 44, borderRadius: '50%', background: 'rgba(245,158,11,0.1)', 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12,
+                  transition: 'transform 0.2s'
+                }} className="group-hover:scale-110">
+                  <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--accent))' }}>star</span>
                 </div>
-                <span className="text-[10px] font-bold text-on-surface tracking-tight leading-tight">{achievement.name}</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))', lineHeight: 1.3, letterSpacing: '-0.01em' }}>{achievement.name}</span>
               </div>
             ))
           )}

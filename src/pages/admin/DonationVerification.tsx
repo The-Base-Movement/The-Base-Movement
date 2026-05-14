@@ -3,7 +3,6 @@ import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/services/adminService'
 import { toast } from 'sonner'
 import DonationListCard from '@/components/admin/DonationListCard'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 type StatusFilter = 'Pending' | 'Rejected' | 'Verified' | 'Refunded'
@@ -145,7 +144,7 @@ export default function FinancialAudit() {
         <div>
           <div className="crumbs">Money · Donations · Verification queue</div>
           <h2 style={{ margin: '4px 0 0' }}>Donations · verification queue</h2>
-          <BrandLine />
+          <div className="bl"><div /><div /><div /></div>
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 2, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Match MoMo transactions, confirm card receipts, and clear pending donations against the chapter ledger.
           </p>

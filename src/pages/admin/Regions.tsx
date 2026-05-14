@@ -102,7 +102,7 @@ export default function AdminRegions() {
             return (
               <div key={region.id} className="panel" style={{ padding: 0, overflow: 'hidden' }}>
                 {/* Region header row */}
-                <button
+                <div
                   style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
                   onClick={() => toggleRegion(region.id)}
                 >
@@ -132,7 +132,7 @@ export default function AdminRegions() {
                     </button>
                     <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))', transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'none' }}>chevron_right</span>
                   </div>
-                </button>
+                </div>
 
                 {/* Expanded: constituency grid */}
                 {isExpanded && (

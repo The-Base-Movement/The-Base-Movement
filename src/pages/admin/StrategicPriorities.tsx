@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { adminService } from '@/services/adminService'
 import type { DonationCampaign } from '@/types/admin'
@@ -122,7 +121,7 @@ export default function StrategicPriorities() {
             <span className="material-symbols-outlined" style={{ fontSize: 24 }}>target</span>
             Strategic priorities
           </h2>
-          <div style={{ marginTop: 12 }}><BrandLine /></div>
+          <div style={{ marginTop: 12 }}><div className="bl"><div /><div /><div /></div></div>
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
             Manage movement-wide mobilization goals, financial targets, and operational milestones.
           </p>

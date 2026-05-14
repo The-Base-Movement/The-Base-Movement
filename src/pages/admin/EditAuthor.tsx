@@ -4,7 +4,6 @@ import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
 import { toast } from 'sonner'
 import type { Author, Member } from '@/types/admin'
-import { BrandLine } from '@/components/admin/BrandLine'
 
 
 export default function AdminEditAuthor() {
@@ -191,7 +190,7 @@ export default function AdminEditAuthor() {
               <span className="material-symbols-outlined text-primary">{isEditing ? 'manage_accounts' : 'person_add'}</span>
               {isEditing ? `Refine: ${formData.name}` : 'Recruit new personnel'}
             </h2>
-            <BrandLine />
+            <div className="bl"><div /><div /><div /></div>
           </div>
         </div>
         <div className="actions">

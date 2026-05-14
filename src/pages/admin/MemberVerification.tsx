@@ -4,7 +4,6 @@ import { toast } from 'sonner'
 import RegistrationForm from '@/components/admin/RegistrationForm'
 import type { RegistrationSubmission } from '@/components/admin/RegistrationForm'
 import VerificationListCard from '@/components/admin/VerificationListCard'
-import { BrandLine } from '@/components/admin/BrandLine'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const PAGE_SIZE = 10
@@ -129,7 +128,7 @@ export default function MemberVerification() {
         <div>
           <div className="crumbs">Members · Verification</div>
           <h2 style={{ margin: '4px 0 0' }}>Member verification</h2>
-          <BrandLine />
+          <div className="bl"><div /><div /><div /></div>
           <p style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 12.5, marginTop: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
             Review and approve new member registrations for movement security.
           </p>

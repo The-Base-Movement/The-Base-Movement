@@ -27,6 +27,9 @@ class GamificationService {
   }
 
   async getMemberAchievements(userId: string): Promise<Achievement[]> {
+    if (userId.startsWith('TBM-')) {
+      console.warn(`[GAMIFICATION] getMemberAchievements called with registration number (${userId}) instead of UUID. This will fail in the database.`);
+    }
     try {
       const { data, error } = await supabase
         .from('member_achievements')
@@ -41,6 +44,9 @@ class GamificationService {
   }
 
   async getMemberPoints(userId: string): Promise<number> {
+    if (userId.startsWith('TBM-')) {
+      console.warn(`[GAMIFICATION] getMemberPoints called with registration number (${userId}) instead of UUID. This will fail in the database.`);
+    }
     try {
       const { data, error } = await supabase
         .from('member_points')
