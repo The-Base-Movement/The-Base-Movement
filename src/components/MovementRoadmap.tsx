@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { CheckCircle2, Clock, Flag, TrendingUp, Target, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { adminService, type Milestone } from '@/services/adminService'
 
@@ -66,7 +65,7 @@ export function MovementRoadmap() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-on-surface flex items-center gap-3 m-0">
             <span className="p-2 bg-[var(--brand-red)]/10 rounded-none">
-              <Flag className="w-6 h-6 text-[var(--brand-red)]" />
+              <span className="material-symbols-outlined text-[var(--brand-red)]" style={{ fontSize: 24 }}>flag</span>
             </span>
             National strategic <span className="text-[var(--brand-green)]">roadmap</span>
           </h2>
@@ -116,9 +115,9 @@ export function MovementRoadmap() {
                   }}
                 >
                   <div className="relative z-20">
-                    {milestone.status === 'Completed' && <CheckCircle2 className="w-7 h-7 text-white stroke-[4px]" />}
-                    {milestone.status === 'In Progress' && <Clock className="w-7 h-7 text-white stroke-[4px]" />}
-                    {milestone.status === 'Upcoming' && <Target className="w-7 h-7 text-white stroke-[4px]" />}
+                    {milestone.status === 'Completed' && <span className="material-symbols-outlined text-white" style={{ fontSize: 28, fontVariationSettings: "'FILL' 1" }}>check_circle</span>}
+                    {milestone.status === 'In Progress' && <span className="material-symbols-outlined text-white" style={{ fontSize: 28 }}>schedule</span>}
+                    {milestone.status === 'Upcoming' && <span className="material-symbols-outlined text-white" style={{ fontSize: 28 }}>gps_fixed</span>}
                   </div>
                   
                   {milestone.status === 'In Progress' && (
@@ -137,8 +136,8 @@ export function MovementRoadmap() {
                   <div className="absolute top-0 left-0 w-full h-[5px] bg-gradient-to-r from-[var(--brand-red-full)] via-[var(--brand-gold-full)] to-[var(--brand-green-full)]" />
                   
                   {/* Strategic Watermark */}
-                  <div className="absolute top-6 right-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                    <TrendingUp className="w-24 h-24 rotate-[-15deg]" />
+                  <div className="absolute top-6 right-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity rotate-[-15deg]">
+                    <span className="material-symbols-outlined" style={{ fontSize: 96 }}>trending_up</span>
                   </div>
 
                   <div className={cn(
@@ -172,7 +171,7 @@ export function MovementRoadmap() {
                     index % 2 === 0 ? "sm:justify-end" : "sm:justify-start"
                   )}>
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-3 h-3 text-[var(--brand-red)]" />
+                      <span className="material-symbols-outlined text-[var(--brand-red)]" style={{ fontSize: 12 }}>calendar_today</span>
                       <span>Launch: {new Date(milestone.target_date).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
                     </div>
                     
@@ -180,7 +179,7 @@ export function MovementRoadmap() {
                       <>
                         <div className="w-1 h-1 bg-stone-200 rounded-full" />
                         <div className="flex items-center gap-2 text-[var(--brand-green)] bg-[var(--brand-green)]/5 px-2 py-1">
-                          <TrendingUp className="w-3 h-3" />
+                          <span className="material-symbols-outlined" style={{ fontSize: 12 }}>trending_up</span>
                           <span>Fulfillment: {new Date(milestone.forecasted_date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         </div>
                       </>

@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { User, Send, MessageSquare } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 
 interface Comment {
   id: string
@@ -46,7 +44,7 @@ export function CommentSection() {
   return (
     <div className="mt-24 pt-12 border-t border-stone-100">
       <div className="flex items-center gap-3 mb-10">
-        <MessageSquare className="w-6 h-6 text-[var(--brand-green)]" />
+        <span className="material-symbols-outlined text-[var(--brand-green)]" style={{ fontSize: 24 }}>chat_bubble</span>
         <h2 className="text-xl font-bold text-stone-900 tracking-tight mb-0">Community Discussion</h2>
         <span className="bg-stone-100 text-stone-500 text-micro font-bold px-2 py-0.5 tracking-tight">
           {comments.length} comments
@@ -58,7 +56,7 @@ export function CommentSection() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 bg-stone-200 flex items-center justify-center shrink-0">
-              <User className="w-6 h-6 text-stone-400" />
+              <span className="material-symbols-outlined text-stone-400" style={{ fontSize: 24 }}>person</span>
             </div>
             <div className="flex-1">
               <textarea
@@ -70,13 +68,13 @@ export function CommentSection() {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button 
+            <button
               type="submit"
               disabled={!newComment.trim()}
-              className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-micro h-10 px-8 rounded-none"
+              className="bg-[var(--brand-green)] hover:bg-[var(--brand-green)]/90 text-white font-bold tracking-tight text-micro h-10 px-8 rounded-none border-none cursor-pointer flex items-center gap-2 disabled:opacity-50"
             >
-              Post comment <Send className="w-3 h-3 ml-2" />
-            </Button>
+              Post comment <span className="material-symbols-outlined" style={{ fontSize: 12 }}>send</span>
+            </button>
           </div>
         </form>
       </div>
@@ -86,7 +84,7 @@ export function CommentSection() {
         {comments.map((comment) => (
           <div key={comment.id} className="flex gap-4 group">
             <div className="w-12 h-12 bg-[var(--brand-green)]/5 border border-[var(--brand-green)]/10 flex items-center justify-center shrink-0">
-              <User className="w-6 h-6 text-[var(--brand-green)]" />
+              <span className="material-symbols-outlined text-[var(--brand-green)]" style={{ fontSize: 24 }}>person</span>
             </div>
             <div className="flex-1 space-y-2">
               <div className="flex items-center justify-between">

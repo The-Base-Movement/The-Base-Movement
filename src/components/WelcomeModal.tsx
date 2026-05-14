@@ -1,6 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { X, MapPin, Globe, Check, ChevronDown, Building2 } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 
 interface WelcomeModalProps {
   isOpen: boolean;
@@ -42,14 +40,14 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
           onClick={onClose}
           className="absolute top-6 right-6 w-8 h-8 rounded-none bg-stone-50 border border-stone-100 flex items-center justify-center text-stone-400 hover:text-[var(--brand-green)] transition-colors z-10"
         >
-          <X className="w-4 h-4" />
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
         </button>
 
         <div className="p-10">
           {/* Header */}
           <div className="text-center mb-10">
             <div className="w-16 h-16 bg-[var(--brand-green)]/10 flex items-center justify-center mx-auto mb-6">
-              <MapPin className="w-8 h-8 text-[var(--brand-green)]" />
+              <span className="material-symbols-outlined text-[var(--brand-green)]" style={{ fontSize: 32 }}>location_on</span>
             </div>
             <h2 className="text-stone-900 mb-3">
               Welcome to the Movement
@@ -63,7 +61,7 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
           <div className="border-2 border-[var(--brand-green)] bg-emerald-50/30 p-6 mb-8 relative group">
             <div className="flex items-center gap-5">
               <div className="w-14 h-14 bg-[var(--brand-green)] text-white flex items-center justify-center rounded-none shadow-lg">
-                <Globe className="w-7 h-7" />
+                <span className="material-symbols-outlined" style={{ fontSize: 28 }}>public</span>
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
@@ -83,20 +81,19 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
 
           {/* Actions */}
           <div className="space-y-4">
-            <Button 
-              variant="primary"
+            <button
               onClick={onClose}
-              className="w-full h-14 rounded-none font-bold text-sm tracking-tight shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3"
+              className="w-full h-14 rounded-none font-bold text-sm tracking-tight shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3 bg-primary text-white border-none cursor-pointer hover:opacity-90"
             >
-              <Check className="w-5 h-5" />
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>check</span>
               Confirm this chapter
-            </Button>
+            </button>
             
             <button 
               onClick={handleChooseDifferent}
               className="w-full py-4 text-xs font-bold text-stone-400 hover:text-[var(--brand-green)] tracking-tight transition-colors flex items-center justify-center gap-2 group"
             >
-              <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+              <span className="material-symbols-outlined group-hover:translate-y-0.5 transition-transform" style={{ fontSize: 16 }}>expand_more</span>
               Choose a different chapter
             </button>
           </div>
@@ -104,7 +101,7 @@ export function WelcomeModal({ isOpen, onClose, userName, assignedChapter }: Wel
           {/* Footer Info */}
           <div className="mt-10 pt-8 border-t border-stone-100">
             <div className="flex items-center gap-3 text-stone-400">
-              <Building2 className="w-4 h-4" />
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>account_balance</span>
               <p className="text-micro font-bold tracking-tight mb-0">
                 Assigned based on your region: {assignedChapter.region}
               </p>
