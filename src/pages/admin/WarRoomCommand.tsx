@@ -80,6 +80,8 @@ export default function WarRoomCommand() {
   const [hoveredRegion, setHoveredRegion] = useState<RegionalStat | null>(null)
   const [activeTab, setActiveTab] = useState<'activity' | 'intelligence'>('activity')
   const [loading, setLoading] = useState(true)
+  const [reportData, setReportData] = useState<string | null>(null)
+  const [reportLoading, setReportLoading] = useState(false)
 
   useEffect(() => {
     fetchWarRoomIntelligence()
@@ -135,18 +137,29 @@ export default function WarRoomCommand() {
     }
   }
 
+  const handleGenerateReport = async () => {
+    setReportLoading(true)
+    try {
+      const report = await adminService.generateComplianceReport()
+      setReportData(report)
+    } catch (err) {
+      console.error('[SYSTEM] Report generation failed:', err)
+      toast.error('Failed to generate compliance report')
+    } finally {
+      setReportLoading(false)
+    }
+  }
+
   const fetchWarRoomIntelligence = async (isBackground = false) => {
     if (!isBackground) setLoading(true)
     try {
-      const [dirData, incData, narData, regData, pulseData, donData, members, chapters, trendData, broadcastData] = await Promise.all([
+      const [dirData, incData, narData, regData, pulseData, donData, trendData, broadcastData] = await Promise.all([
         adminService.getRapidResponseDirectives(),
         adminService.getCrisisIncidents(),
         adminService.getMediaCounterNarratives(),
         adminService.getRegionalStats(),
         adminService.getMovementPulse(),
         donationService.getDonationStats(),
-        adminService.getMembers(),
-        adminService.getChapters(),
         adminService.getGrowthTrends(),
         adminService.getBroadcasts()
       ])
@@ -156,8 +169,12 @@ export default function WarRoomCommand() {
       setRegionalStats(regData)
       setPulse(pulseData)
       setDonationStats(donData)
-      setMemberCount(members.length)
-      setChapterCount(chapters.length)
+      const [mCount, cCount] = await Promise.all([
+        adminService.getTotalMemberCount(),
+        supabase.from('chapters').select('*', { count: 'exact', head: true }).then(res => res.count || 0)
+      ])
+      setMemberCount(mCount)
+      setChapterCount(cCount)
       setGrowthTrends(trendData)
       setBroadcasts(broadcastData || [])
     } catch (error) {
@@ -202,6 +219,15 @@ export default function WarRoomCommand() {
           </div>
           <div className="flex items-center gap-2 sm:gap-3 sm:mt-1 flex-wrap w-full sm:w-auto">
             <LiveClock />
+            <button
+              className="btn btn-outline"
+              style={{ height: 32, fontSize: 11, padding: '0 12px' }}
+              onClick={handleGenerateReport}
+              disabled={reportLoading}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>analytics</span> 
+              {reportLoading ? 'Generating...' : 'Compliance Report'}
+            </button>
             <button
               className="btn btn-outline"
               style={{ height: 32, fontSize: 11, padding: '0 12px' }}
@@ -699,6 +725,52 @@ export default function WarRoomCommand() {
         </div>
 
       </div>
+
+      {/* ── Compliance Report Modal ── */}
+      {reportData && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#0d1510] border border-[#1c221e] rounded-lg w-full max-w-4xl max-h-[80vh] flex flex-col shadow-2xl">
+            <div className="px-6 py-4 border-b border-[#1c221e] flex justify-between items-center">
+              <div>
+                <h3 className="text-white font-extrabold text-lg">National Compliance Report</h3>
+                <p className="text-white/40 text-xs uppercase tracking-widest font-bold">Generated: {new Date().toLocaleString()}</p>
+              </div>
+              <button 
+                onClick={() => setReportData(null)}
+                className="text-white/40 hover:text-white transition-colors"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto font-mono text-sm">
+              <pre className="bg-black/40 p-4 rounded border border-white/5 text-emerald-400 leading-relaxed overflow-x-auto">
+                {JSON.stringify(JSON.parse(reportData), null, 2)}
+              </pre>
+            </div>
+            <div className="px-6 py-4 border-t border-[#1c221e] flex justify-end gap-3">
+              <button 
+                className="btn btn-outline"
+                onClick={() => {
+                  const blob = new Blob([reportData], { type: 'application/json' })
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = `compliance_report_${new Date().toISOString().split('T')[0]}.json`
+                  a.click()
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>download</span> Download JSON
+              </button>
+              <button 
+                className="btn btn-primary"
+                onClick={() => setReportData(null)}
+              >
+                Acknowledge
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

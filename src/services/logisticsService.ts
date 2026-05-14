@@ -791,26 +791,38 @@ class LogisticsService {
   }
 
   async getRegionalAvailability(productId: string, region: string): Promise<{ available: boolean; message: string }> {
-    // Logic: In a real system, this would check a 'regional_stock' table.
-    // For now, we simulate logic where certain heavy/limited items aren't in remote regions.
-    
-    const remoteRegions = ['Upper West', 'Upper East', 'North East', 'Savannah']
-    const isRemote = remoteRegions.includes(region)
-    
-    // Simulate some products being restricted
-    // (In production, this would be a query to store_inventory_regional)
-    const isRestricted = productId.length % 7 === 0 // Mock restriction logic
-    
-    if (isRemote && isRestricted) {
-      return { 
-        available: false, 
-        message: `This item is currently out of stock for the ${region} region due to logistical constraints.` 
+    try {
+      const { data, error } = await supabase
+        .from('store_inventory_regional')
+        .select('is_restricted, restriction_reason, stock_quantity')
+        .eq('product_id', productId)
+        .eq('region', region)
+        .maybeSingle()
+
+      if (error) throw error
+
+      if (data) {
+        if (data.is_restricted) {
+          return { 
+            available: false, 
+            message: data.restriction_reason || `This item is currently restricted for the ${region} region.` 
+          }
+        }
+        if (data.stock_quantity <= 0) {
+          return {
+            available: false,
+            message: `This item is currently out of stock in ${region}.`
+          }
+        }
       }
-    }
-    
-    return { 
-      available: true, 
-      message: `Available for fulfillment in ${region}.` 
+
+      return { 
+        available: true, 
+        message: `Available for fulfillment in ${region}.` 
+      }
+    } catch (error) {
+      console.warn('[LOGISTICS] Regional check failed, falling back to central:', error)
+      return { available: true, message: 'Fulfilling from central hub.' }
     }
   }
 
