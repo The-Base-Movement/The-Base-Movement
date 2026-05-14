@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
 import type { BlogPost } from '@/types/admin'
 
 interface BlogPostCardProps {
@@ -60,7 +59,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           >
             {post.title}
           </h3>
-          <ArrowRight className="w-4 h-4 text-[var(--primary)] shrink-0 mt-1 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300" />
+          <span className="material-symbols-outlined shrink-0 mt-1 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>arrow_forward</span>
         </Link>
 
         <p className="text-[13px] text-[var(--on-surface-muted,#6b7280)] leading-[1.55] mb-[14px] line-clamp-3 flex-1">

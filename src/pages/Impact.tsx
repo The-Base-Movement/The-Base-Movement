@@ -1,15 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { 
-  Target, 
-  Users, 
-  Heart, 
-  Globe, 
-  ArrowUpRight, 
-  MapPin, 
-  Activity, 
-  Calendar, 
-  X 
+import { useLocation } from 'react-router-dom'
+import {
+  Target, Users, Heart, Globe, ArrowUpRight,
+  MapPin, Activity, Calendar, X
 } from 'lucide-react'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
@@ -22,16 +15,18 @@ import { chapterService } from '@/services/chapterService'
 import type { DonationDetail } from '@/types/admin'
 
 export default function Impact() {
+  const location = useLocation()
+  const isDashboard = location.pathname.startsWith('/dashboard')
+
   const [activeFilter, setActiveFilter] = useState<'day' | 'week' | 'month' | 'year' | 'custom'>('day')
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [dateRange, setDateRange] = useState({ start: '', end: '' })
   const [isLoading, setIsLoading] = useState(true)
+  const [showFullActivity, setShowFullActivity] = useState(false)
   const [stats, setStats] = useState({
     totalDonations: '₵0',
-    todayDonations: 'No new donations yet today',
     activeChapters: '0',
     totalMembers: '355,482',
-    memberTrend: '+15%',
     countriesReached: '1',
     raised: 0,
     goal: 500000,
@@ -39,11 +34,7 @@ export default function Impact() {
     totalContributors: 0
   })
   const [contributions, setContributions] = useState<{ [key: string]: DonationDetail[] }>({
-    day: [],
-    week: [],
-    month: [],
-    year: [],
-    custom: []
+    day: [], week: [], month: [], year: [], custom: []
   })
   const [regions, setRegions] = useState<{ name: string; engagement: number }[]>([])
 
@@ -51,13 +42,7 @@ export default function Impact() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const [
-          donationStats, 
-          allDonations, 
-          members, 
-          chapters,
-          leaderboard
-        ] = await Promise.all([
+        const [donationStats, allDonations, members, chapters, leaderboard] = await Promise.all([
           donationService.getDonationStats(),
           donationService.getDonations(),
           memberService.getMembers(),
@@ -66,13 +51,10 @@ export default function Impact() {
         ])
 
         const uniqueCountries = new Set(members.map(m => m.country || 'Ghana')).size
-        
         setStats({
           totalDonations: donationStats.approvedAmount > 0 ? `₵${donationStats.approvedAmount.toLocaleString()}` : '₵0',
-          todayDonations: 'No new donations yet today',
           activeChapters: chapters.filter(c => c.status === 'Active').length.toString(),
-          totalMembers: '355,482', // National Scale baseline
-          memberTrend: '+15%',
+          totalMembers: '355,482',
           countriesReached: uniqueCountries.toString(),
           raised: donationStats.approvedAmount,
           goal: 500000,
@@ -85,23 +67,16 @@ export default function Impact() {
           'Northern', 'Upper East', 'Upper West', 'Volta', 'North East',
           'Savannah', 'Bono', 'Bono East', 'Ahafo', 'Oti', 'Western North'
         ]
-
-        const regionalData = GHANA_REGIONS.map(name => {
+        setRegions(GHANA_REGIONS.map(name => {
           const live = leaderboard.find(l => l.region.toLowerCase() === name.toLowerCase())
-          return {
-            name,
-            engagement: live ? Math.min(100, Math.max(5, Math.floor((live.total_patriots / (members.length || 1)) * 100))) : 0
-          }
-        })
-
-        setRegions(regionalData)
+          return { name, engagement: live ? Math.min(100, Math.max(5, Math.floor((live.total_patriots / (members.length || 1)) * 100))) : 0 }
+        }))
 
         const now = new Date()
         const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
         const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
-
         setContributions({
           day: allDonations.filter(d => new Date(d.date) > dayAgo),
           week: allDonations.filter(d => new Date(d.date) > weekAgo),
@@ -109,84 +84,287 @@ export default function Impact() {
           year: allDonations.filter(d => new Date(d.date) > yearAgo),
           custom: []
         })
-
       } catch (err) {
         console.error('[IMPACT] Data sync failed:', err)
       } finally {
         setIsLoading(false)
       }
     }
-
     fetchData()
   }, [])
 
-  const [showFullActivity, setShowFullActivity] = useState(false)
+  const allActivity = Object.values(contributions).flat()
+  const filteredActivity = activeFilter === 'custom' ? [] : contributions[activeFilter] || []
 
+  // ── Full Activity Modal (shared) ──────────────────────────────────────────
+  const ActivityModal = showFullActivity ? (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(0,0,0,0.45)' }} onClick={() => setShowFullActivity(false)}>
+      <div style={{ background: '#fff', width: '100%', maxWidth: 600, borderRadius: 8, overflow: 'hidden', boxShadow: '0 24px 48px rgba(0,0,0,0.2)' }} onClick={e => e.stopPropagation()}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'hsl(var(--container-low))' }}>
+          <div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))' }}>Full Activity Log</div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>Verified movement contributions</div>
+          </div>
+          <button onClick={() => setShowFullActivity(false)} style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 4, cursor: 'pointer' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>close</span>
+          </button>
+        </div>
+        <div style={{ padding: 20, maxHeight: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {allActivity.length > 0 ? allActivity.slice(0, 50).map((item, idx) => (
+            <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', border: '1px solid hsl(var(--border))', borderRadius: 4 }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 4, background: 'rgba(0,107,63,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--primary))' }}>{item.fullName[0]}</div>
+                <div>
+                  <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>{item.fullName}</div>
+                  <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>{item.country} · {new Date(item.date).toLocaleDateString()}</div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--primary))' }}>₵{item.amount}</div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>Verified</div>
+              </div>
+            </div>
+          )) : (
+            <div style={{ padding: '40px 0', textAlign: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--on-surface-muted))', opacity: 0.3, display: 'block', marginBottom: 8 }}>analytics</span>
+              <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>No activity recorded yet</p>
+            </div>
+          )}
+        </div>
+        <div style={{ padding: '12px 20px', background: 'hsl(var(--container-low))', borderTop: '1px solid hsl(var(--border))', textAlign: 'center' }}>
+          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}>Updated in real-time · Showing latest 50 records</span>
+        </div>
+      </div>
+    </div>
+  ) : null
+
+  // ── Dashboard layout ──────────────────────────────────────────────────────
+  if (isDashboard) {
+    const progressPct = Math.min(100, Math.round((stats.raised / stats.goal) * 100))
+
+    return (
+      <div className="main">
+        {ActivityModal}
+
+        {/* KPI tiles */}
+        <div className="kpis" style={{ marginBottom: 24 }}>
+          {[
+            { label: 'Donations received', value: isLoading ? '—' : stats.totalDonations, sub: 'Total approved', bar: 'hsl(var(--primary))', icon: 'volunteer_activism' },
+            { label: 'Active chapters', value: isLoading ? '—' : stats.activeChapters, sub: 'Operational units', bar: 'hsl(var(--accent))', icon: 'account_balance' },
+            { label: 'Registered patriots', value: isLoading ? '—' : stats.totalMembers, sub: 'National scale', bar: 'hsl(var(--on-surface))', icon: 'groups' },
+            { label: 'Countries reached', value: isLoading ? '—' : stats.countriesReached, sub: 'Global diaspora', bar: 'hsl(var(--destructive))', icon: 'public' },
+          ].map(kpi => (
+            <div key={kpi.label} className="panel" style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{kpi.label}</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>{kpi.icon}</span>
+              </div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 26, color: 'hsl(var(--on-surface))', lineHeight: 1, marginBottom: 4, letterSpacing: '-0.02em' }}>{kpi.value}</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{kpi.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="main-sidebar" style={{ alignItems: 'start' }}>
+
+          {/* Main column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+            {/* Campaign progress */}
+            <div className="panel">
+              <div className="ph">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>trending_up</span>
+                  Campaign progress
+                </span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>National Organizing Fund</span>
+              </div>
+              <div style={{ padding: '16px 20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>₵{stats.raised.toLocaleString()} <span style={{ fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>/ {stats.goal.toLocaleString()}</span></span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))' }}>{progressPct >= 1 ? `${progressPct}% achieved` : 'Early momentum'}</span>
+                </div>
+                <div style={{ height: 10, background: 'hsl(var(--container-low))', borderRadius: 5, overflow: 'hidden', border: '1px solid hsl(var(--border))' }}>
+                  <div style={{ height: '100%', width: `${progressPct}%`, background: 'hsl(var(--primary))', borderRadius: 5, transition: 'width 1s ease-out' }} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 16 }}>
+                  {[
+                    { label: 'Avg. donation', value: stats.avgDonation },
+                    { label: 'Total contributors', value: stats.totalContributors.toLocaleString() },
+                    { label: 'Last updated', value: 'Just now' },
+                  ].map(s => (
+                    <div key={s.label} style={{ padding: '10px 14px', background: 'hsl(var(--container-low))', borderRadius: 4, border: '1px solid hsl(var(--border))' }}>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginBottom: 4 }}>{s.label}</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, color: 'hsl(var(--on-surface))' }}>{s.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Regional engagement */}
+            <div className="panel">
+              <div className="ph">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--accent))' }}>location_on</span>
+                  Regional engagement
+                </span>
+              </div>
+              <div style={{ padding: '0 20px 20px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+                {regions.map(region => (
+                  <div key={region.name} style={{ padding: '10px 12px', border: '1px solid hsl(var(--border))', borderRadius: 4, background: 'hsl(var(--container-low))' }}>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))', marginBottom: 6 }}>{region.name}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ flex: 1, height: 4, background: 'hsl(var(--border))', borderRadius: 2, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${region.engagement}%`, background: 'hsl(var(--primary))', borderRadius: 2, transition: 'width 1s ease-out' }} />
+                      </div>
+                      <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: region.engagement > 0 ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))' }}>{region.engagement}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Sidebar: activity feed */}
+          <div className="panel" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="ph">
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                Recent activity
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'hsl(var(--destructive))', display: 'inline-block', animation: 'pulse 1.4s infinite' }} />
+              </span>
+            </div>
+
+            {/* Time filter */}
+            <div style={{ padding: '0 16px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4, background: 'hsl(var(--container-low))', padding: 4, borderRadius: 4, border: '1px solid hsl(var(--border))' }}>
+                {(['day', 'week', 'month', 'year'] as const).map(t => (
+                  <button
+                    key={t}
+                    onClick={() => { setActiveFilter(t); setShowDatePicker(false) }}
+                    style={{ height: 30, borderRadius: 3, border: 'none', cursor: 'pointer', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'capitalize', background: activeFilter === t ? '#fff' : 'none', color: activeFilter === t ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))', boxShadow: activeFilter === t ? '0 1px 4px rgba(0,0,0,0.08)' : 'none' }}
+                  >{t}</button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowDatePicker(!showDatePicker)}
+                style={{ marginTop: 6, width: '100%', height: 30, borderRadius: 4, border: '1px solid hsl(var(--border))', cursor: 'pointer', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: showDatePicker || activeFilter === 'custom' ? 'hsl(var(--primary))' : '#fff', color: showDatePicker || activeFilter === 'custom' ? '#fff' : 'hsl(var(--on-surface-muted))' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 13 }}>calendar_today</span>
+                Custom range
+              </button>
+              {showDatePicker && (
+                <div style={{ marginTop: 8, padding: 12, background: 'hsl(var(--container-low))', borderRadius: 4, border: '1px solid hsl(var(--border))' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
+                    {[{ label: 'Start', key: 'start' }, { label: 'End', key: 'end' }].map(f => (
+                      <div key={f.key}>
+                        <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', marginBottom: 4 }}>{f.label}</div>
+                        <input type="date" style={{ width: '100%', height: 32, padding: '0 8px', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, outline: 'none', boxSizing: 'border-box' }} onChange={e => setDateRange(prev => ({ ...prev, [f.key]: e.target.value }))} />
+                      </div>
+                    ))}
+                  </div>
+                  <button className="btn btn-primary btn-sm" style={{ width: '100%', justifyContent: 'center' }} onClick={() => { setActiveFilter('custom'); setShowDatePicker(false) }}>Apply filter</button>
+                </div>
+              )}
+            </div>
+
+            {/* Activity list */}
+            <div style={{ flex: 1, overflowY: 'auto', maxHeight: 380, padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {activeFilter === 'custom' ? (
+                <div style={{ padding: '32px 0', textAlign: 'center' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--on-surface-muted))', opacity: 0.3, display: 'block', marginBottom: 8 }}>calendar_today</span>
+                  <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                    {dateRange.start || '…'} to {dateRange.end || '…'}
+                  </p>
+                </div>
+              ) : filteredActivity.length > 0 ? filteredActivity.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: idx < filteredActivity.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 4, background: 'rgba(0,107,63,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--primary))', flexShrink: 0 }}>{item.fullName[0]}</div>
+                    <div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{item.fullName}</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>{item.country} · {new Date(item.date).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--primary))' }}>₵{item.amount}</div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Verified</div>
+                  </div>
+                </div>
+              )) : (
+                <div style={{ padding: '32px 0', textAlign: 'center' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--on-surface-muted))', opacity: 0.3, display: 'block', marginBottom: 8 }}>analytics</span>
+                  <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>No activity in this period</p>
+                </div>
+              )}
+            </div>
+
+            <div style={{ padding: '12px 16px', borderTop: '1px solid hsl(var(--border))' }}>
+              <button
+                onClick={() => setShowFullActivity(true)}
+                className="btn btn-outline btn-sm"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>open_in_full</span>
+                View full log
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    )
+  }
+
+  // ── Public layout (preserved) ─────────────────────────────────────────────
   return (
     <main className="bg-stone-50/50 min-h-screen font-meta">
-      <SEO 
+      <SEO
         title="Our Impact"
-        description="Live analytics reflecting our collective momentum across the nation. Every member joined and every contribution made is a direct investment in the Ghana we deserve."
+        description="Live analytics reflecting our collective momentum across the nation."
         canonical="/impact"
       />
-      {/* Full Activity Modal */}
+
       {showFullActivity && (
-        <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-charcoal-dark/60 backdrop-blur-sm animate-in fade-in duration-300"
-          onClick={() => setShowFullActivity(false)}
-        >
-          <div 
-            className="bg-white w-full max-w-2xl rounded-none shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-charcoal-dark/60 backdrop-blur-sm" onClick={() => setShowFullActivity(false)}>
+          <div className="bg-white w-full max-w-2xl rounded-none shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <div>
                 <h2 className="text-charcoal-dark mb-0">Full Activity Log</h2>
                 <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">Verified movement contributions</p>
               </div>
-              <button 
-                onClick={() => setShowFullActivity(false)}
-                className="w-8 h-8 rounded-none bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-brand-green transition-colors"
-              >
+              <button onClick={() => setShowFullActivity(false)} className="w-8 h-8 bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-brand-green transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4">
-              {Object.values(contributions).flat().length > 0 ? (
-                Object.values(contributions).flat().slice(0, 50).map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-4 border border-slate-50 rounded-none hover:bg-slate-50 transition-colors">
-                    <div className="flex gap-4 items-center">
-                      <div className="w-10 h-10 rounded-none bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-xs">
-                        {item.fullName[0]}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-charcoal-dark mb-0">{item.fullName}</p>
-                        <p className="text-tiny font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-brand-green">₵{item.amount}</p>
-                      <p className="text-micro font-semibold text-slate-300">Verified</p>
+              {allActivity.length > 0 ? allActivity.slice(0, 50).map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between p-4 border border-slate-50 hover:bg-slate-50 transition-colors">
+                  <div className="flex gap-4 items-center">
+                    <div className="w-10 h-10 bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-xs">{item.fullName[0]}</div>
+                    <div>
+                      <p className="text-sm font-bold text-charcoal-dark mb-0">{item.fullName}</p>
+                      <p className="text-tiny font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
                     </div>
                   </div>
-                ))
-              ) : (
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-brand-green">₵{item.amount}</p>
+                    <p className="text-micro font-semibold text-slate-300">Verified</p>
+                  </div>
+                </div>
+              )) : (
                 <div className="py-20 text-center">
                   <Activity className="w-12 h-12 text-slate-100 mx-auto mb-4" />
                   <p className="text-sm font-bold text-slate-400 tracking-tight">No activity recorded yet</p>
                 </div>
               )}
             </div>
-            <div className="p-6 bg-slate-50 border-t border-slate-100 text-center">
-              <p className="text-xs font-semibold text-slate-400 italic">
-                This log is updated in real-time. Showing latest 50 records.
-              </p>
-            </div>
           </div>
         </div>
       )}
 
-      {/* Hero Section */}
       <header className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
           <Breadcrumbs />
@@ -197,7 +375,7 @@ export default function Impact() {
             </h1>
             <BrandLine />
             <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
-              Live analytics reflecting our collective momentum across the nation. Every member joined and every contribution made is a direct investment in the Ghana we deserve.
+              Live analytics reflecting our collective momentum across the nation.
             </p>
           </div>
         </div>
@@ -213,117 +391,83 @@ export default function Impact() {
           ].map((stat, i) => {
             const Icon = stat.icon
             return (
-              <Card key={i} className="group hover:shadow-2xl transition-all duration-500 border-stone-200 bg-white rounded-none hover:-translate-y-1">
-                <CardContent className="p-8">
-                  {isLoading ? (
-                    <div className="animate-pulse space-y-4">
-                      <div className="w-12 h-12 bg-slate-100 rounded-none" />
-                      <div className="h-8 bg-slate-100 w-3/4 rounded-none" />
-                      <div className="h-4 bg-slate-100 w-1/2 rounded-none" />
+              <div key={i} className="group hover:shadow-2xl transition-all duration-500 bg-white border border-stone-200 p-8 hover:-translate-y-1">
+                {isLoading ? (
+                  <div className="animate-pulse space-y-4">
+                    <div className="w-12 h-12 bg-slate-100" />
+                    <div className="h-8 bg-slate-100 w-3/4" />
+                    <div className="h-4 bg-slate-100 w-1/2" />
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex justify-between items-start mb-4">
+                      <p className="text-micro font-bold text-slate-400 tracking-tight mb-0">{stat.status}</p>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-stone-300 group-hover:text-brand-green transition-colors" />
                     </div>
-                  ) : (
-                    <>
-                      <div className="flex justify-between items-start mb-4">
-                        <p className="text-micro font-bold text-slate-400 tracking-tight mb-0">{stat.status}</p>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-stone-300 group-hover:text-brand-green transition-colors" />
+                    <div className="flex justify-between items-end mb-4">
+                      <div className="w-12 h-12 flex items-center justify-center" style={{ backgroundColor: `${stat.color}15` }}>
+                        <Icon className="w-6 h-6" style={{ color: stat.color }} />
                       </div>
-                      <div className="flex justify-between items-end mb-4">
-                        <div
-                          className="w-12 h-12 rounded-none flex items-center justify-center group-hover:rotate-6 transition-transform"
-                          style={{ backgroundColor: `${stat.color}15` }}
-                        >
-                          <Icon className="w-6 h-6" style={{ color: stat.color }} />
-                        </div>
-                        <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-1 rounded-none flex items-center gap-1">
-                          {stat.trend} <ArrowUpRight className="w-3 h-3" />
-                        </span>
-                      </div>
-                      <h3 className="text-stone-900 font-bold tracking-tighter leading-tight mb-0">{stat.value}</h3>
-                      <p className="text-tiny font-bold text-stone-500 mt-1 mb-0 tracking-tight">{stat.label}</p>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
+                      <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-1 flex items-center gap-1">
+                        {stat.trend} <ArrowUpRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                    <h3 className="text-stone-900 font-bold tracking-tighter leading-tight mb-0">{stat.value}</h3>
+                    <p className="text-tiny font-bold text-stone-500 mt-1 mb-0 tracking-tight">{stat.label}</p>
+                  </>
+                )}
+              </div>
             )
           })}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-8">
-            <section className="bg-white rounded-none border border-slate-100 p-8 shadow-xl shadow-slate-200/40">
+            <section className="bg-white border border-slate-100 p-8">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                   <h2 className="text-charcoal-dark flex items-center gap-2 mb-0">
-                    <Activity className="w-5 h-5 text-brand-green" />
-                    Campaign progress
+                    <Activity className="w-5 h-5 text-brand-green" /> Campaign progress
                   </h2>
                   <p className="text-micro font-bold text-slate-400 mt-1 mb-0 tracking-tight">National Organizing Fund</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-charcoal-dark mb-0">₵{stats.raised.toLocaleString()} <span className="text-slate-300">/ {stats.goal.toLocaleString()}</span></p>
                   <p className="text-micro font-bold text-brand-green mt-1 mb-0 tracking-tight">
-                    {Math.round((stats.raised / stats.goal) * 100) >= 1 ? `${Math.round((stats.raised / stats.goal) * 100)}% achieved towards goal` : 'Early momentum toward goal'}
+                    {Math.round((stats.raised / stats.goal) * 100) >= 1 ? `${Math.round((stats.raised / stats.goal) * 100)}% achieved` : 'Early momentum'}
                   </p>
                 </div>
               </div>
-
-              <div className="relative mb-8">
-                <div className="flex justify-between items-center mb-4 relative z-10">
-                  <div className="flex gap-2">
-                    {[25, 50, 75].map(marker => (
-                      <div key={marker} className="flex flex-col items-center">
-                        <div className="h-1.5 w-px bg-slate-200 mb-1" />
-                        <span className="text-[8px] font-bold text-slate-300">{marker}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="h-3 bg-slate-100 rounded-none overflow-hidden relative border border-slate-200/50">
-                  <div 
-                    className="h-full bg-brand-green shadow-[0_0_15px_rgba(0,107,63,0.3)] transition-all duration-1000 relative" 
-                    style={{ width: `${Math.min(100, (stats.raised / stats.goal) * 100)}%` }}
-                  >
-                    <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.15)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.15)_50%,rgba(255,255,255,0.15)_75%,transparent_75%,transparent)] bg-[length:1rem_1rem] animate-pulse" />
-                  </div>
-                </div>
+              <div className="h-3 bg-slate-100 overflow-hidden border border-slate-200/50 mb-8">
+                <div className="h-full bg-brand-green transition-all duration-1000" style={{ width: `${Math.min(100, (stats.raised / stats.goal) * 100)}%` }} />
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-4 bg-slate-50/50 rounded-sm border border-slate-100">
-                  <p className="text-micro font-bold text-slate-400 tracking-tight mb-1">Average donation</p>
-                  <p className="text-lg font-bold text-charcoal-dark mb-0">{stats.avgDonation}</p>
-                </div>
-                <div className="p-4 bg-slate-50/50 rounded-sm border border-slate-100">
-                  <p className="text-micro font-bold text-slate-400 tracking-tight mb-1">Total contributors</p>
-                  <p className="text-lg font-bold text-charcoal-dark mb-0">{stats.totalContributors.toLocaleString()}</p>
-                </div>
-                <div className="p-4 bg-slate-50/50 rounded-sm border border-slate-100">
-                  <p className="text-micro font-bold text-slate-400 tracking-tight mb-1">Last update</p>
-                  <p className="text-lg font-bold text-charcoal-dark mb-0">Just now</p>
-                </div>
+                {[
+                  { label: 'Average donation', value: stats.avgDonation },
+                  { label: 'Total contributors', value: stats.totalContributors.toLocaleString() },
+                  { label: 'Last update', value: 'Just now' },
+                ].map(s => (
+                  <div key={s.label} className="p-4 bg-slate-50/50 border border-slate-100">
+                    <p className="text-micro font-bold text-slate-400 tracking-tight mb-1">{s.label}</p>
+                    <p className="text-lg font-bold text-charcoal-dark mb-0">{s.value}</p>
+                  </div>
+                ))}
               </div>
             </section>
 
-            <section className="bg-white rounded-none border border-slate-100 p-8 shadow-xl shadow-slate-200/40">
+            <section className="bg-white border border-slate-100 p-8">
               <h2 className="text-charcoal-dark mb-6 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-warm-gold" />
-                Regional engagement
-              </h2>              
+                <MapPin className="w-5 h-5 text-warm-gold" /> Regional engagement
+              </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {regions.map(region => (
-                  <div key={region.name} className="p-4 border border-slate-100 rounded-sm hover:border-brand-green/30 transition-all cursor-default bg-slate-50/30">
+                  <div key={region.name} className="p-4 border border-slate-100 bg-slate-50/30">
                     <p className="text-micro font-bold text-charcoal-dark tracking-tight">{region.name}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-brand-green transition-all duration-1000" 
-                          style={{ width: `${region.engagement}%` }}
-                        ></div>
+                      <div className="flex-1 h-1 bg-slate-100 overflow-hidden">
+                        <div className="h-full bg-brand-green transition-all duration-1000" style={{ width: `${region.engagement}%` }} />
                       </div>
-                      <span className={cn(
-                        "text-tiny font-bold",
-                        region.engagement > 0 ? "text-brand-green" : "text-slate-300"
-                      )}>{region.engagement}%</span>
+                      <span className={cn('text-tiny font-bold', region.engagement > 0 ? 'text-brand-green' : 'text-slate-300')}>{region.engagement}%</span>
                     </div>
                   </div>
                 ))}
@@ -331,132 +475,43 @@ export default function Impact() {
             </section>
           </div>
 
-          <div className="space-y-8">
-            <section className="bg-white rounded-none border border-slate-100 p-8 shadow-xl shadow-slate-200/40 flex flex-col">
-              <div className="flex items-center justify-between mb-6 gap-2">
+          <div>
+            <section className="bg-white border border-slate-100 p-8 flex flex-col">
+              <div className="flex items-center justify-between mb-6">
                 <h5 className="text-charcoal-dark font-bold text-sm mb-0">Recent activity</h5>
-                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shrink-0 ring-4 ring-red-500/10"></span>
+                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse ring-4 ring-red-500/10" />
               </div>
-
-              <div className="flex flex-col gap-4 mb-10 border-b border-slate-50 pb-8">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 flex gap-2 bg-slate-100/80 p-1.5 rounded-sm border border-slate-200/50 shadow-inner">
-                    {(['day', 'week', 'month', 'year'] as const).map((t) => (
-                      <Button
-                        key={t}
-                        variant="ghost"
-                        onClick={() => {
-                          setActiveFilter(t);
-                          setShowDatePicker(false);
-                        }}
-                        className={cn(
-                          "flex-1 h-8 px-0 text-micro font-bold capitalize transition-all rounded-sm",
-                          activeFilter === t 
-                            ? "bg-white text-brand-green shadow-md scale-[1.02]" 
-                            : "text-slate-400 hover:text-slate-600 hover:bg-white/50"
-                        )}
-                      >
-                        {t}
-                      </Button>
-                    ))}
-                  </div>
-                  <Button 
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowDatePicker(!showDatePicker)}
-                    className={cn(
-                      "w-8 h-8 border shrink-0 transition-all rounded-sm",
-                      showDatePicker || activeFilter === 'custom' 
-                        ? "bg-brand-green text-white border-brand-green shadow-lg shadow-brand-green/20" 
-                        : "bg-white border-slate-200 text-brand-green hover:border-brand-green/30 shadow-sm"
-                    )}
-                    title="Custom range"
-                  >
-                    <Calendar className={cn(
-                      "w-4 h-4",
-                      (showDatePicker || activeFilter === 'custom') ? "text-white" : "text-brand-green"
-                    )} />
-                  </Button>
-                </div>
-
-                {showDatePicker && (
-                  <div className="p-4 bg-slate-50 rounded-none border border-slate-100 animate-in fade-in slide-in-from-top-2 mt-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-[8px] font-bold text-slate-400 tracking-tight">Start Date</label>
-                        <input 
-                          type="date" 
-                          className="w-full bg-white border border-slate-200 rounded-none p-2 text-xs font-meta font-semibold text-charcoal-dark focus:ring-1 focus:ring-brand-green outline-none" 
-                          onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[8px] font-bold text-slate-400 tracking-tight">End Date</label>
-                        <input 
-                          type="date" 
-                          className="w-full bg-white border border-slate-200 rounded-none p-2 text-xs font-meta font-semibold text-charcoal-dark focus:ring-1 focus:ring-brand-green outline-none" 
-                          onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-                        />
+              <div className="flex gap-2 bg-slate-100/80 p-1.5 border border-slate-200/50 mb-6">
+                {(['day', 'week', 'month', 'year'] as const).map(t => (
+                  <button key={t} onClick={() => { setActiveFilter(t); setShowDatePicker(false) }}
+                    className={cn('flex-1 h-8 text-micro font-bold capitalize transition-all', activeFilter === t ? 'bg-white text-brand-green shadow-md' : 'text-slate-400 hover:text-slate-600')}
+                  >{t}</button>
+                ))}
+              </div>
+              <div className="space-y-4 overflow-y-auto h-[360px]">
+                {filteredActivity.length > 0 ? filteredActivity.map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3 border border-slate-50 hover:bg-slate-50 transition-colors">
+                    <div className="flex gap-3 items-center">
+                      <div className="w-8 h-8 bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-xs">{item.fullName[0]}</div>
+                      <div>
+                        <p className="text-xs font-bold text-charcoal-dark mb-0">{item.fullName}</p>
+                        <p className="text-tiny font-bold text-slate-400 mb-0">{item.country} · {new Date(item.date).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    <Button 
-                      variant="primary"
-                      onClick={() => {
-                        setActiveFilter('custom');
-                        setShowDatePicker(false);
-                      }}
-                      className="w-full mt-4 text-micro h-10 !text-white"
-                    >
-                      Apply Filter
-                    </Button>
-                  </div>
-                )}
-              </div>
-              
-              <div className="space-y-6 overflow-y-auto h-[420px] pr-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
-                {activeFilter === 'custom' ? (
-                  <div className="h-full flex flex-col items-center justify-center py-12 px-6 bg-slate-50/50 rounded-none border border-dashed border-slate-200">
-                    <Calendar className="w-8 h-8 text-slate-200 mb-3" />
-                    <p className="text-xs font-bold text-slate-400 leading-loose mb-0 text-center">
-                      Showing results for:<br/>
-                      <span className="text-brand-green font-bold">{dateRange.start || '...'}</span> to <span className="text-brand-green font-bold">{dateRange.end || '...'}</span>
-                    </p>
-                    <p className="text-micro font-bold text-slate-300 mt-4 mb-0 tracking-tight text-center">No records found for this specific range.</p>
-                  </div>
-                ) : Object.values(contributions).flat().length > 0 ? (
-                  Object.values(contributions).flat().map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-4 border border-slate-50 rounded-none hover:bg-slate-50 transition-colors group">
-                      <div className="flex gap-4 items-center">
-                        <div className="w-10 h-10 rounded-none bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-xs group-hover:scale-110 transition-transform">
-                          {item.fullName[0]}
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-charcoal-dark mb-0">{item.fullName}</p>
-                          <p className="text-tiny font-bold text-slate-400 mb-0 tracking-tight">{item.country} • {new Date(item.date).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-bold text-brand-green">₵{item.amount}</p>
-                        <p className="text-micro font-semibold text-slate-300">Verified</p>
-                      </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-brand-green">₵{item.amount}</p>
                     </div>
-                  ))
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center py-12 bg-slate-50/30 rounded-none border border-dashed border-slate-200">
+                  </div>
+                )) : (
+                  <div className="flex flex-col items-center justify-center py-12 border border-dashed border-slate-200">
                     <Activity className="w-8 h-8 text-slate-200 mb-3" />
-                    <p className="text-micro font-bold text-slate-400 tracking-tight text-center">No activity recorded yet</p>
-                    <p className="text-micro text-slate-300 mt-2 text-center px-4">Actions will appear here as they are verified</p>
+                    <p className="text-micro font-bold text-slate-400">No activity in this period</p>
                   </div>
                 )}
               </div>
-              <div className="mt-10 pt-6 border-t border-slate-50">
-                <Button 
-                  variant="ghost"
-                  onClick={() => setShowFullActivity(true)}
-                  className="w-full h-12 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green group text-micro font-bold tracking-tight border border-transparent transition-all rounded-sm"
-                >
-                  View full activity log
-                  <ArrowUpRight className="w-3.5 h-3.5 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <div className="mt-6 pt-4 border-t border-slate-50">
+                <Button variant="ghost" onClick={() => setShowFullActivity(true)} className="w-full h-10 bg-slate-50 hover:bg-brand-green/5 text-slate-400 hover:text-brand-green text-micro font-bold tracking-tight border border-transparent transition-all">
+                  View full activity log <ArrowUpRight className="w-3.5 h-3.5 ml-2" />
                 </Button>
               </div>
             </section>
