@@ -188,7 +188,7 @@ export default function WarRoomCommand() {
 
   if (loading) {
     return (
-      <div className="-mx-[28px] -mt-[24px] bg-[#0a0d0b] flex items-center justify-center" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
+      <div className="-mx-[28px] -mt-[24px] flex items-center justify-center" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
         <div className="flex flex-col items-center gap-4">
           <span className="material-symbols-outlined text-destructive" style={{ fontSize: 40, animation: 'spin 1.5s linear infinite' }}>sync</span>
           <p className="text-[11px] font-extrabold text-destructive uppercase tracking-[.06em] animate-pulse">Initializing war room protocols…</p>
@@ -198,15 +198,15 @@ export default function WarRoomCommand() {
   }
 
   return (
-    <div className="-mx-[28px] -mt-[24px] bg-[#0a0d0b] text-[#e8ece7] pb-24" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
+    <div className="-mx-[28px] -mt-[24px] pb-24" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
       <div className="px-6 pt-5">
 
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-3">
           <div>
-            <div className="text-[10px] text-[rgba(255,255,255,.4)] font-bold uppercase tracking-[.05em] mb-1">Command center → War room</div>
+            <div className="text-[10px] font-bold uppercase tracking-[.05em] mb-1" style={{ color: 'hsl(var(--on-surface-muted))' }}>Command center → War room</div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-              <h2 className="font-meta font-extrabold text-[22px] text-white tracking-[-0.015em] leading-tight">
+              <h2 className="font-meta font-extrabold text-[22px] tracking-[-0.015em] leading-tight" style={{ color: 'hsl(var(--on-surface))' }}>
                 War Room — live mobilization
               </h2>
               <div className="bl"><div /><div /><div /></div>
@@ -393,18 +393,18 @@ export default function WarRoomCommand() {
           </div>
 
           {/* Regional table */}
-          <div className="rounded-[6px] overflow-hidden flex flex-col h-full" style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}>
-            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid #1c221e' }}>
-              <h3 className="font-extrabold text-[12.5px] text-white">Regions · pace to goal</h3>
-              <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>YTD</span>
+          <div className="rounded-[6px] overflow-hidden flex flex-col h-full" style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}>
+            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+              <h3 className="font-extrabold text-[12.5px]" style={{ color: 'hsl(var(--on-surface))' }}>Regions · pace to goal</h3>
+              <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>YTD</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-[11.5px]" style={{ borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#0d110f', borderBottom: '1px solid #1c221e' }}>
-                    <th className="text-left px-4 py-2 text-[9px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'rgba(255,255,255,.4)' }}>Region</th>
-                    <th className="text-right px-4 py-2 text-[9px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'rgba(255,255,255,.4)' }}>Members</th>
-                    <th className="px-4 py-2 text-[9px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'rgba(255,255,255,.4)' }}>% Goal</th>
+                  <tr style={{ background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
+                    <th className="text-left px-4 py-2 text-[9px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>Region</th>
+                    <th className="text-right px-4 py-2 text-[9px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>Members</th>
+                    <th className="px-4 py-2 text-[9px] font-extrabold uppercase tracking-[.06em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>% Goal</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -417,11 +417,11 @@ export default function WarRoomCommand() {
                       return true;
                     });
                     return filtered.map((r, i) => (
-                      <tr key={r.region} style={{ borderBottom: i < filtered.length - 1 ? '1px solid #1c221e' : 'none' }}>
-                        <td className="px-4 py-2 font-extrabold" style={{ color: '#e8ece7' }}>{r.region}</td>
-                        <td className="px-4 py-2 text-right font-extrabold tabular-nums" style={{ color: '#e8ece7' }}>{r.memberCount.toLocaleString()}</td>
+                      <tr key={r.region} style={{ borderBottom: i < filtered.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
+                        <td className="px-4 py-2 font-extrabold" style={{ color: 'hsl(var(--on-surface))' }}>{r.region}</td>
+                        <td className="px-4 py-2 text-right font-extrabold tabular-nums" style={{ color: 'hsl(var(--on-surface))' }}>{r.memberCount.toLocaleString()}</td>
                         <td className="px-4 py-2">
-                          <div className="w-20 h-1 rounded-full overflow-hidden" style={{ background: '#1c221e' }}>
+                          <div className="w-20 h-1 rounded-full overflow-hidden" style={{ background: 'hsl(var(--border))' }}>
                             <div className="h-full rounded-full" style={{
                               width: `${Math.min(100, Math.floor((r.memberCount / 5000) * 100))}%`,
                               background: r.performance === 'High' ? 'hsl(var(--primary))' : r.performance === 'Medium' ? 'hsl(var(--accent))' : 'hsl(var(--destructive))'
@@ -437,18 +437,18 @@ export default function WarRoomCommand() {
           </div>
 
           {/* Activity stream */}
-          <div className="rounded-[6px] overflow-hidden flex flex-col h-full" style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}>
-            <div className="flex bg-[#0f1310] border-b border-[#1c221e] shrink-0">
-              <button 
-                onClick={() => setActiveTab('activity')} 
-                className={cn("px-4 py-3 text-[11px] font-bold uppercase tracking-wider transition-all border-b-2", 
-                  activeTab === 'activity' ? "text-primary border-primary bg-primary/5" : "text-white/40 border-transparent hover:text-white/60")}>
+          <div className="rounded-[6px] overflow-hidden flex flex-col h-full" style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}>
+            <div className="flex border-b shrink-0" style={{ background: 'hsl(var(--container-low))', borderColor: 'hsl(var(--border))' }}>
+              <button
+                onClick={() => setActiveTab('activity')}
+                className={cn("px-4 py-3 text-[11px] font-bold uppercase tracking-wider transition-all border-b-2",
+                  activeTab === 'activity' ? "text-primary border-primary bg-primary/5" : "text-on-surface-muted border-transparent hover:text-on-surface")}>
                 Tactical Stream
               </button>
-              <button 
-                onClick={() => setActiveTab('intelligence')} 
-                className={cn("px-4 py-3 text-[11px] font-bold uppercase tracking-wider transition-all border-b-2", 
-                  activeTab === 'intelligence' ? "text-primary border-primary bg-primary/5" : "text-white/40 border-transparent hover:text-white/60")}>
+              <button
+                onClick={() => setActiveTab('intelligence')}
+                className={cn("px-4 py-3 text-[11px] font-bold uppercase tracking-wider transition-all border-b-2",
+                  activeTab === 'intelligence' ? "text-primary border-primary bg-primary/5" : "text-on-surface-muted border-transparent hover:text-on-surface")}>
                 Intelligence Center
               </button>
             </div>
@@ -456,37 +456,37 @@ export default function WarRoomCommand() {
               {(activeTab === 'activity' ? (directives.length === 0 && broadcasts.length === 0) : (incidents.length === 0 && narratives.length === 0)) ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-3">
                   <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--primary))' }}>check_circle</span>
-                  <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>Sector clear</p>
+                  <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>Sector clear</p>
                 </div>
               ) : (
                 <>
                   {activeTab === 'activity' && (
                     <>
                       {directives.slice(0, 10).map(dir => (
-                        <div key={dir.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
+                        <div key={dir.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--primary))' }}>
                             <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>bolt</span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
-                              <b className="font-extrabold text-white">{dir.title}</b>
+                            <p className="text-[11.5px] leading-[1.45]" style={{ color: 'hsl(var(--on-surface))' }}>
+                              <b className="font-extrabold" style={{ color: 'hsl(var(--on-surface))' }}>{dir.title}</b>
                             </p>
-                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>
+                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>
                               {dir.target_region} · {dir.priority.toLowerCase()}
                             </span>
                           </div>
                         </div>
                       ))}
                       {broadcasts.slice(0, 10).map(b => (
-                        <div key={b.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
-                          <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: b.priority === 'Urgent' ? 'hsl(var(--destructive))' : 'rgba(255,255,255,.1)' }}>
+                        <div key={b.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                          <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: b.priority === 'Urgent' ? 'hsl(var(--destructive))' : 'hsl(var(--border))' }}>
                             <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>campaign</span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
-                              <b className="font-extrabold text-white">{b.title}</b>
+                            <p className="text-[11.5px] leading-[1.45]" style={{ color: 'hsl(var(--on-surface))' }}>
+                              <b className="font-extrabold" style={{ color: 'hsl(var(--on-surface))' }}>{b.title}</b>
                             </p>
-                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>
+                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>
                               {b.target_type === 'ALL' ? 'National' : b.target_value} · {formatGhanaTime(b.created_at, { hour: '2-digit', minute: '2-digit', hour12: false })}
                             </span>
                           </div>
@@ -497,17 +497,17 @@ export default function WarRoomCommand() {
                   {activeTab === 'intelligence' && (
                     <>
                       {incidents.map(inc => (
-                        <div key={inc.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
+                        <div key={inc.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: inc.severity === 'DEFCON1' || inc.severity === 'SEVERE' ? 'hsl(var(--destructive))' : 'hsl(var(--accent))' }}>
                             <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>warning</span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
-                              <b className="font-extrabold text-white">{inc.region}</b> — {inc.incident_type.replace(/_/g, ' ').toLowerCase()}
+                            <p className="text-[11.5px] leading-[1.45]" style={{ color: 'hsl(var(--on-surface))' }}>
+                              <b className="font-extrabold" style={{ color: 'hsl(var(--on-surface))' }}>{inc.region}</b> — {inc.incident_type.replace(/_/g, ' ').toLowerCase()}
                             </p>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ 
-                                color: inc.status === 'RESOLVED' ? 'hsl(var(--primary))' : inc.status === 'CONTAINED' ? 'hsl(var(--accent))' : 'rgba(255,255,255,.4)' 
+                              <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{
+                                color: inc.status === 'RESOLVED' ? 'hsl(var(--primary))' : inc.status === 'CONTAINED' ? 'hsl(var(--accent))' : 'hsl(var(--on-surface-muted))'
                               }}>
                                 {formatGhanaTime(inc.created_at, { hour: '2-digit', minute: '2-digit', hour12: false })} · {inc.status.toLowerCase()}
                               </span>
@@ -525,16 +525,16 @@ export default function WarRoomCommand() {
                         </div>
                       ))}
                       {narratives.slice(0, 5).map(nar => (
-                        <div key={nar.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid #1c221e' }}>
+                        <div key={nar.id} className="flex gap-[10px] py-[11px]" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                           <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--accent))' }}>
                             <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'white' }}>chat</span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[11.5px] leading-[1.45]" style={{ color: '#e8ece7' }}>
-                              <b className="font-extrabold text-white">{nar.target_platform}</b> — digital directive
+                            <p className="text-[11.5px] leading-[1.45]" style={{ color: 'hsl(var(--on-surface))' }}>
+                              <b className="font-extrabold" style={{ color: 'hsl(var(--on-surface))' }}>{nar.target_platform}</b> — digital directive
                             </p>
-                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{ 
-                              color: nar.dispatch_status === 'DEPLOYED' ? 'hsl(var(--primary))' : 'rgba(255,255,255,.4)'
+                            <span className="text-[9.5px] font-bold uppercase tracking-[.04em]" style={{
+                              color: nar.dispatch_status === 'DEPLOYED' ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))'
                             }}>
                               {nar.dispatch_status.toLowerCase()}
                             </span>
@@ -558,10 +558,10 @@ export default function WarRoomCommand() {
 
         {/* ── Trend Charts ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[12px] mb-[12px]">
-          <div className="rounded-[6px] overflow-hidden" style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}>
-            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid #1c221e' }}>
-              <h3 className="font-extrabold text-[12.5px] text-white">Sign-ups · 24 h</h3>
-              <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>hourly · GMT</span>
+          <div className="rounded-[6px] overflow-hidden" style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}>
+            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+              <h3 className="font-extrabold text-[12.5px]" style={{ color: 'hsl(var(--on-surface))' }}>Sign-ups · 24 h</h3>
+              <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>hourly · GMT</span>
             </div>
             <div className="h-[200px] p-4 relative">
               <svg viewBox="0 0 600 180" className="w-full h-full" preserveAspectRatio="none">
@@ -571,7 +571,7 @@ export default function WarRoomCommand() {
                     <stop offset="100%" stopColor="rgba(206,17,38,0)"/>
                   </linearGradient>
                 </defs>
-                <g stroke="#1c221e" strokeWidth="1">
+                <g stroke="rgba(0,0,0,.08)" strokeWidth="1">
                   <line x1="0" x2="600" y1="40" y2="40"/>
                   <line x1="0" x2="600" y1="90" y2="90"/>
                   <line x1="0" x2="600" y1="140" y2="140"/>
@@ -603,10 +603,10 @@ export default function WarRoomCommand() {
               </svg>
             </div>
           </div>
-          <div className="rounded-[6px] overflow-hidden" style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}>
-            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid #1c221e' }}>
-              <h3 className="font-extrabold text-[12.5px] text-white">Donations · 24 h (₵)</h3>
-              <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>MoMo + card</span>
+          <div className="rounded-[6px] overflow-hidden" style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}>
+            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+              <h3 className="font-extrabold text-[12.5px]" style={{ color: 'hsl(var(--on-surface))' }}>Donations · 24 h (₵)</h3>
+              <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>MoMo + card</span>
             </div>
             <div className="h-[200px] p-4 relative">
               <svg viewBox="0 0 600 180" className="w-full h-full" preserveAspectRatio="none">
@@ -629,12 +629,12 @@ export default function WarRoomCommand() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[12px]">
 
           {/* Active crisis incidents */}
-          <div className="rounded-[6px] overflow-hidden" style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}>
-            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid #1c221e' }}>
-              <h3 className="font-extrabold text-[12.5px] text-white flex items-center gap-2">
+          <div className="rounded-[6px] overflow-hidden" style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}>
+            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+              <h3 className="font-extrabold text-[12.5px] flex items-center gap-2" style={{ color: 'hsl(var(--on-surface))' }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--accent))' }}>warning</span> Crisis incidents
               </h3>
-              <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>
+              <span className="text-[10px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>
                 {incidents.filter(i => i.status === 'INVESTIGATING').length} active
               </span>
             </div>
@@ -642,10 +642,10 @@ export default function WarRoomCommand() {
               {incidents.length === 0 ? (
                 <div className="p-10 text-center">
                   <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--primary))', display: 'block', margin: '0 auto 12px' }}>check_circle</span>
-                  <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>No active incidents. All sectors secure.</p>
+                  <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>No active incidents. All sectors secure.</p>
                 </div>
               ) : incidents.map(inc => (
-                <div key={inc.id} className="p-4 space-y-2" style={{ borderBottom: '1px solid #1c221e' }}>
+                <div key={inc.id} className="p-4 space-y-2" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <span className={cn(
@@ -658,15 +658,15 @@ export default function WarRoomCommand() {
                       }}>
                         {inc.severity}
                       </span>
-                      <span className="text-[10.5px] font-extrabold" style={{ color: 'rgba(255,255,255,.7)' }}>{inc.region}</span>
+                      <span className="text-[10.5px] font-extrabold" style={{ color: 'hsl(var(--on-surface))' }}>{inc.region}</span>
                     </div>
-                    <span className="text-[10px] font-bold shrink-0" style={{ color: 'rgba(255,255,255,.4)' }}>
+                    <span className="text-[10px] font-bold shrink-0" style={{ color: 'hsl(var(--on-surface-muted))' }}>
                       {formatGhanaTime(inc.created_at, { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })}
                     </span>
                   </div>
-                  <p className="text-[12px] font-bold text-white">{inc.incident_type.replace(/_/g, ' ')}</p>
-                  <p className="text-[11.5px] leading-[1.5]" style={{ color: 'rgba(255,255,255,.6)' }}>{inc.description}</p>
-                  <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid #1c221e' }}>
+                  <p className="text-[12px] font-bold" style={{ color: 'hsl(var(--on-surface))' }}>{inc.incident_type.replace(/_/g, ' ')}</p>
+                  <p className="text-[11.5px] leading-[1.5]" style={{ color: 'hsl(var(--on-surface-muted))' }}>{inc.description}</p>
+                  <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid hsl(var(--border))' }}>
                     <span className="text-[9px] font-extrabold uppercase tracking-tight px-2 py-0.5 rounded-full" style={{
                       background: inc.status === 'INVESTIGATING' ? 'rgba(218,165,32,.15)' : 'rgba(0,107,63,.15)',
                       color: inc.status === 'INVESTIGATING' ? 'hsl(var(--accent))' : 'hsl(var(--primary))',
@@ -687,32 +687,32 @@ export default function WarRoomCommand() {
           </div>
 
           {/* Media counter-narratives */}
-          <div className="rounded-[6px] overflow-hidden relative" style={{ background: '#0d1510', border: '1px solid #1c221e' }}>
-            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid #1c221e' }}>
-              <h3 className="font-extrabold text-[12.5px] text-white flex items-center gap-2">
+          <div className="rounded-[6px] overflow-hidden relative" style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}>
+            <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+              <h3 className="font-extrabold text-[12.5px] flex items-center gap-2" style={{ color: 'hsl(var(--on-surface))' }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#60a5fa' }}>chat</span> Digital strike directives
               </h3>
-              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,.4)' }}>campaign</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}>campaign</span>
             </div>
             <div>
               {narratives.length === 0 ? (
                 <div className="p-8 text-center">
-                  <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'rgba(255,255,255,.4)' }}>No active media campaigns.</p>
+                  <p className="text-[10.5px] font-bold uppercase tracking-[.04em]" style={{ color: 'hsl(var(--on-surface-muted))' }}>No active media campaigns.</p>
                 </div>
               ) : narratives.map(nar => (
-                <div key={nar.id} className="p-4 space-y-2 hover:bg-white/5 transition-colors" style={{ borderBottom: '1px solid #1c221e' }}>
+                <div key={nar.id} className="p-4 space-y-2 hover:bg-black/5 transition-colors" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10.5px] font-extrabold text-blue-400">{nar.target_platform}</span>
+                    <span className="text-[10.5px] font-extrabold text-blue-500">{nar.target_platform}</span>
                     <span className={cn(
                       "text-[8px] font-extrabold uppercase tracking-tight px-2 py-0.5 rounded-full",
-                      nar.dispatch_status === 'DEPLOYED' ? "bg-emerald-900/50 text-emerald-400" : "bg-orange-900/50 text-orange-400"
+                      nar.dispatch_status === 'DEPLOYED' ? "bg-emerald-100 text-emerald-700" : "bg-orange-100 text-orange-700"
                     )}>
                       {nar.dispatch_status.toLowerCase()}
                     </span>
                   </div>
-                  <p className="text-[12px] leading-[1.45]" style={{ color: 'rgba(255,255,255,.8)' }}>"{nar.approved_messaging}"</p>
+                  <p className="text-[12px] leading-[1.45]" style={{ color: 'hsl(var(--on-surface))' }}>"{nar.approved_messaging}"</p>
                   <div className="flex items-center justify-between pt-1">
-                    <p className="text-[10px] font-bold" style={{ color: 'rgba(255,255,255,.4)' }}>{nar.hashtags}</p>
+                    <p className="text-[10px] font-bold" style={{ color: 'hsl(var(--on-surface-muted))' }}>{nar.hashtags}</p>
                     {nar.dispatch_status === 'PENDING' && (
                       <button 
                         onClick={() => handleDispatchNarrative(nar.id, nar.dispatch_status)}
@@ -734,25 +734,26 @@ export default function WarRoomCommand() {
       {/* ── Compliance Report Modal ── */}
       {reportData && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#0d1510] border border-[#1c221e] rounded-lg w-full max-w-4xl max-h-[80vh] flex flex-col shadow-2xl">
-            <div className="px-6 py-4 border-b border-[#1c221e] flex justify-between items-center">
+          <div className="rounded-lg w-full max-w-4xl max-h-[80vh] flex flex-col shadow-2xl" style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}>
+            <div className="px-6 py-4 flex justify-between items-center" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
               <div>
-                <h3 className="text-white font-extrabold text-lg">National Compliance Report</h3>
-                <p className="text-white/40 text-xs uppercase tracking-widest font-bold">Generated: {new Date().toLocaleString()}</p>
+                <h3 className="font-extrabold text-lg" style={{ color: 'hsl(var(--on-surface))' }}>National Compliance Report</h3>
+                <p className="text-xs uppercase tracking-widest font-bold" style={{ color: 'hsl(var(--on-surface-muted))' }}>Generated: {new Date().toLocaleString()}</p>
               </div>
-              <button 
+              <button
                 onClick={() => setReportData(null)}
-                className="text-white/40 hover:text-white transition-colors"
+                className="transition-colors"
+                style={{ color: 'hsl(var(--on-surface-muted))' }}
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
             <div className="p-6 overflow-y-auto font-mono text-sm">
-              <pre className="bg-black/40 p-4 rounded border border-white/5 text-emerald-400 leading-relaxed overflow-x-auto">
+              <pre className="bg-black/5 p-4 rounded border border-black/10 text-emerald-700 leading-relaxed overflow-x-auto">
                 {JSON.stringify(JSON.parse(reportData), null, 2)}
               </pre>
             </div>
-            <div className="px-6 py-4 border-t border-[#1c221e] flex justify-end gap-3">
+            <div className="px-6 py-4 flex justify-end gap-3" style={{ borderTop: '1px solid hsl(var(--border))' }}>
               <button 
                 className="btn btn-outline"
                 onClick={() => {

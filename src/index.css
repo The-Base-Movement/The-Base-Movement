@@ -502,7 +502,7 @@
 .card::after { content:""; position:absolute; top:14px; right:18px; width:6px; height:6px;
   border-radius:50%; background:var(--accent); }
 .card .row { display:flex; align-items:baseline; justify-content:space-between; }
-.card .eye { font-size:9.5px; font-weight:700; color:var(--on-surface-muted);
+.card .eye { font-size:9.5px; font-weight:700; color:hsl(var(--on-surface-muted));
   letter-spacing:.08em; text-transform:uppercase; }
 .card .num { font-family: 'Public Sans', sans-serif; font-weight: 800; font-size: 48px;
   letter-spacing: -.03em; line-height: .95; color: #181d19; }
