@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, Loader2 } from 'lucide-react'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
-import { Button } from '@/components/ui/neon-button'
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
@@ -113,30 +111,28 @@ export default function Login() {
                 </label>
               </div>
 
-              <Button
+              <button
                 type="submit"
                 disabled={isLoading}
-                variant="primary"
-                className="w-full h-[52px] font-bold text-sm tracking-tight flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                className="w-full h-[52px] font-bold text-sm tracking-tight flex items-center justify-center gap-2 active:scale-[0.98] transition-transform bg-primary text-white border-none cursor-pointer"
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Authenticating...
+                    <span className="material-symbols-outlined" style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}>progress_activity</span> Authenticating…
                   </>
                 ) : (
                   <>
-                    Sign in <ArrowRight className="w-4 h-4" />
+                    Sign in <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
                   </>
                 )}
-              </Button>
+              </button>
 
               <div className="auth-divider">Or continue with</div>
 
               <div className="flex flex-col gap-2">
-                <Button 
+                <button
                   type="button"
-                  variant="outline"
-                  className="w-full h-[46px] font-bold text-xs flex items-center justify-center gap-3 active:scale-[0.98] transition-transform"
+                  className="w-full h-[46px] font-bold text-xs flex items-center justify-center gap-3 active:scale-[0.98] transition-transform border border-border/40 bg-white text-on-surface cursor-pointer"
                   onClick={async () => {
                     try {
                       await authService.signInWithGoogle()
@@ -164,7 +160,7 @@ export default function Login() {
                     />
                   </svg>
                   Continue with Google
-                </Button>
+                </button>
               </div>
 
               <div className="auth-footer">
