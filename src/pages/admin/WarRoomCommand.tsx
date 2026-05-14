@@ -205,17 +205,17 @@ export default function WarRoomCommand() {
         <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-3">
           <div>
             <div className="text-[10px] font-bold uppercase tracking-[.05em] mb-1" style={{ color: 'hsl(var(--on-surface-muted))' }}>Command center → War room</div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-              <h2 className="font-meta font-extrabold text-[22px] tracking-[-0.015em] leading-tight" style={{ color: 'hsl(var(--on-surface))' }}>
+            <div className="flex items-center gap-2 mt-1">
+              <h2 className="font-meta font-extrabold text-[22px] tracking-[-0.015em] leading-tight mb-0" style={{ color: 'hsl(var(--on-surface))' }}>
                 War Room — live mobilization
               </h2>
-              <div className="bl"><div /><div /><div /></div>
-              <span className="inline-flex items-center gap-[6px] font-extrabold text-[10.5px] uppercase tracking-[.06em] px-[10px] py-1 rounded-full border self-start sm:self-auto"
+              <span className="inline-flex items-center gap-[6px] font-extrabold text-[10.5px] uppercase tracking-[.06em] px-[10px] py-1 rounded-full border"
                 style={{ color: 'hsl(var(--destructive))', background: 'rgba(206,17,38,.12)', borderColor: 'rgba(206,17,38,.3)' }}>
                 <span className="w-[6px] h-[6px] rounded-full animate-pulse block" style={{ background: 'hsl(var(--destructive))' }} />
                 Live · updating
               </span>
             </div>
+            <div style={{ marginTop: 10, marginBottom: 4 }}><div className="bl"><div /><div /><div /></div></div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 sm:mt-1 flex-wrap w-full sm:w-auto">
             <LiveClock />
