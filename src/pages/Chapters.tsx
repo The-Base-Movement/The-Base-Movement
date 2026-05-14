@@ -2,28 +2,11 @@ import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
-import { MapPin, Search, Plus, Building2, Send, Globe } from 'lucide-react'
-import { BrandLine } from '@/components/ui/BrandLine'
-import { Button } from '@/components/ui/neon-button'
 import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ChapterCard } from '@/components/ChapterCard'
 import { useChapters } from '@/context/ChaptersContext'
-import {
-  Pagination, PaginationContent, PaginationItem,
-  PaginationLink, PaginationNext, PaginationPrevious,
-} from "@/components/ui/pagination"
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-  DialogDescription, DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Filter } from 'lucide-react'
-import {
-  Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
-} from "@/components/ui/sheet"
 
 const countryFlags: Record<string, string> = {
   'Germany': '🇩🇪', 'United Kingdom': '🇬🇧', 'Australia': '🇦🇺', 'United States': '🇺🇸',
@@ -286,30 +269,30 @@ export default function Chapters() {
           <div>
             <label className="text-micro font-medium text-stone-900 mb-3 block">Search hubs</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
-              <Input placeholder="Search by city, name..." className="pl-10 h-11 bg-stone-50 border-stone-200 rounded-none focus:ring-brand-green font-medium text-xs" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" style={{ fontSize: 16 }}>search</span>
+              <input placeholder="Search by city, name..." className="w-full pl-10 h-11 bg-stone-50 border border-stone-200 rounded-none focus:outline-none focus:border-brand-green font-medium text-xs" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
             </div>
           </div>
           <div>
             <label className="text-[10px] font-medium text-stone-900 mb-3 block">Region filter</label>
             <div className="flex flex-col gap-2">
-              <Button variant="solid" onClick={() => { setActiveTab('ghana'); setSelectedRegion('All Regions') }} className={cn("w-full justify-between font-medium tracking-tight text-tiny h-11 px-4 rounded-none", activeTab === 'ghana' ? "bg-brand-green text-white" : "bg-white text-stone-500 border-stone-200")}>
-                Ghana regions <MapPin className="w-4 h-4" />
-              </Button>
+              <button onClick={() => { setActiveTab('ghana'); setSelectedRegion('All Regions') }} className={cn("w-full flex items-center justify-between font-medium tracking-tight text-xs h-11 px-4 border cursor-pointer transition-colors", activeTab === 'ghana' ? "bg-brand-green text-white border-brand-green" : "bg-white text-stone-500 border-stone-200 hover:border-brand-green")}>
+                Ghana regions <span className="material-symbols-outlined" style={{ fontSize: 16 }}>location_on</span>
+              </button>
               {activeTab === 'ghana' && regions.length > 0 && (
-                <select value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} className="w-full h-11 bg-stone-100 border-stone-200 text-stone-900 font-medium text-[10px] px-3 outline-none appearance-none cursor-pointer">
+                <select value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} className="w-full h-11 bg-stone-100 border border-stone-200 text-stone-900 font-medium text-[10px] px-3 outline-none appearance-none cursor-pointer">
                   {regions.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               )}
-              <Button variant="outline" onClick={() => { setActiveTab('diaspora'); setSelectedRegion('All Regions') }} className={cn("w-full justify-between font-medium tracking-tight text-tiny h-11 px-4 rounded-none", activeTab === 'diaspora' ? "border-brand-green text-brand-green" : "border-stone-200 text-stone-500")}>
-                Global diaspora <Globe className="w-4 h-4" />
-              </Button>
+              <button onClick={() => { setActiveTab('diaspora'); setSelectedRegion('All Regions') }} className={cn("w-full flex items-center justify-between font-medium tracking-tight text-xs h-11 px-4 border cursor-pointer transition-colors", activeTab === 'diaspora' ? "border-brand-green text-brand-green" : "border-stone-200 text-stone-500 hover:border-brand-green")}>
+                Global diaspora <span className="material-symbols-outlined" style={{ fontSize: 16 }}>public</span>
+              </button>
             </div>
           </div>
           <div className="pt-4 border-t border-stone-100">
-            <Button variant="accent" onClick={() => setIsRequestModalOpen(true)} className="w-full font-bold tracking-tight text-tiny h-12 px-6 rounded-none">
-              <Plus className="w-4 h-4 mr-2" /> Request a Chapter
-            </Button>
+            <button onClick={() => setIsRequestModalOpen(true)} className="w-full font-bold tracking-tight text-xs h-12 px-6 bg-accent text-white border-none cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span> Request a Chapter
+            </button>
           </div>
         </div>
       </div>
@@ -339,7 +322,7 @@ export default function Chapters() {
           <Breadcrumbs />
           <div className="mt-6">
             <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6">Movement Chapters</h1>
-            <BrandLine />
+            <div className="bl"><div /><div /><div /></div>
             <p className="text-stone-500 max-w-2xl mt-6 leading-relaxed font-medium text-sm md:text-base">
               Connect with your local community through our global network of {chapters.length}+ regional hubs.
             </p>
@@ -347,24 +330,26 @@ export default function Chapters() {
         </div>
       </header>
 
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-[100] flex items-start justify-start" style={{ background: 'rgba(0,0,0,0.45)' }} onClick={() => setShowMobileFilters(false)}>
+          <div className="bg-white w-[300px] h-full overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="p-6 border-b border-stone-100 flex items-center justify-between">
+              <span className="font-meta font-bold tracking-tight text-lg">Filters</span>
+              <button onClick={() => setShowMobileFilters(false)} className="bg-none border-none cursor-pointer"><span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span></button>
+            </div>
+            <div className="p-6"><FilterSection isMobile /></div>
+          </div>
+        </div>
+      )}
+
       <main className="max-w-7xl mx-auto px-4 md:px-8 mt-12">
         <div className="lg:hidden mb-8 flex gap-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="default" className="flex-1 h-12 gap-2 font-bold text-xs border-stone-200">
-                <Filter className="w-4 h-4" /> Filter & Search
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] p-0 border-r-0">
-              <SheetHeader className="p-6 border-b border-stone-100">
-                <SheetTitle className="font-meta font-bold tracking-tight text-lg">Filters</SheetTitle>
-              </SheetHeader>
-              <div className="overflow-y-auto h-full p-6"><FilterSection isMobile /></div>
-            </SheetContent>
-          </Sheet>
-          <Button variant="primary" onClick={() => setIsRequestModalOpen(true)} className="flex-1 font-bold text-xs h-12 rounded-none">
-            <Plus className="w-4 h-4 mr-2" /> Request
-          </Button>
+          <button onClick={() => setShowMobileFilters(true)} className="flex-1 h-12 gap-2 font-bold text-xs border border-stone-200 bg-white cursor-pointer hover:bg-stone-50 flex items-center justify-center">
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>filter_list</span> Filter & Search
+          </button>
+          <button onClick={() => setIsRequestModalOpen(true)} className="flex-1 font-bold text-xs h-12 bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span> Request
+          </button>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
@@ -374,75 +359,71 @@ export default function Chapters() {
               {paginatedChapters.map(chapter => <ChapterCard key={chapter.id} chapter={chapter} countryFlags={countryFlags} />)}
             </div>
             {totalPages > 1 && (
-              <div className="mt-12 pt-12 border-t border-stone-100">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious onClick={() => setCurrentPage(p => Math.max(1, p - 1))} className={cn("cursor-pointer", currentPage === 1 && "opacity-30 pointer-events-none")} />
-                    </PaginationItem>
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                      <PaginationItem key={i}>
-                        <PaginationLink isActive={currentPage === i + 1} onClick={() => setCurrentPage(i + 1)} className="cursor-pointer font-bold">{i + 1}</PaginationLink>
-                      </PaginationItem>
-                    ))}
-                    <PaginationItem>
-                      <PaginationNext onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} className={cn("cursor-pointer", currentPage === totalPages && "opacity-30 pointer-events-none")} />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+              <div className="mt-12 pt-12 border-t border-stone-100 flex items-center justify-center gap-1">
+                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="h-9 px-3 border border-stone-200 bg-white text-xs font-bold cursor-pointer disabled:opacity-30 hover:border-brand-green hover:text-brand-green transition-colors">
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>chevron_left</span>
+                </button>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button key={i} onClick={() => setCurrentPage(i + 1)} className={cn("w-9 h-9 border text-xs font-bold cursor-pointer transition-colors", currentPage === i + 1 ? "bg-stone-900 text-white border-stone-900" : "bg-white border-stone-200 hover:border-brand-green hover:text-brand-green")}>
+                    {i + 1}
+                  </button>
+                ))}
+                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="h-9 px-3 border border-stone-200 bg-white text-xs font-bold cursor-pointer disabled:opacity-30 hover:border-brand-green hover:text-brand-green transition-colors">
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>chevron_right</span>
+                </button>
               </div>
             )}
             {filteredChapters.length === 0 && (
               <div className="py-20 text-center border-2 border-dashed border-stone-200">
-                <Building2 className="w-12 h-12 text-stone-200 mx-auto mb-4" />
+                <span className="material-symbols-outlined text-stone-200 block mx-auto mb-4" style={{ fontSize: 48 }}>account_balance</span>
                 <p className="text-stone-400 font-bold tracking-tight">No strategic hubs found.</p>
-                <Button variant="ghost" onClick={() => setSearchTerm('')} className="mt-4 text-brand-green font-bold text-xs">Clear search</Button>
+                <button onClick={() => setSearchTerm('')} className="mt-4 text-brand-green font-bold text-xs bg-transparent border-none cursor-pointer hover:underline">Clear search</button>
               </div>
             )}
           </div>
         </div>
       </main>
 
-      <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
-        <DialogContent className="sm:max-w-[500px] border-none rounded-none p-0 overflow-hidden bg-white">
-          <DialogHeader className="p-8 bg-charcoal-dark text-white">
-            <div className="flex items-center gap-3 mb-2">
-              <Building2 className="w-5 h-5 text-brand-green" />
-              <DialogTitle className="text-xl font-bold tracking-tight font-meta normal-case">Request a chapter</DialogTitle>
+      {isRequestModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={() => setIsRequestModalOpen(false)}>
+          <div className="bg-white w-full max-w-[500px] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="p-8 bg-charcoal-dark text-white">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>account_balance</span>
+                <h3 className="text-xl font-bold tracking-tight font-meta m-0">Request a chapter</h3>
+              </div>
+              <p className="text-stone-400 text-xs font-bold tracking-tight m-0">Proposals reviewed by the National Executive Committee.</p>
             </div>
-            <DialogDescription className="text-stone-400 text-xs font-bold tracking-tight">
-              Proposals reviewed by the National Executive Committee.
-            </DialogDescription>
-          </DialogHeader>
-          {submissionSuccess ? (
-            <div className="p-12 text-center space-y-4">
-              <Send className="w-8 h-8 text-brand-green mx-auto" />
-              <h3 className="text-stone-900">Request Submitted</h3>
-              <p className="text-xs text-stone-500 max-w-xs mx-auto">Your proposal for <span className="font-bold text-brand-green">{chapterLocation}</span> has been logged.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmitRequest} className="p-8 space-y-6">
-              <div className="space-y-1.5">
-                <label className="text-micro font-medium text-stone-400">Chapter location / country</label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
-                  <Input required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} className="pl-10 h-12 bg-stone-50 border-stone-200 rounded-none font-medium text-sm" />
+            {submissionSuccess ? (
+              <div className="p-12 text-center space-y-4">
+                <span className="material-symbols-outlined text-brand-green block mx-auto" style={{ fontSize: 32 }}>send</span>
+                <h3 className="text-stone-900">Request Submitted</h3>
+                <p className="text-xs text-stone-500 max-w-xs mx-auto">Your proposal for <span className="font-bold text-brand-green">{chapterLocation}</span> has been logged.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitRequest} className="p-8 space-y-6">
+                <div className="space-y-1.5">
+                  <label className="text-micro font-medium text-stone-400">Chapter location / country</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" style={{ fontSize: 16 }}>location_on</span>
+                    <input required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} className="w-full pl-10 h-12 bg-stone-50 border border-stone-200 font-medium text-sm outline-none focus:border-brand-green" />
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-micro font-medium text-stone-400">Why start a chapter here?</label>
-                <Textarea required placeholder="Describe local interest and your vision…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} className="min-h-[120px] bg-stone-50 border-stone-200 rounded-none font-medium text-sm p-4" />
-              </div>
-              <DialogFooter className="pt-4">
-                <Button type="button" variant="default" onClick={() => setIsRequestModalOpen(false)} className="text-stone-400 text-micro font-bold rounded-none">Cancel</Button>
-                <Button type="submit" variant="primary" disabled={isSubmitting} className="h-12 font-bold text-micro rounded-none min-w-[140px]">
-                  {isSubmitting ? 'Processing...' : 'Submit Request'}
-                </Button>
-              </DialogFooter>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
+                <div className="space-y-1.5">
+                  <label className="text-micro font-medium text-stone-400">Why start a chapter here?</label>
+                  <textarea required placeholder="Describe local interest and your vision…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} className="w-full min-h-[120px] bg-stone-50 border border-stone-200 font-medium text-sm p-4 outline-none focus:border-brand-green resize-none" />
+                </div>
+                <div className="flex justify-end gap-3 pt-4">
+                  <button type="button" onClick={() => setIsRequestModalOpen(false)} className="px-4 h-12 text-stone-400 text-xs font-bold border border-stone-200 bg-white cursor-pointer hover:bg-stone-50">Cancel</button>
+                  <button type="submit" disabled={isSubmitting} className="h-12 px-8 bg-primary text-white font-bold text-xs border-none cursor-pointer disabled:opacity-60 hover:opacity-90 transition-opacity min-w-[140px]">
+                    {isSubmitting ? 'Processing...' : 'Submit Request'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

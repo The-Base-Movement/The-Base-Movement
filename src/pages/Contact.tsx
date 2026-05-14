@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { Mail, Phone, MapPin, Send } from 'lucide-react'
-import { BrandLine } from '@/components/ui/BrandLine'
-import { Button } from '../components/ui/neon-button'
+import { cn } from '@/lib/utils'
 import { adminService } from '../services/adminService'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
@@ -57,7 +55,7 @@ export default function Contact() {
           <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tighter mb-4">
             Get in touch
           </h1>
-          <BrandLine className="mx-auto" />
+          <div className={cn("bl", "mx-auto")}><div /><div /><div /></div>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto font-body-md">
             Have a question or want to get involved? Reach out to our team. We are a movement of ordinary citizens building an extraordinary nation.
           </p>
@@ -79,7 +77,7 @@ export default function Contact() {
             <div className="space-y-4 md:space-y-6">
               <div className="bg-white p-5 md:p-6 border border-slate-200 rounded-none civic-card-shadow flex items-start gap-4 transition-transform hover:-translate-y-1">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-surface-warm flex items-center justify-center shrink-0">
-                  <Mail className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
+                  <span className="material-symbols-outlined text-[var(--brand-green)]" style={{ fontSize: 24 }}>mail</span>
                 </div>
                 <div className="min-w-0">
                   <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">Email</p>
@@ -89,7 +87,7 @@ export default function Contact() {
 
               <div className="bg-white p-5 md:p-6 border border-slate-200 rounded-none civic-card-shadow flex items-start gap-4 transition-transform hover:-translate-y-1">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-surface-warm flex items-center justify-center shrink-0">
-                  <Phone className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
+                  <span className="material-symbols-outlined text-[var(--brand-green)]" style={{ fontSize: 24 }}>phone</span>
                 </div>
                 <div>
                   <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">Phone</p>
@@ -99,7 +97,7 @@ export default function Contact() {
 
               <div className="bg-white p-5 md:p-6 border border-slate-200 rounded-none civic-card-shadow flex items-start gap-4 transition-transform hover:-translate-y-1">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-surface-warm flex items-center justify-center shrink-0">
-                  <MapPin className="w-5 h-5 md:w-6 md:h-6 text-[var(--brand-green)]" />
+                  <span className="material-symbols-outlined text-[var(--brand-green)]" style={{ fontSize: 24 }}>location_on</span>
                 </div>
                 <div>
                   <p className="text-micro font-bold tracking-tight text-slate-400 mb-1 font-meta">Location</p>
@@ -133,7 +131,7 @@ export default function Contact() {
               {submitted ? (
                 <div className="text-center py-12 md:py-20">
                   <div className="w-20 h-20 bg-surface-warm flex items-center justify-center mx-auto mb-6">
-                    <Send className="w-10 h-10 text-[var(--brand-green)]" />
+                    <span className="material-symbols-outlined text-[var(--brand-green)]" style={{ fontSize: 40 }}>send</span>
                   </div>
                   <h3 className="text-xl font-bold text-charcoal-dark mb-3 font-meta tracking-tight">Message sent</h3>
                   <p className="text-slate-600 text-sm md:text-base max-w-xs mx-auto">Thank you for reaching out. Our team will get back to you shortly.</p>
@@ -203,13 +201,12 @@ export default function Contact() {
                     ></textarea>
                   </div>
 
-                  <Button
+                  <button
                     type="submit"
-                    variant="primary"
-                    className="w-full py-8 flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-primary text-white flex items-center justify-center gap-2 font-bold text-sm border-none cursor-pointer hover:opacity-90 transition-opacity"
                   >
-                    <Send className="w-5 h-5" /> Send Message
-                  </Button>
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>send</span> Send Message
+                  </button>
                 </form>
               )}
             </div>

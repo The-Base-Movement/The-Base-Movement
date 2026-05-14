@@ -1,4 +1,3 @@
-import { Scale, Info, CheckCircle } from 'lucide-react'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import SEO from '@/components/SEO'
 
@@ -33,7 +32,7 @@ export default function Terms() {
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
               <div className="flex gap-6">
                 <div className="w-12 h-12 bg-brand-green/10 rounded-none flex items-center justify-center shrink-0">
-                  <Scale className="w-6 h-6 text-brand-green" />
+                  <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 24 }}>balance</span>
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Membership agreement</h2>
@@ -47,7 +46,7 @@ export default function Terms() {
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
               <div className="flex gap-6">
                 <div className="w-12 h-12 bg-warm-gold/10 rounded-none flex items-center justify-center shrink-0">
-                  <Info className="w-6 h-6 text-warm-gold" />
+                  <span className="material-symbols-outlined text-warm-gold" style={{ fontSize: 24 }}>info</span>
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Code of conduct</h2>
@@ -61,7 +60,7 @@ export default function Terms() {
             <section className="bg-white p-8 md:p-12 border border-slate-200 shadow-sm">
               <div className="flex gap-6">
                 <div className="w-12 h-12 bg-charcoal-dark/10 rounded-none flex items-center justify-center shrink-0">
-                  <CheckCircle className="w-6 h-6 text-charcoal-dark" />
+                  <span className="material-symbols-outlined text-charcoal-dark" style={{ fontSize: 24 }}>check_circle</span>
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-charcoal-dark mb-4 font-meta tracking-tight">Platform usage & security</h2>

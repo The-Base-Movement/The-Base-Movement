@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ArrowRight, Loader2, Newspaper } from 'lucide-react'
-import { BrandLine } from '@/components/ui/BrandLine'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { Button } from '@/components/ui/neon-button'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
 import SEO from '@/components/SEO'
@@ -171,10 +168,10 @@ export default function Blog() {
           <Breadcrumbs />
           <div className="mt-6">
             <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
-              <Newspaper className="w-10 h-10 text-brand-green" />
+              <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 40 }}>newspaper</span>
               Updates & Insights
             </h1>
-            <BrandLine />
+            <div className="bl"><div /><div /><div /></div>
             <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
               Perspectives from within the movement on governance, youth empowerment, diaspora engagement and the future of Ghana.
             </p>
@@ -185,7 +182,7 @@ export default function Blog() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-16">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <Loader2 className="w-8 h-8 text-brand-green animate-spin" />
+            <span className="material-symbols-outlined text-brand-green animate-spin" style={{ fontSize: 32 }}>progress_activity</span>
             <p className="text-micro font-bold tracking-tight text-stone-400">Loading insights...</p>
           </div>
         ) : posts.length === 0 ? (
@@ -224,11 +221,9 @@ export default function Blog() {
                       <div className="text-micro font-medium text-stone-400 tracking-tight">
                         {featured.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : featured.authorName} <span className="mx-2 opacity-50">|</span> {featured.readTime}
                       </div>
-                      <Button asChild variant="link" className="p-0 h-auto text-brand-green">
-                        <Link to={`${baseUrl}/${featured.slug}`} className="flex items-center gap-2">
-                          Read article <ArrowRight className="w-4 h-4" />
-                        </Link>
-                      </Button>
+                      <Link to={`${baseUrl}/${featured.slug}`} className="flex items-center gap-2 text-brand-green font-bold text-xs hover:underline">
+                        Read article <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -266,7 +261,7 @@ export default function Blog() {
                     <p className="text-xs text-slate-400 leading-relaxed mb-6">Get the movement's policy briefs and news delivered directly to your inbox every week.</p>
                     <div className="space-y-3">
                       <input type="email" placeholder="Email Address" className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm" />
-                      <Button variant="primary" className="w-full h-12">Subscribe</Button>
+                      <button className="w-full h-12 bg-primary text-white font-bold text-xs border-none cursor-pointer hover:opacity-90 transition-opacity">Subscribe</button>
                     </div>
                   </div>
                 </aside>
@@ -279,9 +274,9 @@ export default function Blog() {
           <p className="font-meta text-warm-gold tracking-tight text-xs mb-3">Join the conversation</p>
           <h2 className="font-meta font-bold text-3xl tracking-tight mb-4">Become a member. Shape the narrative.</h2>
           <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">Registered members get early access to analysis, policy briefs and updates directly from our research desk.</p>
-          <Button asChild variant="gold" size="lg" className="h-14 px-10">
-            <Link to="/register">Join The Base <ArrowRight className="w-5 h-5 ml-2" /></Link>
-          </Button>
+          <Link to="/register" className="h-14 px-10 inline-flex items-center gap-2 bg-accent text-white font-bold text-sm hover:opacity-90 transition-opacity">
+            Join The Base <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
+          </Link>
         </section>
       </div>
     </div>

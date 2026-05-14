@@ -1,7 +1,5 @@
 import { useRef } from 'react'
 import { useBranding } from '@/hooks/useBranding'
-import { Button } from '@/components/ui/neon-button'
-import { Printer, Download, ArrowLeft } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import SEO from '@/components/SEO'
@@ -33,29 +31,27 @@ export default function RegistrationFormPreview() {
       />
       {/* Controls - Hidden on Print */}
       <div className="max-w-[210mm] mx-auto mb-8 flex items-center justify-between print:hidden">
-        <Button 
-          variant="ghost" 
+        <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-stone-600"
+          className="flex items-center gap-2 text-stone-600 hover:text-stone-900 text-sm font-bold bg-transparent border-none cursor-pointer transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_back</span>
           Back to Registration
-        </Button>
+        </button>
         <div className="flex items-center gap-4">
-          <Button 
-            variant="default" 
+          <button
             onClick={handlePrint}
-            className="flex items-center gap-2 border-stone-200 text-stone-600 hover:text-brand-green hover:bg-stone-50 transition-all active:scale-95 shadow-sm"
+            className="flex items-center gap-2 h-10 px-4 border border-stone-200 text-stone-600 hover:text-brand-green hover:bg-stone-50 transition-all active:scale-95 shadow-sm text-sm font-bold bg-white cursor-pointer"
           >
-            <Printer className="w-4 h-4" />
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>print</span>
             Print Form
-          </Button>
-          <a 
-            href={formUrl as string} 
+          </button>
+          <a
+            href={formUrl as string}
             download={`The_Base_${platform}_Registration_Form.pdf`}
-            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 gap-2"
+            className="inline-flex h-10 items-center justify-center bg-primary px-4 text-sm font-bold text-white hover:opacity-90 transition-opacity gap-2"
           >
-            <Download className="w-4 h-4" />
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>download</span>
             Download {platform === 'DIASPORA' ? 'Diaspora' : 'Ghana'} PDF
           </a>
         </div>

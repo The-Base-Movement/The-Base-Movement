@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom'
-import { Home, Search, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/neon-button'
 import SEO from '@/components/SEO'
 
 export default function NotFound() {
@@ -22,7 +20,7 @@ export default function NotFound() {
 
       <div className="text-center relative z-10 max-w-lg mx-auto">
         <div className="w-24 h-24 bg-white border border-slate-100 shadow-xl flex items-center justify-center mx-auto mb-10 group hover:rotate-6 transition-transform duration-500">
-          <Search className="w-10 h-10 text-brand-green group-hover:scale-110 transition-transform" />
+          <span className="material-symbols-outlined text-brand-green group-hover:scale-110 transition-transform" style={{ fontSize: 40 }}>search</span>
         </div>
 
         <p className="font-meta text-brand-green tracking-tight text-xs font-bold mb-4">Error 404</p>
@@ -35,19 +33,15 @@ export default function NotFound() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button asChild variant="primary" size="lg" className="h-14 px-10 w-full sm:w-auto">
-            <Link to="/">
-              <Home className="w-4 h-4 mr-2" />
-              Return home
-            </Link>
-          </Button>
-          
-          <Button asChild variant="ghost" size="lg" className="h-14 px-10 w-full sm:w-auto border-slate-200">
-            <Link to="/blog">
-              Browse insights
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </Button>
+          <Link to="/" className="h-14 px-10 w-full sm:w-auto bg-primary text-white flex items-center justify-center font-bold text-sm gap-2 hover:opacity-90 transition-opacity">
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>home</span>
+            Return home
+          </Link>
+
+          <Link to="/blog" className="h-14 px-10 w-full sm:w-auto border border-slate-200 text-slate-700 flex items-center justify-center font-bold text-sm gap-2 hover:bg-slate-50 transition-colors">
+            Browse insights
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
+          </Link>
         </div>
       </div>
 

@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Newspaper, FileText, Download, Mail, ExternalLink, ArrowRight, X, Loader2 } from 'lucide-react'
-import { Button } from '../components/ui/neon-button'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { adminService } from '@/services/adminService'
 import type { PressRelease, MediaKitAsset } from '@/types/admin'
@@ -59,14 +57,14 @@ export default function Press() {
           <div className="lg:col-span-2 space-y-12">
             <div>
               <h2 className="font-meta font-bold text-2xl tracking-tight mb-8 flex items-center gap-3">
-                <Newspaper className="w-6 h-6 text-brand-green" />
+                <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 24 }}>newspaper</span>
                 Latest press releases
               </h2>
               
               <div className="space-y-8">
                 {loading ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-4 text-stone-300">
-                    <Loader2 className="w-8 h-8 animate-spin" />
+                    <span className="material-symbols-outlined animate-spin" style={{ fontSize: 32 }}>progress_activity</span>
                     <p className="text-micro font-bold tracking-tight">Scanning dispatch desk...</p>
                   </div>
                 ) : releases.length > 0 ? (
@@ -86,15 +84,15 @@ export default function Press() {
                       <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
                         {pr.excerpt}
                       </p>
-                      <Button variant="link" className="p-0 h-auto text-brand-green" onClick={() => setSelectedRelease(pr)}>
+                      <button onClick={() => setSelectedRelease(pr)} className="flex items-center gap-2 text-brand-green font-bold text-xs bg-transparent border-none cursor-pointer hover:underline p-0">
                         View full release
-                        <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                      </Button>
+                        <span className="material-symbols-outlined transition-transform group-hover:translate-x-1" style={{ fontSize: 16 }}>arrow_forward</span>
+                      </button>
                     </div>
                   ))
                 ) : (
                   <div className="p-12 border-2 border-dashed border-slate-100 text-center">
-                    <Newspaper className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                    <span className="material-symbols-outlined text-slate-200 block mx-auto mb-4" style={{ fontSize: 48 }}>newspaper</span>
                     <p className="text-slate-400 text-sm font-bold tracking-tight">No active dispatches found.</p>
                   </div>
                 )}
@@ -107,7 +105,7 @@ export default function Press() {
             {/* Media Contact */}
             <div className="bg-charcoal-dark p-8 border-l-4 border-warm-gold text-white">
               <h3 className="font-meta font-bold text-xl tracking-tight mb-4 flex items-center gap-2">
-                <Mail className="w-5 h-5 text-warm-gold" />
+                <span className="material-symbols-outlined text-warm-gold" style={{ fontSize: 20 }}>mail</span>
                 Media inquiries
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed mb-6">
@@ -128,7 +126,7 @@ export default function Press() {
             {/* Media Kit */}
             <div className="bg-white p-8 border border-slate-100 shadow-sm">
               <h3 className="font-meta font-bold text-xl tracking-tight mb-4 flex items-center gap-2 text-charcoal-dark">
-                <Download className="w-5 h-5 text-brand-green" />
+                <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>download</span>
                 Media kit
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed mb-6">
@@ -137,35 +135,34 @@ export default function Press() {
               <div className="space-y-3">
                 {mediaKit.length > 0 ? (
                   mediaKit.map((asset) => (
-                    <Button 
+                    <button
                       key={asset.id}
-                      variant="ghost" 
-                      className="w-full justify-between text-slate-600 border-slate-100 hover:bg-slate-50"
                       onClick={() => window.open(asset.fileUrl, '_blank')}
+                      className="w-full flex items-center justify-between text-slate-600 border border-slate-100 hover:bg-slate-50 px-3 py-2 bg-white cursor-pointer text-xs font-medium transition-colors"
                     >
                       <div className="flex items-center gap-2">
-                        {asset.fileType === 'LOGO' ? <ExternalLink className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{asset.fileType === 'LOGO' ? 'open_in_new' : 'description'}</span>
                         {asset.title}
                       </div>
-                      <Download className="w-4 h-4 opacity-50" />
-                    </Button>
+                      <span className="material-symbols-outlined opacity-50" style={{ fontSize: 16 }}>download</span>
+                    </button>
                   ))
                 ) : (
                   <>
-                    <Button disabled variant="ghost" className="w-full justify-between text-slate-600 border-slate-100 opacity-50 cursor-not-allowed">
+                    <button disabled className="w-full flex items-center justify-between text-slate-600 border border-slate-100 opacity-50 cursor-not-allowed px-3 py-2 bg-white text-xs font-medium">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>description</span>
                         Brand Guidelines
                       </div>
-                      <Download className="w-4 h-4 opacity-50" />
-                    </Button>
-                    <Button disabled variant="ghost" className="w-full justify-between text-slate-600 border-slate-100 opacity-50 cursor-not-allowed">
+                      <span className="material-symbols-outlined opacity-50" style={{ fontSize: 16 }}>download</span>
+                    </button>
+                    <button disabled className="w-full flex items-center justify-between text-slate-600 border border-slate-100 opacity-50 cursor-not-allowed px-3 py-2 bg-white text-xs font-medium">
                       <div className="flex items-center gap-2">
-                        <ExternalLink className="w-4 h-4" />
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>open_in_new</span>
                         High-Res Logos
                       </div>
-                      <Download className="w-4 h-4 opacity-50" />
-                    </Button>
+                      <span className="material-symbols-outlined opacity-50" style={{ fontSize: 16 }}>download</span>
+                    </button>
                   </>
                 )}
               </div>
@@ -192,9 +189,9 @@ export default function Press() {
                   {selectedRelease.title}
                 </h2>
               </div>
-              <Button variant="ghost" size="sm" className="w-8 h-8 p-0" onClick={() => setSelectedRelease(null)}>
-                <X className="w-4 h-4" />
-              </Button>
+              <button onClick={() => setSelectedRelease(null)} className="w-8 h-8 flex items-center justify-center bg-transparent border-none cursor-pointer hover:bg-white/10 rounded-full transition-colors">
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
+              </button>
             </div>
             <div className="p-8 max-h-[60vh] overflow-y-auto">
               <div className="prose prose-sm max-w-none text-slate-600 leading-relaxed space-y-4">
@@ -209,9 +206,9 @@ export default function Press() {
               </div>
             </div>
             <div className="p-6 bg-stone-50 border-t border-slate-100 text-center">
-              <Button variant="primary" onClick={() => setSelectedRelease(null)}>
+              <button onClick={() => setSelectedRelease(null)} className="h-10 px-6 bg-primary text-white font-bold text-xs border-none cursor-pointer hover:opacity-90 transition-opacity">
                 Close Release
-              </Button>
+              </button>
             </div>
           </div>
         </div>
