@@ -118,20 +118,31 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
                 <h4 className="font-meta font-bold text-xs text-on-surface tracking-tight mb-1">Registration number</h4>
                 <p className="font-meta font-bold text-xl text-primary tracking-tight">{regNumber}</p>
               </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handlePrint}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-white font-bold text-sm shadow-md hover:scale-[1.02] active:scale-95 transition-all border-none cursor-pointer"
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>print</span>
-                  Print card
-                </button>
-                <button
-                  onClick={onEdit}
-                  className="flex items-center justify-center gap-2 px-6 py-3 text-stone-500 border border-stone-200 bg-white hover:text-primary hover:bg-stone-50 transition-all active:scale-95 shadow-sm font-bold text-sm cursor-pointer"
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_back</span> Edit info
-                </button>
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handlePrint}
+                    disabled={!photoUrl}
+                    title={!photoUrl ? 'A profile photo is required to print your card' : undefined}
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-white font-bold text-sm shadow-md hover:scale-[1.02] active:scale-95 transition-all border-none"
+                    style={{ cursor: photoUrl ? 'pointer' : 'not-allowed', opacity: photoUrl ? 1 : 0.4 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>print</span>
+                    Print card
+                  </button>
+                  <button
+                    onClick={onEdit}
+                    className="flex items-center justify-center gap-2 px-6 py-3 text-stone-500 border border-stone-200 bg-white hover:text-primary hover:bg-stone-50 transition-all active:scale-95 shadow-sm font-bold text-sm cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_back</span> Edit info
+                  </button>
+                </div>
+                {!photoUrl && (
+                  <p className="text-[11px] font-bold text-muted-foreground font-meta tracking-tight">
+                    <span className="material-symbols-outlined" style={{ fontSize: 12, verticalAlign: 'middle' }}>info</span>
+                    {' '}A profile photo is required to print your membership card.
+                  </p>
+                )}
               </div>
             </div>
           </div>

@@ -1174,13 +1174,31 @@ export default function MembersList() {
                     />
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 16 }}>
-                    <button className="btn btn-outline" onClick={handlePrint}>
+                    <button
+                      className="btn btn-outline"
+                      onClick={handlePrint}
+                      disabled={!selectedMember.avatarUrl}
+                      title={!selectedMember.avatarUrl ? 'Member has no profile photo — card cannot be printed' : undefined}
+                      style={{ opacity: selectedMember.avatarUrl ? 1 : 0.4, cursor: selectedMember.avatarUrl ? 'pointer' : 'not-allowed' }}
+                    >
                       <span className="material-symbols-outlined" style={{ fontSize: 16 }}>print</span>Print card
                     </button>
-                    <button className="btn btn-primary" onClick={handleDownload}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleDownload}
+                      disabled={!selectedMember.avatarUrl}
+                      title={!selectedMember.avatarUrl ? 'Member has no profile photo — card cannot be downloaded' : undefined}
+                      style={{ opacity: selectedMember.avatarUrl ? 1 : 0.4, cursor: selectedMember.avatarUrl ? 'pointer' : 'not-allowed' }}
+                    >
                       <span className="material-symbols-outlined" style={{ fontSize: 16 }}>download</span>Download PDF
                     </button>
                   </div>
+                  {!selectedMember.avatarUrl && (
+                    <p style={{ marginTop: 10, fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>info</span>
+                      Profile photo required to print or download this member's card.
+                    </p>
+                  )}
                 </div>
               )}
 
