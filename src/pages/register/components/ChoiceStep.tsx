@@ -6,9 +6,10 @@ import { cn } from '@/lib/utils'
 interface ChoiceStepProps {
   settings: BrandingSettings
   onSelect: (platform: string, file?: File) => void
+  isScanning?: boolean
 }
 
-export function ChoiceStep({ settings, onSelect }: ChoiceStepProps) {
+export function ChoiceStep({ settings, onSelect, isScanning = false }: ChoiceStepProps) {
   return (
     <div className="max-w-[840px] w-full mx-auto">
       <SEO 
@@ -67,19 +68,28 @@ export function ChoiceStep({ settings, onSelect }: ChoiceStepProps) {
                 Download Diaspora Form
               </a>
             </div>
-            <label className="cursor-pointer">
-              <input 
-                type="file" 
-                accept=".pdf,image/*" 
-                className="hidden" 
+            <label className={isScanning ? 'cursor-not-allowed' : 'cursor-pointer'}>
+              <input
+                type="file"
+                accept=".pdf,image/*"
+                className="hidden"
+                disabled={isScanning}
                 onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    onSelect('PHYSICAL', e.target.files[0]);
-                  }
-                }} 
+                  if (e.target.files?.[0]) onSelect('PHYSICAL', e.target.files[0])
+                }}
               />
-              <div className="inline-flex items-center justify-center px-6 py-4 bg-on-surface text-surface text-[12px] font-bold uppercase tracking-wider rounded-sm hover:opacity-90 transition-all shadow-lg">
-                Upload Scanned Form
+              <div className="inline-flex items-center justify-center gap-2 px-6 py-4 bg-on-surface text-surface text-[12px] font-bold uppercase tracking-wider rounded-sm hover:opacity-90 transition-all shadow-lg select-none">
+                {isScanning ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin" style={{ fontSize: 16 }}>progress_activity</span>
+                    Scanning form…
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>document_scanner</span>
+                    Upload Scanned Form
+                  </>
+                )}
               </div>
             </label>
           </div>

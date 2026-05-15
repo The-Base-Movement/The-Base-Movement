@@ -61,6 +61,7 @@ export default function Register() {
   }, [])
 
   const [isScanningId, setIsScanningId] = useState(false)
+  const [isScanningForm, setIsScanningForm] = useState(false)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
@@ -128,25 +129,69 @@ export default function Register() {
     if (newPlatform === 'GHANA') setFormData(prev => ({ ...prev, country: 'Ghana', countryCode: '+233' }))
   }
 
-  const handlePhysicalUpload = async (file: File) => {
-    setIsLoading(true)
+  const handleFormScan = async (file: File) => {
+    setIsScanningForm(true)
     try {
-      const timestamp = Date.now()
-      const fileName = `physical_${timestamp}_${file.name.replace(/\s+/g, '_')}`
-      
-      const { error: uploadError } = await supabase.storage
-        .from('media')
-        .upload(`registrations/${fileName}`, file, { upsert: true })
+      const mediaTypeMap: Record<string, string> = {
+        'image/jpeg': 'image/jpeg',
+        'image/jpg': 'image/jpeg',
+        'image/png': 'image/png',
+        'image/webp': 'image/webp',
+        'application/pdf': 'application/pdf',
+      }
+      const mediaType = mediaTypeMap[file.type] || 'image/jpeg'
 
-      if (uploadError) throw uploadError
+      const fileBase64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          const result = reader.result as string
+          // Strip data URL prefix — send raw base64 only
+          resolve(result.split(',')[1])
+        }
+        reader.onerror = reject
+        reader.readAsDataURL(file)
+      })
 
-      setPhysicalSubmitted(true)
-      toast.success('Registration form uploaded successfully!')
+      const { data, error } = await supabase.functions.invoke('scan-form', {
+        body: { fileBase64, mediaType },
+      })
+
+      if (error) throw error
+      if (!data?.success) throw new Error(data?.error || 'Scan failed')
+
+      const extracted = data.data
+      const detectedPlatform: string = extracted.platform === 'DIASPORA' ? 'DIASPORA' : 'GHANA'
+
+      handlePlatformChange(detectedPlatform)
+      setFormData(prev => ({
+        ...prev,
+        fullName: extracted.fullName ?? prev.fullName,
+        gender: extracted.gender ?? prev.gender,
+        ageRange: extracted.ageRange ?? prev.ageRange,
+        email: extracted.email ?? prev.email,
+        countryCode: extracted.countryCode ?? prev.countryCode,
+        contactNumber: extracted.contactNumber ?? prev.contactNumber,
+        residentialAddress: extracted.residentialAddress ?? prev.residentialAddress,
+        region: extracted.region ?? prev.region,
+        constituency: extracted.constituency ?? prev.constituency,
+        country: extracted.country ?? prev.country,
+        profession: extracted.profession ?? prev.profession,
+        educationLevel: extracted.educationLevel ?? prev.educationLevel,
+        emergencyContactName: extracted.emergencyContactName ?? prev.emergencyContactName,
+        emergencyRelationship: extracted.emergencyRelationship ?? prev.emergencyRelationship,
+        emergencyNumber: extracted.emergencyNumber ?? prev.emergencyNumber,
+      }))
+
+      setStep('form')
+      setFormStep(1)
+      toast.success(`${detectedPlatform === 'DIASPORA' ? 'Diaspora' : 'Ghana'} form scanned — please review and complete your details.`)
     } catch (error) {
-      toast.error('Upload failed. Please try again or use the online form.')
-      console.error('Physical upload error:', error)
+      console.error('Form scan error:', error)
+      toast.error('Could not read form. Please fill in your details manually.')
+      setStep('form')
+      setFormStep(1)
     } finally {
-      setIsLoading(false)
+      setIsScanningForm(false)
     }
   }
 
@@ -271,17 +316,18 @@ export default function Register() {
   if (step === 'choice') {
     return (
       <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
-        <ChoiceStep 
-          settings={settings} 
-          onSelect={(p, file) => { 
+        <ChoiceStep
+          settings={settings}
+          isScanning={isScanningForm}
+          onSelect={(p, file) => {
             if (p === 'PHYSICAL' && file) {
-              handlePhysicalUpload(file);
+              handleFormScan(file)
             } else {
-              handlePlatformChange(p); 
-              setStep('form'); 
-              setFormStep(1); 
+              handlePlatformChange(p)
+              setStep('form')
+              setFormStep(1)
             }
-          }} 
+          }}
         />
       </main>
     )
