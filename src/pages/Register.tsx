@@ -140,7 +140,16 @@ export default function Register() {
 
       setStep('form')
       setFormStep(1)
-      toast.success(`${detectedPlatform === 'DIASPORA' ? 'Diaspora' : 'Ghana'} form scanned — please review and complete your details.`)
+
+      const fieldCount = Object.keys(fields).length
+      const platformLabel = detectedPlatform === 'DIASPORA' ? 'Diaspora' : 'Ghana'
+      if (fieldCount === 0) {
+        toast.warning('Nothing could be read from the form — please fill in your details manually.')
+      } else if (fieldCount < 4) {
+        toast.info(`${platformLabel} form partially read — please review and complete the remaining fields.`)
+      } else {
+        toast.success(`${platformLabel} form scanned — please review and complete your details.`)
+      }
     } catch (error) {
       console.error('Form scan error:', error)
       toast.error('Could not read form. Please fill in your details manually.')
