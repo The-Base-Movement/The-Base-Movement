@@ -43,7 +43,7 @@ async function ocrPdf(file: File): Promise<string> {
     // First try embedded text (works for digital/searchable PDFs instantly)
     const content = await page.getTextContent()
     const embedded = content.items
-      .map((item: { str?: string }) => item.str ?? '')
+      .map((item) => ('str' in item ? (item.str ?? '') : ''))
       .join(' ')
       .trim()
 
@@ -58,7 +58,7 @@ async function ocrPdf(file: File): Promise<string> {
     canvas.width = viewport.width
     canvas.height = viewport.height
     const ctx = canvas.getContext('2d')!
-    await page.render({ canvasContext: ctx, viewport }).promise
+    await page.render({ canvasContext: ctx, canvas, viewport } as Parameters<typeof page.render>[0]).promise
     const text = await ocrImage(canvas)
     pageTexts.push(text)
   }
