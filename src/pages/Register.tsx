@@ -9,6 +9,7 @@ import { ChoiceStep } from './register/components/ChoiceStep'
 import { RegistrationForm } from './register/components/RegistrationForm'
 import { SuccessStep } from './register/components/SuccessStep'
 import { adminService } from '@/services/adminService'
+import { scanFormFile } from '@/lib/scanForm'
 import type { RegistrationFormData, Region, Constituency } from '@/types/registration'
 import SEO from '@/components/SEO'
 
@@ -132,55 +133,10 @@ export default function Register() {
   const handleFormScan = async (file: File) => {
     setIsScanningForm(true)
     try {
-      const mediaTypeMap: Record<string, string> = {
-        'image/jpeg': 'image/jpeg',
-        'image/jpg': 'image/jpeg',
-        'image/png': 'image/png',
-        'image/webp': 'image/webp',
-        'application/pdf': 'application/pdf',
-      }
-      const mediaType = mediaTypeMap[file.type] || 'image/jpeg'
-
-      const fileBase64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-          const result = reader.result as string
-          // Strip data URL prefix — send raw base64 only
-          resolve(result.split(',')[1])
-        }
-        reader.onerror = reject
-        reader.readAsDataURL(file)
-      })
-
-      const { data, error } = await supabase.functions.invoke('scan-form', {
-        body: { fileBase64, mediaType },
-      })
-
-      if (error) throw error
-      if (!data?.success) throw new Error(data?.error || 'Scan failed')
-
-      const extracted = data.data
-      const detectedPlatform: string = extracted.platform === 'DIASPORA' ? 'DIASPORA' : 'GHANA'
+      const { platform: detectedPlatform, fields } = await scanFormFile(file)
 
       handlePlatformChange(detectedPlatform)
-      setFormData(prev => ({
-        ...prev,
-        fullName: extracted.fullName ?? prev.fullName,
-        gender: extracted.gender ?? prev.gender,
-        ageRange: extracted.ageRange ?? prev.ageRange,
-        email: extracted.email ?? prev.email,
-        countryCode: extracted.countryCode ?? prev.countryCode,
-        contactNumber: extracted.contactNumber ?? prev.contactNumber,
-        residentialAddress: extracted.residentialAddress ?? prev.residentialAddress,
-        region: extracted.region ?? prev.region,
-        constituency: extracted.constituency ?? prev.constituency,
-        country: extracted.country ?? prev.country,
-        profession: extracted.profession ?? prev.profession,
-        educationLevel: extracted.educationLevel ?? prev.educationLevel,
-        emergencyContactName: extracted.emergencyContactName ?? prev.emergencyContactName,
-        emergencyRelationship: extracted.emergencyRelationship ?? prev.emergencyRelationship,
-        emergencyNumber: extracted.emergencyNumber ?? prev.emergencyNumber,
-      }))
+      setFormData(prev => ({ ...prev, ...fields }))
 
       setStep('form')
       setFormStep(1)
