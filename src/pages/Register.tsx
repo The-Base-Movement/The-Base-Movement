@@ -190,7 +190,12 @@ export default function Register() {
 
         const { data: authData, error: authError } = await signUpPromise
 
-        if (authError) throw authError
+        if (authError) {
+          if (authError.message?.toLowerCase().includes('already registered')) {
+            throw new Error('An account with this phone number already exists. Try signing in instead.')
+          }
+          throw authError
+        }
 
         // 2. NOW upload the avatar using the authenticated session
         let finalAvatarUrl = null

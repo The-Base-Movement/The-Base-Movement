@@ -193,10 +193,27 @@ export async function scanFormFile(file: File): Promise<{
       undefined,
   }
 
-  // Strip undefined keys
+  // Sanitize extracted values
+  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/
+  const cleanPhone = (v: string | undefined) => {
+    if (!v) return undefined
+    const digits = v.replace(/[^\d]/g, '')
+    return digits.length >= 7 ? v.replace(/[^\d+\s\-()]/g, '').trim() : undefined
+  }
+
+  if (fields.contactNumber) fields.contactNumber = cleanPhone(fields.contactNumber)
+  if (fields.emergencyNumber) fields.emergencyNumber = cleanPhone(fields.emergencyNumber)
+  if (fields.email && !emailRegex.test(fields.email)) delete fields.email
+
+  // Trim whitespace from all string fields and drop empty strings
   Object.keys(fields).forEach(k => {
-    if ((fields as Record<string, unknown>)[k] === undefined) {
+    const val = (fields as Record<string, unknown>)[k]
+    if (val === undefined || val === null) {
       delete (fields as Record<string, unknown>)[k]
+    } else if (typeof val === 'string') {
+      const trimmed = val.trim()
+      if (trimmed.length === 0) delete (fields as Record<string, unknown>)[k]
+      else (fields as Record<string, unknown>)[k] = trimmed
     }
   })
 
