@@ -802,10 +802,8 @@ class AdminService {
    * Generates a standardized avatar path following the pattern: {userId}/{timestamp}.jpg
    * This ensures compliance with RLS policies that often restrict updates to user-owned folders.
    */
-  generateAvatarPath(userId: string, originalName?: string): string {
-    const timestamp = Date.now()
-    const extension = originalName?.split('.').pop() || 'jpg'
-    return `${userId}/${timestamp}.${extension}`
+  generateAvatarPath(regNo: string): string {
+    return `${regNo}.jpg`
   }
 
   getAvatarPublicUrl(fileName: string): string {

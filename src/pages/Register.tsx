@@ -199,7 +199,7 @@ export default function Register() {
             const croppedBlob = await getCroppedImg(photoUrl, croppedAreaPixels)
             if (croppedBlob) {
               // Standardize pathing: {userId}/{timestamp}.jpg
-              const fileName = adminService.generateAvatarPath(authData.user.id)
+              const fileName = adminService.generateAvatarPath(regNo)
               const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
               
               if (!uploadError) {

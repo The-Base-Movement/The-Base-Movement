@@ -193,7 +193,7 @@ export default function MembersList() {
           const croppedBlob = await getCroppedImg(data.photoUrl, data.croppedAreaPixels)
           if (croppedBlob) {
             // Standardize pathing: {userId}/{timestamp}.jpg
-            const fileName = adminService.generateAvatarPath(newId)
+            const fileName = adminService.generateAvatarPath(data.registrationNumber)
             const { error: uploadError } = await adminService.uploadAvatar(fileName, croppedBlob)
             
             if (uploadError) {
