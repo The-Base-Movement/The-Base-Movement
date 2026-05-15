@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { OpinionPollCard } from '@/components/OpinionPollCard'
 import { adminService } from '@/services/adminService'
 import type { Poll, PollOption } from '@/types/admin'
 import { toast } from 'sonner'
 import { useIsClient } from '@/hooks/useIsClient'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
+import SEO from '@/components/SEO'
 
 export default function Polls() {
+  const location = useLocation()
+  const isDashboard = location.pathname.startsWith('/dashboard')
   const [polls, setPolls] = useState<Poll[]>([])
   const [loading, setLoading] = useState(true)
   const [voting, setVoting] = useState<string | null>(null)
@@ -58,9 +63,8 @@ export default function Polls() {
   const closedPolls = polls.filter(p => p.status === 'Closed')
   const totalVotes = polls.reduce((acc, p) => acc + p.totalVotes, 0)
 
-  return (
-    <div className="main">
-
+  const content = (
+    <>
       {/* KPI row */}
       <div className="kpis" style={{ marginBottom: 24 }}>
         {[
@@ -215,6 +219,38 @@ export default function Polls() {
         </div>
 
       </div>
-    </div>
+    </>
+  )
+
+  if (isDashboard) {
+    return <div className="main">{content}</div>
+  }
+
+  return (
+    <main className="bg-stone-50/50 min-h-screen font-meta pb-20">
+      <SEO
+        title="Polls & Feedback"
+        description="Your voice shapes movement strategy. Participate in active polls and see how other patriots think."
+        canonical="/polls"
+      />
+      <header className="bg-white border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+          <Breadcrumbs />
+          <div className="mt-6">
+            <h1 className="text-stone-900 text-4xl md:text-5xl font-meta font-bold tracking-tighter mb-6 flex items-center gap-4">
+              <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 40 }}>how_to_vote</span>
+              Polls & Feedback
+            </h1>
+            <div className="bl"><div /><div /><div /></div>
+            <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
+              Your voice shapes movement strategy. Participate in active polls and see how other patriots think.
+            </p>
+          </div>
+        </div>
+      </header>
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10">
+        {content}
+      </div>
+    </main>
   )
 }
