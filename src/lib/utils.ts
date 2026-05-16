@@ -24,7 +24,7 @@ export function getCountryFlag(flagOrCode: any, asEmoji: boolean = false): strin
         .map(char => 127397 + char.charCodeAt(0))
       return String.fromCodePoint(...codePoints)
     }
-    return `https://flagcdn.com/${code.toLowerCase()}.svg`
+    return `https://cdn.simplelocalize.io/flags/${code.toLowerCase()}.svg`
   }
 
   // If it's already an emoji or a URL, return as is
