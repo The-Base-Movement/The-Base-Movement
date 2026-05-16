@@ -164,8 +164,8 @@ class AdminService {
     return memberService.getMembersPaginated(page, pageSize, searchTerm, registrationSource)
   }
 
-  async searchMembers(query: string): Promise<Member[]> {
-    return memberService.searchMembers(query)
+  async searchMembers(query: string, searchType: 'name' | 'id' | 'phone' = 'name'): Promise<Member[]> {
+    return memberService.searchMembers(query, searchType)
   }
 
   async getAdministrators(): Promise<AdminUser[]> {
@@ -1017,7 +1017,7 @@ class AdminService {
     return donationService.getPendingDonations()
   }
 
-  async getDonationStats() {
+  async getDonationStats(): Promise<{ totalRaised: number, totalDonors: number, recentGrowth: string }> {
     return donationService.getDonationStats()
   }
 
@@ -1082,7 +1082,12 @@ class AdminService {
     }
 
     const admin = data as unknown as DBAdminResponse;
-    const userProfile = Array.isArray(admin.users) ? admin.users[0] : admin.users;
+    const userProfile = (Array.isArray(admin.users) ? admin.users[0] : admin.users) as { 
+      full_name: string; 
+      email: string; 
+      phone_number: string; 
+      avatar_url: string; 
+    } | null;
 
     // Map database JSON permissions to the AdminPermission[] format
     const dbPermissions = admin.permissions || {};

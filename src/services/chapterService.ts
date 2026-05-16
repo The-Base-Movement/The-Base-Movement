@@ -39,6 +39,7 @@ class ChapterService {
       .from('chapters')
       .select(`
         *,
+        countries(flag_url),
         leadership:chapter_leaders(*),
         activities:chapter_activities(*)
       `)
@@ -49,33 +50,38 @@ class ChapterService {
       return []
     }
 
-    return data.map((c) => ({
-      id: c.id,
-      name: c.name,
-      city_or_region: c.city_or_region,
-      country: c.country || 'Ghana',
-      leader_name: c.leader_name || 'Unassigned',
-      leader_id: c.leader_id || undefined,
-      member_count: c.member_count || 0,
-      status: c.status,
-      region: c.region || undefined,
-      description: c.description || undefined,
-      details_url: c.details_url || undefined,
-      meeting_schedule: c.meeting_schedule || undefined,
-      local_focus: c.local_focus || undefined,
-      email: c.email || undefined,
-      phone_number: c.phone_number || undefined,
-      leadership: c.leadership?.map((l: ChapterLeaderRow): ChapterLeader => ({
-        id: l.id,
-        name: l.name,
-        role: l.role,
-        imageUrl: l.image_url || undefined
-      })),
-      activities: c.activities?.map((a: ChapterActivityRow): ChapterActivity => ({
-        id: a.id,
-        title: a.title,
-        description: a.description || undefined,
-        type: a.type,
+    return (data || []).map((c) => {
+      // Supabase join on countries might return an array or object depending on schema
+      const countryData = Array.isArray(c.countries) ? c.countries[0] : c.countries;
+      
+      return {
+        id: c.id || '',
+        name: c.name || 'Unknown Chapter',
+        city_or_region: c.city_or_region || 'Unknown Location',
+        country: c.country || 'Ghana',
+        flag_url: countryData?.flag_url || undefined,
+        leader_name: c.leader_name || 'Unassigned',
+        leader_id: c.leader_id || undefined,
+        member_count: c.member_count || 0,
+        status: c.status || 'Pending',
+        region: c.region || undefined,
+        description: c.description || undefined,
+        details_url: c.details_url || undefined,
+        meeting_schedule: c.meeting_schedule || undefined,
+        local_focus: c.local_focus || undefined,
+        email: c.email || undefined,
+        phone_number: c.phone_number || undefined,
+        leadership: (c.leadership as unknown as ChapterLeaderRow[])?.map((l: ChapterLeaderRow): ChapterLeader => ({
+          id: l.id,
+          name: l.name,
+          role: l.role,
+          imageUrl: l.image_url || undefined
+        })) || [],
+        activities: (c.activities as unknown as ChapterActivityRow[])?.map((a: ChapterActivityRow): ChapterActivity => ({
+          id: a.id,
+          title: a.title,
+          description: a.description || undefined,
+          type: a.type,
         activityDate: a.activity_date
       }))
     }))
@@ -86,6 +92,7 @@ class ChapterService {
       .from('chapters')
       .select(`
         *,
+        countries(flag_url),
         leadership:chapter_leaders(*),
         activities:chapter_activities(*)
       `)
@@ -102,6 +109,7 @@ class ChapterService {
       name: data.name,
       city_or_region: data.city_or_region,
       country: data.country || 'Ghana',
+      flag_url: data.countries?.flag_url,
       leader_name: data.leader_name || 'Unassigned',
       member_count: data.member_count || 0,
       status: data.status,

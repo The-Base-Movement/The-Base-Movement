@@ -4,11 +4,12 @@ import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
-import { supabase } from '@/lib/supabase'
 import { useBranding } from '@/hooks/useBranding'
+import { useAuth } from '@/context/AuthContext'
 
 export default function DashboardLayout() {
   const { settings } = useBranding()
+  const { session } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
@@ -24,32 +25,31 @@ export default function DashboardLayout() {
   const [notifications, setNotifications] = useState<import('@/types/admin').Notification[]>([])
   const [myChapterLink, setMyChapterLink] = useState<{ to: string; icon: string } | null>(null)
 
-  const checkChapterRole = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user) return
-      const chapters = await adminService.getChapters()
-
-      // Leader takes priority
-      const leaderChapter = chapters.find(c => c.leader_id === session.user.id)
-      if (leaderChapter) {
-        setMyChapterLink({ to: `/dashboard/chapter-hub/${leaderChapter.id}`, icon: 'manage_accounts' })
-        return
-      }
-
-      // Regular member — check DB directly (null = never joined)
-      const dbChapter = await adminService.getUserChapter(session.user.id)
-      if (dbChapter) {
-        const matched = chapters.find(c => c.name.toLowerCase() === dbChapter.toLowerCase())
-        if (matched) {
-          const slug = matched.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
-          setMyChapterLink({ to: `/dashboard/chapters/${slug}`, icon: 'group' })
-        }
-      }
-    } catch { /* non-critical */ }
-  }
-
   useEffect(() => {
+    const checkChapterRole = async () => {
+      try {
+        if (!session?.user) return
+        const chapters = await adminService.getChapters()
+
+        // Leader takes priority
+        const leaderChapter = chapters.find(c => c.leader_id === session.user.id)
+        if (leaderChapter) {
+          setMyChapterLink({ to: `/dashboard/chapter-hub/${leaderChapter.id}`, icon: 'manage_accounts' })
+          return
+        }
+
+        // Regular member — check DB directly (null = never joined)
+        const dbChapter = await adminService.getUserChapter(session.user.id)
+        if (dbChapter) {
+          const matched = chapters.find(c => c.name.toLowerCase() === dbChapter.toLowerCase())
+          if (matched) {
+            const slug = matched.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+            setMyChapterLink({ to: `/dashboard/chapters/${slug}`, icon: 'group' })
+          }
+        }
+      } catch { /* non-critical */ }
+    }
+
     const readProfile = async () => {
       // 1. Try to get the specific member profile from DB first (via regNo in storage)
       const storedRegNo = localStorage.getItem('userRegNo')
@@ -102,7 +102,7 @@ export default function DashboardLayout() {
 
     window.addEventListener('storage', readProfile)
     return () => window.removeEventListener('storage', readProfile)
-  }, [])
+  }, [session])
 
   // Close sidebar on route change
   useEffect(() => {

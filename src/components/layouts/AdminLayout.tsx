@@ -1,19 +1,15 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-
 import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
-import { supabase } from '@/lib/supabase'
-import type { GlobalSearchResult } from '@/types/admin'
 import { useBranding } from '@/hooks/useBranding'
-import type { AdminUser } from '@/types/admin'
-
-
-
+import { useAuth } from '@/context/AuthContext'
+import type { GlobalSearchResult, AdminUser, Notification } from '@/types/admin'
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const { settings } = useBranding()
+  const { session } = useAuth()
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     'Overview': true,
@@ -28,6 +24,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const [user, setUser] = useState<AdminUser | null>(adminService.getCurrentUser())
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const [pendingVerificationsCount, setPendingVerificationsCount] = useState<number>(0)
   const [pendingDonationsCount, setPendingDonationsCount] = useState<number>(0)
 
@@ -59,8 +58,15 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     }
 
     applyDensity()
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth)
+    }
     window.addEventListener('admin_density_changed', applyDensity)
-    return () => window.removeEventListener('admin_density_changed', applyDensity)
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('admin_density_changed', applyDensity)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   useEffect(() => {
@@ -71,8 +77,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       } else {
         setUser(currentUser)
         
-        // Resolve avatar from auth session
-        const { data: { session } } = await supabase.auth.getSession()
+        // Resolve avatar from auth session (using the one from AuthContext if available)
         const sessionAvatar = session?.user?.user_metadata?.avatar_url || null
         setAvatarUrl(currentUser.avatarUrl || sessionAvatar || null)
 
@@ -83,7 +88,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             adminService.getPendingVerifications(),
             donationService.getPendingDonations()
           ])
-          setUnreadCount(notes.filter(n => !n.is_read).length)
+          setNotifications(notes)
+          setUnreadCount(notes.filter((n: Notification) => !n.is_read).length)
           setPendingVerificationsCount(pendingVer.length)
           setPendingDonationsCount(pendingDon.length)
         } catch (err) {
@@ -92,7 +98,30 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       }
     }
     init()
-  }, [navigate])
+  }, [navigate, session])
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      const success = await adminService.markNotificationRead(id)
+      if (success) {
+        setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+        setUnreadCount(prev => Math.max(0, prev - 1))
+      }
+    } catch (err) {
+      console.error("Failed to mark notification as read:", err)
+    }
+  }
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      const unreadIds = notifications.filter(n => !n.is_read).map(n => n.id)
+      await Promise.all(unreadIds.map(id => adminService.markNotificationRead(id)))
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+      setUnreadCount(0)
+    } catch (err) {
+      console.error("Failed to mark all as read:", err)
+    }
+  }
 
   // Global Search Logic
   useEffect(() => {
@@ -198,8 +227,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     ...group,
     items: group.items.filter(item => {
       if (!item.permission) return true;
-      // @ts-expect-error type assertion
-      return adminService.can(item.permission.action, item.permission.resource);
+      return adminService.can(item.permission.action as any, item.permission.resource as any);
     })
   })).filter(group => group.items.length > 0)
 
@@ -209,13 +237,11 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   }
 
   const handleLogout = () => {
-    // Basic logout logic
     navigate('/admin-login')
   }
 
   return (
     <div className="h-screen bg-[#f1f5ee] font-meta text-on-surface flex overflow-hidden">
-      {/* Mobile Sidebar Overlay */}
       <div 
         className={cn(
           "fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden",
@@ -224,13 +250,11 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
         onClick={() => setIsSidebarOpen(false)}
       />
 
-      {/* Sidebar */}
       <aside className={cn(
         "fixed inset-y-0 left-0 z-50 flex flex-col bg-[#0f1310] text-white transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 border-r border-black",
         isSidebarOpen ? "translate-x-0 w-[220px]" : "-translate-x-full lg:w-0 lg:translate-x-0"
       )}>
         <div className="h-full flex flex-col">
-          {/* Logo Section */}
           <div className={cn(
             "h-16 flex items-center border-b border-white/[0.08] mb-3 overflow-hidden transition-all duration-300",
             isSidebarOpen ? "px-[18px]" : "px-5"
@@ -253,7 +277,6 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             </Link>
           </div>
           
-          {/* View Site Action */}
           <div className={cn("px-3 mb-2 transition-all duration-300", isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden")}>
             <Link 
               to="/" 
@@ -264,16 +287,12 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             </Link>
           </div>
 
-
-          {/* Navigation */}
           <nav className="flex-1 py-4 px-3 space-y-4 overflow-y-auto scrollbar-hide">
-
             {filteredNavGroups.map((group) => {
               const isOpen = openGroups[group.label]
 
               return (
                 <div key={group.label} className="space-y-1">
-                  {/* Group Header */}
                   <button
                     onClick={() => toggleGroup(group.label)}
                     className={cn(
@@ -516,21 +535,109 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
 
             {/* Notification bell */}
-            <button className="ico" style={{ width: 32, height: 32, position: 'relative' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>notifications</span>
-              {unreadCount > 0 && (
-                <span style={{
-                  position: 'absolute', top: 3, right: 3,
-                  minWidth: 14, height: 14, padding: '0 3px',
-                  background: 'hsl(var(--destructive))', color: '#fff',
-                  borderRadius: 99, border: '1.5px solid #fff',
-                  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 8,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
+            <div style={{ position: 'relative' }}>
+              <button 
+                className="ico" 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                style={{ width: 32, height: 32, position: 'relative' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>notifications</span>
+                {unreadCount > 0 && (
+                  <span style={{
+                    position: 'absolute', top: 3, right: 3,
+                    minWidth: 14, height: 14, padding: '0 3px',
+                    background: 'hsl(var(--destructive))', color: '#fff',
+                    borderRadius: 99, border: '1.5px solid #fff',
+                    fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 8,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown */}
+              {isNotificationsOpen && (
+                <>
+                  <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setIsNotificationsOpen(false)} />
+                  <div 
+                    className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0"
+                    style={{
+                      top: windowWidth < 640 ? 80 : 'calc(100% + 12px)',
+                      width: windowWidth < 640 ? 'auto' : 320,
+                      background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 8,
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.1)', zIndex: 50, overflow: 'hidden',
+                      display: 'flex', flexDirection: 'column'
+                    }}
+                  >
+                    <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'hsl(var(--container-low))' }}>
+                      <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Alert center</span>
+                      {unreadCount > 0 && (
+                        <button 
+                          onClick={handleMarkAllAsRead}
+                          style={{ background: 'none', border: 'none', color: 'hsl(var(--primary))', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                        >
+                          Clear all
+                        </button>
+                      )}
+                    </div>
+                    
+                    <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+                      {notifications.length > 0 ? (
+                        notifications.map(note => (
+                          <div 
+                            key={note.id}
+                            onClick={() => !note.is_read && handleMarkAsRead(note.id)}
+                            style={{ 
+                              padding: '14px 18px', 
+                              borderBottom: '1px solid hsl(var(--border))', 
+                              background: note.is_read ? 'transparent' : 'rgba(206, 17, 38, 0.03)',
+                              cursor: note.is_read ? 'default' : 'pointer',
+                              display: 'flex',
+                              gap: 12
+                            }}
+                          >
+                            <div style={{ 
+                              width: 32, height: 32, borderRadius: 6, 
+                              background: note.is_read ? 'hsl(var(--container-low))' : 'hsl(var(--destructive))', 
+                              color: note.is_read ? 'hsl(var(--on-surface-muted))' : '#fff',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 
+                            }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                                {note.type === 'Alert' ? 'warning' : note.type === 'Action' ? 'rocket_launch' : note.type === 'Info' ? 'psychology' : 'notifications'}
+                              </span>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11.5, color: 'hsl(var(--on-surface))', marginBottom: 2 }}>{note.title}</div>
+                              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.4, marginBottom: 6 }}>{note.message}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', opacity: 0.6 }}>
+                                  {new Date(note.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                                {!note.is_read && <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'hsl(var(--destructive))' }} />}
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--on-surface-muted))', opacity: 0.2 }}>notifications_off</span>
+                          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginTop: 12 }}>No strategic alerts</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <Link 
+                      to="/admin/notifications" 
+                      onClick={() => setIsNotificationsOpen(false)}
+                      style={{ padding: '12px', textAlign: 'center', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', textDecoration: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}
+                    >
+                      View all intelligence
+                    </Link>
+                  </div>
+                </>
               )}
-            </button>
+            </div>
 
             <div style={{ width: 1, height: 20, background: 'hsl(var(--border))', margin: '0 4px' }} />
 

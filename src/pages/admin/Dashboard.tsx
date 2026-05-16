@@ -342,7 +342,7 @@ export default function AdminDashboard() {
             </div>
             
             <div className="field">
-              <span className="lbl">Headline</span>
+              <label htmlFor="input-b97fc0" className="lbl">Headline</label>
               <input name="name-b97fc0" id="input-b97fc0" 
                 className="title" 
                 value={broadcast.title}
@@ -352,7 +352,7 @@ export default function AdminDashboard() {
             </div>
             
             <div className="field">
-              <span className="lbl">Message</span>
+              <label htmlFor="textarea-daf71f" className="lbl">Message</label>
               <textarea name="name-daf71f" id="textarea-daf71f" 
                 value={broadcast.content}
                 onChange={(e) => setBroadcast({ ...broadcast, content: e.target.value })}
@@ -362,7 +362,7 @@ export default function AdminDashboard() {
             </div>
             
             <div className="field">
-              <span className="lbl">Target Audience</span>
+              <label htmlFor="select-50d2d6" className="lbl">Target Audience</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
                 <select name="name-50d2d6" id="select-50d2d6" 
                   className="reg" 
@@ -381,21 +381,25 @@ export default function AdminDashboard() {
                 </select>
                 
                 {broadcast.target_type === 'REGION' && (
-                  <select name="name-e1e9ef" id="select-e1e9ef" 
-                    className="reg"
-                    value={broadcast.target_value}
-                    onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                    style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))' }}
-                  >
-                    <option value="ALL">Select Region...</option>
-                    {regions.map(r => (
-                      <option key={r.id} value={r.name}>{r.name}</option>
-                    ))}
-                  </select>
+                  <>
+                    <label htmlFor="select-e1e9ef" style={{ display: 'none' }}>Target Region</label>
+                    <select name="name-e1e9ef" id="select-e1e9ef" 
+                      className="reg"
+                      value={broadcast.target_value}
+                      onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
+                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))' }}
+                    >
+                      <option value="ALL">Select Region...</option>
+                      {regions.map(r => (
+                        <option key={r.id} value={r.name}>{r.name}</option>
+                      ))}
+                    </select>
+                  </>
                 )}
 
                 {broadcast.target_type === 'CONSTITUENCY' && (
                   <div style={{ display: 'flex', gap: '8px' }}>
+                    <label htmlFor="select-dac9b9" style={{ display: 'none' }}>Filter Region</label>
                     <select name="selectedRegionId || ''" id="select-dac9b9" 
                       className="reg"
                       value={selectedRegionId || ''}
@@ -412,6 +416,7 @@ export default function AdminDashboard() {
                       ))}
                     </select>
 
+                    <label htmlFor="select-81066f" style={{ display: 'none' }}>Target Constituency</label>
                     <select name="name-81066f" id="select-81066f" 
                       className="reg"
                       value={broadcast.target_value}
@@ -430,23 +435,27 @@ export default function AdminDashboard() {
                 )}
 
                 {broadcast.target_type === 'DIASPORA' && (
-                  <select name="name-ab1a39" id="select-ab1a39" 
-                    className="reg"
-                    value={broadcast.target_value}
-                    onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                    style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))' }}
-                  >
-                    <option value="ALL">All Diaspora Chapters</option>
-                    {diasporaChapters.map(c => (
-                      <option key={c.id} value={c.name}>{c.name} ({c.country})</option>
-                    ))}
-                  </select>
+                  <>
+                    <label htmlFor="select-ab1a39" style={{ display: 'none' }}>Target Diaspora Chapter</label>
+                    <select name="name-ab1a39" id="select-ab1a39" 
+                      className="reg"
+                      value={broadcast.target_value}
+                      onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
+                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))' }}
+                    >
+                      <option value="ALL">All Diaspora Chapters</option>
+                      {diasporaChapters.map(c => (
+                        <option key={c.id} value={c.name}>{c.name} ({c.country})</option>
+                      ))}
+                    </select>
+                  </>
                 )}
               </div>
             </div>
 
             <div className="toolbar">
               <div className="left">
+                <label htmlFor="select-b728c8" style={{ display: 'none' }}>Broadcast Priority</label>
                 <select name="name-b728c8" id="select-b728c8" 
                   className="reg"
                   value={broadcast.priority}
@@ -458,6 +467,7 @@ export default function AdminDashboard() {
                   <option value="Urgent">URGENT</option>
                 </select>
                 <div style={{ width: '1px', height: '12px', background: 'hsl(var(--border))', margin: '0 8px' }} />
+                <label htmlFor="select-0f0d2a" style={{ display: 'none' }}>Communication Channel</label>
                 <select name="name-0f0d2a" id="select-0f0d2a" 
                   className="reg"
                   value={broadcast.channel}
