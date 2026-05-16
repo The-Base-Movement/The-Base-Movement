@@ -877,9 +877,9 @@ export default function ChaptersManagement() {
                       ID: {chapter.id?.slice(0, 8) || 'N/A'}
                     </div>
                     <h4 style={{ margin: 0, fontSize: 13, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", color: chapter.status === 'Active' ? '#000' : 'hsl(var(--on-surface))', lineHeight: 1.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                      {chapter.flag_url && (
+                      {(chapter.flag_url || (chapter.country !== 'Ghana' ? chapter.country : '')) && (
                         <span style={{ marginRight: 6, display: 'inline-flex', alignItems: 'center' }}>
-                          <CountryBadge flag={getCountryFlag(String(chapter.flag_url))} />
+                          <CountryBadge flag={getCountryFlag(String(chapter.flag_url || chapter.country))} />
                         </span>
                       )}
                       {chapter.name}
