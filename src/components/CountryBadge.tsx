@@ -1,5 +1,4 @@
 import React from 'react'
-import { cn } from '@/lib/utils'
 
 interface CountryBadgeProps {
   flag: string
@@ -7,42 +6,33 @@ interface CountryBadgeProps {
   alt?: string
 }
 
-export const CountryBadge: React.FC<CountryBadgeProps> = ({ flag, className, alt = 'flag' }) => {
+function isoToEmoji(code: string): string {
+  return code.toUpperCase().split('').map(c => String.fromCodePoint(127397 + c.charCodeAt(0))).join('')
+}
+
+export const CountryBadge: React.FC<CountryBadgeProps> = ({ flag, alt = 'flag' }) => {
   if (!flag) return null
 
-  const isUrl = flag.startsWith('http') || flag.includes('flagcdn.com')
+  const isUrl = flag.startsWith('http') || flag.startsWith('data:')
   const isIsoCode = flag.length === 2 && /^[A-Za-z]{2}$/.test(flag)
 
-  // If it's a 2-letter ISO code, use flag-icons CSS classes
-  if (isIsoCode) {
-    return (
-      <span 
-        className={cn("fi", `fi-${flag.toLowerCase()}`, "inline-block w-[1.1em] h-[0.8em] align-middle", className)} 
-        title={alt}
-        style={{ borderRadius: 1 }}
-      />
-    )
-  }
-
-  // If it's a URL
   if (isUrl) {
     return (
-      <img 
-        src={flag} 
-        className={cn("h-[1.1em] w-auto inline-block align-middle rounded-[1px] shadow-sm border border-black/5", className)} 
+      <img
+        src={flag}
+        style={{ height: '1.1em', width: 'auto', display: 'inline-block', verticalAlign: 'middle', borderRadius: 1 }}
         alt={alt}
         loading="lazy"
-        onError={(e) => {
-          e.currentTarget.style.display = 'none'
-        }}
+        onError={(e) => { e.currentTarget.style.display = 'none' }}
       />
     )
   }
 
-  // Otherwise assume it's an emoji
+  const emoji = isIsoCode ? isoToEmoji(flag) : flag
+
   return (
-    <span className={cn("inline-block align-middle text-[1.1em]", className)} role="img" aria-label={alt}>
-      {flag}
+    <span role="img" aria-label={alt} style={{ display: 'inline-block', verticalAlign: 'middle', fontSize: '1.1em', lineHeight: 1 }}>
+      {emoji}
     </span>
   )
 }

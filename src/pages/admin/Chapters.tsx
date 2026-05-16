@@ -10,8 +10,7 @@ import type { Member } from '@/types/admin'
 import { contentService } from '@/services/contentService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
-import { getCountryFlag } from '@/lib/utils'
-import { CountryBadge } from '@/components/CountryBadge'
+import { getCountryFlag, getFlagImageUrl } from '@/lib/utils'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { supabase } from '@/lib/supabase'
 
@@ -877,11 +876,7 @@ export default function ChaptersManagement() {
                       ID: {chapter.id?.slice(0, 8) || 'N/A'}
                     </div>
                     <h4 style={{ margin: 0, fontSize: 13, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", color: chapter.status === 'Active' ? '#000' : 'hsl(var(--on-surface))', lineHeight: 1.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                      {chapter.flag_url && (
-                        <span style={{ marginRight: 6, display: 'inline-flex', alignItems: 'center' }}>
-                          <CountryBadge flag={getCountryFlag(String(chapter.flag_url))} />
-                        </span>
-                      )}
+                      {getFlagImageUrl(chapter.country) && <img src={getFlagImageUrl(chapter.country)} alt={chapter.country} style={{ marginRight: 6, height: 13, width: 'auto', verticalAlign: 'middle', borderRadius: 2, flexShrink: 0 }} />}
                       {chapter.name}
                     </h4>
                   </div>

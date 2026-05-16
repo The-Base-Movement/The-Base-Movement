@@ -10,7 +10,7 @@ import { ChaptersProvider } from '@/context/ChaptersContext'
 import { AuthProvider } from '@/context/AuthContext'
 import { routes } from './routes'
 import { Toaster as SonnerToaster } from 'sonner'
-import { Toaster } from './components/ui/toaster'
+import { Toaster } from './components/buttons/ui/toaster'
 import { useIsClient } from '@/hooks/useIsClient'
 
 

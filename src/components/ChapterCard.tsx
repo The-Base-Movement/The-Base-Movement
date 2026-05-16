@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { type Chapter } from '@/types/admin'
-import { getCountryFlag } from '@/lib/utils'
-import { CountryBadge } from '@/components/CountryBadge'
+import { getFlagImageUrl } from '@/lib/utils'
 
 interface ChapterCardProps {
   chapter: Chapter
@@ -29,8 +28,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
   const programsCount = Math.max(0, Math.floor(eventsCount / 3))
 
   const regionLabel = chapter.region || chapter.city_or_region
-  const rawFlag = chapter.flag_url || ''
-  const flag = getCountryFlag(rawFlag)
+  const flagUrl = getFlagImageUrl(chapter.country)
   const slug = chapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
 
   const isUserChapter = userChapterName && chapter.name.toLowerCase() === userChapterName.toLowerCase()
@@ -65,10 +63,12 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
             whiteSpace: 'nowrap',
           }}>
             {chapter.name}
-            {flag && (
-              <span style={{ marginLeft: 6, display: 'inline-flex', alignItems: 'center' }}>
-                <CountryBadge flag={flag} alt={`${chapter.country} flag`} />
-              </span>
+            {flagUrl && (
+              <img
+                src={flagUrl}
+                alt={chapter.country}
+                style={{ marginLeft: 6, height: 13, width: 'auto', verticalAlign: 'middle', borderRadius: 2, display: 'inline-block' }}
+              />
             )}
           </h4>
           <div style={{
