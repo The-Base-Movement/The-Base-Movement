@@ -66,9 +66,8 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
           }}>
             {chapter.name}
             {flag && (
-              <span className="ml-1.5 inline-flex items-center">
+              <span style={{ marginLeft: 6, display: 'inline-flex', alignItems: 'center' }}>
                 <CountryBadge flag={flag} alt={`${chapter.country} flag`} />
-                <span className="text-[8px] opacity-20 ml-1">{rawFlag}</span>
               </span>
             )}
           </h4>
