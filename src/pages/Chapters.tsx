@@ -265,7 +265,7 @@ export default function Chapters() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
                 {paginatedChapters.map(chapter => (
-                  <ChapterCard key={chapter.id} chapter={chapter} countryFlags={countryFlags} userChapterName={userChapterName} />
+                  <ChapterCard key={chapter.id} chapter={chapter} userChapterName={userChapterName} />
                 ))}
               </div>
             )}
