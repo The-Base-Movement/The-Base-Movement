@@ -208,6 +208,10 @@ export default function ChapterHub() {
     setFocusInput('')
   }
 
+  const handleRemoveFocusTag = (tag: string) => {
+    setFocusTags(prev => prev.filter(t => t !== tag))
+  }
+
   const handleAddMeeting = async () => {
     if (!chapter || !meetTitle.trim() || !meetDate) { toast.error('Title and date are required.'); return }
     setIsSavingMeeting(true)
