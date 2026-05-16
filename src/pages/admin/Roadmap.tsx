@@ -5,8 +5,8 @@ import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const inputSt: React.CSSProperties = { width: '100%', height: 40, padding: '0 12px', border: '1px solid hsl(var(--border))', background: '#fff', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }
 const selectSt: React.CSSProperties = { ...inputSt, appearance: 'none' }
-const labelSt: React.CSSProperties = { fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }
-const pillBase: React.CSSProperties = { padding: '2px 10px', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', borderRadius: 4, fontFamily: "'Public Sans', sans-serif" }
+const labelSt: React.CSSProperties = { fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6 }
+const pillBase: React.CSSProperties = { padding: '2px 10px', fontSize: 9, fontWeight: 800, borderRadius: 4, fontFamily: "'Public Sans', sans-serif" }
 
 const statusStyle = (s: Milestone['status']): React.CSSProperties => {
   if (s === 'Completed') return { background: 'rgba(34,197,94,0.1)', color: 'hsl(var(--primary))', border: '1px solid rgba(34,197,94,0.2)' }
@@ -237,11 +237,11 @@ export default function RoadmapManagement() {
                 {/* Left */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
-                    <label style={labelSt}>Objective title</label>
+                    <label htmlFor="input-781ac1" style={labelSt}>Objective title</label>
                     <input aria-label="e.g. National Logistics Hub" name="name-781ac1" id="input-781ac1" required style={inputSt} placeholder="e.g. National Logistics Hub" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                   </div>
                   <div>
-                    <label style={labelSt}>Strategic category</label>
+                    <label htmlFor="select-1dd723" style={labelSt}>Strategic category</label>
                     <select name="name-1dd723" id="select-1dd723" style={selectSt} value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
                       <option>Mobilization</option>
                       <option>Infrastructure</option>
@@ -251,18 +251,18 @@ export default function RoadmapManagement() {
                     </select>
                   </div>
                   <div>
-                    <label style={labelSt}>Target date</label>
+                    <label htmlFor="input-984beb" style={labelSt}>Target date</label>
                     <input name="name-984beb" id="input-984beb" required type="date" style={inputSt} value={formData.target_date} onChange={e => setFormData({ ...formData, target_date: e.target.value })} />
                   </div>
                   <div>
-                    <label style={labelSt}>Target member count</label>
+                    <label htmlFor="input-d35a6f" style={labelSt}>Target member count</label>
                     <input aria-label="0" name="name-d35a6f" id="input-d35a6f" type="number" style={inputSt} placeholder="0" value={formData.target_members} onChange={e => setFormData({ ...formData, target_members: parseInt(e.target.value) || 0 })} />
                   </div>
                 </div>
                 {/* Right */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
-                    <label style={labelSt}>Status</label>
+                    <label htmlFor="select-170815" style={labelSt}>Status</label>
                     <select name="name-170815" id="select-170815" style={selectSt} value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value as Milestone['status'] })}>
                       <option>Upcoming</option>
                       <option>In Progress</option>
@@ -270,7 +270,7 @@ export default function RoadmapManagement() {
                     </select>
                   </div>
                   <div>
-                    <label style={labelSt}>Importance level</label>
+                    <label htmlFor="select-96c1d5" style={labelSt}>Importance level</label>
                     <select name="name-96c1d5" id="select-96c1d5" style={selectSt} value={formData.importance_level} onChange={e => setFormData({ ...formData, importance_level: e.target.value as Milestone['importance_level'] })}>
                       <option>Normal</option>
                       <option>High</option>
@@ -278,7 +278,7 @@ export default function RoadmapManagement() {
                     </select>
                   </div>
                   <div>
-                    <label style={labelSt}>Objective description</label>
+                    <label htmlFor="textarea-90ba7c" style={labelSt}>Objective description</label>
                     <textarea aria-label="Detailed breakdown of the milestone…" name="name-90ba7c" id="textarea-90ba7c" required rows={5} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.6 }} placeholder="Detailed breakdown of the milestone…" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                   </div>
                 </div>

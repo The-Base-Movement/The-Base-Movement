@@ -61,7 +61,7 @@ export function ProductFormDialog({
         <div style={{ padding: 24, overflowY: 'auto', flex: 1 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <label style={labelSt}>Product Name</label>
+              <label htmlFor="input-c63960" style={labelSt}>Product Name</label>
               <input name="name-c63960" id="input-c63960" 
                 style={inputSt}
                 value={selectedProduct?.name || ''} 
@@ -72,7 +72,7 @@ export function ProductFormDialog({
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <label style={labelSt}>Category</label>
+                <label htmlFor="select-4461bf" style={labelSt}>Category</label>
                 <select name="name-4461bf" id="select-4461bf" 
                   style={inputSt}
                   value={selectedProduct?.category || ''} 
@@ -87,7 +87,7 @@ export function ProductFormDialog({
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <label style={labelSt}>Price</label>
+                  <label htmlFor="input-88b8ac" style={labelSt}>Price</label>
                   <input name="name-88b8ac" id="input-88b8ac" 
                     style={inputSt}
                     value={selectedProduct?.price || ''} 
@@ -96,7 +96,7 @@ export function ProductFormDialog({
                   />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <label style={labelSt}>Stock</label>
+                  <label htmlFor="input-ce252a" style={labelSt}>Stock</label>
                   <input name="name-ce252a" id="input-ce252a" 
                     style={inputSt}
                     type="number"
@@ -108,7 +108,7 @@ export function ProductFormDialog({
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <label style={labelSt}>Short Summary</label>
+              <label htmlFor="textarea-820e70" style={labelSt}>Short Summary</label>
               <textarea name="name-820e70" id="textarea-820e70" 
                 style={{ ...inputSt, height: 80, padding: 12, resize: 'none' }}
                 value={selectedProduct?.description || ''} 
@@ -118,7 +118,7 @@ export function ProductFormDialog({
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <label style={labelSt}>Full Details</label>
+              <label htmlFor="textarea-a45e1f" style={labelSt}>Full Details</label>
               <textarea name="name-a45e1f" id="textarea-a45e1f" 
                 style={{ ...inputSt, height: 120, padding: 12, resize: 'vertical' }}
                 value={selectedProduct?.longDescription || ''} 
@@ -128,7 +128,7 @@ export function ProductFormDialog({
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <label style={labelSt}>Product Gallery</label>
+              <label htmlFor="file-upload-input" style={labelSt}>Product Gallery</label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
                 {(selectedProduct?.images || []).map((url, idx) => (
                   <div key={url} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: 4, overflow: 'hidden', border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
@@ -141,14 +141,14 @@ export function ProductFormDialog({
                     </button>
                   </div>
                 ))}
-                <label style={{ aspectRatio: '1/1', borderRadius: 4, border: '1px dashed hsl(var(--border))', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'hsl(var(--container-low))' }}>
-                  <input type="file" style={{ display: 'none' }} accept="image/*" onChange={handleImageUpload} disabled={isUploadingImage} />
+                <label htmlFor="file-upload-input" style={{ aspectRatio: '1/1', borderRadius: 4, border: '1px dashed hsl(var(--border))', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'hsl(var(--container-low))' }}>
+                  <input type="file" id="file-upload-input" style={{ display: 'none' }} accept="image/*" onChange={handleImageUpload} disabled={isUploadingImage} />
                   {isUploadingImage ? (
                     <span className="material-symbols-outlined animate-spin" style={{ color: 'hsl(var(--on-surface-muted))' }}>sync</span>
                   ) : (
                     <>
                       <span className="material-symbols-outlined" style={{ color: 'hsl(var(--on-surface-muted))' }}>add</span>
-                      <span style={{ fontSize: 8, fontWeight: 900, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Add image</span>
+                      <span style={{ fontSize: 8, fontWeight: 900, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Add image</span>
                     </>
                   )}
                 </label>
@@ -156,7 +156,7 @@ export function ProductFormDialog({
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <label style={labelSt}>Icon Fallback</label>
+              <label htmlFor="input-24e641" style={labelSt}>Icon Fallback</label>
               <input name="name-24e641" id="input-24e641" 
                 style={{ ...inputSt, textAlign: 'center', width: 80 }}
                 value={selectedProduct?.image?.startsWith('http') ? '' : (selectedProduct?.image || '')} 

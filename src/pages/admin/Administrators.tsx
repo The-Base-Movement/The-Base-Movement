@@ -100,7 +100,7 @@ export default function Administrators() {
           </p>
         </div>
         <div className="actions">
-          <button className="btn btn-primary">
+          <button id="btn-provision-credentials" className="btn btn-primary">
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>person_add</span>
             Provision Credentials
           </button>
@@ -119,6 +119,7 @@ export default function Administrators() {
       <div className="panel">
         <div style={{ padding: '14px 20px' }}>
           <div style={{ position: 'relative', maxWidth: 400 }}>
+            <label htmlFor="input-2deddd" style={{ display: 'none' }}>Filter by name, ID or role…</label>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
             <input aria-label="Filter by name, ID or role…" name="searchTerm" id="input-2deddd"
               type="text"
@@ -172,7 +173,7 @@ export default function Administrators() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div style={avatarSt(admin.role)}>
                         {admin.avatarUrl
-                          ? <img src={admin.avatarUrl} alt={admin.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                          ? <img src={admin.avatarUrl} alt={admin.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" crossOrigin="anonymous" />
                           : admin.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div>
@@ -271,7 +272,7 @@ export default function Administrators() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ ...avatarSt(admin.role), width: 44, height: 44, fontSize: 13 }}>
                   {admin.avatarUrl
-                    ? <img src={admin.avatarUrl} alt={admin.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                    ? <img src={admin.avatarUrl} alt={admin.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" crossOrigin="anonymous" />
                     : admin.name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div>
@@ -357,7 +358,7 @@ export default function Administrators() {
                   <h3 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Administrative Audit Vault</h3>
                   <p style={{ margin: '4px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontWeight: 700 }}>Activity logs for {activeAdminName}</p>
                 </div>
-                <button onClick={() => setIsLogsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center' }}>
+                <button aria-label="Close activity logs" onClick={() => setIsLogsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center' }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
                 </button>
               </div>

@@ -197,6 +197,7 @@ export default function FinancialAudit() {
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search by name, reg. no., reference, phone, or amount…"
             style={{ ...fieldStyle, paddingLeft: 32 }}
+            aria-label="Search by name, reference, or phone"
           />
         </div>
         <div style={{ display: 'flex', border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden', overflowX: 'auto', flexShrink: 0 }}>
@@ -267,7 +268,7 @@ export default function FinancialAudit() {
                           borderBottom: '1px solid hsl(var(--border))',
                           width: i === 0 ? 32 : undefined,
                         }}>
-                          {i === 0 ? <input name="name-c0b592" id="input-c0b592" type="checkbox" /> : h}
+                          {i === 0 ? <input name="select-all-donations" id="input-c0b592" type="checkbox" aria-label="Select all donations" /> : h}
                         </th>
                       ))}
                     </tr>
@@ -290,7 +291,7 @@ export default function FinancialAudit() {
                           onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '' }}
                         >
                           <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
-                            <input name="name-72896f" id="input-72896f" type="checkbox" checked={isActive} readOnly />
+                            <input name={`select-donation-${d.id}`} id={`input-select-${d.id}`} type="checkbox" checked={isActive} readOnly aria-label={`Select donation from ${d.fullName}`} />
                           </td>
                           <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -433,7 +434,7 @@ export default function FinancialAudit() {
 
               {/* Internal note */}
               <div style={{ padding: '0 20px 18px' }}>
-                <span style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6, marginTop: 14 }}>Internal note (optional)</span>
+                <label htmlFor="textarea-825477" style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6, marginTop: 14 }}>Internal note (optional)</label>
                 <textarea name="internalNote" id="textarea-825477"
                   value={internalNote}
                   onChange={e => setInternalNote(e.target.value)}
@@ -486,6 +487,7 @@ export default function FinancialAudit() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--border))' }}>image</span>
                 <button
+                  aria-label="Close receipt viewer"
                   onClick={() => setSelectedReceipt(null)}
                   style={{ width: 32, height: 32, borderRadius: 4, background: '#0f1310', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
@@ -496,6 +498,7 @@ export default function FinancialAudit() {
             <div style={{ padding: 32, background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
               <img src={selectedReceipt} alt="Transaction Receipt"
                 style={{ maxHeight: '60vh', objectFit: 'contain', boxShadow: '0 4px 20px rgba(0,0,0,.1)', borderRadius: 4, border: '1px solid hsl(var(--border))' }}
+                crossOrigin="anonymous"
               />
             </div>
             <div style={{ padding: '14px 20px', display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid hsl(var(--border))', background: '#fff' }}>

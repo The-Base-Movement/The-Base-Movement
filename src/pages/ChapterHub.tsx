@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import { chapterService } from '@/services/chapterService'
 import type { Chapter } from '@/types/admin'
+import { useAuth } from '@/context/AuthContext'
 
 interface ChapterMember {
   authId: string
@@ -69,6 +70,7 @@ const inp: CSSProperties = {
 
 export default function ChapterHub() {
   const { chapterId } = useParams<{ chapterId?: string }>()
+  const { session } = useAuth()
   const [chapter, setChapter] = useState<Chapter | null>(null)
   const [members, setMembers] = useState<ChapterMember[]>([])
   const [donations, setDonations] = useState<ChapterDonation[]>([])
@@ -104,7 +106,6 @@ export default function ChapterHub() {
 
   useEffect(() => {
     async function load() {
-      const { data: { session } } = await supabase.auth.getSession()
       if (!session?.user) { setIsLoading(false); return }
       const userId = session.user.id
 
@@ -165,7 +166,7 @@ export default function ChapterHub() {
       setIsLoading(false)
     }
     load()
-  }, [chapterId])
+  }, [chapterId, session])
 
   const activeCount = members.filter(m => m.status === 'Active' || m.status === 'Approved').length
   const pendingCount = members.filter(m => m.status === 'Pending').length

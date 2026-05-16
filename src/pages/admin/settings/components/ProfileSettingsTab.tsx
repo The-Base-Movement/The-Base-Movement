@@ -60,7 +60,7 @@ export function ProfileSettingsTab({
                 </div>
               )}
               {profileForm.avatarUrl ? (
-                <img src={profileForm.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                <img src={profileForm.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" crossOrigin="anonymous" />
               ) : (
                 <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>{initials}</span>
               )}
@@ -85,11 +85,11 @@ export function ProfileSettingsTab({
         {/* Form grid */}
         <div className="settings-form-grid">
           <div>
-            <label style={labelSt}>Full name</label>
+            <label htmlFor="input-1798f5" style={labelSt}>Full name</label>
             <input name="name-1798f5" id="input-1798f5" style={inputSt} value={profileForm.fullName} onChange={e => setProfileForm({ ...profileForm, fullName: e.target.value })} />
           </div>
           <div>
-            <label style={labelSt}>Email address</label>
+            <label htmlFor="input-44682c" style={labelSt}>Email address</label>
             <input name="name-44682c" id="input-44682c" style={{ ...inputSt, opacity: 0.5, cursor: 'not-allowed' }} value={profileForm.email} disabled />
           </div>
           <div>
@@ -99,7 +99,7 @@ export function ProfileSettingsTab({
             </div>
           </div>
           <div>
-            <label style={labelSt}>Phone number</label>
+            <label htmlFor="input-d429d4" style={labelSt}>Phone number</label>
             <input name="name-d429d4" id="input-d429d4" style={inputSt} value={profileForm.phone} onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })} placeholder="+233 XX XXX XXXX" />
           </div>
         </div>

@@ -53,9 +53,15 @@ export function SystemPreferencesTab({ interfaceDensity, setInterfaceDensity, to
                   <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', margin: 0 }}>{item.label}</p>
                   <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0' }}>{item.desc}</p>
                 </div>
-                <div style={{ width: 36, height: 20, background: 'hsl(var(--primary))', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 3px', cursor: 'pointer', flexShrink: 0 }}>
+                <button 
+                  type="button"
+                  role="switch"
+                  aria-checked="true"
+                  aria-label={`Toggle ${item.label}`}
+                  style={{ width: 36, height: 20, background: 'hsl(var(--primary))', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 3px', cursor: 'pointer', border: 'none', outline: 'none', flexShrink: 0 }}
+                >
                   <div style={{ width: 14, height: 14, background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
-                </div>
+                </button>
               </div>
             ))}
           </div>

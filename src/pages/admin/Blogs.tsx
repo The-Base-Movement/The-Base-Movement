@@ -31,9 +31,9 @@ const selectSt: React.CSSProperties = {
 }
 
 const labelSt: React.CSSProperties = {
-  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10,
+  fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11,
   color: 'hsl(var(--on-surface-muted))', display: 'block',
-  textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8,
+  marginBottom: 8,
 }
 
 const metaSt: React.CSSProperties = {
@@ -71,6 +71,8 @@ export default function AdminBlogs() {
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
+  const [showMobileFilter, setShowMobileFilter] = useState(false)
   const [showMediaPanel, setShowMediaPanel] = useState(true)
   const [mediaSearch, setMediaSearch] = useState('')
   const [showIntelPanel, setShowIntelPanel] = useState(true)
@@ -157,6 +159,11 @@ export default function AdminBlogs() {
 
   useEffect(() => { fetchMedia() }, [fetchMedia])
   useEffect(() => { fetchAuthors(); fetchPosts() }, [fetchAuthors, fetchPosts])
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth <= 640)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
 
   const handleEditPost = (post?: BlogPost) => {
     if (post) {
@@ -203,9 +210,9 @@ export default function AdminBlogs() {
         success = await adminService.createBlogPost(postData)
       }
       if (success) {
-        const label = formData.status === 'Published' ? 'Intelligence Authorized & Published'
-          : formData.status === 'Pending Verification' ? 'Submitted for Strategic Verification'
-          : 'Intelligence Saved as Draft'
+        const label = formData.status === 'Published' ? 'Intelligence authorized & published'
+          : formData.status === 'Pending Verification' ? 'Submitted for strategic verification'
+          : 'Intelligence saved as draft'
         toast.success(label, { description: `"${formData.title}" has been processed successfully.` })
         setCurrentView('list')
         fetchPosts()
@@ -264,7 +271,7 @@ export default function AdminBlogs() {
             <button onClick={() => setCurrentView('list')} className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))', background: 'none', border: 'none', cursor: 'pointer' }}>arrow_back</button>
             <div>
               <div className="crumbs" style={{ marginBottom: 2 }}>
-                <button onClick={() => setCurrentView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', fontWeight: 700, fontSize: 10, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Editorial</button>
+                <button onClick={() => setCurrentView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', fontWeight: 700, fontSize: 11, color: 'hsl(var(--primary))' }}>Editorial</button>
                 {' · '}{editingPost ? 'Refining intelligence' : 'Drafting dispatch'}
               </div>
               <h2 className="!text-sm !font-black !m-0" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -308,7 +315,7 @@ export default function AdminBlogs() {
               <div style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>photo_library</span>
-                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Library</span>
+                  <label htmlFor="select-2bbe02" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: 0, cursor: 'pointer' }}>Library</label>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', background: 'hsl(var(--border))', padding: '1px 5px', borderRadius: 10 }}>{mediaFiles.length}</span>
@@ -367,7 +374,7 @@ export default function AdminBlogs() {
                     <div key={i} style={{ position: 'relative', aspectRatio: '1', borderRadius: 4, overflow: 'hidden', border: `2px solid ${formData.imageUrl === url ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`, transition: 'border-color 0.15s' }}
                       onMouseEnter={e => { const actions = e.currentTarget.querySelector('.img-actions') as HTMLElement | null; if (actions) actions.style.opacity = '1' }}
                       onMouseLeave={e => { const actions = e.currentTarget.querySelector('.img-actions') as HTMLElement | null; if (actions) actions.style.opacity = '0' }}>
-                      <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt="" />
+                      <img src={url} crossOrigin="anonymous" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt="" />
                       <div className="img-actions" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, opacity: 0, transition: 'opacity 0.15s' }}>
                         <button
                           title="Set as cover image"
@@ -411,9 +418,10 @@ export default function AdminBlogs() {
                     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16, borderBottom: '1px solid hsl(var(--border))', paddingBottom: 20, marginBottom: 24 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'hsl(var(--primary))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, overflow: 'hidden', flexShrink: 0 }}>
-                          {formData.authorImage ? <img src={formData.authorImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : (formData.authorName?.[0] || 'A')}
+                          {formData.authorImage ? <img src={formData.authorImage} crossOrigin="anonymous" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : (formData.authorName?.[0] || 'A')}
                         </div>
                         <div>
+                         <label htmlFor="select-7efb7f" style={{ display: 'none' }}>Author</label>
                           <select name="name-7efb7f" id="select-7efb7f"
                             value={formData.authorId || authors[0]?.id}
                             onChange={e => {
@@ -427,10 +435,11 @@ export default function AdminBlogs() {
                           <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{formData.authorRole || 'Contributor'}</div>
                         </div>
                       </div>
+                      <label htmlFor="select-b23691" style={{ display: 'none' }}>Category</label>
                       <select name="name-b23691" id="select-b23691"
                         value={formData.category}
                         onChange={e => setFormData({ ...formData, category: e.target.value })}
-                        style={{ height: 34, padding: '0 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', outline: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface))' }}
+                        style={{ height: 34, padding: '0 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, outline: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface))' }}
                       >
                         {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                       </select>
@@ -456,7 +465,7 @@ export default function AdminBlogs() {
                       <div style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', aspectRatio: '16/9', border: '1px solid hsl(var(--border))', marginBottom: 20 }}
                         onMouseEnter={e => { const btn = e.currentTarget.querySelector('button') as HTMLElement | null; if (btn) btn.style.opacity = '1' }}
                         onMouseLeave={e => { const btn = e.currentTarget.querySelector('button') as HTMLElement | null; if (btn) btn.style.opacity = '0' }}>
-                        <img src={formData.imageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                        <img src={formData.imageUrl} crossOrigin="anonymous" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
                         <button
                           onClick={() => setFormData({ ...formData, imageUrl: '' })}
                           style={{ position: 'absolute', top: 12, right: 12, width: 36, height: 36, background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: 0, transition: 'opacity 0.2s' }}
@@ -497,14 +506,14 @@ export default function AdminBlogs() {
           {/* Right: post intelligence */}
           {showIntelPanel && <aside style={{ width: 280, flexShrink: 0, borderLeft: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', background: '#fff', overflowY: 'auto' }}>
             <div style={{ padding: '14px 16px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Post Intelligence</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>Post intelligence</span>
             </div>
             <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 24 }}>
               {/* SEO */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 8 }}>
-                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>SEO Quality</span>
-                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: 'hsl(var(--primary))' }}>{seoScore}%</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>SEO quality</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 20, color: 'hsl(var(--primary))' }}>{seoScore}%</span>
                 </div>
                 <div style={{ height: 4, background: 'hsl(var(--container-low))', borderRadius: 2, overflow: 'hidden', marginBottom: 12 }}>
                   <div style={{ height: '100%', background: 'hsl(var(--primary))', width: `${seoScore}%`, transition: 'width 0.7s' }} />
@@ -519,7 +528,7 @@ export default function AdminBlogs() {
 
               {/* Slug */}
               <div>
-                <label style={labelSt}>Resource Slug</label>
+                <label htmlFor="input-7ecb7f" style={labelSt}>Resource Slug</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 10px', height: 36 }}>
                   <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>/blog/</span>
                   <input name="name-7ecb7f" id="input-7ecb7f" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} style={{ background: 'transparent', border: 'none', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', flex: 1 }} />
@@ -528,7 +537,7 @@ export default function AdminBlogs() {
 
               {/* Tags */}
               <div>
-                <label style={labelSt}>Tactical Tags</label>
+                <label htmlFor="input-bfbda3" style={labelSt}>Tactical tags</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
                   {formData.tags.map(tag => (
                     <span key={tag} className="pill pill-mute" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -554,7 +563,7 @@ export default function AdminBlogs() {
 
               {/* Meta description */}
               <div>
-                <label style={labelSt}>Strategic Summary</label>
+                <label htmlFor="textarea-992ac4" style={labelSt}>Strategic summary</label>
                 <textarea name="name-992ac4" id="textarea-992ac4"
                   value={formData.metaDescription}
                   onChange={e => setFormData({ ...formData, metaDescription: e.target.value })}
@@ -575,8 +584,8 @@ export default function AdminBlogs() {
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))', marginBottom: 0,
     }
-    const metaLabelSt: React.CSSProperties = { ...metaSt, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 800 }
-    const metaValueSt: React.CSSProperties = { fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }
+    const metaLabelSt: React.CSSProperties = { ...metaSt, fontSize: 11, fontWeight: 700 }
+    const metaValueSt: React.CSSProperties = { fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))' }
 
     return (
       <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -585,8 +594,8 @@ export default function AdminBlogs() {
         <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
           <div>
             <div className="crumbs">
-              <button onClick={() => setCurrentView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', fontWeight: 700, fontSize: 10, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Editorial</button>
-              {' · '} Intelligence Review
+              <button onClick={() => setCurrentView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', fontWeight: 700, fontSize: 11, color: 'hsl(var(--primary))' }}>Editorial</button>
+              {' · '} Intelligence review
             </div>
             <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6, maxWidth: 600, lineHeight: 1.2 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 20, flexShrink: 0 }}>visibility</span>
@@ -611,13 +620,13 @@ export default function AdminBlogs() {
           <div className="panel" style={{ overflow: 'hidden' }}>
             {viewPost.imageUrl && (
               <div style={{ height: 300, overflow: 'hidden' }}>
-                <img src={viewPost.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={viewPost.imageUrl} crossOrigin="anonymous" loading="lazy" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
             )}
             <div style={{ padding: '32px 40px' }}>
               {/* Category + date */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
-                <span className="pill pill-ok" style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 10 }}>{viewPost.category}</span>
+                <span className="pill pill-ok" style={{ fontWeight: 700, fontSize: 11 }}>{viewPost.category}</span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 5, ...metaSt }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 13 }}>calendar_today</span>
                   {new Date(viewPost.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -645,7 +654,7 @@ export default function AdminBlogs() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 0', borderTop: '1px solid hsl(var(--border))', borderBottom: '1px solid hsl(var(--border))', marginBottom: 28 }}>
                   <div style={{ width: 38, height: 38, borderRadius: 4, background: 'hsl(var(--primary))', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
                     {viewPost.authorImage
-                      ? <img src={viewPost.authorImage} alt={viewPost.authorName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ? <img src={viewPost.authorImage} crossOrigin="anonymous" loading="lazy" alt={viewPost.authorName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       : <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, color: '#fff' }}>{viewPost.authorName[0]}</span>
                     }
                   </div>
@@ -792,16 +801,16 @@ export default function AdminBlogs() {
 
       <div className="sidebar-main">
         {/* Sidebar */}
-        <aside className="panel h-fit sticky top-20">
+        <aside className="desktop-only panel h-fit sticky top-20">
           <div className="ph">
-            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>filter_list</span>
               Intelligence filters
             </span>
           </div>
           <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 18 }}>
             <div>
-              <label style={labelSt}>Search feed</label>
+              <label htmlFor="input-bbba95" style={labelSt}>Search feed</label>
               <div style={{ position: 'relative' }}>
                 <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
                 <input aria-label="Keywords…" name="searchQuery" id="input-bbba95"
@@ -812,18 +821,18 @@ export default function AdminBlogs() {
               </div>
             </div>
             <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
-              <label style={labelSt}>Status</label>
+              <label htmlFor="select-0a8b07" style={labelSt}>Status</label>
               <select name="statusFilter" id="select-0a8b07" value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={selectSt}>
-                <option value="all">All Statuses</option>
+                <option value="all">All statuses</option>
                 <option value="Published">Published</option>
                 <option value="Pending Verification">Pending</option>
                 <option value="Draft">Drafts</option>
               </select>
             </div>
             <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
-              <label style={labelSt}>Category</label>
+              <label htmlFor="select-339e1e" style={labelSt}>Category</label>
               <select name="categoryFilter" id="select-339e1e" value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} style={selectSt}>
-                <option value="all">All Categories</option>
+                <option value="all">All categories</option>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
@@ -856,6 +865,8 @@ export default function AdminBlogs() {
                   <img
                     src={post.imageUrl || CATEGORY_PLACEHOLDERS[post.category] || DEFAULT_PLACEHOLDER}
                     alt={post.title}
+                    crossOrigin="anonymous"
+                    loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                   <div style={{ position: 'absolute', top: 10, left: 10 }}>
@@ -929,6 +940,67 @@ export default function AdminBlogs() {
           </div>
         </div>
       </div>
+
+      {/* Mobile filter FAB + bottom sheet */}
+      {isMobile && (
+        <>
+          <button
+            onClick={() => setShowMobileFilter(true)}
+            style={{ position: 'fixed', bottom: 88, left: 16, zIndex: 50, width: 46, height: 46, borderRadius: '50%', background: 'hsl(var(--on-surface))', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,0,0,0.28)', cursor: 'pointer' }}
+            aria-label="Open filters"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>filter_list</span>
+          </button>
+
+          {showMobileFilter && (
+            <>
+              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 60 }} onClick={() => setShowMobileFilter(false)} />
+              <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 70, background: '#fff', borderRadius: '14px 14px 0 0' }}>
+                <div style={{ padding: '16px 18px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))' }}>Intelligence filters</span>
+                  <button onClick={() => setShowMobileFilter(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 22 }}>close</span>
+                  </button>
+                </div>
+                <div style={{ padding: '18px 18px 32px', display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '70vh', overflowY: 'auto' }}>
+                  <div>
+                    <label htmlFor="mob-search-blogs" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 8 }}>Search</label>
+                    <div style={{ position: 'relative' }}>
+                      <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
+                      <input
+                        id="mob-search-blogs" name="mobBlogSearch"
+                        placeholder="Keywords…"
+                        value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                        style={{ ...selectSt, paddingLeft: 34, height: 42 }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="mob-status-blogs" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 8 }}>Status</label>
+                    <select id="mob-status-blogs" name="mobStatusFilter" value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ ...selectSt, height: 42 }}>
+                      <option value="all">All statuses</option>
+                      <option value="Published">Published</option>
+                      <option value="Pending Verification">Pending</option>
+                      <option value="Draft">Drafts</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="mob-cat-blogs" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 8 }}>Category</label>
+                    <select id="mob-cat-blogs" name="mobCategoryFilter" value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} style={{ ...selectSt, height: 42 }}>
+                      <option value="all">All categories</option>
+                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <button className="btn btn-primary" style={{ width: '100%', height: 44, marginTop: 4 }} onClick={() => setShowMobileFilter(false)}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>check</span>
+                    Apply filters
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </>
+      )}
 
       <DeleteConfirmationModal
         isOpen={!!postToDelete}

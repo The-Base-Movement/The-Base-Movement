@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import MobilizationLeaderboardCard from '@/components/admin/MobilizationLeaderboardCard'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
-const pillBase: React.CSSProperties = { padding: '2px 10px', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', borderRadius: 4, fontFamily: "'Public Sans', sans-serif" }
+const pillBase: React.CSSProperties = { padding: '2px 10px', fontSize: 9, fontWeight: 800, borderRadius: 4, fontFamily: "'Public Sans', sans-serif" }
 
 const rankStyle = (index: number): React.CSSProperties => {
   if (index === 0) return { background: 'hsl(var(--accent))', color: '#fff' }
@@ -72,7 +72,7 @@ export default function MobilizationMetrics() {
     return (
       <div className="admin-page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', gap: 12 }}>
         <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))', animation: 'spin 1s linear infinite' }}>refresh</span>
-        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Synchronizing mobilization metrics…</p>
+        <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>Synchronizing mobilization metrics…</p>
       </div>
     )
   }
@@ -106,7 +106,7 @@ export default function MobilizationMetrics() {
       {/* Filter bar */}
       {isFilterVisible && (
         <div className="panel" style={{ padding: '14px 18px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>Region:</span>
+          <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }}>Region:</span>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {regions.map(r => (
               <button
@@ -165,7 +165,7 @@ export default function MobilizationMetrics() {
                     </td>
                     <td>
                       <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', marginBottom: 2 }}>{entry.chapter}</div>
-                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{entry.region}</div>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>{entry.region}</div>
                     </td>
                     <td style={{ textAlign: 'center' }}>
                       <span style={{ ...pillBase, background: 'hsl(var(--container-low))', color: 'hsl(var(--on-surface-muted))', border: '1px solid hsl(var(--border))' }}>{entry.total_patriots}</span>
@@ -218,7 +218,7 @@ export default function MobilizationMetrics() {
           {/* Movement velocity */}
           <div style={{ background: 'hsl(var(--on-surface))', borderRadius: 6, overflow: 'hidden' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Movement velocity</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>Movement velocity</span>
               <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--accent))' }}>bolt</span>
             </div>
             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -228,7 +228,7 @@ export default function MobilizationMetrics() {
               ].map(bar => (
                 <div key={bar.label}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{bar.label}</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'rgba(255,255,255,0.6)' }}>{bar.label}</span>
                     <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: '#fff' }}>{bar.pct}%</span>
                   </div>
                   <div style={{ height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden' }}>

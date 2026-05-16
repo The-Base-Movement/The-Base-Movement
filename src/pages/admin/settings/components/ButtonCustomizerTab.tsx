@@ -60,7 +60,14 @@ export function ButtonCustomizerTab({ siteSettings, setSiteSettings, isSaving, h
                   <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', margin: 0 }}>Neon Glow Effects</p>
                   <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0' }}>Toggle administrative glow signatures on hover.</p>
                 </div>
-                <button onClick={() => setSiteSettings({ ...siteSettings, button_neon_enabled: !siteSettings.button_neon_enabled })} style={{ width: 36, height: 20, borderRadius: 10, background: siteSettings.button_neon_enabled ? 'hsl(var(--primary))' : 'hsl(var(--border))', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 3px', justifyContent: siteSettings.button_neon_enabled ? 'flex-end' : 'flex-start', flexShrink: 0, transition: 'background 0.2s' }}>
+                <button 
+                  type="button"
+                  role="switch"
+                  aria-checked={siteSettings.button_neon_enabled ? "true" : "false"}
+                  aria-label="Toggle Neon Glow Effects"
+                  onClick={() => setSiteSettings({ ...siteSettings, button_neon_enabled: !siteSettings.button_neon_enabled })} 
+                  style={{ width: 36, height: 20, borderRadius: 10, background: siteSettings.button_neon_enabled ? 'hsl(var(--primary))' : 'hsl(var(--border))', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 3px', justifyContent: siteSettings.button_neon_enabled ? 'flex-end' : 'flex-start', flexShrink: 0, transition: 'background 0.2s' }}
+                >
                   <div style={{ width: 14, height: 14, background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                 </button>
               </div>
@@ -104,7 +111,7 @@ export function ButtonCustomizerTab({ siteSettings, setSiteSettings, isSaving, h
 
             {/* Active tab bg */}
             <div style={sectionSt}>
-              <label style={labelSt}>Active Tab Background</label>
+              <label htmlFor="input-15144a" style={labelSt}>Active Tab Background</label>
               <div style={{ display: 'flex', gap: 8 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', flexShrink: 0, background: siteSettings.button_active_tab_bg_color ? `hsl(${siteSettings.button_active_tab_bg_color as string})` : 'hsl(var(--primary))' }} />
                 <input name="name-15144a" id="input-15144a" style={inputSt} value={(siteSettings.button_active_tab_bg_color as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, button_active_tab_bg_color: e.target.value })} placeholder="0 0% 0%" />
@@ -119,7 +126,7 @@ export function ButtonCustomizerTab({ siteSettings, setSiteSettings, isSaving, h
 
             {/* Inactive tab bg */}
             <div style={sectionSt}>
-              <label style={labelSt}>Inactive Tab Background</label>
+              <label htmlFor="input-aa8b63" style={labelSt}>Inactive Tab Background</label>
               <div style={{ display: 'flex', gap: 8 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', flexShrink: 0, background: siteSettings.button_inactive_tab_bg_color ? `hsl(${siteSettings.button_inactive_tab_bg_color as string})` : '#fff' }} />
                 <input name="name-aa8b63" id="input-aa8b63" style={inputSt} value={(siteSettings.button_inactive_tab_bg_color as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, button_inactive_tab_bg_color: e.target.value })} placeholder="0 0% 100%" />

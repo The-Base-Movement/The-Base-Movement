@@ -171,7 +171,7 @@ export default function TrashPage() {
         <aside style={{ display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 80, width: 280, flexShrink: 0 }}>
           <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
             <div className="ph" style={{ padding: '12px 18px' }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Vault sectors</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>Vault sectors</span>
             </div>
             <div style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 2 }}>
               <button
@@ -215,7 +215,7 @@ export default function TrashPage() {
 
           <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
             <div className="ph" style={{ padding: '12px 18px' }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'hsl(var(--on-surface-muted))' }}>Vault scanner</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>Vault scanner</span>
             </div>
             <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ position: 'relative' }}>
@@ -231,7 +231,7 @@ export default function TrashPage() {
               <div style={{ background: 'rgba(206, 17, 38, 0.05)', borderRadius: 4, padding: 14, border: '1px solid rgba(206, 17, 38, 0.1)', display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--destructive))' }}>report_problem</span>
-                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, color: 'hsl(var(--destructive))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Critical awareness</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, color: 'hsl(var(--destructive))' }}>Critical awareness</span>
                 </div>
                 <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--destructive))', opacity: 0.8, lineHeight: 1.5, margin: 0 }}>
                   Permanent deletion occurs at T-0. Records cannot be recovered once purged.
@@ -378,7 +378,7 @@ function TrashCard({
           )}
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 4, background: accent === 'red' ? 'hsl(var(--destructive))' : accent === 'gold' ? 'hsl(var(--accent))' : 'hsl(var(--primary))' }} />
           <div style={{ position: 'absolute', top: 12, left: 12 }}>
-            <span className="pill" style={{ background: 'hsl(var(--on-surface))', color: '#fff', fontSize: 9, fontWeight: 900, textTransform: 'uppercase', padding: '2px 8px' }}>
+            <span className="pill" style={{ background: 'hsl(var(--on-surface))', color: '#fff', fontSize: 9, fontWeight: 900, padding: '2px 8px' }}>
               {type}
             </span>
           </div>
@@ -388,13 +388,13 @@ function TrashCard({
           <div>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{subtitle}</p>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>{subtitle}</p>
                 <h4 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 16, color: 'hsl(var(--on-surface))', margin: '4px 0 0', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h4>
               </div>
               
               <div style={{ padding: '8px 12px', borderRadius: 4, background: isExpiringSoon ? 'hsl(var(--destructive))' : 'hsl(var(--container-low))', border: `1px solid ${isExpiringSoon ? 'hsl(var(--destructive))' : 'hsl(var(--border))'}`, textAlign: 'center', minWidth: 70 }}>
                 <div style={{ fontSize: 24, fontWeight: 900, color: isExpiringSoon ? '#fff' : 'hsl(var(--on-surface))', lineHeight: 1 }}>{daysLeft}</div>
-                <div style={{ fontSize: 8, fontWeight: 900, textTransform: 'uppercase', color: isExpiringSoon ? 'rgba(255,255,255,0.8)' : 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Days left</div>
+                <div style={{ fontSize: 8, fontWeight: 900, color: isExpiringSoon ? 'rgba(255,255,255,0.8)' : 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Days left</div>
               </div>
             </div>
 

@@ -63,11 +63,11 @@ export function SecuritySettingsTab({
         <div style={{ padding: 24 }}>
           <div style={{ maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label style={labelSt}>New password</label>
+              <label htmlFor="input-577d4f" style={labelSt}>New password</label>
               <input name="name-577d4f" id="input-577d4f" type="password" style={inputSt} value={passwordForm.newPassword} onChange={e => setPasswordForm({ ...passwordForm, newPassword: e.target.value })} placeholder="••••••••" />
             </div>
             <div>
-              <label style={labelSt}>Confirm new password</label>
+              <label htmlFor="input-5fe6aa" style={labelSt}>Confirm new password</label>
               <input name="name-5fe6aa" id="input-5fe6aa" type="password" style={inputSt} value={passwordForm.confirmPassword} onChange={e => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })} placeholder="••••••••" />
             </div>
             <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={handleUpdatePassword} disabled={isSaving || !passwordForm.newPassword}>
@@ -130,7 +130,7 @@ export function SecuritySettingsTab({
             {mfaStep === 'verify' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
-                  <label style={labelSt}>Verification code</label>
+                  <label htmlFor="input-007f09" style={labelSt}>Verification code</label>
                   <input name="mfaCode" id="input-007f09"
                     value={mfaCode}
                     onChange={e => setMfaCode(e.target.value)}

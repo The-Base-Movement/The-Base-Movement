@@ -153,10 +153,10 @@ export default function NewBroadcast() {
 
           {/* Title */}
           <div>
-            <label style={labelStyle}>
+            <label htmlFor="input-broadcast-title" style={labelStyle}>
               Broadcast title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
-            <input aria-label="e.g. National registration wave" name="name-6d4aa4" id="input-6d4aa4"
+            <input id="input-broadcast-title" aria-label="e.g. National registration wave" name="title"
               type="text"
               placeholder="e.g. National registration wave"
               style={{ ...fieldStyle, height: 44 }}
@@ -168,8 +168,8 @@ export default function NewBroadcast() {
           {/* Channel + Target + Priority */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
             <div>
-              <label style={labelStyle}>Delivery channel</label>
-              <select name="name-1031e4" id="select-1031e4"
+              <label htmlFor="select-broadcast-channel" style={labelStyle}>Delivery channel</label>
+              <select name="channel" id="select-broadcast-channel"
                 style={{ ...fieldStyle, appearance: 'none' as const }}
                 value={newBroadcast.channel}
                 onChange={e => setNewBroadcast({ ...newBroadcast, channel: e.target.value as 'SMS' | 'Email' | 'Push' | 'In-app' })}
@@ -181,8 +181,8 @@ export default function NewBroadcast() {
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Target segment</label>
-              <select name="name-ca5797" id="select-ca5797"
+              <label htmlFor="select-broadcast-target" style={labelStyle}>Target segment</label>
+              <select name="target_type" id="select-broadcast-target"
                 style={{ ...fieldStyle, appearance: 'none' as const }}
                 value={newBroadcast.target_type}
                 onChange={e => setNewBroadcast({ ...newBroadcast, target_type: e.target.value as 'ALL' | 'REGION' | 'CONSTITUENCY', target_value: '' })}
@@ -193,8 +193,8 @@ export default function NewBroadcast() {
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Priority level</label>
-              <select name="name-1bb4d5" id="select-1bb4d5"
+              <label htmlFor="select-broadcast-priority" style={labelStyle}>Priority level</label>
+              <select name="priority" id="select-broadcast-priority"
                 style={{ ...fieldStyle, appearance: 'none' as const, borderColor: priorityBorderColor(newBroadcast.priority), color: newBroadcast.priority === 'Urgent' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))' }}
                 value={newBroadcast.priority}
                 onChange={e => setNewBroadcast({ ...newBroadcast, priority: e.target.value as 'Normal' | 'High' | 'Urgent' })}
@@ -210,8 +210,8 @@ export default function NewBroadcast() {
           {newBroadcast.target_type !== 'ALL' && (
             <div style={{ display: 'grid', gridTemplateColumns: newBroadcast.target_type === 'CONSTITUENCY' ? '1fr 1fr' : '1fr', gap: 14 }}>
               <div>
-                <label style={labelStyle}>Select region <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                <select name="name-d4e101" id="select-d4e101"
+                <label htmlFor="select-broadcast-region" style={labelStyle}>Select region <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
+                <select name="target_region" id="select-broadcast-region"
                   style={{ ...fieldStyle, appearance: 'none' as const }}
                   value={fullRegions.find(r => r.name === newBroadcast.target_value)?.name || ''}
                   onChange={e => {
@@ -230,8 +230,8 @@ export default function NewBroadcast() {
               </div>
               {newBroadcast.target_type === 'CONSTITUENCY' && (
                 <div>
-                  <label style={labelStyle}>Select constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                  <select name="name-497bec" id="select-497bec"
+                  <label htmlFor="select-broadcast-constituency" style={labelStyle}>Select constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
+                  <select name="target_constituency" id="select-broadcast-constituency"
                     style={{ ...fieldStyle, appearance: 'none' as const, opacity: !selectedRegionId ? 0.45 : 1 }}
                     disabled={!selectedRegionId}
                     value={newBroadcast.target_value}
@@ -263,11 +263,12 @@ export default function NewBroadcast() {
 
           {/* Rich text editor */}
           <div>
-            <label style={labelStyle}>
+            <label id="label-broadcast-message" style={labelStyle}>
               Broadcast message <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
             <div style={{ border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
               <Editor
+                aria-labelledby="label-broadcast-message"
                 apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
                 onInit={(_, editor) => (editorRef.current = editor)}
                 initialValue={newBroadcast.content}

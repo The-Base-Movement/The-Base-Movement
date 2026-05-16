@@ -5,7 +5,7 @@ import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
-import type { GlobalSearchResult, AdminUser, Notification } from '@/types/admin'
+import type { GlobalSearchResult, AdminUser, Notification, AdminPermission } from '@/types/admin'
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
   const { settings } = useBranding()
@@ -152,8 +152,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     label: string;
     pill?: string;
     permission?: {
-      action: string;
-      resource: string;
+      action: AdminPermission['action'];
+      resource: AdminPermission['resource'];
     };
   }
 
@@ -227,7 +227,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
     ...group,
     items: group.items.filter(item => {
       if (!item.permission) return true;
-      return adminService.can(item.permission.action as any, item.permission.resource as any);
+      return adminService.can(item.permission.action, item.permission.resource);
     })
   })).filter(group => group.items.length > 0)
 

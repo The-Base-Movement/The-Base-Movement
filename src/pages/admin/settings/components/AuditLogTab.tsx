@@ -55,6 +55,7 @@ export function AuditLogTab({
       {/* Filters */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, padding: '12px 20px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
         <div style={{ position: 'relative', flex: 1, minWidth: 180 }}>
+          <label htmlFor="input-7ba91a" style={{ display: 'none' }}>Search by action or resource…</label>
           <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
           <input aria-label="Search by action or resource…" name="auditSearch" id="input-7ba91a"
             placeholder="Search by action or resource…"
@@ -63,12 +64,14 @@ export function AuditLogTab({
             style={{ width: '100%', height: 36, paddingLeft: 34, paddingRight: 12, border: '1px solid hsl(var(--border))', background: '#fff', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, boxSizing: 'border-box' }}
           />
         </div>
+        <label htmlFor="select-194325" style={{ display: 'none' }}>Filter by Status</label>
         <select name="auditFilter" id="select-194325" value={auditFilter} onChange={e => setAuditFilter(e.target.value)} style={selSt}>
           <option>All Status</option>
           <option>Success</option>
           <option>Warning</option>
           <option>Failure</option>
         </select>
+        <label htmlFor="select-265651" style={{ display: 'none' }}>Filter by Resource</label>
         <select name="auditResourceFilter" id="select-265651" value={auditResourceFilter} onChange={e => setAuditResourceFilter(e.target.value)} style={selSt}>
           <option>All Resources</option>
           <option>MEMBERS</option>

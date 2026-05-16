@@ -7,6 +7,7 @@ import { useChapters } from '@/context/ChaptersContext'
 import { LoadingScreen } from '../components/LoadingScreen'
 import { adminService } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/context/AuthContext'
 
 interface ChapterPoll {
   id: string
@@ -21,6 +22,7 @@ interface ChapterPoll {
 export default function ChapterDetails() {
   const { slug } = useParams<{ slug: string }>()
   const { chapters, isLoading } = useChapters()
+  const { session } = useAuth()
   const chapter: Chapter | undefined = chapters.find(
     c => c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') === slug
   )
@@ -31,18 +33,11 @@ export default function ChapterDetails() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [leaderAvatarUrl, setLeaderAvatarUrl] = useState<string | null>(null)
   const [isLeader, setIsLeader] = useState(false)
-  const [authUserId, setAuthUserId] = useState<string | null>(null)
+  const authUserId = session?.user?.id || null
   const [polls, setPolls] = useState<ChapterPoll[]>([])
   const [voteCounts, setVoteCounts] = useState<Record<string, number>>({})
   const [userVotes, setUserVotes] = useState<Record<string, string>>({})
   const [votingPollId, setVotingPollId] = useState<string | null>(null)
-
-  // Resolve auth user ID async — avoids the race where getUser() returns null on first render
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user?.id) setAuthUserId(data.session.user.id)
-    })
-  }, [])
 
   // Check chapter membership (joined)
   useEffect(() => {

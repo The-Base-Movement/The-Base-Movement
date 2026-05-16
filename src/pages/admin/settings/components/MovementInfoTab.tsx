@@ -40,7 +40,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
         {/* Contact emails */}
         <div className="settings-form-grid">
           <div>
-            <label style={labelSt}>Primary contact email</label>
+            <label htmlFor="input-e727d9" style={labelSt}>Primary contact email</label>
             <div style={{ position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>mail</span>
               <input name="name-e727d9" id="input-e727d9" style={{ ...inputSt, paddingLeft: 34 }} value={(siteSettings.primary_email as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, primary_email: e.target.value })} />
@@ -48,7 +48,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
             <p style={hintSt}>Used for contact forms and general inquiries.</p>
           </div>
           <div>
-            <label style={labelSt}>Newsletter dispatch email</label>
+            <label htmlFor="input-ce9df3" style={labelSt}>Newsletter dispatch email</label>
             <div style={{ position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>campaign</span>
               <input name="name-ce9df3" id="input-ce9df3" style={{ ...inputSt, paddingLeft: 34 }} value={(siteSettings.newsletter_email as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, newsletter_email: e.target.value })} />
@@ -64,18 +64,18 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
             Movement Palette Control
           </h3>
           <div className="settings-form-grid-3">
-            {[
+            {([
               { key: 'primary_color', label: 'Primary Brand (Green)', desc: 'HSL value for the dominant identity color.' },
               { key: 'accent_color', label: 'Accent Highlight (Gold)', desc: 'HSL value for secondary emphasis.' },
               { key: 'destructive_color', label: 'Destructive/Alert (Red)', desc: 'HSL value for high-urgency elements.' },
               { key: 'muted_foreground_color', label: 'Muted Text (General)', desc: 'HSL value for secondary labels/hints.' },
               { key: 'on_surface_muted_color', label: 'Muted Text (Dark)', desc: 'HSL value for text on dark backgrounds.' }
-            ].map(color => (
+            ] as const).map(color => (
               <div key={color.key}>
-                <label style={labelSt}>{color.label}</label>
+                <label htmlFor={`input-${color.key}`} style={labelSt}>{color.label}</label>
                 <div style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', flexShrink: 0, background: siteSettings[color.key] ? `hsl(${siteSettings[color.key] as string})` : 'transparent' }} />
-                  <input name="name-8a8371" id="input-8a8371" style={{ ...inputSt, fontFamily: 'monospace' }} value={(siteSettings[color.key] as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, [color.key]: e.target.value })} placeholder="0 0% 0%" />
+                  <input name={`name-${color.key}`} id={`input-${color.key}`} style={{ ...inputSt, fontFamily: 'monospace' }} value={(siteSettings[color.key] as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, [color.key]: e.target.value })} placeholder="0 0% 0%" />
                 </div>
                 <p style={{ ...hintSt, lineHeight: 1.5 }}>{color.desc}</p>
               </div>
@@ -92,7 +92,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
           <div className="settings-form-grid">
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <label style={{ ...labelSt, marginBottom: 0 }}>Global font scale</label>
+                <label htmlFor="input-c7b696" style={{ ...labelSt, marginBottom: 0 }}>Global font scale</label>
                 <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 12, color: 'hsl(var(--primary))' }}>{((siteSettings.font_scale_global as number) || 1.0).toFixed(2)}x</span>
               </div>
               <input name="name-c7b696" id="input-c7b696" type="range" min="0.8" max="1.5" step="0.05" value={(siteSettings.font_scale_global as number) || 1.0} onChange={e => setSiteSettings({ ...siteSettings, font_scale_global: parseFloat(e.target.value) })} style={{ width: '100%', accentColor: 'hsl(var(--primary))' }} />
@@ -100,7 +100,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
             </div>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <label style={{ ...labelSt, marginBottom: 0 }}>Heading emphasis scale</label>
+                <label htmlFor="input-375d88" style={{ ...labelSt, marginBottom: 0 }}>Heading emphasis scale</label>
                 <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 12, color: 'hsl(var(--primary))' }}>{((siteSettings.font_scale_headings as number) || 1.0).toFixed(2)}x</span>
               </div>
               <input name="name-375d88" id="input-375d88" type="range" min="0.8" max="2.0" step="0.05" value={(siteSettings.font_scale_headings as number) || 1.0} onChange={e => setSiteSettings({ ...siteSettings, font_scale_headings: parseFloat(e.target.value) })} style={{ width: '100%', accentColor: 'hsl(var(--primary))' }} />

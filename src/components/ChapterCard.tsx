@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { type Chapter } from '@/types/admin'
+import { getCountryFlag } from '@/lib/utils'
 
 interface ChapterCardProps {
   chapter: Chapter
@@ -13,7 +14,9 @@ export function ChapterCard({ chapter, countryFlags, userChapterName }: ChapterC
   const isFeatured = chapter.member_count > 500
 
   const badge = isDiaspora ? 'Diaspora' : isFeatured ? 'Featured' : isActive ? 'Active' : 'Regional'
-  const headerBg = isFeatured ? 'hsl(var(--primary))' : '#181d19'
+  const headerBg = isFeatured ? 'hsl(var(--primary))' : isActive ? 'hsl(var(--accent))' : '#181d19'
+  const headerTextColor = (isActive && !isFeatured) ? '#000' : '#fff'
+  const headerMutedColor = (isActive && !isFeatured) ? 'rgba(0,0,0,0.6)' : isFeatured ? 'rgba(255,255,255,0.85)' : 'hsl(var(--accent))'
 
   const leader = chapter.leadership?.[0]
   const leaderName = leader?.name || chapter.leader_name || 'Branch Chair'
@@ -24,29 +27,38 @@ export function ChapterCard({ chapter, countryFlags, userChapterName }: ChapterC
   const programsCount = Math.max(0, Math.floor(eventsCount / 3))
 
   const regionLabel = chapter.region || chapter.city_or_region
-  const flag = isDiaspora && countryFlags[chapter.country] ? countryFlags[chapter.country] : ''
+  const rawFlag = chapter.flag_url || (isDiaspora && countryFlags[chapter.country] ? countryFlags[chapter.country] : '')
+  const flag = getCountryFlag(rawFlag)
   const slug = chapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
 
   return (
     <div className="bg-white border border-border rounded-[6px] overflow-hidden">
-      {/* Dark header */}
+      {/* Header */}
       <div
         className="px-4 py-[14px] flex justify-between items-center"
         style={{ background: headerBg }}
       >
-        <div>
-          <h4 className="font-['Public_Sans',sans-serif] font-extrabold text-[14px] tracking-[-0.005em] text-white leading-tight">
+        <div className="min-w-0">
+          <h4 className="font-['Public_Sans',sans-serif] font-extrabold text-[14px] tracking-[-0.005em] leading-tight truncate"
+            style={{ color: headerTextColor }}
+          >
             {chapter.name}
             {flag && <span className="ml-1.5">{flag}</span>}
           </h4>
           <div
-            className="text-[9.5px] font-bold tracking-[0.06em] uppercase mt-0.5 font-['Public_Sans',sans-serif]"
-            style={{ color: isFeatured ? 'rgba(255,255,255,0.85)' : 'hsl(var(--accent))' }}
+            className="text-[9.5px] font-bold tracking-[0.06em] uppercase mt-0.5 font-['Public_Sans',sans-serif] truncate"
+            style={{ color: headerMutedColor }}
           >
             {regionLabel}
           </div>
         </div>
-        <span className="px-2 py-[2px] border border-white/20 bg-white/10 rounded-[2px] font-['Public_Sans',sans-serif] font-extrabold text-[9px] tracking-[0.05em] uppercase text-white shrink-0">
+        <span className="px-2 py-[2px] border rounded-[2px] font-['Public_Sans',sans-serif] font-extrabold text-[9px] tracking-[0.05em] uppercase shrink-0"
+          style={{ 
+            background: (isActive && !isFeatured) ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)', 
+            borderColor: (isActive && !isFeatured) ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)',
+            color: headerTextColor
+          }}
+        >
           {badge}
         </span>
       </div>

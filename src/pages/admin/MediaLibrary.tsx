@@ -131,6 +131,7 @@ export default function MediaLibrary() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }} className="lg:grid-cols-[220px_1fr]">
         {/* Mobile folder selector */}
         <div className="mobile-only" style={{ marginBottom: 8 }}>
+          <label htmlFor="select-7676fc" style={{ display: 'none' }}>Active Folder</label>
           <select name="activeFolder" id="select-7676fc"
             value={activeFolder}
             onChange={(e) => setActiveFolder(e.target.value)}
@@ -150,6 +151,7 @@ export default function MediaLibrary() {
               <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Search assets</span>
             </div>
             <div style={{ padding: 12, position: 'relative' }}>
+              <label htmlFor="input-bb03eb" style={{ display: 'none' }}>Search assets</label>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 22, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
               <input aria-label="Search your assets…" name="searchQuery" id="input-bb03eb"
                 placeholder="Search your assets…"
@@ -205,7 +207,7 @@ export default function MediaLibrary() {
                 {filteredFiles.map((url, idx) => (
                   <div key={idx} className="group" style={{ position: 'relative' }}>
                     <div style={{ aspectRatio: '1', borderRadius: 4, overflow: 'hidden', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', position: 'relative' }}>
-                      <img src={url} alt="Media asset" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} decoding="async" loading="lazy" />
+                      <img src={url} alt="Media asset" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} decoding="async" loading="lazy" crossOrigin="anonymous" />
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                         <button
                           onClick={() => copyToClipboard(url)}

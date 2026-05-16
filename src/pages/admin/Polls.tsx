@@ -393,7 +393,7 @@ export default function PollsManagement() {
                 <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>add</span>
                 Create Campaign
               </span>
-              <button style={modalCloseBtn} onClick={() => setShowCreateModal(false)}>
+              <button aria-label="Close creation modal" style={modalCloseBtn} onClick={() => setShowCreateModal(false)}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
               </button>
             </div>
@@ -403,12 +403,12 @@ export default function PollsManagement() {
                   {/* Left: core details */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
-                      <label style={labelSt}>Campaign question / topic</label>
-                      <input aria-label="e.g. Should we increase regional chapter funding?" name="name-1e5a1f" id="input-1e5a1f" style={inputSt} required placeholder="e.g. Should we increase regional chapter funding?" value={newPoll.question} onChange={e => setNewPoll({ ...newPoll, question: e.target.value })} />
+                      <label htmlFor="input-poll-question" style={labelSt}>Campaign question / topic</label>
+                      <input id="input-poll-question" aria-label="e.g. Should we increase regional chapter funding?" name="question" style={inputSt} required placeholder="e.g. Should we increase regional chapter funding?" value={newPoll.question} onChange={e => setNewPoll({ ...newPoll, question: e.target.value })} />
                     </div>
                     <div>
-                      <label style={labelSt}>Target Audience Base</label>
-                      <select name="name-313f84" id="select-313f84"
+                      <label htmlFor="select-target-base" style={labelSt}>Target Audience Base</label>
+                      <select name="targetBase" id="select-target-base"
                         style={selectSt}
                         value={newPoll.targetBase}
                         onChange={e => {
@@ -421,8 +421,8 @@ export default function PollsManagement() {
                       </select>
                     </div>
                     <div>
-                      <label style={labelSt}>{newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}</label>
-                      <select name="name-6fd5f4" id="select-6fd5f4"
+                      <label htmlFor="select-target-region" style={labelSt}>{newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}</label>
+                      <select name="targetRegion" id="select-target-region"
                         style={selectSt}
                         value={newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country}
                         onChange={e => {
@@ -444,10 +444,10 @@ export default function PollsManagement() {
                       </select>
                     </div>
                     <div>
-                      <label style={labelSt}>Operational end date</label>
+                      <label htmlFor="input-poll-end-date" style={labelSt}>Operational end date</label>
                       <div style={{ position: 'relative' }}>
                         <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>calendar_today</span>
-                        <input name="name-267df3" id="input-267df3" type="date" style={{ ...inputSt, paddingLeft: 34 }} value={newPoll.endDate} onChange={e => setNewPoll({ ...newPoll, endDate: e.target.value })} />
+                        <input name="endDate" id="input-poll-end-date" type="date" style={{ ...inputSt, paddingLeft: 34 }} value={newPoll.endDate} onChange={e => setNewPoll({ ...newPoll, endDate: e.target.value })} />
                       </div>
                     </div>
                   </div>
@@ -510,7 +510,7 @@ export default function PollsManagement() {
                 <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>forum</span>
                 Movement Feedback Vault
               </span>
-              <button style={modalCloseBtn} onClick={() => setIsFeedbackModalOpen(false)}>
+              <button aria-label="Close feedback vault" style={modalCloseBtn} onClick={() => setIsFeedbackModalOpen(false)}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
               </button>
             </div>
@@ -549,7 +549,7 @@ export default function PollsManagement() {
                   Poll Details
                   {statusPill(viewPoll.status)}
                 </span>
-                <button style={modalCloseBtn} onClick={() => setViewPoll(null)}>
+                <button aria-label="Close poll details" style={modalCloseBtn} onClick={() => setViewPoll(null)}>
                   <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
                 </button>
               </div>
@@ -650,7 +650,7 @@ export default function PollsManagement() {
                 <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--destructive))' }}>bar_chart</span>
                 Engagement Analytics Guide
               </span>
-              <button style={modalCloseBtn} onClick={() => setIsAnalyticsModalOpen(false)}>
+              <button aria-label="Close analytics guide" style={modalCloseBtn} onClick={() => setIsAnalyticsModalOpen(false)}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
               </button>
             </div>

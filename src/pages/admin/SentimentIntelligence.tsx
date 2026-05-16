@@ -73,7 +73,7 @@ export default function SentimentIntelligence() {
         <div className="actions">
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 16px', background: 'hsl(var(--container-low))', borderRadius: 4, border: '1px solid hsl(var(--border))' }}>
             <div style={{ textAlign: 'right' }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block' }}>National average</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, color: 'hsl(var(--on-surface-muted))', display: 'block' }}>National average</span>
               <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 18, color: nationalScore >= 0 ? 'hsl(var(--primary))' : 'hsl(var(--destructive))' }}>
                 {(nationalScore * 100).toFixed(1)}
               </span>
@@ -130,8 +130,8 @@ export default function SentimentIntelligence() {
           <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
             <div className="ph" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface))' }}>Impact forecasts</span>
-                <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>30-day mobilization projections</p>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))' }}>Impact forecasts</span>
+                <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>30-day mobilization projections</p>
               </div>
               <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}>target</span>
             </div>
@@ -147,7 +147,7 @@ export default function SentimentIntelligence() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                       <h4 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))' }}>{proj.region}</h4>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Projected reach</span>
+                        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Projected reach</span>
                         <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 16, color: 'hsl(var(--destructive))' }}>{proj.projected_reach_30d.toLocaleString()}</p>
                       </div>
                     </div>
@@ -178,7 +178,7 @@ export default function SentimentIntelligence() {
           {/* Regional Metrics */}
           <div className="panel" style={{ padding: 0, overflow: 'hidden', background: 'hsl(var(--on-surface))', color: '#fff' }}>
             <div className="ph" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Regional metrics</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11 }}>Regional metrics</span>
               <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,0.4)' }}>map</span>
             </div>
             <div style={{ maxHeight: 400, overflowY: 'auto' }}>
@@ -203,7 +203,6 @@ export default function SentimentIntelligence() {
                         color: getSentimentColor(t.avg_sentiment).color,
                         fontSize: 9,
                         fontWeight: 900,
-                        textTransform: 'uppercase',
                         minWidth: 70,
                         textAlign: 'center'
                       }}>
@@ -222,8 +221,8 @@ export default function SentimentIntelligence() {
           <div className="panel" style={{ padding: 0, overflow: 'hidden', height: '100%' }}>
             <div className="ph" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface))' }}>Live feedback</span>
-                <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Direct member sentiment</p>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))' }}>Live feedback</span>
+                <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Direct member sentiment</p>
               </div>
               <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}>message</span>
             </div>
@@ -240,8 +239,7 @@ export default function SentimentIntelligence() {
                         background: getSentimentColor(item.sentiment_score).bg, 
                         color: getSentimentColor(item.sentiment_score).color,
                         fontSize: 9,
-                        fontWeight: 900,
-                        textTransform: 'uppercase'
+                        fontWeight: 900
                       }}>
                         {item.category}
                       </span>

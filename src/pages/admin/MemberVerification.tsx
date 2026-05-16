@@ -201,6 +201,7 @@ export default function MemberVerification() {
                 onChange={e => handleSearch(e.target.value)}
                 placeholder="Search by name, ID, phone, region…"
                 style={{ width: '100%', height: 36, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px 0 32px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', background: 'hsl(var(--surface))', color: 'hsl(var(--on-surface))' }}
+                aria-label="Search members by name, ID, or phone"
               />
             </div>
             <div style={{ position: 'relative' }}>
@@ -209,6 +210,7 @@ export default function MemberVerification() {
                 value={statusFilter}
                 onChange={e => handleFilter(e.target.value as PendingVerification['status'] | 'All')}
                 style={{ height: 36, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', cursor: 'pointer' }}
+                aria-label="Filter by verification status"
               >
                 {STATUS_OPTIONS.map(s => (
                   <option key={s} value={s}>{s === 'All' ? 'All statuses' : s}</option>
@@ -221,6 +223,7 @@ export default function MemberVerification() {
                 value={constituencyFilter}
                 onChange={e => { setConstituencyFilter(e.target.value); setCurrentPage(1) }}
                 style={{ height: 36, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', cursor: 'pointer' }}
+                aria-label="Filter by constituency"
               >
                 <option value="">All constituencies</option>
                 {constituencies.map(c => (
@@ -267,7 +270,7 @@ export default function MemberVerification() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div style={{ width: 42, height: 42, borderRadius: 4, overflow: 'hidden', background: isActive ? 'rgba(255,255,255,.1)' : '#f1f5ee', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: isActive ? '1px solid rgba(255,255,255,.15)' : '1px solid hsl(var(--border))' }}>
                           {member.photoUrl
-                            ? <img src={member.photoUrl} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                            ? <img src={member.photoUrl} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" crossOrigin="anonymous" />
                             : <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: isActive ? 'rgba(255,255,255,.6)' : 'hsl(var(--on-surface-muted))' }}>{member.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</span>
                           }
                         </div>
@@ -354,7 +357,7 @@ export default function MemberVerification() {
                     style={{ width: 64, height: 72, borderRadius: 4, overflow: 'hidden', background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', flexShrink: 0, cursor: selectedMember.photoUrl ? 'zoom-in' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     {selectedMember.photoUrl
-                      ? <img src={selectedMember.photoUrl} alt={selectedMember.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                      ? <img src={selectedMember.photoUrl} alt={selectedMember.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" crossOrigin="anonymous" />
                       : <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'rgba(255,255,255,.25)' }}>person</span>
                     }
                   </button>
@@ -543,13 +546,14 @@ export default function MemberVerification() {
           onClick={() => setShowPhotoFull(false)}
         >
           <button
+            aria-label="Close photo viewer"
             onClick={() => setShowPhotoFull(false)}
             style={{ position: 'absolute', top: 24, right: 24, background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.2)', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
           </button>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }} onClick={e => e.stopPropagation()}>
-            <img src={selectedMember.photoUrl} alt={selectedMember.name} style={{ maxHeight: '80vh', maxWidth: '100%', objectFit: 'contain', boxShadow: '0 32px 80px rgba(0,0,0,.6)' }} decoding="async" />
+            <img src={selectedMember.photoUrl} alt={selectedMember.name} style={{ maxHeight: '80vh', maxWidth: '100%', objectFit: 'contain', boxShadow: '0 32px 80px rgba(0,0,0,.6)' }} decoding="async" crossOrigin="anonymous" />
             <p style={{ margin: 0, fontSize: 11.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'rgba(255,255,255,.5)' }}>
               {selectedMember.name} · {selectedMember.id}
             </p>
@@ -579,7 +583,7 @@ export default function MemberVerification() {
                   <h2 style={{ margin: '0 0 4px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: '#fff', letterSpacing: '-.02em' }}>{viewingVaultRecord.name}</h2>
                   <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11.5, color: 'rgba(255,255,255,.45)' }}>Permanent record ID: {viewingVaultRecord.id}</p>
                 </div>
-                <button onClick={() => setViewingVaultRecord(null)} style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff', flexShrink: 0 }}>
+                <button aria-label="Close audit vault" onClick={() => setViewingVaultRecord(null)} style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff', flexShrink: 0 }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
                 </button>
               </div>
@@ -654,7 +658,7 @@ export default function MemberVerification() {
                   <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.07em', textTransform: 'uppercase', borderBottom: '1px solid hsl(var(--border))', paddingBottom: 8, marginBottom: 14 }}>Captured credentials</div>
                   <div style={{ aspectRatio: '3/4', background: 'hsl(var(--container-low))', overflow: 'hidden', border: '1px solid hsl(var(--border))', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {viewingVaultRecord.photoUrl
-                      ? <img src={viewingVaultRecord.photoUrl} alt="Vault record" style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" />
+                      ? <img src={viewingVaultRecord.photoUrl} alt="Vault record" style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" crossOrigin="anonymous" />
                       : <div style={{ textAlign: 'center' }}>
                           <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--border))', display: 'block', marginBottom: 8 }}>hide_image</span>
                           <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>No biometric data</p>

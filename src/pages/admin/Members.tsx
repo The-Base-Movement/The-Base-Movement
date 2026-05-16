@@ -13,11 +13,9 @@ import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
 const thStyle: React.CSSProperties = {
   padding: '10px 16px',
-  fontSize: 9.5,
-  fontWeight: 800,
+  fontSize: 11,
+  fontWeight: 700,
   color: 'hsl(var(--on-surface-muted))',
-  letterSpacing: '.06em',
-  textTransform: 'uppercase',
   fontFamily: "'Public Sans', sans-serif",
   textAlign: 'left',
   whiteSpace: 'nowrap',
@@ -575,6 +573,7 @@ export default function MembersList() {
                     checked={selectedIds.size === paginatedMembers.length && paginatedMembers.length > 0}
                     onChange={handleToggleSelectAll}
                     style={{ cursor: 'pointer' }}
+                    aria-label="Select all members"
                   />
                 </th>
                 <th style={thStyle}>Member</th>
@@ -625,13 +624,13 @@ export default function MembersList() {
                     onMouseLeave={e => { if (!lowBandwidthMode) (e.currentTarget as HTMLElement).style.background = '' }}
                   >
                     <td style={tdStyle}>
-                      <input name="name-f0edc7" id="input-f0edc7" type="checkbox" checked={selectedIds.has(member.id)} onChange={() => handleToggleSelect(member.id)} style={{ cursor: 'pointer' }} />
+                      <input name={`select-member-${member.id}`} id={`input-select-${member.id}`} type="checkbox" checked={selectedIds.has(member.id)} onChange={() => handleToggleSelect(member.id)} style={{ cursor: 'pointer' }} aria-label={`Select ${member.name}`} />
                     </td>
                     <td style={tdStyle}>
                       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                         <div style={{ width: 38, height: 38, borderRadius: '50%', border: '2px solid hsl(var(--border))', overflow: 'hidden', background: '#f1f5ee', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           {member.avatarUrl
-                            ? <img src={member.avatarUrl} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" />
+                            ? <img src={member.avatarUrl} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" loading="lazy" crossOrigin="anonymous" />
                             : <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>{member.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</span>
                           }
                         </div>
@@ -762,14 +761,14 @@ export default function MembersList() {
             <div className="member-detail-header" style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', color: '#fff', padding: '24px 28px', position: 'relative', overflow: 'hidden', borderTop: '3px solid hsl(var(--destructive))', borderBottom: '3px solid hsl(var(--primary))' }}>
               <div style={{ position: 'absolute', right: -40, top: -40, width: 200, height: 200, background: 'radial-gradient(circle,rgba(218,165,32,.15),transparent 70%)' }} />
 
-              <button onClick={() => setSelectedMember(null)} style={{ position: 'absolute', top: 16, right: 16, width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.2)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}>
+              <button aria-label="Close member details" onClick={() => setSelectedMember(null)} style={{ position: 'absolute', top: 16, right: 16, width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.2)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
               </button>
 
               <div className="member-detail-identity-row" style={{ display: 'flex', gap: 20, alignItems: 'flex-start', position: 'relative' }}>
                 <div style={{ width: 80, height: 80, borderRadius: '50%', border: '3px solid hsl(var(--accent))', flexShrink: 0, overflow: 'hidden', background: '#2a332b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {selectedMember.avatarUrl
-                    ? <img src={selectedMember.avatarUrl} alt={selectedMember.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ? <img src={selectedMember.avatarUrl} alt={selectedMember.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} crossOrigin="anonymous" />
                     : <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 24, color: '#fff' }}>{selectedMember.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</span>
                   }
                 </div>
@@ -1227,6 +1226,7 @@ export default function MembersList() {
                   <div className="panel" style={{ marginBottom: 20 }}>
                     <div className="ph2"><h3>Add administrative note</h3><span className="meta">internal record</span></div>
                     <div style={{ padding: '18px 24px' }}>
+                      <label htmlFor="textarea-8e85c6" style={{ display: 'none' }}>Internal administrative note</label>
                       <textarea name="newNoteContent" id="textarea-8e85c6"
                         value={newNoteContent}
                         onChange={e => setNewNoteContent(e.target.value)}
@@ -1248,7 +1248,7 @@ export default function MembersList() {
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                               <b style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11.5 }}>{n.author}</b>
-                              <span style={{ fontSize: 9.5, color: 'hsl(var(--on-surface-muted))', background: 'rgba(0,0,0,.05)', padding: '1px 6px', borderRadius: 99, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, textTransform: 'uppercase' }}>{n.role}</span>
+                              <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', background: 'rgba(0,0,0,.05)', padding: '1px 6px', borderRadius: 99, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>{n.role}</span>
                             </div>
                             <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>{n.date}</span>
                           </div>
@@ -1361,7 +1361,7 @@ export default function MembersList() {
                             )}
                           </div>
                         </div>
-                        <span style={{ padding: '2px 8px', fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', borderRadius: 99, background: log.status === 'Success' ? 'rgba(0,107,63,.1)' : 'rgba(218,165,32,.1)', color: log.status === 'Success' ? 'hsl(var(--primary))' : '#a87d10', border: log.status === 'Success' ? '1px solid rgba(0,107,63,.2)' : '1px solid rgba(218,165,32,.2)', flexShrink: 0 }}>
+                        <span style={{ padding: '2px 8px', fontSize: 10, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, borderRadius: 99, background: log.status === 'Success' ? 'rgba(0,107,63,.1)' : 'rgba(218,165,32,.1)', color: log.status === 'Success' ? 'hsl(var(--primary))' : '#a87d10', border: log.status === 'Success' ? '1px solid rgba(0,107,63,.2)' : '1px solid rgba(218,165,32,.2)', flexShrink: 0 }}>
                           {log.status}
                         </span>
                       </div>
@@ -1397,8 +1397,8 @@ export default function MembersList() {
             </div>
             <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 18 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>Target chapter</label>
-                <select name="name-177083" id="select-177083"
+                <label htmlFor="select-chapter-assign" style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>Target chapter</label>
+                <select name="chapterId" id="select-chapter-assign"
                   value={assignmentData.chapterId}
                   onChange={e => setAssignmentData({ ...assignmentData, chapterId: e.target.value })}
                   style={{ width: '100%', height: 44, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none' }}
@@ -1410,8 +1410,8 @@ export default function MembersList() {
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>Designated role</label>
-                <select name="name-1b73e7" id="select-1b73e7"
+                <label htmlFor="select-role-assign" style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>Designated role</label>
+                <select name="role" id="select-role-assign"
                   value={assignmentData.role}
                   onChange={e => setAssignmentData({ ...assignmentData, role: e.target.value })}
                   style={{ width: '100%', height: 44, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none' }}
@@ -1457,7 +1457,7 @@ export default function MembersList() {
                   <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--destructive))' }}>warning</span>
                 </div>
                 <div>
-                  <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--destructive))', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+                  <div style={{ fontSize: 11, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'hsl(var(--destructive))', marginBottom: 4 }}>
                     Irreversible action
                   </div>
                   <h2 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-.01em' }}>
@@ -1476,13 +1476,13 @@ export default function MembersList() {
                   <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: i < arr.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
                     <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'hsl(var(--border))', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {m.avatarUrl
-                        ? <img src={m.avatarUrl} alt={m.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ? <img src={m.avatarUrl} alt={m.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} crossOrigin="anonymous" />
                         : <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{m.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</span>
                       }
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--on-surface))', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.name}</p>
-                      <span style={{ fontSize: 10.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontVariantNumeric: 'tabular-nums' }}>{m.id.substring(0, 12).toUpperCase()}</span>
+                      <span style={{ fontSize: 10.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontVariantNumeric: 'tabular-nums' }}>{m.id.substring(0, 12)}</span>
                     </div>
                   </div>
                 ))}
@@ -1564,11 +1564,11 @@ export default function MembersList() {
                 { key: 'residentialAddress',  label: 'Residential address',  type: 'text' },
               ] as const).map(field => (
                 <div key={field.key}>
-                  <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 5 }}>
+                  <label htmlFor={`input-edit-${field.key}`} style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", marginBottom: 5 }}>
                     {field.label}
                   </label>
                   {field.type === 'select' ? (
-                    <select name="name-e0c791" id="select-e0c791"
+                    <select name={field.key} id={`input-edit-${field.key}`}
                       value={(editForm[field.key as keyof typeof editForm] as string) ?? ''}
                       onChange={e => setEditForm(f => ({ ...f, [field.key]: e.target.value }))}
                       style={{ width: '100%', height: 42, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}
@@ -1577,7 +1577,7 @@ export default function MembersList() {
                       {field.options.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                   ) : (
-                    <input name="name-16aed2" id="input-16aed2"
+                    <input name={field.key} id={`input-edit-${field.key}`}
                       type={field.type}
                       value={(editForm[field.key as keyof typeof editForm] as string) ?? ''}
                       onChange={e => setEditForm(f => ({ ...f, [field.key]: e.target.value }))}

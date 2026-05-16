@@ -58,7 +58,7 @@ function DeleteModal({ label, itemName, onClose, onConfirm, isLoading }: {
         </div>
         <div style={{ padding: 22 }}>
           <div style={{ background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '10px 14px', marginBottom: 18 }}>
-            <p style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em', margin: '0 0 3px' }}>Target</p>
+            <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', margin: '0 0 3px' }}>Target</p>
             <p style={{ fontSize: 14, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>{itemName}</p>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -248,7 +248,7 @@ export default function AdminRegions() {
           <div key={kpi.label} className="panel" style={{ padding: '14px 18px 14px 22px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-              <p style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{kpi.label}</p>
+              <p style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>{kpi.label}</p>
               <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>{kpi.icon}</span>
             </div>
             <p style={{ fontSize: 22, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>
@@ -394,7 +394,7 @@ export default function AdminRegions() {
       {/* Add region */}
       {addRegionModal && (
         <Modal title="Define new region" subtitle="Add an administrative region" onClose={() => setAddRegionModal(false)}>
-          <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Region name</label>
+          <label htmlFor="input-bff317" style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6 }}>Region name</label>
           <input name="inputValue" id="input-bff317"
             autoFocus
             value={inputValue}
@@ -416,7 +416,7 @@ export default function AdminRegions() {
       {/* Edit region */}
       {editRegionModal && (
         <Modal title="Edit region" subtitle={`Editing: ${editRegionModal.name}`} onClose={() => setEditRegionModal(null)}>
-          <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Region name</label>
+          <label htmlFor="input-5066bc" style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6 }}>Region name</label>
           <input name="inputValue" id="input-5066bc"
             autoFocus
             value={inputValue}
@@ -437,7 +437,7 @@ export default function AdminRegions() {
       {/* Add constituency */}
       {addConModal && (
         <Modal title="Define constituency" subtitle={`Adding to: ${addConModal.regionName}`} onClose={() => setAddConModal(null)}>
-          <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Constituency name</label>
+          <label htmlFor="input-fe8639" style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6 }}>Constituency name</label>
           <input name="inputValue" id="input-fe8639"
             autoFocus
             value={inputValue}
@@ -459,7 +459,7 @@ export default function AdminRegions() {
       {/* Edit constituency */}
       {editConModal && (
         <Modal title="Edit constituency" subtitle={`In: ${editConModal.regionName}`} onClose={() => setEditConModal(null)}>
-          <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Constituency name</label>
+          <label htmlFor="input-1238ff" style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6 }}>Constituency name</label>
           <input name="inputValue" id="input-1238ff"
             autoFocus
             value={inputValue}

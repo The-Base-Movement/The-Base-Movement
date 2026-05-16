@@ -9,21 +9,44 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { ChapterCard } from '@/components/ChapterCard'
 import { useChapters } from '@/context/ChaptersContext'
 
-const countryFlags: Record<string, string> = {
-  'Germany': '🇩🇪', 'United Kingdom': '🇬🇧', 'Australia': '🇦🇺', 'United States': '🇺🇸',
-  'Austria': '🇦🇹', 'Belgium': '🇧🇪', 'Brazil': '🇧🇷', 'Burkina Faso': '🇧🇫',
-  'Cameroon': '🇨🇲', 'Canada': '🇨🇦', 'China': '🇨🇳', 'Czech Republic': '🇨🇿',
-  'Denmark': '🇩🇰', 'Egypt': '🇪🇬', 'Finland': '🇫🇮', 'France': '🇫🇷',
-  'India': '🇮🇳', 'Ireland': '🇮🇪', 'Israel': '🇮🇱', 'Italy': '🇮🇹',
-  'Ivory Coast': '🇨🇮', 'Japan': '🇯🇵', 'Kenya': '🇰🇪', 'Kuwait': '🇰🇼',
-  'Luxembourg': '🇱🇺', 'Malaysia': '🇲🇾', 'Mexico': '🇲🇽', 'Morocco': '🇲🇦',
-  'Netherlands': '🇳🇱', 'New Zealand': '🇳🇿', 'Nigeria': '🇳🇬', 'Norway': '🇳🇴',
-  'Poland': '🇵🇱', 'Portugal': '🇵🇹', 'Qatar': '🇶🇦', 'Russia': '🇷🇺',
-  'Saudi Arabia': '🇸🇦', 'Senegal': '🇸🇳', 'Singapore': '🇸🇬', 'South Africa': '🇿🇦',
-  'South Korea': '🇰🇷', 'Spain': '🇪🇸', 'Sweden': '🇸🇪', 'Switzerland': '🇨🇭',
-  'Tanzania': '🇹🇿', 'Thailand': '🇹🇭', 'Togo': '🇹🇬', 'Turkey': '🇹🇷',
-  'United Arab Emirates': '🇦🇪'
-}
+// countryFlags record removed - now using dynamic database assets via flag_url
+const countryFlags: Record<string, string> = {}
+
+const GHANA_REGIONS_LIST = [
+  'Ahafo', 'Ashanti', 'Bono', 'Bono East', 'Central', 'Eastern', 'Greater Accra',
+  'North East', 'Northern', 'Oti', 'Savannah', 'Upper East', 'Upper West', 'Volta', 'Western', 'Western North'
+];
+
+/**
+ * Robustly determines which Ghana region a chapter belongs to.
+ */
+const getChapterRegion = (c: { region?: string | null, city_or_region: string }) => {
+  if (c.region && GHANA_REGIONS_LIST.includes(c.region)) return c.region;
+  
+  const city = (c.city_or_region || '').toLowerCase();
+  if (!city || city === 'ghana') return null;
+
+  const matched = GHANA_REGIONS_LIST.find(r => 
+    city === r.toLowerCase() || 
+    city.includes(r.toLowerCase()) || 
+    r.toLowerCase().includes(city)
+  );
+  if (matched) return matched;
+
+  if (city.includes('accra') || city.includes('tema')) return 'Greater Accra';
+  if (city.includes('kumasi') || city.includes('obuasi')) return 'Ashanti';
+  if (city.includes('takoradi') || city.includes('sekondi')) return 'Western';
+  if (city.includes('tamale')) return 'Northern';
+  if (city.includes('cape coast') || city.includes('winneba')) return 'Central';
+  if (city.includes('koforidua')) return 'Eastern';
+  if (city.includes('ho')) return 'Volta';
+  if (city.includes('sunyani')) return 'Bono';
+  if (city.includes('techiman')) return 'Bono East';
+  if (city.includes('wa')) return 'Upper West';
+  if (city.includes('bolgatanga')) return 'Upper East';
+  
+  return null;
+};
 
 const inputSt: React.CSSProperties = {
   width: '100%', height: 40, padding: '0 12px',
@@ -56,7 +79,7 @@ export default function Chapters() {
   const [submissionSuccess, setSubmissionSuccess] = useState(false)
 
   useEffect(() => {
-    adminService.getRegions().then(res => setRegions(['All Regions', ...res.map(r => r.name)]))
+    setRegions(['All Regions', ...GHANA_REGIONS_LIST.slice().sort()])
     const user = authService.getUser()
     if (user) adminService.getUserChapter(user.id).then(setUserChapterName)
   }, [])
@@ -70,7 +93,13 @@ export default function Chapters() {
     const matchSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.city_or_region.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.country.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchRegion = activeTab === 'diaspora' || selectedRegion === 'All Regions' || c.region === selectedRegion
+    
+    let matchRegion = true;
+    if (activeTab === 'ghana' && selectedRegion !== 'All Regions') {
+      const derived = getChapterRegion(c);
+      matchRegion = derived === selectedRegion;
+    }
+
     return matchSearch && matchRegion
   })
 

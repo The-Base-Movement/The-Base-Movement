@@ -132,7 +132,7 @@ export default function RallyCommand() {
         <aside style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
             <div className="ph" style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Field actions</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11 }}>Field actions</span>
               <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}>bolt</span>
             </div>
             <div style={{ maxHeight: 600, overflowY: 'auto' }}>
@@ -153,17 +153,16 @@ export default function RallyCommand() {
                       background: action.status === 'Live' ? 'rgba(206, 17, 38, 0.1)' : 'hsl(var(--container-low))', 
                       color: action.status === 'Live' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))',
                       fontSize: 8,
-                      fontWeight: 900,
-                      textTransform: 'uppercase'
+                      fontWeight: 900
                     }}>
                       {action.status}
                     </span>
-                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>{format(new Date(action.start_time), 'MMM dd, HH:mm')}</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>{format(new Date(action.start_time), 'MMM dd, HH:mm')}</span>
                   </div>
                   <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))', margin: 0 }}>{action.title}</h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))' }}>location_on</span>
-                    <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{action.location_name}</p>
+                    <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{action.location_name}</p>
                   </div>
                 </div>
               ))}
@@ -179,34 +178,34 @@ export default function RallyCommand() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
                 <div className="panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Verified strength</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Verified strength</span>
                     <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>verified</span>
                   </div>
                   <div>
                     <p style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>{attendance.filter(a => a.is_verified).length}</p>
-                    <p style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Confirmed field personnel</p>
+                    <p style={{ fontSize: 9, fontWeight: 900, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Confirmed field personnel</p>
                   </div>
                 </div>
                 <div className="panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Check-in velocity</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Check-in velocity</span>
                     <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>timer</span>
                   </div>
                   <div>
                     <p style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>{attendance.length}</p>
-                    <p style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Total signals received</p>
+                    <p style={{ fontSize: 9, fontWeight: 900, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Total signals received</p>
                   </div>
                 </div>
                 <div className="panel" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Target achievement</span>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Target achievement</span>
                     <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>flag</span>
                   </div>
                   <div>
                     <p style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>
                       {Math.round((attendance.length / (selectedAction.target_attendance || 1)) * 100)}%
                     </p>
-                    <p style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Goal: {selectedAction.target_attendance}</p>
+                    <p style={{ fontSize: 9, fontWeight: 900, color: 'hsl(var(--on-surface-muted))', marginTop: 4 }}>Goal: {selectedAction.target_attendance}</p>
                   </div>
                 </div>
               </div>
@@ -215,8 +214,8 @@ export default function RallyCommand() {
               <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
                 <div className="ph" style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', color: 'hsl(var(--on-surface))' }}>Attendance manifest</span>
-                    <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Verified check-ins via geo-fenced signals</p>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface))' }}>Attendance manifest</span>
+                    <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Verified check-ins via geo-fenced signals</p>
                   </div>
                   <div style={{ position: 'relative' }}>
                     <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>search</span>
@@ -229,16 +228,16 @@ export default function RallyCommand() {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead style={{ background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
                     <tr>
-                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Member</th>
-                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Signal time</th>
-                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Status</th>
-                      <th style={{ padding: '14px 24px', textAlign: 'right', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))' }}>Actions</th>
+                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Member</th>
+                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Signal time</th>
+                      <th style={{ padding: '14px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Status</th>
+                      <th style={{ padding: '14px 24px', textAlign: 'right', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, color: 'hsl(var(--on-surface-muted))' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {attendance.length === 0 ? (
                       <tr>
-                        <td colSpan={4} style={{ padding: 60, textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>No signals detected for this action</td>
+                        <td colSpan={4} style={{ padding: 60, textAlign: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>No signals detected for this action</td>
                       </tr>
                     ) : (
                       attendance.map((entry) => (
@@ -258,12 +257,12 @@ export default function RallyCommand() {
                             {entry.is_verified ? (
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'hsl(var(--primary))' }}>
                                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>verified_user</span>
-                                <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase' }}>Verified</span>
+                                <span style={{ fontSize: 9, fontWeight: 900 }}>Verified</span>
                               </div>
                             ) : (
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'hsl(var(--accent))' }}>
                                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>hourglass_empty</span>
-                                <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase' }}>Pending</span>
+                                <span style={{ fontSize: 9, fontWeight: 900 }}>Pending</span>
                               </div>
                             )}
                           </td>
@@ -293,17 +292,17 @@ export default function RallyCommand() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <span className="material-symbols-outlined" style={{ color: 'hsl(var(--destructive))' }}>location_on</span>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: 10, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Geo-fence verification</h3>
-                      <p style={{ margin: '4px 0 0', fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>{selectedAction.location_name}</p>
+                      <h3 style={{ margin: 0, fontSize: 11, fontWeight: 900 }}>Geo-fence verification</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.4)' }}>{selectedAction.location_name}</p>
                     </div>
                   </div>
-                  <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: 2 }}>{selectedAction.geofence_radius_meters}m radius</span>
+                  <span style={{ fontSize: 9, fontWeight: 900, color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: 2 }}>{selectedAction.geofence_radius_meters}m radius</span>
                 </div>
 
                 <div style={{ height: 'calc(100% - 65px)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                   <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 64, color: 'rgba(255,255,255,0.05)' }}>explore</span>
-                    <p style={{ margin: '12px 0 0', fontSize: 9, fontWeight: 900, textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.1em' }}>Satellite Engagement Visualization</p>
+                    <p style={{ margin: '12px 0 0', fontSize: 9, fontWeight: 900, color: 'rgba(255,255,255,0.2)' }}>Satellite Engagement Visualization</p>
                   </div>
                   
                   {/* Visual pulses */}
@@ -316,8 +315,8 @@ export default function RallyCommand() {
             <div className="panel" style={{ height: 600, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, borderStyle: 'dashed' }}>
               <span className="material-symbols-outlined" style={{ fontSize: 64, color: 'hsl(var(--on-surface-muted))', opacity: 0.1 }}>priority_high</span>
               <div style={{ textAlign: 'center', maxWidth: 320 }}>
-                <p style={{ fontSize: 14, fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>Deployment Pending</p>
-                <p style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', marginTop: 8, lineHeight: 1.6 }}>Select a field action from the operational log to view tactical metrics and member manifests.</p>
+                <p style={{ fontSize: 14, fontWeight: 900, margin: 0 }}>Deployment Pending</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', marginTop: 8, lineHeight: 1.6 }}>Select a field action from the operational log to view tactical metrics and member manifests.</p>
               </div>
             </div>
           )}

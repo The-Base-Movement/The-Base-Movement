@@ -5,12 +5,14 @@ import { useStore } from '@/hooks/useStore'
 import { adminService } from '@/services/adminService'
 import type { Region } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/context/AuthContext'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 
 export default function Checkout() {
   const navigate = useNavigate()
   const { cart, clearCart } = useStore()
+  const { session } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card'>('momo')
   const [isDiaspora, setIsDiaspora] = useState(false)
@@ -36,7 +38,6 @@ export default function Checkout() {
     let isMounted = true
     async function loadData() {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
         
         const [cList, rList] = await Promise.all([
           adminService.getCountries(),
@@ -64,7 +65,7 @@ export default function Checkout() {
     }
     loadData()
     return () => { isMounted = false }
-  }, [])
+  }, [session])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -97,7 +98,6 @@ export default function Checkout() {
 
     setIsSubmitting(true)
     try {
-      const { data: { session } } = await supabase.auth.getSession()
 
       // 1. Insert Master Order Record
       const { data: order, error: orderError } = await supabase
