@@ -57,22 +57,15 @@ class ChapterService {
     }, {})
 
     return (data || []).map((c) => {
-      const dbFlag = countryFlagsMap[(c.country || '').toLowerCase()]
-      
-      // Fallback: extract ISO code from name if it ends with a 2-letter code
-      let nameFlag = undefined
-      const nameParts = (c.name || '').split(' ')
-      const lastPart = nameParts[nameParts.length - 1]
-      if (lastPart && lastPart.length === 2 && /^[A-Z]{2}$/.test(lastPart)) {
-        nameFlag = lastPart
-      }
+      const resolvedCountry = c.country || 'Ghana'
+      const dbFlag = countryFlagsMap[resolvedCountry.toLowerCase()] || countryFlagsMap['ghana']
 
       return {
         id: c.id || '',
         name: c.name || 'Unknown Chapter',
         city_or_region: c.city_or_region || 'Unknown Location',
-        country: c.country || 'Ghana',
-        flag_url: dbFlag || c.flag_url || nameFlag || undefined,
+        country: resolvedCountry,
+        flag_url: dbFlag || c.flag_url || undefined,
         leader_name: c.leader_name || 'Unassigned',
         leader_id: c.leader_id || undefined,
         member_count: c.member_count || 0,

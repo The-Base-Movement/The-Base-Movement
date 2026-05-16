@@ -232,7 +232,7 @@ export default function Polls() {
     <main className="bg-stone-50/50 min-h-screen font-meta pb-20">
       <SEO
         title="Polls & Feedback"
-        description="Your voice shapes movement strategy. Participate in active polls and see how other patriots think."
+        description="Your voice shapes movement strategy. Participate in active polls and see how other members think."
         canonical="/polls"
       />
       <header className="bg-white border-b border-stone-200">
@@ -245,7 +245,7 @@ export default function Polls() {
             </h1>
             <div className="bl"><div /><div /><div /></div>
             <p className="text-stone-500 max-w-3xl mt-6 leading-relaxed font-medium text-sm md:text-base">
-              Your voice shapes movement strategy. Participate in active polls and see how other patriots think.
+              Your voice shapes movement strategy. Participate in active polls and see how other members think.
             </p>
           </div>
         </div>

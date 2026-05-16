@@ -183,9 +183,9 @@ export default function Members() {
       {/* KPIs — brand-color left bars: charcoal · green · gold · red */}
       <div className="kpis">
         {([
-          { label: 'Total patriots',    value: members.length, sub: 'Across all networks',    bar: 'hsl(var(--on-surface))',    val: 'hsl(var(--on-surface))',   icon: 'groups'    },
+          { label: 'Total members',     value: members.length, sub: 'Across all networks',    bar: 'hsl(var(--on-surface))',    val: 'hsl(var(--on-surface))',   icon: 'groups'    },
           { label: 'Ghana network',     value: ghanaCount,     sub: 'Registered in Ghana',    bar: 'hsl(var(--primary))',       val: 'hsl(var(--on-surface))',   icon: 'flag'      },
-          { label: 'Diaspora network',  value: diasporaCount,  sub: 'International patriots', bar: 'hsl(var(--accent))',        val: 'hsl(var(--on-surface))',   icon: 'public'    },
+          { label: 'Diaspora network',  value: diasporaCount,  sub: 'International members',  bar: 'hsl(var(--accent))',        val: 'hsl(var(--on-surface))',   icon: 'public'    },
           { label: 'Verified',          value: verifiedCount,  sub: 'ID confirmed',           bar: 'hsl(var(--destructive))',   val: 'hsl(var(--destructive))',  icon: 'verified'  },
         ] as { label: string; value: number; sub: string; bar: string; val: string; icon: string }[]).map(kpi => (
           <div key={kpi.label} className="panel" style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}>
@@ -248,7 +248,7 @@ export default function Members() {
         <div style={{ minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))' }}>
             <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-              {filteredMembers.length} patriot{filteredMembers.length !== 1 ? 's' : ''} found
+              {filteredMembers.length} member{filteredMembers.length !== 1 ? 's' : ''} found
             </span>
             {isFiltered && (
               <button className="btn btn-outline btn-sm" onClick={clearFilters}>
@@ -267,7 +267,7 @@ export default function Members() {
           ) : (
             <div className="panel" style={{ padding: '48px 24px', textAlign: 'center' }}>
               <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', opacity: 0.2, display: 'block', marginBottom: 12 }}>groups</span>
-              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))', marginBottom: 6 }}>No patriots found</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'hsl(var(--on-surface))', marginBottom: 6 }}>No members found</div>
               <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginBottom: 18 }}>
                 Try adjusting your filters or search term.
               </div>
@@ -278,7 +278,7 @@ export default function Members() {
           {/* Quote strip */}
           <div style={{ marginTop: 32, borderLeft: '4px solid hsl(var(--primary))', paddingLeft: 20, paddingTop: 8, paddingBottom: 8 }}>
             <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 14, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic', lineHeight: 1.7, margin: 0, maxWidth: 560 }}>
-              "Our strength lies in our unity across borders. Every verified patriot is a pillar in the foundation of the new Ghana we are building."
+              "Our strength lies in our unity across borders. Every verified member is a pillar in the foundation of the new Ghana we are building."
             </p>
           </div>
         </div>

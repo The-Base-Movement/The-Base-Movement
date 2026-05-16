@@ -86,7 +86,7 @@ export function SuccessStep({ formData, photoUrl, regNumber, onEdit }: SuccessSt
           <span className="material-symbols-outlined" style={{ fontSize: 32 }}>check_circle</span>
         </div>
         <h1 className="text-3xl font-bold text-on-surface tracking-tighter font-meta mb-2">Registration complete</h1>
-        <p className="text-muted-foreground/90 font-meta tracking-tight text-xs">Welcome to the movement, patriot.</p>
+        <p className="text-muted-foreground/90 font-meta tracking-tight text-xs">Welcome to the movement, {formData.fullName.split(' ')[0]}.</p>
       </div>
 
       <div className="space-y-8">

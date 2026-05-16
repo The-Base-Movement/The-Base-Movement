@@ -488,8 +488,13 @@ export default function Home() {
                     <Link key={chapter.id} to="/chapters" style={{ textDecoration: 'none' }}>
                       <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, overflow: 'hidden', height: '100%' }}>
                         <div style={{ padding: '14px 16px', background: isFeatured ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div>
-                            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, letterSpacing: '-.005em' }}>{chapter.name}</div>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, letterSpacing: '-.005em', display: 'flex', alignItems: 'center', gap: 6 }}>
+                              {chapter.name}
+                              {chapter.flag_url && (
+                                <img src={chapter.flag_url} alt={chapter.country} style={{ height: 13, width: 'auto', borderRadius: 2, flexShrink: 0 }} />
+                              )}
+                            </div>
                             <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: isFeatured ? 'rgba(255,255,255,.85)' : 'hsl(var(--accent))', marginTop: 2 }}>
                               {chapter.city_or_region || chapter.country}
                             </div>

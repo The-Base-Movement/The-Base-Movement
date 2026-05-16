@@ -10,7 +10,7 @@ import type { Member } from '@/types/admin'
 import { contentService } from '@/services/contentService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
-import { getCountryFlag, getFlagImageUrl } from '@/lib/utils'
+import { getCountryFlag } from '@/lib/utils'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { supabase } from '@/lib/supabase'
 
@@ -534,7 +534,7 @@ export default function ChaptersManagement() {
                   tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(0,0,0,0.3)' }}
                   label={{ value: 'Chapter density', position: 'bottom', offset: 0, fontSize: 10, fill: 'rgba(0,0,0,0.4)' }}
                 />
-                <YAxis type="number" dataKey="memberCount" name="Patriots" axisLine={false} tickLine={false}
+                <YAxis type="number" dataKey="memberCount" name="Members" axisLine={false} tickLine={false}
                   tick={{ fontSize: 10, fontWeight: 600, fill: 'rgba(0,0,0,0.3)' }}
                   label={{ value: 'Mobilization strength', angle: -90, position: 'insideLeft', fontSize: 10, fill: 'rgba(0,0,0,0.4)' }}
                 />

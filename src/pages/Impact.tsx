@@ -145,7 +145,7 @@ export default function Impact() {
           {[
             { label: 'Donations received', value: isLoading ? '—' : stats.totalDonations, sub: 'Total approved', bar: 'hsl(var(--primary))', icon: 'volunteer_activism' },
             { label: 'Active chapters', value: isLoading ? '—' : stats.activeChapters, sub: 'Operational units', bar: 'hsl(var(--accent))', icon: 'account_balance' },
-            { label: 'Registered patriots', value: isLoading ? '—' : stats.totalMembers, sub: 'National scale', bar: 'hsl(var(--on-surface))', icon: 'groups' },
+            { label: 'Registered members', value: isLoading ? '—' : stats.totalMembers, sub: 'National scale', bar: 'hsl(var(--on-surface))', icon: 'groups' },
             { label: 'Countries reached', value: isLoading ? '—' : stats.countriesReached, sub: 'Global diaspora', bar: 'hsl(var(--destructive))', icon: 'public' },
           ].map(kpi => (
             <div key={kpi.label} className="panel" style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}>
@@ -380,7 +380,7 @@ export default function Impact() {
           {[
             { label: 'Donations received', value: stats.totalDonations, icon: 'volunteer_activism', trend: '+12%', color: '#006B3F', status: 'No new donations yet today' },
             { label: 'Chapters active', value: stats.activeChapters, icon: 'track_changes', trend: '+2', color: '#DAA520', status: 'Verified' },
-            { label: 'Registered Patriots', value: stats.totalMembers, icon: 'groups', trend: '+15%', color: '#22C55E', status: 'National scale' },
+            { label: 'Registered members', value: stats.totalMembers, icon: 'groups', trend: '+15%', color: '#22C55E', status: 'National scale' },
             { label: 'Countries reached', value: stats.countriesReached, icon: 'public', trend: 'Global', color: '#3B82F6', status: 'Global' }
           ].map((stat, i) => {
             return (

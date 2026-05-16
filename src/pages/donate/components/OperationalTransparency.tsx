@@ -91,7 +91,7 @@ export function OperationalTransparency({
             borderRadius: 4,
             minWidth: 160
           }}>
-            <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4, fontFamily: "'Public Sans', sans-serif" }}>Active patriots</p>
+            <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4, fontFamily: "'Public Sans', sans-serif" }}>Active members</p>
             <p style={{ fontSize: 20, fontWeight: 900, color: 'hsl(var(--primary))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>{globalStats.totalMembers.toLocaleString()}</p>
           </div>
         </div>

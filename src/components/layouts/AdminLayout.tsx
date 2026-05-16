@@ -174,7 +174,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       label: "Members",
       icon: 'group',
       items: [
-        { to: '/admin/members', icon: 'group', label: 'Patriot directory', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
+        { to: '/admin/members', icon: 'group', label: 'Member directory', permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/verification', icon: 'verified_user', label: 'KYC queue', pill: pendingVerificationsCount > 0 ? pendingVerificationsCount.toString() : undefined, permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' } },
         { to: '/admin/donations', icon: 'payments', label: 'Contribution desk', pill: pendingDonationsCount > 0 ? pendingDonationsCount.toString() : undefined, permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' } },
         { to: '/admin/leadership', icon: 'shield', label: 'Leadership hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },

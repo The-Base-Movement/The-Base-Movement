@@ -4,7 +4,7 @@ const actions = [
   { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Vote on poll', sub: 'Closes in 4 days' },
   { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Make a donation', sub: 'Support the cause' },
   { to: '/dashboard/chapters', icon: 'groups', label: 'Find a branch', sub: 'Near Ablekuma North' },
-  { to: '/dashboard/members', icon: 'share', label: 'Refer a patriot', sub: 'Earn impact points' },
+  { to: '/dashboard/members', icon: 'share', label: 'Refer a member', sub: 'Earn impact points' },
 ]
 
 export function QuickActions() {

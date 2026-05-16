@@ -223,7 +223,7 @@ export default function DashboardLayout() {
               { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
               { to: '/dashboard/store', icon: 'storefront', label: 'Supplies' },
               { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback Hub' },
-              { to: '/dashboard/members', icon: 'groups', label: 'Verified Patriots' },
+              { to: '/dashboard/members', icon: 'groups', label: 'Verified Members' },
             ]},
             { label: 'Personal', items: [
               { to: '/dashboard/settings', icon: 'settings', label: 'Settings' },

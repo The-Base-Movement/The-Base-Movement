@@ -747,7 +747,7 @@ class AdminService {
         diaspora: dCount,
         membersDelta: mNew > 0 ? `+${mNew} this month` : 'Steady growth',
         chaptersDelta: cNew > 0 ? `+${cNew} this month` : 'Growing nationwide',
-        diasporaDelta: dNew > 0 ? `+${dNew} new patriots` : 'Global network'
+        diasporaDelta: dNew > 0 ? `+${dNew} new members` : 'Global network'
       };
     } catch (error) {
       console.warn('[ADMIN SERVICE] Failed to fetch public stats:', error);
@@ -1017,7 +1017,7 @@ class AdminService {
     return donationService.getPendingDonations()
   }
 
-  async getDonationStats(): Promise<{ totalRaised: number, totalDonors: number, recentGrowth: string }> {
+  async getDonationStats(): Promise<{ totalContributions: number, pendingCount: number, approvedAmount: number, flaggedCount: number }> {
     return donationService.getDonationStats()
   }
 

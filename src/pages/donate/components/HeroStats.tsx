@@ -67,7 +67,7 @@ export function HeroStats({ totalRaised, totalMembers }: HeroStatsProps) {
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: 24, border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', borderRadius: 4 }}>
-              <p style={{ fontSize: 10.5, fontWeight: 800, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 8, fontFamily: "'Public Sans', sans-serif" }}>Active patriots</p>
+              <p style={{ fontSize: 10.5, fontWeight: 800, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 8, fontFamily: "'Public Sans', sans-serif" }}>Active members</p>
               <h3 style={{ fontSize: 24, fontWeight: 900, color: '#fff', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>{totalMembers.toLocaleString()}</h3>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: 24, border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', borderRadius: 4 }}>

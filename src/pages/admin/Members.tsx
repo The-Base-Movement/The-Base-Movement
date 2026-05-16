@@ -470,7 +470,7 @@ export default function MembersList() {
           description="Verified citizens registered nationwide in the movement database"
         />
         <TacticalKPI 
-          label="Patriots"
+          label="Members"
           value={isLoading ? '—' : stats.active.toLocaleString()}
           variant="gold"
           description="Active mobilization personnel with verified administrative status"
@@ -774,7 +774,7 @@ export default function MembersList() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 9.5, color: 'hsl(var(--accent))', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase' }}>
-                    {selectedMember.status === 'Active' || selectedMember.status === 'Approved' ? 'Verified patriot' : 'Pending verification'} · since {selectedMember.joined?.split('-')[0] || '2025'}
+                    {selectedMember.status === 'Active' || selectedMember.status === 'Approved' ? 'Verified member' : 'Pending verification'} · since {selectedMember.joined?.split('-')[0] || '2025'}
                   </div>
                   <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, letterSpacing: '-.02em', marginTop: 4, lineHeight: 1.1 }}>{selectedMember.name}</h2>
                   <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--accent))', marginTop: 4, fontVariantNumeric: 'tabular-nums', letterSpacing: '.04em' }}>

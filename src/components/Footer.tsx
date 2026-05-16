@@ -210,6 +210,12 @@ export default function Footer() {
           <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
             © {new Date().getFullYear()} The Base Movement. Ghana First.
           </p>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 11, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+            Flag icons by{' '}
+            <a href="https://flagpedia.net" target="_blank" rel="noopener noreferrer" style={{ color: 'hsl(var(--on-surface-muted))', textDecoration: 'underline' }}>
+              Flagpedia.net
+            </a>
+          </p>
           {/* Brand gradient bar */}
           <div style={{ display: 'flex', height: 3, width: 160, borderRadius: 99, overflow: 'hidden', flexShrink: 0 }}>
             <div style={{ flex: 1, background: 'hsl(var(--destructive))' }} />

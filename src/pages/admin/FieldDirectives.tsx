@@ -217,7 +217,7 @@ export default function FieldDirectives() {
                           <img src={`https://i.pravatar.cc/100?u=${report.member_id}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                         <div>
-                          <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>Patriot #{report.member_id.slice(0, 8).toUpperCase()}</div>
+                          <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>Member #{report.member_id.slice(0, 8).toUpperCase()}</div>
                           <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>{new Date(report.created_at).toLocaleString()}</div>
                         </div>
                       </div>

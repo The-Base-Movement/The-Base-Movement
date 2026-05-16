@@ -153,7 +153,7 @@ export default function Navbar() {
                 }}>
                   <div style={{ padding: '10px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
                     <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>Member portal</div>
-                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--accent))', marginTop: 2 }}>Active patriot</div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--accent))', marginTop: 2 }}>Active member</div>
                   </div>
                   {[
                     { to: '/dashboard',        icon: 'dashboard', label: 'Dashboard' },
