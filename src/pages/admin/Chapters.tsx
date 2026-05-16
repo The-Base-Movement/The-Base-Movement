@@ -13,6 +13,16 @@ import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { supabase } from '@/lib/supabase'
 
+interface PollSummary {
+  id: string
+  title: string
+  description: string | null
+  ends_at: string
+  banner_url: string | null
+  total_votes: number
+  candidates: { id: string; name: string; position: string | null; avatar_url: string | null }[]
+}
+
 const REGION_PATHS = [
   { id: "Northern", d: "M284.727,183.507c-5.086-1.152-5.614-0.649-5.766,4.458c-0.098,3.319,1.616,6.376,1.094,9.753c-0.186,1.2-0.214,2.366-1.342,2.99c-1.381,0.764-2.497,0.165-3.452-0.953c-1.771-2.074-3.732-2.658-5.945-0.618c-1.866,1.72-4.143,0.803-6.19,0.787c-2.925-0.023-4.448,0.848-4.139,3.999c0.295,3.005-0.825,6.209,1.933,8.787c3.244,3.032,2.2,5.95-1.147,7.942c-4.416,2.627-3.213,4.641,0.22,6.856c0.803,0.518,1.572,1.103,2.363,1.637c9.286,6.271,10.939,12.362,6.773,22.819c-0.615,1.543-1.383,3.233-1.176,5.177c0.648,6.085,3.367,7.578,8.292,4.008c2.3-1.667,4.583-2.19,7.292-2.194c3.722-0.005,7.588,0.809,11.003-1.705c0.639-0.47,2.524-0.469,2.779-0.048c2.345,3.875,4.706,0.736,7.38,0.259c-0.482,4.244,2.734,5.235,5.875,5.429c4.508,0.278,9.137-0.108,13.197-2.298c1.487-0.802,2.046-0.008,3.021,0.375c1.782,0.701,3.538,1.571,5.391,1.969c4.025,0.866,6.237-1.587,5.295-6.111c3.494,1.81,6.873,3.315,10.62,1.238c0.693-0.384,1.629,0.013,2.206,0.75c6.468,8.254,15.405,11.104,25.411,12.345c4.366,0.541,9.274,1.671,10.938,7.054c0.606,1.964,1.783,2.682,3.938,2.908c2.741,0.288,4.092,1.619,3.628,5.188c-0.533,4.094-1.353,8.652,1.201,12.547c1.187,1.811-0.031,2.859-1.116,2.967c-5.215,0.519-6.199,6.92-11.117,7.798c-0.34,0.061-0.539,1.276-1.593,1.397c-4.548,0.523-3.008,2.911-1.147,4.775c2.504,2.509,1.437,6.945-0.971,9.355c-3.755,3.76-7.75,1.769-11.684,1.821c-2.852,0.038-5.941-0.362-6.724,3.348c-0.74,3.514,1.405,5.476,4.403,6.744c2.827,1.196,4.744,2.657,6.534,5.787c2.016,3.522,6.548,5.934,9.585,9.28c1.031,1.137,2.222,1.19,3.554,0.3c1.599-1.067,3.383-2.249,5.001-2.785c1.894-0.627,4.755-3.131,6.415-0.32c1.517,2.568,0.549,5.972-2.066,7.317c-3.143,1.617-2.721,3.706-2.131,6.125c1.205,4.938-0.896,7.933-5.697,8.299c-1.216,0.093-3.315-1.25-3.587,1.263c-0.155,1.426-0.785,3.372,0.406,4.268c1.245,0.936,3.112,0.701,4.662-0.165c1.72-0.96,3.484-1.506,5.555-1.484c5.953,0.064,7.258,1.205,7.298,7.001c0.032,4.598-2.403,6.971-7.361,7.041c-4.165,0.059-8.339,0.154-12.496-0.044c-2.296-0.109-4.022,0.656-4.905,2.571c-1.083,2.347-0.885,5.903-4.025,6.351c-4.518,0.643-9.849,1.178-13.063-2.482c-5.695-6.484-14.074-9.821-18.63-17.87c-2.784-4.917-9.592-3.164-14.271-1.986c-8.417,2.119-13.58,8.884-18.226,15.782c-1.278,1.898-2.337,3.351-4.823,4.208c-5.783,1.993-6.708,5.492-4.859,11.441c1.075,3.459,2.047,7.334-1.302,10.571c-1.52,1.469-2.939,1.818-4.869,1.11c-1.836-0.673-2.023-1.915-2.254-3.708c-0.972-7.555-5.271-14.041-7.182-21.36c-1.243-4.764-3.376-9.33-5.066-13.998c-0.795-2.197-1.083-5.55-5.035-5.821c-1.691-0.116-2.507-2.322-0.911-3.888c2.545-2.496,5.259-4.679,3.991-8.976c-0.23-0.78,1.082-2.555,2.092-3.077c8.025-4.151,6.476-11.066,5.616-17.98c-0.672-5.405-3.843-7.069-8.742-6.839c-4.238,0.199-6.268-3.177-8.789-5.646c-3.556-3.483-7.288-6.225-12.627-6.423c-5.468-0.203-9.309,1.259-12.281,6.383c-4.701,8.103-5.822,8.125-14.572,4.494c-2.794-1.159-5.042-1.73-6.808,1.908c-3.071,6.326-5.083,6.718-11.137,3.126c-5.036-2.988-10.588-0.985-12.222,4.621c-0.72,2.469-1.09,5.103-1.185,7.677c-0.165,4.454-0.445,8.673-3.203,12.582c-2.617,3.709-0.315,7.368,1.866,10.312c1.795,2.423,3.71,5.476,8.121,3.185c2.506-1.302,5.478,0.23,7.4,2.583c1.268,1.552,1.455,3.996,0.161,4.878c-1.169,0.797-2.622,2.902-4.961,1.363c-6.831-4.494-9.567-1.917-13.361,4.191c-6.162,9.918-21.162,10.799-27.993,1.476c-2.164-2.954-4.87-5.724-7.865-7.806c-5.188-3.606-7.479-8.37-7.153-14.438c0.133-2.48-0.95-4.013-2.576-5.506c-3.465-3.183-6.129-6.599-5.614-11.862c0.243-2.483-0.958-4.979-3.071-6.83c-5.085-4.456-9.411-9.597-12.529-15.595c-1.378-2.651-3.647-4.257-5.885-5.58c-4.426-2.619-5.022-6.752-5.335-11.061c-0.206-2.836-1.087-5.438-2.448-7.756c-1.736-2.959-5.101-5.152-2.819-9.465c0.34-0.643-0.834-3.072-2.588-3.787c-3.772-1.537-7.541-3.051-11.826-1.33c-1.613-3.649,1.821-6.675,1.587-10.153c-0.315-4.681,3.775-4.809,6.326-6.646c1.865-1.343,3.899-2.891,4.938-4.837c1.671-3.129,1.513-6.213-2.405-8.123c-2.577-1.256-3.8-2.92-0.867-5.498c4.241-3.727,4.456-15.185,0.563-19.416c-1.577-1.714-3.723-3.049-4.851-4.996c-1.655-2.856-7.409-5.268-1.792-9.561c-0.657-7.865,3.975-5.199,8.339-4.666c3.098,0.378,5.983-1.929,8.484-3.996c4.027-3.328,8.064-6.644,12.054-10.017c3.432-2.902,7.797-1.708,11.677-2.655c14.136-3.45,28.645-1.284,42.938-2.301c10.275-0.731,20.513-0.63,30.769-0.821c0.5-0.009,1.037,0.105,1.494-0.038c2.923-0.915-0.46-6.628,5.004-6.096c5.214,0.507,3.224-4.024,3.283-6.52c0.213-8.884,1.611-12.909,7.949-13.395c7.321-0.561,14.861-2.815,21.892-1.571c7.648,1.353,15.051,5.078,21.629,9.613c3.668,2.529,8.492,1.943,11.823,5.023C284.557,182.338,285.131,182.455,284.727,183.507z" },
   { id: "Bono East", d: "M240.018,674.969c1.797-7.83,0.869-8.963-6.024-8.969c-2.833-0.002-5.758-0.461-8.48,0.09c-7.107,1.438-12.414-2.705-18.125-5.457c-1.563-0.754-3.399-2.119-3.408-4.529c-0.013-3.552-2.25-3.347-4.78-2.77c-5.173,1.181-10.185,1.792-13.889-3.412c-0.818-1.149-1.502-2.122-1.311-3.538c0.241-1.781-0.539-3.597-1.686-4.398c-5.896-4.123-5.53-9.125-2.943-14.916c2.46-5.508,0.692-7.97-5.148-8.104c-3.159-0.073-6.743,1.502-8.063-3.94c-0.735-3.028-5.364-2.939-8.314-4.161c-2.98-1.234-7.522-2.089-3.261-7.366c1.467-1.816,1.42-5.956-0.238-7.991c-1.104-1.354-4.41-1.323-6.19,1.327c-0.375,0.559-2.242,0.326-3.367,0.134c-4.891-0.835-5.902,3.029-5.481,5.904c0.349,2.384-0.77,3.281-1.391,4.942c-1.385,3.703-4.145,4.24-6.671,2.698c-2.866-1.749-4.204-4.9-2.747-8.561c0.634-1.593,1.775-2.709,2.918-3.88c5.364-5.499,6.197-11.87,2.051-17.929c-1.009-1.475-2.082-2.889-1.277-4.43c0.802-1.535,2.703-0.65,4.091-0.675c7.148-0.127,10.918-3.556,11.694-10.985c0.298-2.858,2.204-4.978,3.154-7.541c1.565-4.224,0.471-6.332-3.936-6.494c-2.578-0.096-5.162-0.018-9.136-0.018c5.22-3.388,5.936-7.291,6.162-12.006c0.231-4.83,5.457-6.742,8.559-9.863c0.441-0.444,1.843-0.412,2.137,0.519c1.324,4.192,4.753,3.151,7.773,3.381c3.732,0.284,7.441,0.087,11.235,0.646c4.705,0.693,7.261-4.076,9.826-7.278c2.855-3.563,5.141-6.971,10.535-6.523c2.797,0.231,6.087-5.74,5.67-9.637c-0.352-3.279-2.74-3.444-5.365-3.257c-4.391,0.313-4.989-4.482-8.046-6.226c-2.271-1.295-3.971-3.281-6.92-2.769c-2.113,0.366-3.851-0.238-5.212-2.038c-0.889-1.175-1.953-2.128-3.74-1.986c-3.902,0.309-5.298-1.829-4.649-5.429c0.588-3.262,1.242-6.563,5.718-6.544c8.498,0.035,16.997,0.074,25.494-0.035c2.115-0.027,2.443,0.656,2.899,2.701c1.817,8.152,5.471,10.371,13.686,10.6c2.465,0.068,5.109,0.653,7.702,0.742c2.528,0.087,4.586-0.353,6.047-2.943c1.515-2.688,4.82-2.736,7.371-2.907c4.218-0.282,4.932-3.224,3.877-5.646c-2.365-5.429,1.192-6.849,4.697-8.62c3.804-1.924,7.41-3.912,8.517-8.615c0.627-2.665,3.216-4.482,5.418-3.969c3.177,0.74,4.267,4.008,4.532,7.181c0.272,3.26-0.438,6.403,2.588,9.359c1.358,1.326,2.149,2.177,3.921,2.166c2.166-0.013,4.332,0.007,6.499-0.005c7.474-0.039,15.157,1.425,20.399-6.597c2.861-4.377,7.061,0.326,10.676,0.15c0.439-0.021,0.955,0.552,1.333,0.455c7.546-1.936,15.154,4.068,22.822-0.547c5.587-3.362,10.011-1.726,12.671,4.284c1.478,3.339,3.614,6.336,4.318,10.166c0.532,2.9,3.519,4.457,6.592,5.099c10.53,2.198,21.163,3.968,31.251,7.946c4.969,1.96,6.51,7.854,2.846,11.632c-6.251,6.445-12.383,12.935-21.783,14.985c-3.097,0.676-5.831-0.416-8.547-0.794c-8.925-1.242,14.321,3.055-18.532,9.969c-2.753,4.519-5.787,8.925-7.995,13.705c-3.858,8.351-10.689,11.192-19.166,11.535c-3.075,0.125-6.907-0.051-7.656,3.416c-0.817,3.775-1.293,8.027,3.93,10.384c4.904,2.213,4.95,6.761,1.741,10.994c-3.238,4.272-7.285,7.032-11.724,9.882c-5.052,3.243-7.573,9.196-10.617,14.35c-3.008,5.094-6.354,10.086-6.719,16.338c-0.138,2.377-2.913,3.129-3.841,5.143c-1.521,3.301-1.068,6.793-0.928,10.196c0.161,3.916-0.68,7.502-3.135,10.439c-2.295,2.746-2.288,5.627-1.563,8.743c0.84,3.611-1.545,7.526-5.006,8.088c-1.243,0.202-2.17-0.188-3.052-1.185c-4.317-4.871-9.05-5.274-14.207-1.434c-1.404,1.046-3.065,1.742-4.497,2.756C243.294,672.022,242.138,673.159,240.018,674.969z" },
@@ -102,6 +112,14 @@ export default function ChaptersManagement() {
   const [pollCandidateMatches, setPollCandidateMatches] = useState<{ id: string; name: string; avatar_url: string | null; registration_number: string }[]>([])
   const [showCandidateDropdown, setShowCandidateDropdown] = useState(false)
 
+  // Poll management state
+  const [showPollManageModal, setShowPollManageModal] = useState(false)
+  const [managePollChapterId, setManagePollChapterId] = useState('')
+  const [managePollChapterName, setManagePollChapterName] = useState('')
+  const [chapterPolls, setChapterPolls] = useState<PollSummary[]>([])
+  const [loadingPolls, setLoadingPolls] = useState(false)
+  const [editingPollId, setEditingPollId] = useState<string | null>(null)
+
   const handleSaveChapter = async (e: React.FormEvent) => {
     e.preventDefault()
     const chapterData = {
@@ -173,16 +191,63 @@ export default function ChaptersManagement() {
     }
   }
 
-  const openPollModal = (chapter: Chapter) => {
+  const openPollManageModal = (chapter: Chapter) => {
+    setManagePollChapterId(chapter.id)
+    setManagePollChapterName(chapter.name)
+    setShowPollManageModal(true)
+    fetchChapterPolls(chapter.id)
+  }
+
+  const fetchChapterPolls = async (chapterId: string) => {
+    setLoadingPolls(true)
+    const { data } = await supabase
+      .from('chapter_polls')
+      .select('*, chapter_poll_candidates(*), chapter_poll_votes(id)')
+      .eq('chapter_id', chapterId)
+      .order('created_at', { ascending: false })
+    setLoadingPolls(false)
+    if (data) {
+      setChapterPolls(data.map(p => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        ends_at: p.ends_at,
+        banner_url: p.banner_url,
+        total_votes: (p.chapter_poll_votes || []).length,
+        candidates: p.chapter_poll_candidates || [],
+      })))
+    }
+  }
+
+  const handleClosePollEarly = async (pollId: string) => {
+    const { error } = await supabase
+      .from('chapter_polls')
+      .update({ ends_at: new Date().toISOString() })
+      .eq('id', pollId)
+    if (error) { toast.error('Failed to close poll.'); return }
+    toast.success('Poll closed.')
+    fetchChapterPolls(managePollChapterId)
+  }
+
+  const handleDeletePoll = async (pollId: string) => {
+    if (!window.confirm('Delete this poll and all its votes? This cannot be undone.')) return
+    const { error } = await supabase.from('chapter_polls').delete().eq('id', pollId)
+    if (error) { toast.error('Failed to delete poll.'); return }
+    toast.success('Poll deleted.')
+    fetchChapterPolls(managePollChapterId)
+  }
+
+  const openPollModal = (chapter: Chapter, poll?: PollSummary) => {
     setPollChapterId(chapter.id)
     setPollChapterName(chapter.name)
-    setPollTitle('')
-    setPollDescription('')
-    setPollEndsAt('')
-    setPollCandidates([])
+    setEditingPollId(poll?.id || null)
+    setPollTitle(poll?.title || '')
+    setPollDescription(poll?.description || '')
+    setPollEndsAt(poll ? new Date(poll.ends_at).toISOString().slice(0, 16) : '')
+    setPollCandidates(poll?.candidates.map(c => ({ name: c.name, position: c.position || '', avatar_url: c.avatar_url })) || [])
     setPollCandidateInput({ name: '', position: '', avatar_url: null })
     setPollBannerFile(null)
-    setPollBannerPreview(null)
+    setPollBannerPreview(poll?.banner_url || null)
     setPollCandidateSearch('')
     setPollCandidateMatches([])
     setShowCandidateDropdown(false)
@@ -230,25 +295,42 @@ export default function ChaptersManagement() {
     if (pollCandidates.length < 2) { toast.error('Add at least 2 candidates.'); return }
     setIsCreatingPoll(true)
 
-    let bannerUrl: string | null = null
+    let bannerUrl: string | null = pollBannerPreview && !pollBannerFile ? pollBannerPreview : null
     if (pollBannerFile) {
       bannerUrl = await contentService.uploadImage(pollBannerFile, 'poll-banners')
       if (!bannerUrl) { toast.error('Banner upload failed.'); setIsCreatingPoll(false); return }
     }
 
-    const { data: poll, error: pollError } = await supabase
-      .from('chapter_polls')
-      .insert({ chapter_id: pollChapterId, title: pollTitle.trim(), description: pollDescription.trim() || null, ends_at: new Date(pollEndsAt).toISOString(), banner_url: bannerUrl })
-      .select('id')
-      .single()
-    if (pollError || !poll) { toast.error('Failed to create poll.'); setIsCreatingPoll(false); return }
-    const { error: candError } = await supabase
-      .from('chapter_poll_candidates')
-      .insert(pollCandidates.map(c => ({ poll_id: poll.id, name: c.name, position: c.position || null, avatar_url: c.avatar_url || null })))
-    setIsCreatingPoll(false)
-    if (candError) { toast.error('Poll created but failed to add candidates.'); return }
-    toast.success(`Poll created for "${pollChapterName}".`)
-    setShowPollModal(false)
+    if (editingPollId) {
+      const { error } = await supabase
+        .from('chapter_polls')
+        .update({ title: pollTitle.trim(), description: pollDescription.trim() || null, ends_at: new Date(pollEndsAt).toISOString(), banner_url: bannerUrl })
+        .eq('id', editingPollId)
+      if (error) { toast.error('Failed to update poll.'); setIsCreatingPoll(false); return }
+      await supabase.from('chapter_poll_candidates').delete().eq('poll_id', editingPollId)
+      await supabase.from('chapter_poll_candidates').insert(
+        pollCandidates.map(c => ({ poll_id: editingPollId, name: c.name, position: c.position || null, avatar_url: c.avatar_url || null }))
+      )
+      setIsCreatingPoll(false)
+      toast.success('Poll updated.')
+      setShowPollModal(false)
+      fetchChapterPolls(pollChapterId)
+    } else {
+      const { data: poll, error: pollError } = await supabase
+        .from('chapter_polls')
+        .insert({ chapter_id: pollChapterId, title: pollTitle.trim(), description: pollDescription.trim() || null, ends_at: new Date(pollEndsAt).toISOString(), banner_url: bannerUrl })
+        .select('id')
+        .single()
+      if (pollError || !poll) { toast.error('Failed to create poll.'); setIsCreatingPoll(false); return }
+      const { error: candError } = await supabase
+        .from('chapter_poll_candidates')
+        .insert(pollCandidates.map(c => ({ poll_id: poll.id, name: c.name, position: c.position || null, avatar_url: c.avatar_url || null })))
+      setIsCreatingPoll(false)
+      if (candError) { toast.error('Poll created but failed to add candidates.'); return }
+      toast.success(`Poll created for "${pollChapterName}".`)
+      setShowPollModal(false)
+      fetchChapterPolls(pollChapterId)
+    }
   }
 
   const handleVerifyChapter = async (id: string, name: string) => {
@@ -683,7 +765,7 @@ export default function ChaptersManagement() {
                   <button className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11 }} onClick={() => openEditModal(chapter)}>
                     Configure
                   </button>
-                  <button className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11 }} onClick={() => openPollModal(chapter)}>
+                  <button className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11 }} onClick={() => openPollManageModal(chapter)}>
                     <span className="material-symbols-outlined" style={{ fontSize: 13 }}>how_to_vote</span>
                     Poll
                   </button>
@@ -737,7 +819,111 @@ export default function ChaptersManagement() {
         </div>
       )}
 
-      {/* Poll creation modal */}
+      {/* Poll management modal */}
+      {showPollManageModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          onClick={e => { if (e.target === e.currentTarget) setShowPollManageModal(false) }}>
+          <div style={{ width: '100%', maxWidth: 520, background: '#fff', borderRadius: 6, overflow: 'hidden', boxShadow: '0 24px 48px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', maxHeight: '88vh' }}>
+            {/* Header */}
+            <div style={{ padding: '14px 20px', background: 'hsl(var(--on-surface))', borderTop: '4px solid hsl(var(--primary))' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--accent))' }}>how_to_vote</span>
+                  <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, color: '#fff', margin: 0 }}>Chapter polls</p>
+                </div>
+                <button
+                  onClick={() => {
+                    const ch = chapters.find(c => c.id === managePollChapterId)
+                    if (ch) { setShowPollManageModal(false); openPollModal(ch) }
+                  }}
+                  className="btn btn-primary btn-sm"
+                  style={{ fontSize: 11 }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>add</span>
+                  New poll
+                </button>
+              </div>
+              <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 11, color: 'rgba(255,255,255,0.5)', margin: '3px 0 0', fontWeight: 600 }}>{managePollChapterName}</p>
+            </div>
+
+            {/* Poll list */}
+            <div style={{ overflowY: 'auto', flex: 1 }}>
+              {loadingPolls ? (
+                <div style={{ padding: 32, textAlign: 'center', color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontSize: 13, fontWeight: 700 }}>Loading polls…</div>
+              ) : chapterPolls.length === 0 ? (
+                <div style={{ padding: 32, textAlign: 'center' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'hsl(var(--border))', display: 'block', marginBottom: 8 }}>how_to_vote</span>
+                  <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontSize: 13, fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>No polls yet for this chapter.</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {chapterPolls.map((poll, i) => {
+                    const isOpen = new Date(poll.ends_at) > new Date()
+                    const ch = chapters.find(c => c.id === managePollChapterId)
+                    return (
+                      <div key={poll.id} style={{ padding: '14px 20px', borderBottom: i < chapterPolls.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 10 }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+                              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poll.title}</span>
+                              <span className={`pill ${isOpen ? 'pill-ok' : 'pill-mute'}`} style={{ flexShrink: 0, fontSize: 9 }}>{isOpen ? 'Open' : 'Closed'}</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
+                                {isOpen ? 'Closes' : 'Closed'} {new Date(poll.ends_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </span>
+                              <span style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
+                                {poll.total_votes} vote{poll.total_votes !== 1 ? 's' : ''}
+                              </span>
+                              <span style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
+                                {poll.candidates.length} candidate{poll.candidates.length !== 1 ? 's' : ''}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button
+                            className="btn btn-outline btn-sm"
+                            style={{ fontSize: 11 }}
+                            onClick={() => { if (ch) { setShowPollManageModal(false); openPollModal(ch, poll) } }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>edit</span>
+                            Edit
+                          </button>
+                          {isOpen && (
+                            <button
+                              className="btn btn-outline btn-sm"
+                              style={{ fontSize: 11 }}
+                              onClick={() => handleClosePollEarly(poll.id)}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>lock</span>
+                              Close early
+                            </button>
+                          )}
+                          <button
+                            className="btn btn-dest btn-sm"
+                            style={{ fontSize: 11 }}
+                            onClick={() => handleDeletePoll(poll.id)}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>delete</span>
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div style={{ padding: '14px 20px', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
+              <button onClick={() => setShowPollManageModal(false)} className="btn btn-outline" style={{ width: '100%', height: 40 }}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Poll creation / edit modal */}
       {showPollModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
           onClick={e => { if (e.target === e.currentTarget) setShowPollModal(false) }}>
@@ -746,7 +932,7 @@ export default function ChaptersManagement() {
             <div style={{ padding: '14px 20px', background: 'hsl(var(--on-surface))', borderTop: '4px solid hsl(var(--primary))' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--accent))' }}>how_to_vote</span>
-                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, color: '#fff', margin: 0 }}>Create chapter poll</p>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 15, color: '#fff', margin: 0 }}>{editingPollId ? 'Edit poll' : 'Create chapter poll'}</p>
               </div>
               <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 11, color: 'rgba(255,255,255,0.5)', margin: '3px 0 0', fontWeight: 600 }}>{pollChapterName}</p>
             </div>
@@ -867,10 +1053,10 @@ export default function ChaptersManagement() {
             </div>
 
             <div style={{ padding: '14px 20px', borderTop: '1px solid hsl(var(--border))', display: 'flex', gap: 10, background: 'hsl(var(--container-low))' }}>
-              <button onClick={() => setShowPollModal(false)} className="btn btn-outline" style={{ flex: 1, height: 42 }}>Cancel</button>
+              <button onClick={() => { setShowPollModal(false); setShowPollManageModal(true) }} className="btn btn-outline" style={{ flex: 1, height: 42 }}>Back</button>
               <button onClick={handleCreatePoll} disabled={isCreatingPoll} className="btn btn-primary" style={{ flex: 1, height: 42 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>how_to_vote</span>
-                {isCreatingPoll ? 'Creating…' : 'Create poll'}
+                {isCreatingPoll ? (editingPollId ? 'Saving…' : 'Creating…') : (editingPollId ? 'Save changes' : 'Create poll')}
               </button>
             </div>
           </div>
