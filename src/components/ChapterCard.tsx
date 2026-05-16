@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { type Chapter } from '@/types/admin'
 import { getCountryFlag } from '@/lib/utils'
+import { CountryBadge } from '@/components/CountryBadge'
 
 interface ChapterCardProps {
   chapter: Chapter
@@ -43,7 +44,11 @@ export function ChapterCard({ chapter, countryFlags, userChapterName }: ChapterC
             style={{ color: headerTextColor }}
           >
             {chapter.name}
-            {flag && <span className="ml-1.5">{flag}</span>}
+            {flag && (
+              <span className="ml-1.5 inline-flex items-center">
+                <CountryBadge flag={flag} alt={`${chapter.country} flag`} />
+              </span>
+            )}
           </h4>
           <div
             className="text-[9.5px] font-bold tracking-[0.06em] uppercase mt-0.5 font-['Public_Sans',sans-serif] truncate"

@@ -6,26 +6,24 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Converts a 2-letter ISO country code to an emoji flag.
+ * Converts a 2-letter ISO country code to an emoji flag or a Flagcdn URL.
  * If the input is not a 2-letter code, it returns the input as-is.
  */
-export function getCountryFlag(flagOrCode: string | null | undefined): string {
+export function getCountryFlag(flagOrCode: string | null | undefined, asEmoji: boolean = false): string {
   if (!flagOrCode) return ''
   
-  // If it's already an emoji (roughly check for non-ASCII)
-  // or if it's a URL, return as is.
-  if (flagOrCode.length > 2 || flagOrCode.includes('/') || flagOrCode.includes('.')) {
-    return flagOrCode
-  }
-
   // Handle 2-letter ISO codes
   if (flagOrCode.length === 2 && /^[A-Z]{2}$/i.test(flagOrCode)) {
-    const codePoints = flagOrCode
-      .toUpperCase()
-      .split('')
-      .map(char => 127397 + char.charCodeAt(0))
-    return String.fromCodePoint(...codePoints)
+    if (asEmoji) {
+      const codePoints = flagOrCode
+        .toUpperCase()
+        .split('')
+        .map(char => 127397 + char.charCodeAt(0))
+      return String.fromCodePoint(...codePoints)
+    }
+    return `https://flagcdn.com/${flagOrCode.toLowerCase()}.svg`
   }
 
+  // If it's already an emoji or a URL, return as is
   return flagOrCode
 }

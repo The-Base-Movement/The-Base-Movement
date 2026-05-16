@@ -5,6 +5,7 @@ import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
 import { useBranding } from '@/hooks/useBranding'
 import { useAuth } from '@/context/AuthContext'
+import { CountryBadge } from '@/components/CountryBadge'
 import type { GlobalSearchResult, AdminUser, Notification, AdminPermission } from '@/types/admin'
 
 export default function AdminLayout({ children }: { children?: React.ReactNode }) {
@@ -504,9 +505,9 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                             {result.subtitle && (
                               <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
                                 {result.subtitle.split(' · ').map((part, i, arr) => (
-                                  <span key={i}>
-                                    {getCountryFlag(part)}
-                                    {i < arr.length - 1 && ' · '}
+                                  <span key={i} className="inline-flex items-center gap-1">
+                                    <CountryBadge flag={getCountryFlag(part)} />
+                                    {i < arr.length - 1 && <span className="mx-1 text-white/20">·</span>}
                                   </span>
                                 ))}
                               </div>
