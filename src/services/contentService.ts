@@ -50,6 +50,17 @@ class ContentService {
     }))
   }
 
+  async getPublishedPostCount(): Promise<number> {
+    const { count, error } = await supabase
+      .from('blog_posts')
+      .select('id', { count: 'exact', head: true })
+      .is('deleted_at', null)
+      .eq('status', 'Published')
+
+    if (error) return 0
+    return count ?? 0
+  }
+
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
     const { data, error } = await supabase
       .from('blog_posts')
@@ -429,6 +440,20 @@ class ContentService {
 
   // --- Authors Management ---
 
+  async getAuthorRoles(): Promise<string[]> {
+    const { data, error } = await supabase
+      .from('author_roles')
+      .select('name')
+      .order('display_order', { ascending: true })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch author roles:', error)
+      return ['Contributor', 'Field Correspondent', 'Regional Editor', 'Senior Correspondent', 'Strategic Analyst', 'Digital Mobilizer', 'Deputy Editor', 'Chief Editor']
+    }
+
+    return (data || []).map((r: { name: string }) => r.name)
+  }
+
   async getAuthors(): Promise<Author[]> {
     interface DBAuthor {
       id: string
@@ -459,6 +484,7 @@ class ContentService {
       role: a.role,
       bio: a.bio,
       imageUrl: a.image_url,
+      memberId: (a as { member_id?: string | null }).member_id ?? null,
       createdAt: a.created_at,
       deletedAt: a.deleted_at
     }))
@@ -485,6 +511,7 @@ class ContentService {
       role: data.role,
       bio: data.bio,
       imageUrl: data.image_url,
+      memberId: data.member_id ?? null,
       createdAt: data.created_at,
       deletedAt: data.deleted_at
     }
@@ -498,7 +525,8 @@ class ContentService {
         slug: author.slug,
         role: author.role,
         bio: author.bio,
-        image_url: author.imageUrl
+        image_url: author.imageUrl,
+        member_id: author.memberId ?? null
       })
 
     if (error) {
@@ -513,12 +541,13 @@ class ContentService {
   }
 
   async updateAuthor(id: string, author: Partial<Author>): Promise<boolean> {
-    const updateData: Record<string, string> = {}
+    const updateData: Record<string, unknown> = {}
     if (author.name !== undefined) updateData.name = author.name
     if (author.slug !== undefined) updateData.slug = author.slug
     if (author.role !== undefined) updateData.role = author.role
     if (author.bio !== undefined) updateData.bio = author.bio
     if (author.imageUrl !== undefined) updateData.image_url = author.imageUrl
+    if (author.memberId !== undefined) updateData.member_id = author.memberId ?? null
 
     const { error } = await supabase
       .from('authors')

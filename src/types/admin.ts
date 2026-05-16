@@ -79,6 +79,7 @@ export interface Chapter {
   member_count: number
   status: 'Active' | 'Pending' | 'Closed' | 'Member' | 'Join Chapter' | string
   image_url?: string
+  flag_url?: string
   description?: string
   details_url?: string
   meeting_schedule?: string
@@ -102,6 +103,7 @@ export interface Author {
   role?: string
   bio?: string
   imageUrl?: string
+  memberId?: string | null
   createdAt: string
   deletedAt?: string | null
 }
@@ -616,6 +618,7 @@ export interface Country {
   name: string
   dialing_code: string
   is_diaspora: boolean
+  flag_url?: string | null
 }
 
 export interface BlogPost {

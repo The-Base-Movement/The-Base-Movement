@@ -51,8 +51,7 @@ const AdminSettings = lazy(() => import('./pages/admin/Settings'))
 const AdminMemberVerification = lazy(() => import('./pages/admin/MemberVerification'))
 const AdminRegions = lazy(() => import('./pages/admin/Regions'))
 const AdminBlogs = lazy(() => import('./pages/admin/Blogs'))
-const AdminAuthors = lazy(() => import('./pages/admin/Authors'))
-const AdminEditAuthor = lazy(() => import('./pages/admin/EditAuthor'))
+const AdminAuthors = lazy(() => import('./pages/admin/authors'))
 const AdminMediaLibrary = lazy(() => import('./pages/admin/MediaLibrary'))
 const AdminLeadershipHub = lazy(() => import('./pages/admin/LeadershipHub'))
 const AdminDonations = lazy(() => import('./pages/admin/DonationVerification'))
@@ -158,8 +157,6 @@ export const routes: RouteObject[] = [
       { path: '/admin/regions', element: <AdminRegions /> },
       { path: '/admin/blogs', element: <AdminBlogs /> },
       { path: '/admin/authors', element: <AdminAuthors /> },
-      { path: '/admin/authors/new', element: <AdminEditAuthor /> },
-      { path: '/admin/authors/edit/:id', element: <AdminEditAuthor /> },
       { path: '/admin/media', element: <AdminMediaLibrary /> },
       { path: '/admin/broadcasts', element: <AdminBroadcasts /> },
       { path: '/admin/broadcasts/new', element: <AdminNewBroadcast /> },

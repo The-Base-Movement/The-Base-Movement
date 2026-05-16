@@ -283,7 +283,7 @@ class MemberService {
     return true
   }
 
-  async getCountries(): Promise<{ id: string | number; name: string; dialing_code: string; is_diaspora: boolean }[]> {
+  async getCountries(): Promise<Country[]> {
     const { data, error } = await supabase
       .from('countries')
       .select('*')
@@ -306,14 +306,20 @@ class MemberService {
     return true
   }
 
-  async searchMembers(query: string): Promise<Member[]> {
+  async searchMembers(query: string, searchType: 'name' | 'id' | 'phone' = 'name'): Promise<Member[]> {
     if (!query || query.length < 2) return []
 
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .or(`full_name.ilike.%${query}%,phone_number.ilike.%${query}%`)
-      .limit(10)
+    let supabaseQuery = supabase.from('users').select('*')
+
+    if (searchType === 'id') {
+      supabaseQuery = supabaseQuery.ilike('registration_number', `%${query}%`)
+    } else if (searchType === 'phone') {
+      supabaseQuery = supabaseQuery.ilike('phone_number', `%${query}%`)
+    } else {
+      supabaseQuery = supabaseQuery.ilike('full_name', `%${query}%`)
+    }
+
+    const { data, error } = await supabaseQuery.limit(10)
 
     if (error) {
       console.warn('[DATABASE] Failed to search members:', error)
