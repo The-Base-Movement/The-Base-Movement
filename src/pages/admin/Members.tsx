@@ -63,6 +63,13 @@ export default function MembersList() {
   const [assignmentData, setAssignmentData] = useState({ chapterId: '', role: 'Chapter Coordinator' })
   const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false)
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editForm, setEditForm] = useState<Partial<Member>>({})
+  const [isSavingEdit, setIsSavingEdit] = useState(false)
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isDeletingMembers, setIsDeletingMembers] = useState(false)
+
   const handleOpenAssign = () => {
     if (selectedIds.size > 0) {
       setAssigningMembers(members.filter(m => selectedIds.has(m.id)))
@@ -97,14 +104,15 @@ export default function MembersList() {
   }
 
   const [totalMembers, setTotalMembers] = useState(0)
+  const [sourceFilter, setSourceFilter] = useState<'all' | 'digital' | 'scan' | 'admin'>('all')
 
   const fetchMembers = useCallback(async () => {
     setIsLoading(true)
-    const { data, totalCount: total } = await adminService.getMembersPaginated(currentPage, itemsPerPage, searchTerm)
+    const { data, totalCount: total } = await adminService.getMembersPaginated(currentPage, itemsPerPage, searchTerm, sourceFilter)
     setMembers(data)
     setTotalMembers(total)
     setIsLoading(false)
-  }, [currentPage, searchTerm])
+  }, [currentPage, searchTerm, sourceFilter])
 
   useEffect(() => { fetchMembers() }, [fetchMembers])
 
@@ -148,6 +156,14 @@ export default function MembersList() {
     if (!adminService.can('VERIFY_MEMBER', 'MEMBERS')) {
       toast.error('You do not have authorization to verify members.')
       return
+    }
+    const member = members.find(m => m.id === id) ?? selectedMember
+    if (member) {
+      const missing = getMissingRequiredFields(member)
+      if (missing.length > 0) {
+        toast.error(`Cannot approve — missing: ${missing.join(', ')}`)
+        return
+      }
     }
     if (window.confirm(`Are you sure you want to verify and admit ${name} into the movement?`)) {
       const success = await adminService.verifyMember(id, true, 'Administrative Approval')
@@ -228,7 +244,8 @@ export default function MembersList() {
         emergency_relationship: data.emergencyRelationship,
         emergency_number: data.emergencyNumber,
         joined_at: new Date().toISOString(),
-        status: 'Active'
+        status: 'Active',
+        registration_source: 'admin'
       }
       const { error: dbError } = await adminService.registerMember(newUser)
       if (dbError) throw dbError
@@ -321,22 +338,27 @@ export default function MembersList() {
     }
   }
 
-  const handleBulkDelete = async () => {
+  const handleBulkDelete = () => {
     if (!adminService.can('DELETE_MEMBER', 'MEMBERS')) {
       toast.error('You lack the authority for member removal.')
       return
     }
-    if (window.confirm(`Are you sure you want to permanently remove ${selectedIds.size} records from the database? This cannot be undone.`)) {
-      toast.success('Processing secure deletion…')
-      let successCount = 0
-      for (const id of selectedIds) {
-        const success = await adminService.deleteMember(id)
-        if (success) successCount++
-      }
-      toast.success(`Successfully removed ${successCount} records from the database.`)
-      setSelectedIds(new Set())
-      fetchMembers()
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    setIsDeletingMembers(true)
+    let successCount = 0
+    for (const id of selectedIds) {
+      const success = await adminService.deleteMember(id)
+      if (success) successCount++
     }
+    setIsDeletingMembers(false)
+    setIsDeleteModalOpen(false)
+    setSelectedIds(new Set())
+    if (selectedMember && selectedIds.has(selectedMember.id)) setSelectedMember(null)
+    toast.success(`${successCount} member record${successCount !== 1 ? 's' : ''} permanently removed.`)
+    fetchMembers()
   }
 
   const totalPages = Math.ceil(totalMembers / itemsPerPage)
@@ -356,6 +378,58 @@ export default function MembersList() {
     if (next.has(id)) next.delete(id)
     else next.add(id)
     setSelectedIds(next)
+  }
+
+  const getMissingRequiredFields = (m: Member): string[] => {
+    const missing: string[] = []
+    if (!m.name?.trim()) missing.push('Full name')
+    if (!m.phone?.trim()) missing.push('Phone number')
+    if (!m.gender?.trim()) missing.push('Gender')
+    if (!m.avatarUrl) missing.push('Profile photo')
+    if (m.platform === 'DIASPORA') {
+      if (!m.country?.trim()) missing.push('Country')
+    } else {
+      if (!m.region?.trim()) missing.push('Region')
+      if (!m.constituency?.trim()) missing.push('Constituency')
+    }
+    return missing
+  }
+
+  const handleSaveEdit = async () => {
+    if (!selectedMember) return
+    setIsSavingEdit(true)
+    try {
+      const success = await adminService.updateMemberProfile(selectedMember.id, editForm)
+      if (success) {
+        toast.success('Member profile updated.')
+        setIsEditModalOpen(false)
+        setSelectedMember({ ...selectedMember, ...editForm } as Member)
+        fetchMembers()
+      } else {
+        toast.error('Failed to update member profile.')
+      }
+    } catch {
+      toast.error('An error occurred while updating.')
+    } finally {
+      setIsSavingEdit(false)
+    }
+  }
+
+  const openEditModal = (m: Member) => {
+    setEditForm({
+      name: m.name,
+      email: m.email,
+      phone: m.phone,
+      gender: m.gender,
+      region: m.region,
+      constituency: m.constituency,
+      country: m.country,
+      chapter: m.chapter,
+      profession: m.profession,
+      city: m.city,
+      residentialAddress: m.residentialAddress,
+    })
+    setIsEditModalOpen(true)
   }
 
   const stats = {
@@ -419,10 +493,10 @@ export default function MembersList() {
 
       {/* Filter bar */}
       <div className="panel" style={{ marginBottom: 20 }}>
-        <div style={{ padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ position: 'relative', flex: 1 }}>
+        <div style={{ padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 17, color: 'hsl(var(--on-surface-muted))' }}>search</span>
-            <input
+            <input name="searchTerm" id="input-0acdd0"
               type="text"
               placeholder="Search by name, ID, phone, profession, region…"
               value={searchTerm}
@@ -435,6 +509,30 @@ export default function MembersList() {
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>close</span>Clear
             </button>
           )}
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+            {([
+              { value: 'all',     label: 'All',     icon: 'group' },
+              { value: 'digital', label: 'Digital',  icon: 'computer' },
+              { value: 'scan',    label: 'Scanned',  icon: 'document_scanner' },
+              { value: 'admin',   label: 'Admin',    icon: 'admin_panel_settings' },
+            ] as const).map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => { setSourceFilter(opt.value); setCurrentPage(1) }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5, height: 32, padding: '0 10px',
+                  borderRadius: 4, border: '1px solid', cursor: 'pointer', fontSize: 11.5,
+                  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, transition: 'all .15s',
+                  background: sourceFilter === opt.value ? 'hsl(var(--on-surface))' : 'transparent',
+                  borderColor: sourceFilter === opt.value ? 'hsl(var(--on-surface))' : 'hsl(var(--border))',
+                  color: sourceFilter === opt.value ? '#fff' : 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 13 }}>{opt.icon}</span>
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -472,7 +570,7 @@ export default function MembersList() {
             <thead>
               <tr style={{ background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
                 <th style={{ ...thStyle, width: 40 }}>
-                  <input
+                  <input name="name-4e22c5" id="input-4e22c5"
                     type="checkbox"
                     checked={selectedIds.size === paginatedMembers.length && paginatedMembers.length > 0}
                     onChange={handleToggleSelectAll}
@@ -527,7 +625,7 @@ export default function MembersList() {
                     onMouseLeave={e => { if (!lowBandwidthMode) (e.currentTarget as HTMLElement).style.background = '' }}
                   >
                     <td style={tdStyle}>
-                      <input type="checkbox" checked={selectedIds.has(member.id)} onChange={() => handleToggleSelect(member.id)} style={{ cursor: 'pointer' }} />
+                      <input name="name-f0edc7" id="input-f0edc7" type="checkbox" checked={selectedIds.has(member.id)} onChange={() => handleToggleSelect(member.id)} style={{ cursor: 'pointer' }} />
                     </td>
                     <td style={tdStyle}>
                       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -704,6 +802,13 @@ export default function MembersList() {
                   {selectedMember.gender && <span style={{ padding: '3px 10px', background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 99, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, letterSpacing: '.04em', textTransform: 'uppercase' }}>{selectedMember.gender}</span>}
                 </div>
                 <div className="member-detail-actions" style={{ display: 'flex', gap: 8, alignSelf: 'flex-start', flexWrap: 'wrap' }}>
+                  <button
+                    className="btn btn-sm"
+                    style={{ background: 'rgba(255,255,255,.08)', color: '#fff', border: '1px solid rgba(255,255,255,.18)' }}
+                    onClick={() => openEditModal(selectedMember)}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>edit</span>Edit
+                  </button>
                   <button className="btn btn-sm" style={{ background: 'rgba(255,255,255,.08)', color: '#fff', border: '1px solid rgba(255,255,255,.18)' }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 14 }}>mail</span>Message
                   </button>
@@ -970,16 +1075,23 @@ export default function MembersList() {
                         ))}
                       </div>
                     </div>
-                    {adminService.can('VERIFY_MEMBER', 'MEMBERS') && selectedMember.status === 'Pending' && (
+                    {adminService.can('VERIFY_MEMBER', 'MEMBERS') && (
                       <div className="panel">
                         <div className="ph2"><h3>Actions</h3></div>
                         <div style={{ padding: '18px 24px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                          <button className="btn btn-primary" onClick={() => handleVerify(selectedMember.id, selectedMember.name)}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>verified</span>Verify & admit
+                          <button className="btn btn-outline" onClick={() => openEditModal(selectedMember)}>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>Edit member info
                           </button>
-                          <button className="btn btn-dest">
-                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>block</span>Reject application
-                          </button>
+                          {selectedMember.status === 'Pending' && (
+                            <>
+                              <button className="btn btn-primary" onClick={() => handleVerify(selectedMember.id, selectedMember.name)}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>verified</span>Verify & admit
+                              </button>
+                              <button className="btn btn-dest">
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>block</span>Reject application
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     )}
@@ -1115,7 +1227,7 @@ export default function MembersList() {
                   <div className="panel" style={{ marginBottom: 20 }}>
                     <div className="ph2"><h3>Add administrative note</h3><span className="meta">internal record</span></div>
                     <div style={{ padding: '18px 24px' }}>
-                      <textarea
+                      <textarea name="newNoteContent" id="textarea-8e85c6"
                         value={newNoteContent}
                         onChange={e => setNewNoteContent(e.target.value)}
                         placeholder="Type internal observation or status update…"
@@ -1286,7 +1398,7 @@ export default function MembersList() {
             <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 18 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>Target chapter</label>
-                <select
+                <select name="name-177083" id="select-177083"
                   value={assignmentData.chapterId}
                   onChange={e => setAssignmentData({ ...assignmentData, chapterId: e.target.value })}
                   style={{ width: '100%', height: 44, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none' }}
@@ -1299,7 +1411,7 @@ export default function MembersList() {
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>Designated role</label>
-                <select
+                <select name="name-1b73e7" id="select-1b73e7"
                   value={assignmentData.role}
                   onChange={e => setAssignmentData({ ...assignmentData, role: e.target.value })}
                   style={{ width: '100%', height: 44, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none' }}
@@ -1321,6 +1433,164 @@ export default function MembersList() {
               <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setIsAssignModalOpen(false)}>Cancel</button>
               <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleConfirmAssignment} disabled={isSubmittingAssignment || !assignmentData.chapterId}>
                 {isSubmittingAssignment ? 'Processing…' : 'Confirm appointment'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {isDeleteModalOpen && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.65)', backdropFilter: 'blur(6px)', padding: 20 }}
+          onClick={e => { if (e.target === e.currentTarget && !isDeletingMembers) setIsDeleteModalOpen(false) }}
+        >
+          <div style={{ width: '100%', maxWidth: 440, background: '#fff', borderRadius: 4, overflow: 'hidden' }}>
+
+            {/* Dark header */}
+            <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', padding: '28px 28px 24px', borderTop: '4px solid hsl(var(--destructive))', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', right: -20, top: -20, opacity: .05 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 120 }}>delete_forever</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, position: 'relative' }}>
+                <div style={{ width: 44, height: 44, borderRadius: 4, background: 'rgba(206,17,38,.18)', border: '1px solid rgba(206,17,38,.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--destructive))' }}>warning</span>
+                </div>
+                <div>
+                  <div style={{ fontSize: 9.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, color: 'hsl(var(--destructive))', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+                    Irreversible action
+                  </div>
+                  <h2 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-.01em' }}>
+                    Remove {selectedIds.size} member{selectedIds.size !== 1 ? 's' : ''}
+                  </h2>
+                </div>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+              {/* Member list preview */}
+              <div style={{ background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
+                {members.filter(m => selectedIds.has(m.id)).slice(0, 4).map((m, i, arr) => (
+                  <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderBottom: i < arr.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
+                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'hsl(var(--border))', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {m.avatarUrl
+                        ? <img src={m.avatarUrl} alt={m.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{m.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</span>
+                      }
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12.5, color: 'hsl(var(--on-surface))', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.name}</p>
+                      <span style={{ fontSize: 10.5, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontVariantNumeric: 'tabular-nums' }}>{m.id.substring(0, 12).toUpperCase()}</span>
+                    </div>
+                  </div>
+                ))}
+                {selectedIds.size > 4 && (
+                  <div style={{ padding: '8px 14px', background: 'rgba(206,17,38,.04)', borderTop: '1px solid hsl(var(--border))' }}>
+                    <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                      + {selectedIds.size - 4} more record{selectedIds.size - 4 !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Warning text */}
+              <div style={{ display: 'flex', gap: 10, padding: '12px 14px', background: 'rgba(206,17,38,.05)', border: '1px solid rgba(206,17,38,.18)', borderRadius: 4 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--destructive))', flexShrink: 0, marginTop: 1 }}>info</span>
+                <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', lineHeight: 1.6 }}>
+                  These records will be <strong>permanently erased</strong> from the movement database. Authentication credentials, activity history, and all associated data will be destroyed. This action <strong>cannot be undone</strong>.
+                </p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding: '16px 28px', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', gap: 10 }}>
+              <button
+                className="btn btn-outline"
+                style={{ flex: 1 }}
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeletingMembers}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-dest"
+                style={{ flex: 1, justifyContent: 'center' }}
+                onClick={handleConfirmDelete}
+                disabled={isDeletingMembers}
+              >
+                {isDeletingMembers
+                  ? <><span className="material-symbols-outlined" style={{ fontSize: 15, animation: 'spin 1s linear infinite' }}>refresh</span>Removing…</>
+                  : <><span className="material-symbols-outlined" style={{ fontSize: 15 }}>delete_forever</span>Confirm removal</>
+                }
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Edit member modal */}
+      {isEditModalOpen && selectedMember && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.6)', padding: 20 }}
+          onClick={e => { if (e.target === e.currentTarget) setIsEditModalOpen(false) }}
+        >
+          <div style={{ width: '100%', maxWidth: 560, background: '#fff', borderRadius: 4, overflow: 'hidden', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', padding: '22px 28px', borderTop: '4px solid hsl(var(--primary))' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 4, background: 'rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--accent))' }}>edit</span>
+                </div>
+                <div>
+                  <h2 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 18, color: '#fff' }}>Edit member info</h2>
+                  <p style={{ margin: '2px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11.5, color: 'rgba(255,255,255,.5)' }}>{selectedMember.name}</p>
+                </div>
+              </div>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {([
+                { key: 'name',                label: 'Full name',            type: 'text' },
+                { key: 'email',               label: 'Email address',        type: 'email' },
+                { key: 'phone',               label: 'Phone number',         type: 'text' },
+                { key: 'gender',              label: 'Gender',               type: 'select', options: ['Male', 'Female'] },
+                { key: 'region',              label: 'Region',               type: 'text' },
+                { key: 'constituency',        label: 'Constituency',         type: 'text' },
+                { key: 'country',             label: 'Country',              type: 'text' },
+                { key: 'chapter',             label: 'Chapter',              type: 'text' },
+                { key: 'profession',          label: 'Profession',           type: 'text' },
+                { key: 'city',                label: 'City / Town',          type: 'text' },
+                { key: 'residentialAddress',  label: 'Residential address',  type: 'text' },
+              ] as const).map(field => (
+                <div key={field.key}>
+                  <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 5 }}>
+                    {field.label}
+                  </label>
+                  {field.type === 'select' ? (
+                    <select name="name-e0c791" id="select-e0c791"
+                      value={(editForm[field.key as keyof typeof editForm] as string) ?? ''}
+                      onChange={e => setEditForm(f => ({ ...f, [field.key]: e.target.value }))}
+                      style={{ width: '100%', height: 42, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}
+                    >
+                      <option value="">— select —</option>
+                      {field.options.map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  ) : (
+                    <input name="name-16aed2" id="input-16aed2"
+                      type={field.type}
+                      value={(editForm[field.key as keyof typeof editForm] as string) ?? ''}
+                      onChange={e => setEditForm(f => ({ ...f, [field.key]: e.target.value }))}
+                      style={{ width: '100%', height: 42, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: '16px 28px', borderTop: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', display: 'flex', gap: 10 }}>
+              <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setIsEditModalOpen(false)} disabled={isSavingEdit}>Cancel</button>
+              <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleSaveEdit} disabled={isSavingEdit}>
+                {isSavingEdit ? 'Saving…' : 'Save changes'}
               </button>
             </div>
           </div>

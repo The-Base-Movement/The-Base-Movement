@@ -144,7 +144,7 @@ export default function Blog() {
                 <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, margin: '0 0 14px' }}>
                   Get policy briefs and movement news delivered to your inbox weekly.
                 </p>
-                <input type="email" placeholder="Email address" style={{ width: '100%', height: 38, padding: '0 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 4, color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
+                <input name="name-0af8a4" id="input-0af8a4" type="email" placeholder="Email address" style={{ width: '100%', height: 38, padding: '0 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 4, color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
                 <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Subscribe</button>
               </div>
 
@@ -260,7 +260,7 @@ export default function Blog() {
                     <h4 className="font-meta font-bold text-lg tracking-tight mb-4">The Base Weekly</h4>
                     <p className="text-xs text-slate-400 leading-relaxed mb-6">Get the movement's policy briefs and news delivered directly to your inbox every week.</p>
                     <div className="space-y-3">
-                      <input type="email" placeholder="Email Address" className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm" />
+                      <input name="name-b70be6" id="input-b70be6" type="email" placeholder="Email Address" className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm" />
                       <button className="w-full h-12 bg-primary text-white font-bold text-xs border-none cursor-pointer hover:opacity-90 transition-opacity">Subscribe</button>
                     </div>
                   </div>

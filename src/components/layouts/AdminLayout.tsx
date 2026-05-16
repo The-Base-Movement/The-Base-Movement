@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 
 import { adminService } from '@/services/adminService'
 import { donationService } from '@/services/donationService'
+import { supabase } from '@/lib/supabase'
 import type { GlobalSearchResult } from '@/types/admin'
 import { useBranding } from '@/hooks/useBranding'
 import type { AdminUser } from '@/types/admin'
@@ -70,10 +71,10 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       } else {
         setUser(currentUser)
         
-        // Attempt to resolve avatar URL
-        const authUser = JSON.parse(localStorage.getItem('sb-yymncrshblmzeuomomnz-auth-token') || '{}')?.user
-        const fallbackAvatar = authUser?.user_metadata?.avatar_url || localStorage.getItem('userAvatar')
-        setAvatarUrl(currentUser.avatarUrl || fallbackAvatar || null)
+        // Resolve avatar from auth session
+        const { data: { session } } = await supabase.auth.getSession()
+        const sessionAvatar = session?.user?.user_metadata?.avatar_url || null
+        setAvatarUrl(currentUser.avatarUrl || sessionAvatar || null)
 
         // Fetch unread notifications
         try {
@@ -339,23 +340,49 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
             })}
           </nav>
 
-          {/* Footer */}
-          <div className="p-4 bg-black/20 border-t border-white/5">
-            <button 
-              onClick={handleLogout}
-              className={cn(
-                "w-full flex items-center gap-4 px-4 py-4 text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all group overflow-hidden",
-                isSidebarOpen ? "" : "justify-center"
-              )}
-            >
-              <span className="material-symbols-outlined shrink-0 transition-colors" style={{ fontSize: 20 }}>logout</span>
-              <span className={cn(
-                "text-tiny font-bold tracking-tight whitespace-nowrap transition-all duration-300",
-                isSidebarOpen ? "opacity-100" : "opacity-0 w-0"
-              )}>
-                Sign out
-              </span>
-            </button>
+          {/* Footer — user profile + sign out */}
+          <div className="bg-black/20 border-t border-white/5">
+            {isSidebarOpen ? (
+              <div style={{ padding: '12px 14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 4, background: 'hsl(var(--primary))', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, overflow: 'hidden', flexShrink: 0 }}>
+                    {avatarUrl
+                      ? <img src={avatarUrl} alt={user?.name || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" />
+                      : user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'HQ'
+                    }
+                  </div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: '#fff', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {user?.name || 'Admin'}
+                    </div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9.5, color: 'rgba(255,255,255,0.4)', lineHeight: 1.3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {user?.role === 'FOUNDER' ? 'Movement Founder'
+                        : user?.role === 'ORGANIZER' ? 'Strategic Organizer'
+                        : user?.role === 'SUPER_ADMIN' ? 'System Admin'
+                        : user?.role === 'REGIONAL_DIRECTOR' ? 'Regional Director'
+                        : user?.role === 'CONSTITUENCY_LEAD' ? 'Constituency Lead'
+                        : 'Staff'}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 4, color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11 }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)' }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>logout</span>
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center py-4 text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>logout</span>
+              </button>
+            )}
           </div>
         </div>
       </aside>
@@ -395,7 +422,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 className="material-symbols-outlined"
                 style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none', zIndex: 1 }}
               >search</span>
-              <input
+              <input name="searchQuery" id="input-5b759c"
                 type="text"
                 placeholder="Search command center…"
                 value={searchQuery}

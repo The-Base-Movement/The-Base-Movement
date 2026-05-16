@@ -92,7 +92,7 @@ export function InventoryTable({
         {/* Search — full width */}
         <div style={{ position: 'relative' }}>
           <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-          <input
+          <input name="searchQuery" id="input-b1aa13"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search products…"

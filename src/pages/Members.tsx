@@ -411,7 +411,7 @@ function FilterControls({
       {/* Search */}
       <div style={{ position: 'relative' }}>
         <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-        <input
+        <input name="search" id="input-7a47f3"
           type="text"
           placeholder="Search by name or profession…"
           value={search}
@@ -458,14 +458,14 @@ function FilterControls({
             <>
               <div>
                 <label style={{ ...labelSt, marginBottom: 5 }}>Region</label>
-                <select value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} style={selectSt}>
+                <select name="selectedRegion" id="select-0e4197" value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} style={selectSt}>
                   <option value="all">All regions</option>
                   {ghanaRegions.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
               <div>
                 <label style={{ ...labelSt, marginBottom: 5 }}>Constituency</label>
-                <select value={selectedConstituency} onChange={e => setSelectedConstituency(e.target.value)}
+                <select name="selectedConstituency" id="select-bf4e24" value={selectedConstituency} onChange={e => setSelectedConstituency(e.target.value)}
                   style={{ ...selectSt, opacity: selectedRegion === 'all' ? 0.45 : 1 }}
                   disabled={selectedRegion === 'all'}>
                   <option value="all">All constituencies</option>
@@ -476,7 +476,7 @@ function FilterControls({
           ) : (
             <div>
               <label style={{ ...labelSt, marginBottom: 5 }}>Country</label>
-              <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)} style={selectSt}>
+              <select name="selectedCountry" id="select-401afc" value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)} style={selectSt}>
                 <option value="all">All countries</option>
                 {diasporaCountries.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
@@ -491,7 +491,7 @@ function FilterControls({
           <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))' }}>work</span>
           Profession
         </div>
-        <select value={selectedProfession} onChange={e => setSelectedProfession(e.target.value)} style={selectSt}>
+        <select name="selectedProfession" id="select-ce720a" value={selectedProfession} onChange={e => setSelectedProfession(e.target.value)} style={selectSt}>
           <option value="all">All professions</option>
           {professions.map(p => <option key={p} value={p}>{p}</option>)}
         </select>

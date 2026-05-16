@@ -350,7 +350,7 @@ export default function ProfileSettings() {
                 Verify your official voter registration to unlock the Patriot Ground Game badge. Your polling station data secures our election day logistics.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <input
+                <input name="name-af8311" id="input-af8311"
                   type="text"
                   placeholder="Polling Station Code (e.g. C021001A)"
                   style={inputStyle}
@@ -391,7 +391,7 @@ export default function ProfileSettings() {
                 {/* Full name */}
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <label style={labelStyle}>Full Name <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                  <input
+                  <input name="name-43d16b" id="input-43d16b"
                     required
                     value={form.fullName}
                     onChange={e => handleChange('fullName', e.target.value)}
@@ -403,7 +403,7 @@ export default function ProfileSettings() {
                 {/* Email */}
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <label style={labelStyle}>Email address</label>
-                  <input
+                  <input name="name-eaefbf" id="input-eaefbf"
                     type="email"
                     value={form.email}
                     onChange={e => handleChange('email', e.target.value)}
@@ -417,7 +417,7 @@ export default function ProfileSettings() {
                   <label style={labelStyle}>Phone number</label>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <div style={{ position: 'relative', width: 110, flexShrink: 0 }}>
-                      <select
+                      <select name="name-8448b5" id="select-8448b5"
                         value={form.countryCode}
                         onChange={e => handleChange('countryCode', e.target.value)}
                         style={{ ...selectStyle, width: '100%' }}
@@ -429,7 +429,7 @@ export default function ProfileSettings() {
                       </select>
                       <SelIcon />
                     </div>
-                    <input
+                    <input name="name-7b1c95" id="input-7b1c95"
                       type="tel"
                       value={form.phone}
                       onChange={e => handleChange('phone', e.target.value)}
@@ -443,7 +443,7 @@ export default function ProfileSettings() {
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <label style={labelStyle}>Gender & age group</label>
                   <div style={{ position: 'relative' }}>
-                    <select value={form.gender} onChange={e => handleChange('gender', e.target.value)} style={selectStyle}>
+                    <select name="name-2e1d40" id="select-2e1d40" value={form.gender} onChange={e => handleChange('gender', e.target.value)} style={selectStyle}>
                       <option value="Male / 18 - 25">Male / 18 - 25</option>
                       <option value="Male / 26 - 40">Male / 26 - 40</option>
                       <option value="Male / 41+">Male / 41+</option>
@@ -458,7 +458,7 @@ export default function ProfileSettings() {
                 {/* Profession */}
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <label style={labelStyle}>Profession</label>
-                  <input
+                  <input name="name-281364" id="input-281364"
                     value={form.profession}
                     onChange={e => handleChange('profession', e.target.value)}
                     placeholder="E.g. Teacher, Engineer, Student"
@@ -470,7 +470,7 @@ export default function ProfileSettings() {
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <label style={labelStyle}>Assigned chapter</label>
                   <div style={{ position: 'relative' }}>
-                    <select value={form.chapter} onChange={e => handleChange('chapter', e.target.value)} style={selectStyle}>
+                    <select name="name-d8a77b" id="select-d8a77b" value={form.chapter} onChange={e => handleChange('chapter', e.target.value)} style={selectStyle}>
                       <option value="">Select Chapter</option>
                       {availableChapters.map(name => (
                         <option key={name} value={name}>{name}</option>
@@ -486,7 +486,7 @@ export default function ProfileSettings() {
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <label style={labelStyle}>Region</label>
                       <div style={{ position: 'relative' }}>
-                        <select
+                        <select name="name-c13da3" id="select-c13da3"
                           value={form.region}
                           onChange={e => setForm(prev => ({ ...prev, region: e.target.value, constituency: '' }))}
                           style={selectStyle}
@@ -503,7 +503,7 @@ export default function ProfileSettings() {
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <label style={labelStyle}>Constituency</label>
                       <div style={{ position: 'relative' }}>
-                        <select
+                        <select name="name-767782" id="select-767782"
                           value={form.constituency}
                           disabled={!form.region}
                           onChange={e => handleChange('constituency', e.target.value)}
@@ -525,7 +525,7 @@ export default function ProfileSettings() {
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <label style={labelStyle}>Country of residence</label>
                       <div style={{ position: 'relative' }}>
-                        <select
+                        <select name="name-38f885" id="select-38f885"
                           value={form.country}
                           onChange={e => {
                             const countryName = e.target.value
@@ -551,7 +551,7 @@ export default function ProfileSettings() {
 
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <label style={labelStyle}>City / Locality</label>
-                      <input
+                      <input name="name-d8d448" id="input-d8d448"
                         value={form.city}
                         onChange={e => handleChange('city', e.target.value)}
                         placeholder="E.g. London, New York, Hamburg"
@@ -564,7 +564,7 @@ export default function ProfileSettings() {
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                           <label style={labelStyle}>Region</label>
                           <div style={{ position: 'relative' }}>
-                            <select
+                            <select name="name-25c44b" id="select-25c44b"
                               value={form.region}
                               onChange={e => setForm(prev => ({ ...prev, region: e.target.value, constituency: '' }))}
                               style={selectStyle}
@@ -581,7 +581,7 @@ export default function ProfileSettings() {
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                           <label style={labelStyle}>Constituency</label>
                           <div style={{ position: 'relative' }}>
-                            <select
+                            <select name="name-dede8f" id="select-dede8f"
                               value={form.constituency}
                               disabled={!form.region}
                               onChange={e => handleChange('constituency', e.target.value)}
@@ -608,7 +608,7 @@ export default function ProfileSettings() {
                     Residential Address{' '}
                     {userPlatform === 'GHANA' && <span style={{ color: 'hsl(var(--destructive))' }}>*</span>}
                   </label>
-                  <input
+                  <input name="name-048091" id="input-048091"
                     required={userPlatform === 'GHANA'}
                     value={form.residentialAddress}
                     onChange={e => handleChange('residentialAddress', e.target.value)}
@@ -620,7 +620,7 @@ export default function ProfileSettings() {
                 {/* Bio — full width */}
                 <div className="profile-form-full" style={{ display: 'flex', flexDirection: 'column' }}>
                   <label style={labelStyle}>Short bio</label>
-                  <textarea
+                  <textarea name="name-956004" id="textarea-956004"
                     rows={4}
                     value={form.bio}
                     onChange={e => handleChange('bio', e.target.value)}

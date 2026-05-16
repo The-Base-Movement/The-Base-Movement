@@ -203,14 +203,14 @@ export default function CanvasserClipboard() {
                   <span className="material-symbols-outlined text-primary" style={{ fontSize: 16 }}>person</span> Constituent data
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
+                  <input name="contactName" id="input-2fd5d6"
                     type="text"
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     placeholder="Contact Name (Optional)"
                     className="w-full h-12 px-4 bg-stone-50 border border-stone-200 focus:border-primary focus:ring-0 text-sm font-medium"
                   />
-                  <input
+                  <input name="addressNotes" id="input-b200f3"
                     type="text"
                     value={addressNotes}
                     onChange={(e) => setAddressNotes(e.target.value)}
@@ -282,7 +282,7 @@ export default function CanvasserClipboard() {
 
               <div className="pt-6 border-t border-stone-100 flex justify-between items-center">
                 <label className="flex items-center gap-3 cursor-pointer">
-                  <input 
+                  <input name="name-fa348b" id="input-fa348b" 
                     type="checkbox" 
                     checked={needsFollowUp}
                     onChange={(e) => setNeedsFollowUp(e.target.checked)}

@@ -1,7 +1,9 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
+import { chapterService } from '@/services/chapterService'
 import type { Chapter } from '@/types/admin'
 
 interface ChapterMember {
@@ -27,28 +29,65 @@ interface ChapterDonation {
   reference: string | null
 }
 
-export default function AdminChapterLeadHub() {
-  const { chapterId } = useParams<{ chapterId: string }>()
+export default function ChapterHub() {
+  const { chapterId } = useParams<{ chapterId?: string }>()
   const [chapter, setChapter] = useState<Chapter | null>(null)
   const [members, setMembers] = useState<ChapterMember[]>([])
   const [donations, setDonations] = useState<ChapterDonation[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'members' | 'donations'>('members')
+  const [activeTab, setActiveTab] = useState<'members' | 'donations' | 'settings'>('members')
   const [memberSearch, setMemberSearch] = useState('')
+  const [emailDraft, setEmailDraft] = useState('')
+  const [phoneDraft, setPhoneDraft] = useState('')
+  const [isSavingContact, setIsSavingContact] = useState(false)
+  const [descDraft, setDescDraft] = useState('')
+  const [scheduleDraft, setScheduleDraft] = useState('')
+  const [focusDraft, setFocusDraft] = useState('')
+  const [isSavingDetails, setIsSavingDetails] = useState(false)
 
   useEffect(() => {
     async function load() {
-      if (!chapterId) { setIsLoading(false); return }
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) { setIsLoading(false); return }
+      const userId = session.user.id
 
       const chapters = await adminService.getChapters()
-      const found = chapters.find(c => c.id === chapterId)
-      if (!found) { setIsLoading(false); return }
-      setChapter(found)
+      let mine: Chapter | undefined
+
+      // 1. Explicit ID from URL param (most reliable)
+      if (chapterId) {
+        mine = chapters.find(c => c.id === chapterId)
+      }
+
+      // 2. Match by leader_id (UUID)
+      if (!mine) {
+        mine = chapters.find(c => c.leader_id === userId)
+      }
+
+      // 3. Match by chapter name stored on user's DB row
+      if (!mine) {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('chapter')
+          .eq('id', userId)
+          .maybeSingle()
+        if (userData?.chapter) {
+          mine = chapters.find(c => c.name.toLowerCase() === userData.chapter.toLowerCase())
+        }
+      }
+
+      if (!mine) { setIsLoading(false); return }
+      setChapter(mine)
+      setEmailDraft(mine.email || '')
+      setPhoneDraft(mine.phone_number || '')
+      setDescDraft(mine.description || '')
+      setScheduleDraft(mine.meeting_schedule || '')
+      setFocusDraft(mine.local_focus || '')
 
       const { data: memberData } = await supabase
         .from('users')
         .select('id, registration_number, full_name, phone_number, region, constituency, status, joined_at, avatar_url')
-        .eq('chapter', found.name)
+        .eq('chapter', mine.name)
         .order('joined_at', { ascending: false })
 
       const mapped: ChapterMember[] = (memberData || []).map(u => ({
@@ -88,6 +127,34 @@ export default function AdminChapterLeadHub() {
     return !q || m.name.toLowerCase().includes(q) || m.regNo.toLowerCase().includes(q) || m.phone.includes(q)
   })
 
+  const slug = chapter ? chapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : ''
+
+  const handleSaveContact = async () => {
+    if (!chapter) return
+    setIsSavingContact(true)
+    const ok = await chapterService.updateChapter(chapter.id, { email: emailDraft, phone_number: phoneDraft })
+    setIsSavingContact(false)
+    if (ok) toast.success('Contact info updated.')
+    else toast.error('Failed to update contact info.')
+  }
+
+  const handleSaveDetails = async () => {
+    if (!chapter) return
+    setIsSavingDetails(true)
+    const ok = await chapterService.updateChapter(chapter.id, {
+      description: descDraft,
+      meeting_schedule: scheduleDraft,
+      local_focus: focusDraft,
+    })
+    setIsSavingDetails(false)
+    if (ok) {
+      setChapter(prev => prev ? { ...prev, description: descDraft, meeting_schedule: scheduleDraft, local_focus: focusDraft } : prev)
+      toast.success('Chapter profile updated.')
+    } else {
+      toast.error('Failed to save changes.')
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="main">
@@ -105,9 +172,9 @@ export default function AdminChapterLeadHub() {
       <div className="main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
         <div style={{ textAlign: 'center' }}>
           <span className="material-symbols-outlined" style={{ fontSize: 56, color: 'hsl(var(--on-surface-muted))', opacity: 0.15 }}>account_balance</span>
-          <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 18, color: 'hsl(var(--on-surface))', marginTop: 16, marginBottom: 8 }}>Chapter not found</h2>
-          <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginBottom: 20 }}>This chapter does not exist or could not be loaded.</p>
-          <Link to="/admin/chapters" className="btn btn-outline">Back to chapters</Link>
+          <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 18, color: 'hsl(var(--on-surface))', marginTop: 16, marginBottom: 8 }}>No chapter assigned</h2>
+          <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginBottom: 20 }}>You have not been appointed as a chapter leader yet.</p>
+          <Link to="/dashboard/chapters" className="btn btn-outline">View all chapters</Link>
         </div>
       </div>
     )
@@ -115,31 +182,27 @@ export default function AdminChapterLeadHub() {
 
   return (
     <div className="main animate-in fade-in duration-500">
+      {/* Header */}
       <div className="top">
         <div>
-          <div className="crumbs" style={{ marginBottom: 6 }}>
-            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>Admin</Link>
-            {' · '}
-            <Link to="/admin/chapters" style={{ color: 'hsl(var(--primary))' }}>Chapters</Link>
-            {' · '}
-            {chapter.name}
-          </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 22 }}>account_balance</span>
             {chapter.name}
           </h2>
-          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 6, marginBottom: 0 }}>
-            {chapter.leader_name || 'No leader assigned'} — {chapter.city_or_region}, {chapter.country}
+          <div style={{ marginTop: 12 }}><div className="bl"><div /><div /><div /></div></div>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
+            Chapter management hub — {chapter.city_or_region}, {chapter.country}
           </p>
         </div>
         <div className="actions">
-          <Link to="/admin/chapters" className="btn btn-outline btn-sm">
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_back</span>
-            All chapters
+          <Link to={`/dashboard/chapters/${slug}`} className="btn btn-outline">
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>visibility</span>
+            Public view
           </Link>
         </div>
       </div>
 
+      {/* KPIs */}
       <div className="kpis">
         {[
           { label: 'Total members', value: members.length, bar: 'hsl(var(--on-surface))' },
@@ -155,10 +218,12 @@ export default function AdminChapterLeadHub() {
         ))}
       </div>
 
+      {/* Tabs */}
       <div style={{ display: 'flex', borderBottom: '1px solid hsl(var(--border))', marginBottom: 20 }}>
         {([
           { key: 'members', label: `Members (${members.length})` },
           { key: 'donations', label: `Donations (${donations.length})` },
+          { key: 'settings', label: 'Chapter Settings' },
         ] as const).map(tab => (
           <button
             key={tab.key}
@@ -177,13 +242,14 @@ export default function AdminChapterLeadHub() {
         ))}
       </div>
 
+      {/* Members tab */}
       {activeTab === 'members' && (
         <div className="panel" style={{ overflow: 'hidden' }}>
           <div style={{ padding: '12px 18px', borderBottom: '1px solid hsl(var(--border))', position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 30, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4, pointerEvents: 'none' }}>search</span>
-            <input name="memberSearch" id="input-681c07"
+            <input name="memberSearch" id="input-baf451"
               type="text"
-              placeholder="Search by name, reg. ID, or phone..."
+              placeholder="Search by name, reg. ID, or phone…"
               value={memberSearch}
               onChange={e => setMemberSearch(e.target.value)}
               style={{ width: '100%', height: 38, paddingLeft: 38, paddingRight: 12, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 13, fontFamily: "'Public Sans', sans-serif", fontWeight: 600, outline: 'none', boxSizing: 'border-box' }}
@@ -238,6 +304,104 @@ export default function AdminChapterLeadHub() {
         </div>
       )}
 
+      {/* Settings tab */}
+      {activeTab === 'settings' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Chapter profile */}
+          <div className="panel" style={{ padding: '20px 22px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>edit_note</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Chapter profile</span>
+              </div>
+              <button className="btn btn-primary btn-sm" onClick={handleSaveDetails} disabled={isSavingDetails}>
+                {isSavingDetails ? 'Saving…' : 'Save changes'}
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>
+                  About this chapter
+                </label>
+                <textarea name="descDraft" id="textarea-eef928"
+                  value={descDraft}
+                  onChange={e => setDescDraft(e.target.value)}
+                  placeholder="Describe your chapter's mission, goals, and focus areas…"
+                  rows={4}
+                  style={{ width: '100%', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '10px 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 13, outline: 'none', boxSizing: 'border-box', background: '#fff', color: 'hsl(var(--on-surface))', resize: 'vertical', lineHeight: 1.6 }}
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>
+                    Meeting schedule
+                  </label>
+                  <input name="scheduleDraft" id="input-7dc8e3"
+                    type="text"
+                    value={scheduleDraft}
+                    onChange={e => setScheduleDraft(e.target.value)}
+                    placeholder="e.g. Every 1st Saturday at 10am"
+                    style={{ width: '100%', height: 40, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 13, outline: 'none', boxSizing: 'border-box', background: '#fff', color: 'hsl(var(--on-surface))' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>
+                    Local focus
+                  </label>
+                  <input name="focusDraft" id="input-2c8d97"
+                    type="text"
+                    value={focusDraft}
+                    onChange={e => setFocusDraft(e.target.value)}
+                    placeholder="e.g. Voter registration, Community outreach"
+                    style={{ width: '100%', height: 40, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 13, outline: 'none', boxSizing: 'border-box', background: '#fff', color: 'hsl(var(--on-surface))' }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact info */}
+          <div className="panel" style={{ padding: '20px 22px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>contacts</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contact info</span>
+              </div>
+              <button className="btn btn-primary btn-sm" onClick={handleSaveContact} disabled={isSavingContact}>
+                {isSavingContact ? 'Saving…' : 'Save changes'}
+              </button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>
+                  Chapter email
+                </label>
+                <input name="emailDraft" id="input-2b72d8"
+                  type="email"
+                  value={emailDraft}
+                  onChange={e => setEmailDraft(e.target.value)}
+                  placeholder="chapter@thebasemovement.com"
+                  style={{ width: '100%', height: 40, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 13, outline: 'none', boxSizing: 'border-box', background: '#fff', color: 'hsl(var(--on-surface))' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6 }}>
+                  Chapter phone
+                </label>
+                <input name="phoneDraft" id="input-ec026c"
+                  type="tel"
+                  value={phoneDraft}
+                  onChange={e => setPhoneDraft(e.target.value)}
+                  placeholder="+233 50 000 0000"
+                  style={{ width: '100%', height: 40, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 13, outline: 'none', boxSizing: 'border-box', background: '#fff', color: 'hsl(var(--on-surface))' }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Donations tab */}
       {activeTab === 'donations' && (
         <div className="panel" style={{ overflow: 'hidden' }}>
           <div style={{ overflowX: 'auto' }}>
@@ -263,7 +427,7 @@ export default function AdminChapterLeadHub() {
                       <p style={{ margin: 0, fontSize: 10, fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>{d.phone}</p>
                     </td>
                     <td style={{ padding: '12px 18px', fontSize: 15, fontWeight: 800, color: 'hsl(var(--primary))', fontFamily: "'Public Sans', sans-serif", whiteSpace: 'nowrap' }}>
-                      {`GH₵ ${Number(d.amount).toLocaleString()}`}
+                      GH₵ {Number(d.amount).toLocaleString()}
                     </td>
                     <td style={{ padding: '12px 18px', fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{d.payment_method}</td>
                     <td style={{ padding: '12px 18px', fontSize: 11, fontWeight: 700, fontFamily: 'monospace', color: 'hsl(var(--on-surface-muted))' }}>{d.reference || '—'}</td>

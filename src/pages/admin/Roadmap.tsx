@@ -138,7 +138,7 @@ export default function RoadmapManagement() {
           </div>
           <div style={{ position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-            <input
+            <input name="searchQuery" id="input-1c539d"
               placeholder="Search milestones…"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -238,11 +238,11 @@ export default function RoadmapManagement() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
                     <label style={labelSt}>Objective title</label>
-                    <input required style={inputSt} placeholder="e.g. National Logistics Hub" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                    <input name="name-781ac1" id="input-781ac1" required style={inputSt} placeholder="e.g. National Logistics Hub" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                   </div>
                   <div>
                     <label style={labelSt}>Strategic category</label>
-                    <select style={selectSt} value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
+                    <select name="name-1dd723" id="select-1dd723" style={selectSt} value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
                       <option>Mobilization</option>
                       <option>Infrastructure</option>
                       <option>Policy</option>
@@ -252,18 +252,18 @@ export default function RoadmapManagement() {
                   </div>
                   <div>
                     <label style={labelSt}>Target date</label>
-                    <input required type="date" style={inputSt} value={formData.target_date} onChange={e => setFormData({ ...formData, target_date: e.target.value })} />
+                    <input name="name-984beb" id="input-984beb" required type="date" style={inputSt} value={formData.target_date} onChange={e => setFormData({ ...formData, target_date: e.target.value })} />
                   </div>
                   <div>
                     <label style={labelSt}>Target member count</label>
-                    <input type="number" style={inputSt} placeholder="0" value={formData.target_members} onChange={e => setFormData({ ...formData, target_members: parseInt(e.target.value) || 0 })} />
+                    <input name="name-d35a6f" id="input-d35a6f" type="number" style={inputSt} placeholder="0" value={formData.target_members} onChange={e => setFormData({ ...formData, target_members: parseInt(e.target.value) || 0 })} />
                   </div>
                 </div>
                 {/* Right */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
                     <label style={labelSt}>Status</label>
-                    <select style={selectSt} value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value as Milestone['status'] })}>
+                    <select name="name-170815" id="select-170815" style={selectSt} value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value as Milestone['status'] })}>
                       <option>Upcoming</option>
                       <option>In Progress</option>
                       <option>Completed</option>
@@ -271,7 +271,7 @@ export default function RoadmapManagement() {
                   </div>
                   <div>
                     <label style={labelSt}>Importance level</label>
-                    <select style={selectSt} value={formData.importance_level} onChange={e => setFormData({ ...formData, importance_level: e.target.value as Milestone['importance_level'] })}>
+                    <select name="name-96c1d5" id="select-96c1d5" style={selectSt} value={formData.importance_level} onChange={e => setFormData({ ...formData, importance_level: e.target.value as Milestone['importance_level'] })}>
                       <option>Normal</option>
                       <option>High</option>
                       <option>Critical</option>
@@ -279,7 +279,7 @@ export default function RoadmapManagement() {
                   </div>
                   <div>
                     <label style={labelSt}>Objective description</label>
-                    <textarea required rows={5} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.6 }} placeholder="Detailed breakdown of the milestone…" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                    <textarea name="name-90ba7c" id="textarea-90ba7c" required rows={5} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.6 }} placeholder="Detailed breakdown of the milestone…" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                   </div>
                 </div>
               </div>

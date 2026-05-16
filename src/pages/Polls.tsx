@@ -11,6 +11,7 @@ import SEO from '@/components/SEO'
 export default function Polls() {
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
+  const bodyFont = isDashboard ? "'Public Sans', sans-serif" : "'Work Sans', sans-serif"
   const [polls, setPolls] = useState<Poll[]>([])
   const [loading, setLoading] = useState(true)
   const [voting, setVoting] = useState<string | null>(null)
@@ -73,14 +74,14 @@ export default function Polls() {
           { label: 'Closed polls', value: loading ? '—' : closedPolls.length, sub: 'Results available', bar: 'hsl(var(--on-surface))', icon: 'lock' },
           { label: 'Your votes', value: loading ? '—' : polls.filter(p => p.voted).length, sub: 'Participation count', bar: 'hsl(var(--destructive))', icon: 'verified' },
         ].map(kpi => (
-          <div key={kpi.label} className="panel" style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
+          <div key={kpi.label} className="panel" style={{ padding: isDashboard ? '16px 18px 16px 22px' : '20px 22px 20px 26px', position: 'relative', overflow: 'hidden', background: isDashboard ? undefined : 'hsl(var(--background))' }}>
+            <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: isDashboard ? 3 : 4, background: kpi.bar }} />
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{kpi.label}</span>
-              <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>{kpi.icon}</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: isDashboard ? 10 : 12, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{kpi.label}</span>
+              <span className="material-symbols-outlined" style={{ fontSize: isDashboard ? 16 : 20, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>{kpi.icon}</span>
             </div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--on-surface))', lineHeight: 1, marginBottom: 4, letterSpacing: '-0.02em' }}>{kpi.value}</div>
-            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{kpi.sub}</div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: isDashboard ? 28 : 36, color: 'hsl(var(--on-surface))', lineHeight: 1, marginBottom: 4, letterSpacing: '-0.02em' }}>{kpi.value}</div>
+            <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: isDashboard ? 11 : 13, color: 'hsl(var(--on-surface-muted))' }}>{kpi.sub}</div>
           </div>
         ))}
       </div>
@@ -94,7 +95,7 @@ export default function Polls() {
           <div style={{ background: '#181d19', borderRadius: 6, padding: 20, position: 'relative', overflow: 'hidden' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', right: 12, top: 12, fontSize: 56, color: '#fff', opacity: 0.05, pointerEvents: 'none' }}>how_to_vote</span>
             <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--accent))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>Movement voice</div>
-            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, margin: '0 0 16px' }}>
+            <p style={{ fontFamily: bodyFont, fontWeight: 500, fontSize: isDashboard ? 12 : 13, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, margin: '0 0 16px' }}>
               Poll results are presented to the National Steering Committee every month to influence movement strategy.
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
@@ -173,7 +174,7 @@ export default function Polls() {
           {/* Suggest a poll */}
           <div style={{ background: 'hsl(var(--primary))', borderRadius: 6, padding: 20 }}>
             <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: '#fff', marginBottom: 8 }}>Suggest a poll</div>
-            <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, margin: '0 0 14px' }}>
+            <p style={{ fontFamily: bodyFont, fontWeight: 500, fontSize: isDashboard ? 12 : 13, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, margin: '0 0 14px' }}>
               Have a question you think the movement needs to answer? Submit your proposal.
             </p>
             <button className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', background: '#fff', color: 'hsl(var(--primary))', borderColor: 'transparent' }}>
@@ -187,7 +188,7 @@ export default function Polls() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>schedule</span>
-            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Active feedback</span>
+            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: isDashboard ? 13 : 16, color: 'hsl(var(--on-surface))' }}>Active feedback</span>
           </div>
 
           {loading ? (
@@ -212,6 +213,7 @@ export default function Polls() {
                   isLoggedIn={isLoggedIn}
                   handleVote={handleVote}
                   toggleResults={toggleResults}
+                  variant={isDashboard ? undefined : 'public'}
                 />
               ))}
             </div>

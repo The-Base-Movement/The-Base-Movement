@@ -28,6 +28,7 @@ export default function MemberVerification() {
   const [search, setSearch]             = useState('')
   const [statusFilter, setStatusFilter] = useState<PendingVerification['status'] | 'All'>('All')
   const [currentPage, setCurrentPage]   = useState(1)
+  const [constituencyFilter, setConstituencyFilter] = useState('')
   const [showPhotoFull, setShowPhotoFull] = useState(false)
   const [viewingVaultRecord, setViewingVaultRecord] = useState<PendingVerification | null>(null)
   const [loading, setLoading]           = useState(true)
@@ -107,12 +108,16 @@ export default function MemberVerification() {
   const handleSearch = (val: string) => { setSearch(val); setCurrentPage(1) }
   const handleFilter = (val: PendingVerification['status'] | 'All') => { setStatusFilter(val); setCurrentPage(1) }
 
+  const constituencies = Array.from(new Set(members.map(m => m.constituency).filter(Boolean))).sort()
+
   const filtered = members.filter(m =>
     (statusFilter === 'All' || m.status === statusFilter) &&
+    (constituencyFilter === '' || m.constituency === constituencyFilter) &&
     (
       (m.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
       (m.id?.toLowerCase() || '').includes(search.toLowerCase()) ||
-      (m.region?.toLowerCase() || '').includes(search.toLowerCase())
+      (m.region?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (m.phone?.toLowerCase() || '').includes(search.toLowerCase())
     )
   )
 
@@ -187,26 +192,39 @@ export default function MemberVerification() {
         {/* ── Left: verification queue ── */}
         <div className="panel">
           {/* Search + filter bar */}
-          <div className="ph" style={{ gap: 10 }}>
-            <div style={{ position: 'relative', flex: 1 }}>
+          <div className="ph" style={{ gap: 8, flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 160 }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>search</span>
-              <input
+              <input name="search" id="input-13be0c"
                 type="text"
                 value={search}
                 onChange={e => handleSearch(e.target.value)}
-                placeholder="Search by name, ID, region…"
+                placeholder="Search by name, ID, phone, region…"
                 style={{ width: '100%', height: 36, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px 0 32px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', background: 'hsl(var(--surface))', color: 'hsl(var(--on-surface))' }}
               />
             </div>
             <div style={{ position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>filter_list</span>
-              <select
+              <select name="statusFilter" id="select-a12bda"
                 value={statusFilter}
                 onChange={e => handleFilter(e.target.value as PendingVerification['status'] | 'All')}
                 style={{ height: 36, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', cursor: 'pointer' }}
               >
                 {STATUS_OPTIONS.map(s => (
                   <option key={s} value={s}>{s === 'All' ? 'All statuses' : s}</option>
+                ))}
+              </select>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>location_on</span>
+              <select name="constituencyFilter" id="select-3f4bc0"
+                value={constituencyFilter}
+                onChange={e => { setConstituencyFilter(e.target.value); setCurrentPage(1) }}
+                style={{ height: 36, paddingLeft: 30, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', cursor: 'pointer' }}
+              >
+                <option value="">All constituencies</option>
+                {constituencies.map(c => (
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </select>
             </div>

@@ -43,7 +43,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
             <label style={labelSt}>Primary contact email</label>
             <div style={{ position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>mail</span>
-              <input style={{ ...inputSt, paddingLeft: 34 }} value={(siteSettings.primary_email as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, primary_email: e.target.value })} />
+              <input name="name-e727d9" id="input-e727d9" style={{ ...inputSt, paddingLeft: 34 }} value={(siteSettings.primary_email as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, primary_email: e.target.value })} />
             </div>
             <p style={hintSt}>Used for contact forms and general inquiries.</p>
           </div>
@@ -51,7 +51,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
             <label style={labelSt}>Newsletter dispatch email</label>
             <div style={{ position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>campaign</span>
-              <input style={{ ...inputSt, paddingLeft: 34 }} value={(siteSettings.newsletter_email as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, newsletter_email: e.target.value })} />
+              <input name="name-ce9df3" id="input-ce9df3" style={{ ...inputSt, paddingLeft: 34 }} value={(siteSettings.newsletter_email as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, newsletter_email: e.target.value })} />
             </div>
             <p style={hintSt}>Authoritative sender for all movement broadcasts.</p>
           </div>
@@ -75,7 +75,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
                 <label style={labelSt}>{color.label}</label>
                 <div style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', flexShrink: 0, background: siteSettings[color.key] ? `hsl(${siteSettings[color.key] as string})` : 'transparent' }} />
-                  <input style={{ ...inputSt, fontFamily: 'monospace' }} value={(siteSettings[color.key] as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, [color.key]: e.target.value })} placeholder="0 0% 0%" />
+                  <input name="name-8a8371" id="input-8a8371" style={{ ...inputSt, fontFamily: 'monospace' }} value={(siteSettings[color.key] as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, [color.key]: e.target.value })} placeholder="0 0% 0%" />
                 </div>
                 <p style={{ ...hintSt, lineHeight: 1.5 }}>{color.desc}</p>
               </div>
@@ -95,7 +95,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
                 <label style={{ ...labelSt, marginBottom: 0 }}>Global font scale</label>
                 <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 12, color: 'hsl(var(--primary))' }}>{((siteSettings.font_scale_global as number) || 1.0).toFixed(2)}x</span>
               </div>
-              <input type="range" min="0.8" max="1.5" step="0.05" value={(siteSettings.font_scale_global as number) || 1.0} onChange={e => setSiteSettings({ ...siteSettings, font_scale_global: parseFloat(e.target.value) })} style={{ width: '100%', accentColor: 'hsl(var(--primary))' }} />
+              <input name="name-c7b696" id="input-c7b696" type="range" min="0.8" max="1.5" step="0.05" value={(siteSettings.font_scale_global as number) || 1.0} onChange={e => setSiteSettings({ ...siteSettings, font_scale_global: parseFloat(e.target.value) })} style={{ width: '100%', accentColor: 'hsl(var(--primary))' }} />
               <p style={hintSt}>Adjusts the base font size for all paragraphs and body text.</p>
             </div>
             <div>
@@ -103,7 +103,7 @@ export function MovementInfoTab({ siteSettings, setSiteSettings, isSaving, setIs
                 <label style={{ ...labelSt, marginBottom: 0 }}>Heading emphasis scale</label>
                 <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 12, color: 'hsl(var(--primary))' }}>{((siteSettings.font_scale_headings as number) || 1.0).toFixed(2)}x</span>
               </div>
-              <input type="range" min="0.8" max="2.0" step="0.05" value={(siteSettings.font_scale_headings as number) || 1.0} onChange={e => setSiteSettings({ ...siteSettings, font_scale_headings: parseFloat(e.target.value) })} style={{ width: '100%', accentColor: 'hsl(var(--primary))' }} />
+              <input name="name-375d88" id="input-375d88" type="range" min="0.8" max="2.0" step="0.05" value={(siteSettings.font_scale_headings as number) || 1.0} onChange={e => setSiteSettings({ ...siteSettings, font_scale_headings: parseFloat(e.target.value) })} style={{ width: '100%', accentColor: 'hsl(var(--primary))' }} />
               <p style={hintSt}>Specifically scales H1-H6 headings for high-impact visibility.</p>
             </div>
           </div>

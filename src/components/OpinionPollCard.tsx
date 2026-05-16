@@ -8,9 +8,11 @@ interface OpinionPollCardProps {
   isLoggedIn: boolean
   handleVote: (pollId: string, optionId: string) => void
   toggleResults: (pollId: string) => void
+  variant?: 'public'
 }
 
-export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleVote, toggleResults }: OpinionPollCardProps) {
+export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleVote, toggleResults, variant }: OpinionPollCardProps) {
+  const bodyFont = variant === 'public' ? "'Work Sans', sans-serif" : "'Public Sans', sans-serif"
   const isLive = poll.status === 'Active'
   const accentColor = isLive ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface-muted))'
 
@@ -45,7 +47,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
           </span>
         </div>
 
-        <h3 className="font-['Public_Sans',sans-serif] font-extrabold text-[17px] leading-[1.3] tracking-[-0.01em] mb-[14px] text-[var(--on-surface,#181d19)]">
+        <h3 className="text-[17px] leading-[1.4] mb-[14px] text-[var(--on-surface,#181d19)]" style={{ fontFamily: bodyFont, fontWeight: variant === 'public' ? 600 : 800, letterSpacing: variant === 'public' ? '-0.005em' : '-0.01em' }}>
           {poll.question}
         </h3>
 
@@ -75,9 +77,10 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
                     />
                     <div className="relative flex justify-between items-center">
                       <span
-                        className={`text-[12.5px] font-extrabold tracking-[-0.005em] font-['Public_Sans',sans-serif] flex items-center gap-2 ${
+                        className={`text-[12.5px] tracking-[-0.005em] font-['Public_Sans',sans-serif] flex items-center gap-2 ${
                           isLead ? 'text-[var(--primary)]' : 'text-[var(--on-surface,#181d19)]'
                         }`}
+                        style={{ fontWeight: variant === 'public' ? 500 : 800 }}
                       >
                         {isSelected && <span className="material-symbols-outlined" style={{ fontSize: 14, flexShrink: 0 }}>check_circle</span>}
                         {option.label}
@@ -100,7 +103,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
                     disabled={voting === poll.id}
                     className="w-full text-left px-[14px] py-[10px] border border-[var(--border,#e5e7eb)] rounded-[4px] bg-[var(--container-low,#f9fafb)] hover:border-[var(--primary)] transition-all duration-150 group/btn"
                   >
-                    <span className="text-[12.5px] font-extrabold tracking-[-0.005em] font-['Public_Sans',sans-serif] text-[var(--on-surface,#181d19)] block">
+                    <span className="text-[12.5px] tracking-[-0.005em] font-['Public_Sans',sans-serif] text-[var(--on-surface,#181d19)] block" style={{ fontWeight: variant === 'public' ? 500 : 800 }}>
                       {option.label}
                     </span>
                     {!isLoggedIn && (

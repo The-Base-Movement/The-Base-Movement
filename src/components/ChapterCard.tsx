@@ -4,9 +4,10 @@ import { type Chapter } from '@/types/admin'
 interface ChapterCardProps {
   chapter: Chapter
   countryFlags: Record<string, string>
+  userChapterName?: string | null
 }
 
-export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
+export function ChapterCard({ chapter, countryFlags, userChapterName }: ChapterCardProps) {
   const isActive = (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member'
   const isDiaspora = chapter.country !== 'Ghana'
   const isFeatured = chapter.member_count > 500
@@ -86,12 +87,19 @@ export function ChapterCard({ chapter, countryFlags }: ChapterCardProps) {
               {leaderRole}
             </div>
           </div>
-          <Link
-            to={`/dashboard/chapters/${slug}`}
-            className="shrink-0 px-3 py-1.5 border border-border rounded-[4px] text-[11px] font-extrabold text-on-surface hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors font-['Public_Sans',sans-serif]"
-          >
-            Join
-          </Link>
+          {userChapterName && chapter.name.toLowerCase() === userChapterName.toLowerCase() ? (
+            <span className="shrink-0 px-3 py-1.5 rounded-[4px] text-[11px] font-extrabold font-['Public_Sans',sans-serif]"
+              style={{ background: 'hsla(var(--primary), 0.08)', color: 'hsl(var(--primary))', border: '1px solid hsla(var(--primary), 0.25)' }}>
+              Joined
+            </span>
+          ) : (
+            <Link
+              to={`/dashboard/chapters/${slug}`}
+              className="shrink-0 px-3 py-1.5 border border-border rounded-[4px] text-[11px] font-extrabold text-on-surface hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors font-['Public_Sans',sans-serif]"
+            >
+              Join
+            </Link>
+          )}
         </div>
       </div>
     </div>

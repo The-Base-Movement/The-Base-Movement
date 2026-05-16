@@ -86,11 +86,11 @@ export function ProfileSettingsTab({
         <div className="settings-form-grid">
           <div>
             <label style={labelSt}>Full name</label>
-            <input style={inputSt} value={profileForm.fullName} onChange={e => setProfileForm({ ...profileForm, fullName: e.target.value })} />
+            <input name="name-1798f5" id="input-1798f5" style={inputSt} value={profileForm.fullName} onChange={e => setProfileForm({ ...profileForm, fullName: e.target.value })} />
           </div>
           <div>
             <label style={labelSt}>Email address</label>
-            <input style={{ ...inputSt, opacity: 0.5, cursor: 'not-allowed' }} value={profileForm.email} disabled />
+            <input name="name-44682c" id="input-44682c" style={{ ...inputSt, opacity: 0.5, cursor: 'not-allowed' }} value={profileForm.email} disabled />
           </div>
           <div>
             <label style={labelSt}>Administrative role</label>
@@ -100,7 +100,7 @@ export function ProfileSettingsTab({
           </div>
           <div>
             <label style={labelSt}>Phone number</label>
-            <input style={inputSt} value={profileForm.phone} onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })} placeholder="+233 XX XXX XXXX" />
+            <input name="name-d429d4" id="input-d429d4" style={inputSt} value={profileForm.phone} onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })} placeholder="+233 XX XXX XXXX" />
           </div>
         </div>
 

@@ -255,7 +255,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       Full name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
-                    <input
+                    <input name="name-efc762" id="input-efc762"
                       placeholder="As it appears on official ID"
                       required
                       value={formData.fullName}
@@ -283,7 +283,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           color: platform === p ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
                           transition: 'all 0.15s ease'
                         }}>
-                          <input type="radio" name="platform" value={p} checked={platform === p} onChange={() => handlePlatformChange(p)} style={{ display: 'none' }} />
+                          <input id="input-76964c" type="radio" name="platform" value={p} checked={platform === p} onChange={() => handlePlatformChange(p)} style={{ display: 'none' }} />
                           Base {p === 'GHANA' ? 'Ghana' : 'Diaspora'}
                         </label>
                       ))}
@@ -296,7 +296,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                           Country of residence <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                         </label>
-                        <select 
+                        <select name="name-ea007f" id="select-ea007f" 
                           required
                           value={formData.country} 
                           onChange={(e) => handleChange('country', e.target.value)}
@@ -319,7 +319,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         Contact number <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        <select
+                        <select name="name-9533b6" id="select-9533b6"
                           value={formData.countryCode}
                           onChange={(e) => handleChange('countryCode', e.target.value)}
                           className="reg"
@@ -333,7 +333,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             <option key={code} value={code}>{code}</option>
                           ))}
                         </select>
-                        <input
+                        <input name="name-109f3c" id="input-109f3c"
                           type="tel"
                           placeholder="Phone number"
                           required
@@ -354,7 +354,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       Account password <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
                     <div style={{ position: 'relative' }}>
-                      <input
+                      <input name="name-ec50d2" id="input-ec50d2"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Minimum 6 characters"
                         required
@@ -402,7 +402,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             color: formData.ageRange === range ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
                             transition: 'all 0.15s ease'
                           }}>
-                            <input type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} style={{ display: 'none' }} />
+                            <input id="input-d93ff7" type="radio" name="ageRange" value={range} checked={formData.ageRange === range} onChange={() => handleChange('ageRange', range)} style={{ display: 'none' }} />
                             {range}
                           </label>
                         ))}
@@ -424,7 +424,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             color: formData.gender === g ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
                             transition: 'all 0.15s ease'
                           }}>
-                            <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} style={{ display: 'none' }} />
+                            <input id="input-27f402" type="radio" name="gender" value={g} checked={formData.gender === g} onChange={() => handleChange('gender', g)} style={{ display: 'none' }} />
                             {g}
                           </label>
                         ))}
@@ -436,7 +436,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       Residential address <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
-                    <input
+                    <input name="name-f8cc39" id="input-f8cc39"
                       placeholder="Street, House Number, City"
                       required
                       value={formData.residentialAddress}
@@ -456,7 +456,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             Region <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                           </label>
-                          <select 
+                          <select name="name-0e9706" id="select-0e9706" 
                             required
                             value={formData.region} 
                             onChange={(e) => handleChange('region', e.target.value)}
@@ -477,7 +477,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             Constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                           </label>
-                          <select 
+                          <select name="name-3ce1cd" id="select-3ce1cd" 
                             required
                             disabled={!formData.region}
                             value={formData.constituency} 
@@ -501,7 +501,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                           Assigned chapter <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                         </label>
-                        <input
+                        <input name="name-4d1480" id="input-4d1480"
                           placeholder="E.g. UK Chapter - London"
                           required
                           value={formData.chapter}
@@ -529,7 +529,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       Emergency contact name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
-                    <input
+                    <input name="name-6a8f94" id="input-6a8f94"
                       placeholder="Full Name"
                       required
                       value={formData.emergencyContactName}
@@ -547,7 +547,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Relationship <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <input
+                      <input name="name-6df3eb" id="input-6df3eb"
                         placeholder="E.g. Spouse, Parent, Brother"
                         required
                         value={formData.emergencyRelationship}
@@ -563,7 +563,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Emergency contact number <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <input
+                      <input name="name-434c82" id="input-434c82"
                         type="tel"
                         placeholder="Phone number"
                         required
@@ -583,7 +583,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Profession / occupation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <input
+                      <input name="name-fcf881" id="input-fcf881"
                         placeholder="E.g. Teacher, Nurse, Student"
                         required
                         value={formData.profession}
@@ -599,7 +599,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Education level <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <select 
+                      <select name="name-b50420" id="select-b50420" 
                         required
                         value={formData.educationLevel} 
                         onChange={(e) => handleChange('educationLevel', e.target.value)}
@@ -663,7 +663,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                           />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginTop: '24px' }}>
-                          <input
+                          <input name="zoom" id="input-d97898"
                             type="range"
                             value={zoom}
                             min={1}
@@ -699,7 +699,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     </p>
                     
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
-                      <input
+                      <input name="name-698fba"
                         type="checkbox"
                         id="privacy"
                         checked={agreed}

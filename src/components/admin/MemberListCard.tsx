@@ -38,7 +38,7 @@ export default function MemberListCard({ member, isSelected, onToggleSelect, onV
 
       {/* Row 1: checkbox · avatar · name + reg · status */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <input
+        <input name="name-263266" id="input-263266"
           type="checkbox"
           checked={isSelected}
           onChange={() => onToggleSelect(member.id)}

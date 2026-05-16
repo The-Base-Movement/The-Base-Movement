@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase'
-import { authService } from './authService'
 import type { ChapterApplication, ChapterLeaderboard, Chapter, ChapterLeader, ChapterActivity } from '@/types/admin'
 
 interface ChapterLeaderRow {
@@ -56,6 +55,7 @@ class ChapterService {
       city_or_region: c.city_or_region,
       country: c.country || 'Ghana',
       leader_name: c.leader_name || 'Unassigned',
+      leader_id: c.leader_id || undefined,
       member_count: c.member_count || 0,
       status: c.status,
       region: c.region || undefined,
@@ -161,6 +161,7 @@ class ChapterService {
     if (chapter.city_or_region) updateData.city_or_region = chapter.city_or_region
     if (chapter.country) updateData.country = chapter.country
     if (chapter.leader_name) updateData.leader_name = chapter.leader_name
+    if (chapter.leader_id !== undefined) updateData.leader_id = chapter.leader_id
     if (chapter.status) updateData.status = chapter.status
     if (chapter.region) updateData.region = chapter.region
     if (chapter.member_count !== undefined) updateData.member_count = chapter.member_count
@@ -260,16 +261,13 @@ class ChapterService {
   }
 
   async joinChapter(chapterName: string): Promise<boolean> {
-    const user = await authService.getUser()
-    if (!user) return false
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return false
 
-    // In this movement, joining a chapter is a direct action for verified members,
-    // but for others it might be a request. 
-    // Here we update the user's chapter field.
     const { error } = await supabase
       .from('users')
       .update({ chapter: chapterName })
-      .eq('id', user.id)
+      .eq('id', session.user.id)
 
     if (error) {
       console.error('[DATABASE] Join chapter failed:', error)
@@ -325,13 +323,13 @@ class ChapterService {
     vision_statement: string;
     experience_summary?: string;
   }): Promise<boolean> {
-    const user = await authService.getUser()
-    if (!user) return false
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return false
 
     const { error } = await supabase
       .from('chapter_applications')
       .insert({
-        applicant_id: user.id,
+        applicant_id: session.user.id,
         proposed_chapter_name: application.proposed_chapter_name,
         region: application.region,
         constituency: application.constituency,
@@ -349,12 +347,12 @@ class ChapterService {
   }
 
   async approveChapterApplication(applicationId: string, notes: string = ''): Promise<boolean> {
-    const user = await authService.getUser()
-    if (!user) return false
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return false
 
     const { error } = await supabase.rpc('approve_chapter_application', {
       app_id: applicationId,
-      admin_uid: user.id,
+      admin_uid: session.user.id,
       notes: notes
     })
 

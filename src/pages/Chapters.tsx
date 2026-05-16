@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
+import { authService } from '@/services/authService'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 import { cn } from '@/lib/utils'
@@ -45,6 +46,7 @@ export default function Chapters() {
   const [regions, setRegions] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [userChapterName, setUserChapterName] = useState<string | null>(null)
 
   // Request modal state
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
@@ -55,6 +57,8 @@ export default function Chapters() {
 
   useEffect(() => {
     adminService.getRegions().then(res => setRegions(['All Regions', ...res.map(r => r.name)]))
+    const user = authService.getUser()
+    if (user) adminService.getUserChapter(user.id).then(setUserChapterName)
   }, [])
 
   useEffect(() => { setCurrentPage(1) }, [searchTerm, selectedRegion, activeTab])
@@ -136,12 +140,12 @@ export default function Chapters() {
                     <label style={labelSt}>Chapter location / country</label>
                     <div style={{ position: 'relative' }}>
                       <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>location_on</span>
-                      <input required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} style={{ ...inputSt, paddingLeft: 32 }} />
+                      <input name="chapterLocation" id="input-c66f5d" required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} style={{ ...inputSt, paddingLeft: 32 }} />
                     </div>
                   </div>
                   <div>
                     <label style={labelSt}>Why start a chapter here?</label>
-                    <textarea required rows={4} placeholder="Describe local interest and your vision for organizing this hub…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }} />
+                    <textarea name="chapterDescription" id="textarea-3c577c" required rows={4} placeholder="Describe local interest and your vision for organizing this hub…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }} />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid hsl(var(--border))' }}>
                     <button type="button" className="btn btn-outline btn-sm" onClick={() => setIsRequestModalOpen(false)}>Cancel</button>
@@ -233,7 +237,7 @@ export default function Chapters() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
                 {paginatedChapters.map(chapter => (
-                  <ChapterCard key={chapter.id} chapter={chapter} countryFlags={countryFlags} />
+                  <ChapterCard key={chapter.id} chapter={chapter} countryFlags={countryFlags} userChapterName={userChapterName} />
                 ))}
               </div>
             )}
@@ -270,7 +274,7 @@ export default function Chapters() {
             <label className="text-micro font-medium text-stone-900 mb-3 block">Search hubs</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" style={{ fontSize: 16 }}>search</span>
-              <input placeholder="Search by city, name..." className="w-full pl-10 h-11 bg-stone-50 border border-stone-200 rounded-none focus:outline-none focus:border-brand-green font-medium text-xs" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+              <input name="searchTerm" id="input-caa685" placeholder="Search by city, name..." className="w-full pl-10 h-11 bg-stone-50 border border-stone-200 rounded-none focus:outline-none focus:border-brand-green font-medium text-xs" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
             </div>
           </div>
           <div>
@@ -280,7 +284,7 @@ export default function Chapters() {
                 Ghana regions <span className="material-symbols-outlined" style={{ fontSize: 16 }}>location_on</span>
               </button>
               {activeTab === 'ghana' && regions.length > 0 && (
-                <select value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} className="w-full h-11 bg-stone-100 border border-stone-200 text-stone-900 font-medium text-[10px] px-3 outline-none appearance-none cursor-pointer">
+                <select name="selectedRegion" id="select-6d5c40" value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} className="w-full h-11 bg-stone-100 border border-stone-200 text-stone-900 font-medium text-[10px] px-3 outline-none appearance-none cursor-pointer">
                   {regions.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               )}
@@ -356,7 +360,7 @@ export default function Chapters() {
           <aside className="hidden lg:block lg:w-[320px] shrink-0 sticky top-0 self-start"><FilterSection /></aside>
           <div className="flex-1">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {paginatedChapters.map(chapter => <ChapterCard key={chapter.id} chapter={chapter} countryFlags={countryFlags} />)}
+              {paginatedChapters.map(chapter => <ChapterCard key={chapter.id} chapter={chapter} countryFlags={countryFlags} userChapterName={userChapterName} />)}
             </div>
             {totalPages > 1 && (
               <div className="mt-12 pt-12 border-t border-stone-100 flex items-center justify-center gap-1">
@@ -406,12 +410,12 @@ export default function Chapters() {
                   <label className="text-micro font-medium text-stone-400">Chapter location / country</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" style={{ fontSize: 16 }}>location_on</span>
-                    <input required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} className="w-full pl-10 h-12 bg-stone-50 border border-stone-200 font-medium text-sm outline-none focus:border-brand-green" />
+                    <input name="chapterLocation" id="input-53d016" required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} className="w-full pl-10 h-12 bg-stone-50 border border-stone-200 font-medium text-sm outline-none focus:border-brand-green" />
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-micro font-medium text-stone-400">Why start a chapter here?</label>
-                  <textarea required placeholder="Describe local interest and your vision…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} className="w-full min-h-[120px] bg-stone-50 border border-stone-200 font-medium text-sm p-4 outline-none focus:border-brand-green resize-none" />
+                  <textarea name="chapterDescription" id="textarea-7ec95d" required placeholder="Describe local interest and your vision…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} className="w-full min-h-[120px] bg-stone-50 border border-stone-200 font-medium text-sm p-4 outline-none focus:border-brand-green resize-none" />
                 </div>
                 <div className="flex justify-end gap-3 pt-4">
                   <button type="button" onClick={() => setIsRequestModalOpen(false)} className="px-4 h-12 text-stone-400 text-xs font-bold border border-stone-200 bg-white cursor-pointer hover:bg-stone-50">Cancel</button>
@@ -445,7 +449,7 @@ function DashboardFilterControls({ searchTerm, setSearchTerm, activeTab, setActi
       {/* Search */}
       <div style={{ position: 'relative' }}>
         <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-        <input type="text" placeholder="Search chapters…" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ width: '100%', height: 40, paddingLeft: 32, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }} />
+        <input name="searchTerm" id="input-db9159" type="text" placeholder="Search chapters…" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ width: '100%', height: 40, paddingLeft: 32, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }} />
       </div>
 
       {/* Network */}
@@ -466,7 +470,7 @@ function DashboardFilterControls({ searchTerm, setSearchTerm, activeTab, setActi
         <div style={sectionSt}>
           <div style={headSt}><span className="material-symbols-outlined" style={{ fontSize: 14 }}>location_on</span>Region</div>
           <div style={{ position: 'relative' }}>
-            <select value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} style={{ width: '100%', height: 40, padding: '0 32px 0 12px', border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, color: 'hsl(var(--on-surface))', boxSizing: 'border-box', appearance: 'none', cursor: 'pointer' }}>
+            <select name="selectedRegion" id="select-3eb288" value={selectedRegion} onChange={e => setSelectedRegion(e.target.value)} style={{ width: '100%', height: 40, padding: '0 32px 0 12px', border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, color: 'hsl(var(--on-surface))', boxSizing: 'border-box', appearance: 'none', cursor: 'pointer' }}>
               {regions.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
             <span className="material-symbols-outlined" style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>expand_more</span>

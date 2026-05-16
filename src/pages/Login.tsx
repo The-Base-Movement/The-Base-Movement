@@ -75,7 +75,7 @@ export default function Login() {
                 <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
                   Email or Phone
                 </span>
-                <input 
+                <input name="email" id="input-80a9bc" 
                   type="text"
                   className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                   value={email}
@@ -94,7 +94,7 @@ export default function Login() {
                     Forgot password?
                   </Link>
                 </div>
-                <input 
+                <input name="password" id="input-936899" 
                   type="password"
                   className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                   value={password}
@@ -105,7 +105,7 @@ export default function Login() {
               </div>
 
               <div className="flex items-center gap-2 pt-1 pb-2">
-                <input type="checkbox" id="remember" className="w-4 h-4 accent-primary" defaultChecked />
+                <input name="name-769aef" type="checkbox" id="remember" className="w-4 h-4 accent-primary" defaultChecked />
                 <label htmlFor="remember" className="text-[11.5px] font-[700] text-on-surface">
                   Keep me signed in
                 </label>

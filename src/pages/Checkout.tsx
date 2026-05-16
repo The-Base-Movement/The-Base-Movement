@@ -203,7 +203,7 @@ export default function Checkout() {
               <div className="grid sm:grid-cols-2 gap-6">
                 <div className="sm:col-span-2">
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Full name</label>
-                  <input
+                  <input id="input-9f4084"
                     type="text"
                     name="fullName"
                     required
@@ -215,7 +215,7 @@ export default function Checkout() {
                 </div>
                 <div>
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Email address</label>
-                  <input
+                  <input id="input-94b596"
                     type="email"
                     name="email"
                     required
@@ -227,7 +227,7 @@ export default function Checkout() {
                 </div>
                 <div>
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Phone number</label>
-                  <input
+                  <input id="input-6781fb"
                     type="tel"
                     name="phone"
                     required
@@ -239,7 +239,7 @@ export default function Checkout() {
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Shipping address</label>
-                  <input
+                  <input id="input-5705f2"
                     type="text"
                     name="address"
                     required
@@ -251,7 +251,7 @@ export default function Checkout() {
                 </div>
                 <div>
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Country</label>
-                  <select
+                  <select id="select-5d78b8"
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
@@ -266,7 +266,7 @@ export default function Checkout() {
                 {isDiaspora ? (
                   <div>
                     <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">State / Province</label>
-                    <input
+                    <input id="input-c53526"
                       type="text"
                       name="stateProvince"
                       value={formData.stateProvince}
@@ -278,7 +278,7 @@ export default function Checkout() {
                 ) : (
                   <div>
                     <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Region</label>
-                    <select
+                    <select id="select-12f928"
                       name="region"
                       value={formData.region}
                       onChange={handleChange}
@@ -347,14 +347,14 @@ export default function Checkout() {
                   <div className="flex flex-wrap gap-4">
                     {['MTN', 'Telecel', 'AT Money'].map(network => (
                       <label key={network} className="flex items-center gap-2 cursor-pointer group">
-                        <input type="radio" name="network" className="w-4 h-4 text-[var(--brand-green)] focus:ring-[var(--brand-green)]" />
+                        <input id="input-4964d2" type="radio" name="network" className="w-4 h-4 text-[var(--brand-green)] focus:ring-[var(--brand-green)]" />
                         <span className="text-xs font-bold text-stone-600 group-hover:text-stone-900 tracking-tight">{network}</span>
                       </label>
                     ))}
                   </div>
                   <div className="mt-6">
                     <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">MoMo number</label>
-                    <input
+                    <input name="name-94ad78" id="input-94ad78"
                       type="tel"
                       className="w-full h-12 bg-white border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
                       placeholder="Enter your mobile number"
@@ -398,7 +398,7 @@ export default function Checkout() {
                   <div className="pt-4 border-t border-stone-50">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <input
+                        <input name="name-e1342c"
                           type="checkbox"
                           id="usePoints"
                           checked={usePoints}

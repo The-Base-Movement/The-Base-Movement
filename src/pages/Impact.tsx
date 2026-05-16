@@ -255,7 +255,7 @@ export default function Impact() {
                     {[{ label: 'Start', key: 'start' }, { label: 'End', key: 'end' }].map(f => (
                       <div key={f.key}>
                         <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', marginBottom: 4 }}>{f.label}</div>
-                        <input type="date" style={{ width: '100%', height: 32, padding: '0 8px', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, outline: 'none', boxSizing: 'border-box' }} onChange={e => setDateRange(prev => ({ ...prev, [f.key]: e.target.value }))} />
+                        <input name="name-488fce" id="input-488fce" type="date" style={{ width: '100%', height: 32, padding: '0 8px', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, outline: 'none', boxSizing: 'border-box' }} onChange={e => setDateRange(prev => ({ ...prev, [f.key]: e.target.value }))} />
                       </div>
                     ))}
                   </div>

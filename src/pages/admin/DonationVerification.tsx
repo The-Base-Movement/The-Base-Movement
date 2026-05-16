@@ -192,7 +192,7 @@ export default function FinancialAudit() {
       <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, padding: '12px 14px', display: 'flex', gap: 8, alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', minWidth: 0 }}>
         <div style={{ flex: 1, minWidth: 220, position: 'relative' }}>
           <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: 9, fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>search</span>
-          <input
+          <input name="searchQuery" id="input-4a5fad"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search by name, reg. no., reference, phone, or amount…"
@@ -267,7 +267,7 @@ export default function FinancialAudit() {
                           borderBottom: '1px solid hsl(var(--border))',
                           width: i === 0 ? 32 : undefined,
                         }}>
-                          {i === 0 ? <input type="checkbox" /> : h}
+                          {i === 0 ? <input name="name-c0b592" id="input-c0b592" type="checkbox" /> : h}
                         </th>
                       ))}
                     </tr>
@@ -290,7 +290,7 @@ export default function FinancialAudit() {
                           onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '' }}
                         >
                           <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
-                            <input type="checkbox" checked={isActive} readOnly />
+                            <input name="name-72896f" id="input-72896f" type="checkbox" checked={isActive} readOnly />
                           </td>
                           <td style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -434,7 +434,7 @@ export default function FinancialAudit() {
               {/* Internal note */}
               <div style={{ padding: '0 20px 18px' }}>
                 <span style={{ display: 'block', fontSize: 9.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: "'Public Sans', sans-serif", marginBottom: 6, marginTop: 14 }}>Internal note (optional)</span>
-                <textarea
+                <textarea name="internalNote" id="textarea-825477"
                   value={internalNote}
                   onChange={e => setInternalNote(e.target.value)}
                   placeholder="Add a note for the treasurer…"

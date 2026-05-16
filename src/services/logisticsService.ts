@@ -522,6 +522,56 @@ class LogisticsService {
     return true
   }
 
+  async createRegion(name: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('ghana_regions')
+      .insert({ name })
+
+    if (error) {
+      console.error('[DATABASE] Region create failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async deleteRegion(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('ghana_regions')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Region delete failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async createConstituency(regionId: string, name: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('ghana_constituencies')
+      .insert({ name, region_id: regionId })
+
+    if (error) {
+      console.error('[DATABASE] Constituency create failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async updateConstituency(id: string, name: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('ghana_constituencies')
+      .update({ name })
+      .eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Constituency update failed:', error)
+      return false
+    }
+    return true
+  }
+
   // --- Orders ---
 
   async getOrders(limit = 50): Promise<Order[]> {

@@ -125,6 +125,7 @@ export default function LeadershipHub() {
       const success = await adminService.updateChapter(selectedChapterId, {
         leader_name: selectedMember.name,
         leader_id: selectedMember.authId,
+        ...(appointRole === 'Chapter Leader' ? { status: 'Active' } : {}),
       })
       if (success) {
         toast.success(`${selectedMember.name} appointed as ${appointRole}`)

@@ -107,7 +107,7 @@ export function ResourceRequestsTab({ requests, handleStatusUpdate }: ResourceRe
                   <span className={statusPill(req.status)}>{req.status}</span>
                 </td>
                 <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                  <select
+                  <select name="name-91c614" id="select-91c614"
                     defaultValue=""
                     onChange={e => { if (e.target.value) handleStatusUpdate(req.id, e.target.value as ResourceRequest['status']) }}
                     style={selectStyle}
@@ -157,7 +157,7 @@ export function ResourceRequestsTab({ requests, handleStatusUpdate }: ResourceRe
               <span style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
                 {new Date(req.createdAt).toLocaleDateString()}
               </span>
-              <select
+              <select name="name-02f646" id="select-02f646"
                 defaultValue=""
                 onChange={e => { if (e.target.value) handleStatusUpdate(req.id, e.target.value as ResourceRequest['status']) }}
                 style={{ ...selectStyle, height: 36, flex: 1, maxWidth: 180 }}

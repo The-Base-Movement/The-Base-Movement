@@ -18,6 +18,7 @@ export interface Member {
   profession?: string
   city?: string
   residentialAddress?: string
+  registrationSource?: 'digital' | 'scan' | 'admin'
 }
 
 export interface User {
@@ -43,6 +44,7 @@ export interface User {
   joined_at: string
   status: string
   city?: string
+  registration_source?: string
 }
 
 export interface Region {
@@ -73,6 +75,7 @@ export interface Chapter {
   city_or_region: string
   country: string
   leader_name: string
+  leader_id?: string
   member_count: number
   status: 'Active' | 'Pending' | 'Closed' | 'Member' | 'Join Chapter' | string
   image_url?: string

@@ -34,6 +34,7 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const RegistrationFormPreview = lazy(() => import('./pages/RegistrationFormPreview'))
 
 // Dashboard components
+const ChapterHub = lazy(() => import('./pages/ChapterHub'))
 const ProfileSettings = lazy(() => import('./pages/ProfileSettings'))
 const Polls = lazy(() => import('./pages/Polls'))
 const FeedbackHub = lazy(() => import('./pages/FeedbackHub'))
@@ -118,6 +119,8 @@ export const routes: RouteObject[] = [
       { path: '/dashboard/store/summary', element: <OrderSummary /> },
       { path: '/dashboard/feedback', element: <FeedbackHub /> },
       { path: '/dashboard/canvass', element: <CanvasserClipboard /> },
+      { path: '/dashboard/chapter-hub', element: <ChapterHub /> },
+      { path: '/dashboard/chapter-hub/:chapterId', element: <ChapterHub /> },
       { path: '/dashboard/donate', element: <Donate /> },
       { path: '/dashboard/contact', element: <Contact /> },
       { path: '/dashboard/members', element: <Members /> },
@@ -131,7 +134,7 @@ export const routes: RouteObject[] = [
     children: [
       { path: '/admin/dashboard', element: <AdminDashboard /> },
       { path: '/admin/leadership', element: <AdminLeadershipHub /> },
-      { path: '/admin/chapter-hub', element: <AdminChapterHub /> },
+      { path: '/admin/chapter-hub/:chapterId', element: <AdminChapterHub /> },
       { path: '/admin/directives', element: <AdminFieldDirectives /> },
       { path: '/admin/mobilization-metrics', element: <AdminMobilizationMetrics /> },
       { path: '/admin/logistics-intelligence', element: <AdminLogisticsIntelligence /> },

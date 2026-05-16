@@ -156,7 +156,7 @@ export default function NewBroadcast() {
             <label style={labelStyle}>
               Broadcast title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
-            <input
+            <input name="name-6d4aa4" id="input-6d4aa4"
               type="text"
               placeholder="e.g. National registration wave"
               style={{ ...fieldStyle, height: 44 }}
@@ -169,7 +169,7 @@ export default function NewBroadcast() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
             <div>
               <label style={labelStyle}>Delivery channel</label>
-              <select
+              <select name="name-1031e4" id="select-1031e4"
                 style={{ ...fieldStyle, appearance: 'none' as const }}
                 value={newBroadcast.channel}
                 onChange={e => setNewBroadcast({ ...newBroadcast, channel: e.target.value as 'SMS' | 'Email' | 'Push' | 'In-app' })}
@@ -182,7 +182,7 @@ export default function NewBroadcast() {
             </div>
             <div>
               <label style={labelStyle}>Target segment</label>
-              <select
+              <select name="name-ca5797" id="select-ca5797"
                 style={{ ...fieldStyle, appearance: 'none' as const }}
                 value={newBroadcast.target_type}
                 onChange={e => setNewBroadcast({ ...newBroadcast, target_type: e.target.value as 'ALL' | 'REGION' | 'CONSTITUENCY', target_value: '' })}
@@ -194,7 +194,7 @@ export default function NewBroadcast() {
             </div>
             <div>
               <label style={labelStyle}>Priority level</label>
-              <select
+              <select name="name-1bb4d5" id="select-1bb4d5"
                 style={{ ...fieldStyle, appearance: 'none' as const, borderColor: priorityBorderColor(newBroadcast.priority), color: newBroadcast.priority === 'Urgent' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))' }}
                 value={newBroadcast.priority}
                 onChange={e => setNewBroadcast({ ...newBroadcast, priority: e.target.value as 'Normal' | 'High' | 'Urgent' })}
@@ -211,7 +211,7 @@ export default function NewBroadcast() {
             <div style={{ display: 'grid', gridTemplateColumns: newBroadcast.target_type === 'CONSTITUENCY' ? '1fr 1fr' : '1fr', gap: 14 }}>
               <div>
                 <label style={labelStyle}>Select region <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                <select
+                <select name="name-d4e101" id="select-d4e101"
                   style={{ ...fieldStyle, appearance: 'none' as const }}
                   value={fullRegions.find(r => r.name === newBroadcast.target_value)?.name || ''}
                   onChange={e => {
@@ -231,7 +231,7 @@ export default function NewBroadcast() {
               {newBroadcast.target_type === 'CONSTITUENCY' && (
                 <div>
                   <label style={labelStyle}>Select constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                  <select
+                  <select name="name-497bec" id="select-497bec"
                     style={{ ...fieldStyle, appearance: 'none' as const, opacity: !selectedRegionId ? 0.45 : 1 }}
                     disabled={!selectedRegionId}
                     value={newBroadcast.target_value}

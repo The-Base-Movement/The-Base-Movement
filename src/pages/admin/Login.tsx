@@ -89,7 +89,7 @@ export default function AdminLogin() {
             {/* Email */}
             <div>
               <label style={labelStyle}>Email address</label>
-              <input
+              <input name="email" id="input-5337b3"
                 type="email"
                 required
                 placeholder="admin@thebase.org"
@@ -103,7 +103,7 @@ export default function AdminLogin() {
             <div>
               <label style={labelStyle}>Password</label>
               <div style={{ position: 'relative' }}>
-                <input
+                <input name="password" id="input-55345f"
                   type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="••••••••"

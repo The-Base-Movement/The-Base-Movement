@@ -62,7 +62,7 @@ export function ProductFormDialog({
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <label style={labelSt}>Product Name</label>
-              <input 
+              <input name="name-c63960" id="input-c63960" 
                 style={inputSt}
                 value={selectedProduct?.name || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, name: e.target.value }))}
@@ -73,7 +73,7 @@ export function ProductFormDialog({
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <label style={labelSt}>Category</label>
-                <select 
+                <select name="name-4461bf" id="select-4461bf" 
                   style={inputSt}
                   value={selectedProduct?.category || ''} 
                   onChange={e => setSelectedProduct(prev => ({ ...prev!, category: e.target.value }))}
@@ -88,7 +88,7 @@ export function ProductFormDialog({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <label style={labelSt}>Price</label>
-                  <input 
+                  <input name="name-88b8ac" id="input-88b8ac" 
                     style={inputSt}
                     value={selectedProduct?.price || ''} 
                     onChange={e => setSelectedProduct(prev => ({ ...prev!, price: e.target.value }))}
@@ -97,7 +97,7 @@ export function ProductFormDialog({
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <label style={labelSt}>Stock</label>
-                  <input 
+                  <input name="name-ce252a" id="input-ce252a" 
                     style={inputSt}
                     type="number"
                     value={selectedProduct?.stock || 0} 
@@ -109,7 +109,7 @@ export function ProductFormDialog({
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <label style={labelSt}>Short Summary</label>
-              <textarea 
+              <textarea name="name-820e70" id="textarea-820e70" 
                 style={{ ...inputSt, height: 80, padding: 12, resize: 'none' }}
                 value={selectedProduct?.description || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, description: e.target.value }))}
@@ -119,7 +119,7 @@ export function ProductFormDialog({
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <label style={labelSt}>Full Details</label>
-              <textarea 
+              <textarea name="name-a45e1f" id="textarea-a45e1f" 
                 style={{ ...inputSt, height: 120, padding: 12, resize: 'vertical' }}
                 value={selectedProduct?.longDescription || ''} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, longDescription: e.target.value }))}
@@ -157,7 +157,7 @@ export function ProductFormDialog({
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <label style={labelSt}>Icon Fallback</label>
-              <input 
+              <input name="name-24e641" id="input-24e641" 
                 style={{ ...inputSt, textAlign: 'center', width: 80 }}
                 value={selectedProduct?.image?.startsWith('http') ? '' : (selectedProduct?.image || '')} 
                 onChange={e => setSelectedProduct(prev => ({ ...prev!, image: e.target.value }))}

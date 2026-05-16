@@ -265,11 +265,11 @@ export default function FieldDirectives() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div>
                   <label style={labelSt}>Directive title</label>
-                  <input style={inputSt} placeholder="e.g. Regional Flyer Blitz" value={newDirective.title} onChange={e => setNewDirective({ ...newDirective, title: e.target.value })} />
+                  <input name="name-89795e" id="input-89795e" style={inputSt} placeholder="e.g. Regional Flyer Blitz" value={newDirective.title} onChange={e => setNewDirective({ ...newDirective, title: e.target.value })} />
                 </div>
                 <div>
                   <label style={labelSt}>Target level</label>
-                  <select style={{ ...inputSt, appearance: 'none' }} value={newDirective.target_type} onChange={e => setNewDirective({ ...newDirective, target_type: e.target.value as FieldDirective['target_type'] })}>
+                  <select name="name-6d5146" id="select-6d5146" style={{ ...inputSt, appearance: 'none' }} value={newDirective.target_type} onChange={e => setNewDirective({ ...newDirective, target_type: e.target.value as FieldDirective['target_type'] })}>
                     <option>Regional</option>
                     <option>Chapter</option>
                     <option>Global</option>
@@ -278,7 +278,7 @@ export default function FieldDirectives() {
               </div>
               <div>
                 <label style={labelSt}>Objective description</label>
-                <textarea
+                <textarea name="name-f70a7b" id="textarea-f70a7b"
                   style={{ ...inputSt, height: 100, padding: '10px 12px', resize: 'none', lineHeight: 1.6 }}
                   placeholder="Describe the tactical goal for field agents…"
                   value={newDirective.description}
@@ -288,7 +288,7 @@ export default function FieldDirectives() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
                 <div>
                   <label style={labelSt}>Priority</label>
-                  <select style={{ ...inputSt, appearance: 'none' }} value={newDirective.priority} onChange={e => setNewDirective({ ...newDirective, priority: e.target.value as FieldDirective['priority'] })}>
+                  <select name="name-11a2e2" id="select-11a2e2" style={{ ...inputSt, appearance: 'none' }} value={newDirective.priority} onChange={e => setNewDirective({ ...newDirective, priority: e.target.value as FieldDirective['priority'] })}>
                     <option>Normal</option>
                     <option>High</option>
                     <option>Urgent</option>
@@ -296,11 +296,11 @@ export default function FieldDirectives() {
                 </div>
                 <div>
                   <label style={labelSt}>Points</label>
-                  <input style={inputSt} type="number" value={newDirective.points_awarded} onChange={e => setNewDirective({ ...newDirective, points_awarded: Number(e.target.value) })} />
+                  <input name="name-19b789" id="input-19b789" style={inputSt} type="number" value={newDirective.points_awarded} onChange={e => setNewDirective({ ...newDirective, points_awarded: Number(e.target.value) })} />
                 </div>
                 <div>
                   <label style={labelSt}>Deadline</label>
-                  <input style={inputSt} type="date" value={newDirective.deadline} onChange={e => setNewDirective({ ...newDirective, deadline: e.target.value })} />
+                  <input name="name-8604e3" id="input-8604e3" style={inputSt} type="date" value={newDirective.deadline} onChange={e => setNewDirective({ ...newDirective, deadline: e.target.value })} />
                 </div>
               </div>
             </div>

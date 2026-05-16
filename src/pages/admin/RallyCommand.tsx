@@ -220,7 +220,7 @@ export default function RallyCommand() {
                   </div>
                   <div style={{ position: 'relative' }}>
                     <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>search</span>
-                    <input 
+                    <input name="name-66c057" id="input-66c057" 
                       style={{ height: 38, width: 240, paddingLeft: 34, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', borderRadius: 4, outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12 }}
                       placeholder="Search member..."
                     />

@@ -380,16 +380,20 @@ class MemberService {
       .subscribe()
   }
 
-  async getMembersPaginated(page: number, pageSize: number, searchTerm?: string): Promise<{ data: Member[], totalCount: number }> {
+  async getMembersPaginated(page: number, pageSize: number, searchTerm?: string, registrationSource?: string): Promise<{ data: Member[], totalCount: number }> {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
     let query = supabase
       .from('users')
-      .select('id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address', { count: 'exact' })
+      .select('id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,registration_source', { count: 'exact' })
 
     if (searchTerm) {
       query = query.or(`full_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,registration_number.ilike.%${searchTerm}%`)
+    }
+
+    if (registrationSource && registrationSource !== 'all') {
+      query = query.eq('registration_source', registrationSource)
     }
 
     const { data, count, error } = await query
@@ -419,7 +423,8 @@ class MemberService {
       country: u.country || 'Ghana',
       profession: u.profession || 'Patriot',
       city: u.city || undefined,
-      residentialAddress: u.residential_address || undefined
+      residentialAddress: u.residential_address || undefined,
+      registrationSource: u.registration_source || 'digital'
     }))
 
     return { data: members, totalCount: count || 0 }

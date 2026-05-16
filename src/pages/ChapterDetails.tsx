@@ -1,12 +1,12 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { ShareModal } from '@/components/ShareModal'
-import type { Chapter, ChapterLeader, ChapterActivity } from '@/types/admin'
+import type { Chapter, ChapterLeader, ChapterActivity, Member } from '@/types/admin'
 import { useChapters } from '@/context/ChaptersContext'
 import { LoadingScreen } from '../components/LoadingScreen'
 import { adminService } from '@/services/adminService'
-import { authService } from '@/services/authService'
+import { supabase } from '@/lib/supabase'
 
 export default function ChapterDetails() {
   const { slug } = useParams<{ slug: string }>()
@@ -16,14 +16,64 @@ export default function ChapterDetails() {
   )
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [isJoining, setIsJoining] = useState(false)
-  const user = authService.getUser()
+  const [hasJoined, setHasJoined] = useState(false)
+  const [leaderProfile, setLeaderProfile] = useState<Member | null>(null)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [leaderAvatarUrl, setLeaderAvatarUrl] = useState<string | null>(null)
+  const [isLeader, setIsLeader] = useState(false)
+  const [authUserId, setAuthUserId] = useState<string | null>(null)
+
+  // Resolve auth user ID async — avoids the race where getUser() returns null on first render
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user?.id) setAuthUserId(data.session.user.id)
+    })
+  }, [])
+
+  // Check chapter membership (joined)
+  useEffect(() => {
+    if (!authUserId || !chapter) return
+    adminService.getUserChapter(authUserId).then(ch => {
+      if (ch && ch.toLowerCase() === chapter.name.toLowerCase()) setHasJoined(true)
+    })
+  }, [authUserId, chapter])
+
+  // Determine leadership — query DB directly so it matches the same source DashboardLayout uses
+  useEffect(() => {
+    if (!authUserId || !chapter) return
+    // 1. Direct DB check: is there a chapter row with this id AND leader_id = current user?
+    supabase.from('chapters')
+      .select('id')
+      .eq('id', chapter.id)
+      .eq('leader_id', authUserId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) { setIsLeader(true); return }
+        // 2. Fallback: name match (chapters appointed before leader_id column existed)
+        if (!chapter.leader_name) return
+        supabase.from('users').select('full_name').eq('id', authUserId).maybeSingle()
+          .then(({ data: u }) => {
+            if (u?.full_name && u.full_name.toLowerCase().trim() === chapter.leader_name.toLowerCase().trim()) {
+              setIsLeader(true)
+            }
+          })
+      })
+  }, [authUserId, chapter])
+
+  // Fetch leader avatar
+  useEffect(() => {
+    if (!chapter?.leader_id) return
+    supabase.from('users').select('avatar_url').eq('id', chapter.leader_id).maybeSingle()
+      .then(({ data }) => { if (data?.avatar_url) setLeaderAvatarUrl(data.avatar_url) })
+  }, [chapter?.leader_id])
+
 
   const handleJoin = async () => {
-    if (!user || !chapter) {
-      toast.error(!user ? 'Please register or login to join.' : 'Chapter hub not found.')
+    if (!authUserId || !chapter) {
+      toast.error(!authUserId ? 'Please register or login to join.' : 'Chapter hub not found.')
       return
     }
-    if (user.user_metadata?.chapter === chapter.name) {
+    if (hasJoined) {
       toast(`Already a member of ${chapter.name}`)
       return
     }
@@ -31,6 +81,7 @@ export default function ChapterDetails() {
     try {
       const success = await adminService.joinChapter(chapter.name)
       if (success) {
+        setHasJoined(true)
         toast.success(`You have successfully joined the ${chapter.name} chapter hub.`)
       } else {
         throw new Error('Join failed')
@@ -59,11 +110,38 @@ export default function ChapterDetails() {
 
   return (
     <div className="main">
+      {/* Leader management banner */}
+      {isLeader && (
+        <div style={{ background: 'linear-gradient(135deg, #0f1310, #1a2618)', borderRadius: 6, padding: '14px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, border: '1px solid rgba(0,107,63,0.3)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--accent))' }}>manage_accounts</span>
+            <div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: '#fff' }}>You are the chapter leader</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>Access your management dashboard to view members, donations, and update chapter info.</div>
+            </div>
+          </div>
+          <Link
+            to={`/dashboard/chapter-hub/${chapter.id}`}
+            className="btn btn-primary btn-sm"
+            style={{ flexShrink: 0, textDecoration: 'none' }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 15 }}>open_in_new</span>
+            Manage chapter
+          </Link>
+        </div>
+      )}
+
       {/* Page header */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-          <span className={`pill ${isActive ? 'pill-ok' : 'pill-warn'}`}>{chapter.status}</span>
-          <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 11, fontWeight: 700, fontFamily: "'Public Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>Verified chapter</span>
+          {isActive ? (
+            <>
+              <span className="pill pill-ok">Active</span>
+              <span style={{ color: 'hsl(var(--on-surface-muted))', fontSize: 11, fontWeight: 700, fontFamily: "'Public Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.05em' }}>Verified chapter</span>
+            </>
+          ) : (
+            <span className="pill pill-warn">{chapter.status}</span>
+          )}
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16 }}>
           <div>
@@ -89,9 +167,9 @@ export default function ChapterDetails() {
             <button
               className="btn btn-primary btn-sm"
               onClick={handleJoin}
-              disabled={isJoining || user?.user_metadata?.chapter === chapter.name}
+              disabled={isJoining || hasJoined}
             >
-              {isJoining ? 'Processing…' : user?.user_metadata?.chapter === chapter.name ? 'Already a Member' : 'Join this chapter'}
+              {isJoining ? 'Processing…' : hasJoined ? 'Already a Member' : 'Join this chapter'}
             </button>
           </div>
         </div>
@@ -102,7 +180,7 @@ export default function ChapterDetails() {
         {/* Main */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* About */}
-          <div className="panel">
+          <div className="panel" style={{ padding: '20px 22px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>language</span>
               <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>About this chapter</span>
@@ -126,7 +204,7 @@ export default function ChapterDetails() {
           </div>
 
           {/* Recent activities */}
-          <div className="panel">
+          <div className="panel" style={{ padding: '20px 22px' }}>
             <div className="ph" style={{ marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>calendar_month</span>
@@ -168,17 +246,84 @@ export default function ChapterDetails() {
         {/* Sidebar */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Leadership */}
-          <div className="panel">
+          <div className="panel" style={{ padding: '20px 22px' }}>
             <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))' }}>Chapter leadership</h3>
+
+            {/* Primary leader card */}
+            {chapter.leader_name ? (
+              <div style={{ background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 6, padding: '14px 16px', marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 4, background: '#181d19', border: '2px solid hsl(var(--accent))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#fff', fontSize: 16, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", overflow: 'hidden' }}>
+                    {leaderAvatarUrl
+                      ? <img src={leaderAvatarUrl} alt={chapter.leader_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : chapter.leader_name.charAt(0).toUpperCase()
+                    }
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>{chapter.leader_name}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 2, fontFamily: "'Public Sans', sans-serif" }}>Chapter Leader</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {chapter.leader_id && (
+                    <button
+                      className="btn btn-outline btn-sm"
+                      style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
+                      onClick={async () => {
+                        const { data } = await supabase
+                          .from('users')
+                          .select('registration_number, full_name, phone_number, region, constituency, country, status, platform, profession, avatar_url, joined_at')
+                          .eq('id', chapter.leader_id!)
+                          .maybeSingle()
+                        if (data) {
+                          setLeaderProfile({
+                            id: data.registration_number,
+                            authId: chapter.leader_id,
+                            name: data.full_name,
+                            email: '',
+                            phone: data.phone_number || '',
+                            region: data.region || '',
+                            constituency: data.constituency || '',
+                            country: data.country || '',
+                            status: data.status,
+                            joined: data.joined_at || '',
+                            platform: data.platform === 'DIASPORA' ? 'DIASPORA' : 'GHANA',
+                            type: 'Standard',
+                            avatarUrl: data.avatar_url || undefined,
+                            profession: data.profession || '',
+                          })
+                          setIsProfileOpen(true)
+                        }
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>person</span>
+                      View profile
+                    </button>
+                  )}
+                  {isLeader && (
+                    <Link
+                      to={`/dashboard/chapter-hub/${chapter.id}`}
+                      className="btn btn-primary btn-sm"
+                      style={{ flex: 1, justifyContent: 'center', fontSize: 11, textDecoration: 'none' }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>manage_accounts</span>
+                      Manage chapter
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ) : null}
+
+            {/* Secondary leadership list */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {chapter.leadership && chapter.leadership.length > 0 ? (
                 chapter.leadership.map((leader: ChapterLeader, i: number) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 4, overflow: 'hidden', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 4, overflow: 'hidden', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {leader.imageUrl ? (
                         <img src={leader.imageUrl} alt={leader.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
-                        <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--on-surface-muted))' }}>person</span>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>{leader.name.charAt(0)}</span>
                       )}
                     </div>
                     <div>
@@ -187,12 +332,13 @@ export default function ChapterDetails() {
                     </div>
                   </div>
                 ))
-              ) : (
+              ) : !chapter.leader_name ? (
                 <div style={{ padding: '24px 0', textAlign: 'center', border: '1px dashed hsl(var(--border))', borderRadius: 4 }}>
                   <p style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Leadership pending</p>
                 </div>
-              )}
+              ) : null}
             </div>
+
             <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>mail</span>
@@ -223,17 +369,95 @@ export default function ChapterDetails() {
           </div>
 
           {/* Donate to chapter */}
-          <div className="panel">
+          <div className="panel" style={{ padding: '20px 22px' }}>
             <h3 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', marginBottom: 8 }}>Support local</h3>
             <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, marginBottom: 16, fontFamily: "'Public Sans', sans-serif" }}>
               Your donations to this specific chapter help fund local townhalls and community outreach programs in {chapter.city_or_region}.
             </p>
-            <Link to="/dashboard/donate" className="btn btn-primary" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
+            <Link to="/dashboard/donate" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
               Donate to chapter
             </Link>
           </div>
         </div>
       </div>
+
+      {/* Leader profile modal */}
+      {isProfileOpen && leaderProfile && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+          onClick={() => setIsProfileOpen(false)}
+        >
+          <div
+            style={{ background: '#fff', borderRadius: 6, border: '1px solid hsl(var(--border))', width: '100%', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto' }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Banner */}
+            <div style={{ height: 80, background: 'hsl(var(--on-surface))', position: 'relative', flexShrink: 0 }}>
+              <div style={{ position: 'absolute', bottom: -24, left: 24, width: 52, height: 52, borderRadius: 4, border: '3px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.18)', overflow: 'hidden' }}>
+                {leaderProfile.avatarUrl
+                  ? <img src={leaderProfile.avatarUrl} alt={leaderProfile.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <div style={{ width: '100%', height: '100%', background: 'hsl(var(--primary))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20 }}>
+                      {leaderProfile.name?.[0] || 'L'}
+                    </div>
+                }
+              </div>
+              <button
+                onClick={() => setIsProfileOpen(false)}
+                style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 4, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+              </button>
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: '36px 24px 24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
+                <div>
+                  <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 18, color: 'hsl(var(--on-surface))', margin: '0 0 3px' }}>
+                    {leaderProfile.name}
+                  </h2>
+                  <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
+                    {leaderProfile.profession || 'Chapter Leader'}
+                  </div>
+                </div>
+                <span style={{ padding: '2px 10px', borderRadius: 4, fontSize: 11, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", background: 'hsla(var(--primary), 0.1)', color: 'hsl(var(--primary))', border: '1px solid hsla(var(--primary), 0.25)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Chapter Leader
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px', marginBottom: 20 }}>
+                {[
+                  { icon: 'public', label: 'Network', value: leaderProfile.platform === 'GHANA' ? 'Ghana Network' : 'Diaspora Network' },
+                  { icon: 'location_on', label: 'Location', value: leaderProfile.platform === 'GHANA' ? leaderProfile.region : leaderProfile.country },
+                  { icon: 'work', label: 'Profession', value: leaderProfile.profession },
+                  ...(leaderProfile.platform === 'GHANA' && leaderProfile.constituency ? [{ icon: 'how_to_reg', label: 'Constituency', value: leaderProfile.constituency }] : []),
+                ].map((row, i) => (
+                  <div key={i}>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{row.label}</div>
+                    <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 13, color: 'hsl(var(--primary))' }}>{row.icon}</span>
+                      {row.value || '—'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ background: 'hsl(var(--container-low))', borderRadius: 4, padding: '12px 14px', marginBottom: 20 }}>
+                <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.65, margin: 0 }}>
+                  Appointed chapter leader for {chapter.name}. Responsible for coordinating local chapter activities and driving grassroots mobilization in {chapter.city_or_region}.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button className="btn btn-outline btn-sm" onClick={() => setIsProfileOpen(false)}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>close</span>
+                  Close profile
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <ShareModal
         isOpen={isShareModalOpen}

@@ -142,7 +142,7 @@ export default function Contact() {
                     <label htmlFor="fullName" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">
                       Full name <span className="text-[var(--brand-red)]">*</span>
                     </label>
-                    <input 
+                    <input name="name-c11fb5" 
                       id="fullName" 
                       type="text" 
                       value={formData.fullName}
@@ -154,7 +154,7 @@ export default function Contact() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label htmlFor="email" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">Email address</label>
-                      <input 
+                      <input name="name-2d2db6" 
                         id="email" 
                         type="email" 
                         value={formData.email}
@@ -164,7 +164,7 @@ export default function Contact() {
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="phone" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">Phone number</label>
-                      <input 
+                      <input name="name-1ec9f2" 
                         id="phone" 
                         type="text" 
                         value={formData.phone}
@@ -176,7 +176,7 @@ export default function Contact() {
 
                   <div className="space-y-2">
                     <label htmlFor="platform" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">Your platform</label>
-                    <select 
+                    <select name="name-36f857" 
                       id="platform" 
                       value={formData.platform}
                       onChange={handleChange}
@@ -193,7 +193,7 @@ export default function Contact() {
                     <label htmlFor="message" className="text-micro font-bold text-charcoal-dark font-meta tracking-tight">
                       Message <span className="text-[var(--brand-red)]">*</span>
                     </label>
-                    <textarea
+                    <textarea name="name-aab423"
                       id="message"
                       value={formData.message}
                       onChange={handleChange}

@@ -195,7 +195,7 @@ export default function PollsManagement() {
           </span>
           <div style={{ position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-            <input style={{ ...inputSt, paddingLeft: 34, width: 210, height: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            <input name="searchQuery" id="input-91cd45" style={{ ...inputSt, paddingLeft: 34, width: 210, height: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
           </div>
         </div>
         <div style={{ overflowX: 'auto' }}>
@@ -277,7 +277,7 @@ export default function PollsManagement() {
         <div className="panel">
           <div style={{ padding: 12, position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 22, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-            <input style={{ ...inputSt, paddingLeft: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            <input name="searchQuery" id="input-2d822f" style={{ ...inputSt, paddingLeft: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
           </div>
         </div>
         {isLoading ? (
@@ -404,11 +404,11 @@ export default function PollsManagement() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
                       <label style={labelSt}>Campaign question / topic</label>
-                      <input style={inputSt} required placeholder="e.g. Should we increase regional chapter funding?" value={newPoll.question} onChange={e => setNewPoll({ ...newPoll, question: e.target.value })} />
+                      <input name="name-1e5a1f" id="input-1e5a1f" style={inputSt} required placeholder="e.g. Should we increase regional chapter funding?" value={newPoll.question} onChange={e => setNewPoll({ ...newPoll, question: e.target.value })} />
                     </div>
                     <div>
                       <label style={labelSt}>Target Audience Base</label>
-                      <select
+                      <select name="name-313f84" id="select-313f84"
                         style={selectSt}
                         value={newPoll.targetBase}
                         onChange={e => {
@@ -422,7 +422,7 @@ export default function PollsManagement() {
                     </div>
                     <div>
                       <label style={labelSt}>{newPoll.targetBase === 'GHANA' ? 'Specific Region' : 'Target Country'}</label>
-                      <select
+                      <select name="name-6fd5f4" id="select-6fd5f4"
                         style={selectSt}
                         value={newPoll.targetBase === 'GHANA' ? newPoll.region : newPoll.country}
                         onChange={e => {
@@ -447,7 +447,7 @@ export default function PollsManagement() {
                       <label style={labelSt}>Operational end date</label>
                       <div style={{ position: 'relative' }}>
                         <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>calendar_today</span>
-                        <input type="date" style={{ ...inputSt, paddingLeft: 34 }} value={newPoll.endDate} onChange={e => setNewPoll({ ...newPoll, endDate: e.target.value })} />
+                        <input name="name-267df3" id="input-267df3" type="date" style={{ ...inputSt, paddingLeft: 34 }} value={newPoll.endDate} onChange={e => setNewPoll({ ...newPoll, endDate: e.target.value })} />
                       </div>
                     </div>
                   </div>
@@ -461,7 +461,7 @@ export default function PollsManagement() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 260, overflowY: 'auto' }}>
                       {newPoll.options.map((opt, idx) => (
                         <div key={idx} style={{ display: 'flex', gap: 8 }}>
-                          <input
+                          <input name="opt" id="input-395525"
                             style={inputSt}
                             placeholder={`Option ${idx + 1}`}
                             value={opt}

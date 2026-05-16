@@ -134,7 +134,7 @@ export function ProductInfo({
               <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-0.5">Free</span>
             </div>
             <div className="relative">
-              <input
+              <input name="customizationText" id="input-3cf7f8"
                 type="text"
                 placeholder="Enter your constituency or name..."
                 value={customizationText}
@@ -159,7 +159,7 @@ export function ProductInfo({
           </div>
           
           <div className="flex gap-2">
-            <select 
+            <select name="selectedRegion" id="select-aa3e2f" 
               value={selectedRegion}
               onChange={(e) => {
                 setSelectedRegion(e.target.value)

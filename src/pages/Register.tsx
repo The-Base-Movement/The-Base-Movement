@@ -24,6 +24,7 @@ export default function Register() {
   const [agreed, setAgreed] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [physicalSubmitted, setPhysicalSubmitted] = useState(false)
+  const [usedScan, setUsedScan] = useState(false)
   const [regNumber, setRegNumber] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [dbCountries, setDbCountries] = useState<string[]>([])
@@ -147,8 +148,10 @@ export default function Register() {
         toast.warning('Nothing could be read from the form — please fill in your details manually.')
       } else if (fieldCount < 4) {
         toast.info(`${platformLabel} form partially read — please review and complete the remaining fields.`)
+        setUsedScan(true)
       } else {
         toast.success(`${platformLabel} form scanned — please review and complete your details.`)
+        setUsedScan(true)
       }
     } catch (error) {
       console.error('Form scan error:', error)
@@ -236,7 +239,7 @@ export default function Register() {
           education_level: formData.educationLevel, emergency_name: formData.emergencyContactName,
           emergency_relationship: formData.emergencyRelationship, emergency_phone: formData.emergencyNumber,
           children_count: formData.children_count, residential_address: formData.residentialAddress,
-          city: formData.city
+          city: formData.city, registration_source: usedScan ? 'scan' : 'digital'
         })
 
         if (dbError) throw dbError

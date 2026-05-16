@@ -92,7 +92,7 @@ export function ReviewSection() {
               </div>
               <div className="space-y-2">
                 <label className="text-micro font-bold text-stone-400 tracking-tight">Your review</label>
-                <textarea
+                <textarea name="newReview" id="textarea-835070"
                   value={newReview}
                   onChange={(e) => setNewReview(e.target.value)}
                   placeholder="What was your experience?"

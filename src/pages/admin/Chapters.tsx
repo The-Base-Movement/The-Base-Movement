@@ -6,6 +6,7 @@ import {
 } from 'recharts'
 import { adminService } from '@/services/adminService'
 import type { RegionalStat, Chapter } from '@/services/adminService'
+import type { Member } from '@/types/admin'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
@@ -50,7 +51,11 @@ export default function ChaptersManagement() {
     country: 'Ghana',
     description: '',
     status: 'Pending',
+    leader_name: '',
   })
+  const [modalMembers, setModalMembers] = useState<{ id: string; name: string; region: string }[]>([])
+  const [leaderSearch, setLeaderSearch] = useState('')
+  const [showLeaderList, setShowLeaderList] = useState(false)
 
   const handleSaveChapter = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,7 +63,7 @@ export default function ChaptersManagement() {
       name: formData.name,
       city_or_region: formData.city_or_region,
       country: formData.country,
-      leader_name: 'Unassigned',
+      leader_name: formData.leader_name || 'Unassigned',
       member_count: 0,
       status: formData.status as Chapter['status'],
     }
@@ -74,17 +79,25 @@ export default function ChaptersManagement() {
 
   const openAddModal = () => {
     setEditingChapterId(null)
-    setFormData({ name: '', city_or_region: '', country: 'Ghana', description: '', status: 'Pending' })
+    setFormData({ name: '', city_or_region: '', country: 'Ghana', description: '', status: 'Pending', leader_name: '' })
+    setLeaderSearch('')
     setIsModalOpen(true)
+    adminService.getMembers().then((members: Member[]) => {
+      setModalMembers(members.filter(m => m.status === 'Active' || m.status === 'Approved').map(m => ({ id: m.id, name: m.name, region: m.region || '' })))
+    })
   }
 
   const openEditModal = (chapter: Chapter) => {
     setEditingChapterId(chapter.id)
-    setFormData({ name: chapter.name, city_or_region: chapter.city_or_region, country: chapter.country || 'Ghana', description: '', status: chapter.status })
+    setFormData({ name: chapter.name, city_or_region: chapter.city_or_region, country: chapter.country || 'Ghana', description: '', status: chapter.status, leader_name: chapter.leader_name || '' })
+    setLeaderSearch(chapter.leader_name || '')
     setIsModalOpen(true)
+    adminService.getMembers().then((members: Member[]) => {
+      setModalMembers(members.filter(m => m.status === 'Active' || m.status === 'Approved').map(m => ({ id: m.id, name: m.name, region: m.region || '' })))
+    })
   }
 
-  const closeModal = () => { setIsModalOpen(false); setEditingChapterId(null) }
+  const closeModal = () => { setIsModalOpen(false); setEditingChapterId(null); setLeaderSearch(''); setShowLeaderList(false) }
 
   useEffect(() => {
     adminService.getRegionalStats().then(setRegionalStats)
@@ -110,6 +123,16 @@ export default function ChaptersManagement() {
     if (window.confirm(`Decommission the "${name}" chapter?`)) {
       const success = await deleteChapter(id, name)
       if (success) toast.error(`Chapter "${name}" decommissioned.`)
+    }
+  }
+
+  const handleVerifyChapter = async (id: string, name: string) => {
+    const success = await adminService.updateChapter(id, { status: 'Active' })
+    if (success) {
+      updateChapter(id, { status: 'Active' })
+      toast.success(`"${name}" verified and activated.`)
+    } else {
+      toast.error('Verification failed.')
     }
   }
 
@@ -316,7 +339,7 @@ export default function ChaptersManagement() {
       <div className="desktop-only" style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
         <div style={{ position: 'relative', flex: 1 }}>
           <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-          <input
+          <input name="search" id="input-f2d090"
             type="text"
             placeholder="Search chapters by name or region..."
             value={search}
@@ -324,7 +347,7 @@ export default function ChaptersManagement() {
             style={{ ...fieldStyle, paddingLeft: 34 }}
           />
         </div>
-        <select
+        <select name="statusFilter" id="select-b86bb7"
           value={statusFilter}
           onChange={e => { setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending'); setCurrentPage(1) }}
           style={{ ...fieldStyle, width: 160, appearance: 'none' as const }}
@@ -339,7 +362,7 @@ export default function ChaptersManagement() {
       <div className="mobile-only" style={{ marginBottom: 14, display: 'flex', flexDirection: 'column', gap: 8, background: 'hsl(var(--container-low))', padding: '12px', borderRadius: 6, border: '1px solid hsl(var(--border))' }}>
         <div style={{ position: 'relative' }}>
           <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15 }}>search</span>
-          <input
+          <input name="search" id="input-cdadcc"
             style={{ ...fieldStyle, width: '100%', height: 38, paddingLeft: 30, boxSizing: 'border-box' }}
             placeholder="Search chapters..."
             value={search}
@@ -373,7 +396,7 @@ export default function ChaptersManagement() {
                   {chapter.name}
                 </h4>
               </div>
-              <span className={chapter.status === 'Active' ? 'pill pill-ok' : 'pill pill-warn'} style={{ flexShrink: 0 }}>
+              <span className="pill pill-mute" style={{ flexShrink: 0 }}>
                 {chapter.status}
               </span>
             </div>
@@ -396,16 +419,27 @@ export default function ChaptersManagement() {
                 </b>
               </div>
             </div>
-            {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
-              <div style={{ padding: '8px 14px', borderTop: '1px solid hsl(var(--border))', display: 'flex', gap: 6 }}>
-                <button className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11 }} onClick={() => openEditModal(chapter)}>
-                  Configure
-                </button>
-                <button className="btn btn-dest btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11 }} onClick={() => handleDeleteChapter(chapter.id, chapter.name)}>
-                  Decommission
-                </button>
-              </div>
-            )}
+            <div style={{ padding: '8px 14px', borderTop: '1px solid hsl(var(--border))', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              <Link to={`/admin/chapter-hub/${chapter.id}`} className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11, textDecoration: 'none' }}>
+                Hub
+              </Link>
+              {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
+                <>
+                  {chapter.status !== 'Active' && (
+                    <button className="btn btn-primary btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11 }} onClick={() => handleVerifyChapter(chapter.id, chapter.name)}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>verified</span>
+                      Verify
+                    </button>
+                  )}
+                  <button className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11 }} onClick={() => openEditModal(chapter)}>
+                    Configure
+                  </button>
+                  <button className="btn btn-dest btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: 11 }} onClick={() => handleDeleteChapter(chapter.id, chapter.name)}>
+                    Decommission
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         ))}
 
@@ -474,33 +508,73 @@ export default function ChaptersManagement() {
                 <div className="chapters-modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                   <div>
                     <label style={labelStyle}>Chapter name <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                    <input type="text" required placeholder="e.g. Adabraka hub" style={fieldStyle}
+                    <input name="name-9869cd" id="input-9869cd" type="text" required placeholder="e.g. Adabraka hub" style={fieldStyle}
                       value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                   </div>
                   <div>
                     <label style={labelStyle}>City / region <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                    <input type="text" required placeholder="e.g. Accra" style={fieldStyle}
+                    <input name="name-1d4389" id="input-1d4389" type="text" required placeholder="e.g. Accra" style={fieldStyle}
                       value={formData.city_or_region} onChange={e => setFormData({ ...formData, city_or_region: e.target.value })} />
                   </div>
                 </div>
                 <div className="chapters-modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                   <div>
                     <label style={labelStyle}>Country <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                    <input type="text" required placeholder="e.g. Ghana" style={fieldStyle}
+                    <input name="name-a45a5a" id="input-a45a5a" type="text" required placeholder="e.g. Ghana" style={fieldStyle}
                       value={formData.country} onChange={e => setFormData({ ...formData, country: e.target.value })} />
                   </div>
                   <div>
                     <label style={labelStyle}>Hub status</label>
-                    <select style={{ ...fieldStyle, appearance: 'none' as const }}
+                    <select name="name-9716c5" id="select-9716c5" style={{ ...fieldStyle, appearance: 'none' as const }}
                       value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}>
                       <option value="Pending">Pending</option>
                       <option value="Active">Active</option>
                     </select>
                   </div>
                 </div>
+                {/* Leader picker */}
+                <div style={{ position: 'relative' }}>
+                  <label style={labelStyle}>Chapter leader</label>
+                  <div style={{ position: 'relative' }}>
+                    <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>person_search</span>
+                    <input name="leaderSearch" id="input-014d9d"
+                      type="text"
+                      placeholder="Search verified members…"
+                      value={leaderSearch}
+                      onChange={e => { setLeaderSearch(e.target.value); setShowLeaderList(true); if (!e.target.value) setFormData(f => ({ ...f, leader_name: '' })) }}
+                      onFocus={() => setShowLeaderList(true)}
+                      onBlur={() => setTimeout(() => setShowLeaderList(false), 150)}
+                      style={{ ...fieldStyle, paddingLeft: 34 }}
+                    />
+                  </div>
+                  {showLeaderList && leaderSearch && (
+                    <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, zIndex: 50, background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 4, maxHeight: 200, overflowY: 'auto', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                      {modalMembers
+                        .filter(m => m.name.toLowerCase().includes(leaderSearch.toLowerCase()) || m.region.toLowerCase().includes(leaderSearch.toLowerCase()))
+                        .slice(0, 8)
+                        .map(m => (
+                          <div
+                            key={m.id}
+                            onMouseDown={() => { setFormData(f => ({ ...f, leader_name: m.name })); setLeaderSearch(m.name); setShowLeaderList(false) }}
+                            style={{ padding: '9px 12px', cursor: 'pointer', fontSize: 13, fontWeight: 700, fontFamily: "'Public Sans', sans-serif", display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid hsl(var(--border))' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'hsl(var(--container-low))'}
+                            onMouseLeave={e => e.currentTarget.style.background = '#fff'}
+                          >
+                            <span style={{ color: 'hsl(var(--on-surface))' }}>{m.name}</span>
+                            <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>{m.region}</span>
+                          </div>
+                        ))
+                      }
+                      {modalMembers.filter(m => m.name.toLowerCase().includes(leaderSearch.toLowerCase())).length === 0 && (
+                        <p style={{ padding: '10px 12px', fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>No members found</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <div>
                   <label style={labelStyle}>Mission description</label>
-                  <textarea
+                  <textarea name="name-5f2aa3" id="textarea-5f2aa3"
                     rows={3}
                     placeholder="Describe the chapter's focus area..."
                     style={{ ...fieldStyle, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }}
@@ -516,7 +590,7 @@ export default function ChaptersManagement() {
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                     {editingChapterId ? 'sync' : 'add_circle'}
                   </span>
-                  {editingChapterId ? 'Synchronize hub' : 'Add chapter'}
+                  {editingChapterId ? 'Save changes' : 'Add chapter'}
                 </button>
               </div>
             </form>

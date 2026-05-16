@@ -6,7 +6,7 @@ import { useBranding } from '@/hooks/useBranding'
 
 interface VerifiedMember {
   full_name: string
-  id: string
+  registration_number: string
   region: string
   constituency: string
   type: string
@@ -28,8 +28,8 @@ export default function VerifyID() {
       try {
         const { data, error: fetchError } = await supabase
           .from('users')
-          .select('full_name, id, region, constituency, type, created_at, avatar_url')
-          .eq('id', id)
+          .select('full_name, registration_number, region, constituency, type, created_at, avatar_url')
+          .eq('registration_number', id)
           .single()
 
         if (fetchError) throw fetchError
@@ -115,7 +115,7 @@ export default function VerifyID() {
                 <span className="text-micro font-bold tracking-tight text-primary">Identity verified</span>
               </div>
               <h2 className="text-2xl font-bold font-meta tracking-tight text-on-surface">{member.full_name}</h2>
-              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mt-1">{member.id}</p>
+              <p className="text-micro font-bold text-muted-foreground/80 tracking-tight mt-1">{member.registration_number}</p>
             </div>
             <div className="p-8 space-y-6">
               <div className="grid grid-cols-2 gap-6">

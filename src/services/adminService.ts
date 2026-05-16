@@ -159,8 +159,8 @@ class AdminService {
     return memberService.getMembers()
   }
 
-  async getMembersPaginated(page: number, pageSize: number, searchTerm?: string): Promise<{ data: Member[], totalCount: number }> {
-    return memberService.getMembersPaginated(page, pageSize, searchTerm)
+  async getMembersPaginated(page: number, pageSize: number, searchTerm?: string, registrationSource?: string): Promise<{ data: Member[], totalCount: number }> {
+    return memberService.getMembersPaginated(page, pageSize, searchTerm, registrationSource)
   }
 
   async searchMembers(query: string): Promise<Member[]> {
@@ -449,6 +449,11 @@ class AdminService {
       await this.logAction('CHAPTER_LEADER_REMOVE', `CHAPTERS/${chapterId}/LEADERS/${leaderName}`, 'Warning')
     }
     return success
+  }
+
+  async getUserChapter(authId: string): Promise<string | null> {
+    const { data } = await supabase.from('users').select('chapter').eq('id', authId).maybeSingle()
+    return data?.chapter ?? null
   }
 
   async joinChapter(chapterName: string): Promise<boolean> {
@@ -834,6 +839,30 @@ class AdminService {
     return success
   }
 
+  async createRegion(name: string): Promise<boolean> {
+    const success = await logisticsService.createRegion(name)
+    if (success) await this.logAction('REGION_CREATE', `REGIONS/${name}`, 'Success')
+    return success
+  }
+
+  async deleteRegion(id: string, name: string): Promise<boolean> {
+    const success = await logisticsService.deleteRegion(id)
+    if (success) await this.logAction('REGION_DELETE', `REGIONS/${name}`, 'Warning')
+    return success
+  }
+
+  async createConstituency(regionId: string, regionName: string, name: string): Promise<boolean> {
+    const success = await logisticsService.createConstituency(regionId, name)
+    if (success) await this.logAction('CONSTITUENCY_CREATE', `REGIONS/${regionName}/CONSTITUENCIES/${name}`, 'Success')
+    return success
+  }
+
+  async updateConstituency(id: string, regionName: string, name: string): Promise<boolean> {
+    const success = await logisticsService.updateConstituency(id, name)
+    if (success) await this.logAction('CONSTITUENCY_UPDATE', `REGIONS/${regionName}/CONSTITUENCIES/${name}`, 'Success')
+    return success
+  }
+
   async getRegionalStats(): Promise<RegionalStat[]> {
     const [regions, chapters] = await Promise.all([
       this.getRegions(),
@@ -1019,10 +1048,11 @@ class AdminService {
       .eq('id', userId)
       .maybeSingle();
 
-    if (error || !data) {
+    if (error) {
       console.error('[DATABASE] Error fetching admin data:', error);
       return null;
     }
+    if (!data) return null;
 
     interface DBAdminResponse {
       id: string

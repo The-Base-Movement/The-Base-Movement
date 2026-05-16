@@ -320,7 +320,7 @@ export default function AdminBlogs() {
 
               {/* Folder Selector */}
               <div style={{ padding: '10px 12px', borderBottom: '1px solid hsl(var(--border))' }}>
-                <select 
+                <select name="activeMediaFolder" id="select-2bbe02" 
                   value={activeMediaFolder}
                   onChange={e => setActiveMediaFolder(e.target.value)}
                   style={{ ...selectSt, height: 32, fontSize: 11, background: 'hsl(var(--background))' }}
@@ -335,7 +335,7 @@ export default function AdminBlogs() {
               <div style={{ padding: '10px 12px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', gap: 6 }}>
                 <div style={{ position: 'relative', flex: 1 }}>
                   <span className="material-symbols-outlined" style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-                  <input
+                  <input name="mediaSearch" id="input-9b2cec"
                     placeholder="Search…"
                     value={mediaSearch}
                     onChange={e => setMediaSearch(e.target.value)}
@@ -414,7 +414,7 @@ export default function AdminBlogs() {
                           {formData.authorImage ? <img src={formData.authorImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : (formData.authorName?.[0] || 'A')}
                         </div>
                         <div>
-                          <select
+                          <select name="name-7efb7f" id="select-7efb7f"
                             value={formData.authorId || authors[0]?.id}
                             onChange={e => {
                               const author = authors.find(a => a.id === e.target.value)
@@ -427,7 +427,7 @@ export default function AdminBlogs() {
                           <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{formData.authorRole || 'Contributor'}</div>
                         </div>
                       </div>
-                      <select
+                      <select name="name-b23691" id="select-b23691"
                         value={formData.category}
                         onChange={e => setFormData({ ...formData, category: e.target.value })}
                         style={{ height: 34, padding: '0 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', outline: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface))' }}
@@ -438,13 +438,13 @@ export default function AdminBlogs() {
 
                     {/* Title + excerpt */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}>
-                      <textarea
+                      <textarea name="name-159e76" id="textarea-159e76"
                         placeholder="Article Title…"
                         style={{ width: '100%', fontSize: 36, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1, outline: 'none', border: 'none', background: 'transparent', resize: 'none', minHeight: 80, color: 'hsl(var(--on-surface))' }}
                         value={formData.title}
                         onChange={e => setFormData({ ...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '') })}
                       />
-                      <textarea
+                      <textarea name="name-08e458" id="textarea-08e458"
                         placeholder="Compelling opening hook or summary…"
                         style={{ width: '100%', fontSize: 17, fontFamily: "'Public Sans', sans-serif", fontWeight: 500, lineHeight: 1.65, outline: 'none', border: 'none', background: 'transparent', resize: 'none', minHeight: 70, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}
                         value={formData.excerpt}
@@ -522,7 +522,7 @@ export default function AdminBlogs() {
                 <label style={labelSt}>Resource Slug</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 10px', height: 36 }}>
                   <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>/blog/</span>
-                  <input value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} style={{ background: 'transparent', border: 'none', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', flex: 1 }} />
+                  <input name="name-7ecb7f" id="input-7ecb7f" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} style={{ background: 'transparent', border: 'none', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface))', flex: 1 }} />
                 </div>
               </div>
 
@@ -537,7 +537,7 @@ export default function AdminBlogs() {
                     </span>
                   ))}
                 </div>
-                <input
+                <input name="name-bfbda3" id="input-bfbda3"
                   placeholder="Type and press Enter…"
                   style={{ width: '100%', height: 32, padding: '0 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
                   onKeyDown={e => {
@@ -555,7 +555,7 @@ export default function AdminBlogs() {
               {/* Meta description */}
               <div>
                 <label style={labelSt}>Strategic Summary</label>
-                <textarea
+                <textarea name="name-992ac4" id="textarea-992ac4"
                   value={formData.metaDescription}
                   onChange={e => setFormData({ ...formData, metaDescription: e.target.value })}
                   style={{ width: '100%', minHeight: 90, padding: 10, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, lineHeight: 1.6, outline: 'none', resize: 'none', boxSizing: 'border-box', color: 'hsl(var(--on-surface))' }}
@@ -804,7 +804,7 @@ export default function AdminBlogs() {
               <label style={labelSt}>Search feed</label>
               <div style={{ position: 'relative' }}>
                 <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-                <input
+                <input name="searchQuery" id="input-bbba95"
                   type="text" placeholder="Keywords…"
                   value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                   style={{ ...selectSt, paddingLeft: 34 }}
@@ -813,7 +813,7 @@ export default function AdminBlogs() {
             </div>
             <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
               <label style={labelSt}>Status</label>
-              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={selectSt}>
+              <select name="statusFilter" id="select-0a8b07" value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={selectSt}>
                 <option value="all">All Statuses</option>
                 <option value="Published">Published</option>
                 <option value="Pending Verification">Pending</option>
@@ -822,7 +822,7 @@ export default function AdminBlogs() {
             </div>
             <div style={{ borderTop: '1px solid hsl(var(--border))', paddingTop: 16 }}>
               <label style={labelSt}>Category</label>
-              <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} style={selectSt}>
+              <select name="categoryFilter" id="select-339e1e" value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} style={selectSt}>
                 <option value="all">All Categories</option>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>

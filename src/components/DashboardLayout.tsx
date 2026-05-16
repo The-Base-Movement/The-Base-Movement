@@ -4,6 +4,7 @@ import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
+import { supabase } from '@/lib/supabase'
 import { useBranding } from '@/hooks/useBranding'
 
 export default function DashboardLayout() {
@@ -19,6 +20,34 @@ export default function DashboardLayout() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const [openUserMenu, setOpenUserMenu] = useState(false)
+  const [openNotifications, setOpenNotifications] = useState(false)
+  const [notifications, setNotifications] = useState<import('@/types/admin').Notification[]>([])
+  const [myChapterLink, setMyChapterLink] = useState<{ to: string; icon: string } | null>(null)
+
+  const checkChapterRole = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user) return
+      const chapters = await adminService.getChapters()
+
+      // Leader takes priority
+      const leaderChapter = chapters.find(c => c.leader_id === session.user.id)
+      if (leaderChapter) {
+        setMyChapterLink({ to: `/dashboard/chapter-hub/${leaderChapter.id}`, icon: 'manage_accounts' })
+        return
+      }
+
+      // Regular member — check DB directly (null = never joined)
+      const dbChapter = await adminService.getUserChapter(session.user.id)
+      if (dbChapter) {
+        const matched = chapters.find(c => c.name.toLowerCase() === dbChapter.toLowerCase())
+        if (matched) {
+          const slug = matched.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+          setMyChapterLink({ to: `/dashboard/chapters/${slug}`, icon: 'group' })
+        }
+      }
+    } catch { /* non-critical */ }
+  }
 
   useEffect(() => {
     const readProfile = async () => {
@@ -31,7 +60,8 @@ export default function DashboardLayout() {
             setUserName(profile.name)
             setAvatarUrl(profile.avatarUrl || null)
             setUserRegNo(profile.id)
-            return // Successfully synced with real member data
+            checkChapterRole()
+            return
           }
         } catch (err) {
           console.warn('[DASHBOARD] Failed to sync member profile:', err)
@@ -40,24 +70,29 @@ export default function DashboardLayout() {
 
       // 2. Fallback to Auth metadata if no stored member ID or DB fetch fails
       const user = authService.getUser()
+      let resolvedName = 'Member'
       if (user) {
-        setUserName(user.user_metadata?.full_name || 'Member')
+        resolvedName = user.user_metadata?.full_name || 'Member'
+        setUserName(resolvedName)
         setAvatarUrl(user.user_metadata?.avatar_url || null)
       } else {
         // 3. Last resort: Local storage raw values
         setAvatarUrl(localStorage.getItem('userAvatar'))
-        setUserName(localStorage.getItem('userName') || 'Member')
+        resolvedName = localStorage.getItem('userName') || 'Member'
+        setUserName(resolvedName)
       }
-      
+
       setUserRegNo(localStorage.getItem('userRegNo') || '')
+      checkChapterRole()
     }
-    
+
     readProfile()
     
-    // Fetch unread notification count
+    // Fetch notifications
     const fetchUnread = async () => {
       try {
         const notes = await adminService.getNotifications()
+        setNotifications(notes)
         setUnreadCount(notes.filter(n => !n.is_read).length)
       } catch {
         console.warn('[DASHBOARD] Notification sync failed')
@@ -113,7 +148,8 @@ export default function DashboardLayout() {
     if (path === '/dashboard/donate') return 'Donations'
     if (path === '/dashboard/members') return 'Verified'
     if (path === '/dashboard/chapters') return 'Chapters'
-    if (path.startsWith('/dashboard/chapter/')) return 'Chapter Details'
+    if (path.startsWith('/dashboard/chapters/')) return 'Chapter Details'
+    if (path === '/dashboard/chapter-hub' || path.startsWith('/dashboard/chapter-hub/')) return 'My Chapter'
     if (path === '/dashboard/contact') return 'Support'
     if (path === '/dashboard/settings') return 'Profile'
     if (path === '/dashboard/wishlist') return 'Wishlist'
@@ -181,6 +217,7 @@ export default function DashboardLayout() {
               { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },
               { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Feedback' },
               { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
+              ...(myChapterLink ? [{ to: myChapterLink.to, icon: myChapterLink.icon, label: 'My Chapter' }] : []),
             ]},
             { label: 'Mobilization', items: [
               { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
@@ -292,7 +329,7 @@ export default function DashboardLayout() {
               {/* Search — desktop only */}
               <div className="hidden lg:block" style={{ position: 'relative' }}>
                 <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4, pointerEvents: 'none' }}>search</span>
-                <input
+                <input name="name-bd4fad" id="input-bd4fad"
                   type="text"
                   placeholder="Search the movement…"
                   style={{ width: 240, height: 36, paddingLeft: 34, paddingRight: 14, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}
@@ -310,12 +347,61 @@ export default function DashboardLayout() {
               </Link>
 
               {/* Notification Bell */}
-              <button style={{ position: 'relative', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: '1px solid hsl(var(--border))', borderRadius: 4, cursor: 'pointer', color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>notifications</span>
-                {unreadCount > 0 && (
-                  <span style={{ position: 'absolute', top: 6, right: 6, width: 7, height: 7, background: 'hsl(var(--destructive))', borderRadius: '50%', border: '1.5px solid #fff' }} />
+              <div style={{ position: 'relative' }}>
+                <button
+                  onClick={() => {
+                    setOpenNotifications(v => !v)
+                    setOpenUserMenu(false)
+                    if (!openNotifications && unreadCount > 0) {
+                      const unread = notifications.filter(n => !n.is_read)
+                      unread.forEach(n => adminService.markNotificationRead(n.id).catch(() => {}))
+                      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+                      setUnreadCount(0)
+                    }
+                  }}
+                  style={{ position: 'relative', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: openNotifications ? 'hsl(var(--container-low))' : 'none', border: '1px solid hsl(var(--border))', borderRadius: 4, cursor: 'pointer', color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>notifications</span>
+                  {unreadCount > 0 && (
+                    <span style={{ position: 'absolute', top: 6, right: 6, width: 7, height: 7, background: 'hsl(var(--destructive))', borderRadius: '50%', border: '1.5px solid #fff' }} />
+                  )}
+                </button>
+
+                {openNotifications && (
+                  <>
+                    <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setOpenNotifications(false)} />
+                    <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', zIndex: 50, background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, width: 320, maxHeight: 420, display: 'flex', flexDirection: 'column', boxShadow: '0 8px 24px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+                      <div style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'hsl(var(--container-low))' }}>
+                        <span style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Notifications</span>
+                        <span style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>{notifications.length} total</span>
+                      </div>
+                      <div style={{ overflowY: 'auto', flex: 1 }}>
+                        {notifications.length === 0 ? (
+                          <div style={{ padding: '32px 14px', textAlign: 'center' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))', display: 'block', marginBottom: 8 }}>notifications_none</span>
+                            <span style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>No notifications yet</span>
+                          </div>
+                        ) : (
+                          notifications.map(n => (
+                            <div key={n.id} style={{ display: 'flex', gap: 10, padding: '11px 14px', borderBottom: '1px solid hsl(var(--border))', background: n.is_read ? '#fff' : 'hsl(var(--container-low))' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 16, marginTop: 1, flexShrink: 0, color: n.type === 'Alert' ? 'hsl(var(--destructive))' : n.type === 'Action' ? 'hsl(var(--accent))' : 'hsl(var(--primary))' }}>
+                                {n.type === 'Alert' ? 'warning' : n.type === 'Action' ? 'task_alt' : 'info'}
+                              </span>
+                              <div style={{ minWidth: 0 }}>
+                                <div style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', marginBottom: 2 }}>{n.title}</div>
+                                <div style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 500, fontSize: 11, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.4 }}>{n.message}</div>
+                                <div style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 4, opacity: 0.6 }}>
+                                  {new Date(n.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </>
                 )}
-              </button>
+              </div>
 
               {/* User dropdown */}
               <div style={{ position: 'relative' }}>

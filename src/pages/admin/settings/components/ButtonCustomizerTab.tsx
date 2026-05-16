@@ -107,7 +107,7 @@ export function ButtonCustomizerTab({ siteSettings, setSiteSettings, isSaving, h
               <label style={labelSt}>Active Tab Background</label>
               <div style={{ display: 'flex', gap: 8 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', flexShrink: 0, background: siteSettings.button_active_tab_bg_color ? `hsl(${siteSettings.button_active_tab_bg_color as string})` : 'hsl(var(--primary))' }} />
-                <input style={inputSt} value={(siteSettings.button_active_tab_bg_color as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, button_active_tab_bg_color: e.target.value })} placeholder="0 0% 0%" />
+                <input name="name-15144a" id="input-15144a" style={inputSt} value={(siteSettings.button_active_tab_bg_color as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, button_active_tab_bg_color: e.target.value })} placeholder="0 0% 0%" />
               </div>
             </div>
 
@@ -122,7 +122,7 @@ export function ButtonCustomizerTab({ siteSettings, setSiteSettings, isSaving, h
               <label style={labelSt}>Inactive Tab Background</label>
               <div style={{ display: 'flex', gap: 8 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 4, border: '1px solid hsl(var(--border))', flexShrink: 0, background: siteSettings.button_inactive_tab_bg_color ? `hsl(${siteSettings.button_inactive_tab_bg_color as string})` : '#fff' }} />
-                <input style={inputSt} value={(siteSettings.button_inactive_tab_bg_color as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, button_inactive_tab_bg_color: e.target.value })} placeholder="0 0% 100%" />
+                <input name="name-aa8b63" id="input-aa8b63" style={inputSt} value={(siteSettings.button_inactive_tab_bg_color as string) || ''} onChange={e => setSiteSettings({ ...siteSettings, button_inactive_tab_bg_color: e.target.value })} placeholder="0 0% 100%" />
               </div>
             </div>
 

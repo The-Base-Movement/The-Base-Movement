@@ -59,7 +59,7 @@ export function CommentSection() {
               <span className="material-symbols-outlined text-stone-400" style={{ fontSize: 24 }}>person</span>
             </div>
             <div className="flex-1">
-              <textarea
+              <textarea name="newComment" id="textarea-7704f3"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Join the conversation..."

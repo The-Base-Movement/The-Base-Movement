@@ -83,7 +83,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block mb-1">
                     Full name <span className="text-primary normal-case tracking-normal ml-1">(Must match ID Card exactly)</span>
                   </span>
-                  <input 
+                  <input name="name-72ee96" id="input-72ee96" 
                     required 
                     pattern=".*\s+.*" 
                     title="Please enter both your first and last name." 
@@ -98,7 +98,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block mb-1">
                     Email address <span className="text-on-surface-muted/60 normal-case tracking-normal ml-1">(Optional - You can register with phone number instead)</span>
                   </span>
-                  <input 
+                  <input name="name-b6d09f" id="input-b6d09f" 
                     type="email"
                     value={formData.email || ''} 
                     onChange={(e) => onInputChange('email', e.target.value)} 
@@ -156,14 +156,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Region</span>
-                      <select required value={formData.region} onChange={(e) => onInputChange('region', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
+                      <select name="name-64ff20" id="select-64ff20" required value={formData.region} onChange={(e) => onInputChange('region', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
                         <option value="">Select Region</option>
                         {dbRegions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
                       </select>
                     </div>
                     <div className="space-y-1.5">
                       <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Constituency</span>
-                      <select required value={formData.constituency} onChange={(e) => onInputChange('constituency', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary" disabled={!formData.region}>
+                      <select name="name-c9e1d3" id="select-c9e1d3" required value={formData.constituency} onChange={(e) => onInputChange('constituency', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary" disabled={!formData.region}>
                         <option value="">Select Constituency</option>
                         {formData.region && dbConstituencies
                           .filter(c => c.region_id === dbRegions.find(r => r.name === formData.region)?.id)
@@ -176,14 +176,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Country</span>
-                      <select required value={formData.country} onChange={(e) => onInputChange('country', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
+                      <select name="name-933eb2" id="select-933eb2" required value={formData.country} onChange={(e) => onInputChange('country', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
                         <option value="">Select Country</option>
                         {dbCountries.map(c => <option key={c} value={c}>{c}</option>)}
                       </select>
                     </div>
                     <div className="space-y-1.5">
                       <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">City</span>
-                      <input 
+                      <input name="name-0bccd3" id="input-0bccd3" 
                         required 
                         value={formData.city || ''} 
                         onChange={(e) => onInputChange('city', e.target.value)} 
@@ -202,7 +202,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     <div className="flex items-center justify-center h-[46px] px-3 bg-muted/10 border border-border border-r-0 text-sm font-bold text-on-surface-muted min-w-[60px]">
                       {formData.countryCode || '+233'}
                     </div>
-                    <input 
+                    <input name="name-fbfe65" id="input-fbfe65" 
                       required 
                       value={formData.contactNumber} 
                       onChange={(e) => onInputChange('contactNumber', e.target.value)} 
@@ -215,7 +215,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Gender</span>
-                    <select required value={formData.gender} onChange={(e) => onInputChange('gender', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
+                    <select name="name-3d4664" id="select-3d4664" required value={formData.gender} onChange={(e) => onInputChange('gender', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
                       <option value="">Select</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
@@ -223,7 +223,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   </div>
                   <div className="space-y-1.5">
                     <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Age Range</span>
-                    <select required value={formData.ageRange} onChange={(e) => onInputChange('ageRange', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
+                    <select name="name-33e7c0" id="select-33e7c0" required value={formData.ageRange} onChange={(e) => onInputChange('ageRange', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
                       <option value="">Select</option>
                       <option value="18-25">18 – 25</option>
                       <option value="26-35">26 – 35</option>
@@ -236,7 +236,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
 
                 <div className="space-y-1.5">
                   <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Chapter</span>
-                  <select value={formData.chapter} onChange={(e) => onInputChange('chapter', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
+                  <select name="name-fdd2f4" id="select-fdd2f4" value={formData.chapter} onChange={(e) => onInputChange('chapter', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
                     <option value="">Select Chapter</option>
                     {(dbChapters || []).map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -246,7 +246,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
                     Set password
                   </span>
-                  <input 
+                  <input name="name-7e320f" id="input-7e320f" 
                     type={showPassword ? 'text' : 'password'} 
                     required 
                     minLength={8} 
@@ -291,7 +291,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     />
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/80 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm z-20">
                       <span className="text-[10px] font-bold text-white uppercase tracking-wider">Zoom</span>
-                      <input 
+                      <input name="zoom" id="input-d87bc1" 
                         type="range" 
                         min={1} 
                         max={3} 
@@ -340,7 +340,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Profession</span>
-                      <input 
+                      <input name="name-2f7edd" id="input-2f7edd" 
                         value={formData.profession} 
                         onChange={(e) => onInputChange('profession', e.target.value)} 
                         className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
@@ -349,7 +349,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     </div>
                     <div className="space-y-1.5">
                       <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Education Level</span>
-                      <select value={formData.educationLevel} onChange={(e) => onInputChange('educationLevel', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
+                      <select name="name-231c1b" id="select-231c1b" value={formData.educationLevel} onChange={(e) => onInputChange('educationLevel', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
                         <option value="">Select</option>
                         <option value="None">None</option>
                         <option value="Primary">Primary</option>
@@ -366,7 +366,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">No. of Children</span>
-                      <input 
+                      <input name="name-f84a60" id="input-f84a60" 
                         type="number" 
                         min={0}
                         value={formData.children_count} 
@@ -379,7 +379,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
                         Residential Address {platform === 'DIASPORA' && <span className="opacity-50 lowercase">(Optional)</span>}
                       </span>
-                      <input 
+                      <input name="name-36e963" id="input-36e963" 
                         required={platform === 'GHANA'}
                         value={formData.residentialAddress} 
                         onChange={(e) => onInputChange('residentialAddress', e.target.value)} 
@@ -395,7 +395,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
                           <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Full Name</span>
-                          <input 
+                          <input name="name-8dd936" id="input-8dd936" 
                             value={formData.emergencyContactName} 
                             onChange={(e) => onInputChange('emergencyContactName', e.target.value)} 
                             className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
@@ -404,7 +404,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         </div>
                         <div className="space-y-1.5">
                           <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Relationship</span>
-                          <select value={formData.emergencyRelationship} onChange={(e) => onInputChange('emergencyRelationship', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
+                          <select name="name-893075" id="select-893075" value={formData.emergencyRelationship} onChange={(e) => onInputChange('emergencyRelationship', e.target.value)} className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary">
                             <option value="">Select</option>
                             <option value="Spouse">Spouse</option>
                             <option value="Parent">Parent</option>
@@ -417,7 +417,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </div>
                       <div className="space-y-1.5">
                         <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">Phone Number</span>
-                        <input 
+                        <input name="name-b705ad" id="input-b705ad" 
                           value={formData.emergencyNumber} 
                           onChange={(e) => onInputChange('emergencyNumber', e.target.value)} 
                           className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
@@ -429,7 +429,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 </div>
 
                 <div className="flex items-start gap-3 p-5 bg-[#181d19] text-white border-l-4 border-primary">
-                  <input 
+                  <input name="name-4810a4" id="input-4810a4" 
                     type="checkbox" 
                     checked={agreed} 
                     onChange={(e) => onAgreedChange(e.target.checked)} 

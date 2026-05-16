@@ -236,7 +236,7 @@ export function MobilizationProtocol({
               <label htmlFor="fullName" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                 identification <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
-              <input 
+              <input name="name-01ce78" 
                 id="fullName" 
                 placeholder="Legal full name" 
                 required 
@@ -263,7 +263,7 @@ export function MobilizationProtocol({
               <label htmlFor="phone" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                 contact line <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
-              <input 
+              <input name="name-ff548e" 
                 id="phone" 
                 placeholder="+233 xx xxx xxxx" 
                 required 
@@ -291,7 +291,7 @@ export function MobilizationProtocol({
                 <label htmlFor="amount" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                   Amount (₵) <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
-                <input 
+                <input name="name-6790e5" 
                   id="amount" 
                   type="number" 
                   placeholder="0.00" 
@@ -319,7 +319,7 @@ export function MobilizationProtocol({
                   jurisdiction <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <select 
+                  <select name="name-4a0eac" 
                     id="country" 
                     required 
                     value={formData.country}
@@ -363,7 +363,7 @@ export function MobilizationProtocol({
                 target cell <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
               <div style={{ position: 'relative' }}>
-                <select 
+                <select name="name-348cbe" 
                   id="campaign" 
                   required 
                   value={formData.campaignId}
@@ -441,7 +441,7 @@ export function MobilizationProtocol({
                   <label htmlFor="membershipNumber" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                     movement id
                   </label>
-                  <input 
+                  <input name="name-915196" 
                     id="membershipNumber" 
                     placeholder="gh-2028-xxxxxx" 
                     value={formData.membershipNumber}
@@ -463,7 +463,7 @@ export function MobilizationProtocol({
                 </div>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', paddingTop: 8 }}>
                   <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <input 
+                    <input name="name-97e307" id="input-97e307" 
                       type="checkbox" 
                       checked={formData.showOnDashboard}
                       onChange={(e) => setFormData({ ...formData, showOnDashboard: e.target.checked })}

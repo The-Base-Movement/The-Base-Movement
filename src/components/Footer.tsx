@@ -153,7 +153,7 @@ export default function Footer() {
               </div>
             ) : (
               <form onSubmit={handleSubscribe} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <input
+                <input name="email" id="input-a60551"
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}

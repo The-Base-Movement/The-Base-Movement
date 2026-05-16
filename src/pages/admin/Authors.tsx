@@ -127,12 +127,12 @@ export default function AdminAuthors() {
               <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Search personnel</label>
               <div style={{ position: 'relative' }}>
                 <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-                <input type="text" placeholder="Name or role…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={inputSt} />
+                <input name="searchQuery" id="input-650b52" type="text" placeholder="Name or role…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={inputSt} />
               </div>
             </div>
             <div>
               <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Role classification</label>
-              <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} style={selectSt}>
+              <select name="roleFilter" id="select-b631d5" value={roleFilter} onChange={e => setRoleFilter(e.target.value)} style={selectSt}>
                 <option value="all">All Roles</option>
                 {uniqueRoles.map(role => <option key={role} value={role}>{role}</option>)}
               </select>

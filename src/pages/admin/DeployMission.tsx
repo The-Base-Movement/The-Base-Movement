@@ -142,7 +142,7 @@ export default function DeployMission() {
                 <label style={labelStyle}>
                   Mission title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
-                <input
+                <input name="name-81c63d" id="input-81c63d"
                   type="text"
                   placeholder="e.g. Operation Doorstep Blitz — Lapaz Central"
                   style={{ ...fieldStyle, height: 44 }}
@@ -158,7 +158,7 @@ export default function DeployMission() {
                   <label style={labelStyle}>
                     Target region <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                   </label>
-                  <select
+                  <select name="selectedRegion" id="select-cc2672"
                     style={{ ...fieldStyle, paddingRight: 32, appearance: 'none' as const }}
                     value={selectedRegion}
                     onChange={e => setSelectedRegion(e.target.value)}
@@ -174,7 +174,7 @@ export default function DeployMission() {
                   <label style={labelStyle}>
                     Target constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                   </label>
-                  <select
+                  <select name="selectedConstituency" id="select-fb8880"
                     style={{ ...fieldStyle, paddingRight: 32, appearance: 'none' as const, opacity: !selectedRegion ? 0.45 : 1 }}
                     value={selectedConstituency}
                     onChange={e => setSelectedConstituency(e.target.value)}
@@ -193,7 +193,7 @@ export default function DeployMission() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 <div>
                   <label style={labelStyle}>Start date <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                  <input
+                  <input name="name-f385be" id="input-f385be"
                     type="date"
                     style={fieldStyle}
                     value={newCampaign.start_date}
@@ -203,7 +203,7 @@ export default function DeployMission() {
                 </div>
                 <div>
                   <label style={labelStyle}>End date <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                  <input
+                  <input name="name-2b3dd1" id="input-2b3dd1"
                     type="date"
                     style={fieldStyle}
                     value={newCampaign.end_date}
@@ -216,7 +216,7 @@ export default function DeployMission() {
               {/* Contact goal */}
               <div>
                 <label style={labelStyle}>Contact goal <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                <input
+                <input name="name-d312d6" id="input-d312d6"
                   type="number"
                   style={fieldStyle}
                   value={newCampaign.goal_contacts}
@@ -229,7 +229,7 @@ export default function DeployMission() {
               {/* Description */}
               <div>
                 <label style={labelStyle}>Mission objective &amp; field instructions</label>
-                <textarea
+                <textarea name="name-ab3220" id="textarea-ab3220"
                   rows={4}
                   placeholder="Provide clear tactical objectives for canvassers in the field..."
                   style={{ ...fieldStyle, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }}

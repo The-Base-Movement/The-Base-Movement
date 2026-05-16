@@ -131,7 +131,7 @@ export default function MediaLibrary() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }} className="lg:grid-cols-[220px_1fr]">
         {/* Mobile folder selector */}
         <div className="mobile-only" style={{ marginBottom: 8 }}>
-          <select
+          <select name="activeFolder" id="select-7676fc"
             value={activeFolder}
             onChange={(e) => setActiveFolder(e.target.value)}
             style={{ width: '100%', height: 40, border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '0 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, background: '#fff', color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}
@@ -151,7 +151,7 @@ export default function MediaLibrary() {
             </div>
             <div style={{ padding: 12, position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 22, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-              <input
+              <input name="searchQuery" id="input-bb03eb"
                 placeholder="Search your assets…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

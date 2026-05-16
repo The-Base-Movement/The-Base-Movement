@@ -168,7 +168,7 @@ export function OperationalTransparency({
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, flex: 1, justifyContent: 'flex-end' }} className="sm:flex-row sm:items-center">
           <div style={{ position: 'relative', width: '100%', maxWidth: 448 }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>search</span>
-            <input 
+            <input name="searchQuery" id="input-a34c64" 
               type="text"
               placeholder="Search mobilization ledger..."
               value={searchQuery}

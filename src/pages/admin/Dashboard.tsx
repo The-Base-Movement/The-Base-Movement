@@ -343,7 +343,7 @@ export default function AdminDashboard() {
             
             <div className="field">
               <span className="lbl">Headline</span>
-              <input 
+              <input name="name-b97fc0" id="input-b97fc0" 
                 className="title" 
                 value={broadcast.title}
                 onChange={(e) => setBroadcast({ ...broadcast, title: e.target.value })}
@@ -353,7 +353,7 @@ export default function AdminDashboard() {
             
             <div className="field">
               <span className="lbl">Message</span>
-              <textarea 
+              <textarea name="name-daf71f" id="textarea-daf71f" 
                 value={broadcast.content}
                 onChange={(e) => setBroadcast({ ...broadcast, content: e.target.value })}
                 placeholder="Tactical update content..."
@@ -364,7 +364,7 @@ export default function AdminDashboard() {
             <div className="field">
               <span className="lbl">Target Audience</span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
-                <select 
+                <select name="name-50d2d6" id="select-50d2d6" 
                   className="reg" 
                   style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))', width: '100%' }}
                   value={broadcast.target_type}
@@ -381,7 +381,7 @@ export default function AdminDashboard() {
                 </select>
                 
                 {broadcast.target_type === 'REGION' && (
-                  <select 
+                  <select name="name-e1e9ef" id="select-e1e9ef" 
                     className="reg"
                     value={broadcast.target_value}
                     onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
 
                 {broadcast.target_type === 'CONSTITUENCY' && (
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <select 
+                    <select name="selectedRegionId || ''" id="select-dac9b9" 
                       className="reg"
                       value={selectedRegionId || ''}
                       onChange={(e) => {
@@ -412,7 +412,7 @@ export default function AdminDashboard() {
                       ))}
                     </select>
 
-                    <select 
+                    <select name="name-81066f" id="select-81066f" 
                       className="reg"
                       value={broadcast.target_value}
                       onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
@@ -430,7 +430,7 @@ export default function AdminDashboard() {
                 )}
 
                 {broadcast.target_type === 'DIASPORA' && (
-                  <select 
+                  <select name="name-ab1a39" id="select-ab1a39" 
                     className="reg"
                     value={broadcast.target_value}
                     onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
@@ -447,7 +447,7 @@ export default function AdminDashboard() {
 
             <div className="toolbar">
               <div className="left">
-                <select 
+                <select name="name-b728c8" id="select-b728c8" 
                   className="reg"
                   value={broadcast.priority}
                   onChange={(e) => setBroadcast({ ...broadcast, priority: e.target.value as Broadcast['priority'] })}
@@ -458,7 +458,7 @@ export default function AdminDashboard() {
                   <option value="Urgent">URGENT</option>
                 </select>
                 <div style={{ width: '1px', height: '12px', background: 'hsl(var(--border))', margin: '0 8px' }} />
-                <select 
+                <select name="name-0f0d2a" id="select-0f0d2a" 
                   className="reg"
                   value={broadcast.channel}
                   onChange={(e) => setBroadcast({ ...broadcast, channel: e.target.value as Broadcast['channel'] })}
