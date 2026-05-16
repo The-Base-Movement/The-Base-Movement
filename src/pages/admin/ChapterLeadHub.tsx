@@ -136,6 +136,8 @@ export default function AdminChapterLeadHub() {
           <div style={{ padding: '14px 18px', position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 30, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4, pointerEvents: 'none' }}>search</span>
             <input
+              id="hub-search"
+              name="hubSearch"
               type="text"
               placeholder="Search hubs by name or region..."
               value={hubSearch}
