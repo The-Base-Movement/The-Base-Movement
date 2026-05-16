@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/buttons/ui/tooltip"
 import type { RegionalStat } from '@/services/adminService'
 
 interface GhanaGrowthMapProps {

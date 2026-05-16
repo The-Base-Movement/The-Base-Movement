@@ -1,4 +1,4 @@
-import { Button, type ButtonProps } from '@/components/ui/neon-button'
+import { Button, type ButtonProps } from '@/components/buttons/ui/neon-button'
 
 export function ButtonPrimary({ children, ...props }: ButtonProps) {
   return (

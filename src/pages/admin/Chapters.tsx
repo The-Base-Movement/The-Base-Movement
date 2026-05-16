@@ -876,7 +876,7 @@ export default function ChaptersManagement() {
                       ID: {chapter.id?.slice(0, 8) || 'N/A'}
                     </div>
                     <h4 style={{ margin: 0, fontSize: 13, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", color: chapter.status === 'Active' ? '#000' : 'hsl(var(--on-surface))', lineHeight: 1.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                      {getFlagImageUrl(chapter.country) && <img src={getFlagImageUrl(chapter.country)} alt={chapter.country} style={{ marginRight: 6, height: 13, width: 'auto', verticalAlign: 'middle', borderRadius: 2, flexShrink: 0 }} />}
+                      {chapter.flag_url && <img src={chapter.flag_url} alt={chapter.country} style={{ marginRight: 6, height: 13, width: 'auto', verticalAlign: 'middle', borderRadius: 2, flexShrink: 0 }} />}
                       {chapter.name}
                     </h4>
                   </div>

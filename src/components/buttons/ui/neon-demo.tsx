@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/neon-button"
+import { Button } from "@/components/buttons/ui/neon-button"
 
 const Default = () => {
     return (
