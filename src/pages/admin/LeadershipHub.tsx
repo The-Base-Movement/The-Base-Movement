@@ -571,6 +571,8 @@ export default function LeadershipHub() {
           <div style={{ position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', opacity: 0.4, pointerEvents: 'none' }}>search</span>
             <input
+              id="leaders-search"
+              name="leadersSearch"
               type="text"
               placeholder="Search leaders…"
               value={leadersSearch}
