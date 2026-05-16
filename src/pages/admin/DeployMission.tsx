@@ -139,7 +139,7 @@ export default function DeployMission() {
 
               {/* Mission title */}
               <div>
-                <label style={labelStyle}>
+                <label htmlFor="input-81c63d" style={labelStyle}>
                   Mission title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
                 <input aria-label="e.g. Operation Doorstep Blitz — Lapaz Central" name="name-81c63d" id="input-81c63d"
@@ -155,7 +155,7 @@ export default function DeployMission() {
               {/* Region + Constituency */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 <div>
-                  <label style={labelStyle}>
+                  <label htmlFor="select-cc2672" style={labelStyle}>
                     Target region <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                   </label>
                   <select name="selectedRegion" id="select-cc2672"
@@ -171,7 +171,7 @@ export default function DeployMission() {
                   </select>
                 </div>
                 <div>
-                  <label style={labelStyle}>
+                  <label htmlFor="select-fb8880" style={labelStyle}>
                     Target constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                   </label>
                   <select name="selectedConstituency" id="select-fb8880"
@@ -192,7 +192,7 @@ export default function DeployMission() {
               {/* Start + End dates */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 <div>
-                  <label style={labelStyle}>Start date <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
+                  <label htmlFor="input-f385be" style={labelStyle}>Start date <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
                   <input name="name-f385be" id="input-f385be"
                     type="date"
                     style={fieldStyle}
@@ -202,7 +202,7 @@ export default function DeployMission() {
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>End date <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
+                  <label htmlFor="input-2b3dd1" style={labelStyle}>End date <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
                   <input name="name-2b3dd1" id="input-2b3dd1"
                     type="date"
                     style={fieldStyle}
@@ -215,7 +215,7 @@ export default function DeployMission() {
 
               {/* Contact goal */}
               <div>
-                <label style={labelStyle}>Contact goal <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
+                <label htmlFor="input-d312d6" style={labelStyle}>Contact goal <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
                 <input name="name-d312d6" id="input-d312d6"
                   type="number"
                   style={fieldStyle}
@@ -228,7 +228,7 @@ export default function DeployMission() {
 
               {/* Description */}
               <div>
-                <label style={labelStyle}>Mission objective &amp; field instructions</label>
+                <label htmlFor="textarea-ab3220" style={labelStyle}>Mission objective &amp; field instructions</label>
                 <textarea aria-label="Provide clear tactical objectives for canvassers in the field" name="name-ab3220" id="textarea-ab3220"
                   rows={4}
                   placeholder="Provide clear tactical objectives for canvassers in the field..."
