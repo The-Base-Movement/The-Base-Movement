@@ -27,7 +27,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
   const programsCount = Math.max(0, Math.floor(eventsCount / 3))
 
   const regionLabel = chapter.region || chapter.city_or_region
-  const rawFlag = chapter.flag_url || (isDiaspora ? chapter.country : '')
+  const rawFlag = chapter.flag_url || ''
   const flag = getCountryFlag(rawFlag)
   const slug = chapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
 
