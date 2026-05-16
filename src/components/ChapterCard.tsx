@@ -5,11 +5,10 @@ import { CountryBadge } from '@/components/CountryBadge'
 
 interface ChapterCardProps {
   chapter: Chapter
-  countryFlags: Record<string, string>
   userChapterName?: string | null
 }
 
-export function ChapterCard({ chapter, countryFlags, userChapterName }: ChapterCardProps) {
+export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
   const isActive = (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member'
   const isDiaspora = chapter.country !== 'Ghana'
   const isFeatured = chapter.member_count > 500
