@@ -33,56 +33,103 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
   const flag = getCountryFlag(rawFlag)
   const slug = chapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
 
+  const isUserChapter = userChapterName && chapter.name.toLowerCase() === userChapterName.toLowerCase()
+
   return (
-    <div className="bg-white border border-border rounded-[6px] overflow-hidden">
+    <div style={{
+      background: '#fff',
+      border: '1px solid hsl(var(--border))',
+      borderRadius: 6,
+      overflow: 'hidden',
+      fontFamily: "'Public Sans', sans-serif",
+    }}>
       {/* Header */}
-      <div
-        className="px-4 py-[14px] flex justify-between items-center"
-        style={{ background: headerBg }}
-      >
-        <div className="min-w-0">
-          <h4 className="font-['Public_Sans',sans-serif] font-extrabold text-[14px] tracking-[-0.005em] leading-tight truncate"
-            style={{ color: headerTextColor }}
-          >
+      <div style={{
+        background: headerBg,
+        padding: '14px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 8,
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <h4 style={{
+            color: headerTextColor,
+            fontWeight: 800,
+            fontSize: 14,
+            letterSpacing: '-0.005em',
+            lineHeight: 1.2,
+            margin: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
             {chapter.name}
             {flag && (
               <span className="ml-1.5 inline-flex items-center">
                 <CountryBadge flag={flag} alt={`${chapter.country} flag`} />
+                <span className="text-[8px] opacity-20 ml-1">{rawFlag}</span>
               </span>
             )}
           </h4>
-          <div
-            className="text-[9.5px] font-bold tracking-[0.06em] uppercase mt-0.5 font-['Public_Sans',sans-serif] truncate"
-            style={{ color: headerMutedColor }}
-          >
+          <div style={{
+            color: headerMutedColor,
+            fontSize: 9.5,
+            fontWeight: 700,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            marginTop: 2,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
             {regionLabel}
           </div>
         </div>
-        <span className="px-2 py-[2px] border rounded-[2px] font-['Public_Sans',sans-serif] font-extrabold text-[9px] tracking-[0.05em] uppercase shrink-0"
-          style={{ 
-            background: (isActive && !isFeatured) ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)', 
-            borderColor: (isActive && !isFeatured) ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)',
-            color: headerTextColor
-          }}
-        >
+        <span style={{
+          padding: '2px 8px',
+          border: `1px solid ${(isActive && !isFeatured) ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)'}`,
+          borderRadius: 2,
+          fontWeight: 800,
+          fontSize: 9,
+          letterSpacing: '0.05em',
+          textTransform: 'uppercase',
+          flexShrink: 0,
+          background: (isActive && !isFeatured) ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)',
+          color: headerTextColor,
+        }}>
           {badge}
         </span>
       </div>
 
       {/* Body */}
-      <div className="px-4 py-4">
+      <div style={{ padding: '16px' }}>
         {/* 3-stat grid */}
-        <div className="grid grid-cols-3 gap-2 mb-[14px]">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 14 }}>
           {[
             { v: chapter.member_count.toLocaleString(), l: 'Members' },
             { v: eventsCount, l: 'Events' },
             { v: programsCount, l: 'Programs' },
           ].map(({ v, l }) => (
             <div key={l}>
-              <div className="font-['Public_Sans',sans-serif] font-extrabold text-[18px] tracking-[-0.015em] text-on-surface tabular-nums leading-none">
+              <div style={{
+                fontWeight: 800,
+                fontSize: 18,
+                letterSpacing: '-0.015em',
+                color: 'hsl(var(--on-surface))',
+                lineHeight: 1,
+                fontVariantNumeric: 'tabular-nums',
+              }}>
                 {v}
               </div>
-              <div className="text-[9.5px] font-bold tracking-[0.05em] uppercase text-on-surface-muted mt-[2px] font-['Public_Sans',sans-serif]">
+              <div style={{
+                fontSize: 9.5,
+                fontWeight: 700,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                color: 'hsl(var(--on-surface-muted))',
+                marginTop: 2,
+              }}>
                 {l}
               </div>
             </div>
@@ -90,30 +137,75 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
         </div>
 
         {/* Leader row */}
-        <div className="flex items-center gap-[10px] pt-3 border-t border-border">
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[12px] font-bold shrink-0 border-2"
-            style={{ background: '#181d19', borderColor: 'hsl(var(--accent))' }}
-          >
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          paddingTop: 12,
+          borderTop: '1px solid hsl(var(--border))',
+        }}>
+          <div style={{
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontSize: 12,
+            fontWeight: 700,
+            flexShrink: 0,
+            background: '#181d19',
+            border: '2px solid hsl(var(--accent))',
+          }}>
             {leaderInitial}
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="font-['Public_Sans',sans-serif] font-extrabold text-[11.5px] text-on-surface truncate">
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{
+              fontWeight: 800,
+              fontSize: 11.5,
+              color: 'hsl(var(--on-surface))',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
               {leaderName}
             </div>
-            <div className="text-[10px] text-on-surface-muted font-bold font-['Public_Sans',sans-serif]">
+            <div style={{
+              fontSize: 10,
+              color: 'hsl(var(--on-surface-muted))',
+              fontWeight: 700,
+            }}>
               {leaderRole}
             </div>
           </div>
-          {userChapterName && chapter.name.toLowerCase() === userChapterName.toLowerCase() ? (
-            <span className="shrink-0 px-3 py-1.5 rounded-[4px] text-[11px] font-extrabold font-['Public_Sans',sans-serif]"
-              style={{ background: 'hsla(var(--primary), 0.08)', color: 'hsl(var(--primary))', border: '1px solid hsla(var(--primary), 0.25)' }}>
+          {isUserChapter ? (
+            <span style={{
+              flexShrink: 0,
+              padding: '6px 12px',
+              borderRadius: 4,
+              fontSize: 11,
+              fontWeight: 800,
+              background: 'hsla(var(--primary), 0.08)',
+              color: 'hsl(var(--primary))',
+              border: '1px solid hsla(var(--primary), 0.25)',
+            }}>
               Joined
             </span>
           ) : (
             <Link
               to={`/dashboard/chapters/${slug}`}
-              className="shrink-0 px-3 py-1.5 border border-border rounded-[4px] text-[11px] font-extrabold text-on-surface hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors font-['Public_Sans',sans-serif]"
+              style={{
+                flexShrink: 0,
+                padding: '6px 12px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 4,
+                fontSize: 11,
+                fontWeight: 800,
+                color: 'hsl(var(--on-surface))',
+                textDecoration: 'none',
+                display: 'inline-block',
+              }}
             >
               Join
             </Link>

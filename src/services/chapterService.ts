@@ -39,7 +39,6 @@ class ChapterService {
       .from('chapters')
       .select(`
         *,
-        countries(flag_url),
         leadership:chapter_leaders(*),
         activities:chapter_activities(*)
       `)
@@ -50,16 +49,22 @@ class ChapterService {
       return []
     }
 
+    // Fetch countries separately to ensure we get flags even if join fails
+    const { data: countriesData } = await supabase.from('countries').select('name, flag_url')
+    const countryFlagsMap = (countriesData || []).reduce((acc: Record<string, string>, curr) => {
+      if (curr.name && curr.flag_url) acc[curr.name.toLowerCase()] = curr.flag_url
+      return acc
+    }, {})
+
     return (data || []).map((c) => {
-      // Supabase join on countries might return an array or object depending on schema
-      const countryData = Array.isArray(c.countries) ? c.countries[0] : c.countries;
+      const dbFlag = countryFlagsMap[(c.country || '').toLowerCase()]
       
       return {
         id: c.id || '',
         name: c.name || 'Unknown Chapter',
         city_or_region: c.city_or_region || 'Unknown Location',
         country: c.country || 'Ghana',
-        flag_url: countryData?.flag_url || undefined,
+        flag_url: dbFlag || c.flag_url || undefined,
         leader_name: c.leader_name || 'Unassigned',
         leader_id: c.leader_id || undefined,
         member_count: c.member_count || 0,
@@ -93,7 +98,6 @@ class ChapterService {
       .from('chapters')
       .select(`
         *,
-        countries(flag_url),
         leadership:chapter_leaders(*),
         activities:chapter_activities(*)
       `)
@@ -105,12 +109,15 @@ class ChapterService {
       return null
     }
 
+    // Fetch country flag manually
+    const { data: countryData } = await supabase.from('countries').select('flag_url').eq('name', data.country).single()
+
     return {
       id: data.id,
       name: data.name,
       city_or_region: data.city_or_region,
       country: data.country || 'Ghana',
-      flag_url: data.countries?.flag_url,
+      flag_url: countryData?.flag_url || data.flag_url,
       leader_name: data.leader_name || 'Unassigned',
       member_count: data.member_count || 0,
       status: data.status,
