@@ -318,7 +318,7 @@ export default function DashboardLayout() {
                 <span className="material-symbols-outlined text-[28px]">menu</span>
               </button>
               
-              <h1 className="text-[20px] md:text-[24px] font-extrabold tracking-tight text-on-surface m-0 font-meta">
+              <h1 className="hidden md:block text-[20px] md:text-[24px] font-extrabold tracking-tight text-on-surface m-0 font-meta">
                 {getPageTitle()}
               </h1>
             </div>
