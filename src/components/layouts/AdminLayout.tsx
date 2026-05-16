@@ -502,8 +502,13 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                               {result.title}
                             </div>
                             {result.subtitle && (
-                              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
-                                {result.subtitle}
+                              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10.5, color: 'hsl(var(--on-surface-muted))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                {result.subtitle.split(' · ').map((part, i, arr) => (
+                                  <span key={i}>
+                                    {getCountryFlag(part)}
+                                    {i < arr.length - 1 && ' · '}
+                                  </span>
+                                ))}
                               </div>
                             )}
                           </div>

@@ -10,6 +10,7 @@ import type { Member } from '@/types/admin'
 import { contentService } from '@/services/contentService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
+import { getCountryFlag } from '@/lib/utils'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { supabase } from '@/lib/supabase'
 
@@ -875,8 +876,8 @@ export default function ChaptersManagement() {
                       ID: {chapter.id?.slice(0, 8) || 'N/A'}
                     </div>
                     <h4 style={{ margin: 0, fontSize: 13, fontWeight: 800, fontFamily: "'Public Sans', sans-serif", color: chapter.status === 'Active' ? '#000' : 'hsl(var(--on-surface))', lineHeight: 1.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                      {chapter.flag_url && typeof chapter.flag_url === 'string' && (
-                        <span style={{ marginRight: 6, fontSize: 16 }}>{chapter.flag_url}</span>
+                      {chapter.flag_url && (
+                        <span style={{ marginRight: 6, fontSize: 16 }}>{getCountryFlag(String(chapter.flag_url))}</span>
                       )}
                       {chapter.name}
                     </h4>
@@ -1276,7 +1277,7 @@ export default function ChaptersManagement() {
                       <option value="">Select country...</option>
                       {countries.map((c) => (
                         <option key={c.id || c.name} value={c.name}>
-                          {c.flag_url ? `${c.flag_url} ` : ''}{c.name}
+                          {c.flag_url ? `${getCountryFlag(c.flag_url)} ` : ''}{c.name}
                         </option>
                       ))}
                       {!countries.some(c => c.name === formData.country) && formData.country && (

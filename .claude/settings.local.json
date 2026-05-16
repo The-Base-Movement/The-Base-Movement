@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm audit *)",
+      "mcp__supabase__list_migrations",
+      "mcp__supabase__list_edge_functions",
+      "mcp__supabase__list_tables",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); rows=json.loads\\(data[0]['text']\\)['result']; tables={}; [tables.setdefault\\(r['table_name'],[]\\).append\\(r\\) for r in rows]; [print\\(f\\\\\"\\\\n=== {t} ===\\\\\"\\) or [print\\(f\\\\\"  {c['ordinal_position']:2}. {c['column_name']:40} {c['data_type']:30} nullable={c['is_nullable']} default={c['column_default']}\\\\\"\\) for c in cols] for t,cols in sorted\\(tables.items\\(\\)\\)]\")",
+      "Bash(python *)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}
