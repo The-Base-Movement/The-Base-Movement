@@ -286,7 +286,7 @@ export default function Donate() {
                   <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Amount (GHS)</label>
                   <div style={{ position: 'relative' }}>
                     <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 13, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}>₵</span>
-                    <input name="name-ded56b" id="input-ded56b"
+                    <input aria-label="0.00" name="name-ded56b" id="input-ded56b"
                       type="number"
                       placeholder="0.00"
                       value={formData.amount}
@@ -319,7 +319,7 @@ export default function Donate() {
 
                 <div>
                   <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>MoMo Number</label>
-                  <input name="name-4a990b" id="input-4a990b"
+                  <input aria-label="024XXXXXXX" name="name-4a990b" id="input-4a990b"
                     type="tel"
                     placeholder="024XXXXXXX"
                     value={formData.phone}

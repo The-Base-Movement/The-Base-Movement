@@ -350,7 +350,7 @@ export default function ProfileSettings() {
                 Verify your official voter registration to unlock the Patriot Ground Game badge. Your polling station data secures our election day logistics.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <input name="name-af8311" id="input-af8311"
+                <input aria-label="Polling Station Code (e.g. C021001A)" name="name-af8311" id="input-af8311"
                   type="text"
                   placeholder="Polling Station Code (e.g. C021001A)"
                   style={inputStyle}

@@ -203,7 +203,7 @@ export default function Checkout() {
               <div className="grid sm:grid-cols-2 gap-6">
                 <div className="sm:col-span-2">
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Full name</label>
-                  <input id="input-9f4084"
+                  <input aria-label="Enter your full name" id="input-9f4084"
                     type="text"
                     name="fullName"
                     required
@@ -215,7 +215,7 @@ export default function Checkout() {
                 </div>
                 <div>
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Email address</label>
-                  <input id="input-94b596"
+                  <input aria-label="email@example.com" id="input-94b596"
                     type="email"
                     name="email"
                     required
@@ -227,7 +227,7 @@ export default function Checkout() {
                 </div>
                 <div>
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Phone number</label>
-                  <input id="input-6781fb"
+                  <input aria-label="+233 00 000 0000" id="input-6781fb"
                     type="tel"
                     name="phone"
                     required
@@ -239,7 +239,7 @@ export default function Checkout() {
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">Shipping address</label>
-                  <input id="input-5705f2"
+                  <input aria-label="House Number, Street Name" id="input-5705f2"
                     type="text"
                     name="address"
                     required
@@ -266,7 +266,7 @@ export default function Checkout() {
                 {isDiaspora ? (
                   <div>
                     <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">State / Province</label>
-                    <input id="input-c53526"
+                    <input aria-label="State or Province" id="input-c53526"
                       type="text"
                       name="stateProvince"
                       value={formData.stateProvince}
@@ -354,7 +354,7 @@ export default function Checkout() {
                   </div>
                   <div className="mt-6">
                     <label className="block text-micro font-bold text-stone-900 tracking-tight mb-2">MoMo number</label>
-                    <input name="name-94ad78" id="input-94ad78"
+                    <input aria-label="Enter your mobile number" name="name-94ad78" id="input-94ad78"
                       type="tel"
                       className="w-full h-12 bg-white border-stone-200 focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)] transition-all px-4 rounded-sm text-sm"
                       placeholder="Enter your mobile number"

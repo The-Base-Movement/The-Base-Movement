@@ -156,7 +156,7 @@ export default function NewBroadcast() {
             <label style={labelStyle}>
               Broadcast title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
-            <input name="name-6d4aa4" id="input-6d4aa4"
+            <input aria-label="e.g. National registration wave" name="name-6d4aa4" id="input-6d4aa4"
               type="text"
               placeholder="e.g. National registration wave"
               style={{ ...fieldStyle, height: 44 }}

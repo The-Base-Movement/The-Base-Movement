@@ -496,7 +496,7 @@ export default function MembersList() {
         <div style={{ padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 17, color: 'hsl(var(--on-surface-muted))' }}>search</span>
-            <input name="searchTerm" id="input-0acdd0"
+            <input aria-label="Search by name, ID, phone, profession, region…" name="searchTerm" id="input-0acdd0"
               type="text"
               placeholder="Search by name, ID, phone, profession, region…"
               value={searchTerm}

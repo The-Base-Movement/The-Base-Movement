@@ -195,7 +195,7 @@ export default function PollsManagement() {
           </span>
           <div style={{ position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-            <input name="searchQuery" id="input-91cd45" style={{ ...inputSt, paddingLeft: 34, width: 210, height: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            <input aria-label="Search polls…" name="searchQuery" id="input-91cd45" style={{ ...inputSt, paddingLeft: 34, width: 210, height: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
           </div>
         </div>
         <div style={{ overflowX: 'auto' }}>
@@ -277,7 +277,7 @@ export default function PollsManagement() {
         <div className="panel">
           <div style={{ padding: 12, position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 22, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-            <input name="searchQuery" id="input-2d822f" style={{ ...inputSt, paddingLeft: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            <input aria-label="Search polls…" name="searchQuery" id="input-2d822f" style={{ ...inputSt, paddingLeft: 34 }} placeholder="Search polls…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
           </div>
         </div>
         {isLoading ? (
@@ -404,7 +404,7 @@ export default function PollsManagement() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
                       <label style={labelSt}>Campaign question / topic</label>
-                      <input name="name-1e5a1f" id="input-1e5a1f" style={inputSt} required placeholder="e.g. Should we increase regional chapter funding?" value={newPoll.question} onChange={e => setNewPoll({ ...newPoll, question: e.target.value })} />
+                      <input aria-label="e.g. Should we increase regional chapter funding?" name="name-1e5a1f" id="input-1e5a1f" style={inputSt} required placeholder="e.g. Should we increase regional chapter funding?" value={newPoll.question} onChange={e => setNewPoll({ ...newPoll, question: e.target.value })} />
                     </div>
                     <div>
                       <label style={labelSt}>Target Audience Base</label>

@@ -142,7 +142,7 @@ export default function DeployMission() {
                 <label style={labelStyle}>
                   Mission title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
-                <input name="name-81c63d" id="input-81c63d"
+                <input aria-label="e.g. Operation Doorstep Blitz — Lapaz Central" name="name-81c63d" id="input-81c63d"
                   type="text"
                   placeholder="e.g. Operation Doorstep Blitz — Lapaz Central"
                   style={{ ...fieldStyle, height: 44 }}
@@ -229,7 +229,7 @@ export default function DeployMission() {
               {/* Description */}
               <div>
                 <label style={labelStyle}>Mission objective &amp; field instructions</label>
-                <textarea name="name-ab3220" id="textarea-ab3220"
+                <textarea aria-label="Provide clear tactical objectives for canvassers in the field" name="name-ab3220" id="textarea-ab3220"
                   rows={4}
                   placeholder="Provide clear tactical objectives for canvassers in the field..."
                   style={{ ...fieldStyle, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }}

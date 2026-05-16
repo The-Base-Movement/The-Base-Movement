@@ -265,7 +265,7 @@ export default function FieldDirectives() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div>
                   <label style={labelSt}>Directive title</label>
-                  <input name="name-89795e" id="input-89795e" style={inputSt} placeholder="e.g. Regional Flyer Blitz" value={newDirective.title} onChange={e => setNewDirective({ ...newDirective, title: e.target.value })} />
+                  <input aria-label="e.g. Regional Flyer Blitz" name="name-89795e" id="input-89795e" style={inputSt} placeholder="e.g. Regional Flyer Blitz" value={newDirective.title} onChange={e => setNewDirective({ ...newDirective, title: e.target.value })} />
                 </div>
                 <div>
                   <label style={labelSt}>Target level</label>
@@ -278,7 +278,7 @@ export default function FieldDirectives() {
               </div>
               <div>
                 <label style={labelSt}>Objective description</label>
-                <textarea name="name-f70a7b" id="textarea-f70a7b"
+                <textarea aria-label="Describe the tactical goal for field agents…" name="name-f70a7b" id="textarea-f70a7b"
                   style={{ ...inputSt, height: 100, padding: '10px 12px', resize: 'none', lineHeight: 1.6 }}
                   placeholder="Describe the tactical goal for field agents…"
                   value={newDirective.description}

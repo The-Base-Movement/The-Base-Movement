@@ -329,7 +329,7 @@ export default function DashboardLayout() {
               {/* Search — desktop only */}
               <div className="hidden lg:block" style={{ position: 'relative' }}>
                 <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4, pointerEvents: 'none' }}>search</span>
-                <input name="name-bd4fad" id="input-bd4fad"
+                <input aria-label="Search the movement…" name="name-bd4fad" id="input-bd4fad"
                   type="text"
                   placeholder="Search the movement…"
                   style={{ width: 240, height: 36, paddingLeft: 34, paddingRight: 14, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}

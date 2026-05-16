@@ -140,12 +140,12 @@ export default function Chapters() {
                     <label style={labelSt}>Chapter location / country</label>
                     <div style={{ position: 'relative' }}>
                       <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>location_on</span>
-                      <input name="chapterLocation" id="input-c66f5d" required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} style={{ ...inputSt, paddingLeft: 32 }} />
+                      <input aria-label="e.g. Kumasi, Ashanti Region or London, UK" name="chapterLocation" id="input-c66f5d" required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} style={{ ...inputSt, paddingLeft: 32 }} />
                     </div>
                   </div>
                   <div>
                     <label style={labelSt}>Why start a chapter here?</label>
-                    <textarea name="chapterDescription" id="textarea-3c577c" required rows={4} placeholder="Describe local interest and your vision for organizing this hub…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }} />
+                    <textarea aria-label="Describe local interest and your vision for organizing this hub…" name="chapterDescription" id="textarea-3c577c" required rows={4} placeholder="Describe local interest and your vision for organizing this hub…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }} />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid hsl(var(--border))' }}>
                     <button type="button" className="btn btn-outline btn-sm" onClick={() => setIsRequestModalOpen(false)}>Cancel</button>
@@ -274,7 +274,7 @@ export default function Chapters() {
             <label className="text-micro font-medium text-stone-900 mb-3 block">Search hubs</label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" style={{ fontSize: 16 }}>search</span>
-              <input name="searchTerm" id="input-caa685" placeholder="Search by city, name..." className="w-full pl-10 h-11 bg-stone-50 border border-stone-200 rounded-none focus:outline-none focus:border-brand-green font-medium text-xs" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+              <input aria-label="Search by city, name" name="searchTerm" id="input-caa685" placeholder="Search by city, name..." className="w-full pl-10 h-11 bg-stone-50 border border-stone-200 rounded-none focus:outline-none focus:border-brand-green font-medium text-xs" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
             </div>
           </div>
           <div>
@@ -410,12 +410,12 @@ export default function Chapters() {
                   <label className="text-micro font-medium text-stone-400">Chapter location / country</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" style={{ fontSize: 16 }}>location_on</span>
-                    <input name="chapterLocation" id="input-53d016" required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} className="w-full pl-10 h-12 bg-stone-50 border border-stone-200 font-medium text-sm outline-none focus:border-brand-green" />
+                    <input aria-label="e.g. Kumasi, Ashanti Region or London, UK" name="chapterLocation" id="input-53d016" required placeholder="e.g. Kumasi, Ashanti Region or London, UK" value={chapterLocation} onChange={e => setChapterLocation(e.target.value)} className="w-full pl-10 h-12 bg-stone-50 border border-stone-200 font-medium text-sm outline-none focus:border-brand-green" />
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-micro font-medium text-stone-400">Why start a chapter here?</label>
-                  <textarea name="chapterDescription" id="textarea-7ec95d" required placeholder="Describe local interest and your vision…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} className="w-full min-h-[120px] bg-stone-50 border border-stone-200 font-medium text-sm p-4 outline-none focus:border-brand-green resize-none" />
+                  <textarea aria-label="Describe local interest and your vision…" name="chapterDescription" id="textarea-7ec95d" required placeholder="Describe local interest and your vision…" value={chapterDescription} onChange={e => setChapterDescription(e.target.value)} className="w-full min-h-[120px] bg-stone-50 border border-stone-200 font-medium text-sm p-4 outline-none focus:border-brand-green resize-none" />
                 </div>
                 <div className="flex justify-end gap-3 pt-4">
                   <button type="button" onClick={() => setIsRequestModalOpen(false)} className="px-4 h-12 text-stone-400 text-xs font-bold border border-stone-200 bg-white cursor-pointer hover:bg-stone-50">Cancel</button>
@@ -449,7 +449,7 @@ function DashboardFilterControls({ searchTerm, setSearchTerm, activeTab, setActi
       {/* Search */}
       <div style={{ position: 'relative' }}>
         <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-        <input name="searchTerm" id="input-db9159" type="text" placeholder="Search chapters…" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ width: '100%', height: 40, paddingLeft: 32, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }} />
+        <input aria-label="Search chapters…" name="searchTerm" id="input-db9159" type="text" placeholder="Search chapters…" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ width: '100%', height: 40, paddingLeft: 32, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, borderRadius: 4, color: 'hsl(var(--on-surface))', boxSizing: 'border-box' }} />
       </div>
 
       {/* Network */}

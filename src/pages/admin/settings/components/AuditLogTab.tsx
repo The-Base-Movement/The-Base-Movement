@@ -56,7 +56,7 @@ export function AuditLogTab({
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, padding: '12px 20px', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))' }}>
         <div style={{ position: 'relative', flex: 1, minWidth: 180 }}>
           <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-          <input name="auditSearch" id="input-7ba91a"
+          <input aria-label="Search by action or resource…" name="auditSearch" id="input-7ba91a"
             placeholder="Search by action or resource…"
             value={auditSearch}
             onChange={e => setAuditSearch(e.target.value)}

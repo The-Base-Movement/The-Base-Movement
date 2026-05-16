@@ -186,7 +186,7 @@ export default function StrategicPriorities() {
                 <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Search priorities</label>
                 <div style={{ position: 'relative' }}>
                   <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-                  <input name="searchQuery" id="input-09c328" 
+                  <input aria-label="Keywords" name="searchQuery" id="input-09c328" 
                     placeholder="Keywords..." 
                     style={{ width: '100%', height: 38, paddingLeft: 34, paddingRight: 12, border: '1px solid hsl(var(--border))', background: 'hsl(var(--container-low))', borderRadius: 4, outline: 'none', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, boxSizing: 'border-box', color: 'hsl(var(--on-surface))' }}
                     value={searchQuery}
@@ -352,7 +352,7 @@ export default function StrategicPriorities() {
               <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 24, maxHeight: '60vh', overflowY: 'auto' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Priority Title</label>
-                  <input name="name-afc280" id="input-afc280" 
+                  <input aria-label="e.g. Ashanti Region Media Blitz" name="name-afc280" id="input-afc280" 
                     type="text" 
                     required
                     placeholder="e.g. Ashanti Region Media Blitz" 
@@ -364,7 +364,7 @@ export default function StrategicPriorities() {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Mission Description</label>
-                  <textarea name="name-e67af7" id="textarea-e67af7" 
+                  <textarea aria-label="Define the scope and impact of this priority" name="name-e67af7" id="textarea-e67af7" 
                     rows={3} 
                     required
                     placeholder="Define the scope and impact of this priority..." 
@@ -411,7 +411,7 @@ export default function StrategicPriorities() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <label style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'hsl(var(--on-surface-muted))' }}>Visual URL (Optional)</label>
-                    <input name="name-195764" id="input-195764" 
+                    <input aria-label="https://" name="name-195764" id="input-195764" 
                       type="url" 
                       placeholder="https://..." 
                       style={{ width: '100%', height: 48, background: 'hsl(var(--container-low))', border: 'none', borderBottom: '2px solid hsl(var(--border))', padding: '0 16px', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, outline: 'none', color: 'hsl(var(--on-surface))' }}

@@ -120,7 +120,7 @@ export default function Administrators() {
         <div style={{ padding: '14px 20px' }}>
           <div style={{ position: 'relative', maxWidth: 400 }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-            <input name="searchTerm" id="input-2deddd"
+            <input aria-label="Filter by name, ID or role…" name="searchTerm" id="input-2deddd"
               type="text"
               placeholder="Filter by name, ID or role…"
               value={searchTerm}

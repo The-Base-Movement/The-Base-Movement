@@ -134,7 +134,7 @@ export function ProductInfo({
               <span className="text-micro font-bold text-brand-green bg-brand-green/10 px-2 py-0.5">Free</span>
             </div>
             <div className="relative">
-              <input name="customizationText" id="input-3cf7f8"
+              <input aria-label="Enter your constituency or name" name="customizationText" id="input-3cf7f8"
                 type="text"
                 placeholder="Enter your constituency or name..."
                 value={customizationText}

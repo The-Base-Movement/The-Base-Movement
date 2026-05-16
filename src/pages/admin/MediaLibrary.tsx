@@ -151,7 +151,7 @@ export default function MediaLibrary() {
             </div>
             <div style={{ padding: 12, position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 22, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-              <input name="searchQuery" id="input-bb03eb"
+              <input aria-label="Search your assets…" name="searchQuery" id="input-bb03eb"
                 placeholder="Search your assets…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

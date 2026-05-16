@@ -255,7 +255,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       Full name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
-                    <input name="name-efc762" id="input-efc762"
+                    <input aria-label="As it appears on official ID" name="name-efc762" id="input-efc762"
                       placeholder="As it appears on official ID"
                       required
                       value={formData.fullName}
@@ -333,7 +333,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                             <option key={code} value={code}>{code}</option>
                           ))}
                         </select>
-                        <input name="name-109f3c" id="input-109f3c"
+                        <input aria-label="Phone number" name="name-109f3c" id="input-109f3c"
                           type="tel"
                           placeholder="Phone number"
                           required
@@ -354,7 +354,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       Account password <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
                     <div style={{ position: 'relative' }}>
-                      <input name="name-ec50d2" id="input-ec50d2"
+                      <input aria-label="Minimum 6 characters" name="name-ec50d2" id="input-ec50d2"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Minimum 6 characters"
                         required
@@ -436,7 +436,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       Residential address <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
-                    <input name="name-f8cc39" id="input-f8cc39"
+                    <input aria-label="Street, House Number, City" name="name-f8cc39" id="input-f8cc39"
                       placeholder="Street, House Number, City"
                       required
                       value={formData.residentialAddress}
@@ -501,7 +501,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                         <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                           Assigned chapter <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                         </label>
-                        <input name="name-4d1480" id="input-4d1480"
+                        <input aria-label="E.g. UK Chapter - London" name="name-4d1480" id="input-4d1480"
                           placeholder="E.g. UK Chapter - London"
                           required
                           value={formData.chapter}
@@ -529,7 +529,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                     <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       Emergency contact name <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                     </label>
-                    <input name="name-6a8f94" id="input-6a8f94"
+                    <input aria-label="Full Name" name="name-6a8f94" id="input-6a8f94"
                       placeholder="Full Name"
                       required
                       value={formData.emergencyContactName}
@@ -547,7 +547,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Relationship <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <input name="name-6df3eb" id="input-6df3eb"
+                      <input aria-label="E.g. Spouse, Parent, Brother" name="name-6df3eb" id="input-6df3eb"
                         placeholder="E.g. Spouse, Parent, Brother"
                         required
                         value={formData.emergencyRelationship}
@@ -563,7 +563,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Emergency contact number <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <input name="name-434c82" id="input-434c82"
+                      <input aria-label="Phone number" name="name-434c82" id="input-434c82"
                         type="tel"
                         placeholder="Phone number"
                         required
@@ -583,7 +583,7 @@ export default function RegistrationForm({ onClose, onSuccess, onSubmitData }: R
                       <label style={{ fontSize: '10px', fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Profession / occupation <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                       </label>
-                      <input name="name-fcf881" id="input-fcf881"
+                      <input aria-label="E.g. Teacher, Nurse, Student" name="name-fcf881" id="input-fcf881"
                         placeholder="E.g. Teacher, Nurse, Student"
                         required
                         value={formData.profession}

@@ -422,7 +422,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
                 className="material-symbols-outlined"
                 style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none', zIndex: 1 }}
               >search</span>
-              <input name="searchQuery" id="input-5b759c"
+              <input aria-label="Search command center…" name="searchQuery" id="input-5b759c"
                 type="text"
                 placeholder="Search command center…"
                 value={searchQuery}

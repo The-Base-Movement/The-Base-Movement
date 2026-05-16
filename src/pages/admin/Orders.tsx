@@ -206,7 +206,7 @@ export default function AdminOrders() {
             <div className="desktop-only flex items-center gap-2">
               <div className="relative">
                 <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-                <input name="search" id="input-3a7bb6"
+                <input aria-label="Search manifest" name="search" id="input-3a7bb6"
                   type="text"
                   placeholder="Search manifest..."
                   value={search}
@@ -232,7 +232,7 @@ export default function AdminOrders() {
           <div className="mobile-only" style={{ padding: '10px 14px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: 8, background: 'hsl(var(--container-low))' }}>
             <div style={{ position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}>search</span>
-              <input name="search" id="input-b2d7a3" 
+              <input aria-label="Search manifest" name="search" id="input-b2d7a3" 
                 type="text"
                 placeholder="Search manifest..."
                 value={search}

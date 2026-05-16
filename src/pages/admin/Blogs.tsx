@@ -335,7 +335,7 @@ export default function AdminBlogs() {
               <div style={{ padding: '10px 12px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', gap: 6 }}>
                 <div style={{ position: 'relative', flex: 1 }}>
                   <span className="material-symbols-outlined" style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-                  <input name="mediaSearch" id="input-9b2cec"
+                  <input aria-label="Search…" name="mediaSearch" id="input-9b2cec"
                     placeholder="Search…"
                     value={mediaSearch}
                     onChange={e => setMediaSearch(e.target.value)}
@@ -438,13 +438,13 @@ export default function AdminBlogs() {
 
                     {/* Title + excerpt */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}>
-                      <textarea name="name-159e76" id="textarea-159e76"
+                      <textarea aria-label="Article Title…" name="name-159e76" id="textarea-159e76"
                         placeholder="Article Title…"
                         style={{ width: '100%', fontSize: 36, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1, outline: 'none', border: 'none', background: 'transparent', resize: 'none', minHeight: 80, color: 'hsl(var(--on-surface))' }}
                         value={formData.title}
                         onChange={e => setFormData({ ...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '') })}
                       />
-                      <textarea name="name-08e458" id="textarea-08e458"
+                      <textarea aria-label="Compelling opening hook or summary…" name="name-08e458" id="textarea-08e458"
                         placeholder="Compelling opening hook or summary…"
                         style={{ width: '100%', fontSize: 17, fontFamily: "'Public Sans', sans-serif", fontWeight: 500, lineHeight: 1.65, outline: 'none', border: 'none', background: 'transparent', resize: 'none', minHeight: 70, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic' }}
                         value={formData.excerpt}
@@ -537,7 +537,7 @@ export default function AdminBlogs() {
                     </span>
                   ))}
                 </div>
-                <input name="name-bfbda3" id="input-bfbda3"
+                <input aria-label="Type and press Enter…" name="name-bfbda3" id="input-bfbda3"
                   placeholder="Type and press Enter…"
                   style={{ width: '100%', height: 32, padding: '0 10px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
                   onKeyDown={e => {
@@ -804,7 +804,7 @@ export default function AdminBlogs() {
               <label style={labelSt}>Search feed</label>
               <div style={{ position: 'relative' }}>
                 <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-                <input name="searchQuery" id="input-bbba95"
+                <input aria-label="Keywords…" name="searchQuery" id="input-bbba95"
                   type="text" placeholder="Keywords…"
                   value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                   style={{ ...selectSt, paddingLeft: 34 }}

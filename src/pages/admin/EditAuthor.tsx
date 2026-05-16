@@ -236,7 +236,7 @@ export default function AdminEditAuthor() {
                 {!selectedMember ? (
                   <div style={{ position: 'relative' }}>
                     <span className="material-symbols-outlined" style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', fontSize: 20, color: 'hsl(var(--on-surface-muted))', opacity: 0.3 }}>search</span>
-                    <input name="memberSearchQuery" id="input-7e0767" 
+                    <input aria-label="Identify movement personnel by name or ID" name="memberSearchQuery" id="input-7e0767" 
                       placeholder="Identify movement personnel by name or ID..." 
                       style={{ width: '100%', height: 48, paddingLeft: 48, paddingRight: 16, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 13, fontWeight: 700, outline: 'none' }}
                       value={memberSearchQuery}
@@ -310,7 +310,7 @@ export default function AdminEditAuthor() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <label className="field-label">Full Professional Name</label>
-                  <input name="name-1fdab6" id="input-1fdab6" 
+                  <input aria-label="e.g. Kwame Patriot" name="name-1fdab6" id="input-1fdab6" 
                     placeholder="e.g. Kwame Patriot"
                     value={formData.name || ''}
                     onChange={handleNameChange}
@@ -321,7 +321,7 @@ export default function AdminEditAuthor() {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <label className="field-label">Tactical Slug</label>
-                  <input name="name-11fe1a" id="input-11fe1a" 
+                  <input aria-label="kwame-patriot" name="name-11fe1a" id="input-11fe1a" 
                     placeholder="kwame-patriot"
                     value={formData.slug || ''}
                     onChange={(e) => setFormData({...formData, slug: e.target.value})}
@@ -334,7 +334,7 @@ export default function AdminEditAuthor() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <label className="field-label">Official Title / Authorization Role</label>
-                <input name="name-72ccb2" id="input-72ccb2" 
+                <input aria-label="e.g. Senior Regional Correspondent" name="name-72ccb2" id="input-72ccb2" 
                   placeholder="e.g. Senior Regional Correspondent"
                   value={formData.role || ''}
                   onChange={(e) => setFormData({...formData, role: e.target.value})}
@@ -344,7 +344,7 @@ export default function AdminEditAuthor() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <label className="field-label">Professional Biography</label>
-                <textarea name="name-8cff23" id="textarea-8cff23" 
+                <textarea aria-label="Provide a comprehensive biography detailing editorial history and movement contributions" name="name-8cff23" id="textarea-8cff23" 
                   placeholder="Provide a comprehensive biography detailing editorial history and movement contributions..."
                   value={formData.bio || ''}
                   onChange={(e) => setFormData({...formData, bio: e.target.value})}
@@ -387,7 +387,7 @@ export default function AdminEditAuthor() {
               <div className="space-y-4">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <label className="field-label">Portrait Resource URI</label>
-                  <input name="name-0b7bed" id="input-0b7bed" 
+                  <input aria-label="https://" name="name-0b7bed" id="input-0b7bed" 
                     placeholder="https://..."
                     value={formData.imageUrl || ''}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}

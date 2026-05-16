@@ -236,7 +236,7 @@ export function MobilizationProtocol({
               <label htmlFor="fullName" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                 identification <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
-              <input name="name-01ce78" 
+              <input aria-label="Legal full name" name="name-01ce78" 
                 id="fullName" 
                 placeholder="Legal full name" 
                 required 
@@ -263,7 +263,7 @@ export function MobilizationProtocol({
               <label htmlFor="phone" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                 contact line <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
               </label>
-              <input name="name-ff548e" 
+              <input aria-label="+233 xx xxx xxxx" name="name-ff548e" 
                 id="phone" 
                 placeholder="+233 xx xxx xxxx" 
                 required 
@@ -291,7 +291,7 @@ export function MobilizationProtocol({
                 <label htmlFor="amount" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                   Amount (₵) <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
                 </label>
-                <input name="name-6790e5" 
+                <input aria-label="0.00" name="name-6790e5" 
                   id="amount" 
                   type="number" 
                   placeholder="0.00" 
@@ -441,7 +441,7 @@ export function MobilizationProtocol({
                   <label htmlFor="membershipNumber" style={{ fontSize: 10.5, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Public Sans', sans-serif" }}>
                     movement id
                   </label>
-                  <input name="name-915196" 
+                  <input aria-label="gh-2028-xxxxxx" name="name-915196" 
                     id="membershipNumber" 
                     placeholder="gh-2028-xxxxxx" 
                     value={formData.membershipNumber}

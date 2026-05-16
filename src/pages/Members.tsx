@@ -411,7 +411,7 @@ function FilterControls({
       {/* Search */}
       <div style={{ position: 'relative' }}>
         <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-        <input name="search" id="input-7a47f3"
+        <input aria-label="Search by name or profession…" name="search" id="input-7a47f3"
           type="text"
           placeholder="Search by name or profession…"
           value={search}

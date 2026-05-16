@@ -138,7 +138,7 @@ export default function RoadmapManagement() {
           </div>
           <div style={{ position: 'relative' }}>
             <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-            <input name="searchQuery" id="input-1c539d"
+            <input aria-label="Search milestones…" name="searchQuery" id="input-1c539d"
               placeholder="Search milestones…"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -238,7 +238,7 @@ export default function RoadmapManagement() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
                     <label style={labelSt}>Objective title</label>
-                    <input name="name-781ac1" id="input-781ac1" required style={inputSt} placeholder="e.g. National Logistics Hub" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
+                    <input aria-label="e.g. National Logistics Hub" name="name-781ac1" id="input-781ac1" required style={inputSt} placeholder="e.g. National Logistics Hub" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                   </div>
                   <div>
                     <label style={labelSt}>Strategic category</label>
@@ -256,7 +256,7 @@ export default function RoadmapManagement() {
                   </div>
                   <div>
                     <label style={labelSt}>Target member count</label>
-                    <input name="name-d35a6f" id="input-d35a6f" type="number" style={inputSt} placeholder="0" value={formData.target_members} onChange={e => setFormData({ ...formData, target_members: parseInt(e.target.value) || 0 })} />
+                    <input aria-label="0" name="name-d35a6f" id="input-d35a6f" type="number" style={inputSt} placeholder="0" value={formData.target_members} onChange={e => setFormData({ ...formData, target_members: parseInt(e.target.value) || 0 })} />
                   </div>
                 </div>
                 {/* Right */}
@@ -279,7 +279,7 @@ export default function RoadmapManagement() {
                   </div>
                   <div>
                     <label style={labelSt}>Objective description</label>
-                    <textarea name="name-90ba7c" id="textarea-90ba7c" required rows={5} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.6 }} placeholder="Detailed breakdown of the milestone…" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                    <textarea aria-label="Detailed breakdown of the milestone…" name="name-90ba7c" id="textarea-90ba7c" required rows={5} style={{ ...inputSt, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.6 }} placeholder="Detailed breakdown of the milestone…" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                   </div>
                 </div>
               </div>

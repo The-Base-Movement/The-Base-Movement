@@ -94,7 +94,7 @@ export default function Broadcasts() {
             </div>
             <div style={{ position: 'relative' }}>
               <span className="material-symbols-outlined" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', pointerEvents: 'none' }}>search</span>
-              <input name="searchQuery" id="input-ee6569"
+              <input aria-label="Search broadcasts…" name="searchQuery" id="input-ee6569"
                 type="text"
                 placeholder="Search broadcasts…"
                 value={searchQuery}
