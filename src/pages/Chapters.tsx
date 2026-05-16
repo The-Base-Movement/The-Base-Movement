@@ -264,7 +264,7 @@ export default function Chapters() {
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
-                {paginatedChapters.map(chapter => (
+                {paginatedChapters.filter(c => !!c && !!c.id).map(chapter => (
                   <ChapterCard key={chapter.id} chapter={chapter} userChapterName={userChapterName} />
                 ))}
               </div>
@@ -388,7 +388,7 @@ export default function Chapters() {
           <aside className="hidden lg:block lg:w-[320px] shrink-0 sticky top-0 self-start"><FilterSection /></aside>
           <div className="flex-1">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {paginatedChapters.map(chapter => <ChapterCard key={chapter.id} chapter={chapter} userChapterName={userChapterName} />)}
+              {paginatedChapters.filter(c => !!c && !!c.id).map(chapter => <ChapterCard key={chapter.id} chapter={chapter} userChapterName={userChapterName} />)}
             </div>
             {totalPages > 1 && (
               <div className="mt-12 pt-12 border-t border-stone-100 flex items-center justify-center gap-1">

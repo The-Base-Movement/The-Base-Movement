@@ -10,8 +10,8 @@ export function cn(...inputs: ClassValue[]) {
  * Converts a 2-letter ISO country code or country name to an emoji flag or a Flagcdn URL.
  * If the input is not recognized, it returns the input as-is.
  */
-export function getCountryFlag(flagOrCode: string | null | undefined, asEmoji: boolean = false): string {
-  if (!flagOrCode) return ''
+export function getCountryFlag(flagOrCode: any, asEmoji: boolean = false): string {
+  if (!flagOrCode || typeof flagOrCode !== 'string') return ''
   
   const code = flagOrCode.trim()
   

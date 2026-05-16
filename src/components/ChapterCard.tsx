@@ -9,6 +9,8 @@ interface ChapterCardProps {
 }
 
 export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
+  if (!chapter) return null
+
   const isActive = (chapter.status as string) === 'Active' || (chapter.status as string) === 'Member'
   const isDiaspora = chapter.country !== 'Ghana'
   const isFeatured = chapter.member_count > 500
