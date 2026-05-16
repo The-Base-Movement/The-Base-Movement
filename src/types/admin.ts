@@ -612,8 +612,10 @@ export interface Notification {
 }
 
 export interface Country {
+  id: string | number
   name: string
-  code: string
+  dialing_code: string
+  is_diaspora: boolean
 }
 
 export interface BlogPost {

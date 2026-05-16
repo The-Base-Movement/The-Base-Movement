@@ -4,6 +4,23 @@ import { adminService } from '@/services/adminService'
 import type { ChapterApplication } from '@/services/adminService'
 import type { Member, Chapter } from '@/types/admin'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
+
+interface AppointedLeader {
+  id: string
+  chapter_name: string
+  leader_name: string
+  leader_id: string | null
+  avatar_url: string | null
+  registration_number: string | null
+  phone_number: string | null
+  status: string | null
+  platform: string | null
+  region: string | null
+  constituency: string | null
+  country: string | null
+  profession: string | null
+}
 
 export default function LeadershipHub() {
   const [applications, setApplications] = useState<ChapterApplication[]>([])
@@ -19,6 +36,9 @@ export default function LeadershipHub() {
   const [appointRole, setAppointRole] = useState('Chapter Leader')
   const [isAppointing, setIsAppointing] = useState(false)
   const [appointLoading, setAppointLoading] = useState(false)
+  const [allLeaders, setAllLeaders] = useState<AppointedLeader[]>([])
+  const [leadersSearch, setLeadersSearch] = useState('')
+  const [viewLeader, setViewLeader] = useState<AppointedLeader | null>(null)
 
   const fetchApplications = useCallback(async (silent = false) => {
     if (!silent) setIsLoading(true)
@@ -27,17 +47,57 @@ export default function LeadershipHub() {
       setApplications(data)
     } catch (err) {
       console.error('[LEADERSHIP] Failed to fetch applications:', err)
-      toast.error("Sync failed", {
-        description: "Could not synchronize chapter applications.",
-      })
+      toast.error("Sync failed", { description: "Could not synchronize chapter applications." })
     } finally {
       setIsLoading(false)
     }
   }, [])
 
+  const fetchAllLeaders = useCallback(async () => {
+    const { data: chapters } = await supabase
+      .from('chapters')
+      .select('id, name, leader_name, leader_id')
+      .not('leader_name', 'is', null)
+      .neq('leader_name', 'Unassigned')
+      .order('name', { ascending: true })
+    if (!chapters) return
+
+    const leaderIds = chapters.filter(c => c.leader_id).map(c => c.leader_id as string)
+    const userMap: Record<string, { avatar_url: string | null; registration_number: string | null; phone_number: string | null; status: string | null; platform: string | null; region: string | null; constituency: string | null; country: string | null; profession: string | null }> = {}
+
+    if (leaderIds.length > 0) {
+      const { data: users } = await supabase
+        .from('users')
+        .select('id, avatar_url, registration_number, phone_number, status, platform, region, constituency, country, profession')
+        .in('id', leaderIds)
+      for (const u of users || []) userMap[u.id] = u
+    }
+
+    setAllLeaders(
+      chapters
+        .filter(c => c.leader_name)
+        .map(c => ({
+          id: c.id,
+          chapter_name: c.name,
+          leader_name: c.leader_name,
+          leader_id: c.leader_id,
+          avatar_url: c.leader_id ? (userMap[c.leader_id]?.avatar_url ?? null) : null,
+          registration_number: c.leader_id ? (userMap[c.leader_id]?.registration_number ?? null) : null,
+          phone_number: c.leader_id ? (userMap[c.leader_id]?.phone_number ?? null) : null,
+          status: c.leader_id ? (userMap[c.leader_id]?.status ?? null) : null,
+          platform: c.leader_id ? (userMap[c.leader_id]?.platform ?? null) : null,
+          region: c.leader_id ? (userMap[c.leader_id]?.region ?? null) : null,
+          constituency: c.leader_id ? (userMap[c.leader_id]?.constituency ?? null) : null,
+          country: c.leader_id ? (userMap[c.leader_id]?.country ?? null) : null,
+          profession: c.leader_id ? (userMap[c.leader_id]?.profession ?? null) : null,
+        }))
+    )
+  }, [])
+
   useEffect(() => {
     fetchApplications()
-  }, [fetchApplications])
+    fetchAllLeaders()
+  }, [fetchApplications, fetchAllLeaders])
 
   const handleApprove = async (id: string, name: string) => {
     try {
@@ -128,9 +188,16 @@ export default function LeadershipHub() {
         ...(appointRole === 'Chapter Leader' ? { status: 'Active' } : {}),
       })
       if (success) {
+        await supabase.from('chapter_leaders').insert({
+          chapter_id: selectedChapterId,
+          name: selectedMember.name,
+          role: appointRole,
+          image_url: selectedMember.avatarUrl || null,
+        })
         toast.success(`${selectedMember.name} appointed as ${appointRole}`)
         setAppointModal(false)
         fetchApplications(true)
+        fetchAllLeaders()
       } else {
         toast.error('Appointment failed — chapter may not have write permission')
       }
@@ -360,7 +427,7 @@ export default function LeadershipHub() {
                   {/* Member search + list */}
                   <div>
                     <label htmlFor="appoint-member-search" style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Select member</label>
-                    <input
+                    <input aria-label="Search by name, region, reg. ID, or phone…"
                       id="appoint-member-search"
                       name="appointSearch"
                       type="text"
@@ -494,6 +561,102 @@ export default function LeadershipHub() {
       )}
 
       {/* Vision & Strategy Section */}
+      {/* ── All Appointed Leaders ──────────────────────── */}
+      <div className="panel" style={{ padding: 0, overflow: 'hidden', marginTop: 24 }}>
+        <div style={{ padding: '18px 24px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <div>
+            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 10, textTransform: 'uppercase', color: 'hsl(var(--on-surface))' }}>Appointed chapter officers</span>
+            <p style={{ margin: '4px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 9, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>All leaders registered across chapters</p>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 15, color: 'hsl(var(--on-surface-muted))', opacity: 0.4, pointerEvents: 'none' }}>search</span>
+            <input
+              type="text"
+              placeholder="Search leaders…"
+              value={leadersSearch}
+              onChange={e => setLeadersSearch(e.target.value)}
+              style={{ height: 36, paddingLeft: 32, paddingRight: 12, border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 12, fontFamily: "'Public Sans', sans-serif", fontWeight: 600, outline: 'none', background: 'hsl(var(--container-low))', width: 220, boxSizing: 'border-box' }}
+            />
+          </div>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead style={{ background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
+              <tr>
+                {['Officer', 'Chapter', 'Phone', 'Actions'].map(h => (
+                  <th key={h} style={{ padding: '11px 24px', textAlign: 'left', fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(() => {
+                const q = leadersSearch.toLowerCase()
+                const filtered = allLeaders.filter(l =>
+                  !q ||
+                  l.leader_name.toLowerCase().includes(q) ||
+                  l.chapter_name.toLowerCase().includes(q) ||
+                  (l.registration_number || '').toLowerCase().includes(q) ||
+                  (l.phone_number || '').toLowerCase().includes(q)
+                )
+                if (filtered.length === 0) return (
+                  <tr>
+                    <td colSpan={4} style={{ padding: '48px 24px', textAlign: 'center', fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
+                      {allLeaders.length === 0 ? 'No leaders have been appointed yet.' : 'No officers match your search.'}
+                    </td>
+                  </tr>
+                )
+                return filtered.map(l => (
+                  <tr key={l.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                    <td style={{ padding: '14px 24px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: 4, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 12, flexShrink: 0, overflow: 'hidden', color: 'hsl(var(--on-surface))' }}>
+                          {l.avatar_url
+                            ? <img src={l.avatar_url} alt={l.leader_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            : l.leader_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)
+                          }
+                        </div>
+                        <div>
+                          <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>{l.leader_name}</p>
+                          {l.registration_number && <p style={{ margin: '2px 0 0', fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>{l.registration_number}</p>}
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding: '14px 24px', fontSize: 13, fontWeight: 700, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>
+                      {l.chapter_name}
+                    </td>
+                    <td style={{ padding: '14px 24px', fontSize: 12, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
+                      {l.phone_number || '—'}
+                    </td>
+                    <td style={{ padding: '14px 24px' }}>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button className="btn btn-outline btn-sm" onClick={() => setViewLeader(l)}>
+                          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>person</span>
+                          View
+                        </button>
+                        <button
+                          className="btn btn-dest btn-sm"
+                          onClick={async () => {
+                            const { error } = await supabase
+                              .from('chapters')
+                              .update({ leader_name: 'Unassigned', leader_id: null })
+                              .eq('id', l.id)
+                            if (error) { toast.error('Failed to remove officer.'); return }
+                            setAllLeaders(prev => prev.filter(x => x.id !== l.id))
+                            toast.success(`${l.leader_name} removed from ${l.chapter_name}.`)
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              })()}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {filteredApps.some((a: ChapterApplication) => a.status === 'Pending') && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginTop: 24 }}>
           {filteredApps.filter((a: ChapterApplication) => a.status === 'Pending').slice(0, 2).map((app: ChapterApplication) => (
@@ -508,6 +671,59 @@ export default function LeadershipHub() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+      {/* Leader profile modal */}
+      {viewLeader && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+          onClick={() => setViewLeader(null)}
+        >
+          <div
+            style={{ width: '100%', maxWidth: 400, background: '#fff', borderRadius: 4, overflow: 'hidden', boxShadow: '0 24px 48px rgba(0,0,0,0.3)' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ padding: '14px 20px', background: 'hsl(var(--on-surface))', borderTop: '4px solid hsl(var(--primary))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 14, color: '#fff' }}>Officer profile</p>
+              <button onClick={() => setViewLeader(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)', lineHeight: 1 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
+              </button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                <div style={{ width: 72, height: 72, borderRadius: 6, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 22, color: 'hsl(var(--on-surface))' }}>
+                  {viewLeader.avatar_url
+                    ? <img src={viewLeader.avatar_url} alt={viewLeader.leader_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : viewLeader.leader_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)
+                  }
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 17, color: 'hsl(var(--on-surface))' }}>{viewLeader.leader_name}</p>
+                  <p style={{ margin: '3px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{viewLeader.profession || 'Chapter Officer'}</p>
+                  <span className={`pill ${viewLeader.status === 'Active' || viewLeader.status === 'Approved' ? 'pill-ok' : 'pill-warn'}`} style={{ marginTop: 6, display: 'inline-block' }}>
+                    {viewLeader.status || 'Member'}
+                  </span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[
+                  { icon: 'badge', label: 'Registration ID', value: viewLeader.registration_number },
+                  { icon: 'apartment', label: 'Chapter', value: viewLeader.chapter_name },
+                  { icon: 'phone', label: 'Phone', value: viewLeader.phone_number },
+                  { icon: 'public', label: 'Network', value: viewLeader.platform === 'GHANA' ? 'Ghana Network' : viewLeader.platform === 'DIASPORA' ? 'Diaspora Network' : viewLeader.platform },
+                  { icon: 'location_on', label: 'Location', value: viewLeader.platform === 'GHANA' ? [viewLeader.constituency, viewLeader.region].filter(Boolean).join(', ') : viewLeader.country },
+                ].map(row => row.value ? (
+                  <div key={row.label} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid hsl(var(--border))' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))', flexShrink: 0 }}>{row.icon}</span>
+                    <div>
+                      <p style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 900, fontSize: 9, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>{row.label}</p>
+                      <p style={{ margin: '2px 0 0', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface))' }}>{row.value}</p>
+                    </div>
+                  </div>
+                ) : null)}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

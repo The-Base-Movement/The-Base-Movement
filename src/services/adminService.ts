@@ -17,6 +17,7 @@ import type {
   Member, 
   Region, 
   Chapter, 
+  Country,
   Poll, 
   InventoryItem,
   DonationCampaign,
@@ -75,7 +76,7 @@ import type {
 
 // Re-export all types so consumers can import from either location
 export type {
-  Member, Region, Chapter, Poll, PollOption, InventoryItem,
+  Member, Region, Chapter, Country, Poll, PollOption, InventoryItem,
   DonationCampaign, DonationDetail,
   FieldEvent, MobilizationLedger, RegionalStat, Milestone,
   FieldDirective, FieldReport, ChapterApplication, Achievement,
@@ -389,7 +390,7 @@ class AdminService {
     return success
   }
 
-  async getCountries(): Promise<{ id: string | number; name: string; dialing_code: string; is_diaspora: boolean }[]> {
+  async getCountries(): Promise<Country[]> {
     return memberService.getCountries()
   }
 
