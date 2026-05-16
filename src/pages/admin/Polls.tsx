@@ -461,7 +461,7 @@ export default function PollsManagement() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 260, overflowY: 'auto' }}>
                       {newPoll.options.map((opt, idx) => (
                         <div key={idx} style={{ display: 'flex', gap: 8 }}>
-                          <input name="opt" id="input-395525"
+                          <input name={`opt-${idx}`} id={`input-395525-${idx}`}
                             style={inputSt}
                             placeholder={`Option ${idx + 1}`}
                             value={opt}
