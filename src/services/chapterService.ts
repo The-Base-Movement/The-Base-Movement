@@ -84,7 +84,8 @@ class ChapterService {
           type: a.type,
         activityDate: a.activity_date
       }))
-    }))
+    }
+    })
   }
 
   async getChapterById(id: string): Promise<Chapter | null> {
