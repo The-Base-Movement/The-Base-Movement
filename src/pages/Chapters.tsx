@@ -69,6 +69,8 @@ export default function Chapters() {
   const [currentPage, setCurrentPage] = useState(1)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [userChapterName, setUserChapterName] = useState<string | null>(null)
+  const [sortOrder, setSortOrder] = useState<'az' | 'za' | 'members-desc' | 'members-asc'>('az')
+  const [showActiveOnly, setShowActiveOnly] = useState(false)
 
   // Request modal state
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
@@ -83,24 +85,30 @@ export default function Chapters() {
     if (user) adminService.getUserChapter(user.id).then(setUserChapterName)
   }, [])
 
-  useEffect(() => { setCurrentPage(1) }, [searchTerm, selectedRegion, activeTab])
+  useEffect(() => { setCurrentPage(1) }, [searchTerm, selectedRegion, activeTab, sortOrder, showActiveOnly])
 
   const ghanaChapters = chapters.filter(c => c.country === 'Ghana')
   const diasporaChapters = chapters.filter(c => c.country !== 'Ghana')
   const activeChapters = (activeTab === 'ghana' ? ghanaChapters : diasporaChapters)
-  const filteredChapters = activeChapters.filter(c => {
-    const matchSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.city_or_region.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.country.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    let matchRegion = true;
-    if (activeTab === 'ghana' && selectedRegion !== 'All Regions') {
-      const derived = getChapterRegion(c);
-      matchRegion = derived === selectedRegion;
-    }
-
-    return matchSearch && matchRegion
-  })
+  const filteredChapters = activeChapters
+    .filter(c => {
+      const matchSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.city_or_region.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.country.toLowerCase().includes(searchTerm.toLowerCase())
+      let matchRegion = true
+      if (activeTab === 'ghana' && selectedRegion !== 'All Regions') {
+        const derived = getChapterRegion(c)
+        matchRegion = derived === selectedRegion
+      }
+      const matchStatus = showActiveOnly ? c.status === 'Active' : true
+      return matchSearch && matchRegion && matchStatus
+    })
+    .sort((a, b) => {
+      if (sortOrder === 'az') return a.name.localeCompare(b.name)
+      if (sortOrder === 'za') return b.name.localeCompare(a.name)
+      if (sortOrder === 'members-desc') return (b.member_count || 0) - (a.member_count || 0)
+      return (a.member_count || 0) - (b.member_count || 0)
+    })
 
   const itemsPerPage = 12
   const totalPages = Math.ceil(filteredChapters.length / itemsPerPage)
@@ -203,11 +211,26 @@ export default function Chapters() {
                 activeTab={activeTab} setActiveTab={setActiveTab}
                 selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion}
                 regions={regions} chapters={chapters}
+                sortOrder={sortOrder} setSortOrder={setSortOrder}
+                showActiveOnly={showActiveOnly} setShowActiveOnly={setShowActiveOnly}
                 onRequestChapter={() => { setShowMobileFilters(false); setIsRequestModalOpen(true) }}
               />
             </div>
           </div>
         )}
+
+        {/* Page title */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+            Movement network
+          </div>
+          <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: 'hsl(var(--on-surface))', margin: '0 0 4px' }}>
+            Chapters &amp; Hubs
+          </h2>
+          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+            Connect with your local community through our network of {chapters.length} regional hubs.
+          </p>
+        </div>
 
         {/* KPI row */}
         <div className="kpis" style={{ marginBottom: 24 }}>
@@ -250,6 +273,8 @@ export default function Chapters() {
               activeTab={activeTab} setActiveTab={setActiveTab}
               selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion}
               regions={regions} chapters={chapters}
+              sortOrder={sortOrder} setSortOrder={setSortOrder}
+              showActiveOnly={showActiveOnly} setShowActiveOnly={setShowActiveOnly}
               onRequestChapter={() => setIsRequestModalOpen(true)}
             />
           </div>
@@ -461,12 +486,14 @@ export default function Chapters() {
 }
 
 // Dashboard filter controls extracted to avoid duplication
-function DashboardFilterControls({ searchTerm, setSearchTerm, activeTab, setActiveTab, selectedRegion, setSelectedRegion, regions, chapters, onRequestChapter }: {
+function DashboardFilterControls({ searchTerm, setSearchTerm, activeTab, setActiveTab, selectedRegion, setSelectedRegion, regions, chapters, sortOrder, setSortOrder, showActiveOnly, setShowActiveOnly, onRequestChapter }: {
   searchTerm: string; setSearchTerm: (v: string) => void
   activeTab: 'ghana' | 'diaspora'; setActiveTab: (v: 'ghana' | 'diaspora') => void
   selectedRegion: string; setSelectedRegion: (v: string) => void
   regions: string[]
   chapters: { country: string }[]
+  sortOrder: 'az' | 'za' | 'members-desc' | 'members-asc'; setSortOrder: (v: 'az' | 'za' | 'members-desc' | 'members-asc') => void
+  showActiveOnly: boolean; setShowActiveOnly: (v: boolean) => void
   onRequestChapter: () => void
 }) {
   const sectionSt = { paddingTop: 16, marginTop: 16, borderTop: '1px solid hsl(var(--border))' }
@@ -505,6 +532,35 @@ function DashboardFilterControls({ searchTerm, setSearchTerm, activeTab, setActi
           </div>
         </div>
       )}
+
+      {/* Sort */}
+      <div style={sectionSt}>
+        <div style={headSt}><span className="material-symbols-outlined" style={{ fontSize: 14 }}>sort</span>Sort</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+          {([
+            { v: 'az' as const, label: 'A → Z' },
+            { v: 'za' as const, label: 'Z → A' },
+            { v: 'members-desc' as const, label: 'Most members' },
+            { v: 'members-asc' as const, label: 'Fewest members' },
+          ]).map(s => (
+            <button key={s.v} onClick={() => setSortOrder(s.v)} className={sortOrder === s.v ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'} style={{ justifyContent: 'center' }}>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Active only */}
+      <div style={sectionSt}>
+        <button
+          onClick={() => setShowActiveOnly(!showActiveOnly)}
+          className={showActiveOnly ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+          style={{ width: '100%', justifyContent: 'center' }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 15 }}>{showActiveOnly ? 'check_circle' : 'radio_button_unchecked'}</span>
+          Active chapters only
+        </button>
+      </div>
 
       {/* Stats */}
       <div style={sectionSt}>
