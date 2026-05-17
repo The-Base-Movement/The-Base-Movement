@@ -194,7 +194,7 @@ export default function Members() {
             <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{kpi.label}</div>
             <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 30, color: kpi.val, lineHeight: 1, marginBottom: 6 }}>{kpi.value}</div>
             <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))', display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 12, color: kpi.bar }}>{kpi.icon}</span>
+              <span className="material-symbols-outlined desktop-only" style={{ fontSize: 12, color: kpi.bar }}>{kpi.icon}</span>
               {kpi.sub}
             </div>
           </div>

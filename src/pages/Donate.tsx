@@ -235,7 +235,7 @@ export default function Donate() {
               <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                 <p style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{kpi.label}</p>
-                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>{kpi.icon}</span>
+                <span className="material-symbols-outlined desktop-only" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>{kpi.icon}</span>
               </div>
               <p style={{ fontSize: 22, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>
                 {loading ? '—' : kpi.value}
@@ -253,13 +253,13 @@ export default function Donate() {
             <p style={{ color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, marginBottom: 24, fontFamily: "'Public Sans', sans-serif", fontSize: 13, fontWeight: 600 }}>
               Your capital has been recorded in the mobilization queue. Verification is in progress.
             </p>
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
               <button onClick={() => setSubmitted(false)} className="btn btn-primary">New Contribution</button>
               <Link to="/dashboard" className="btn btn-outline" style={{ textDecoration: 'none' }}>View Dossier</Link>
             </div>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 24, marginTop: 24, alignItems: 'start' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr]" style={{ gap: 24, marginTop: 24, alignItems: 'start' }}>
             {/* Left: Donation form */}
             <div className="panel">
               <div style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid hsl(var(--border))' }}>
@@ -393,12 +393,12 @@ export default function Donate() {
 
               {/* Contribution History */}
               <div className="panel">
-                <div style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid hsl(var(--border))' }}>
+                <div style={{ padding: '14px 18px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', borderBottom: '1px solid hsl(var(--border))', gap: 12, flexWrap: 'wrap' }}>
                   <div>
                     <p style={{ fontWeight: 800, fontSize: 15, color: 'hsl(var(--on-surface))', margin: 0 }}>Contribution History</p>
                     <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0', fontWeight: 600 }}>Movement mobilization ledger</p>
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                     {(['all', 'me'] as const).map(f => (
                       <button key={f} onClick={() => setContributionFilter(f)}
                         className={`btn btn-sm ${contributionFilter === f ? 'btn-primary' : 'btn-outline'}`}>
@@ -408,7 +408,7 @@ export default function Donate() {
                   </div>
                 </div>
                 <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <table style={{ width: '100%', minWidth: 480, borderCollapse: 'collapse' }}>
                     <thead>
                       <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                         {['Contributor', 'Campaign', 'Amount', 'Status'].map(h => (

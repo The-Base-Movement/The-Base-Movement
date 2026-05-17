@@ -249,7 +249,7 @@ export default function AdminRegions() {
             <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
               <p style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>{kpi.label}</p>
-              <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>{kpi.icon}</span>
+              <span className="material-symbols-outlined desktop-only" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>{kpi.icon}</span>
             </div>
             <p style={{ fontSize: 22, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>
               {isLoading ? '—' : kpi.value}

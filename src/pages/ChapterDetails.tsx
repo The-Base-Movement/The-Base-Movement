@@ -162,12 +162,12 @@ export default function ChapterDetails() {
     <div className="main">
       {/* Leader management banner */}
       {isLeader && (
-        <div style={{ background: 'linear-gradient(135deg, #0f1310, #1a2618)', borderRadius: 6, padding: '14px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, border: '1px solid rgba(0,107,63,0.3)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--accent))' }}>manage_accounts</span>
-            <div>
+        <div style={{ background: 'linear-gradient(135deg, #0f1310, #1a2618)', borderRadius: 6, padding: '14px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, border: '1px solid rgba(0,107,63,0.3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--accent))', flexShrink: 0 }}>manage_accounts</span>
+            <div style={{ minWidth: 0 }}>
               <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: '#fff' }}>You are the chapter leader</div>
-              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>Access your management dashboard to view members, donations, and update chapter info.</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>Manage members, donations and chapter info.</div>
             </div>
           </div>
           <Link
@@ -198,7 +198,7 @@ export default function ChapterDetails() {
             <h1 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--on-surface))', letterSpacing: '-0.02em', marginBottom: 8 }}>
               {chapter.name}
             </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20, color: 'hsl(var(--on-surface-muted))', fontSize: 13, fontWeight: 600, fontFamily: "'Public Sans', sans-serif" }}>
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px 16px', color: 'hsl(var(--on-surface-muted))', fontSize: 13, fontWeight: 600, fontFamily: "'Public Sans', sans-serif" }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>location_on</span>
                 {chapter.city_or_region}, {chapter.country}
@@ -209,13 +209,14 @@ export default function ChapterDetails() {
               </span>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="w-full lg:w-auto" style={{ display: 'flex', gap: 10 }}>
             <button className="btn btn-outline btn-sm" onClick={() => setIsShareModalOpen(true)}>
               <span className="material-symbols-outlined" style={{ fontSize: 15 }}>share</span>
               Share
             </button>
             <button
               className="btn btn-primary btn-sm"
+              style={{ flex: 1 }}
               onClick={handleJoin}
               disabled={isJoining || hasJoined}
             >
@@ -241,7 +242,7 @@ export default function ChapterDetails() {
             <p style={{ fontFamily: "'Public Sans', sans-serif", fontSize: 13, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.65 }}>
               Whether you're looking to volunteer, stay informed about local policy discussions, or connect with fellow movement members, the {chapter.name} provides the platform for meaningful civic engagement and collective action within {chapter.city_or_region}.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 20 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 12, marginTop: 20 }}>
               <div style={{ padding: '14px 16px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4 }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Local focus</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>{chapter.local_focus || 'Grassroots mobilization'}</div>
@@ -356,12 +357,12 @@ export default function ChapterDetails() {
 
           {/* Recent activities */}
           <div className="panel" style={{ padding: '20px 22px' }}>
-            <div className="ph" style={{ marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>calendar_month</span>
                 <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Recent activities</span>
               </div>
-              <button style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--primary))', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Public Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.04em' }}>View all</button>
+              <button style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--primary))', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Public Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.04em', padding: 0 }}>View all</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {chapter.activities && chapter.activities.length > 0 ? (
@@ -376,8 +377,8 @@ export default function ChapterDetails() {
                           <span style={{ fontSize: 9, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{month}</span>
                           <span style={{ fontSize: 18, fontWeight: 800, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", lineHeight: 1 }}>{day}</span>
                         </div>
-                        <div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>{activity.title}</div>
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activity.title}</div>
                           <div style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 2 }}>{activity.type}</div>
                         </div>
                       </div>
@@ -576,7 +577,7 @@ export default function ChapterDetails() {
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px', marginBottom: 20 }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: '10px 16px', marginBottom: 20 }}>
                 {[
                   { icon: 'public', label: 'Network', value: leaderProfile.platform === 'GHANA' ? 'Ghana Network' : 'Diaspora Network' },
                   { icon: 'location_on', label: 'Location', value: leaderProfile.platform === 'GHANA' ? leaderProfile.region : leaderProfile.country },
