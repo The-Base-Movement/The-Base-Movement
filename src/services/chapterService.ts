@@ -309,6 +309,96 @@ class ChapterService {
     return true
   }
 
+  async requestToJoin(chapterId: string): Promise<{ success: boolean; alreadyRequested: boolean }> {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return { success: false, alreadyRequested: false }
+
+    const { error } = await supabase
+      .from('chapter_requests')
+      .insert({ member_id: session.user.id, chapter_id: chapterId, status: 'pending' })
+
+    if (error) {
+      if (error.code === '23505') return { success: false, alreadyRequested: true }
+      console.error('[DATABASE] Chapter request failed:', error)
+      return { success: false, alreadyRequested: false }
+    }
+
+    return { success: true, alreadyRequested: false }
+  }
+
+  async getMyJoinRequest(chapterId: string): Promise<'pending' | 'approved' | 'rejected' | null> {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return null
+
+    const { data } = await supabase
+      .from('chapter_requests')
+      .select('status')
+      .eq('member_id', session.user.id)
+      .eq('chapter_id', chapterId)
+      .maybeSingle()
+
+    return (data?.status as 'pending' | 'approved' | 'rejected') || null
+  }
+
+  async getChapterRequests(chapterId: string): Promise<Array<{
+    id: string; member_id: string; member_name: string; member_reg_no: string;
+    member_avatar: string | null; status: string; created_at: string;
+  }>> {
+    const { data, error } = await supabase
+      .from('chapter_requests')
+      .select('id, member_id, status, created_at, users(full_name, registration_number, avatar_url)')
+      .eq('chapter_id', chapterId)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true })
+
+    if (error) {
+      console.error('[DATABASE] Fetch chapter requests failed:', error)
+      return []
+    }
+
+    return (data || []).map((r) => {
+      const u = Array.isArray(r.users) ? r.users[0] : r.users
+      return {
+        id: r.id as string,
+        member_id: r.member_id as string,
+        member_name: (u?.full_name as string) || 'Unknown',
+        member_reg_no: (u?.registration_number as string) || '',
+        member_avatar: (u?.avatar_url as string | null) || null,
+        status: r.status as string,
+        created_at: r.created_at as string,
+      }
+    })
+  }
+
+  async approveJoinRequest(requestId: string, memberId: string, chapterName: string): Promise<boolean> {
+    const { error: reqError } = await supabase
+      .from('chapter_requests')
+      .update({ status: 'approved', updated_at: new Date().toISOString() })
+      .eq('id', requestId)
+
+    if (reqError) { console.error('[DATABASE] Approve request failed:', reqError); return false }
+
+    const { error: userError } = await supabase
+      .from('users')
+      .update({ chapter: chapterName })
+      .eq('id', memberId)
+
+    if (userError) { console.error('[DATABASE] Chapter assign failed:', userError); return false }
+
+    await this.incrementChapterMemberCount(chapterName)
+    return true
+  }
+
+  async rejectJoinRequest(requestId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('chapter_requests')
+      .update({ status: 'rejected', updated_at: new Date().toISOString() })
+      .eq('id', requestId)
+
+    if (error) { console.error('[DATABASE] Reject request failed:', error); return false }
+    return true
+  }
+
   async getChapterApplications(): Promise<ChapterApplication[]> {
     const { data, error } = await supabase
       .from('chapter_applications')

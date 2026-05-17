@@ -6,6 +6,7 @@ import type { Chapter, ChapterLeader, ChapterActivity, Member } from '@/types/ad
 import { useChapters } from '@/context/ChaptersContext'
 import { LoadingScreen } from '../components/LoadingScreen'
 import { adminService } from '@/services/adminService'
+import { chapterService } from '@/services/chapterService'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 
@@ -29,6 +30,7 @@ export default function ChapterDetails() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [isJoining, setIsJoining] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
+  const [joinRequestStatus, setJoinRequestStatus] = useState<'pending' | 'approved' | 'rejected' | null>(null)
   const [leaderProfile, setLeaderProfile] = useState<Member | null>(null)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [leaderAvatarUrl, setLeaderAvatarUrl] = useState<string | null>(null)
@@ -39,11 +41,14 @@ export default function ChapterDetails() {
   const [userVotes, setUserVotes] = useState<Record<string, string>>({})
   const [votingPollId, setVotingPollId] = useState<string | null>(null)
 
-  // Check chapter membership (joined)
+  // Check chapter membership and any existing join request
   useEffect(() => {
     if (!authUserId || !chapter) return
     adminService.getUserChapter(authUserId).then(ch => {
       if (ch && ch.toLowerCase() === chapter.name.toLowerCase()) setHasJoined(true)
+    })
+    chapterService.getMyJoinRequest(chapter.id).then(status => {
+      setJoinRequestStatus(status)
     })
   }, [authUserId, chapter])
 
@@ -119,27 +124,21 @@ export default function ChapterDetails() {
 
 
   const handleJoin = async () => {
-    if (!authUserId || !chapter) {
-      toast.error(!authUserId ? 'Please register or login to join.' : 'Chapter hub not found.')
-      return
-    }
-    if (hasJoined) {
-      toast(`Already a member of ${chapter.name}`)
-      return
-    }
+    if (!authUserId) { toast.error('Please register or login to join.'); return }
+    if (!chapter) return
+    if (hasJoined || joinRequestStatus === 'approved') { toast(`You are already a member of ${chapter.name}`); return }
+    if (joinRequestStatus === 'pending') { toast('Your request is already pending approval.'); return }
     setIsJoining(true)
-    try {
-      const success = await adminService.joinChapter(chapter.name)
-      if (success) {
-        setHasJoined(true)
-        toast.success(`You have successfully joined the ${chapter.name} chapter hub.`)
-      } else {
-        throw new Error('Join failed')
-      }
-    } catch {
-      toast.error('Failed to process your chapter join request.')
-    } finally {
-      setIsJoining(false)
+    const { success, alreadyRequested } = await chapterService.requestToJoin(chapter.id)
+    setIsJoining(false)
+    if (alreadyRequested) {
+      setJoinRequestStatus('pending')
+      toast('Your join request is already pending.')
+    } else if (success) {
+      setJoinRequestStatus('pending')
+      toast.success('Join request sent! The chapter leader will review it shortly.')
+    } else {
+      toast.error('Failed to send join request. Please try again.')
     }
   }
 
@@ -171,7 +170,7 @@ export default function ChapterDetails() {
             </div>
           </div>
           <Link
-            to={`/dashboard/chapter-hub/${chapter.id}`}
+            to={`/dashboard/chapter-hub/${chapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}`}
             className="btn btn-primary btn-sm"
             style={{ flexShrink: 0, textDecoration: 'none' }}
           >
@@ -215,12 +214,15 @@ export default function ChapterDetails() {
               Share
             </button>
             <button
-              className="btn btn-primary btn-sm"
+              className={`btn btn-sm ${hasJoined || joinRequestStatus === 'approved' ? 'btn-outline' : joinRequestStatus === 'pending' ? 'btn-outline' : 'btn-primary'}`}
               style={{ flex: 1 }}
               onClick={handleJoin}
-              disabled={isJoining || hasJoined}
+              disabled={isJoining || hasJoined || joinRequestStatus === 'pending' || joinRequestStatus === 'approved'}
             >
-              {isJoining ? 'Processing…' : hasJoined ? 'Already a Member' : 'Join this chapter'}
+              {isJoining ? 'Sending request…'
+                : hasJoined || joinRequestStatus === 'approved' ? 'Already a member'
+                : joinRequestStatus === 'pending' ? 'Request pending…'
+                : 'Request to join'}
             </button>
           </div>
         </div>
@@ -454,7 +456,7 @@ export default function ChapterDetails() {
                   )}
                   {isLeader && (
                     <Link
-                      to={`/dashboard/chapter-hub/${chapter.id}`}
+                      to={`/dashboard/chapter-hub/${chapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}`}
                       className="btn btn-primary btn-sm"
                       style={{ flex: 1, justifyContent: 'center', fontSize: 11, textDecoration: 'none' }}
                     >
