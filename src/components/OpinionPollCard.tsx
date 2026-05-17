@@ -47,7 +47,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
           </span>
         </div>
 
-        <h3 className="text-[17px] leading-[1.4] mb-[14px] text-[var(--on-surface,#181d19)]" style={{ fontFamily: bodyFont, fontWeight: variant === 'public' ? 600 : 800, letterSpacing: variant === 'public' ? '-0.005em' : '-0.01em' }}>
+        <h3 className="text-[15px] leading-[1.45] mb-[14px] text-[var(--on-surface,#181d19)]" style={{ fontFamily: bodyFont, fontWeight: variant === 'public' ? 600 : 700, letterSpacing: '-0.005em' }}>
           {poll.question}
         </h3>
 
@@ -80,7 +80,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
                         className={`text-[12.5px] tracking-[-0.005em] font-['Public_Sans',sans-serif] flex items-center gap-2 ${
                           isLead ? 'text-[var(--primary)]' : 'text-[var(--on-surface,#181d19)]'
                         }`}
-                        style={{ fontWeight: variant === 'public' ? 500 : 800 }}
+                        style={{ fontWeight: 500 }}
                       >
                         {isSelected && <span className="material-symbols-outlined" style={{ fontSize: 14, flexShrink: 0 }}>check_circle</span>}
                         {option.label}
@@ -103,7 +103,7 @@ export function OpinionPollCard({ poll, voting, showResults, isLoggedIn, handleV
                     disabled={voting === poll.id}
                     className="w-full text-left px-[14px] py-[10px] border border-[var(--border,#e5e7eb)] rounded-[4px] bg-[var(--container-low,#f9fafb)] hover:border-[var(--primary)] transition-all duration-150 group/btn"
                   >
-                    <span className="text-[12.5px] tracking-[-0.005em] font-['Public_Sans',sans-serif] text-[var(--on-surface,#181d19)] block" style={{ fontWeight: variant === 'public' ? 500 : 800 }}>
+                    <span className="text-[12.5px] tracking-[-0.005em] font-['Public_Sans',sans-serif] text-[var(--on-surface,#181d19)] block" style={{ fontWeight: 500 }}>
                       {option.label}
                     </span>
                     {!isLoggedIn && (

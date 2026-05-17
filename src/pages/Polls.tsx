@@ -88,7 +88,7 @@ export default function Polls() {
           <div key={kpi.label} className="panel" style={{ padding: isDashboard ? '16px 18px 16px 22px' : '20px 22px 20px 26px', position: 'relative', overflow: 'hidden', background: isDashboard ? undefined : 'hsl(var(--background))' }}>
             <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: isDashboard ? 3 : 4, background: kpi.bar }} />
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
-              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: isDashboard ? 10 : 12, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{kpi.label}</span>
+              <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: isDashboard ? 10 : 12, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{kpi.label}</span>
               <span className="material-symbols-outlined desktop-only" style={{ fontSize: isDashboard ? 16 : 20, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>{kpi.icon}</span>
             </div>
             <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: isDashboard ? 28 : 36, color: 'hsl(var(--on-surface))', lineHeight: 1, marginBottom: 4, letterSpacing: '-0.02em' }}>{kpi.value}</div>
