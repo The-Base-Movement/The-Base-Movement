@@ -112,9 +112,7 @@ export function ActivityFeed() {
               </div>
               {act.amt && <div className="amt tnum">{act.amt}</div>}
               {act.status && (
-                <span className={`pill font-meta font-bold uppercase tracking-tight ${act.status === 'Verified' ? 'pill-ok' : 'pill-mute'}`}>
-                  {act.status}
-                </span>
+                <span className="material-symbols-outlined" style={{ fontSize: 17, color: 'hsl(var(--primary))', flexShrink: 0, alignSelf: 'center' }}>verified</span>
               )}
             </div>
           ))
@@ -127,7 +125,7 @@ export function ActivityFeed() {
         .feed-row .av { width: 32px; height: 32px; border-radius: 50%; background: var(--container); flex-shrink: 0; overflow: hidden; }
         .feed-row .av img { width: 100%; height: 100%; object-fit: cover; }
         .feed-row .body { flex: 1; min-width: 0; }
-        .feed-row .body p { margin: 0; font-size: 13px; color: var(--on-surface); }
+        .feed-row .body p { margin: 0; font-size: 12px; color: var(--on-surface); line-height: 1.4; }
         .feed-row .body p b { font-family: 'Public Sans', sans-serif; font-weight: 800; }
         .feed-row .body .meta { font-size: 10.5px; color: var(--on-surface-muted); margin-top: 3px; font-family: 'Public Sans', sans-serif; font-weight: 700; letter-spacing: .02em; }
         .feed-row .amt { font-family: 'Public Sans', sans-serif; font-weight: 800; color: var(--primary); font-size: 14px; }

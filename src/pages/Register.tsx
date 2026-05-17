@@ -17,6 +17,7 @@ export default function Register() {
   const { settings } = useBranding()
   const [searchParams] = useSearchParams()
   const platformParam = searchParams.get('platform')
+  const refParam = searchParams.get('ref')
   const [step, setStep] = useState<'choice' | 'form'>(platformParam ? 'form' : 'choice')
   const [formStep, setFormStep] = useState<number>(1)
   const [platform, setPlatform] = useState(platformParam || 'GHANA')
@@ -239,7 +240,8 @@ export default function Register() {
           education_level: formData.educationLevel, emergency_name: formData.emergencyContactName,
           emergency_relationship: formData.emergencyRelationship, emergency_phone: formData.emergencyNumber,
           children_count: formData.children_count, residential_address: formData.residentialAddress,
-          city: formData.city, registration_source: usedScan ? 'scan' : 'digital'
+          city: formData.city, registration_source: usedScan ? 'scan' : 'digital',
+          referred_by: refParam || null
         })
 
         if (dbError) throw dbError

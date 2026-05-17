@@ -441,12 +441,25 @@ class MemberService {
       .from('users')
       .select('*', { count: 'exact', head: true })
       .eq('verification_status', 'Verified')
-    
+
     if (error) {
       console.warn('[DATABASE] Failed to fetch total member count:', error)
       return 0
     }
-    
+
+    return count || 0
+  }
+
+  async getTotalRegisteredCount(): Promise<number> {
+    const { count, error } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch registered member count:', error)
+      return 0
+    }
+
     return count || 0
   }
 }

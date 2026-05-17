@@ -55,7 +55,7 @@ export default function Dashboard() {
           constituency: liveMember.constituency,
           chapter: liveMember.chapter || 'Central Chapter',
           joined_date: liveMember.joined || '30 Mar 2025',
-          status: liveMember.status === 'Approved' ? 'Verified' : 'Pending',
+          status: (liveMember.status === 'Active' || liveMember.status === 'Approved') ? 'Verified' : 'Pending',
           avatar_url: liveMember.avatarUrl,
           platform: liveMember.platform,
           gender: liveMember.gender
@@ -108,7 +108,7 @@ export default function Dashboard() {
       />
 
       {/* Hero row: membership card + quick actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-[20px] mb-[20px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-[20px] mb-[20px] items-start">
         {member && (
           <MembershipCard 
             userName={member.full_name}

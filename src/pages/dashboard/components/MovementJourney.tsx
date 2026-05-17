@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
-import { donationService } from '@/services/donationService'
 import { format } from 'date-fns'
+import { supabase } from '@/lib/supabase'
 
 interface Step {
   title: string
@@ -40,7 +40,7 @@ export function MovementJourney() {
         ]
 
         // 2. ID Verified
-        const isVerified = member.status === 'Approved'
+        const isVerified = member.status === 'Active' || member.status === 'Approved'
         journeySteps.push({
           title: 'ID verified',
           date: isVerified ? 'Verified' : 'Pending',
@@ -48,21 +48,36 @@ export function MovementJourney() {
           type: isVerified ? 'c' : 'd'
         })
 
-        // 3. First contribution
-        const donations = await donationService.getMemberDonations(member.phone || '')
-        const hasDonated = donations.length > 0
+        // 3. First contribution — look up by auth ID (member_id) to avoid phone fallback issues
+        const { data: { session } } = await supabase.auth.getSession()
+        const authId = session?.user.id || member.authId
+        const { data: donationRows } = await supabase
+          .from('donations')
+          .select('created_at')
+          .eq('member_id', authId)
+          .order('created_at', { ascending: true })
+          .limit(1)
+        const hasDonated = (donationRows?.length ?? 0) > 0
         journeySteps.push({
           title: 'First contribution',
-          date: hasDonated ? format(new Date(donations[0].date), 'dd MMM yyyy') : 'Pending',
+          date: hasDonated ? format(new Date(donationRows![0].created_at), 'dd MMM yyyy') : 'Pending',
           status: hasDonated ? 'Complete' : (isVerified ? 'In progress' : 'Up next'),
           type: hasDonated ? 'c' : (isVerified ? 'd' : 't')
         })
 
-        // 4. Join a Chapter
-        const hasChapter = !!member.chapter && member.chapter !== 'TBM Ghana Chapter'
+        // 4. Join a Chapter — verified by admin = chapter assigned; also check raw DB value
+        const { data: rawUser } = await supabase
+          .from('users')
+          .select('chapter')
+          .eq('registration_number', regNo)
+          .single()
+        const rawChapter = rawUser?.chapter
+        const hasNamedChapter = !!(rawChapter && rawChapter.trim() !== '' && rawChapter !== 'TBM Ghana Chapter')
+        const hasChapter = isVerified || hasNamedChapter
+        const chapterDisplay = hasNamedChapter ? rawChapter! : (isVerified ? 'Assigned by HQ' : 'Up next')
         journeySteps.push({
           title: 'Join local chapter',
-          date: hasChapter ? member.chapter! : 'Up next',
+          date: chapterDisplay,
           status: hasChapter ? 'Complete' : (hasDonated ? 'In progress' : 'Up next'),
           type: hasChapter ? 'c' : (hasDonated ? 'd' : 't')
         })

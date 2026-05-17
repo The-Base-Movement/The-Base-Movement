@@ -137,7 +137,7 @@ const agendaPillars = [
     id: 'reform',
     number: '05',
     title: 'Comprehensive Institutional Reform',
-    icon: 'monument',
+    icon: 'gavel',
     color: 'hsl(var(--destructive))',
     summary: 'Restructure, streamline, and strengthen all public institutions so that government serves the people efficiently, transparently, and without unnecessary duplication or waste.',
     objectives: [
@@ -232,9 +232,9 @@ export default function OurAgenda() {
         canonical="/our-agenda"
       />
       {/* Header */}
-      <header className="bg-charcoal-dark text-white pt-24 pb-16 relative overflow-hidden">
+      <header className="bg-charcoal-dark text-white pt-16 pb-12 md:pt-24 md:pb-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 bg-hero-gradient"></div>
-        <div className="max-w-[1280px] mx-auto px-8 relative z-10 text-center">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-8 relative z-10 text-center">
           <h1 className="tracking-tighter mb-4">The Plan</h1>
           <div className={cn("bl", "mx-auto")}><div /><div /><div /></div>
           <p className="text-slate-300 max-w-2xl mx-auto prose-standard">
@@ -243,9 +243,30 @@ export default function OurAgenda() {
         </div>
       </header>
 
-      <div className="max-w-[1280px] mx-auto px-8 mt-16">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-8 mt-10 md:mt-16">
         <div className="flex flex-col lg:flex-row gap-12">
           
+          {/* Mobile pillar nav — horizontal scroll strip */}
+          <div className="lg:hidden -mx-4 px-4 overflow-x-auto pb-2 mb-2">
+            <div className="flex gap-2 w-max">
+              {agendaPillars.map((pillar) => (
+                <a
+                  key={pillar.id}
+                  href={`#${pillar.id}`}
+                  className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 border text-xs font-bold rounded-none whitespace-nowrap transition-colors"
+                  style={{
+                    borderColor: activeSection === pillar.id ? pillar.color : 'hsl(var(--border, 226 18% 89%))',
+                    color: activeSection === pillar.id ? pillar.color : '#6b7280',
+                    background: activeSection === pillar.id ? `${pillar.color}12` : 'transparent'
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 13 }}>{pillar.icon}</span>
+                  {pillar.number}
+                </a>
+              ))}
+            </div>
+          </div>
+
           {/* Sticky Navigation */}
           <aside className="lg:w-1/4 hidden lg:block">
             <div className="sticky top-20 space-y-4 font-meta">
@@ -286,13 +307,13 @@ export default function OurAgenda() {
             {/* Intro Cards */}
             <section aria-labelledby="agenda-intro-heading" className="flex-columns items-stretch" style={{ '--column-gap': '2rem' } as React.CSSProperties}>
               <h2 id="agenda-intro-heading" className="sr-only">Agenda Definitions</h2>
-              <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
+              <div className="bg-white p-5 md:p-8 border border-slate-200 rounded-none shadow-sm flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
                 <h3 className="text-primary tracking-tight">What is an Aim?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm prose-standard">
                   An Aim is a broad, long-term statement of intent. It describes the desired end state or the overall direction a movement or organisation wishes to pursue. Aims are visionary in nature. They answer the question: "What kind of Ghana are we trying to build?" They are not time-bound or immediately measurable, but they provide the moral compass and purpose that guides all action.
                 </p>
               </div>
-              <div className="bg-white p-8 border border-slate-200 rounded-none shadow-sm flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
+              <div className="bg-white p-5 md:p-8 border border-slate-200 rounded-none shadow-sm flow" style={{ '--flow-space': '1rem' } as React.CSSProperties}>
                 <h3 className="text-primary tracking-tight">What is an Objective?</h3>
                 <p className="text-slate-600 leading-relaxed text-sm prose-standard">
                   An Objective is a specific, actionable, and measurable step taken in pursuit of an Aim. Objectives answer the question: "Exactly what will we do and how?" They are concrete, time-oriented, and directly deliverable. Where an Aim sets the destination, an Objective maps the route. Every objective in this document is derived from one of THE BASE's six core Aims.
@@ -302,31 +323,31 @@ export default function OurAgenda() {
 
             {/* Pillar Content */}
             {agendaPillars.map((pillar) => (
-              <section 
-                key={pillar.id} 
-                id={pillar.id} 
+              <section
+                key={pillar.id}
+                id={pillar.id}
                 aria-labelledby={`pillar-heading-${pillar.id}`}
-                className="pillar-card bg-white border border-slate-200 rounded-none p-8 md:p-12 shadow-sm border-l-4 scroll-mt-24" 
+                className="pillar-card bg-white border border-slate-200 rounded-none p-5 md:p-12 shadow-sm border-l-4 scroll-mt-24"
                 style={{ borderLeftColor: pillar.color }}
               >
-                <div className="space-y-6 mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 shrink-0 flex items-center justify-center bg-surface-warm" style={{ color: pillar.color }}>
-                      <span className="material-symbols-outlined" style={{ fontSize: 24 }}>{pillar.icon}</span>
+                <div className="space-y-4 mb-6 md:space-y-6 md:mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center bg-surface-warm" style={{ color: pillar.color }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 22 }}>{pillar.icon}</span>
                     </div>
                     <p className="text-micro font-bold tracking-tight mb-0" style={{ color: pillar.color }}>Aim {pillar.number}</p>
                   </div>
-                  <h2 id={`pillar-heading-${pillar.id}`} className="mb-0">{pillar.title}</h2>
+                  <h2 id={`pillar-heading-${pillar.id}`} className="mb-0 text-xl md:text-3xl">{pillar.title}</h2>
                 </div>
                 
-                <p className="text-slate-700 leading-relaxed font-medium mb-10 pb-10 border-b border-slate-100 prose-standard">
+                <p className="text-slate-700 leading-relaxed font-medium mb-6 pb-6 md:mb-10 md:pb-10 border-b border-slate-100 prose-standard">
                   {pillar.summary}
                 </p>
 
-                <div className="space-y-8">
+                <div className="space-y-5 md:space-y-8">
                   <p className="text-micro font-bold text-stone-400 tracking-tight mb-0">Objectives</p>
                   {pillar.objectives.map((obj, idx) => (
-                    <div key={idx} className="bg-surface-warm p-6 rounded-none">
+                    <div key={idx} className="bg-surface-warm p-4 md:p-6 rounded-none">
                       <h3 className="mb-4">{obj.title}</h3>
                       <ul className="space-y-3">
                         {obj.items.map((item, i) => (
@@ -343,9 +364,9 @@ export default function OurAgenda() {
             ))}
 
             {/* Covenant CTA */}
-            <section aria-labelledby="covenant-heading" className="bg-charcoal-dark text-white p-6 md:p-12 text-center mt-24">
+            <section aria-labelledby="covenant-heading" className="bg-charcoal-dark text-white p-6 md:p-12 text-center mt-12 md:mt-24">
               <div className="w-16 h-16 bg-primary mx-auto mb-6 flex items-center justify-center">
-                <span className="material-symbols-outlined text-white" style={{ fontSize: 32 }}>monument</span>
+                <span className="material-symbols-outlined text-white" style={{ fontSize: 32 }}>handshake</span>
               </div>
               <h2 id="covenant-heading" className="mb-6">Our Covenant with Ghana</h2>
               <div className="max-w-2xl mx-auto space-y-4 text-slate-300 mb-8">

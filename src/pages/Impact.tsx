@@ -36,19 +36,20 @@ export default function Impact() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const [donationStats, allDonations, members, chapters, leaderboard] = await Promise.all([
+        const [donationStats, allDonations, members, activeChapterCount, leaderboard, totalRegistered] = await Promise.all([
           donationService.getDonationStats(),
           donationService.getDonations(),
           memberService.getMembers(),
-          chapterService.getChapters(),
-          chapterService.getRegionalLeaderboard()
+          chapterService.getActiveChapterCount(),
+          chapterService.getRegionalLeaderboard(),
+          memberService.getTotalRegisteredCount()
         ])
 
         const uniqueCountries = new Set(members.map(m => m.country || 'Ghana')).size
         setStats({
           totalDonations: donationStats.approvedAmount > 0 ? `₵${donationStats.approvedAmount.toLocaleString()}` : '₵0',
-          activeChapters: chapters.filter(c => c.status === 'Active').length.toString(),
-          totalMembers: '355,482',
+          activeChapters: activeChapterCount.toString(),
+          totalMembers: totalRegistered.toLocaleString(),
           countriesReached: uniqueCountries.toString(),
           raised: donationStats.approvedAmount,
           goal: 500000,
@@ -63,7 +64,7 @@ export default function Impact() {
         ]
         setRegions(GHANA_REGIONS.map(name => {
           const live = leaderboard.find(l => l.region.toLowerCase() === name.toLowerCase())
-          return { name, engagement: live ? Math.min(100, Math.max(5, Math.floor((live.total_patriots / (members.length || 1)) * 100))) : 0 }
+          return { name, engagement: live ? Math.min(100, Math.max(5, Math.floor((live.total_patriots / (totalRegistered || 1)) * 100))) : 0 }
         }))
 
         const now = new Date()
@@ -132,6 +133,14 @@ export default function Impact() {
     </div>
   ) : null
 
+  const kpiValueSize = (v: string | number) => {
+    const len = String(v).length
+    if (len <= 4) return 26
+    if (len <= 7) return 22
+    if (len <= 10) return 17
+    return 14
+  }
+
   // ── Dashboard layout ──────────────────────────────────────────────────────
   if (isDashboard) {
     const progressPct = Math.min(100, Math.round((stats.raised / stats.goal) * 100))
@@ -139,6 +148,17 @@ export default function Impact() {
     return (
       <div className="main">
         {ActivityModal}
+
+        {/* Page title */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'hsl(var(--primary))', display: 'inline-block', animation: 'pulse 1.4s infinite' }} />
+            Movement metrics
+          </div>
+          <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: 'hsl(var(--on-surface))', margin: 0 }}>
+            Impact &amp; Analytics
+          </h2>
+        </div>
 
         {/* KPI tiles */}
         <div className="kpis" style={{ marginBottom: 24 }}>
@@ -152,9 +172,9 @@ export default function Impact() {
               <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
                 <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{kpi.label}</span>
-                <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>{kpi.icon}</span>
+                <span className="material-symbols-outlined desktop-only" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4 }}>{kpi.icon}</span>
               </div>
-              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 26, color: 'hsl(var(--on-surface))', lineHeight: 1, marginBottom: 4, letterSpacing: '-0.02em' }}>{kpi.value}</div>
+              <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: kpiValueSize(kpi.value), color: 'hsl(var(--on-surface))', lineHeight: 1, marginBottom: 4, letterSpacing: '-0.02em' }}>{kpi.value}</div>
               <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{kpi.sub}</div>
             </div>
           ))}
@@ -167,22 +187,22 @@ export default function Impact() {
 
             {/* Campaign progress */}
             <div className="panel">
-              <div className="ph">
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ padding: '14px 20px', borderBottom: '1px solid hsl(var(--border))' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>trending_up</span>
-                  Campaign progress
-                </span>
-                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>National Organizing Fund</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Campaign progress</span>
+                </div>
+                <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>National Organizing Fund</div>
               </div>
               <div style={{ padding: '16px 20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 4 }}>
                   <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>₵{stats.raised.toLocaleString()} <span style={{ fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>/ {stats.goal.toLocaleString()}</span></span>
                   <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))' }}>{progressPct >= 1 ? `${progressPct}% achieved` : 'Early momentum'}</span>
                 </div>
                 <div style={{ height: 10, background: 'hsl(var(--container-low))', borderRadius: 5, overflow: 'hidden', border: '1px solid hsl(var(--border))' }}>
                   <div style={{ height: '100%', width: `${progressPct}%`, background: 'hsl(var(--primary))', borderRadius: 5, transition: 'width 1s ease-out' }} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 16 }}>
+                <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 12, marginTop: 16 }}>
                   {[
                     { label: 'Avg. donation', value: stats.avgDonation },
                     { label: 'Total contributors', value: stats.totalContributors.toLocaleString() },
@@ -275,10 +295,10 @@ export default function Impact() {
                 </div>
               ) : filteredActivity.length > 0 ? filteredActivity.map((item, idx) => (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: idx < filteredActivity.length - 1 ? '1px solid hsl(var(--border))' : 'none' }}>
-                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', minWidth: 0, flex: 1 }}>
                     <div style={{ width: 32, height: 32, borderRadius: 4, background: 'rgba(0,107,63,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--primary))', flexShrink: 0 }}>{item.fullName[0]}</div>
-                    <div>
-                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{item.fullName}</div>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.fullName}</div>
                       <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>{item.country} · {new Date(item.date).toLocaleDateString()}</div>
                     </div>
                   </div>

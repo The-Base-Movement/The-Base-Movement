@@ -32,31 +32,55 @@ export default function Blog() {
     return () => { isMounted = false }
   }, [])
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const POSTS_PER_PAGE = 6
+
   const categories = ['All', ...Array.from(new Set(posts.map(p => p.category).filter(Boolean)))]
   const filtered = activeCategory === 'All' ? posts : posts.filter(p => p.category === activeCategory)
-  const featured = filtered[0]
-  const rest = filtered.slice(1)
+
+  const totalPages = Math.ceil(filtered.length / POSTS_PER_PAGE)
+  const paginated = filtered.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE)
+  const featured = currentPage === 1 ? paginated[0] : null
+  const rest = currentPage === 1 ? paginated.slice(1) : paginated
+
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat)
+    setCurrentPage(1)
+  }
 
   // ── Dashboard layout ──────────────────────────────────────────────────────
   if (isDashboard) {
     return (
       <div className="main">
 
-        {/* Category filter */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={activeCategory === cat ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
-              style={{ justifyContent: 'center' }}
-            >
-              {cat}
-              <span style={{ marginLeft: 6, fontWeight: 700, opacity: 0.6, fontSize: 10 }}>
-                {cat === 'All' ? posts.length : posts.filter(p => p.category === cat).length}
-              </span>
-            </button>
-          ))}
+        {/* Page title */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'hsl(var(--primary))', display: 'inline-block', animation: 'pulse 1.4s infinite' }} />
+            Movement insights
+          </div>
+          <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: 'hsl(var(--on-surface))', margin: 0 }}>
+            Updates &amp; Blog
+          </h2>
+        </div>
+
+        {/* Category filter — scrollable strip on mobile, wrap on desktop */}
+        <div style={{ marginBottom: 24, marginLeft: -16, marginRight: -16, paddingLeft: 16, paddingRight: 16, overflowX: 'auto' }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'nowrap', width: 'max-content', paddingBottom: 4 }}>
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => handleCategoryChange(cat)}
+                className={activeCategory === cat ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+                style={{ justifyContent: 'center', flexShrink: 0 }}
+              >
+                {cat}
+                <span style={{ marginLeft: 6, fontWeight: 700, opacity: 0.6, fontSize: 10 }}>
+                  {cat === 'All' ? posts.length : posts.filter(p => p.category === cat).length}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
@@ -94,7 +118,7 @@ export default function Blog() {
                       <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 18, color: 'hsl(var(--on-surface))', margin: '0 0 8px', lineHeight: 1.3, letterSpacing: '-0.01em' }}>{featured.title}</h2>
                     </Link>
                     <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.55, margin: '0 0 14px' }}>{featured.excerpt}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid hsl(var(--border))' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, paddingTop: 12, borderTop: '1px solid hsl(var(--border))' }}>
                       <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
                         {featured.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : featured.authorName} · {featured.readTime}
                       </span>
@@ -108,10 +132,42 @@ export default function Blog() {
               )}
 
               {rest.length > 0 && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 16 }}>
                   {rest.map(post => (
                     <BlogPostCard key={post.id} post={post} baseUrl={baseUrl} />
                   ))}
+                </div>
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, paddingTop: 8 }}>
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="btn btn-outline btn-sm"
+                    style={{ justifyContent: 'center', opacity: currentPage === 1 ? 0.4 : 1 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 15 }}>chevron_left</span>
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={currentPage === page ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+                      style={{ minWidth: 34, justifyContent: 'center' }}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="btn btn-outline btn-sm"
+                    style={{ justifyContent: 'center', opacity: currentPage === totalPages ? 0.4 : 1 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 15 }}>chevron_right</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -126,7 +182,7 @@ export default function Blog() {
                   {categories.map(cat => (
                     <button
                       key={cat}
-                      onClick={() => setActiveCategory(cat)}
+                      onClick={() => handleCategoryChange(cat)}
                       style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 4, border: 'none', cursor: 'pointer', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, marginBottom: 2, background: activeCategory === cat ? 'rgba(0,107,63,0.07)' : 'none', color: activeCategory === cat ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))' }}
                     >
                       <span>{cat === 'All' ? 'All Insights' : cat}</span>
@@ -205,7 +261,7 @@ export default function Blog() {
                       </div>
                     )}
                   </div>
-                  <div className="p-10 flex flex-col justify-center">
+                  <div className="p-6 md:p-10 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-4">
                       <span className="px-2.5 py-1 rounded-sm text-micro font-bold tracking-tight border bg-stone-50 text-stone-500 border-stone-100">{featured.category}</span>
                       <span className="mx-2 text-stone-300 opacity-50">|</span>
@@ -270,7 +326,7 @@ export default function Blog() {
           </>
         )}
 
-        <section className="mt-20 py-16 px-12 bg-charcoal-dark text-white text-center border-l-4 border-brand-green">
+        <section className="mt-20 py-12 px-6 md:py-16 md:px-12 bg-charcoal-dark text-white text-center border-l-4 border-brand-green">
           <p className="font-meta text-warm-gold tracking-tight text-xs mb-3">Join the conversation</p>
           <h2 className="font-meta font-bold text-3xl tracking-tight mb-4">Become a member. Shape the narrative.</h2>
           <p className="text-slate-400 max-w-md mx-auto mb-8 text-sm">Registered members get early access to analysis, policy briefs and updates directly from our research desk.</p>

@@ -34,6 +34,20 @@ class ChapterService {
 
 
 
+  async getActiveChapterCount(): Promise<number> {
+    const { count, error } = await supabase
+      .from('chapters')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'Active')
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch active chapter count:', error)
+      return 0
+    }
+
+    return count || 0
+  }
+
   async getChapters(): Promise<Chapter[]> {
     const { data, error } = await supabase
       .from('chapters')
