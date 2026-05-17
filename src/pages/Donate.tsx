@@ -234,7 +234,7 @@ export default function Donate() {
             <div key={kpi.label} className="panel" style={{ padding: '16px 18px 16px 22px', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: kpi.bar }} />
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <p style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{kpi.label}</p>
+                <p style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{kpi.label}</p>
                 <span className="material-symbols-outlined desktop-only" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>{kpi.icon}</span>
               </div>
               <p style={{ fontSize: 22, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>
@@ -264,15 +264,15 @@ export default function Donate() {
             <div className="panel">
               <div style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid hsl(var(--border))' }}>
                 <div>
-                  <p style={{ fontWeight: 800, fontSize: 15, color: 'hsl(var(--on-surface))', margin: 0 }}>Make a Contribution</p>
-                  <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0', fontWeight: 600 }}>Support an active campaign</p>
+                  <p style={{ fontWeight: 700, fontSize: 14, color: 'hsl(var(--on-surface))', margin: 0 }}>Make a Contribution</p>
+                  <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0', fontWeight: 500 }}>Support an active campaign</p>
                 </div>
                 <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--primary))' }}>volunteer_activism</span>
               </div>
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '18px 18px 20px' }}>
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Campaign</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Campaign</label>
                   <select name="name-badabb" id="select-badabb"
                     value={formData.campaignId}
                     onChange={e => setFormData(prev => ({ ...prev, campaignId: e.target.value }))}
@@ -283,7 +283,7 @@ export default function Donate() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Amount (GHS)</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Amount (GHS)</label>
                   <div style={{ position: 'relative' }}>
                     <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 13, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}>₵</span>
                     <input aria-label="0.00" name="name-ded56b" id="input-ded56b"
@@ -307,7 +307,7 @@ export default function Donate() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Full Name</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>Full Name</label>
                   <input name="name-46ec53" id="input-46ec53"
                     type="text"
                     value={formData.fullName}
@@ -318,7 +318,7 @@ export default function Donate() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>MoMo Number</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 6 }}>MoMo Number</label>
                   <input aria-label="024XXXXXXX" name="name-4a990b" id="input-4a990b"
                     type="tel"
                     placeholder="024XXXXXXX"
@@ -353,8 +353,8 @@ export default function Donate() {
               <div className="panel">
                 <div style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid hsl(var(--border))' }}>
                   <div>
-                    <p style={{ fontWeight: 800, fontSize: 15, color: 'hsl(var(--on-surface))', margin: 0 }}>Active Campaigns</p>
-                    <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0', fontWeight: 600 }}>Click a campaign to select it for your contribution</p>
+                    <p style={{ fontWeight: 700, fontSize: 14, color: 'hsl(var(--on-surface))', margin: 0 }}>Active Campaigns</p>
+                    <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0', fontWeight: 500 }}>Click a campaign to select it for your contribution</p>
                   </div>
                 </div>
                 <div style={{ padding: '16px 18px 18px' }}>
@@ -374,14 +374,14 @@ export default function Donate() {
                             key={c.id}
                             onClick={() => setFormData(prev => ({ ...prev, campaignId: c.id }))}
                             style={{ border: isSelected ? '2px solid hsl(var(--primary))' : '1px solid hsl(var(--border))', borderRadius: 4, padding: 14, cursor: 'pointer', background: isSelected ? 'hsla(var(--primary), 0.04)' : '#fff', transition: 'all 0.15s' }}>
-                            <p style={{ fontSize: 13, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: '0 0 4px', letterSpacing: '-0.01em' }}>{c.title}</p>
+                            <p style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--on-surface))', margin: '0 0 4px', letterSpacing: '-0.01em' }}>{c.title}</p>
                             <p style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', fontWeight: 600, margin: '0 0 10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{c.description}</p>
                             <div style={{ height: 4, background: 'hsl(var(--container-low))', borderRadius: 99, overflow: 'hidden', marginBottom: 6 }}>
                               <div style={{ height: '100%', width: `${pct}%`, background: 'hsl(var(--primary))', transition: 'width 1s ease-out' }} />
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>{pct}% funded</span>
-                              <span style={{ fontSize: 12, fontWeight: 900, color: 'hsl(var(--primary))' }}>₵ {c.raisedAmount.toLocaleString()}</span>
+                              <span style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>{pct}% funded</span>
+                              <span style={{ fontSize: 12, fontWeight: 700, color: 'hsl(var(--primary))' }}>₵ {c.raisedAmount.toLocaleString()}</span>
                             </div>
                           </div>
                         )
@@ -395,8 +395,8 @@ export default function Donate() {
               <div className="panel">
                 <div style={{ padding: '14px 18px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', borderBottom: '1px solid hsl(var(--border))', gap: 12, flexWrap: 'wrap' }}>
                   <div>
-                    <p style={{ fontWeight: 800, fontSize: 15, color: 'hsl(var(--on-surface))', margin: 0 }}>Contribution History</p>
-                    <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0', fontWeight: 600 }}>Movement mobilization ledger</p>
+                    <p style={{ fontWeight: 700, fontSize: 14, color: 'hsl(var(--on-surface))', margin: 0 }}>Contribution History</p>
+                    <p style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', margin: '2px 0 0', fontWeight: 500 }}>Movement mobilization ledger</p>
                   </div>
                   <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                     {(['all', 'me'] as const).map(f => (
@@ -412,7 +412,7 @@ export default function Donate() {
                     <thead>
                       <tr style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                         {['Contributor', 'Campaign', 'Amount', 'Status'].map(h => (
-                          <th key={h} style={{ padding: '10px 18px', fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
+                          <th key={h} style={{ padding: '10px 18px', fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -431,7 +431,7 @@ export default function Donate() {
                             <p style={{ fontSize: 11, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>{item.campaignTitle || 'Strategic Fund'}</p>
                           </td>
                           <td style={{ padding: '10px 18px' }}>
-                            <p style={{ fontSize: 13, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>{item.amount}</p>
+                            <p style={{ fontSize: 13, fontWeight: 700, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>{item.amount}</p>
                           </td>
                           <td style={{ padding: '10px 18px' }}>
                             <span className={`pill ${item.status === 'Verified' ? 'pill-ok' : 'pill-warn'}`}>{item.status}</span>
