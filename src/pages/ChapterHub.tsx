@@ -340,15 +340,15 @@ export default function ChapterHub() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid hsl(var(--border))', marginBottom: 20, overflowX: 'auto' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid hsl(var(--border))', marginBottom: 20 }}>
         {TABS.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             style={{
-              padding: '10px 20px', background: 'none', border: 'none', cursor: 'pointer',
-              fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11,
-              textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap',
+              flex: 1, padding: '10px 8px', background: 'none', border: 'none', cursor: 'pointer',
+              fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 10,
+              textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap',
               color: activeTab === tab.key ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
               borderBottom: activeTab === tab.key ? '2px solid hsl(var(--primary))' : '2px solid transparent',
               marginBottom: -1, transition: 'color 0.15s',
