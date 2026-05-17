@@ -34,7 +34,8 @@ export default function DashboardLayout() {
         // Leader takes priority
         const leaderChapter = chapters.find(c => c.leader_id === session.user.id)
         if (leaderChapter) {
-          setMyChapterLink({ to: `/dashboard/chapter-hub/${leaderChapter.id}`, icon: 'manage_accounts' })
+          const slug = leaderChapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+          setMyChapterLink({ to: `/dashboard/chapter-hub/${slug}`, icon: 'manage_accounts' })
           return
         }
 

@@ -112,7 +112,14 @@ export default function ChapterHub() {
       const chapters = await adminService.getChapters()
       let mine: Chapter | undefined
 
-      if (chapterId) mine = chapters.find(c => c.id === chapterId)
+      if (chapterId) {
+        mine = chapters.find(c => c.id === chapterId)
+        if (!mine) {
+          mine = chapters.find(c =>
+            c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') === chapterId
+          )
+        }
+      }
       if (!mine) mine = chapters.find(c => c.leader_id === userId)
 
       if (!mine) {
