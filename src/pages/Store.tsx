@@ -74,7 +74,7 @@ export default function Store() {
   )
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white pb-20 lg:pb-0">
       <SEO 
         title="Movement Supplies"
         description="Wear the colors. Fund the cause. 100% of proceeds support youth jobs programs."
@@ -290,12 +290,25 @@ export default function Store() {
         </section>
       </div>
 
-      <ShareModal 
-        isOpen={isShareModalOpen} 
-        onClose={() => setIsShareModalOpen(false)} 
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
         title={shareData.title}
         url={shareData.url}
       />
+
+      {cartCount > 0 && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 border-t-2 border-accent" style={{ background: '#181d19' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'hsl(var(--accent))' }}>shopping_bag</span>
+            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: '#fff' }}>{cartCount} item{cartCount !== 1 ? 's' : ''}</span>
+            <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>· ₵{total.toFixed(0)}</span>
+          </div>
+          <Link to="/store/checkout" style={{ background: 'hsl(var(--accent))', color: '#fff', padding: '8px 18px', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, textDecoration: 'none' }}>
+            Checkout →
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

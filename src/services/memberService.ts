@@ -283,7 +283,7 @@ class MemberService {
     return true
   }
 
-  async getCountries(): Promise<Country[]> {
+  async getCountries(): Promise<{ id: string | number; name: string; dialing_code: string; is_diaspora: boolean }[]> {
     const { data, error } = await supabase
       .from('countries')
       .select('*')

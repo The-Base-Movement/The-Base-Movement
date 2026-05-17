@@ -133,6 +133,10 @@ export default function ProfileSettings() {
           city: profile.city || '',
           residentialAddress: profile.residentialAddress || ''
         })
+        if (profile.avatarUrl) {
+          setAvatarUrl(profile.avatarUrl)
+          localStorage.setItem('userAvatar', profile.avatarUrl)
+        }
       }
       setLoading(false)
     }
@@ -217,27 +221,42 @@ export default function ProfileSettings() {
   }
 
   const handleDownload = async () => {
-    if (!cardRef.current) return
+    // We use a hidden high-res version of the card for the download to avoid mobile squashing issues
+    const captureEl = document.getElementById('membership-card-download-capture')
+    if (!captureEl) return
+    
     try {
-      const canvas = await html2canvas(cardRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
+      // Temporarily show it for capture
+      captureEl.style.display = 'block'
+      const canvas = await html2canvas(captureEl, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#ffffff',
+        logging: false
+      })
+      captureEl.style.display = 'none'
+      
       const imgData = canvas.toDataURL('image/png')
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [85.6, 54] })
       pdf.addImage(imgData, 'PNG', 0, 0, 85.6, 54)
       pdf.save(`THE-BASE-CARD-${previewRegNo || 'MEMBER'}.pdf`)
     } catch (error) {
       console.error('Error generating PDF:', error)
+      const captureEl = document.getElementById('membership-card-download-capture')
+      if (captureEl) captureEl.style.display = 'none'
     }
   }
 
   const handlePrint = async () => {
-    if (!cardRef.current) return
+    const captureEl = document.getElementById('membership-card-download-capture')
+    if (!captureEl) return
     try {
-      const canvas = await html2canvas(cardRef.current, {
+      captureEl.style.display = 'block'
+      const canvas = await html2canvas(captureEl, {
         scale: 4, useCORS: true, backgroundColor: '#ffffff',
-        logging: false, scrollX: 0, scrollY: 0,
-        windowWidth: document.documentElement.offsetWidth,
-        windowHeight: document.documentElement.offsetHeight
+        logging: false, scrollX: 0, scrollY: 0
       })
+      captureEl.style.display = 'none'
       const imgData = canvas.toDataURL('image/png')
       const iframe = document.createElement('iframe')
       iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:none'
@@ -249,6 +268,8 @@ export default function ProfileSettings() {
       setTimeout(() => { if (document.body.contains(iframe)) document.body.removeChild(iframe) }, 60000)
     } catch (error) {
       console.error('Error printing card:', error)
+      const captureEl = document.getElementById('membership-card-download-capture')
+      if (captureEl) captureEl.style.display = 'none'
     }
   }
 
@@ -289,7 +310,7 @@ export default function ProfileSettings() {
               <span className="meta">Live preview</span>
             </div>
             <div style={{ padding: 20 }}>
-              <div ref={cardRef}>
+              <div ref={cardRef} className="mcard-container">
                 <MembershipCard
                   userName={form.fullName}
                   avatarUrl={avatarUrl}
@@ -306,6 +327,33 @@ export default function ProfileSettings() {
                   onPhotoClick={() => fileRef.current?.click()}
                 />
               </div>
+
+              {/* Hidden High-Res Capture Target (Fixed dimensions to prevent cropping and squashing) */}
+              <div id="membership-card-download-capture" style={{ 
+                position: 'fixed', 
+                left: '-9999px', 
+                top: '-9999px', 
+                width: '520px',
+                height: '325px',
+                display: 'none'
+              }}>
+                <MembershipCard
+                  userName={form.fullName}
+                  avatarUrl={avatarUrl}
+                  userRegNo={previewRegNo}
+                  initials={initials}
+                  gender={form.gender}
+                  joinedDate={form.joinedDate}
+                  status={form.status}
+                  region={form.region}
+                  constituency={form.constituency}
+                  country={form.country}
+                  city={form.city}
+                  chapter={form.chapter}
+                  isForDownload={true}
+                />
+              </div>
+
               <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarChange} />
             </div>
             <div style={{ padding: '0 16px 16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>

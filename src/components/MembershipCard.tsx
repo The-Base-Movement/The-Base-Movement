@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { useBranding } from '@/hooks/useBranding'
 
@@ -15,156 +16,302 @@ interface MembershipCardProps {
   constituency?: string
   chapter?: string
   city?: string
+  isForDownload?: boolean
 }
 
-const MembershipCard: React.FC<MembershipCardProps> = ({
-  userName,
-  avatarUrl,
-  userRegNo,
-  onPhotoClick,
-  initials,
-  gender,
-  joinedDate,
-  status,
-  country,
-  region,
-  constituency,
-  chapter,
-  city
+const MembershipCardInner: React.FC<MembershipCardProps> = ({
+  userName, avatarUrl, userRegNo, onPhotoClick, initials,
+  gender, joinedDate, status, country, region, constituency, chapter, city,
+  isForDownload = false
 }) => {
   const { settings } = useBranding()
+
+  // Base styles from design handoff
+  const cardStyle: React.CSSProperties = {
+    background: '#fff',
+    aspectRatio: '1.6 / 1',
+    display: 'flex',
+    flexDirection: 'column',
+    borderLeft: '3px solid hsl(var(--primary))',
+    borderRight: '3px solid hsl(var(--primary))',
+    borderTop: '3px solid hsl(var(--destructive))',
+    borderBottom: '3px solid hsl(var(--accent))',
+    borderRadius: 8,
+    overflow: 'hidden',
+    boxShadow: isForDownload ? 'none' : '0 24px 48px -12px rgba(0,0,0,.18)',
+    position: 'relative',
+    width: '100%',
+    fontFamily: "'Public Sans', sans-serif",
+    minWidth: isForDownload ? 520 : 'auto', 
+  }
+
+  const headStyle: React.CSSProperties = {
+    background: 'hsl(var(--destructive))',
+    padding: '12px 14px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexShrink: 0,
+  }
+
+  const bodyStyle: React.CSSProperties = {
+    flex: 1,
+    padding: '14px 18px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 14,
+    position: 'relative',
+    overflow: 'hidden',
+  }
+
+  const photoStyle: React.CSSProperties = {
+    width: '120px',
+    height: '155px',
+    padding: '2px',
+    background: 'linear-gradient(to bottom, hsl(var(--destructive)), hsl(var(--accent)), hsl(var(--primary)))',
+    borderRadius: 4,
+    flexShrink: 0,
+    position: 'relative',
+    zIndex: 10,
+  }
+
+  const infoStyle: React.CSSProperties = {
+    flex: 1,
+    minWidth: 0,
+    paddingRight: '88px',
+  }
+
+  const nameStyle: React.CSSProperties = {
+    fontWeight: 800,
+    fontSize: '18px',
+    lineHeight: '28px',
+    letterSpacing: '-.015em',
+    paddingBottom: '3px',
+    color: 'hsl(var(--on-surface))',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    textTransform: 'capitalize'
+  }
+
+  const dlStyle: React.CSSProperties = {
+    margin: 0,
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr',
+    gap: '3px 12px',
+  }
+
+  const dtStyle: React.CSSProperties = {
+    fontSize: '10px',
+    fontWeight: 700,
+    color: 'hsl(var(--on-surface-muted))',
+    textTransform: 'uppercase',
+    lineHeight: '16px',
+    paddingBottom: '4px',
+  }
+
+  const ddStyle: React.CSSProperties = {
+    margin: 0,
+    fontSize: '11px',
+    fontWeight: 800,
+    color: 'hsl(var(--on-surface))',
+    letterSpacing: '-.005em',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    lineHeight: '16px',
+    paddingBottom: '4px',
+  }
+
+  const qrStyle: React.CSSProperties = {
+    position: 'absolute',
+    right: '18px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '4px',
+    zIndex: 20,
+  }
+
+  const footStyle: React.CSSProperties = {
+    background: 'hsl(var(--container-low))',
+    borderTop: '1px solid hsl(var(--border))',
+    padding: '5px 14px',
+    fontSize: '8px',
+    fontWeight: 700,
+    color: 'hsl(var(--on-surface-muted))',
+    textAlign: 'center',
+    flexShrink: 0,
+  }
+
   return (
-    <div className="relative aspect-[1.58/1] w-full bg-white flex flex-col font-meta border-x-[3px] border-x-primary border-t-[3px] border-t-destructive border-b-[3px] border-b-brand-gold rounded-[8px] overflow-hidden">
-      
-      {/* Card Header (Red Section) - Precise radius matching */}
-      <div className="bg-destructive p-2 sm:p-3 flex justify-between items-center rounded-t-[8px]">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-[8px] p-1 shadow-md">
-            <img src={settings.logo_url} alt="Logo" className="w-full h-full object-contain"  decoding="async" loading="lazy" />
+    <div style={cardStyle}>
+      {/* Header */}
+      <div style={headStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 32, height: 32, background: '#fff', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 3 }}>
+            <img src={settings.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <div>
-            <h4 className="text-white font-bold text-micro sm:text-xs leading-none">The Base Movement</h4>
-            <p className="text-white/80 text-[6px] sm:text-[7px] font-medium mt-1">Ghana First, jobs for the youth!</p>
+            <h4 style={{ margin: 0, color: '#fff', fontSize: 11, fontWeight: 800, lineHeight: 1 }}>The Base Movement</h4>
+            <p style={{ margin: 0, color: 'rgba(255,255,255,.8)', fontSize: 8, fontWeight: 500, marginTop: 2 }}>Ghana First, jobs for the youth!</p>
           </div>
         </div>
-        <div className="px-2 sm:px-3 h-5 sm:h-6 bg-white/10 border border-white/20 rounded-none text-center overflow-hidden">
-          <span className="text-white text-[7px] sm:text-[8px] font-bold tracking-tight leading-[20px] sm:leading-[24px] block uppercase">
-            {country && country !== 'Ghana' ? 'Diaspora Member' : 'Local Member'}
-          </span>
+        <div style={{ padding: '4px 10px', background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.2)', color: '#fff', fontSize: 9, fontWeight: 800, letterSpacing: '-.005em' }}>
+          {country && country !== 'Ghana' ? 'DIASPORA MEMBER' : 'GHANA MEMBER'}
         </div>
       </div>
 
-      {/* Card Body */}
-      <div className="flex-1 p-2 sm:px-4 sm:py-2 flex items-center gap-3 sm:gap-6 relative">
-        {/* Photo Frame with True External Gradient Border */}
-        <div className="w-24 h-28 sm:w-34 sm:h-42 shrink-0 relative z-10 rounded-[4px] bg-white p-0.5 sm:p-1 shadow-sm before:absolute before:-inset-[1px] before:bg-gradient-to-b before:from-destructive before:via-brand-gold before:to-primary before:rounded-[5px] before:-z-10">
-          <div className="w-full h-full bg-muted/30 rounded-[2px] relative">
-            <div 
-              className={`w-full h-full bg-muted overflow-hidden relative group rounded-[2px] ${onPhotoClick ? 'cursor-pointer' : ''}`}
-              onClick={onPhotoClick}
-            >
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={userName} className="w-full h-full object-cover"  decoding="async" loading="lazy" />
-              ) : (
-                <div className="w-full h-full bg-primary flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
-                  {initials || 'M'}
-                </div>
-              )}
-              {onPhotoClick && (
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="material-symbols-outlined text-white text-sm sm:text-base">photo_camera</span>
-                </div>
-              )}
-            </div>
+      {/* Body */}
+      <div style={bodyStyle}>
+        <div style={photoStyle}>
+          <div 
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              padding: '2px', 
+              background: 'rgba(255,255,255,0.9)', 
+              borderRadius: 3,
+              cursor: onPhotoClick ? 'pointer' : 'default',
+              overflow: 'hidden',
+              position: 'relative'
+            }}
+            onClick={onPhotoClick}
+          >
+            {avatarUrl ? (
+              <div 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  backgroundImage: `url(${avatarUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center top',
+                  borderRadius: 2 
+                }} 
+              />
+            ) : (
+              <div style={{ width: '100%', height: '100%', background: 'hsl(var(--primary))', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 800 }}>
+                {initials || 'M'}
+              </div>
+            )}
+            {onPhotoClick && !isForDownload && (
+              <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.2s' }} className="photo-hover">
+                <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 20 }}>photo_camera</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Member Details - Center-aligned with photo */}
-        <div className="flex-1 space-y-0.5 sm:space-y-1.5 min-w-0 pr-16 sm:pr-20">
-          <div className="mb-1 sm:mb-2 pt-1">
-            <h5 className="text-[hsl(var(--foreground))] font-bold text-sm sm:text-lg tracking-tight leading-normal" title={userName || 'Member Name'}>{userName || 'Member Name'}</h5>
-            <div className="h-0.5 w-6 sm:w-12 bg-primary mt-1"></div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-y-0.5 sm:gap-y-1 text-on-surface">
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Reg. no.</span>
-              <span className="text-[8px] sm:text-[11px] font-bold text-primary tracking-tight whitespace-nowrap pb-[2px]">{userRegNo || 'DI-XXXXXX'}</span>
-            </div>
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Gender</span>
-              <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{gender || 'Not Specified'}</span>
-            </div>
+        <div style={infoStyle}>
+          <div style={nameStyle}>{userName || 'Member Name'}</div>
+          <div style={{ height: 2, width: 36, background: 'hsl(var(--primary))', marginBottom: 8 }} />
+          
+          <dl style={dlStyle}>
+            <dt style={dtStyle}>Reg. no.</dt>
+            <dd style={{ ...ddStyle, color: 'hsl(var(--primary))' }}>{userRegNo || 'GH-XXXXXX'}</dd>
+            
+            <dt style={dtStyle}>Gender</dt>
+            <dd style={ddStyle}>{gender || 'Not Specified'}</dd>
             
             {(!country || country === 'Ghana') ? (
               <>
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Region</span>
-                  <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{region || 'Not Specified'}</span>
-                </div>
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Const.</span>
-                  <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{constituency || 'Not Specified'}</span>
-                </div>
+                <dt style={dtStyle}>Region</dt>
+                <dd style={ddStyle}>{region || 'Not Specified'}</dd>
+                <dt style={dtStyle}>Const.</dt>
+                <dd style={ddStyle}>{constituency || 'Not Specified'}</dd>
               </>
             ) : (
               <>
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Country</span>
-                  <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{country || 'Not Specified'}</span>
-                </div>
+                <dt style={dtStyle}>Country</dt>
+                <dd style={ddStyle}>{country || 'Not Specified'}</dd>
                 {city && (
-                  <div className="flex items-center gap-1 sm:gap-1.5">
-                    <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">City</span>
-                    <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{city}</span>
-                  </div>
+                  <>
+                    <dt style={dtStyle}>City</dt>
+                    <dd style={ddStyle}>{city}</dd>
+                  </>
                 )}
               </>
             )}
-
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Chapter</span>
-              <span className="text-[7px] sm:text-[10px] font-bold tracking-tight leading-none whitespace-nowrap max-w-[120px] sm:max-w-none pb-[2px]">{chapter || 'Not Specified'}</span>
-            </div>
-
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Joined</span>
-              <span className="text-[8px] sm:text-[10px] font-bold whitespace-nowrap pb-[2px]">{joinedDate || '30 Apr 2026'}</span>
-            </div>
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <span className="text-[7px] sm:text-[9px] font-bold text-muted-foreground w-12 sm:w-16 shrink-0">Status</span>
-              <span className="text-[8px] sm:text-[10px] font-bold text-primary whitespace-nowrap pb-[2px]">{status || 'Verified'}</span>
-            </div>
-          </div>
+            
+            <dt style={dtStyle}>Chapter</dt>
+            <dd style={ddStyle}>{chapter || 'Not Specified'}</dd>
+            
+            <dt style={dtStyle}>Joined</dt>
+            <dd style={ddStyle}>{joinedDate || '30 Mar 2025'}</dd>
+            
+            <dt style={dtStyle}>Status</dt>
+            <dd style={{ ...ddStyle, color: 'hsl(var(--primary))' }}>● {status || 'Verified'}</dd>
+          </dl>
         </div>
 
-        {/* QR Code - Optimized for horizontal space */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-2 sm:right-4 flex flex-col items-center scale-[0.65] sm:scale-[0.9] origin-right z-20">
-          <div className="bg-white border border-border/60 p-1 shadow-sm">
-            <QRCodeSVG 
-              value={`${typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/${userRegNo || 'DI-XXXXXX'}`}
-              size={80}
+        <div style={qrStyle}>
+          <div style={{ background: '#fff', border: '1px solid hsl(var(--border))', padding: 4 }}>
+            <QRCodeSVG
+              value={`${typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/${userRegNo || 'GH-XXXXXX'}`}
+              size={64}
               level="H"
-              includeMargin={false}
-              className="w-12 h-12 sm:w-20 sm:h-20"
             />
           </div>
-          <span className="text-[6px] sm:text-[8px] text-muted-foreground/80 mt-1 font-bold tracking-tight">Verify id</span>
+          <span style={{ fontSize: 8, fontWeight: 700, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase' }}>Verify ID</span>
         </div>
 
-        {/* Subtle Watermark Logo */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none z-0">
-          <img src={settings.logo_url} alt="" className="w-40 sm:w-64 object-contain grayscale"  decoding="async" loading="lazy" />
+        {/* Watermark */}
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.04, pointerEvents: 'none', zIndex: 0 }}>
+          <img src={settings.logo_url} alt="" style={{ width: '80%', maxWidth: 280, objectFit: 'contain', filter: 'grayscale(1)' }} />
         </div>
       </div>
 
-      {/* Card Footer - Ensuring full visibility */}
-      <div className="bg-muted/10 border-t border-border/20 px-3 sm:px-6 h-6 sm:h-8 flex items-center justify-center pb-1">
-        <p className="text-[5px] sm:text-[7px] text-muted-foreground/80 font-bold tracking-tight leading-normal m-0 whitespace-nowrap">
-          {typeof window !== 'undefined' ? window.location.origin : 'https://thebasemovement.com'}/verify/{userRegNo || 'DI-XXXXXX'}
-        </p>
+      {/* Footer */}
+      <div style={footStyle}>
+        {typeof window !== 'undefined' ? window.location.host : 'thebasemovement.com'}/verify/{userRegNo || 'GH-XXXXXX'}
       </div>
 
+      <style dangerouslySetInnerHTML={{ __html: `
+        .photo-hover:hover { opacity: 1 !important; }
+      `}} />
+    </div>
+  )
+}
+
+const MembershipCard: React.FC<MembershipCardProps> = (props) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(1)
+
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width
+        // Standard dashboard card max-width is 520
+        if (width < 520 && width > 0) {
+          setScale(width / 520)
+        } else {
+          setScale(1)
+        }
+      }
+    })
+    if (containerRef.current) observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  if (props.isForDownload) {
+    return <MembershipCardInner {...props} />
+  }
+
+  return (
+    <div ref={containerRef} style={{ width: '100%', maxWidth: 520, height: (520 / 1.6) * scale, position: 'relative', overflow: 'hidden', borderRadius: 8, margin: '0 auto' }}>
+      <div style={{
+        width: 520,
+        height: 520 / 1.6,
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
+        position: 'absolute',
+        top: 0,
+        left: 0
+      }}>
+        <MembershipCardInner {...props} />
+      </div>
     </div>
   )
 }
