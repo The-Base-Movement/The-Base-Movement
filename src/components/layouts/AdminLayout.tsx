@@ -195,7 +195,8 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
       items: [
         { to: '/admin/chapters', icon: 'location_on', label: 'Chapter management', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
         { to: '/admin/chapter-hub', icon: 'shield', label: 'Regional hub', permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' } },
-        { to: '/admin/ground-game', icon: 'how_to_vote', label: 'Mission control', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/ground-game', icon: 'how_to_vote', label: 'Constituency Operations', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
+        { to: '/admin/polling-stations', icon: 'ballot', label: 'Polling stations', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/broadcasts', icon: 'campaign', label: 'Mass mobilization', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/directives', icon: 'my_location', label: 'Tactical directives', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },
         { to: '/admin/deploy', icon: 'my_location', label: 'Deploy asset', permission: { action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' } },

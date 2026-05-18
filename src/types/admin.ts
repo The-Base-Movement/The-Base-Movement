@@ -146,6 +146,9 @@ export interface DBInventoryItem {
   long_description?: string
   product_images?: { url: string }[]
   deleted_at?: string | null
+  sizes?: string[]
+  colors?: string[]
+  customization_allowed?: boolean
 }
 
 export interface InventoryItem {
@@ -161,6 +164,9 @@ export interface InventoryItem {
   description?: string
   longDescription?: string
   deletedAt?: string | null
+  sizes?: string[]
+  colors?: string[]
+  customization_allowed?: boolean
 }
 
 export interface DonationCampaign {

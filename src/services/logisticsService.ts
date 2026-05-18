@@ -101,7 +101,10 @@ class LogisticsService {
       images: i.image_url ? [i.image_url] : [],
       color: i.brand_color,
       description: i.description,
-      longDescription: i.long_description
+      longDescription: i.long_description,
+      sizes: i.sizes || [],
+      colors: i.colors || [],
+      customization_allowed: i.customization_allowed || false
     }))
   }
 
@@ -200,7 +203,10 @@ class LogisticsService {
         image_emoji: item.image,
         brand_color: item.color,
         description: item.description,
-        long_description: item.longDescription
+        long_description: item.longDescription,
+        sizes: item.sizes || [],
+        colors: item.colors || [],
+        customization_allowed: item.customization_allowed || false
       })
       .select()
       .single()
@@ -214,7 +220,7 @@ class LogisticsService {
   }
 
   async updateInventoryItem(id: string, item: Partial<InventoryItem>): Promise<boolean> {
-    const updateData: Record<string, string | number> = {}
+    const updateData: Record<string, unknown> = {}
     if (item.name) updateData.name = item.name
     if (item.category) updateData.category = item.category
     if (item.price) updateData.price_ghs = parseFloat(item.price.replace(/[^0-9.]/g, ''))
@@ -224,6 +230,9 @@ class LogisticsService {
     if (item.color) updateData.brand_color = item.color
     if (item.description !== undefined) updateData.description = item.description
     if (item.longDescription !== undefined) updateData.long_description = item.longDescription
+    if (item.sizes !== undefined) updateData.sizes = item.sizes
+    if (item.colors !== undefined) updateData.colors = item.colors
+    if (item.customization_allowed !== undefined) updateData.customization_allowed = item.customization_allowed
 
     const { error } = await supabase
       .from('store_inventory')

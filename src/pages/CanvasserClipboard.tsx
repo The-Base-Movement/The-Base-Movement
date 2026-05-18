@@ -102,7 +102,7 @@ export default function CanvasserClipboard() {
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <div className="flex flex-col items-center gap-4">
           <span className="material-symbols-outlined text-primary animate-bounce" style={{ fontSize: 48 }}>assignment</span>
-          <p className="text-micro font-bold tracking-tight text-primary">Loading canvassing protocols...</p>
+          <p className="text-micro font-bold tracking-tight text-primary">Loading mobilization protocols...</p>
         </div>
       </div>
     )
@@ -122,7 +122,7 @@ export default function CanvasserClipboard() {
               Digital <span className="text-stone-400">clipboard</span>
             </h1>
             <p className="text-stone-500 text-xs font-medium tracking-wide mt-1 mb-0">
-              Door-to-door constituent outreach and intelligence logging.
+              Door-to-door outreach and field intelligence logging.
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function CanvasserClipboard() {
             {activeCampaigns.length === 0 ? (
               <div className="bg-white border border-stone-200 p-12 text-center shadow-sm">
                 <span className="material-symbols-outlined text-stone-300 block mx-auto mb-3" style={{ fontSize: 32 }}>warning</span>
-                <p className="text-micro font-bold text-stone-400 tracking-tight">No active canvassing missions in your sector.</p>
+                <p className="text-micro font-bold text-stone-400 tracking-tight">No active mobilization missions in your sector.</p>
               </div>
             ) : (
               activeCampaigns.map(camp => (
@@ -161,7 +161,7 @@ export default function CanvasserClipboard() {
         ) : (
           <div className="bg-white border border-stone-200 shadow-sm animate-in fade-in slide-in-from-bottom-4">
 
-            {/* Red canvasser header */}
+            {/* Field agent mission header */}
             <div className="text-white p-5 pb-[18px] relative overflow-hidden" style={{ background: 'hsl(var(--destructive))' }}>
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <span className="material-symbols-outlined" style={{ fontSize: 96 }}>location_on</span>

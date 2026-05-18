@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import type { CSSProperties } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { adminService } from '@/services/adminService'
 import { chapterService } from '@/services/chapterService'
@@ -31,28 +32,12 @@ interface ChapterDonation {
   reference: string | null
 }
 
-interface ChapterMeeting {
-  id: string
-  chapter_id: string
-  title: string
-  meeting_date: string
-  meeting_time: string | null
-  recurrence: string
-  expiry_date: string | null
-  never_expires: boolean
-  created_at: string
-}
-
 interface ChapterAnnouncement {
   id: string
   chapter_id: string
   content: string
   author_name: string
   created_at: string
-}
-
-const RECURRENCE_LABELS: Record<string, string> = {
-  once: 'One-time', weekly: 'Weekly', biweekly: 'Bi-weekly', monthly: 'Monthly', custom: 'Custom',
 }
 
 const lbl: CSSProperties = {
@@ -71,16 +56,17 @@ const inp: CSSProperties = {
 export default function ChapterHub() {
   const { chapterId } = useParams<{ chapterId?: string }>()
   const { session } = useAuth()
+  const queryClient = useQueryClient()
   const [chapter, setChapter] = useState<Chapter | null>(null)
   const [members, setMembers] = useState<ChapterMember[]>([])
   const [donations, setDonations] = useState<ChapterDonation[]>([])
-  const [meetings, setMeetings] = useState<ChapterMeeting[]>([])
   const [announcements, setAnnouncements] = useState<ChapterAnnouncement[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'members' | 'donations' | 'meetings' | 'board' | 'settings' | 'requests'>('members')
+  const [activeTab, setActiveTab] = useState<'members' | 'donations' | 'board' | 'activities' | 'settings' | 'requests'>('members')
   const [joinRequests, setJoinRequests] = useState<Awaited<ReturnType<typeof chapterService.getChapterRequests>>>([])
   const [processingRequestId, setProcessingRequestId] = useState<string | null>(null)
   const [leaderName, setLeaderName] = useState('')
+  const [leaderAvatarUrl, setLeaderAvatarUrl] = useState<string | null>(null)
 
   const [memberSearch, setMemberSearch] = useState('')
 
@@ -92,19 +78,18 @@ export default function ChapterHub() {
   const [focusTags, setFocusTags] = useState<string[]>([])
   const [focusInput, setFocusInput] = useState('')
 
-  const [showMeetingForm, setShowMeetingForm] = useState(false)
-  const [meetTitle, setMeetTitle] = useState('')
-  const [meetDate, setMeetDate] = useState('')
-  const [meetTime, setMeetTime] = useState('')
-  const [meetRecurrence, setMeetRecurrence] = useState('once')
-  const [meetNeverExpires, setMeetNeverExpires] = useState(true)
-  const [meetExpiryDate, setMeetExpiryDate] = useState('')
-  const [isSavingMeeting, setIsSavingMeeting] = useState(false)
-
   const [announceDraft, setAnnounceDraft] = useState('')
   const [isPostingAnnounce, setIsPostingAnnounce] = useState(false)
 
-  const todayStr = new Date().toISOString().split('T')[0]
+  const [activities, setActivities] = useState<{ id: string; title: string; description: string | null; type: string; activity_date: string }[]>([])
+  const [showActivityForm, setShowActivityForm] = useState(false)
+  const [actTitle, setActTitle] = useState('')
+  const [actDesc, setActDesc] = useState('')
+  const [actType, setActType] = useState('Event')
+  const [actDate, setActDate] = useState('')
+  const [isSavingActivity, setIsSavingActivity] = useState(false)
+  const [actFilter, setActFilter] = useState<string>('All')
+
 
   useEffect(() => {
     async function load() {
@@ -125,12 +110,14 @@ export default function ChapterHub() {
       if (!mine) mine = chapters.find(c => c.leader_id === userId)
 
       if (!mine) {
-        const { data: ud } = await supabase.from('users').select('chapter, full_name').eq('id', userId).maybeSingle()
+        const { data: ud } = await supabase.from('users').select('chapter, full_name, avatar_url').eq('id', userId).maybeSingle()
         if (ud?.chapter) mine = chapters.find(c => c.name.toLowerCase() === ud.chapter.toLowerCase())
         if (ud?.full_name) setLeaderName(ud.full_name)
+        if (ud?.avatar_url) setLeaderAvatarUrl(ud.avatar_url)
       } else {
-        const { data: ud } = await supabase.from('users').select('full_name').eq('id', userId).maybeSingle()
+        const { data: ud } = await supabase.from('users').select('full_name, avatar_url').eq('id', userId).maybeSingle()
         if (ud?.full_name) setLeaderName(ud.full_name)
+        if (ud?.avatar_url) setLeaderAvatarUrl(ud.avatar_url)
       }
 
       if (!mine) { setIsLoading(false); return }
@@ -164,13 +151,14 @@ export default function ChapterHub() {
         setDonations(donationData || [])
       }
 
-      const { data: meetData } = await supabase
-        .from('chapter_meetings').select('*').eq('chapter_id', mine.id).order('meeting_date', { ascending: true })
-      setMeetings(meetData || [])
-
       const { data: announceData } = await supabase
         .from('chapter_announcements').select('*').eq('chapter_id', mine.id).order('created_at', { ascending: false })
       setAnnouncements(announceData || [])
+
+      const { data: actData } = await supabase
+        .from('chapter_activities').select('id, title, description, type, activity_date')
+        .eq('chapter_id', mine.id).order('activity_date', { ascending: false })
+      setActivities(actData || [])
 
       const requests = await chapterService.getChapterRequests(mine.id)
       setJoinRequests(requests)
@@ -219,8 +207,12 @@ export default function ChapterHub() {
     setIsSavingContact(true)
     const ok = await chapterService.updateChapter(chapter.id, { email: emailDraft, phone_number: phoneDraft })
     setIsSavingContact(false)
-    if (ok) toast.success('Contact info updated.')
-    else toast.error('Failed to update contact info.')
+    if (ok) {
+      queryClient.invalidateQueries({ queryKey: ['chapters'] })
+      toast.success('Contact info updated.')
+    } else {
+      toast.error('Failed to update contact info.')
+    }
   }
 
   const handleSaveDetails = async () => {
@@ -233,6 +225,7 @@ export default function ChapterHub() {
     setIsSavingDetails(false)
     if (ok) {
       setChapter(prev => prev ? { ...prev, description: descDraft, local_focus: focusTags.join(', ') } : prev)
+      queryClient.invalidateQueries({ queryKey: ['chapters'] })
       toast.success('Chapter profile updated.')
     } else {
       toast.error('Failed to save changes.')
@@ -248,34 +241,6 @@ export default function ChapterHub() {
 
   const handleRemoveFocusTag = (tag: string) => {
     setFocusTags(prev => prev.filter(t => t !== tag))
-  }
-
-  const handleAddMeeting = async () => {
-    if (!chapter || !meetTitle.trim() || !meetDate) { toast.error('Title and date are required.'); return }
-    setIsSavingMeeting(true)
-    const { error } = await supabase.from('chapter_meetings').insert({
-      chapter_id: chapter.id,
-      title: meetTitle.trim(),
-      meeting_date: meetDate,
-      meeting_time: meetTime || null,
-      recurrence: meetRecurrence,
-      expiry_date: meetNeverExpires ? null : (meetExpiryDate || null),
-      never_expires: meetNeverExpires,
-    })
-    setIsSavingMeeting(false)
-    if (error) { toast.error('Failed to schedule meeting.'); return }
-    const { data } = await supabase.from('chapter_meetings').select('*').eq('chapter_id', chapter.id).order('meeting_date', { ascending: true })
-    setMeetings(data || [])
-    setMeetTitle(''); setMeetDate(''); setMeetTime(''); setMeetRecurrence('once'); setMeetNeverExpires(true); setMeetExpiryDate('')
-    setShowMeetingForm(false)
-    toast.success('Meeting scheduled.')
-  }
-
-  const handleDeleteMeeting = async (id: string) => {
-    const { error } = await supabase.from('chapter_meetings').delete().eq('id', id)
-    if (error) { toast.error('Failed to remove meeting.'); return }
-    setMeetings(prev => prev.filter(m => m.id !== id))
-    toast.success('Meeting removed.')
   }
 
   const handlePostAnnouncement = async () => {
@@ -298,6 +263,34 @@ export default function ChapterHub() {
     const { error } = await supabase.from('chapter_announcements').delete().eq('id', id)
     if (error) { toast.error('Failed to delete update.'); return }
     setAnnouncements(prev => prev.filter(a => a.id !== id))
+  }
+
+  const handleAddActivity = async () => {
+    if (!chapter || !actTitle.trim() || !actDate) { toast.error('Title and date are required.'); return }
+    setIsSavingActivity(true)
+    const { error } = await supabase.from('chapter_activities').insert({
+      chapter_id: chapter.id,
+      title: actTitle.trim(),
+      description: actDesc.trim() || null,
+      type: actType,
+      activity_date: actDate,
+    })
+    setIsSavingActivity(false)
+    if (error) { toast.error('Failed to add activity.'); return }
+    const { data } = await supabase.from('chapter_activities').select('id, title, description, type, activity_date')
+      .eq('chapter_id', chapter.id).order('activity_date', { ascending: false })
+    setActivities(data || [])
+    queryClient.invalidateQueries({ queryKey: ['chapters'] })
+    setActTitle(''); setActDesc(''); setActType('Event'); setActDate('')
+    setShowActivityForm(false)
+    toast.success('Activity added.')
+  }
+
+  const handleDeleteActivity = async (id: string) => {
+    const { error } = await supabase.from('chapter_activities').delete().eq('id', id)
+    if (error) { toast.error('Failed to remove activity.'); return }
+    setActivities(prev => prev.filter(a => a.id !== id))
+    queryClient.invalidateQueries({ queryKey: ['chapters'] })
   }
 
   if (isLoading) {
@@ -326,8 +319,8 @@ export default function ChapterHub() {
   const TABS = [
     { key: 'members' as const, label: `Members (${members.length})` },
     { key: 'donations' as const, label: `Donations (${donations.length})` },
-    { key: 'meetings' as const, label: `Meetings (${meetings.length})` },
     { key: 'board' as const, label: `Board (${announcements.length})` },
+    { key: 'activities' as const, label: `Activities (${activities.length})` },
     { key: 'requests' as const, label: joinRequests.length > 0 ? `Requests (${joinRequests.length})` : 'Requests' },
     { key: 'settings' as const, label: 'Settings' },
   ]
@@ -496,115 +489,6 @@ export default function ChapterHub() {
         </div>
       )}
 
-      {/* ── Meetings ────────────────────────────────────── */}
-      {activeTab === 'meetings' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {!showMeetingForm ? (
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button className="btn btn-primary btn-sm" onClick={() => setShowMeetingForm(true)}>
-                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>add</span>
-                Schedule meeting
-              </button>
-            </div>
-          ) : (
-            <div className="panel" style={{ padding: '20px 22px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>calendar_add_on</span>
-                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>New meeting</span>
-                </div>
-                <button className="btn btn-outline btn-sm" onClick={() => setShowMeetingForm(false)}>Cancel</button>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div>
-                  <label style={lbl}>Meeting title</label>
-                  <input name="meetTitle" id="input-7be651" type="text" value={meetTitle} onChange={e => setMeetTitle(e.target.value)} placeholder="e.g. Monthly general meeting" style={inp} />
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
-                  <div>
-                    <label style={lbl}>Date</label>
-                    <input name="meetDate" id="input-e9359e" type="date" value={meetDate} min={todayStr} onChange={e => setMeetDate(e.target.value)} style={inp} />
-                  </div>
-                  <div>
-                    <label style={lbl}>Time (optional)</label>
-                    <input name="meetTime" id="input-ff696b" type="time" value={meetTime} onChange={e => setMeetTime(e.target.value)} style={inp} />
-                  </div>
-                </div>
-                <div>
-                  <label style={lbl}>Recurrence</label>
-                  <select name="meetRecurrence" id="select-520881" value={meetRecurrence} onChange={e => setMeetRecurrence(e.target.value)} style={{ ...inp, cursor: 'pointer' }}>
-                    {Object.entries(RECURRENCE_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={lbl}>Meeting expiry</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
-                      <input id="input-6aff04" type="radio" name="expiry" checked={meetNeverExpires} onChange={() => setMeetNeverExpires(true)} /> Never expires
-                    </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
-                      <input id="input-b0ab46" type="radio" name="expiry" checked={!meetNeverExpires} onChange={() => setMeetNeverExpires(false)} /> Set expiry date
-                    </label>
-                  </div>
-                  {!meetNeverExpires && (
-                    <input name="meetExpiryDate" id="input-d4973b" type="date" value={meetExpiryDate} min={meetDate || todayStr} onChange={e => setMeetExpiryDate(e.target.value)} style={{ ...inp, marginTop: 10 }} />
-                  )}
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 4 }}>
-                  <button className="btn btn-primary" onClick={handleAddMeeting} disabled={isSavingMeeting}>
-                    {isSavingMeeting ? 'Scheduling…' : 'Schedule meeting'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {meetings.length === 0 ? (
-            <div className="panel" style={{ padding: '48px 18px', textAlign: 'center' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))', opacity: 0.2 }}>calendar_month</span>
-              <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", marginTop: 12 }}>No meetings scheduled yet.</p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {meetings.map(m => {
-                const isPast = !m.never_expires && m.meeting_date < todayStr && (!m.expiry_date || m.expiry_date < todayStr)
-                const dateStr = new Date(m.meeting_date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-                const dayNum = new Date(m.meeting_date + 'T12:00:00').getDate()
-                const monStr = new Date(m.meeting_date + 'T12:00:00').toLocaleDateString('en-GB', { month: 'short' })
-                return (
-                  <div key={m.id} className="panel" style={{ padding: '16px 18px', display: 'flex', alignItems: 'flex-start', gap: 14, opacity: isPast ? 0.55 : 1 }}>
-                    <div style={{ width: 48, height: 48, borderRadius: 6, background: isPast ? 'hsl(var(--container-low))' : 'hsl(var(--primary) / 0.08)', border: `1px solid ${isPast ? 'hsl(var(--border))' : 'hsl(var(--primary) / 0.2)'}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <span style={{ fontSize: 18, fontWeight: 900, color: isPast ? 'hsl(var(--on-surface-muted))' : 'hsl(var(--primary))', fontFamily: "'Public Sans', sans-serif", lineHeight: 1 }}>{dayNum}</span>
-                      <span style={{ fontSize: 9, fontWeight: 800, color: isPast ? 'hsl(var(--on-surface-muted))' : 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: "'Public Sans', sans-serif" }}>{monStr}</span>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-                        <p style={{ margin: 0, fontSize: 14, fontWeight: 800, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>{m.title}</p>
-                        {isPast && <span className="pill pill-mute">Past</span>}
-                      </div>
-                      <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>
-                        {dateStr}{m.meeting_time ? ` · ${m.meeting_time}` : ''}
-                      </p>
-                      <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 20, background: 'hsl(var(--container-low))', color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                          {RECURRENCE_LABELS[m.recurrence] || m.recurrence}
-                        </span>
-                        <span style={{ fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 20, background: m.never_expires ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--container-low))', color: m.never_expires ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                          {m.never_expires ? 'Never expires' : m.expiry_date ? `Expires ${new Date(m.expiry_date + 'T12:00:00').toLocaleDateString('en-GB')}` : 'No expiry'}
-                        </span>
-                      </div>
-                    </div>
-                    <button onClick={() => handleDeleteMeeting(m.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 4, color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }} title="Remove meeting">
-                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
-                    </button>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* ── Board ───────────────────────────────────────── */}
       {activeTab === 'board' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -639,8 +523,11 @@ export default function ChapterHub() {
                 <div key={a.id} className="panel" style={{ padding: '16px 18px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'hsl(var(--primary) / 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))', fontFamily: "'Public Sans', sans-serif", flexShrink: 0 }}>
-                        {a.author_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'hsl(var(--primary) / 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))', fontFamily: "'Public Sans', sans-serif", flexShrink: 0, overflow: 'hidden', border: '1px solid hsl(var(--border))' }}>
+                        {leaderAvatarUrl
+                          ? <img src={leaderAvatarUrl} alt={a.author_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          : a.author_name.split(' ').map(n => n[0]).join('').slice(0, 2)
+                        }
                       </div>
                       <div>
                         <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>{a.author_name}</p>
@@ -660,6 +547,124 @@ export default function ChapterHub() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── Activities ──────────────────────────────────── */}
+      {activeTab === 'activities' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Type filter + add button */}
+          {!showActivityForm && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {['All', 'Meeting', 'Event', 'Action', 'Onboarding', 'Outreach', 'Rally', 'Workshop'].map(f => {
+                  const count = f === 'All' ? activities.length : activities.filter(a => a.type === f).length
+                  const isActive = actFilter === f
+                  return (
+                    <button
+                      key={f}
+                      onClick={() => setActFilter(f)}
+                      style={{ padding: '5px 12px', borderRadius: 20, border: `1px solid ${isActive ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`, background: isActive ? 'hsl(var(--primary))' : 'transparent', color: isActive ? '#fff' : 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 11, cursor: 'pointer', transition: 'all 0.15s' }}
+                    >
+                      {f}{count > 0 ? ` (${count})` : ''}
+                    </button>
+                  )
+                })}
+              </div>
+              <button className="btn btn-primary btn-sm" onClick={() => setShowActivityForm(true)}>
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>add</span>
+                Add activity
+              </button>
+            </div>
+          )}
+
+          {showActivityForm && (
+            <div className="panel" style={{ padding: '20px 22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>event_note</span>
+                  <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>New activity</span>
+                </div>
+                <button className="btn btn-outline btn-sm" onClick={() => setShowActivityForm(false)}>Cancel</button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div>
+                  <label style={lbl}>Title</label>
+                  <input type="text" value={actTitle} onChange={e => setActTitle(e.target.value)} placeholder="e.g. Voter registration drive" style={inp} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
+                  <div>
+                    <label style={lbl}>Type</label>
+                    <select value={actType} onChange={e => setActType(e.target.value)} style={{ ...inp, cursor: 'pointer' }}>
+                      {['Event', 'Action', 'Onboarding', 'Meeting', 'Outreach', 'Rally', 'Workshop'].map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={lbl}>Date</label>
+                    <input type="date" value={actDate} onChange={e => setActDate(e.target.value)} style={inp} />
+                  </div>
+                </div>
+                <div>
+                  <label style={lbl}>Description (optional)</label>
+                  <textarea
+                    value={actDesc}
+                    onChange={e => setActDesc(e.target.value)}
+                    placeholder="Brief description of the activity…"
+                    rows={3}
+                    style={{ width: '100%', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '10px 12px', fontFamily: "'Public Sans', sans-serif", fontWeight: 600, fontSize: 13, outline: 'none', boxSizing: 'border-box', background: '#fff', color: 'hsl(var(--on-surface))', resize: 'vertical', lineHeight: 1.6 }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 4 }}>
+                  <button className="btn btn-primary" onClick={handleAddActivity} disabled={isSavingActivity}>
+                    {isSavingActivity ? 'Saving…' : 'Add activity'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(() => {
+            const filtered = actFilter === 'All' ? activities : activities.filter(a => a.type === actFilter)
+            if (filtered.length === 0) return (
+              <div className="panel" style={{ padding: '48px 18px', textAlign: 'center' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))', opacity: 0.2 }}>event_note</span>
+                <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif", marginTop: 12 }}>
+                  {actFilter === 'All' ? 'No activities recorded yet.' : `No ${actFilter.toLowerCase()} activities yet.`}
+                </p>
+              </div>
+            )
+            return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {filtered.map(a => {
+                const date = new Date(a.activity_date)
+                const dayNum = date.getDate()
+                const monStr = date.toLocaleDateString('en-GB', { month: 'short' })
+                const fullDate = date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                return (
+                  <div key={a.id} className="panel" style={{ padding: '16px 18px', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 6, background: 'hsl(var(--primary) / 0.08)', border: '1px solid hsl(var(--primary) / 0.2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: 18, fontWeight: 900, color: 'hsl(var(--primary))', fontFamily: "'Public Sans', sans-serif", lineHeight: 1 }}>{dayNum}</span>
+                      <span style={{ fontSize: 9, fontWeight: 800, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: "'Public Sans', sans-serif" }}>{monStr}</span>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 2 }}>
+                        <p style={{ margin: 0, fontSize: 14, fontWeight: 800, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif" }}>{a.title}</p>
+                        <span style={{ fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 20, background: 'hsl(var(--container-low))', color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: "'Public Sans', sans-serif" }}>{a.type}</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', fontFamily: "'Public Sans', sans-serif" }}>{fullDate}</p>
+                      {a.description && <p style={{ margin: '6px 0 0', fontSize: 12, fontWeight: 500, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", lineHeight: 1.6 }}>{a.description}</p>}
+                    </div>
+                    <button onClick={() => handleDeleteActivity(a.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 4, color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }} title="Remove activity">
+                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+            )
+          })()}
         </div>
       )}
 

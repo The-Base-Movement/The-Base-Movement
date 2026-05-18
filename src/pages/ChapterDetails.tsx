@@ -20,10 +20,18 @@ interface ChapterPoll {
   chapter_poll_candidates: { id: string; name: string; position: string | null; avatar_url: string | null }[]
 }
 
+interface ChapterAnnouncement {
+  id: string
+  content: string
+  author_name: string
+  created_at: string
+}
+
 export default function ChapterDetails() {
   const { slug } = useParams<{ slug: string }>()
   const { chapters, isLoading } = useChapters()
-  const { session } = useAuth()
+  const { user } = useAuth()
+  const authUserId = user?.id ?? null
   const chapter: Chapter | undefined = chapters.find(
     c => c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') === slug
   )
@@ -35,8 +43,8 @@ export default function ChapterDetails() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [leaderAvatarUrl, setLeaderAvatarUrl] = useState<string | null>(null)
   const [isLeader, setIsLeader] = useState(false)
-  const authUserId = session?.user?.id || null
   const [polls, setPolls] = useState<ChapterPoll[]>([])
+  const [announcements, setAnnouncements] = useState<ChapterAnnouncement[]>([])
   const [voteCounts, setVoteCounts] = useState<Record<string, number>>({})
   const [userVotes, setUserVotes] = useState<Record<string, string>>({})
   const [votingPollId, setVotingPollId] = useState<string | null>(null)
@@ -52,26 +60,36 @@ export default function ChapterDetails() {
     })
   }, [authUserId, chapter])
 
-  // Determine leadership — query DB directly so it matches the same source DashboardLayout uses
+  // Determine whether current user can access chapter management (leader or secretary)
   useEffect(() => {
     if (!authUserId || !chapter) return
-    // 1. Direct DB check: is there a chapter row with this id AND leader_id = current user?
-    supabase.from('chapters')
-      .select('id')
-      .eq('id', chapter.id)
-      .eq('leader_id', authUserId)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data) { setIsLeader(true); return }
-        // 2. Fallback: name match (chapters appointed before leader_id column existed)
-        if (!chapter.leader_name) return
-        supabase.from('users').select('full_name').eq('id', authUserId).maybeSingle()
-          .then(({ data: u }) => {
-            if (u?.full_name && u.full_name.toLowerCase().trim() === chapter.leader_name.toLowerCase().trim()) {
-              setIsLeader(true)
-            }
-          })
-      })
+    let cancelled = false
+    async function check() {
+      // 1. Direct DB check via leader_id column
+      const { data: byId } = await supabase.from('chapters')
+        .select('id').eq('id', chapter!.id).eq('leader_id', authUserId!).maybeSingle()
+      if (cancelled) return
+      if (byId) { setIsLeader(true); return }
+
+      // 2. Fetch user's full name
+      const { data: u } = await supabase.from('users')
+        .select('full_name').eq('id', authUserId!).maybeSingle()
+      if (cancelled || !u?.full_name) return
+      const name = u.full_name.toLowerCase().trim()
+
+      // 3. Leader name match
+      if (chapter!.leader_name && chapter!.leader_name.toLowerCase().trim() === name) {
+        setIsLeader(true); return
+      }
+
+      // 4. Any chapter_leaders row for this chapter matching the user's name
+      const { data: ledRow } = await supabase.from('chapter_leaders')
+        .select('id').eq('chapter_id', chapter!.id).ilike('name', u.full_name).maybeSingle()
+      if (cancelled) return
+      if (ledRow) { setIsLeader(true); return }
+    }
+    check()
+    return () => { cancelled = true }
   }, [authUserId, chapter])
 
   // Fetch leader avatar
@@ -106,6 +124,18 @@ export default function ChapterDetails() {
         }
       })
   }, [chapter?.id, authUserId])
+
+  // Fetch announcements for this chapter
+  useEffect(() => {
+    if (!chapter?.id) return
+    supabase
+      .from('chapter_announcements')
+      .select('id, content, author_name, created_at')
+      .eq('chapter_id', chapter.id)
+      .order('created_at', { ascending: false })
+      .limit(10)
+      .then(({ data }) => { if (data?.length) setAnnouncements(data as ChapterAnnouncement[]) })
+  }, [chapter?.id])
 
   const handleVote = async (pollId: string, candidateId: string) => {
     if (!authUserId) { toast.error('Please log in to vote.'); return }
@@ -354,6 +384,38 @@ export default function ChapterDetails() {
                   </div>
                 )
               })}
+            </div>
+          )}
+
+          {/* Chapter announcements */}
+          {announcements.length > 0 && (
+            <div className="panel" style={{ padding: '20px 22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid hsl(var(--border))' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>campaign</span>
+                <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Chapter updates</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {announcements.map(a => (
+                  <div key={a.id} style={{ borderLeft: '3px solid hsl(var(--accent))', paddingLeft: 14 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                      <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'hsl(var(--primary) / 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 11, color: 'hsl(var(--primary))', fontFamily: "'Public Sans', sans-serif", flexShrink: 0, overflow: 'hidden', border: '1px solid hsl(var(--border))' }}>
+                        {leaderAvatarUrl
+                          ? <img src={leaderAvatarUrl} alt={a.author_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          : a.author_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)
+                        }
+                      </div>
+                      <div>
+                        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))' }}>{a.author_name}</span>
+                        <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Chapter Leader</span>
+                        <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>
+                          · {new Date(a.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+                    </div>
+                    <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>{a.content}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

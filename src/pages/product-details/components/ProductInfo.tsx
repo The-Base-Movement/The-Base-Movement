@@ -58,16 +58,25 @@ export function ProductInfo({
           {product.category}
         </span>
         <h1 className="font-meta text-xl sm:text-2xl md:text-4xl font-bold tracking-tighter text-stone-900 mb-4">{product.name}</h1>
-        <div className="flex items-center gap-4 mb-6">
-          <div className="flex items-center gap-1">
-            {[1, 2, 3, 4, 5].map(i => (
-              <span key={i} className="material-symbols-outlined" style={{ fontSize: 16, color: i <= (product.rating || 4.8) ? '#DAA520' : '#d6d3d1', fontVariationSettings: i <= (product.rating || 4.8) ? "'FILL' 1" : "'FILL' 0" }}>star</span>
-            ))}
-            <span className="ml-2 text-sm font-bold text-stone-900">{product.rating || '4.8'}</span>
-          </div>
-          <span className="text-stone-300">|</span>
-          <span className="text-sm text-stone-500">{product.reviews || 0} Verified reviews</span>
-        </div>
+        {(() => {
+          const count = product.reviews_data?.length ?? product.reviews ?? 0
+          const avg = product.reviews_data?.length
+            ? (product.reviews_data.reduce((s, r) => s + r.rating, 0) / product.reviews_data.length)
+            : (product.rating || 4.8)
+          const displayRating = typeof avg === 'number' ? avg : parseFloat(String(avg))
+          return (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-6">
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <span key={i} className="material-symbols-outlined" style={{ fontSize: 14, color: i <= displayRating ? '#DAA520' : '#d6d3d1', fontVariationSettings: i <= displayRating ? "'FILL' 1" : "'FILL' 0" }}>star</span>
+                ))}
+                <span className="ml-1 text-xs font-bold text-stone-900">{displayRating.toFixed(1)}</span>
+              </div>
+              <span className="text-stone-300 text-xs">|</span>
+              <span className="text-xs text-stone-500 whitespace-nowrap">{count} verified {count === 1 ? 'review' : 'reviews'}</span>
+            </div>
+          )
+        })()}
         <p className="text-2xl font-bold text-brand-green">₵{product.price.toString().replace('GHS', '').replace('GH₵', '').replace('₵', '').trim()}</p>
       </div>
 
@@ -271,20 +280,20 @@ export function ProductInfo({
 
       {/* Delivery & Returns Info */}
       <div className="grid grid-cols-3 gap-2 sm:gap-6 py-8 border-t border-stone-200">
-        <div className="flex flex-col items-center text-center gap-2">
-          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>local_shipping</span>
-          <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Fast delivery</p>
-          <p className="text-sm text-stone-500 font-medium leading-tight">2-3 Days</p>
+        <div className="flex flex-col items-center text-center gap-1 sm:gap-2">
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>local_shipping</span>
+          <p className="text-[10px] sm:text-sm font-bold text-stone-900 tracking-tight leading-tight">Fast delivery</p>
+          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">2-3 Days</p>
         </div>
-        <div className="flex flex-col items-center text-center gap-2 border-x border-stone-100 px-2">
-          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>verified_user</span>
-          <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Secure pay</p>
-          <p className="text-sm text-stone-500 font-medium leading-tight">Verified</p>
+        <div className="flex flex-col items-center text-center gap-1 sm:gap-2 border-x border-stone-100 px-1 sm:px-2">
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>verified_user</span>
+          <p className="text-[10px] sm:text-sm font-bold text-stone-900 tracking-tight leading-tight">Secure pay</p>
+          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">Verified</p>
         </div>
-        <div className="flex flex-col items-center text-center gap-2">
-          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 20 }}>autorenew</span>
-          <p className="text-sm font-bold text-stone-900 tracking-tight leading-tight">Easy returns</p>
-          <p className="text-sm text-stone-500 font-medium leading-tight">7-Day Policy</p>
+        <div className="flex flex-col items-center text-center gap-1 sm:gap-2">
+          <span className="material-symbols-outlined text-brand-green" style={{ fontSize: 16 }}>autorenew</span>
+          <p className="text-[10px] sm:text-sm font-bold text-stone-900 tracking-tight leading-tight">Easy returns</p>
+          <p className="text-[10px] sm:text-sm text-stone-500 font-medium leading-tight">7-Day Policy</p>
         </div>
       </div>
     </div>

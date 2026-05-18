@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminService } from '@/services/adminService'
 import { format } from 'date-fns'
-import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/context/AuthContext'
 
 interface Step {
   title: string
@@ -11,6 +11,7 @@ interface Step {
 }
 
 export function MovementJourney() {
+  const { user } = useAuth()
   const [steps, setSteps] = useState<Step[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -49,8 +50,7 @@ export function MovementJourney() {
         })
 
         // 3. First contribution — look up by auth ID (member_id) to avoid phone fallback issues
-        const { data: { session } } = await supabase.auth.getSession()
-        const authId = session?.user.id || member.authId
+        const authId = user?.id || member.authId
         const { data: donationRows } = await supabase
           .from('donations')
           .select('created_at')

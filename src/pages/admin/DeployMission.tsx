@@ -57,7 +57,7 @@ export default function DeployMission() {
         target_wards: [selectedRegion],
       })
       if (success) {
-        toast.success('Canvassing mission deployed to the field.')
+        toast.success('Mobilization mission deployed to the field.')
         navigate('/admin/ground-game')
       } else {
         toast.error('Failed to deploy mission.')
@@ -102,13 +102,13 @@ export default function DeployMission() {
           <div className="crumbs" style={{ marginBottom: 6 }}>
             <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>Admin</Link>
             {' · '}
-            <Link to="/admin/ground-game" style={{ color: 'hsl(var(--primary))' }}>Ground game</Link>
+            <Link to="/admin/ground-game" style={{ color: 'hsl(var(--primary))' }}>Constituency Operations</Link>
             {' · '}
             Deploy mission
           </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--destructive))' }}>sports_kabaddi</span>
-            Deploy canvassing mission
+            Deploy mobilization mission
           </h2>
           <div className="bl"><div /><div /><div /></div>
         </div>
@@ -229,9 +229,9 @@ export default function DeployMission() {
               {/* Description */}
               <div>
                 <label htmlFor="textarea-ab3220" style={labelStyle}>Mission objective &amp; field instructions</label>
-                <textarea aria-label="Provide clear tactical objectives for canvassers in the field" name="name-ab3220" id="textarea-ab3220"
+                <textarea aria-label="Provide clear tactical objectives for field agents" name="name-ab3220" id="textarea-ab3220"
                   rows={4}
-                  placeholder="Provide clear tactical objectives for canvassers in the field..."
+                  placeholder="Provide clear tactical objectives for field agents..."
                   style={{ ...fieldStyle, height: 'auto', padding: '10px 12px', resize: 'none', lineHeight: 1.55 }}
                   value={newCampaign.description}
                   onChange={e => setNewCampaign({ ...newCampaign, description: e.target.value })}
@@ -270,7 +270,7 @@ export default function DeployMission() {
               {[
                 { icon: 'my_location',  title: 'Precise targeting',   body: 'Ensure the target constituency aligns with the movement\'s current strategic priority areas.' },
                 { icon: 'flag',         title: 'Clear objectives',    body: 'Field agents perform best with clear, concise mission objectives and measurable contact goals.' },
-                { icon: 'storage',      title: 'Data integrity',      body: 'All field interactions must be logged in real-time through the canvasser clipboard protocol.' },
+                { icon: 'storage',      title: 'Data integrity',      body: 'All field interactions must be logged in real-time through the field agent clipboard protocol.' },
               ].map(({ icon, title, body }) => (
                 <div key={title} style={{ display: 'flex', gap: 12 }}>
                   <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

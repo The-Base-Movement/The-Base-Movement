@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import type { InventoryItem } from '@/services/adminService'
 
 interface ProductFormDialogProps {
@@ -39,6 +39,25 @@ export function ProductFormDialog({
   handleImageUpload,
   removeImage
 }: ProductFormDialogProps) {
+  const [sizeInput, setSizeInput] = useState('')
+  const [colorInput, setColorInput] = useState('')
+
+  const addSize = (val: string) => {
+    const trimmed = val.trim().toUpperCase()
+    if (!trimmed) return
+    const current = selectedProduct?.sizes || []
+    if (!current.includes(trimmed)) setSelectedProduct(prev => ({ ...prev!, sizes: [...current, trimmed] }))
+    setSizeInput('')
+  }
+
+  const addColor = (val: string) => {
+    const trimmed = val.trim()
+    if (!trimmed) return
+    const current = selectedProduct?.colors || []
+    if (!current.includes(trimmed)) setSelectedProduct(prev => ({ ...prev!, colors: [...current, trimmed] }))
+    setColorInput('')
+  }
+
   if (!isModalOpen) return null;
 
   return (
@@ -154,6 +173,82 @@ export function ProductFormDialog({
                 </label>
               </div>
             </div>
+
+            {/* Sizes */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label style={labelSt}>Sizes</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
+                {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(s => {
+                  const active = (selectedProduct?.sizes || []).includes(s)
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => {
+                        if (active) setSelectedProduct(prev => ({ ...prev!, sizes: (prev?.sizes || []).filter(x => x !== s) }))
+                        else addSize(s)
+                      }}
+                      style={{ padding: '3px 10px', fontSize: 11, fontWeight: 700, fontFamily: "'Public Sans', sans-serif", borderRadius: 4, border: `1px solid ${active ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`, background: active ? 'hsl(var(--primary))' : 'hsl(var(--container-low))', color: active ? '#fff' : 'hsl(var(--on-surface))', cursor: 'pointer' }}
+                    >{s}</button>
+                  )
+                })}
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  style={{ ...inputSt, flex: 1 }}
+                  value={sizeInput}
+                  onChange={e => setSizeInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addSize(sizeInput) } }}
+                  placeholder="Custom size (e.g. 3XL) — press Enter"
+                />
+              </div>
+              {(selectedProduct?.sizes || []).length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {(selectedProduct?.sizes || []).map(s => (
+                    <span key={s} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 11, fontWeight: 700, fontFamily: "'Public Sans', sans-serif" }}>
+                      {s}
+                      <button type="button" onClick={() => setSelectedProduct(prev => ({ ...prev!, sizes: (prev?.sizes || []).filter(x => x !== s) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'hsl(var(--on-surface-muted))' }}>×</button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Colors */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label style={labelSt}>Colors</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  style={{ ...inputSt, flex: 1 }}
+                  value={colorInput}
+                  onChange={e => setColorInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addColor(colorInput) } }}
+                  placeholder="Color name (e.g. Jet Black) — press Enter"
+                />
+                <button type="button" onClick={() => addColor(colorInput)} className="btn btn-outline btn-sm" style={{ height: 40, whiteSpace: 'nowrap' }}>Add</button>
+              </div>
+              {(selectedProduct?.colors || []).length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {(selectedProduct?.colors || []).map(c => (
+                    <span key={c} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontSize: 11, fontWeight: 700, fontFamily: "'Public Sans', sans-serif" }}>
+                      {c}
+                      <button type="button" onClick={() => setSelectedProduct(prev => ({ ...prev!, colors: (prev?.colors || []).filter(x => x !== c) }))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, color: 'hsl(var(--on-surface-muted))' }}>×</button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Customization */}
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={selectedProduct?.customization_allowed || false}
+                onChange={e => setSelectedProduct(prev => ({ ...prev!, customization_allowed: e.target.checked }))}
+                style={{ width: 16, height: 16, accentColor: 'hsl(var(--primary))', cursor: 'pointer' }}
+              />
+              <span style={{ ...labelSt, marginBottom: 0 }}>Allow patriot customization (name / constituency text)</span>
+            </label>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <label htmlFor="input-24e641" style={labelSt}>Icon Fallback</label>

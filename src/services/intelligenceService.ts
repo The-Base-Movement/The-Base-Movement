@@ -321,7 +321,7 @@ class IntelligenceService {
     }
   }
 
-  // --- Ground Game ---
+  // --- Constituency Operations ---
 
   async getVoterRegistrations(): Promise<VoterRegistration[]> {
     try {

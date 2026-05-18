@@ -453,8 +453,22 @@ class AdminService {
   }
 
   async getUserChapter(authId: string): Promise<string | null> {
-    const { data } = await supabase.from('users').select('chapter').eq('id', authId).maybeSingle()
-    return data?.chapter ?? null
+    const { data } = await supabase.from('users').select('chapter, full_name').eq('id', authId).maybeSingle()
+    if (data?.chapter) return data.chapter
+    // Fall back: check if this user is the named leader of a chapter
+    if (data?.full_name) {
+      const { data: led } = await supabase
+        .from('chapters')
+        .select('name')
+        .eq('leader_name', data.full_name)
+        .maybeSingle()
+      if (led?.name) {
+        // Persist so the user appears in their own chapter directory going forward
+        supabase.from('users').update({ chapter: led.name }).eq('id', authId)
+        return led.name
+      }
+    }
+    return null
   }
 
   async joinChapter(chapterName: string): Promise<boolean> {
@@ -1616,10 +1630,296 @@ class AdminService {
     return success
   }
 
-  // --- Phase 14: Operation "Ground Game" (Voter Registration & Turnout) ---
+  // --- Phase 14: Constituency Operations (Voter Registration & Turnout) ---
 
   async getVoterRegistrations(): Promise<VoterRegistration[]> {
     return intelligenceService.getVoterRegistrations()
+  }
+
+  async getMembersWithConstituency(): Promise<Array<{
+    id: string
+    full_name: string
+    registration_number: string
+    constituency: string
+    region: string | null
+    chapter: string | null
+    polling_station_id: string | null
+    registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER' | null
+  }>> {
+    const [{ data: members }, { data: voterRows }] = await Promise.all([
+      supabase.from('users').select('id, full_name, registration_number, constituency, region, chapter').not('constituency', 'is', null).neq('constituency', '').neq('constituency', 'Constituency pending'),
+      supabase.from('voter_registrations').select('user_id, polling_station_id, registration_status')
+    ])
+    const voterMap: Record<string, { polling_station_id: string | null; registration_status: string }> = {}
+    ;(voterRows || []).forEach((v) => { voterMap[v.user_id as string] = v as { polling_station_id: string | null; registration_status: string } })
+    return (members || []).map((m) => ({
+      id: m.id as string,
+      full_name: (m.full_name as string) || 'Unknown',
+      registration_number: (m.registration_number as string) || '',
+      constituency: m.constituency as string,
+      region: (m.region as string | null) || null,
+      chapter: (m.chapter as string | null) || null,
+      polling_station_id: (voterMap[m.id as string]?.polling_station_id as string | null) ?? null,
+      registration_status: (voterMap[m.id as string]?.registration_status as 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER' | null) ?? null,
+    }))
+  }
+
+  async getVoterRegistrationsWithMembers(): Promise<Array<{
+    id: string
+    user_id: string
+    registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER'
+    polling_station_id: string | null
+    member_name: string
+    registration_number: string
+    chapter: string | null
+    constituency: string | null
+    region: string | null
+    created_at: string
+  }>> {
+    const { data: rows, error } = await supabase
+      .from('voter_registrations')
+      .select('id, user_id, registration_status, polling_station_id, created_at')
+      .order('created_at', { ascending: false })
+    if (error) { console.error('[DATABASE] getVoterRegistrationsWithMembers failed:', error); return [] }
+    if (!rows?.length) return []
+    const userIds = [...new Set(rows.map(r => r.user_id as string).filter(Boolean))]
+    const { data: users } = await supabase.from('users').select('id, full_name, registration_number, chapter, constituency, region').in('id', userIds)
+    const userMap: Record<string, { full_name: string; registration_number: string; chapter: string | null; constituency: string | null; region: string | null }> = {}
+    ;(users || []).forEach(u => { userMap[u.id as string] = u as typeof userMap[string] })
+    return rows.map(r => ({
+      id: r.id as string,
+      user_id: r.user_id as string,
+      registration_status: r.registration_status as 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER',
+      polling_station_id: r.polling_station_id as string | null,
+      member_name: userMap[r.user_id as string]?.full_name || 'Unknown',
+      registration_number: userMap[r.user_id as string]?.registration_number || '',
+      chapter: userMap[r.user_id as string]?.chapter || null,
+      constituency: userMap[r.user_id as string]?.constituency || null,
+      region: userMap[r.user_id as string]?.region || null,
+      created_at: r.created_at as string,
+    }))
+  }
+
+  // --- Field Agents ---
+
+  async getFieldAgents(): Promise<Array<{
+    id: string; member_id: string; member_name: string; registration_number: string
+    constituency: string; region: string | null; status: 'active' | 'inactive'
+    notes: string | null; created_at: string
+  }>> {
+    const { data: rows, error } = await supabase
+      .from('field_agent_assignments')
+      .select('id, member_id, constituency, region, status, notes, created_at')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+    if (error) { console.error('[DATABASE] getFieldAgents failed:', error); return [] }
+    if (!rows?.length) return []
+    const memberIds = rows.map(r => r.member_id as string)
+    const { data: users } = await supabase.from('users').select('id, full_name, registration_number').in('id', memberIds)
+    const userMap: Record<string, { full_name: string; registration_number: string }> = {}
+    ;(users || []).forEach(u => { userMap[u.id as string] = u as typeof userMap[string] })
+    return rows.map(r => ({
+      id: r.id as string, member_id: r.member_id as string,
+      member_name: userMap[r.member_id as string]?.full_name || 'Unknown',
+      registration_number: userMap[r.member_id as string]?.registration_number || '',
+      constituency: r.constituency as string, region: (r.region as string | null) || null,
+      status: r.status as 'active' | 'inactive',
+      notes: (r.notes as string | null) || null, created_at: r.created_at as string,
+    }))
+  }
+
+  async appointFieldAgent(memberId: string, constituency: string, region?: string, notes?: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase.from('field_agent_assignments').upsert({
+      member_id: memberId, constituency, region: region || null,
+      status: 'active', assigned_by: user?.id || null, notes: notes || null,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'member_id,constituency' })
+    if (error) { console.error('[DATABASE] appointFieldAgent failed:', error); return false }
+    return true
+  }
+
+  async removeFieldAgent(assignmentId: string): Promise<boolean> {
+    const { error } = await supabase.from('field_agent_assignments').delete().eq('id', assignmentId)
+    if (error) { console.error('[DATABASE] removeFieldAgent failed:', error); return false }
+    return true
+  }
+
+  // --- Polling Station Agents ---
+
+  async getPollingStationAgents(): Promise<Array<{
+    id: string; member_id: string; member_name: string; registration_number: string
+    polling_station_id: string; constituency: string | null; region: string | null
+    status: 'assigned' | 'confirmed' | 'deployed' | 'stood_down'
+    notes: string | null; created_at: string
+  }>> {
+    const { data: rows, error } = await supabase
+      .from('polling_station_agents')
+      .select('id, member_id, polling_station_id, constituency, region, status, notes, created_at')
+      .order('created_at', { ascending: false })
+    if (error) { console.error('[DATABASE] getPollingStationAgents failed:', error); return [] }
+    if (!rows?.length) return []
+    const memberIds = rows.map(r => r.member_id as string)
+    const { data: users } = await supabase.from('users').select('id, full_name, registration_number').in('id', memberIds)
+    const userMap: Record<string, { full_name: string; registration_number: string }> = {}
+    ;(users || []).forEach(u => { userMap[u.id as string] = u as typeof userMap[string] })
+    return rows.map(r => ({
+      id: r.id as string, member_id: r.member_id as string,
+      member_name: userMap[r.member_id as string]?.full_name || 'Unknown',
+      registration_number: userMap[r.member_id as string]?.registration_number || '',
+      polling_station_id: r.polling_station_id as string,
+      constituency: (r.constituency as string | null) || null,
+      region: (r.region as string | null) || null,
+      status: r.status as 'assigned' | 'confirmed' | 'deployed' | 'stood_down',
+      notes: (r.notes as string | null) || null, created_at: r.created_at as string,
+    }))
+  }
+
+  async appointPollingStationAgent(memberId: string, pollingStationId: string, constituency?: string, region?: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase.from('polling_station_agents').upsert({
+      member_id: memberId, polling_station_id: pollingStationId,
+      constituency: constituency || null, region: region || null,
+      status: 'assigned', assigned_by: user?.id || null,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'member_id,polling_station_id' })
+    if (error) { console.error('[DATABASE] appointPollingStationAgent failed:', error); return false }
+    return true
+  }
+
+  async updatePollingStationAgentStatus(agentId: string, status: 'assigned' | 'confirmed' | 'deployed' | 'stood_down'): Promise<boolean> {
+    const { error } = await supabase.from('polling_station_agents')
+      .update({ status, updated_at: new Date().toISOString() }).eq('id', agentId)
+    if (error) { console.error('[DATABASE] updatePollingStationAgentStatus failed:', error); return false }
+    return true
+  }
+
+  async removePollingStationAgent(agentId: string): Promise<boolean> {
+    const { error } = await supabase.from('polling_station_agents').delete().eq('id', agentId)
+    if (error) { console.error('[DATABASE] removePollingStationAgent failed:', error); return false }
+    return true
+  }
+
+  async getMyVoterRegistration(): Promise<VoterRegistration | null> {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
+    const { data } = await supabase
+      .from('voter_registrations')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    return (data as VoterRegistration) || null
+  }
+
+  async submitVoterRegistration(pollingStationCode: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return false
+    const { data: existing } = await supabase
+      .from('voter_registrations')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    const payload = { polling_station_id: pollingStationCode.trim().toUpperCase(), registration_status: 'IN_PROGRESS' }
+    if (existing) {
+      const { error } = await supabase.from('voter_registrations').update(payload).eq('id', existing.id)
+      return !error
+    }
+    const { error } = await supabase.from('voter_registrations').insert({ user_id: user.id, ...payload })
+    return !error
+  }
+
+  async getPollingStations(region: string, constituency: string, search?: string): Promise<{ code: string; name: string; constituency: string }[]> {
+    if (!search?.trim() && !region) return []
+    let query = supabase
+      .from('polling_stations')
+      .select('code, name, constituency')
+      .limit(25)
+    // Region is reliable (all 16 match exactly after normalization)
+    if (region) query = query.ilike('region', region)
+    // Constituency as secondary filter — ilike handles case differences
+    if (constituency) query = query.ilike('constituency', constituency)
+    if (search?.trim()) {
+      query = query.or(`code.ilike.%${search}%,name.ilike.%${search}%`)
+    }
+    const { data, error } = await query.order('name', { ascending: true })
+    if (error) { console.error('[DATABASE] getPollingStations failed:', error); return [] }
+    // If constituency filter returned nothing, retry with region only
+    if ((data || []).length === 0 && constituency && search?.trim()) {
+      let q2 = supabase
+        .from('polling_stations')
+        .select('code, name, constituency')
+        .ilike('region', region)
+        .or(`code.ilike.%${search}%,name.ilike.%${search}%`)
+        .limit(25)
+        .order('name', { ascending: true })
+      const { data: d2 } = await q2
+      return (d2 || []) as { code: string; name: string; constituency: string }[]
+    }
+    return (data || []) as { code: string; name: string; constituency: string }[]
+  }
+
+  async getPollingStationsPaginated(
+    page: number,
+    pageSize: number,
+    region?: string,
+    constituency?: string,
+    search?: string
+  ): Promise<{ data: { code: string; name: string; community: string; constituency: string; region: string; member_count: number }[]; totalCount: number }> {
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    let query = supabase
+      .from('polling_stations')
+      .select('code, name, community, constituency, region', { count: 'exact' })
+
+    if (region) query = query.eq('region', region)
+    if (constituency) query = query.eq('constituency', constituency)
+    if (search?.trim()) {
+      query = query.or(`code.ilike.%${search}%,name.ilike.%${search}%,community.ilike.%${search}%`)
+    }
+
+    const { data, count, error } = await query
+      .order('region', { ascending: true })
+      .order('constituency', { ascending: true })
+      .order('community', { ascending: true })
+      .range(from, to)
+
+    if (error) { console.error('[DATABASE] getPollingStationsPaginated failed:', error); return { data: [], totalCount: 0 } }
+
+    const codes = (data || []).map(s => s.code)
+    const { data: regRows } = codes.length > 0
+      ? await supabase.from('voter_registrations').select('polling_station_id').in('polling_station_id', codes)
+      : { data: [] }
+
+    const countMap: Record<string, number> = {}
+    ;(regRows || []).forEach(r => {
+      const id = r.polling_station_id as string
+      countMap[id] = (countMap[id] || 0) + 1
+    })
+
+    return {
+      data: (data || []).map(s => ({
+        code: s.code as string,
+        name: s.name as string,
+        community: s.community as string,
+        constituency: s.constituency as string,
+        region: s.region as string,
+        member_count: countMap[s.code as string] || 0
+      })),
+      totalCount: count || 0
+    }
+  }
+
+  async getPollingStationStats(): Promise<{ total: number; regions: number; constituencies: number; withMembers: number }> {
+    const [statsRes, membersRes] = await Promise.all([
+      supabase.from('polling_stations').select('region, constituency', { count: 'exact' }),
+      supabase.from('voter_registrations').select('polling_station_id').not('polling_station_id', 'is', null)
+    ])
+    const total = statsRes.count || 0
+    const regions = new Set((statsRes.data || []).map(r => r.region)).size
+    const constituencies = new Set((statsRes.data || []).map(r => r.constituency)).size
+    const withMembers = new Set((membersRes.data || []).map(r => r.polling_station_id)).size
+    return { total, regions, constituencies, withMembers }
   }
 
   async getCanvassingCampaigns(): Promise<CanvassingCampaign[]> {

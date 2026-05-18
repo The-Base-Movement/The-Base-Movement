@@ -5,20 +5,26 @@ interface ReviewsProps {
 }
 
 export function Reviews({ product }: ReviewsProps) {
+  const count = product.reviews_data?.length ?? product.reviews ?? 0
+  const avgRating = product.reviews_data?.length
+    ? (product.reviews_data.reduce((s, r) => s + r.rating, 0) / product.reviews_data.length).toFixed(1)
+    : (product.rating || 4.8)
+
   return (
-    <section className="mt-24 pt-24 border-t border-stone-200">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+    <section className="mt-10 md:mt-20 pt-10 md:pt-16 border-t border-stone-200">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 md:mb-12">
         <div>
-          <span className="text-micro font-bold text-brand-green tracking-tight mb-4 block">Voice of the movement</span>
-          <h2 className="font-h2 text-h3 text-stone-900">Patriot reviews</h2>
+          <span className="text-micro font-bold text-brand-green tracking-tight mb-4 block">Member feedback</span>
+          <h2 className="font-h2 text-h3 text-stone-900">Member reviews</h2>
         </div>
         <div className="flex items-center gap-6">
           <div className="text-right">
-            <p className="text-3xl font-bold text-stone-900">{product.rating || '4.8'}</p>
-            <p className="text-micro font-bold text-stone-400 tracking-tight">Average patriot rating</p>
+            <p className="text-3xl font-bold text-stone-900">{avgRating}</p>
+            <p className="text-micro font-bold text-stone-400 tracking-tight">Average member rating</p>
+            {count > 0 && <p className="text-micro text-stone-400">{count} {count === 1 ? 'review' : 'reviews'}</p>}
           </div>
           <div className="w-px h-12 bg-stone-200" />
-          <button className="h-12 text-micro font-bold tracking-tight px-8 rounded-none bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity">
+          <button className="h-12 text-micro font-bold tracking-tight px-6 whitespace-nowrap rounded-none bg-primary text-white border-none cursor-pointer hover:opacity-90 transition-opacity">
             Write a review
           </button>
         </div>

@@ -63,26 +63,36 @@ class ChapterService {
       return []
     }
 
-    // Fetch countries separately to ensure we get flags even if join fails
-    const { data: countriesData } = await supabase.from('countries').select('name, flag_url')
+    // Fetch countries and live member counts in parallel
+    const [{ data: countriesData }, { data: memberRows }] = await Promise.all([
+      supabase.from('countries').select('name, flag_url'),
+      supabase.from('users').select('chapter').not('chapter', 'is', null)
+    ])
+
     const countryFlagsMap = (countriesData || []).reduce((acc: Record<string, string>, curr) => {
       if (curr.name && curr.flag_url) acc[curr.name.toLowerCase()] = curr.flag_url
       return acc
     }, {})
 
+    const liveCounts: Record<string, number> = {}
+    ;(memberRows || []).forEach((u: { chapter: string | null }) => {
+      if (u.chapter) liveCounts[u.chapter.toLowerCase()] = (liveCounts[u.chapter.toLowerCase()] || 0) + 1
+    })
+
     return (data || []).map((c) => {
       const resolvedCountry = c.country || 'Ghana'
-      const dbFlag = countryFlagsMap[resolvedCountry.toLowerCase()] || countryFlagsMap['ghana']
+      const isGhana = resolvedCountry.toLowerCase() === 'ghana'
+      const dbFlag = isGhana ? '/flags/gh.png' : countryFlagsMap[resolvedCountry.toLowerCase()]
 
       return {
         id: c.id || '',
         name: c.name || 'Unknown Chapter',
         city_or_region: c.city_or_region || 'Unknown Location',
         country: resolvedCountry,
-        flag_url: dbFlag || c.flag_url || undefined,
+        flag_url: dbFlag || undefined,
         leader_name: c.leader_name || 'Unassigned',
         leader_id: c.leader_id || undefined,
-        member_count: c.member_count || 0,
+        member_count: liveCounts[(c.name || '').toLowerCase()] ?? 0,
         status: c.status || 'Pending',
         region: c.region || undefined,
         description: c.description || undefined,
