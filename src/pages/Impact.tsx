@@ -271,7 +271,7 @@ export default function Impact() {
               </button>
               {showDatePicker && (
                 <div style={{ marginTop: 8, padding: 12, background: 'hsl(var(--container-low))', borderRadius: 4, border: '1px solid hsl(var(--border))' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 8, marginBottom: 8 }}>
                     {[{ label: 'Start', key: 'start' }, { label: 'End', key: 'end' }].map(f => (
                       <div key={f.key}>
                         <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 9, color: 'hsl(var(--on-surface-muted))', marginBottom: 4 }}>{f.label}</div>

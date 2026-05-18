@@ -5,6 +5,7 @@ import { BlogPostCard } from '@/components/BlogPostCard'
 import { adminService, type BlogPost } from '@/services/adminService'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
+import { toast } from 'sonner'
 
 export default function Blog() {
   const { settings } = useBranding()
@@ -14,6 +15,19 @@ export default function Blog() {
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
   const baseUrl = isDashboard ? '/dashboard/blog' : '/blog'
+  const [sidebarEmail, setSidebarEmail] = useState('')
+  const [sidebarSubmitting, setSidebarSubmitting] = useState(false)
+  const [publicEmail, setPublicEmail] = useState('')
+  const [publicSubmitting, setPublicSubmitting] = useState(false)
+
+  const handleNewsletter = async (email: string, setEmail: (v: string) => void, setSubmitting: (v: boolean) => void) => {
+    if (!email.trim() || !email.includes('@')) { toast.error('Please enter a valid email address.'); return }
+    setSubmitting(true)
+    const success = await adminService.subscribeToNewsletter(email.trim())
+    setSubmitting(false)
+    if (success) { toast.success('Subscribed! You\'ll receive The Base Weekly.'); setEmail('') }
+    else toast.error('Subscription failed. Please try again.')
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -200,8 +214,8 @@ export default function Blog() {
                 <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, margin: '0 0 14px' }}>
                   Get policy briefs and movement news delivered to your inbox weekly.
                 </p>
-                <input aria-label="Email address" name="name-0af8a4" id="input-0af8a4" type="email" placeholder="Email address" style={{ width: '100%', height: 38, padding: '0 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 4, color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
-                <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Subscribe</button>
+                <input aria-label="Email address" name="name-0af8a4" id="input-0af8a4" type="email" placeholder="Email address" value={sidebarEmail} onChange={e => setSidebarEmail(e.target.value)} style={{ width: '100%', height: 38, padding: '0 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 4, color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, outline: 'none', boxSizing: 'border-box', marginBottom: 8 }} />
+                <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={sidebarSubmitting} onClick={() => handleNewsletter(sidebarEmail, setSidebarEmail, setSidebarSubmitting)}>{sidebarSubmitting ? 'Subscribing…' : 'Subscribe'}</button>
               </div>
 
             </div>
@@ -316,8 +330,8 @@ export default function Blog() {
                     <h4 className="font-meta font-bold text-lg tracking-tight mb-4">The Base Weekly</h4>
                     <p className="text-xs text-slate-400 leading-relaxed mb-6">Get the movement's policy briefs and news delivered directly to your inbox every week.</p>
                     <div className="space-y-3">
-                      <input aria-label="Email Address" name="name-b70be6" id="input-b70be6" type="email" placeholder="Email Address" className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm" />
-                      <button className="w-full h-12 bg-primary text-white font-bold text-xs border-none cursor-pointer hover:opacity-90 transition-opacity">Subscribe</button>
+                      <input aria-label="Email Address" name="name-b70be6" id="input-b70be6" type="email" placeholder="Email Address" value={publicEmail} onChange={e => setPublicEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 p-3 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-brand-green transition-colors rounded-sm" />
+                      <button className="w-full h-12 bg-primary text-white font-bold text-xs border-none cursor-pointer hover:opacity-90 transition-opacity" disabled={publicSubmitting} onClick={() => handleNewsletter(publicEmail, setPublicEmail, setPublicSubmitting)}>{publicSubmitting ? 'Subscribing…' : 'Subscribe'}</button>
                     </div>
                   </div>
                 </aside>

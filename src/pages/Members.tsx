@@ -328,7 +328,7 @@ export default function Members() {
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px', marginBottom: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '12px 20px', marginBottom: 20 }}>
                 {[
                   { icon: 'public', label: 'Network', value: selectedMember.platform === 'GHANA' ? 'Ghana' : 'Diaspora' },
                   { icon: 'location_on', label: 'Location', value: selectedMember.platform === 'GHANA' ? selectedMember.region : selectedMember.country },

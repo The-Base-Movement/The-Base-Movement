@@ -46,13 +46,17 @@ function statusPill(status: string): { cls: string; label: string } {
   return { cls: 'pill pill-mute', label: status }
 }
 
-function getChecks(d: DonationDetail) {
+function getChecks(d: DonationDetail, allDonations: DonationDetail[]) {
+  const hasPhone = !!(d.phone && d.phone.trim().length >= 9)
+  const refValid = !!(d.reference && d.reference.trim().length >= 6)
+  const priorDonations = allDonations.filter(x => x.id !== d.id && x.phone === d.phone).length
+  const isFirstFromSource = priorDonations === 0
   return [
-    { type: 'ok',   label: 'Phone number matches member record', detail: d.phone || 'N/A' },
-    { type: 'ok',   label: 'Name matches payment wallet holder',  detail: 'fuzzy 98%' },
-    { type: 'ok',   label: 'Reference code valid',               detail: d.reference.toUpperCase() },
-    { type: 'warn', label: 'First donation from this source',     detail: 'review' },
-    { type: 'ok',   label: 'Not flagged by AML watchlist',        detail: 'auto' },
+    { type: hasPhone ? 'ok' : 'warn', label: 'Phone number on record', detail: d.phone || 'Missing' },
+    { type: 'warn', label: 'Name vs wallet holder — manual review required', detail: d.fullName },
+    { type: refValid ? 'ok' : 'warn', label: 'Reference code format valid', detail: refValid ? d.reference.toUpperCase() : 'Invalid format' },
+    { type: isFirstFromSource ? 'warn' : 'ok', label: isFirstFromSource ? 'First donation from this phone' : 'Prior donations from this phone', detail: isFirstFromSource ? 'Review carefully' : `${priorDonations} previous` },
+    { type: 'warn', label: 'AML watchlist check — manual verification', detail: 'No automated watchlist available' },
   ]
 }
 
@@ -232,7 +236,7 @@ export default function FinancialAudit() {
       </div>
 
       {/* Split view */}
-      <div className="donation-split" style={{ gridTemplateColumns: selectedDonation ? '1fr 460px' : '1fr' }}>
+      <div className="donation-split" style={{ gridTemplateColumns: selectedDonation ? '1fr min(460px, 100%)' : '1fr' }}>
 
         {/* Queue table */}
         <div className="panel">
@@ -350,7 +354,7 @@ export default function FinancialAudit() {
         {selectedDonation && (() => {
           const mb = methodBadge(selectedDonation.method)
           const sp = statusPill(selectedDonation.status)
-          const checks = getChecks(selectedDonation)
+          const checks = getChecks(selectedDonation, donations)
           return (
             <aside style={{ background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, alignSelf: 'start', position: 'sticky', top: 24 }}>
 

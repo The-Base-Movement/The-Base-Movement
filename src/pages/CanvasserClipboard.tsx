@@ -4,6 +4,7 @@ import { adminService } from '@/services/adminService'
 import type { CanvassingCampaign } from '@/types/admin'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { supabase } from '@/lib/supabase'
 
 export default function CanvasserClipboard() {
   const [activeCampaigns, setActiveCampaigns] = useState<CanvassingCampaign[]>([])
@@ -53,11 +54,19 @@ export default function CanvasserClipboard() {
       const profile = await adminService.getMemberProfile(regNo)
       if (!profile) throw new Error('Profile not found')
 
-      // Mock geolocation (in a real app, use navigator.geolocation)
-      const lat = 5.6037
-      const lng = -0.1870
+      let lat = 5.6037
+      let lng = -0.1870
+      try {
+        const pos = await new Promise<GeolocationPosition>((res, rej) =>
+          navigator.geolocation.getCurrentPosition(res, rej, { timeout: 5000 })
+        )
+        lat = pos.coords.latitude
+        lng = pos.coords.longitude
+      } catch {
+        // fallback to default Accra coords if geolocation denied
+      }
 
-      const payload = {
+      const { error } = await supabase.from('canvasser_logs').insert({
         campaign_id: selectedCampaign.id,
         canvasser_id: profile.id,
         contact_name: contactName || null,
@@ -67,11 +76,10 @@ export default function CanvasserClipboard() {
         needs_follow_up: needsFollowUp,
         location_lat: lat,
         location_lng: lng
-      }
+      })
 
-      // Simulate API call for now since we don't have the explicit submit method in adminService yet
-      console.log('[CANVASSER] Submitting payload:', payload)
-      
+      if (error) throw error
+
       toast.success('Contact logged securely to HQ servers.')
       
       // Reset form for next door

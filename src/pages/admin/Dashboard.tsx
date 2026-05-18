@@ -309,10 +309,10 @@ export default function AdminDashboard() {
                       <button className="ico ok" onClick={() => navigate(`/admin/verification?id=${member.id}`)}>
                         <span className="material-symbols-outlined">check</span>
                       </button>
-                      <button className="ico no">
+                      <button className="ico no" onClick={async () => { await adminService.verifyMember(member.id, false); setPendingVerifications(prev => prev.filter(m => m.id !== member.id)) }}>
                         <span className="material-symbols-outlined">close</span>
                       </button>
-                      <button className="ico">
+                      <button className="ico" onClick={() => navigate(`/admin/verification?id=${member.id}`)}>
                         <span className="material-symbols-outlined">visibility</span>
                       </button>
                     </div>

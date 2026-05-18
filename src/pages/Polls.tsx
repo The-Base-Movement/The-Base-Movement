@@ -145,7 +145,7 @@ export default function Polls() {
             <p style={{ fontFamily: bodyFont, fontWeight: 500, fontSize: isDashboard ? 12 : 13, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, margin: '0 0 16px' }}>
               Poll results are presented to the National Steering Committee every month to influence movement strategy.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 8 }}>
               <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 4, padding: 12 }}>
                 <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>Total votes</div>
                 <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', lineHeight: 1 }}>{totalVotes.toLocaleString()}</div>

@@ -78,17 +78,30 @@ export default function LogisticsIntelligence() {
     setShowReplenishConfirm(false)
   }
 
-  const handleGeneratePurchaseOrder = async () => {
+  const handleGeneratePurchaseOrder = () => {
+    if (!alerts.length) { toast.error('No low-stock items to generate a purchase order for.'); return }
     setIsGeneratingPO(true)
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    toast.success('Purchase order documentation generated successfully.')
+    const headers = ['Product', 'Category', 'Current Stock', 'Threshold', 'Units Needed']
+    const rows = alerts.map(a => [
+      `"${a.name}"`, `"${a.category}"`, a.stock_quantity, a.low_stock_threshold,
+      Math.max(0, a.low_stock_threshold * 3 - a.stock_quantity)
+    ])
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `purchase_order_${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    toast.success(`Purchase order generated — ${alerts.length} low-stock items included.`)
     setIsGeneratingPO(false)
   }
 
-  const handleRouteOptimization = async () => {
-    setIsOptimizing(true)
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    toast.success('Route optimization protocols initiated for all regional hubs.')
+  const handleRouteOptimization = () => {
+    toast.info('Route optimization requires regional coordinators to redistribute assignments. Contact leads via the Broadcasts module.')
     setIsOptimizing(false)
   }
 

@@ -520,7 +520,7 @@ export default function ChapterHub() {
                   <label style={lbl}>Meeting title</label>
                   <input name="meetTitle" id="input-7be651" type="text" value={meetTitle} onChange={e => setMeetTitle(e.target.value)} placeholder="e.g. Monthly general meeting" style={inp} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
                   <div>
                     <label style={lbl}>Date</label>
                     <input name="meetDate" id="input-e9359e" type="date" value={meetDate} min={todayStr} onChange={e => setMeetDate(e.target.value)} style={inp} />
@@ -781,7 +781,7 @@ export default function ChapterHub() {
                 {isSavingContact ? 'Saving…' : 'Save changes'}
               </button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
               <div>
                 <label style={lbl}>Chapter email</label>
                 <input name="emailDraft" id="input-17e0b1" type="email" value={emailDraft} onChange={e => setEmailDraft(e.target.value)} placeholder="chapter@thebasemovement.com" style={inp} />
