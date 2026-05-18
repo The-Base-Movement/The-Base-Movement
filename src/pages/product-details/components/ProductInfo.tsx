@@ -57,7 +57,7 @@ export function ProductInfo({
         <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-micro font-bold tracking-tight rounded-full mb-4">
           {product.category}
         </span>
-        <h1 className="font-meta text-3xl md:text-4xl font-bold tracking-tighter text-stone-900 mb-4">{product.name}</h1>
+        <h1 className="font-meta text-xl sm:text-2xl md:text-4xl font-bold tracking-tighter text-stone-900 mb-4">{product.name}</h1>
         <div className="flex items-center gap-4 mb-6">
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map(i => (
