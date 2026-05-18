@@ -12,33 +12,33 @@ import { routes } from './routes'
 import { Toaster as SonnerToaster } from 'sonner'
 import { Toaster } from './components/buttons/ui/toaster'
 import { useIsClient } from '@/hooks/useIsClient'
-
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 export default function App() {
-  const content = useRoutes(routes);
-  const isClient = useIsClient();
+  const content = useRoutes(routes)
+  const isClient = useIsClient()
 
   return (
-    <PerformanceProvider>
-      <BrandingProvider>
-        <AuthProvider>
-          <ChaptersProvider>
-            <StoreProvider>
-              <ScrollToTop />
-              <ReadingProgressBar />
-              <Toaster />
-              {isClient && (
-                <>
-                  <SonnerToaster position="top-right" richColors />
-                </>
-              )}
-              <Suspense fallback={<LoadingScreen />}>
-                {content}
-              </Suspense>
-            </StoreProvider>
-          </ChaptersProvider>
-        </AuthProvider>
-      </BrandingProvider>
-    </PerformanceProvider>
+    <ErrorBoundary>
+      <PerformanceProvider>
+        <BrandingProvider>
+          <AuthProvider>
+            <ChaptersProvider>
+              <StoreProvider>
+                <ScrollToTop />
+                <ReadingProgressBar />
+                <Toaster />
+                {isClient && (
+                  <>
+                    <SonnerToaster position="top-right" richColors />
+                  </>
+                )}
+                <Suspense fallback={<LoadingScreen />}>{content}</Suspense>
+              </StoreProvider>
+            </ChaptersProvider>
+          </AuthProvider>
+        </BrandingProvider>
+      </PerformanceProvider>
+    </ErrorBoundary>
   )
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import SEO from '@/components/SEO'
 import BackToTop from './BackToTop'
 import { ShareModal } from './ShareModal'
 import { authService } from '@/services/authService'
@@ -32,9 +33,12 @@ export default function DashboardLayout() {
         const chapters = await adminService.getChapters()
 
         // Leader takes priority
-        const leaderChapter = chapters.find(c => c.leader_id === session.user.id)
+        const leaderChapter = chapters.find((c) => c.leader_id === session.user.id)
         if (leaderChapter) {
-          const slug = leaderChapter.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+          const slug = leaderChapter.name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)+/g, '')
           setMyChapterLink({ to: `/dashboard/chapter-hub/${slug}`, icon: 'manage_accounts' })
           return
         }
@@ -42,13 +46,18 @@ export default function DashboardLayout() {
         // Regular member — check DB directly (null = never joined)
         const dbChapter = await adminService.getUserChapter(session.user.id)
         if (dbChapter) {
-          const matched = chapters.find(c => c.name.toLowerCase() === dbChapter.toLowerCase())
+          const matched = chapters.find((c) => c.name.toLowerCase() === dbChapter.toLowerCase())
           if (matched) {
-            const slug = matched.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+            const slug = matched.name
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/(^-|-$)+/g, '')
             setMyChapterLink({ to: `/dashboard/chapters/${slug}`, icon: 'group' })
           }
         }
-      } catch { /* non-critical */ }
+      } catch {
+        /* non-critical */
+      }
     }
 
     const readProfile = async () => {
@@ -88,13 +97,13 @@ export default function DashboardLayout() {
     }
 
     readProfile()
-    
+
     // Fetch notifications
     const fetchUnread = async () => {
       try {
         const notes = await adminService.getNotifications()
         setNotifications(notes)
-        setUnreadCount(notes.filter(n => !n.is_read).length)
+        setUnreadCount(notes.filter((n) => !n.is_read).length)
       } catch {
         console.warn('[DASHBOARD] Notification sync failed')
       }
@@ -114,7 +123,7 @@ export default function DashboardLayout() {
   // Derive initials from the stored name
   const initials = (userName || 'Member')
     .split(' ')
-    .map(n => n[0])
+    .map((n) => n[0])
     .join('')
     .toUpperCase()
 
@@ -150,7 +159,8 @@ export default function DashboardLayout() {
     if (path === '/dashboard/members') return 'Verified'
     if (path === '/dashboard/chapters') return 'Chapters'
     if (path.startsWith('/dashboard/chapters/')) return 'Chapter Details'
-    if (path === '/dashboard/chapter-hub' || path.startsWith('/dashboard/chapter-hub/')) return 'My Chapter'
+    if (path === '/dashboard/chapter-hub' || path.startsWith('/dashboard/chapter-hub/'))
+      return 'My Chapter'
     if (path === '/dashboard/contact') return 'Support'
     if (path === '/dashboard/settings') return 'Profile'
     if (path === '/dashboard/wishlist') return 'Wishlist'
@@ -162,19 +172,32 @@ export default function DashboardLayout() {
 
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen">
+      <SEO noindex />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:rounded-md focus:font-semibold focus:text-white"
+        style={{ background: 'hsl(var(--primary))' }}
+      >
+        Skip to main content
+      </a>
       {/* Mobile Backdrop */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-[45] md:hidden backdrop-blur-sm transition-opacity"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Share Modal */}
-      <ShareModal 
-        isOpen={isShareModalOpen} 
-        onClose={() => setIsShareModalOpen(false)} 
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
         title="Invite others to join The Base"
+        url={
+          userRegNo
+            ? `https://thebasemovement.com/register?ref=${userRegNo}`
+            : 'https://thebasemovement.com/register'
+        }
       />
 
       {/* Navigation Shell (SideNavBar) */}
@@ -183,27 +206,40 @@ export default function DashboardLayout() {
         className={`fixed left-0 top-0 h-full flex flex-col bg-[#181d19] text-white border-r-[4px] border-accent z-50 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isSidebarCollapsed ? 'w-20' : 'w-60'}`}
       >
         {/* Fixed Header */}
-        <div className={`py-[24px] flex items-center border-b border-white/[0.08] mb-3 shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-[22px] gap-[10px]'}`}>
+        <div
+          className={`py-[24px] flex items-center border-b border-white/[0.08] mb-3 shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-[22px] gap-[10px]'}`}
+        >
           <div className="w-10 h-10 bg-background flex items-center justify-center rounded-sm shadow-2xl p-1.5 shrink-0">
-            <img src={settings.logo_url} alt="The Base Logo" className="w-full h-full object-contain"  decoding="async" />
+            <img
+              src={settings.logo_url}
+              alt="The Base Logo"
+              className="w-full h-full object-contain"
+              decoding="async"
+            />
           </div>
           {!isSidebarCollapsed && (
             <div className="overflow-hidden whitespace-nowrap">
-              <h1 className="text-[16px] font-extrabold text-white leading-none mb-0 tracking-tight">The Base</h1>
-              <p className="text-[9px] text-accent font-bold tracking-[0.04em] uppercase mt-1 mb-0">Member portal</p>
+              <h1 className="text-[16px] font-extrabold text-white leading-none mb-0 tracking-tight">
+                The Base
+              </h1>
+              <p className="text-[9px] text-accent font-bold tracking-[0.04em] uppercase mt-1 mb-0">
+                Member portal
+              </p>
             </div>
           )}
         </div>
-        
+
         {/* Back to Site Action */}
         {!isSidebarCollapsed && (
           <div className="px-4 mb-4">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 text-white/90 hover:text-white rounded-[4px] transition-all group border border-white/5"
             >
               <span className="material-symbols-outlined text-[18px] text-accent">arrow_back</span>
-              <span className="text-[11px] font-extrabold uppercase tracking-[0.06em]">Back to Site</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.06em]">
+                Back to Site
+              </span>
             </Link>
           </div>
         )}
@@ -211,28 +247,39 @@ export default function DashboardLayout() {
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto sidebar-scroll">
           {[
-            { label: 'Navigation', items: [
-              { to: '/dashboard', icon: 'dashboard', label: 'Overview' },
-              { to: '/dashboard/blog', icon: 'article', label: 'Updates' },
-              { to: '/dashboard/agenda', icon: 'event_note', label: 'The Plan' },
-              { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },
-              { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Feedback' },
-              { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
-              ...(myChapterLink ? [{ to: myChapterLink.to, icon: myChapterLink.icon, label: 'My Chapter' }] : []),
-            ]},
-            { label: 'Mobilization', items: [
-              { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
-              { to: '/dashboard/store', icon: 'storefront', label: 'Supplies' },
-              { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback Hub' },
-              { to: '/dashboard/members', icon: 'groups', label: 'Verified Members' },
-            ]},
-            { label: 'Personal', items: [
-              { to: '/dashboard/settings', icon: 'settings', label: 'Settings' },
-            ]},
+            {
+              label: 'Navigation',
+              items: [
+                { to: '/dashboard', icon: 'dashboard', label: 'Overview' },
+                { to: '/dashboard/blog', icon: 'article', label: 'Updates' },
+                { to: '/dashboard/agenda', icon: 'event_note', label: 'The Plan' },
+                { to: '/dashboard/impact', icon: 'insights', label: 'Impact' },
+                { to: '/dashboard/polls', icon: 'how_to_vote', label: 'Feedback' },
+                { to: '/dashboard/chapters', icon: 'account_balance', label: 'Chapters' },
+                ...(myChapterLink
+                  ? [{ to: myChapterLink.to, icon: myChapterLink.icon, label: 'My Chapter' }]
+                  : []),
+              ],
+            },
+            {
+              label: 'Mobilization',
+              items: [
+                { to: '/dashboard/donate', icon: 'volunteer_activism', label: 'Donate' },
+                { to: '/dashboard/store', icon: 'storefront', label: 'Supplies' },
+                { to: '/dashboard/feedback', icon: 'forum', label: 'Feedback Hub' },
+                { to: '/dashboard/members', icon: 'groups', label: 'Verified Members' },
+              ],
+            },
+            {
+              label: 'Personal',
+              items: [{ to: '/dashboard/settings', icon: 'settings', label: 'Settings' }],
+            },
           ].map((group) => (
             <div key={group.label} className="nav-sec mt-2">
               {!isSidebarCollapsed && (
-                <h6 className="text-[9px] font-bold text-white/40 tracking-[0.08em] uppercase mb-2 mt-2 px-6 font-meta">{group.label}</h6>
+                <h6 className="text-[9px] font-bold text-white/40 tracking-[0.08em] uppercase mb-2 mt-2 px-6 font-meta">
+                  {group.label}
+                </h6>
               )}
               <div className="space-y-0.5 px-4">
                 {group.items.map((item) => (
@@ -241,7 +288,12 @@ export default function DashboardLayout() {
                     className={`flex items-center transition-all font-meta text-[12px] font-bold tracking-tight rounded-[4px] ${isSidebarCollapsed ? 'px-0 justify-center h-14' : 'px-[12px] py-[10px]'} ${isActive(item.to) || (item.to !== '/dashboard' && location.pathname.startsWith(item.to)) ? 'bg-[hsl(var(--primary))] text-white shadow-lg shadow-primary/10' : 'text-white/70 hover:bg-white/5 hover:text-white'}`}
                     to={item.to}
                   >
-                    <span className={`material-symbols-outlined text-[18px] ${isSidebarCollapsed ? 'mr-0' : 'mr-[10px]'}`} style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>{item.icon}</span>
+                    <span
+                      className={`material-symbols-outlined text-[18px] ${isSidebarCollapsed ? 'mr-0' : 'mr-[10px]'}`}
+                      style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
+                    >
+                      {item.icon}
+                    </span>
                     {!isSidebarCollapsed && item.label}
                   </Link>
                 ))}
@@ -249,7 +301,9 @@ export default function DashboardLayout() {
             </div>
           ))}
 
-          <div className={`mt-8 mb-8 px-4 ${isSidebarCollapsed ? 'flex flex-col items-center' : ''}`}>
+          <div
+            className={`mt-8 mb-8 px-4 ${isSidebarCollapsed ? 'flex flex-col items-center' : ''}`}
+          >
             <button
               onClick={() => setIsShareModalOpen(true)}
               style={{
@@ -271,7 +325,9 @@ export default function DashboardLayout() {
                 boxShadow: '0 4px 16px rgba(0,107,63,0.25)',
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>share</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                share
+              </span>
               {!isSidebarCollapsed && 'Invite & Share'}
             </button>
           </div>
@@ -280,33 +336,40 @@ export default function DashboardLayout() {
         {/* User identification footer */}
         {!isSidebarCollapsed && (
           <div className="mt-auto px-[22px] py-6 border-t border-white/[0.08] flex items-center gap-3">
-             <div className="w-8 h-8 rounded-full border-[1.5px] border-accent overflow-hidden shrink-0">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-primary flex items-center justify-center text-[10px] font-bold">
-                    {initials}
-                  </div>
-                )}
-             </div>
-             <div className="min-w-0">
-                <b className="block text-[12px] text-white font-bold leading-none mb-1 truncate capitalize">{userName?.toLowerCase()}</b>
-                <span className="block text-[10px] text-white/50 truncate">Patriot ID: {userRegNo?.slice(0, 8)}</span>
-             </div>
+            <div className="w-8 h-8 rounded-full border-[1.5px] border-accent overflow-hidden shrink-0">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-primary flex items-center justify-center text-[10px] font-bold">
+                  {initials}
+                </div>
+              )}
+            </div>
+            <div className="min-w-0">
+              <b className="block text-[12px] text-white font-bold leading-none mb-1 truncate capitalize">
+                {userName?.toLowerCase()}
+              </b>
+              <span className="block text-[10px] text-white/50 truncate">
+                Patriot ID: {userRegNo?.slice(0, 8)}
+              </span>
+            </div>
           </div>
         )}
       </aside>
 
       {/* Main Content Canvas */}
-      <main className={`min-h-screen bg-muted/10 flex flex-col pt-20 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'}`}>
-
+      <main
+        id="main-content"
+        className={`min-h-screen bg-muted/10 flex flex-col pt-20 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-60'}`}
+      >
         {/* ── Topbar ── fixed, clears the sidebar */}
-        <div className={`fixed top-0 left-0 right-0 z-40 bg-white border-b border-border shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-60'}`}>
+        <div
+          className={`fixed top-0 left-0 right-0 z-40 bg-white border-b border-border shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'md:left-20' : 'md:left-60'}`}
+        >
           <div className="flex items-center justify-between px-6 md:px-10 h-20">
-
             {/* Left: Hamburger (Mobile) + Current Page Title */}
             <div className="flex items-center gap-6">
-              <button 
+              <button
                 onClick={() => {
                   if (window.innerWidth < 768) {
                     setIsSidebarOpen(true)
@@ -318,7 +381,7 @@ export default function DashboardLayout() {
               >
                 <span className="material-symbols-outlined text-[28px]">menu</span>
               </button>
-              
+
               <h1 className="hidden md:block text-[20px] md:text-[24px] font-extrabold tracking-tight text-on-surface m-0 font-meta">
                 {getPageTitle()}
               </h1>
@@ -326,24 +389,71 @@ export default function DashboardLayout() {
 
             {/* Right: Actions + Avatar */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-
               {/* Search — desktop only */}
               <div className="hidden lg:block" style={{ position: 'relative' }}>
-                <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: 'hsl(var(--on-surface-muted))', opacity: 0.4, pointerEvents: 'none' }}>search</span>
-                <input aria-label="Search the movement…" name="name-bd4fad" id="input-bd4fad"
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    position: 'absolute',
+                    left: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: 16,
+                    color: 'hsl(var(--on-surface-muted))',
+                    opacity: 0.4,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  search
+                </span>
+                <input
+                  aria-label="Search the movement…"
+                  name="name-bd4fad"
+                  id="input-bd4fad"
                   type="text"
                   placeholder="Search the movement…"
-                  style={{ width: 240, height: 36, paddingLeft: 34, paddingRight: 14, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', outline: 'none', boxSizing: 'border-box' }}
+                  style={{
+                    width: 240,
+                    height: 36,
+                    paddingLeft: 34,
+                    paddingRight: 14,
+                    background: 'hsl(var(--container-low))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 4,
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    color: 'hsl(var(--on-surface))',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
                 />
               </div>
 
               {/* Donate shortcut */}
               <Link
                 to="/dashboard/donate"
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 14px', height: 36, background: 'hsl(var(--accent))', color: 'hsl(var(--on-surface))', borderRadius: 4, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, textDecoration: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '0 14px',
+                  height: 36,
+                  background: 'hsl(var(--accent))',
+                  color: 'hsl(var(--on-surface))',
+                  borderRadius: 4,
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 800,
+                  fontSize: 12,
+                  textDecoration: 'none',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                }}
                 className="hidden md:flex"
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>volunteer_activism</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  volunteer_activism
+                </span>
                 Donate ₵
               </Link>
 
@@ -351,48 +461,214 @@ export default function DashboardLayout() {
               <div style={{ position: 'relative' }}>
                 <button
                   onClick={() => {
-                    setOpenNotifications(v => !v)
+                    setOpenNotifications((v) => !v)
                     setOpenUserMenu(false)
                     if (!openNotifications && unreadCount > 0) {
-                      const unread = notifications.filter(n => !n.is_read)
-                      unread.forEach(n => adminService.markNotificationRead(n.id).catch(() => {}))
-                      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+                      const unread = notifications.filter((n) => !n.is_read)
+                      unread.forEach((n) => adminService.markNotificationRead(n.id).catch(() => {}))
+                      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })))
                       setUnreadCount(0)
                     }
                   }}
-                  style={{ position: 'relative', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: openNotifications ? 'hsl(var(--container-low))' : 'none', border: '1px solid hsl(var(--border))', borderRadius: 4, cursor: 'pointer', color: 'hsl(var(--on-surface-muted))', flexShrink: 0 }}
+                  aria-label={
+                    unreadCount > 0 ? `Notifications — ${unreadCount} unread` : 'Notifications'
+                  }
+                  aria-expanded={openNotifications}
+                  aria-haspopup="true"
+                  style={{
+                    position: 'relative',
+                    width: 36,
+                    height: 36,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: openNotifications ? 'hsl(var(--container-low))' : 'none',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    color: 'hsl(var(--on-surface-muted))',
+                    flexShrink: 0,
+                  }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>notifications</span>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 20 }}
+                    aria-hidden="true"
+                  >
+                    notifications
+                  </span>
+                  <span className="sr-only">
+                    {unreadCount > 0
+                      ? `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`
+                      : 'Notifications'}
+                  </span>
                   {unreadCount > 0 && (
-                    <span style={{ position: 'absolute', top: 6, right: 6, width: 7, height: 7, background: 'hsl(var(--destructive))', borderRadius: '50%', border: '1.5px solid #fff' }} />
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        position: 'absolute',
+                        top: 6,
+                        right: 6,
+                        width: 7,
+                        height: 7,
+                        background: 'hsl(var(--destructive))',
+                        borderRadius: '50%',
+                        border: '1.5px solid #fff',
+                      }}
+                    />
                   )}
                 </button>
 
                 {openNotifications && (
                   <>
-                    <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setOpenNotifications(false)} />
-                    <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', zIndex: 50, background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, width: 320, maxHeight: 420, display: 'flex', flexDirection: 'column', boxShadow: '0 8px 24px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-                      <div style={{ padding: '12px 14px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'hsl(var(--container-low))' }}>
-                        <span style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))' }}>Notifications</span>
-                        <span style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>{notifications.length} total</span>
+                    <div
+                      style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                      onClick={() => setOpenNotifications(false)}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: 'calc(100% + 6px)',
+                        zIndex: 50,
+                        background: '#fff',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 6,
+                        width: 320,
+                        maxHeight: 420,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div
+                        style={{
+                          padding: '12px 14px',
+                          borderBottom: '1px solid hsl(var(--border))',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          background: 'hsl(var(--container-low))',
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans',sans-serif",
+                            fontWeight: 800,
+                            fontSize: 13,
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                        >
+                          Notifications
+                        </span>
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans',sans-serif",
+                            fontWeight: 700,
+                            fontSize: 10,
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          {notifications.length} total
+                        </span>
                       </div>
                       <div style={{ overflowY: 'auto', flex: 1 }}>
                         {notifications.length === 0 ? (
                           <div style={{ padding: '32px 14px', textAlign: 'center' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))', display: 'block', marginBottom: 8 }}>notifications_none</span>
-                            <span style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>No notifications yet</span>
+                            <span
+                              className="material-symbols-outlined"
+                              style={{
+                                fontSize: 32,
+                                color: 'hsl(var(--border))',
+                                display: 'block',
+                                marginBottom: 8,
+                              }}
+                            >
+                              notifications_none
+                            </span>
+                            <span
+                              style={{
+                                fontFamily: "'Public Sans',sans-serif",
+                                fontWeight: 700,
+                                fontSize: 12,
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
+                            >
+                              No notifications yet
+                            </span>
                           </div>
                         ) : (
-                          notifications.map(n => (
-                            <div key={n.id} style={{ display: 'flex', gap: 10, padding: '11px 14px', borderBottom: '1px solid hsl(var(--border))', background: n.is_read ? '#fff' : 'hsl(var(--container-low))' }}>
-                              <span className="material-symbols-outlined" style={{ fontSize: 16, marginTop: 1, flexShrink: 0, color: n.type === 'Alert' ? 'hsl(var(--destructive))' : n.type === 'Action' ? 'hsl(var(--accent))' : 'hsl(var(--primary))' }}>
-                                {n.type === 'Alert' ? 'warning' : n.type === 'Action' ? 'task_alt' : 'info'}
+                          notifications.map((n) => (
+                            <div
+                              key={n.id}
+                              style={{
+                                display: 'flex',
+                                gap: 10,
+                                padding: '11px 14px',
+                                borderBottom: '1px solid hsl(var(--border))',
+                                background: n.is_read ? '#fff' : 'hsl(var(--container-low))',
+                              }}
+                            >
+                              <span
+                                className="material-symbols-outlined"
+                                style={{
+                                  fontSize: 16,
+                                  marginTop: 1,
+                                  flexShrink: 0,
+                                  color:
+                                    n.type === 'Alert'
+                                      ? 'hsl(var(--destructive))'
+                                      : n.type === 'Action'
+                                        ? 'hsl(var(--accent))'
+                                        : 'hsl(var(--primary))',
+                                }}
+                              >
+                                {n.type === 'Alert'
+                                  ? 'warning'
+                                  : n.type === 'Action'
+                                    ? 'task_alt'
+                                    : 'info'}
                               </span>
                               <div style={{ minWidth: 0 }}>
-                                <div style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 800, fontSize: 12, color: 'hsl(var(--on-surface))', marginBottom: 2 }}>{n.title}</div>
-                                <div style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 500, fontSize: 11, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.4 }}>{n.message}</div>
-                                <div style={{ fontFamily: "'Public Sans',sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', marginTop: 4, opacity: 0.6 }}>
-                                  {new Date(n.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                <div
+                                  style={{
+                                    fontFamily: "'Public Sans',sans-serif",
+                                    fontWeight: 800,
+                                    fontSize: 12,
+                                    color: 'hsl(var(--on-surface))',
+                                    marginBottom: 2,
+                                  }}
+                                >
+                                  {n.title}
+                                </div>
+                                <div
+                                  style={{
+                                    fontFamily: "'Public Sans',sans-serif",
+                                    fontWeight: 500,
+                                    fontSize: 11,
+                                    color: 'hsl(var(--on-surface-muted))',
+                                    lineHeight: 1.4,
+                                  }}
+                                >
+                                  {n.message}
+                                </div>
+                                <div
+                                  style={{
+                                    fontFamily: "'Public Sans',sans-serif",
+                                    fontWeight: 700,
+                                    fontSize: 10,
+                                    color: 'hsl(var(--on-surface-muted))',
+                                    marginTop: 4,
+                                    opacity: 0.6,
+                                  }}
+                                >
+                                  {new Date(n.created_at).toLocaleDateString('en-GB', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })}
                                 </div>
                               </div>
                             </div>
@@ -407,53 +683,192 @@ export default function DashboardLayout() {
               {/* User dropdown */}
               <div style={{ position: 'relative' }}>
                 <button
-                  onClick={() => setOpenUserMenu(v => !v)}
-                  style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: '1px solid hsl(var(--border))', borderRadius: 4, padding: '4px 10px 4px 4px', cursor: 'pointer', outline: 'none' }}
+                  onClick={() => setOpenUserMenu((v) => !v)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    background: 'none',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 4,
+                    padding: '4px 10px 4px 4px',
+                    cursor: 'pointer',
+                    outline: 'none',
+                  }}
                 >
-                  <div style={{ width: 28, height: 28, borderRadius: 4, overflow: 'hidden', background: 'hsl(var(--primary))', flexShrink: 0 }}>
-                    {avatarUrl
-                      ? <img src={avatarUrl} alt={userName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} decoding="async" />
-                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 11 }}>{initials || 'M'}</div>
-                    }
+                  <div
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 4,
+                      overflow: 'hidden',
+                      background: 'hsl(var(--primary))',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={userName}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        decoding="async"
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#fff',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 800,
+                          fontSize: 11,
+                        }}
+                      >
+                        {initials || 'M'}
+                      </div>
+                    )}
                   </div>
-                  <span className="hidden md:block" style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textTransform: 'capitalize' }}>{userName?.toLowerCase()}</span>
-                  <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}>expand_more</span>
+                  <span
+                    className="hidden md:block"
+                    style={{
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontWeight: 700,
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface))',
+                      maxWidth: 100,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {userName?.toLowerCase()}
+                  </span>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 16, color: 'hsl(var(--on-surface-muted))' }}
+                  >
+                    expand_more
+                  </span>
                 </button>
 
                 {openUserMenu && (
                   <>
-                    <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setOpenUserMenu(false)} />
-                    <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', zIndex: 50, background: '#fff', border: '1px solid hsl(var(--border))', borderRadius: 6, minWidth: 210, boxShadow: '0 8px 24px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+                    <div
+                      style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                      onClick={() => setOpenUserMenu(false)}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: 'calc(100% + 6px)',
+                        zIndex: 50,
+                        background: '#fff',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 6,
+                        minWidth: 210,
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+                        overflow: 'hidden',
+                      }}
+                    >
                       {/* Identity header */}
-                      <div style={{ padding: '12px 14px', background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
-                        <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13, color: 'hsl(var(--on-surface))', textTransform: 'capitalize', marginBottom: 2 }}>{userName?.toLowerCase()}</div>
-                        <div style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>ID: {userRegNo?.slice(0, 10) || 'Unverified'}</div>
+                      <div
+                        style={{
+                          padding: '12px 14px',
+                          background: 'hsl(var(--container-low))',
+                          borderBottom: '1px solid hsl(var(--border))',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 800,
+                            fontSize: 13,
+                            color: 'hsl(var(--on-surface))',
+                            textTransform: 'capitalize',
+                            marginBottom: 2,
+                          }}
+                        >
+                          {userName?.toLowerCase()}
+                        </div>
+                        <div
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 700,
+                            fontSize: 10,
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          ID: {userRegNo?.slice(0, 10) || 'Unverified'}
+                        </div>
                       </div>
                       {/* Menu items */}
                       {[
                         { icon: 'person', label: 'Member Profile', to: '/dashboard/settings' },
                         { icon: 'settings', label: 'Settings', to: '/dashboard/settings' },
-                      ].map(item => (
+                      ].map((item) => (
                         <Link
                           key={item.to + item.label}
                           to={item.to}
                           onClick={() => setOpenUserMenu(false)}
-                          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--on-surface))', textDecoration: 'none' }}
-                          onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                            padding: '10px 14px',
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 700,
+                            fontSize: 12,
+                            color: 'hsl(var(--on-surface))',
+                            textDecoration: 'none',
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                          }
+                          onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                         >
-                          <span className="material-symbols-outlined" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>{item.icon}</span>
+                          <span
+                            className="material-symbols-outlined"
+                            style={{ fontSize: 16, color: 'hsl(var(--primary))' }}
+                          >
+                            {item.icon}
+                          </span>
                           {item.label}
                         </Link>
                       ))}
                       <div style={{ height: 1, background: 'hsl(var(--border))' }} />
                       <button
-                        onClick={() => { setOpenUserMenu(false); handleLogout() }}
-                        style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12, color: 'hsl(var(--destructive))', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--container-low))')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                        onClick={() => {
+                          setOpenUserMenu(false)
+                          handleLogout()
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 10,
+                          padding: '10px 14px',
+                          fontFamily: "'Public Sans', sans-serif",
+                          fontWeight: 700,
+                          fontSize: 12,
+                          color: 'hsl(var(--destructive))',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          width: '100%',
+                          textAlign: 'left',
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.background = 'hsl(var(--container-low))')
+                        }
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                       >
-                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>logout</span>
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                          logout
+                        </span>
                         Sign out
                       </button>
                     </div>
@@ -473,11 +888,28 @@ export default function DashboardLayout() {
         {/* Dashboard Footer */}
         <footer className="mt-16 py-10 px-12 border-t border-border/10 bg-muted/5">
           <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-micro text-muted-foreground/40 mb-0 font-bold tracking-tight uppercase">© {new Date().getFullYear()} The Base Movement. National Infrastructure.</p>
+            <p className="text-micro text-muted-foreground/40 mb-0 font-bold tracking-tight uppercase">
+              © {new Date().getFullYear()} The Base Movement. National Infrastructure.
+            </p>
             <div className="flex flex-wrap justify-center items-center gap-6">
-              <Link className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/privacy">Privacy</Link>
-              <Link className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/terms">Terms</Link>
-              <Link className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors" to="/dashboard/contact">Support</Link>
+              <Link
+                className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
+                to="/dashboard/privacy"
+              >
+                Privacy
+              </Link>
+              <Link
+                className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
+                to="/dashboard/terms"
+              >
+                Terms
+              </Link>
+              <Link
+                className="font-bold text-micro uppercase text-muted-foreground/40 hover:text-primary transition-colors"
+                to="/dashboard/contact"
+              >
+                Support
+              </Link>
             </div>
           </div>
         </footer>
