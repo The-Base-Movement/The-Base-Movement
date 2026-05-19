@@ -18,7 +18,7 @@ class ContentService {
   async getBlogPosts(): Promise<BlogPost[]> {
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('*')
+      .select('*, authors(name, role, image_url, bio)')
       .is('deleted_at', null)
       .order('published_at', { ascending: false })
 
@@ -27,27 +27,35 @@ class ContentService {
       return []
     }
 
-    return (data || []).map((p: Record<string, unknown>) => ({
-      id: p.id as string,
-      title: p.title as string,
-      slug: p.slug as string,
-      excerpt: p.excerpt as string,
-      content: p.content as string,
-      authorId: p.author_id as string,
-      authorName: (p.author_name as string) || 'Admin',
-      authorRole: p.author_role as string | undefined,
-      authorImage: p.author_image as string | undefined,
-      authorBio: p.author_bio as string | undefined,
-      category: p.category as string,
-      imageUrl: p.image_url as string | undefined,
-      readTime: p.read_time as string,
-      isFeatured: p.is_featured as boolean,
-      publishedAt: p.published_at as string,
-      status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Published',
-      tags: (p.tags as string[]) || [],
-      seoTitle: p.seo_title as string | undefined,
-      metaDescription: p.meta_description as string | undefined
-    }))
+    return (data || []).map((p: Record<string, unknown>) => {
+      const a = p.authors as {
+        name?: string
+        role?: string
+        image_url?: string
+        bio?: string
+      } | null
+      return {
+        id: p.id as string,
+        title: p.title as string,
+        slug: p.slug as string,
+        excerpt: p.excerpt as string,
+        content: p.content as string,
+        authorId: p.author_id as string,
+        authorName: a?.name || (p.author_name as string) || 'Admin',
+        authorRole: a?.role || (p.author_role as string | undefined),
+        authorImage: a?.image_url || (p.author_image as string | undefined),
+        authorBio: a?.bio || (p.author_bio as string | undefined),
+        category: p.category as string,
+        imageUrl: p.image_url as string | undefined,
+        readTime: p.read_time as string,
+        isFeatured: p.is_featured as boolean,
+        publishedAt: p.published_at as string,
+        status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Published',
+        tags: (p.tags as string[]) || [],
+        seoTitle: p.seo_title as string | undefined,
+        metaDescription: p.meta_description as string | undefined,
+      }
+    })
   }
 
   async getPublishedPostCount(): Promise<number> {
@@ -64,7 +72,7 @@ class ContentService {
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('*')
+      .select('*, authors(name, role, image_url, bio)')
       .eq('slug', slug)
       .is('deleted_at', null)
       .maybeSingle()
@@ -79,6 +87,12 @@ class ContentService {
       return null
     }
 
+    const a = data.authors as {
+      name?: string
+      role?: string
+      image_url?: string
+      bio?: string
+    } | null
     return {
       id: data.id,
       title: data.title,
@@ -86,10 +100,10 @@ class ContentService {
       excerpt: data.excerpt,
       content: data.content,
       authorId: data.author_id,
-      authorName: data.author_name || 'Admin',
-      authorRole: data.author_role,
-      authorImage: data.author_image,
-      authorBio: data.author_bio,
+      authorName: a?.name || data.author_name || 'Admin',
+      authorRole: a?.role || data.author_role,
+      authorImage: a?.image_url || data.author_image,
+      authorBio: a?.bio || data.author_bio,
       category: data.category,
       imageUrl: data.image_url,
       readTime: data.read_time,
@@ -98,33 +112,31 @@ class ContentService {
       status: (data.status as 'Draft' | 'Pending Verification' | 'Published') || 'Published',
       tags: data.tags || [],
       seoTitle: data.seo_title,
-      metaDescription: data.meta_description
+      metaDescription: data.meta_description,
     }
   }
 
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<boolean> {
-    const { error } = await supabase
-      .from('blog_posts')
-      .insert({
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        content: post.content,
-        author_id: post.authorId,
-        author_name: post.authorName,
-        author_role: post.authorRole,
-        author_image: post.authorImage,
-        author_bio: post.authorBio,
-        category: post.category,
-        image_url: post.imageUrl || null,
-        read_time: post.readTime,
-        is_featured: post.isFeatured,
-        published_at: post.publishedAt,
-        status: post.status || 'Draft',
-        tags: post.tags,
-        seo_title: post.seoTitle || null,
-        meta_description: post.metaDescription || null
-      })
+    const { error } = await supabase.from('blog_posts').insert({
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.content,
+      author_id: post.authorId,
+      author_name: post.authorName,
+      author_role: post.authorRole,
+      author_image: post.authorImage,
+      author_bio: post.authorBio,
+      category: post.category,
+      image_url: post.imageUrl || null,
+      read_time: post.readTime,
+      is_featured: post.isFeatured,
+      published_at: post.publishedAt,
+      status: post.status || 'Draft',
+      tags: post.tags,
+      seo_title: post.seoTitle || null,
+      meta_description: post.metaDescription || null,
+    })
 
     if (error) {
       console.error('[DATABASE] Blog post creation failed:', error)
@@ -153,10 +165,7 @@ class ContentService {
     if (post.seoTitle !== undefined) updateData.seo_title = post.seoTitle
     if (post.metaDescription !== undefined) updateData.meta_description = post.metaDescription
 
-    const { error } = await supabase
-      .from('blog_posts')
-      .update(updateData)
-      .eq('id', id)
+    const { error } = await supabase.from('blog_posts').update(updateData).eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Blog post update failed:', error)
@@ -205,15 +214,12 @@ class ContentService {
       publishedAt: p.published_at,
       status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Published',
       deletedAt: p.deleted_at,
-      tags: p.tags || []
+      tags: p.tags || [],
     }))
   }
 
   async restoreBlogPost(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('blog_posts')
-      .update({ deleted_at: null })
-      .eq('id', id)
+    const { error } = await supabase.from('blog_posts').update({ deleted_at: null }).eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Failed to restore blog post:', error)
@@ -223,10 +229,7 @@ class ContentService {
   }
 
   async permanentlyDeleteBlogPost(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('blog_posts')
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from('blog_posts').delete().eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Permanent blog post deletion failed:', error)
@@ -245,9 +248,7 @@ class ContentService {
       const filePath = `${path}/${fileName}`
 
       // Upload the file to the 'media' bucket
-      const { error: uploadError } = await supabase.storage
-        .from('media')
-        .upload(filePath, file)
+      const { error: uploadError } = await supabase.storage.from('media').upload(filePath, file)
 
       if (uploadError) {
         console.error('[STORAGE] Upload failed:', uploadError)
@@ -260,13 +261,13 @@ class ContentService {
         url: `${supabase.storage.from('media').getPublicUrl(filePath).data.publicUrl}`,
         folder: path,
         size_bytes: file.size,
-        mime_type: file.type
+        mime_type: file.type,
       })
 
       // Get the public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('media')
-        .getPublicUrl(filePath)
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('media').getPublicUrl(filePath)
 
       return publicUrl
     } catch (err) {
@@ -306,13 +307,13 @@ class ContentService {
     }
 
     // 4. Normalize URLs (ensure full public URL if relative)
-    const normalizedUrls = data.map(item => {
+    const normalizedUrls = data.map((item) => {
       if (item.url.startsWith('http')) return item.url
       // If relative, it's likely /folder/filename.ext or folder/filename.ext
       const cleanPath = item.url.startsWith('/') ? item.url.substring(1) : item.url
-      const { data: { publicUrl } } = supabase.storage
-        .from('media')
-        .getPublicUrl(cleanPath)
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('media').getPublicUrl(cleanPath)
       return publicUrl
     })
 
@@ -326,19 +327,17 @@ class ContentService {
   }
 
   private async getMediaFilesFromStorage(path: string): Promise<string[]> {
-    const { data, error } = await supabase.storage
-      .from('media')
-      .list(path)
+    const { data, error } = await supabase.storage.from('media').list(path)
 
     if (error) {
       console.error('[STORAGE] Failed to list media files:', error)
       return []
     }
 
-    return (data || []).map(file => {
-      const { data: { publicUrl } } = supabase.storage
-        .from('media')
-        .getPublicUrl(`${path}/${file.name}`)
+    return (data || []).map((file) => {
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('media').getPublicUrl(`${path}/${file.name}`)
       return publicUrl
     })
   }
@@ -395,19 +394,17 @@ class ContentService {
       const storagePath = pathParts.slice(mediaIdx + 1).join('/')
 
       // 2. Delete from storage
-      const { error: storageError } = await supabase.storage
-        .from('media')
-        .remove([storagePath])
+      const { error: storageError } = await supabase.storage.from('media').remove([storagePath])
 
       if (storageError) {
-        console.warn('[STORAGE] Failed to remove file from storage, proceeding with DB cleanup:', storageError)
+        console.warn(
+          '[STORAGE] Failed to remove file from storage, proceeding with DB cleanup:',
+          storageError
+        )
       }
 
       // 3. Delete from DB
-      const { error: dbError } = await supabase
-        .from('media_library')
-        .delete()
-        .eq('url', url)
+      const { error: dbError } = await supabase.from('media_library').delete().eq('url', url)
 
       if (dbError) {
         console.error('[DATABASE] Permanent media deletion failed:', dbError)
@@ -427,10 +424,7 @@ class ContentService {
         return mediaManifest.branding || []
       case 'branding':
         // Combine all branding assets for the library view
-        return [
-          ...(mediaManifest.branding || []),
-          ...(mediaManifest.publicAssets || [])
-        ]
+        return [...(mediaManifest.branding || []), ...(mediaManifest.publicAssets || [])]
       case 'public-assets':
         return mediaManifest.publicAssets || []
       default:
@@ -448,7 +442,16 @@ class ContentService {
 
     if (error) {
       console.warn('[DATABASE] Failed to fetch author roles:', error)
-      return ['Contributor', 'Field Correspondent', 'Regional Editor', 'Senior Correspondent', 'Strategic Analyst', 'Digital Mobilizer', 'Deputy Editor', 'Chief Editor']
+      return [
+        'Contributor',
+        'Field Correspondent',
+        'Regional Editor',
+        'Senior Correspondent',
+        'Strategic Analyst',
+        'Digital Mobilizer',
+        'Deputy Editor',
+        'Chief Editor',
+      ]
     }
 
     return (data || []).map((r: { name: string }) => r.name)
@@ -477,7 +480,7 @@ class ContentService {
       return []
     }
 
-    return (data as DBAuthor[] || []).map((a) => ({
+    return ((data as DBAuthor[]) || []).map((a) => ({
       id: a.id,
       name: a.name,
       slug: a.slug,
@@ -486,16 +489,12 @@ class ContentService {
       imageUrl: a.image_url,
       memberId: (a as { member_id?: string | null }).member_id ?? null,
       createdAt: a.created_at,
-      deletedAt: a.deleted_at
+      deletedAt: a.deleted_at,
     }))
   }
 
   async getAuthorById(id: string): Promise<Author | null> {
-    const { data, error } = await supabase
-      .from('authors')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle()
+    const { data, error } = await supabase.from('authors').select('*').eq('id', id).maybeSingle()
 
     if (error) {
       console.error('[DATABASE] Failed to fetch author:', error)
@@ -513,30 +512,31 @@ class ContentService {
       imageUrl: data.image_url,
       memberId: data.member_id ?? null,
       createdAt: data.created_at,
-      deletedAt: data.deleted_at
+      deletedAt: data.deleted_at,
     }
   }
 
   async createAuthor(author: Omit<Author, 'id' | 'createdAt'>): Promise<boolean> {
-    const { error } = await supabase
-      .from('authors')
-      .insert({
-        name: author.name,
-        slug: author.slug,
-        role: author.role,
-        bio: author.bio,
-        image_url: author.imageUrl,
-        member_id: author.memberId ?? null
-      })
+    const { error } = await supabase.from('authors').insert({
+      name: author.name,
+      slug: author.slug,
+      role: author.role,
+      bio: author.bio,
+      image_url: author.imageUrl,
+      member_id: author.memberId ?? null,
+    })
 
     if (error) {
       console.error('[DATABASE] Failed to create author:', error)
       return false
     }
-    
+
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
-    await adminService.logAction('Create Author', 'AUTHORS', 'Success', { name: author.name, adminId })
-    
+    await adminService.logAction('Create Author', 'AUTHORS', 'Success', {
+      name: author.name,
+      adminId,
+    })
+
     return true
   }
 
@@ -549,19 +549,16 @@ class ContentService {
     if (author.imageUrl !== undefined) updateData.image_url = author.imageUrl
     if (author.memberId !== undefined) updateData.member_id = author.memberId ?? null
 
-    const { error } = await supabase
-      .from('authors')
-      .update(updateData)
-      .eq('id', id)
+    const { error } = await supabase.from('authors').update(updateData).eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Failed to update author:', error)
       return false
     }
-    
+
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
     await adminService.logAction('Update Author', 'AUTHORS', 'Success', { id, adminId })
-    
+
     return true
   }
 
@@ -575,10 +572,10 @@ class ContentService {
       console.error('[DATABASE] Failed to soft-delete author:', error)
       return false
     }
-    
+
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
     await adminService.logAction('Trash Author', 'AUTHORS', 'Success', { id, adminId })
-    
+
     return true
   }
 
@@ -605,7 +602,7 @@ class ContentService {
       return []
     }
 
-    return (data as DBAuthor[] || []).map((a) => ({
+    return ((data as DBAuthor[]) || []).map((a) => ({
       id: a.id,
       name: a.name,
       slug: a.slug,
@@ -613,41 +610,35 @@ class ContentService {
       bio: a.bio,
       imageUrl: a.image_url,
       createdAt: a.created_at,
-      deletedAt: a.deleted_at
+      deletedAt: a.deleted_at,
     }))
   }
 
   async restoreAuthor(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('authors')
-      .update({ deleted_at: null })
-      .eq('id', id)
+    const { error } = await supabase.from('authors').update({ deleted_at: null }).eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Failed to restore author:', error)
       return false
     }
-    
+
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
     await adminService.logAction('Restore Author', 'AUTHORS', 'Success', { id, adminId })
-    
+
     return true
   }
 
   async permanentlyDeleteAuthor(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('authors')
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from('authors').delete().eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Failed to permanently delete author:', error)
       return false
     }
-    
+
     const adminId = localStorage.getItem('adminId') || 'hq-system-admin'
     await adminService.logAction('Delete Author', 'AUTHORS', 'Success', { id, adminId })
-    
+
     return true
   }
 
@@ -677,24 +668,24 @@ class ContentService {
       updatedAt: p.updated_at as string,
       authorId: p.author_id as string | undefined,
       imageUrl: p.image_url as string | undefined,
-      isOfficial: p.is_official as boolean
+      isOfficial: p.is_official as boolean,
     }))
   }
 
-  async createPressRelease(release: Omit<PressRelease, 'id' | 'createdAt' | 'updatedAt'>): Promise<boolean> {
-    const { error } = await supabase
-      .from('press_releases')
-      .insert({
-        title: release.title,
-        slug: release.slug,
-        category: release.category,
-        excerpt: release.excerpt,
-        content: release.content,
-        published_at: release.publishedAt,
-        author_id: release.authorId,
-        image_url: release.imageUrl,
-        is_official: release.isOfficial
-      })
+  async createPressRelease(
+    release: Omit<PressRelease, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<boolean> {
+    const { error } = await supabase.from('press_releases').insert({
+      title: release.title,
+      slug: release.slug,
+      category: release.category,
+      excerpt: release.excerpt,
+      content: release.content,
+      published_at: release.publishedAt,
+      author_id: release.authorId,
+      image_url: release.imageUrl,
+      is_official: release.isOfficial,
+    })
 
     if (error) {
       console.error('[DATABASE] Press release creation failed:', error)
@@ -725,7 +716,7 @@ class ContentService {
       fileType: a.file_type as 'LOGO' | 'GUIDELINE' | 'PHOTO',
       createdAt: a.created_at as string,
       updatedAt: a.updated_at as string,
-      isActive: a.is_active as boolean
+      isActive: a.is_active as boolean,
     }))
   }
 }

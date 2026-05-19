@@ -1,18 +1,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import { contentService } from '@/services/contentService'
 import { logisticsService } from '@/services/logisticsService'
+import { adminService, type Member } from '@/services/adminService'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import type { BlogPost, InventoryItem, MediaAsset, Author } from '@/types/admin'
 
-type TrashTab = 'blogs' | 'products' | 'media' | 'authors'
+type TrashTab = 'blogs' | 'products' | 'media' | 'authors' | 'members'
 
 const TABS: { value: TrashTab; label: string; icon: string }[] = [
   { value: 'blogs', label: 'Blog posts', icon: 'article' },
   { value: 'products', label: 'Products', icon: 'inventory_2' },
   { value: 'media', label: 'Media', icon: 'image' },
   { value: 'authors', label: 'Authors', icon: 'history_edu' },
+  { value: 'members', label: 'Members', icon: 'person_remove' },
 ]
 
 export default function TrashPage() {
@@ -21,6 +23,7 @@ export default function TrashPage() {
   const [products, setProducts] = useState<InventoryItem[]>([])
   const [media, setMedia] = useState<MediaAsset[]>([])
   const [authors, setAuthors] = useState<Author[]>([])
+  const [members, setMembers] = useState<Member[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -36,16 +39,19 @@ export default function TrashPage() {
   const loadTrash = useCallback(async () => {
     setIsLoading(true)
     try {
-      const [trashedBlogs, trashedProducts, trashedMedia, trashedAuthors] = await Promise.all([
-        contentService.getTrashedBlogPosts(),
-        logisticsService.getTrashedInventory(),
-        contentService.getTrashedMedia(),
-        contentService.getTrashedAuthors(),
-      ])
+      const [trashedBlogs, trashedProducts, trashedMedia, trashedAuthors, trashedMembers] =
+        await Promise.all([
+          contentService.getTrashedBlogPosts(),
+          logisticsService.getTrashedInventory(),
+          contentService.getTrashedMedia(),
+          contentService.getTrashedAuthors(),
+          adminService.getTrashedMembers(),
+        ])
       setBlogs(trashedBlogs || [])
       setProducts(trashedProducts || [])
       setMedia(trashedMedia || [])
       setAuthors(trashedAuthors || [])
+      setMembers(trashedMembers || [])
     } catch {
       toast.error('Failed to load trash.')
     } finally {
@@ -69,6 +75,7 @@ export default function TrashPage() {
       if (type === 'products') success = await logisticsService.restoreInventoryItem(idOrUrl)
       if (type === 'media') success = await contentService.restoreMediaFile(idOrUrl)
       if (type === 'authors') success = await contentService.restoreAuthor(idOrUrl)
+      if (type === 'members') success = await adminService.restoreMember(idOrUrl)
       if (success) {
         toast.success('Item restored.')
         loadTrash()
@@ -89,6 +96,7 @@ export default function TrashPage() {
         if (activeTab === 'products') success = await logisticsService.restoreInventoryItem(id)
         if (activeTab === 'media') success = await contentService.restoreMediaFile(id)
         if (activeTab === 'authors') success = await contentService.restoreAuthor(id)
+        if (activeTab === 'members') success = await adminService.restoreMember(id)
       } catch {
         /* continue */
       }
@@ -112,6 +120,8 @@ export default function TrashPage() {
         success = await contentService.permanentlyDeleteMediaFile(deleteModal.id)
       if (deleteModal.type === 'authors')
         success = await contentService.permanentlyDeleteAuthor(deleteModal.id)
+      if (deleteModal.type === 'members')
+        success = await adminService.permanentlyDeleteMember(deleteModal.id)
       if (success) {
         toast.success('Deleted permanently.')
         setDeleteModal({ isOpen: false, type: null, id: null, name: null })
@@ -136,17 +146,21 @@ export default function TrashPage() {
         ? products.length
         : tab === 'media'
           ? media.length
-          : authors.length
+          : tab === 'authors'
+            ? authors.length
+            : members.length
 
   const getFilteredItems = () => {
-    const items: (BlogPost | InventoryItem | MediaAsset | Author)[] =
+    const items: (BlogPost | InventoryItem | MediaAsset | Author | Member)[] =
       activeTab === 'blogs'
         ? blogs
         : activeTab === 'products'
           ? products
           : activeTab === 'media'
             ? media
-            : authors
+            : activeTab === 'authors'
+              ? authors
+              : members
     if (!searchQuery) return items
     return items.filter((item) => {
       const r = item as unknown as Record<string, unknown>
@@ -157,7 +171,7 @@ export default function TrashPage() {
   }
 
   const filteredItems = getFilteredItems()
-  const total = blogs.length + products.length + media.length + authors.length
+  const total = blogs.length + products.length + media.length + authors.length + members.length
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -645,7 +659,7 @@ function TrashContent({
   onToggleAll,
 }: {
   isLoading: boolean
-  filteredItems: (BlogPost | InventoryItem | MediaAsset | Author)[]
+  filteredItems: (BlogPost | InventoryItem | MediaAsset | Author | Member)[]
   activeTab: TrashTab
   searchQuery: string
   setSearchQuery: (q: string) => void
@@ -869,6 +883,26 @@ function TrashContent({
               accent="red"
               isSelected={selectedIds.has(author.id)}
               onToggle={() => onToggle(author.id)}
+            />
+          ))}
+        {activeTab === 'members' &&
+          (filteredItems as Member[]).map((member) => (
+            <TrashCard
+              key={member.id}
+              title={member.name}
+              subtitle={member.id}
+              type="Member"
+              image={member.avatarUrl}
+              deletedAt={member.deletedAt || new Date().toISOString()}
+              daysLeft={formatDaysRemaining(member.deletedAt || new Date().toISOString())}
+              onRestore={() => handleRestore('members', member.id)}
+              onDelete={() =>
+                setDeleteModal({ isOpen: true, type: 'members', id: member.id, name: member.name })
+              }
+              icon="person_remove"
+              accent="red"
+              isSelected={selectedIds.has(member.id)}
+              onToggle={() => onToggle(member.id)}
             />
           ))}
       </div>

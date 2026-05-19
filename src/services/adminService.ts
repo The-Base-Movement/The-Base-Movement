@@ -461,9 +461,23 @@ class AdminService {
 
   async deleteMember(id: string): Promise<boolean> {
     const success = await memberService.deleteMember(id)
-    if (success) {
-      await this.logAction('DELETE_MEMBER', `MEMBERS/${id}`, 'Warning')
-    }
+    if (success) await this.logAction('SOFT_DELETE_MEMBER', `MEMBERS/${id}`, 'Warning')
+    return success
+  }
+
+  async getTrashedMembers(): Promise<Member[]> {
+    return memberService.getTrashedMembers()
+  }
+
+  async restoreMember(id: string): Promise<boolean> {
+    const success = await memberService.restoreMember(id)
+    if (success) await this.logAction('RESTORE_MEMBER', `MEMBERS/${id}`, 'Info')
+    return success
+  }
+
+  async permanentlyDeleteMember(id: string): Promise<boolean> {
+    const success = await memberService.permanentlyDeleteMember(id)
+    if (success) await this.logAction('PERMANENT_DELETE_MEMBER', `MEMBERS/${id}`, 'Warning')
     return success
   }
 

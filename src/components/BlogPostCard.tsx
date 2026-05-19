@@ -8,11 +8,16 @@ interface BlogPostCardProps {
 
 export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
   const formattedDate = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
     : ''
 
   const authorInitial = post.authorName?.charAt(0)?.toUpperCase() || 'T'
-  const displayName = post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName
+  const displayName =
+    post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName
 
   return (
     <article
@@ -52,14 +57,22 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           <span>{post.readTime}</span>
         </div>
 
-        <Link to={`${baseUrl}/${post.slug}`} className="group/title flex items-start justify-between gap-3">
+        <Link
+          to={`${baseUrl}/${post.slug}`}
+          className="group/title flex items-start justify-between gap-3"
+        >
           <h3
             id={`blog-post-title-${post.id}`}
             className="font-['Public_Sans',sans-serif] font-extrabold text-[17px] leading-[1.3] tracking-[-0.01em] mb-2 text-[var(--on-surface,#181d19)] group-hover/title:text-[var(--primary)] transition-colors"
           >
             {post.title}
           </h3>
-          <span className="material-symbols-outlined shrink-0 mt-1 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300" style={{ fontSize: 16, color: 'hsl(var(--primary))' }}>arrow_forward</span>
+          <span
+            className="material-symbols-outlined shrink-0 mt-1 opacity-0 -translate-x-2 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all duration-300"
+            style={{ fontSize: 16, color: 'hsl(var(--primary))' }}
+          >
+            arrow_forward
+          </span>
         </Link>
 
         <p className="text-[13px] text-[var(--on-surface-muted,#6b7280)] leading-[1.55] mb-[14px] line-clamp-3 flex-1">
@@ -68,9 +81,17 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
 
         {/* Author row */}
         <div className="flex items-center gap-2 pt-[14px] border-t border-[var(--border,#e5e7eb)]">
-          <div className="w-6 h-6 rounded-full bg-[var(--primary)] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-            {authorInitial}
-          </div>
+          {post.authorImage ? (
+            <img
+              src={post.authorImage}
+              alt={displayName || ''}
+              className="w-6 h-6 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-[var(--primary)] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+              {authorInitial}
+            </div>
+          )}
           <span className="font-['Public_Sans',sans-serif] text-[11.5px] font-bold text-[var(--on-surface,#181d19)]">
             {displayName}
           </span>

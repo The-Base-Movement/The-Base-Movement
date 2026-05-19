@@ -68,11 +68,16 @@ export default defineConfig(({ mode }) => {
             if (id.includes('@radix-ui')) return 'vendor-radix'
             if (id.includes('@supabase')) return 'vendor-supabase'
             if (id.includes('@tanstack')) return 'vendor-query'
+            // Keep react-dependent runtime libs in the same chunk as React to
+            // avoid "cannot access before initialization" errors from circular
+            // references across chunk boundaries.
             if (
               id.includes('react-dom') ||
               id.includes('react-router') ||
               id.includes('/react/') ||
-              id.includes('/react-is/')
+              id.includes('/react-is/') ||
+              id.includes('/sonner/') ||
+              id.includes('/scheduler/')
             )
               return 'vendor-react'
             if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('/zod/'))

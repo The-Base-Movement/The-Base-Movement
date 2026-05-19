@@ -1,5 +1,11 @@
 import { supabase } from '@/lib/supabase'
-import type { ChapterApplication, ChapterLeaderboard, Chapter, ChapterLeader, ChapterActivity } from '@/types/admin'
+import type {
+  ChapterApplication,
+  ChapterLeaderboard,
+  Chapter,
+  ChapterLeader,
+  ChapterActivity,
+} from '@/types/admin'
 
 interface ChapterLeaderRow {
   id: string
@@ -32,8 +38,6 @@ class ChapterService {
     return ChapterService.instance
   }
 
-
-
   async getActiveChapterCount(): Promise<number> {
     const { count, error } = await supabase
       .from('chapters')
@@ -51,11 +55,13 @@ class ChapterService {
   async getChapters(): Promise<Chapter[]> {
     const { data, error } = await supabase
       .from('chapters')
-      .select(`
+      .select(
+        `
         *,
         leadership:chapter_leaders(*),
         activities:chapter_activities(*)
-      `)
+      `
+      )
       .order('name', { ascending: true })
 
     if (error) {
@@ -66,7 +72,7 @@ class ChapterService {
     // Fetch countries and live member counts in parallel
     const [{ data: countriesData }, { data: memberRows }] = await Promise.all([
       supabase.from('countries').select('name, flag_url'),
-      supabase.from('users').select('chapter').not('chapter', 'is', null)
+      supabase.from('users').select('chapter').not('chapter', 'is', null),
     ])
 
     const countryFlagsMap = (countriesData || []).reduce((acc: Record<string, string>, curr) => {
@@ -76,7 +82,8 @@ class ChapterService {
 
     const liveCounts: Record<string, number> = {}
     ;(memberRows || []).forEach((u: { chapter: string | null }) => {
-      if (u.chapter) liveCounts[u.chapter.toLowerCase()] = (liveCounts[u.chapter.toLowerCase()] || 0) + 1
+      if (u.chapter)
+        liveCounts[u.chapter.toLowerCase()] = (liveCounts[u.chapter.toLowerCase()] || 0) + 1
     })
 
     return (data || []).map((c) => {
@@ -101,31 +108,38 @@ class ChapterService {
         local_focus: c.local_focus || undefined,
         email: c.email || undefined,
         phone_number: c.phone_number || undefined,
-        leadership: (c.leadership as unknown as ChapterLeaderRow[])?.map((l: ChapterLeaderRow): ChapterLeader => ({
-          id: l.id,
-          name: l.name,
-          role: l.role,
-          imageUrl: l.image_url || undefined
-        })) || [],
-        activities: (c.activities as unknown as ChapterActivityRow[])?.map((a: ChapterActivityRow): ChapterActivity => ({
-          id: a.id,
-          title: a.title,
-          description: a.description || undefined,
-          type: a.type,
-        activityDate: a.activity_date
-      }))
-    }
+        leadership:
+          (c.leadership as unknown as ChapterLeaderRow[])?.map(
+            (l: ChapterLeaderRow): ChapterLeader => ({
+              id: l.id,
+              name: l.name,
+              role: l.role,
+              imageUrl: l.image_url || undefined,
+            })
+          ) || [],
+        activities: (c.activities as unknown as ChapterActivityRow[])?.map(
+          (a: ChapterActivityRow): ChapterActivity => ({
+            id: a.id,
+            title: a.title,
+            description: a.description || undefined,
+            type: a.type,
+            activityDate: a.activity_date,
+          })
+        ),
+      }
     })
   }
 
   async getChapterById(id: string): Promise<Chapter | null> {
     const { data, error } = await supabase
       .from('chapters')
-      .select(`
+      .select(
+        `
         *,
         leadership:chapter_leaders(*),
         activities:chapter_activities(*)
-      `)
+      `
+      )
       .eq('id', id)
       .single()
 
@@ -135,7 +149,11 @@ class ChapterService {
     }
 
     // Fetch country flag manually
-    const { data: countryData } = await supabase.from('countries').select('flag_url').eq('name', data.country).single()
+    const { data: countryData } = await supabase
+      .from('countries')
+      .select('flag_url')
+      .eq('name', data.country)
+      .single()
 
     return {
       id: data.id,
@@ -153,40 +171,42 @@ class ChapterService {
       local_focus: data.local_focus || undefined,
       email: data.email || undefined,
       phone_number: data.phone_number || undefined,
-      leadership: data.leadership?.map((l: ChapterLeaderRow): ChapterLeader => ({
-        id: l.id,
-        name: l.name,
-        role: l.role,
-        imageUrl: l.image_url || undefined
-      })),
-      activities: data.activities?.map((a: ChapterActivityRow): ChapterActivity => ({
-        id: a.id,
-        title: a.title,
-        description: a.description || undefined,
-        type: a.type,
-        activityDate: a.activity_date
-      }))
+      leadership: data.leadership?.map(
+        (l: ChapterLeaderRow): ChapterLeader => ({
+          id: l.id,
+          name: l.name,
+          role: l.role,
+          imageUrl: l.image_url || undefined,
+        })
+      ),
+      activities: data.activities?.map(
+        (a: ChapterActivityRow): ChapterActivity => ({
+          id: a.id,
+          title: a.title,
+          description: a.description || undefined,
+          type: a.type,
+          activityDate: a.activity_date,
+        })
+      ),
     }
   }
 
   async createChapter(chapter: Omit<Chapter, 'id'>): Promise<boolean> {
-    const { error } = await supabase
-      .from('chapters')
-      .insert({
-        name: chapter.name,
-        city_or_region: chapter.city_or_region,
-        country: chapter.country,
-        leader_name: chapter.leader_name,
-        member_count: chapter.member_count,
-        status: chapter.status,
-        region: chapter.region,
-        description: chapter.description,
-        details_url: chapter.details_url,
-        meeting_schedule: chapter.meeting_schedule,
-        local_focus: chapter.local_focus,
-        email: chapter.email,
-        phone_number: chapter.phone_number
-      })
+    const { error } = await supabase.from('chapters').insert({
+      name: chapter.name,
+      city_or_region: chapter.city_or_region,
+      country: chapter.country,
+      leader_name: chapter.leader_name,
+      member_count: chapter.member_count,
+      status: chapter.status,
+      region: chapter.region,
+      description: chapter.description,
+      details_url: chapter.details_url,
+      meeting_schedule: chapter.meeting_schedule,
+      local_focus: chapter.local_focus,
+      email: chapter.email,
+      phone_number: chapter.phone_number,
+    })
 
     if (error) {
       console.error('[DATABASE] Chapter creation failed:', error)
@@ -213,10 +233,7 @@ class ChapterService {
     if (chapter.email) updateData.email = chapter.email
     if (chapter.phone_number) updateData.phone_number = chapter.phone_number
 
-    const { error } = await supabase
-      .from('chapters')
-      .update(updateData)
-      .eq('id', id)
+    const { error } = await supabase.from('chapters').update(updateData).eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Chapter update failed:', error)
@@ -227,10 +244,7 @@ class ChapterService {
   }
 
   async deleteChapter(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('chapters')
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from('chapters').delete().eq('id', id)
 
     if (error) {
       console.error('[DATABASE] Chapter deletion failed:', error)
@@ -255,15 +269,16 @@ class ChapterService {
     }
   }
 
-  async addChapterLeader(chapterId: string, leader: { name: string, role: string, imageUrl?: string }): Promise<boolean> {
-    const { error } = await supabase
-      .from('chapter_leaders')
-      .insert({
-        chapter_id: chapterId,
-        name: leader.name,
-        role: leader.role,
-        image_url: leader.imageUrl || null
-      })
+  async addChapterLeader(
+    chapterId: string,
+    leader: { name: string; role: string; imageUrl?: string }
+  ): Promise<boolean> {
+    const { error } = await supabase.from('chapter_leaders').insert({
+      chapter_id: chapterId,
+      name: leader.name,
+      role: leader.role,
+      image_url: leader.imageUrl || null,
+    })
 
     if (error) {
       console.error('[DATABASE] Failed to add chapter leader:', error)
@@ -278,20 +293,14 @@ class ChapterService {
       .single()
 
     if (chapter && (chapter.leader_name === 'Unassigned' || !chapter.leader_name)) {
-      await supabase
-        .from('chapters')
-        .update({ leader_name: leader.name })
-        .eq('id', chapterId)
+      await supabase.from('chapters').update({ leader_name: leader.name }).eq('id', chapterId)
     }
 
     return true
   }
 
   async removeChapterLeader(leaderId: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('chapter_leaders')
-      .delete()
-      .eq('id', leaderId)
+    const { error } = await supabase.from('chapter_leaders').delete().eq('id', leaderId)
 
     if (error) {
       console.error('[DATABASE] Failed to remove chapter leader:', error)
@@ -302,7 +311,9 @@ class ChapterService {
   }
 
   async joinChapter(chapterName: string): Promise<boolean> {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
     if (!session?.user) return false
 
     const { error } = await supabase
@@ -320,7 +331,9 @@ class ChapterService {
   }
 
   async requestToJoin(chapterId: string): Promise<{ success: boolean; alreadyRequested: boolean }> {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
     if (!session?.user) return { success: false, alreadyRequested: false }
 
     const { error } = await supabase
@@ -337,7 +350,9 @@ class ChapterService {
   }
 
   async getMyJoinRequest(chapterId: string): Promise<'pending' | 'approved' | 'rejected' | null> {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
     if (!session?.user) return null
 
     const { data } = await supabase
@@ -350,13 +365,22 @@ class ChapterService {
     return (data?.status as 'pending' | 'approved' | 'rejected') || null
   }
 
-  async getChapterRequests(chapterId: string): Promise<Array<{
-    id: string; member_id: string; member_name: string; member_reg_no: string;
-    member_avatar: string | null; status: string; created_at: string;
-  }>> {
+  async getChapterRequests(chapterId: string): Promise<
+    Array<{
+      id: string
+      member_id: string
+      member_name: string
+      member_reg_no: string
+      member_avatar: string | null
+      status: string
+      created_at: string
+    }>
+  > {
     const { data, error } = await supabase
       .from('chapter_requests')
-      .select('id, member_id, status, created_at, users(full_name, registration_number, avatar_url)')
+      .select(
+        'id, member_id, status, created_at, users(full_name, registration_number, avatar_url)'
+      )
       .eq('chapter_id', chapterId)
       .eq('status', 'pending')
       .order('created_at', { ascending: true })
@@ -380,32 +404,57 @@ class ChapterService {
     })
   }
 
-  async approveJoinRequest(requestId: string, memberId: string, chapterName: string): Promise<boolean> {
+  async approveJoinRequest(
+    requestId: string,
+    memberId: string,
+    chapterName: string
+  ): Promise<boolean> {
     const { error: reqError } = await supabase
       .from('chapter_requests')
       .update({ status: 'approved', updated_at: new Date().toISOString() })
       .eq('id', requestId)
 
-    if (reqError) { console.error('[DATABASE] Approve request failed:', reqError); return false }
+    if (reqError) {
+      console.error('[DATABASE] Approve request failed:', reqError)
+      return false
+    }
 
     const { error: userError } = await supabase
       .from('users')
       .update({ chapter: chapterName })
       .eq('id', memberId)
 
-    if (userError) { console.error('[DATABASE] Chapter assign failed:', userError); return false }
+    if (userError) {
+      console.error('[DATABASE] Chapter assign failed:', userError)
+      return false
+    }
 
     await this.incrementChapterMemberCount(chapterName)
     return true
   }
 
-  async rejectJoinRequest(requestId: string): Promise<boolean> {
+  async rejectJoinRequest(
+    requestId: string,
+    memberId: string,
+    chapterName: string
+  ): Promise<boolean> {
     const { error } = await supabase
       .from('chapter_requests')
       .update({ status: 'rejected', updated_at: new Date().toISOString() })
       .eq('id', requestId)
 
-    if (error) { console.error('[DATABASE] Reject request failed:', error); return false }
+    if (error) {
+      console.error('[DATABASE] Reject request failed:', error)
+      return false
+    }
+
+    await supabase.from('notifications').insert({
+      user_id: memberId,
+      title: 'Chapter Request Declined',
+      message: `Your request to join "${chapterName}" was not approved. You may reapply or contact your chapter leader.`,
+      type: 'Info',
+    })
+
     return true
   }
 
@@ -443,31 +492,31 @@ class ChapterService {
       experience_summary: app.experience_summary,
       vision_statement: app.vision_statement,
       status: app.status,
-      created_at: app.created_at
+      created_at: app.created_at,
     }))
   }
 
-  async submitChapterApplication(application: { 
-    proposed_chapter_name: string; 
-    region: string; 
-    constituency: string; 
-    vision_statement: string;
-    experience_summary?: string;
+  async submitChapterApplication(application: {
+    proposed_chapter_name: string
+    region: string
+    constituency: string
+    vision_statement: string
+    experience_summary?: string
   }): Promise<boolean> {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
     if (!session?.user) return false
 
-    const { error } = await supabase
-      .from('chapter_applications')
-      .insert({
-        applicant_id: session.user.id,
-        proposed_chapter_name: application.proposed_chapter_name,
-        region: application.region,
-        constituency: application.constituency,
-        vision_statement: application.vision_statement,
-        experience_summary: application.experience_summary,
-        status: 'Pending'
-      })
+    const { error } = await supabase.from('chapter_applications').insert({
+      applicant_id: session.user.id,
+      proposed_chapter_name: application.proposed_chapter_name,
+      region: application.region,
+      constituency: application.constituency,
+      vision_statement: application.vision_statement,
+      experience_summary: application.experience_summary,
+      status: 'Pending',
+    })
 
     if (error) {
       console.error('[DATABASE] Chapter application submission failed:', error)
@@ -478,13 +527,15 @@ class ChapterService {
   }
 
   async approveChapterApplication(applicationId: string, notes: string = ''): Promise<boolean> {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
     if (!session?.user) return false
 
     const { error } = await supabase.rpc('approve_chapter_application', {
       app_id: applicationId,
       admin_uid: session.user.id,
-      notes: notes
+      notes: notes,
     })
 
     if (error) {
@@ -498,7 +549,7 @@ class ChapterService {
   async rejectChapterApplication(applicationId: string, notes: string = ''): Promise<boolean> {
     const { error } = await supabase
       .from('chapter_applications')
-      .update({ status: 'Rejected', notes: notes })
+      .update({ status: 'Rejected', review_notes: notes })
       .eq('id', applicationId)
 
     if (error) {
@@ -517,13 +568,13 @@ class ChapterService {
         .order('regional_chapter_rank', { ascending: true })
       if (error) return []
 
-      return (data || []).map(item => ({
+      return (data || []).map((item) => ({
         region: item.region,
         chapter: item.chapter,
         total_patriots: item.total_patriots,
         total_mobilization_points: item.aggregate_chapter_points,
         achievements_unlocked: item.total_chapter_achievements,
-        regional_rank: item.regional_chapter_rank
+        regional_rank: item.regional_chapter_rank,
       }))
     } catch {
       return []

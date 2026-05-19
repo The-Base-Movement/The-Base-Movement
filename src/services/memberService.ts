@@ -1,6 +1,13 @@
 import { supabase } from '@/lib/supabase'
 import { PostgrestError } from '@supabase/supabase-js'
-import type { Member, PendingVerification, AdminUser, AdminRole, AdminPermission, User } from '@/types/admin'
+import type {
+  Member,
+  PendingVerification,
+  AdminUser,
+  AdminRole,
+  AdminPermission,
+  User,
+} from '@/types/admin'
 
 class MemberService {
   private static instance: MemberService
@@ -18,7 +25,10 @@ class MemberService {
     const [usersRes, adminsRes] = await Promise.all([
       supabase
         .from('users')
-        .select('id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address')
+        .select(
+          'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address'
+        )
+        .is('deleted_at', null)
         .order('joined_at', { ascending: false }),
       supabase.from('admins').select('id'),
     ])
@@ -51,32 +61,30 @@ class MemberService {
         country: u.country || 'Ghana',
         profession: u.profession || 'Patriot',
         city: u.city || undefined,
-        residentialAddress: u.residential_address || undefined
+        residentialAddress: u.residential_address || undefined,
       }))
   }
 
   async getAdministrators(): Promise<AdminUser[]> {
     interface AdminDbResponse {
-      id: string;
-      role: string;
-      permissions: AdminPermission[];
+      id: string
+      role: string
+      permissions: AdminPermission[]
       users: {
-        full_name: string;
-        email: string;
-        region: string | null;
-      } | null;
+        full_name: string
+        email: string
+        region: string | null
+      } | null
     }
 
-    const { data, error } = await supabase
-      .from('admins')
-      .select(`
+    const { data, error } = await supabase.from('admins').select(`
         id,
         role,
         permissions,
+        assigned_region,
         users!admins_id_fkey (
           full_name,
           email,
-          region,
           avatar_url
         )
       `)
@@ -86,16 +94,19 @@ class MemberService {
       return []
     }
 
-    const typedData = data as unknown as (AdminDbResponse & { users: { avatar_url: string | null } })[]
+    const typedData = data as unknown as (AdminDbResponse & {
+      assigned_region: string | null
+      users: { avatar_url: string | null }
+    })[]
 
     return typedData.map((a) => ({
       id: a.id,
       name: a.users?.full_name || 'Authorized Officer',
       email: a.users?.email || 'hq@thebase.gh',
       role: a.role as AdminRole,
-      region: a.users?.region || 'National HQ',
+      region: a.assigned_region || undefined,
       permissions: a.permissions as AdminPermission[],
-      avatarUrl: a.users?.avatar_url || undefined
+      avatarUrl: a.users?.avatar_url || undefined,
     }))
   }
 
@@ -129,16 +140,12 @@ class MemberService {
       country: data.country || 'Ghana',
       profession: data.profession || 'Patriot',
       city: data.city || undefined,
-      residentialAddress: data.residential_address || undefined
+      residentialAddress: data.residential_address || undefined,
     }
   }
 
   async getMemberProfileByAuthId(authId: string): Promise<Member | null> {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', authId)
-      .maybeSingle()
+    const { data, error } = await supabase.from('users').select('*').eq('id', authId).maybeSingle()
 
     if (error || !data) {
       return null
@@ -160,19 +167,21 @@ class MemberService {
       gender: data.gender || 'Unknown',
       chapter: data.chapter || undefined,
       country: data.country || 'Ghana',
-      profession: data.profession || 'Patriot'
+      profession: data.profession || 'Patriot',
     }
   }
 
   async registerMember(data: User): Promise<{ data: boolean; error: PostgrestError | null }> {
-    const { error } = await supabase
-      .from('users')
-      .insert([data])
-    
+    const { error } = await supabase.from('users').insert([data])
+
     return { data: !error, error }
   }
 
-  async getGrowthStats(): Promise<{ joined_last_hour: number; joined_last_24h: number; joined_last_7d: number }> {
+  async getGrowthStats(): Promise<{
+    joined_last_hour: number
+    joined_last_24h: number
+    joined_last_7d: number
+  }> {
     const now = new Date()
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString()
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
@@ -180,15 +189,24 @@ class MemberService {
 
     try {
       const [hourRes, dayRes, weekRes] = await Promise.all([
-        supabase.from('users').select('*', { count: 'exact', head: true }).gte('joined_at', oneHourAgo),
-        supabase.from('users').select('*', { count: 'exact', head: true }).gte('joined_at', oneDayAgo),
-        supabase.from('users').select('*', { count: 'exact', head: true }).gte('joined_at', sevenDaysAgo)
+        supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true })
+          .gte('joined_at', oneHourAgo),
+        supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true })
+          .gte('joined_at', oneDayAgo),
+        supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true })
+          .gte('joined_at', sevenDaysAgo),
       ])
 
       return {
         joined_last_hour: hourRes.count || 0,
         joined_last_24h: dayRes.count || 0,
-        joined_last_7d: weekRes.count || 0
+        joined_last_7d: weekRes.count || 0,
       }
     } catch (error) {
       console.warn('[DATABASE] Failed to fetch growth stats:', error)
@@ -239,7 +257,7 @@ class MemberService {
       return []
     }
 
-    return (data || []).map(u => ({
+    return (data || []).map((u) => ({
       id: u.registration_number,
       name: u.full_name,
       region: u.region,
@@ -257,21 +275,26 @@ class MemberService {
       submitted: new Date(u.joined_at).toLocaleString(),
       status: u.verification_status,
       photoUrl: u.avatar_url,
-      chapter: u.chapter
+      chapter: u.chapter,
     }))
   }
 
-  async verifyMember(id: string, approve: boolean, reason?: string, chapterName?: string): Promise<boolean> {
+  async verifyMember(
+    id: string,
+    approve: boolean,
+    reason?: string,
+    chapterName?: string
+  ): Promise<boolean> {
     const status = approve ? 'Approved' : 'Rejected'
     const accountStatus = approve ? 'Active' : 'Suspended'
-    
+
     const { error } = await supabase
       .from('users')
-      .update({ 
+      .update({
         verification_status: status,
         status: accountStatus,
         chapter: chapterName || null,
-        verification_notes: reason || null
+        verification_notes: reason || null,
       })
       .eq('registration_number', id)
 
@@ -283,7 +306,9 @@ class MemberService {
     return true
   }
 
-  async getCountries(): Promise<{ id: string | number; name: string; dialing_code: string; is_diaspora: boolean }[]> {
+  async getCountries(): Promise<
+    { id: string | number; name: string; dialing_code: string; is_diaspora: boolean }[]
+  > {
     const { data, error } = await supabase
       .from('countries')
       .select('*')
@@ -296,20 +321,77 @@ class MemberService {
   async deleteMember(id: string): Promise<boolean> {
     const { error } = await supabase
       .from('users')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq('registration_number', id)
 
     if (error) {
-      console.error('[DATABASE] Member deletion failed:', error)
+      console.error('[DATABASE] Member soft-delete failed:', error)
       return false
     }
     return true
   }
 
-  async searchMembers(query: string, searchType: 'name' | 'id' | 'phone' = 'name'): Promise<Member[]> {
+  async getTrashedMembers(): Promise<Member[]> {
+    const { data, error } = await supabase
+      .from('users')
+      .select(
+        'id,registration_number,full_name,email,avatar_url,platform,region,constituency,status,joined_at,deleted_at'
+      )
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false })
+
+    if (error) {
+      console.error('[DATABASE] Failed to fetch trashed members:', error)
+      return []
+    }
+
+    return (data || []).map((u) => ({
+      id: u.registration_number,
+      authId: u.id,
+      name: u.full_name,
+      email: u.email,
+      phone: 'N/A',
+      region: u.region || '',
+      constituency: u.constituency || '',
+      status: u.status,
+      joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString() : 'N/A',
+      platform: u.platform || 'GHANA',
+      type: 'Standard',
+      avatarUrl: u.avatar_url || undefined,
+      deletedAt: u.deleted_at as string,
+    }))
+  }
+
+  async restoreMember(id: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('users')
+      .update({ deleted_at: null })
+      .eq('registration_number', id)
+
+    if (error) {
+      console.error('[DATABASE] Member restore failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async permanentlyDeleteMember(id: string): Promise<boolean> {
+    const { error } = await supabase.from('users').delete().eq('registration_number', id)
+
+    if (error) {
+      console.error('[DATABASE] Member permanent deletion failed:', error)
+      return false
+    }
+    return true
+  }
+
+  async searchMembers(
+    query: string,
+    searchType: 'name' | 'id' | 'phone' = 'name'
+  ): Promise<Member[]> {
     if (!query || query.length < 2) return []
 
-    let supabaseQuery = supabase.from('users').select('*')
+    let supabaseQuery = supabase.from('users').select('*').is('deleted_at', null)
 
     if (searchType === 'id') {
       supabaseQuery = supabaseQuery.ilike('registration_number', `%${query}%`)
@@ -344,7 +426,7 @@ class MemberService {
       country: u.country || 'Ghana',
       profession: u.profession || 'Patriot',
       city: u.city || undefined,
-      residentialAddress: u.residential_address || undefined
+      residentialAddress: u.residential_address || undefined,
     }))
   }
 
@@ -358,7 +440,7 @@ class MemberService {
           event: 'INSERT',
           schema: 'public',
           table: 'users',
-          filter: 'status=eq.Active'
+          filter: 'status=eq.Active',
         },
         (payload) => {
           const u = payload.new
@@ -379,23 +461,34 @@ class MemberService {
             country: u.country || 'Ghana',
             profession: u.profession || 'Patriot',
             city: u.city || undefined,
-            residentialAddress: u.residential_address || undefined
+            residentialAddress: u.residential_address || undefined,
           })
         }
       )
       .subscribe()
   }
 
-  async getMembersPaginated(page: number, pageSize: number, searchTerm?: string, registrationSource?: string): Promise<{ data: Member[], totalCount: number }> {
+  async getMembersPaginated(
+    page: number,
+    pageSize: number,
+    searchTerm?: string,
+    registrationSource?: string
+  ): Promise<{ data: Member[]; totalCount: number }> {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
     let query = supabase
       .from('users')
-      .select('id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,registration_source', { count: 'exact' })
+      .select(
+        'id,registration_number,full_name,email,phone_number,region,constituency,status,joined_at,platform,avatar_url,gender,chapter,country,profession,city,residential_address,registration_source',
+        { count: 'exact' }
+      )
+      .is('deleted_at', null)
 
     if (searchTerm) {
-      query = query.or(`full_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,registration_number.ilike.%${searchTerm}%`)
+      query = query.or(
+        `full_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%,registration_number.ilike.%${searchTerm}%`
+      )
     }
 
     if (registrationSource && registrationSource !== 'all') {
@@ -430,7 +523,7 @@ class MemberService {
       profession: u.profession || 'Patriot',
       city: u.city || undefined,
       residentialAddress: u.residential_address || undefined,
-      registrationSource: u.registration_source || 'digital'
+      registrationSource: u.registration_source || 'digital',
     }))
 
     return { data: members, totalCount: count || 0 }
@@ -440,6 +533,7 @@ class MemberService {
     const { count, error } = await supabase
       .from('users')
       .select('*', { count: 'exact', head: true })
+      .is('deleted_at', null)
       .eq('verification_status', 'Verified')
 
     if (error) {
@@ -454,6 +548,7 @@ class MemberService {
     const { count, error } = await supabase
       .from('users')
       .select('*', { count: 'exact', head: true })
+      .is('deleted_at', null)
 
     if (error) {
       console.warn('[DATABASE] Failed to fetch registered member count:', error)

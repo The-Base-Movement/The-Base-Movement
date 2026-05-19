@@ -1,4 +1,3 @@
-
 export interface Member {
   id: string
   authId?: string
@@ -19,6 +18,7 @@ export interface Member {
   city?: string
   residentialAddress?: string
   registrationSource?: 'digital' | 'scan' | 'admin'
+  deletedAt?: string
 }
 
 export interface User {
@@ -573,10 +573,30 @@ export interface AuditLogEntry {
   details?: Record<string, unknown>
 }
 
-export type AdminRole = 'FOUNDER' | 'ORGANIZER' | 'SUPER_ADMIN' | 'REGIONAL_DIRECTOR' | 'CONSTITUENCY_LEAD' | 'VERIFIER' | 'CHIEF_EDITOR' | 'SENIOR_EDITOR' | 'EDITOR' | 'JUNIOR_EDITOR' | 'REGIONAL_CORRESPONDENT'
+export type AdminRole =
+  | 'FOUNDER'
+  | 'ORGANIZER'
+  | 'SUPER_ADMIN'
+  | 'REGIONAL_DIRECTOR'
+  | 'CONSTITUENCY_LEAD'
+  | 'VERIFIER'
+  | 'CHIEF_EDITOR'
+  | 'SENIOR_EDITOR'
+  | 'EDITOR'
+  | 'JUNIOR_EDITOR'
+  | 'REGIONAL_CORRESPONDENT'
 
 export interface AdminPermission {
-  action: 'VERIFY_MEMBER' | 'DELETE_MEMBER' | 'MANAGE_CHAPTER' | 'MANAGE_POLLS' | 'MANAGE_INVENTORY' | 'VIEW_AUDIT_LOGS' | 'APPOINT_LEAD' | 'MANAGE_BLOGS' | 'MANAGE_DONATIONS'
+  action:
+    | 'VERIFY_MEMBER'
+    | 'DELETE_MEMBER'
+    | 'MANAGE_CHAPTER'
+    | 'MANAGE_POLLS'
+    | 'MANAGE_INVENTORY'
+    | 'VIEW_AUDIT_LOGS'
+    | 'APPOINT_LEAD'
+    | 'MANAGE_BLOGS'
+    | 'MANAGE_DONATIONS'
   resource: 'MEMBERS' | 'CHAPTERS' | 'POLLS' | 'STORE' | 'SYSTEM' | 'BLOGS' | 'DONATIONS'
 }
 
@@ -591,8 +611,6 @@ export interface AdminUser {
   phone?: string
   avatarUrl?: string
 }
-
-
 
 export interface Broadcast {
   id: string

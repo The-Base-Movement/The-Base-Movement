@@ -49,6 +49,9 @@
 
 @layer base {
   :root {
+    /* --- KPI stats typography --- */
+    --kpi-num-size: 22px;
+
     /* --- Surfaces — design spec: #f6fbf4 green-tinted off-white --- */
     --background: 103 47% 97%; /* #f6fbf4 */
     --surface-warm: 36 24% 96%; /* #F7F5F2 footer / soft sections */
@@ -926,6 +929,11 @@
   color: var(--on-surface-muted);
   margin-left: 2px;
   letter-spacing: 0;
+}
+.kpis .card .num {
+  font-size: var(--kpi-num-size);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 .card .lbl {
   font-size: 12px;

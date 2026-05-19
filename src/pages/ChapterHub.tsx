@@ -238,13 +238,14 @@ export default function ChapterHub() {
     }
   }
 
-  const handleRejectRequest = async (requestId: string) => {
+  const handleRejectRequest = async (requestId: string, memberId: string) => {
+    if (!chapter) return
     setProcessingRequestId(requestId)
-    const ok = await chapterService.rejectJoinRequest(requestId)
+    const ok = await chapterService.rejectJoinRequest(requestId, memberId, chapter.name)
     setProcessingRequestId(null)
     if (ok) {
       setJoinRequests((prev) => prev.filter((r) => r.id !== requestId))
-      toast.success('Request declined.')
+      toast.success('Request declined. Member has been notified.')
     } else {
       toast.error('Failed to decline request.')
     }
@@ -1640,7 +1641,7 @@ export default function ChapterHub() {
                     <button
                       className="btn btn-dest btn-sm"
                       disabled={processingRequestId === req.id}
-                      onClick={() => handleRejectRequest(req.id)}
+                      onClick={() => handleRejectRequest(req.id, req.member_id)}
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                         close
