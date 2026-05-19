@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { adminService } from '@/services/adminService'
 import type { Order, OrderStats } from '@/services/adminService'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
 import { OrderListCard } from '@/components/admin/OrderListCard'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
@@ -198,7 +197,7 @@ export default function AdminOrders() {
   )
 
   return (
-    <div className="main animate-in fade-in duration-500">
+    <div className="main">
       {/* Page Header - Industrial Standard */}
       <div className="top" style={{ marginBottom: 20 }}>
         <div>
@@ -270,8 +269,8 @@ export default function AdminOrders() {
               <h3>Fulfillment feed</h3>
               <div className="meta">Real-time merchandise dispatch telemetry</div>
             </div>
-            <div className="desktop-only flex items-center gap-2">
-              <div className="relative">
+            <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ position: 'relative' }}>
                 <span
                   className="material-symbols-outlined"
                   style={{
@@ -294,24 +293,68 @@ export default function AdminOrders() {
                   placeholder="Search manifest..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 h-9 text-tiny font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 rounded-sm placeholder:text-muted-foreground/20 w-64"
+                  style={{
+                    paddingLeft: 36,
+                    paddingRight: 16,
+                    height: 36,
+                    width: 256,
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--background))',
+                    outline: 'none',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    borderRadius: 4,
+                    boxSizing: 'border-box',
+                    color: 'hsl(var(--on-surface))',
+                  }}
                 />
               </div>
 
-              <select
-                name="statusFilter"
-                id="select-736283"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
-                className="pl-3 pr-8 h-9 text-tiny font-bold bg-white border border-border/40 focus:outline-none focus:border-brand-green/40 appearance-none rounded-sm cursor-pointer text-muted-foreground/60"
-              >
-                <option value="ALL">All Statuses</option>
-                {(Object.keys(STATUS_CONFIG) as Order['status'][]).map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+              <div style={{ position: 'relative' }}>
+                <select
+                  name="statusFilter"
+                  id="select-736283"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value as Order['status'] | 'ALL')}
+                  style={{
+                    height: 36,
+                    padding: '0 32px 0 12px',
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--background))',
+                    outline: 'none',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    color: 'hsl(var(--on-surface-muted))',
+                    appearance: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <option value="ALL">All Statuses</option>
+                  {(Object.keys(STATUS_CONFIG) as Order['status'][]).map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+                <span
+                  className="material-symbols-outlined"
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: 16,
+                    color: 'hsl(var(--on-surface-muted))',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  expand_more
+                </span>
+              </div>
             </div>
           </div>
 
@@ -364,10 +407,8 @@ export default function AdminOrders() {
             </div>
             <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 4 }}>
               <button
-                className={cn(
-                  'pill flex-shrink-0',
-                  statusFilter === 'ALL' ? 'pill-ok' : 'pill-mute'
-                )}
+                className={`pill ${statusFilter === 'ALL' ? 'pill-ok' : 'pill-mute'}`}
+                style={{ flexShrink: 0 }}
                 onClick={() => setStatusFilter('ALL')}
               >
                 All Statuses
@@ -375,7 +416,8 @@ export default function AdminOrders() {
               {(Object.keys(STATUS_CONFIG) as Order['status'][]).map((s) => (
                 <button
                   key={s}
-                  className={cn('pill flex-shrink-0', statusFilter === s ? 'pill-ok' : 'pill-mute')}
+                  className={`pill ${statusFilter === s ? 'pill-ok' : 'pill-mute'}`}
+                  style={{ flexShrink: 0 }}
                   onClick={() => setStatusFilter(s)}
                 >
                   {s}
@@ -383,25 +425,46 @@ export default function AdminOrders() {
               ))}
             </div>
           </div>
-          <div className="overflow-x-auto">
+          <div style={{ overflowX: 'auto' }}>
             {loading ? (
-              <div className="p-20 text-center">
+              <div style={{ padding: 80, textAlign: 'center' }}>
                 <span
-                  className="material-symbols-outlined animate-spin text-brand-green/20"
-                  style={{ fontSize: 32 }}
+                  className="material-symbols-outlined animate-spin"
+                  style={{ fontSize: 32, color: 'hsl(var(--primary) / 0.2)' }}
                 >
                   sync
                 </span>
-                <p className="text-micro font-bold mt-4 text-slate-300">
+                <p
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 800,
+                    marginTop: 16,
+                    color: 'hsl(var(--border))',
+                    fontFamily: "'Public Sans', sans-serif",
+                  }}
+                >
                   Synchronizing order flow...
                 </p>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="p-20 text-center">
-                <span className="material-symbols-outlined text-slate-100" style={{ fontSize: 48 }}>
+              <div style={{ padding: 80, textAlign: 'center' }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 48, color: 'hsl(var(--border))' }}
+                >
                   inventory_2
                 </span>
-                <p className="text-micro font-bold mt-4 text-slate-400">No orders found</p>
+                <p
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 800,
+                    marginTop: 16,
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontFamily: "'Public Sans', sans-serif",
+                  }}
+                >
+                  No orders found
+                </p>
               </div>
             ) : (
               <>
@@ -423,10 +486,13 @@ export default function AdminOrders() {
                         return (
                           <tr
                             key={order.id}
-                            className={cn(
-                              'cursor-pointer',
-                              selectedOrder?.id === order.id && 'bg-muted/5'
-                            )}
+                            style={{
+                              cursor: 'pointer',
+                              background:
+                                selectedOrder?.id === order.id
+                                  ? 'hsl(var(--container-low))'
+                                  : undefined,
+                            }}
                             onClick={() =>
                               setSelectedOrder((prev) => (prev?.id === order.id ? null : order))
                             }
@@ -439,12 +505,18 @@ export default function AdminOrders() {
                               </div>
                             </td>
                             <td>
-                              <b className="text-tiny font-bold text-slate-500">
+                              <b
+                                style={{
+                                  fontSize: 11,
+                                  fontWeight: 800,
+                                  color: 'hsl(var(--on-surface-muted))',
+                                }}
+                              >
                                 {order.region_or_state || '-'}
                               </b>
                             </td>
                             <td>
-                              <b className="font-bold text-on-surface">
+                              <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
                                 ₵
                                 {Number(order.total_amount).toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
@@ -453,14 +525,7 @@ export default function AdminOrders() {
                             </td>
                             <td>
                               <span
-                                className={cn(
-                                  'pill',
-                                  order.status === 'Delivered'
-                                    ? 'pill-ok'
-                                    : order.status === 'Cancelled'
-                                      ? 'pill-err'
-                                      : 'pill-warn'
-                                )}
+                                className={`pill ${order.status === 'Delivered' ? 'pill-ok' : order.status === 'Cancelled' ? 'pill-err' : 'pill-warn'}`}
                               >
                                 <span
                                   className="material-symbols-outlined"
@@ -471,14 +536,20 @@ export default function AdminOrders() {
                                 {cfg.label}
                               </span>
                             </td>
-                            <td className="text-micro font-bold text-slate-400">
+                            <td
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 800,
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
+                            >
                               {new Date(order.created_at).toLocaleDateString()}
                             </td>
                             <td>
                               <div className="row-actions" onClick={(e) => e.stopPropagation()}>
                                 {nextStatus && (
                                   <button
-                                    className="btn btn-primary btn-sm h-8"
+                                    className="btn btn-primary btn-sm"
                                     onClick={() => handleStatusAdvance(order)}
                                     disabled={updatingId === order.id}
                                   >
@@ -486,7 +557,7 @@ export default function AdminOrders() {
                                   </button>
                                 )}
                                 <button
-                                  className="ico h-8 w-8"
+                                  className="ico"
                                   onClick={() =>
                                     setSelectedOrder((prev) =>
                                       prev?.id === order.id ? null : order
@@ -509,7 +580,7 @@ export default function AdminOrders() {
                   </table>
                 </div>
 
-                <div className="mobile-only divide-y divide-border/10">
+                <div className="mobile-only">
                   {filtered.map((order) => (
                     <OrderListCard
                       key={order.id}
@@ -535,7 +606,10 @@ export default function AdminOrders() {
           (() => {
             const cfg = STATUS_CONFIG[selectedOrder.status]
             return (
-              <div className="panel animate-in slide-in-from-right-4 duration-500 h-fit sticky top-6">
+              <div
+                className="panel"
+                style={{ position: 'sticky', top: 24, alignSelf: 'flex-start' }}
+              >
                 <div
                   className="ph"
                   style={{
@@ -585,87 +659,233 @@ export default function AdminOrders() {
                   </button>
                 </div>
 
-                <div style={{ padding: '24px 20px' }} className="space-y-8">
+                <div
+                  style={{
+                    padding: '24px 20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 24,
+                  }}
+                >
                   {/* ID & Status */}
-                  <div className="flex items-start justify-between gap-4">
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                      gap: 16,
+                    }}
+                  >
                     <span
-                      className={cn(
-                        'pill',
-                        selectedOrder.status === 'Delivered'
-                          ? 'pill-ok'
-                          : selectedOrder.status === 'Cancelled'
-                            ? 'pill-err'
-                            : 'pill-warn'
-                      )}
+                      className={`pill ${selectedOrder.status === 'Delivered' ? 'pill-ok' : selectedOrder.status === 'Cancelled' ? 'pill-err' : 'pill-warn'}`}
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
                         {cfg.icon}
                       </span>
                       {cfg.label}
                     </span>
-                    <div className="text-right">
-                      <p className="text-micro font-bold text-muted-foreground/40 uppercase tracking-tight mb-1">
+                    <div style={{ textAlign: 'right' }}>
+                      <p
+                        style={{
+                          fontSize: 9.5,
+                          fontWeight: 800,
+                          color: 'hsl(var(--on-surface-muted))',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
+                          marginBottom: 4,
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
                         Manifest Date
                       </p>
-                      <p className="text-tiny font-bold text-on-surface">
+                      <p
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 800,
+                          color: 'hsl(var(--on-surface))',
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
                         {new Date(selectedOrder.created_at).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
 
                   {/* Patriot */}
-                  <div className="pt-6 border-t border-border/10 space-y-3">
+                  <div
+                    style={{
+                      paddingTop: 20,
+                      borderTop: '1px solid hsl(var(--border))',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                    }}
+                  >
                     <label className="field-label">Recipient details</label>
-                    <div className="space-y-1">
-                      <p className="font-bold text-base text-on-surface">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <p
+                        style={{
+                          fontWeight: 800,
+                          fontSize: 14,
+                          color: 'hsl(var(--on-surface))',
+                          margin: 0,
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
                         {selectedOrder.full_name}
                       </p>
-                      <p className="text-xs font-medium text-muted-foreground/60">
+                      <p
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 600,
+                          color: 'hsl(var(--on-surface-muted))',
+                          margin: 0,
+                        }}
+                      >
                         {selectedOrder.email}
                       </p>
-                      <p className="text-xs font-medium text-muted-foreground/60">
+                      <p
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 600,
+                          color: 'hsl(var(--on-surface-muted))',
+                          margin: 0,
+                        }}
+                      >
                         {selectedOrder.phone}
                       </p>
                     </div>
                   </div>
 
                   {/* Shipping */}
-                  <div className="pt-6 border-t border-border/10 space-y-3">
+                  <div
+                    style={{
+                      paddingTop: 20,
+                      borderTop: '1px solid hsl(var(--border))',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                    }}
+                  >
                     <label className="field-label">Logistics destination</label>
-                    <div className="text-xs font-medium text-muted-foreground/60 leading-relaxed">
-                      <p>{selectedOrder.shipping_address}</p>
-                      <p>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: 'hsl(var(--on-surface-muted))',
+                        lineHeight: 1.6,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 0,
+                      }}
+                    >
+                      <p style={{ margin: 0 }}>{selectedOrder.shipping_address}</p>
+                      <p style={{ margin: 0 }}>
                         {selectedOrder.city}, {selectedOrder.region_or_state}
                       </p>
-                      <p className="font-bold text-on-surface pt-1">{selectedOrder.country}</p>
+                      <p
+                        style={{
+                          fontWeight: 800,
+                          color: 'hsl(var(--on-surface))',
+                          margin: '4px 0 0',
+                        }}
+                      >
+                        {selectedOrder.country}
+                      </p>
                     </div>
                   </div>
 
                   {/* Manifest Items */}
-                  <div className="pt-6 border-t border-border/10 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <label className="field-label mb-0">Manifest items</label>
-                      <span className="text-micro font-bold text-slate-400">
+                  <div
+                    style={{
+                      paddingTop: 20,
+                      borderTop: '1px solid hsl(var(--border))',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 12,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <label className="field-label" style={{ margin: 0 }}>
+                        Manifest items
+                      </label>
+                      <span
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 800,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
                         {selectedOrder.items.length} Units
                       </span>
                     </div>
-                    <div className="space-y-2">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                       {selectedOrder.items.map((item, idx) => (
                         <div
                           key={idx}
-                          className="p-3 bg-muted/5 border border-border/10 flex items-center justify-between group rounded-sm"
+                          style={{
+                            padding: 12,
+                            background: 'hsl(var(--container-low))',
+                            border: '1px solid hsl(var(--border))',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            borderRadius: 4,
+                          }}
                         >
-                          <div className="space-y-1">
-                            <p className="text-xs font-bold text-on-surface">
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <p
+                              style={{
+                                fontSize: 12,
+                                fontWeight: 800,
+                                color: 'hsl(var(--on-surface))',
+                                margin: 0,
+                                fontFamily: "'Public Sans', sans-serif",
+                              }}
+                            >
                               {item.product_name || 'Movement Asset'}
                             </p>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                            <p
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 800,
+                                color: 'hsl(var(--on-surface-muted))',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.04em',
+                                margin: 0,
+                              }}
+                            >
                               ₵{Number(item.price_at_purchase).toFixed(2)} unit
                             </p>
                           </div>
-                          <div className="text-right">
-                            <p className="text-xs font-bold text-on-surface">x{item.quantity}</p>
-                            <p className="text-[10px] font-bold text-brand-green uppercase tracking-tight">
+                          <div style={{ textAlign: 'right' }}>
+                            <p
+                              style={{
+                                fontSize: 12,
+                                fontWeight: 800,
+                                color: 'hsl(var(--on-surface))',
+                                margin: 0,
+                              }}
+                            >
+                              x{item.quantity}
+                            </p>
+                            <p
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 800,
+                                color: 'hsl(var(--primary))',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.04em',
+                                margin: 0,
+                              }}
+                            >
                               ₵{(item.quantity * item.price_at_purchase).toFixed(2)}
                             </p>
                           </div>
@@ -675,30 +895,71 @@ export default function AdminOrders() {
                   </div>
 
                   {/* Totals */}
-                  <div className="pt-6 border-t border-border/10 space-y-2">
-                    <div className="flex justify-between text-xs font-bold text-muted-foreground/40">
-                      <span>Subtotal</span>
-                      <span className="text-on-surface">
-                        ₵
-                        {Number(selectedOrder.subtotal).toLocaleString(undefined, {
+                  <div
+                    style={{
+                      paddingTop: 20,
+                      borderTop: '1px solid hsl(var(--border))',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 6,
+                    }}
+                  >
+                    {[
+                      {
+                        label: 'Subtotal',
+                        value: Number(selectedOrder.subtotal).toLocaleString(undefined, {
                           minimumFractionDigits: 2,
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs font-bold text-muted-foreground/40">
-                      <span>Logistics Fee</span>
-                      <span className="text-on-surface">
-                        ₵
-                        {Number(selectedOrder.shipping_fee).toLocaleString(undefined, {
+                        }),
+                      },
+                      {
+                        label: 'Logistics Fee',
+                        value: Number(selectedOrder.shipping_fee).toLocaleString(undefined, {
                           minimumFractionDigits: 2,
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex justify-between pt-4 border-t border-border/10">
-                      <span className="text-micro font-bold text-on-surface uppercase tracking-tight">
+                        }),
+                      },
+                    ].map(({ label, value }) => (
+                      <div
+                        key={label}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: 11,
+                          fontWeight: 700,
+                        }}
+                      >
+                        <span style={{ color: 'hsl(var(--on-surface-muted))' }}>{label}</span>
+                        <span style={{ color: 'hsl(var(--on-surface))' }}>₵{value}</span>
+                      </div>
+                    ))}
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        paddingTop: 12,
+                        borderTop: '1px solid hsl(var(--border))',
+                        marginTop: 6,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 800,
+                          color: 'hsl(var(--on-surface))',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
                         Total Value
                       </span>
-                      <span className="text-lg font-bold text-brand-green">
+                      <span
+                        style={{
+                          fontSize: 17,
+                          fontWeight: 800,
+                          color: 'hsl(var(--primary))',
+                          fontFamily: "'Public Sans', sans-serif",
+                        }}
+                      >
                         ₵
                         {Number(selectedOrder.total_amount).toLocaleString(undefined, {
                           minimumFractionDigits: 2,
@@ -708,10 +969,13 @@ export default function AdminOrders() {
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-6 space-y-3">
+                  <div
+                    style={{ paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}
+                  >
                     {NEXT_STATUS[selectedOrder.status] && (
                       <button
-                        className="btn btn-primary w-full h-12 rounded-sm"
+                        className="btn btn-primary"
+                        style={{ width: '100%', height: 44 }}
                         onClick={() => handleStatusAdvance(selectedOrder)}
                         disabled={updatingId === selectedOrder.id}
                       >
@@ -723,7 +987,8 @@ export default function AdminOrders() {
                     {selectedOrder.status !== 'Cancelled' &&
                       selectedOrder.status !== 'Delivered' && (
                         <button
-                          className="btn btn-outline w-full h-12 rounded-sm text-destructive hover:border-destructive hover:text-destructive"
+                          className="btn btn-dest"
+                          style={{ width: '100%', height: 44 }}
                           onClick={() => handleCancel(selectedOrder)}
                           disabled={updatingId === selectedOrder.id}
                         >

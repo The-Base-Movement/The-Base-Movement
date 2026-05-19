@@ -315,7 +315,22 @@ export default function AdminDashboard() {
                   <tr key={member.id}>
                     <td>
                       <div className="who">
-                        <div className="w-8 h-8 rounded-full bg-muted/10 flex items-center justify-center text-micro font-bold">
+                        <div
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: '50%',
+                            background: 'hsl(var(--container-low))',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: 10,
+                            fontWeight: 800,
+                            color: 'hsl(var(--on-surface-muted))',
+                            fontFamily: "'Public Sans', sans-serif",
+                            flexShrink: 0,
+                          }}
+                        >
                           {member.name[0]}
                         </div>
                         <div>
@@ -374,7 +389,15 @@ export default function AdminDashboard() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="text-center py-8 text-on-surface-muted text-tiny italic font-bold"
+                      style={{
+                        textAlign: 'center',
+                        padding: '32px 0',
+                        color: 'hsl(var(--on-surface-muted))',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        fontStyle: 'italic',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
                     >
                       All verifications complete. Operational baseline maintained.
                     </td>
@@ -687,7 +710,15 @@ export default function AdminDashboard() {
                 </div>
               ))}
               {auditLogs.length === 0 && (
-                <div className="py-8 text-center text-on-surface-muted text-xs italic">
+                <div
+                  style={{
+                    padding: '32px 0',
+                    textAlign: 'center',
+                    color: 'hsl(var(--on-surface-muted))',
+                    fontSize: 12,
+                    fontStyle: 'italic',
+                  }}
+                >
                   No recent mobilization telemetry.
                 </div>
               )}
