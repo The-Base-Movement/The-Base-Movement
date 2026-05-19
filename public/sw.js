@@ -29,6 +29,9 @@ self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
 
+  // Only handle http/https — chrome-extension:// and others will throw on cache.put
+  if (!url.protocol.startsWith('http')) return
+
   // Never intercept Supabase API calls — always need fresh auth/data
   if (url.hostname.includes('supabase.co')) return
 
