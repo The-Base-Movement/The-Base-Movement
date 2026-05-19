@@ -471,7 +471,7 @@ class AdminService {
 
   async restoreMember(id: string): Promise<boolean> {
     const success = await memberService.restoreMember(id)
-    if (success) await this.logAction('RESTORE_MEMBER', `MEMBERS/${id}`, 'Info')
+    if (success) await this.logAction('RESTORE_MEMBER', `MEMBERS/${id}`, 'Success')
     return success
   }
 
