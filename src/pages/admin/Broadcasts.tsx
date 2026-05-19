@@ -182,10 +182,7 @@ export default function Broadcasts() {
         />
       </div>
 
-      <div
-        style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}
-        className="xl:grid-cols-[1fr_320px]"
-      >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
         {/* Broadcast history */}
         <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
           <div

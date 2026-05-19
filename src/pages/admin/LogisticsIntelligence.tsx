@@ -282,10 +282,7 @@ export default function LogisticsIntelligence() {
       </div>
 
       {/* Main grid */}
-      <div
-        style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}
-        className="xl:grid-cols-[1fr_2fr]"
-      >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 24 }}>
         {/* Inventory Alerts */}
         <div
           className="panel"

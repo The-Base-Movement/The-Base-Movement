@@ -478,13 +478,13 @@ export default function AdminAuthors() {
             </aside>
 
             {/* Table */}
-            <div className="panel overflow-hidden">
+            <div className="panel" style={{ overflow: 'hidden' }}>
               <div className="ph">
                 <h3>Registered personnel</h3>
                 <span className="meta">{filteredAuthors.length} records identified</span>
               </div>
               {/* Desktop table */}
-              <div className="desktop-only overflow-x-auto">
+              <div className="desktop-only" style={{ overflowX: 'auto' }}>
                 <table className="table">
                   <thead>
                     <tr>
@@ -669,7 +669,7 @@ export default function AdminAuthors() {
                             </div>
                           </td>
                           <td style={{ textAlign: 'right' }}>
-                            <div className="row-actions justify-end">
+                            <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
                               <button
                                 onClick={() => setViewingAuthor(author)}
                                 className="ico"

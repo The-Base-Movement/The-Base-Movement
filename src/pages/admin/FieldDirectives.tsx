@@ -280,10 +280,7 @@ export default function FieldDirectives() {
       </div>
 
       {/* Main grid */}
-      <div
-        style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}
-        className="xl:grid-cols-[1fr_2fr]"
-      >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 24 }}>
         {/* Active Directives */}
         <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
           <div

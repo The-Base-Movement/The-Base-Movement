@@ -264,10 +264,7 @@ export default function MobilizationMetrics() {
         />
       </div>
 
-      <div
-        style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}
-        className="xl:grid-cols-[2fr_1fr]"
-      >
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
         {/* Leaderboard */}
         <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
           <div
