@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://thebasemovement.com/sitemap.xml
