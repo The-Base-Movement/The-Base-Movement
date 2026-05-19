@@ -226,17 +226,33 @@ export default function WarRoomCommand() {
   if (loading) {
     return (
       <div
-        className="-mx-[28px] -mt-[24px] flex items-center justify-center"
-        style={{ minHeight: 'calc(100vh - 3.5rem)' }}
+        style={{
+          margin: '-24px -28px',
+          minHeight: 'calc(100vh - 3.5rem)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <div className="flex flex-col items-center gap-4">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
           <span
-            className="material-symbols-outlined text-destructive"
-            style={{ fontSize: 40, animation: 'spin 1.5s linear infinite' }}
+            className="material-symbols-outlined"
+            style={{
+              fontSize: 40,
+              color: 'hsl(var(--destructive))',
+              animation: 'spin 1.5s linear infinite',
+            }}
           >
             sync
           </span>
-          <p className="text-[11px] font-extrabold text-destructive animate-pulse">
+          <p
+            style={{
+              fontSize: 11,
+              fontWeight: 800,
+              color: 'hsl(var(--destructive))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
             Initializing war room protocols…
           </p>
         </div>
@@ -245,35 +261,69 @@ export default function WarRoomCommand() {
   }
 
   return (
-    <div className="-mx-[28px] -mt-[24px] pb-24" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
-      <div className="px-6 pt-5">
+    <div style={{ margin: '-24px -28px', paddingBottom: 96, minHeight: 'calc(100vh - 3.5rem)' }}>
+      <div style={{ padding: '20px 24px 0' }}>
         {/* ── Header ── */}
-        <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-3">
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginBottom: 16,
+            gap: 12,
+            flexWrap: 'wrap',
+          }}
+        >
           <div>
             <div
-              className="text-[10px] font-bold mb-1"
-              style={{ color: 'hsl(var(--on-surface-muted))' }}
+              style={{
+                fontSize: 10,
+                fontWeight: 800,
+                marginBottom: 4,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+              }}
             >
               Command center → War room
             </div>
-            <div className="flex items-center gap-2 mt-1">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
               <h2
-                className="font-meta font-extrabold text-[22px] tracking-[-0.015em] leading-tight mb-0"
-                style={{ color: 'hsl(var(--on-surface))' }}
+                style={{
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 800,
+                  fontSize: 22,
+                  letterSpacing: '-0.015em',
+                  lineHeight: 1.2,
+                  margin: 0,
+                  color: 'hsl(var(--on-surface))',
+                }}
               >
                 War Room — live mobilization
               </h2>
               <span
-                className="inline-flex items-center gap-[6px] font-extrabold text-[10.5px] px-[10px] py-1 rounded-full border"
                 style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontWeight: 800,
+                  fontSize: 10.5,
+                  padding: '4px 10px',
+                  borderRadius: 99,
+                  border: '1px solid rgba(206,17,38,.3)',
                   color: 'hsl(var(--destructive))',
                   background: 'rgba(206,17,38,.12)',
-                  borderColor: 'rgba(206,17,38,.3)',
                 }}
               >
                 <span
-                  className="w-[6px] h-[6px] rounded-full animate-pulse block"
-                  style={{ background: 'hsl(var(--destructive))' }}
+                  className="animate-pulse"
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: 'hsl(var(--destructive))',
+                    display: 'inline-block',
+                    flexShrink: 0,
+                  }}
                 />
                 Live · updating
               </span>
@@ -286,7 +336,7 @@ export default function WarRoomCommand() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3 sm:mt-1 flex-wrap w-full sm:w-auto">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <LiveClock />
             <button
               className="btn btn-outline"
@@ -1003,29 +1053,49 @@ export default function WarRoomCommand() {
         </div>
 
         {/* ── Trend Charts ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-[12px] mb-[12px]">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 12,
+            marginBottom: 12,
+          }}
+        >
           <div
-            className="rounded-[6px] overflow-hidden"
-            style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
+            style={{
+              borderRadius: 6,
+              overflow: 'hidden',
+              background: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
+            }}
           >
             <div
-              className="px-4 py-3 flex justify-between items-center"
-              style={{ borderBottom: '1px solid hsl(var(--border))' }}
+              style={{
+                padding: '10px 16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
             >
               <h3
-                className="font-extrabold text-[12.5px]"
-                style={{ color: 'hsl(var(--on-surface))' }}
+                style={{
+                  fontWeight: 800,
+                  fontSize: 12.5,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
               >
                 Sign-ups · 24 h
               </h3>
               <span
-                className="text-[10px] font-bold"
-                style={{ color: 'hsl(var(--on-surface-muted))' }}
+                style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}
               >
                 Hourly · Gmt
               </span>
             </div>
-            <div className="h-[200px] p-4 relative">
+            <div style={{ height: 200, padding: 16, position: 'relative' }}>
               <svg viewBox="0 0 600 180" className="w-full h-full" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="gp" x1="0" x2="0" y1="0" y2="1">
@@ -1083,27 +1153,40 @@ export default function WarRoomCommand() {
             </div>
           </div>
           <div
-            className="rounded-[6px] overflow-hidden"
-            style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
+            style={{
+              borderRadius: 6,
+              overflow: 'hidden',
+              background: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
+            }}
           >
             <div
-              className="px-4 py-3 flex justify-between items-center"
-              style={{ borderBottom: '1px solid hsl(var(--border))' }}
+              style={{
+                padding: '10px 16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
             >
               <h3
-                className="font-extrabold text-[12.5px]"
-                style={{ color: 'hsl(var(--on-surface))' }}
+                style={{
+                  fontWeight: 800,
+                  fontSize: 12.5,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
               >
                 Donations · 24 h (₵)
               </h3>
               <span
-                className="text-[10px] font-bold"
-                style={{ color: 'hsl(var(--on-surface-muted))' }}
+                style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}
               >
                 Momo + card
               </span>
             </div>
-            <div className="h-[200px] p-4 relative">
+            <div style={{ height: 200, padding: 16, position: 'relative' }}>
               <svg viewBox="0 0 600 180" className="w-full h-full" preserveAspectRatio="none">
                 <g fill="hsl(var(--accent))">
                   {growthTrends.map((t, i) => {
@@ -1132,19 +1215,36 @@ export default function WarRoomCommand() {
         </div>
 
         {/* ── Lower row: Incidents detail + Narratives ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-[12px]">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           {/* Active crisis incidents */}
           <div
-            className="rounded-[6px] overflow-hidden"
-            style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
+            style={{
+              borderRadius: 6,
+              overflow: 'hidden',
+              background: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
+            }}
           >
             <div
-              className="px-4 py-3 flex justify-between items-center"
-              style={{ borderBottom: '1px solid hsl(var(--border))' }}
+              style={{
+                padding: '10px 16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
             >
               <h3
-                className="font-extrabold text-[12.5px] flex items-center gap-2"
-                style={{ color: 'hsl(var(--on-surface))' }}
+                style={{
+                  fontWeight: 800,
+                  fontSize: 12.5,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
               >
                 <span
                   className="material-symbols-outlined"
@@ -1155,15 +1255,14 @@ export default function WarRoomCommand() {
                 Crisis incidents
               </h3>
               <span
-                className="text-[10px] font-bold"
-                style={{ color: 'hsl(var(--on-surface-muted))' }}
+                style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))' }}
               >
                 {incidents.filter((i) => i.status === 'INVESTIGATING').length} active
               </span>
             </div>
             <div>
               {incidents.length === 0 ? (
-                <div className="p-10 text-center">
+                <div style={{ padding: 40, textAlign: 'center' }}>
                   <span
                     className="material-symbols-outlined"
                     style={{
@@ -1176,8 +1275,12 @@ export default function WarRoomCommand() {
                     check_circle
                   </span>
                   <p
-                    className="text-[10.5px] font-bold"
-                    style={{ color: 'hsl(var(--on-surface-muted))' }}
+                    style={{
+                      fontSize: 10.5,
+                      fontWeight: 800,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
                   >
                     No active incidents. All sectors secure.
                   </p>
@@ -1186,17 +1289,30 @@ export default function WarRoomCommand() {
                 incidents.map((inc) => (
                   <div
                     key={inc.id}
-                    className="p-4 space-y-2"
-                    style={{ borderBottom: '1px solid hsl(var(--border))' }}
+                    style={{
+                      padding: 16,
+                      borderBottom: '1px solid hsl(var(--border))',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                    }}
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-2">
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 12,
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span
-                          className={cn(
-                            'px-2 py-0.5 text-[8px] font-extrabold rounded-full',
-                            inc.severity === 'DEFCON1' ? 'animate-pulse' : ''
-                          )}
+                          className={inc.severity === 'DEFCON1' ? 'animate-pulse' : ''}
                           style={{
+                            padding: '2px 8px',
+                            fontSize: 8,
+                            fontWeight: 800,
+                            borderRadius: 99,
                             background:
                               inc.severity === 'DEFCON1' || inc.severity === 'SEVERE'
                                 ? 'rgba(206,17,38,.2)'
@@ -1211,15 +1327,22 @@ export default function WarRoomCommand() {
                           {inc.severity}
                         </span>
                         <span
-                          className="text-[10.5px] font-extrabold"
-                          style={{ color: 'hsl(var(--on-surface))' }}
+                          style={{
+                            fontSize: 10.5,
+                            fontWeight: 800,
+                            color: 'hsl(var(--on-surface))',
+                          }}
                         >
                           {inc.region}
                         </span>
                       </div>
                       <span
-                        className="text-[10px] font-bold shrink-0"
-                        style={{ color: 'hsl(var(--on-surface-muted))' }}
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 800,
+                          flexShrink: 0,
+                          color: 'hsl(var(--on-surface-muted))',
+                        }}
                       >
                         {formatGhanaTime(inc.created_at, {
                           month: 'short',
@@ -1231,24 +1354,40 @@ export default function WarRoomCommand() {
                       </span>
                     </div>
                     <p
-                      className="text-[12px] font-bold"
-                      style={{ color: 'hsl(var(--on-surface))' }}
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: 'hsl(var(--on-surface))',
+                        margin: 0,
+                      }}
                     >
                       {inc.incident_type.replace(/_/g, ' ')}
                     </p>
                     <p
-                      className="text-[11.5px] leading-[1.5]"
-                      style={{ color: 'hsl(var(--on-surface-muted))' }}
+                      style={{
+                        fontSize: 11.5,
+                        lineHeight: 1.5,
+                        color: 'hsl(var(--on-surface-muted))',
+                        margin: 0,
+                      }}
                     >
                       {inc.description}
                     </p>
                     <div
-                      className="flex items-center justify-between pt-2"
-                      style={{ borderTop: '1px solid hsl(var(--border))' }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingTop: 8,
+                        borderTop: '1px solid hsl(var(--border))',
+                      }}
                     >
                       <span
-                        className="text-[9px] font-extrabold px-2 py-0.5 rounded-full"
                         style={{
+                          fontSize: 9,
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: 99,
                           background:
                             inc.status === 'INVESTIGATING'
                               ? 'rgba(218,165,32,.15)'
@@ -1277,16 +1416,34 @@ export default function WarRoomCommand() {
 
           {/* Media counter-narratives */}
           <div
-            className="rounded-[6px] overflow-hidden relative"
-            style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
+            style={{
+              borderRadius: 6,
+              overflow: 'hidden',
+              position: 'relative',
+              background: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
+            }}
           >
             <div
-              className="px-4 py-3 flex justify-between items-center"
-              style={{ borderBottom: '1px solid hsl(var(--border))' }}
+              style={{
+                padding: '10px 16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
             >
               <h3
-                className="font-extrabold text-[12.5px] flex items-center gap-2"
-                style={{ color: 'hsl(var(--on-surface))' }}
+                style={{
+                  fontWeight: 800,
+                  fontSize: 12.5,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
               >
                 <span
                   className="material-symbols-outlined"
@@ -1305,10 +1462,14 @@ export default function WarRoomCommand() {
             </div>
             <div>
               {narratives.length === 0 ? (
-                <div className="p-8 text-center">
+                <div style={{ padding: 32, textAlign: 'center' }}>
                   <p
-                    className="text-[10.5px] font-bold"
-                    style={{ color: 'hsl(var(--on-surface-muted))' }}
+                    style={{
+                      fontSize: 10.5,
+                      fontWeight: 800,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
                   >
                     No active media campaigns.
                   </p>
@@ -1317,34 +1478,65 @@ export default function WarRoomCommand() {
                 narratives.map((nar) => (
                   <div
                     key={nar.id}
-                    className="p-4 space-y-2 hover:bg-black/5 transition-colors"
-                    style={{ borderBottom: '1px solid hsl(var(--border))' }}
+                    style={{
+                      padding: 16,
+                      borderBottom: '1px solid hsl(var(--border))',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                    }}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10.5px] font-extrabold text-blue-500">
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <span style={{ fontSize: 10.5, fontWeight: 800, color: '#60a5fa' }}>
                         {nar.target_platform}
                       </span>
                       <span
-                        className={cn(
-                          'text-[8px] font-extrabold px-2 py-0.5 rounded-full',
-                          nar.dispatch_status === 'DEPLOYED'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : 'bg-orange-100 text-orange-700'
-                        )}
+                        style={{
+                          fontSize: 8,
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: 99,
+                          background:
+                            nar.dispatch_status === 'DEPLOYED'
+                              ? 'rgba(16,185,129,.15)'
+                              : 'rgba(249,115,22,.15)',
+                          color: nar.dispatch_status === 'DEPLOYED' ? '#059669' : '#ea580c',
+                        }}
                       >
                         {nar.dispatch_status.toLowerCase()}
                       </span>
                     </div>
                     <p
-                      className="text-[12px] leading-[1.45]"
-                      style={{ color: 'hsl(var(--on-surface))' }}
+                      style={{
+                        fontSize: 12,
+                        lineHeight: 1.45,
+                        color: 'hsl(var(--on-surface))',
+                        margin: 0,
+                      }}
                     >
                       "{nar.approved_messaging}"
                     </p>
-                    <div className="flex items-center justify-between pt-1">
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingTop: 4,
+                      }}
+                    >
                       <p
-                        className="text-[10px] font-bold"
-                        style={{ color: 'hsl(var(--on-surface-muted))' }}
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 800,
+                          color: 'hsl(var(--on-surface-muted))',
+                          margin: 0,
+                        }}
                       >
                         {nar.hashtags}
                       </p>

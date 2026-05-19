@@ -199,7 +199,7 @@ export default function TrashPage() {
   }
 
   return (
-    <div className="main animate-in fade-in duration-500">
+    <div className="main">
       <div className="top" style={{ marginBottom: 18 }}>
         <div>
           <div className="crumbs">Platform · Trash</div>

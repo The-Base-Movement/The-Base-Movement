@@ -172,7 +172,7 @@ export default function PollingStations() {
   ]
 
   return (
-    <div className="main animate-in fade-in duration-500">
+    <div className="main">
       {/* Header */}
       <div className="top">
         <div>

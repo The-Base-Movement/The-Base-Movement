@@ -35,15 +35,21 @@ export default function NewBroadcast() {
   const location = useLocation()
   const editorRef = useRef<{ getContent: () => string } | null>(null)
 
-  const state = location.state as { template?: { title: string; content: string; type: string; priority: string } } | null
+  const state = location.state as {
+    template?: { title: string; content: string; type: string; priority: string }
+  } | null
   const initialTemplate = state?.template
 
   const [isSending, setIsSending] = useState(false)
   const [fullRegions, setFullRegions] = useState<Region[]>([])
-  const [allConstituencies, setAllConstituencies] = useState<{ name: string; region_id: number }[]>([])
+  const [allConstituencies, setAllConstituencies] = useState<{ name: string; region_id: number }[]>(
+    []
+  )
   const [selectedRegionId, setSelectedRegionId] = useState<number | null>(null)
 
-  const [newBroadcast, setNewBroadcast] = useState<Omit<Broadcast, 'id' | 'sender_id' | 'created_at'>>({
+  const [newBroadcast, setNewBroadcast] = useState<
+    Omit<Broadcast, 'id' | 'sender_id' | 'created_at'>
+  >({
     title: initialTemplate?.title || '',
     content: initialTemplate?.content || '',
     channel: 'In-app',
@@ -66,7 +72,9 @@ export default function NewBroadcast() {
     }
   }, [])
 
-  useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleSend = async () => {
     const content = editorRef.current ? editorRef.current.getContent() : newBroadcast.content
@@ -80,7 +88,10 @@ export default function NewBroadcast() {
     }
     setIsSending(true)
     try {
-      const payload: Omit<Broadcast, 'id' | 'created_at' | 'sender_id'> = { ...newBroadcast, content }
+      const payload: Omit<Broadcast, 'id' | 'created_at' | 'sender_id'> = {
+        ...newBroadcast,
+        content,
+      }
       const success = await adminService.sendBroadcast(payload)
       if (success) {
         toast.success('Broadcast deployed to the field.')
@@ -109,28 +120,42 @@ export default function NewBroadcast() {
   }
 
   return (
-    <div className="main animate-in fade-in duration-500">
-
+    <div className="main">
       {/* Top bar */}
       <div className="top" style={{ marginBottom: 20 }}>
         <div>
           <div className="crumbs" style={{ marginBottom: 6 }}>
-            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>Admin</Link>
+            <Link to="/admin/dashboard" style={{ color: 'hsl(var(--primary))' }}>
+              Admin
+            </Link>
             {' · '}
-            <Link to="/admin/broadcasts" style={{ color: 'hsl(var(--primary))' }}>Communication hub</Link>
+            <Link to="/admin/broadcasts" style={{ color: 'hsl(var(--primary))' }}>
+              Communication hub
+            </Link>
             {' · '}
             New broadcast
           </div>
           <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'hsl(var(--primary))' }}>campaign</span>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 22, color: 'hsl(var(--primary))' }}
+            >
+              campaign
+            </span>
             New broadcast
           </h2>
-          <div className="bl"><div /><div /><div /></div>
+          <div className="bl">
+            <div />
+            <div />
+            <div />
+          </div>
         </div>
         <div className="actions">
           <Link to="/admin/broadcasts">
             <button className="btn btn-outline btn-sm">
-              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>arrow_back</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                arrow_back
+              </span>
               Abort
             </button>
           </Link>
@@ -139,40 +164,85 @@ export default function NewBroadcast() {
 
       {/* Form panel */}
       <div className="panel" style={{ maxWidth: 900 }}>
-
         {/* Dark gradient header */}
-        <div style={{ background: 'linear-gradient(135deg,#0f1310,#1f2620)', borderTop: '3px solid hsl(var(--destructive))', borderRadius: '6px 6px 0 0', padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>shield</span>
+        <div
+          style={{
+            background: 'linear-gradient(135deg,#0f1310,#1f2620)',
+            borderTop: '3px solid hsl(var(--destructive))',
+            borderRadius: '6px 6px 0 0',
+            padding: '16px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 18, color: 'hsl(var(--primary))' }}
+          >
+            shield
+          </span>
           <div>
-            <h3 style={{ margin: 0, fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 13.5, color: '#fff' }}>Deployment configuration</h3>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontFamily: "'Public Sans', sans-serif", fontWeight: 700, marginTop: 2 }}>Define your target audience and broadcast priority</div>
+            <h3
+              style={{
+                margin: 0,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 800,
+                fontSize: 13.5,
+                color: '#fff',
+              }}
+            >
+              Deployment configuration
+            </h3>
+            <div
+              style={{
+                fontSize: 11,
+                color: 'rgba(255,255,255,.45)',
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 700,
+                marginTop: 2,
+              }}
+            >
+              Define your target audience and broadcast priority
+            </div>
           </div>
         </div>
 
         <div style={{ padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 20 }}>
-
           {/* Title */}
           <div>
             <label htmlFor="input-broadcast-title" style={labelStyle}>
               Broadcast title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
-            <input id="input-broadcast-title" aria-label="e.g. National registration wave" name="title"
+            <input
+              id="input-broadcast-title"
+              aria-label="e.g. National registration wave"
+              name="title"
               type="text"
               placeholder="e.g. National registration wave"
               style={{ ...fieldStyle, height: 44 }}
               value={newBroadcast.title}
-              onChange={e => setNewBroadcast({ ...newBroadcast, title: e.target.value })}
+              onChange={(e) => setNewBroadcast({ ...newBroadcast, title: e.target.value })}
             />
           </div>
 
           {/* Channel + Target + Priority */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
             <div>
-              <label htmlFor="select-broadcast-channel" style={labelStyle}>Delivery channel</label>
-              <select name="channel" id="select-broadcast-channel"
+              <label htmlFor="select-broadcast-channel" style={labelStyle}>
+                Delivery channel
+              </label>
+              <select
+                name="channel"
+                id="select-broadcast-channel"
                 style={{ ...fieldStyle, appearance: 'none' as const }}
                 value={newBroadcast.channel}
-                onChange={e => setNewBroadcast({ ...newBroadcast, channel: e.target.value as 'SMS' | 'Email' | 'Push' | 'In-app' })}
+                onChange={(e) =>
+                  setNewBroadcast({
+                    ...newBroadcast,
+                    channel: e.target.value as 'SMS' | 'Email' | 'Push' | 'In-app',
+                  })
+                }
               >
                 <option value="In-app">In-app message</option>
                 <option value="Push">Push notification</option>
@@ -181,11 +251,21 @@ export default function NewBroadcast() {
               </select>
             </div>
             <div>
-              <label htmlFor="select-broadcast-target" style={labelStyle}>Target segment</label>
-              <select name="target_type" id="select-broadcast-target"
+              <label htmlFor="select-broadcast-target" style={labelStyle}>
+                Target segment
+              </label>
+              <select
+                name="target_type"
+                id="select-broadcast-target"
                 style={{ ...fieldStyle, appearance: 'none' as const }}
                 value={newBroadcast.target_type}
-                onChange={e => setNewBroadcast({ ...newBroadcast, target_type: e.target.value as 'ALL' | 'REGION' | 'CONSTITUENCY', target_value: '' })}
+                onChange={(e) =>
+                  setNewBroadcast({
+                    ...newBroadcast,
+                    target_type: e.target.value as 'ALL' | 'REGION' | 'CONSTITUENCY',
+                    target_value: '',
+                  })
+                }
               >
                 <option value="ALL">National (all)</option>
                 <option value="REGION">Regional</option>
@@ -193,11 +273,28 @@ export default function NewBroadcast() {
               </select>
             </div>
             <div>
-              <label htmlFor="select-broadcast-priority" style={labelStyle}>Priority level</label>
-              <select name="priority" id="select-broadcast-priority"
-                style={{ ...fieldStyle, appearance: 'none' as const, borderColor: priorityBorderColor(newBroadcast.priority), color: newBroadcast.priority === 'Urgent' ? 'hsl(var(--destructive))' : 'hsl(var(--on-surface))' }}
+              <label htmlFor="select-broadcast-priority" style={labelStyle}>
+                Priority level
+              </label>
+              <select
+                name="priority"
+                id="select-broadcast-priority"
+                style={{
+                  ...fieldStyle,
+                  appearance: 'none' as const,
+                  borderColor: priorityBorderColor(newBroadcast.priority),
+                  color:
+                    newBroadcast.priority === 'Urgent'
+                      ? 'hsl(var(--destructive))'
+                      : 'hsl(var(--on-surface))',
+                }}
                 value={newBroadcast.priority}
-                onChange={e => setNewBroadcast({ ...newBroadcast, priority: e.target.value as 'Normal' | 'High' | 'Urgent' })}
+                onChange={(e) =>
+                  setNewBroadcast({
+                    ...newBroadcast,
+                    priority: e.target.value as 'Normal' | 'High' | 'Urgent',
+                  })
+                }
               >
                 <option value="Normal">Normal</option>
                 <option value="High">High priority</option>
@@ -208,14 +305,25 @@ export default function NewBroadcast() {
 
           {/* Region + Constituency (conditional) */}
           {newBroadcast.target_type !== 'ALL' && (
-            <div style={{ display: 'grid', gridTemplateColumns: newBroadcast.target_type === 'CONSTITUENCY' ? '1fr 1fr' : '1fr', gap: 14 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns:
+                  newBroadcast.target_type === 'CONSTITUENCY' ? '1fr 1fr' : '1fr',
+                gap: 14,
+              }}
+            >
               <div>
-                <label htmlFor="select-broadcast-region" style={labelStyle}>Select region <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                <select name="target_region" id="select-broadcast-region"
+                <label htmlFor="select-broadcast-region" style={labelStyle}>
+                  Select region <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+                </label>
+                <select
+                  name="target_region"
+                  id="select-broadcast-region"
                   style={{ ...fieldStyle, appearance: 'none' as const }}
-                  value={fullRegions.find(r => r.name === newBroadcast.target_value)?.name || ''}
-                  onChange={e => {
-                    const region = fullRegions.find(r => r.name === e.target.value)
+                  value={fullRegions.find((r) => r.name === newBroadcast.target_value)?.name || ''}
+                  onChange={(e) => {
+                    const region = fullRegions.find((r) => r.name === e.target.value)
                     if (region) {
                       setSelectedRegionId(region.id)
                       setNewBroadcast({ ...newBroadcast, target_value: region.name })
@@ -223,23 +331,37 @@ export default function NewBroadcast() {
                   }}
                 >
                   <option value="">Select region</option>
-                  {fullRegions.map(r => (
-                    <option key={r.id} value={r.name}>{r.name}</option>
+                  {fullRegions.map((r) => (
+                    <option key={r.id} value={r.name}>
+                      {r.name}
+                    </option>
                   ))}
                 </select>
               </div>
               {newBroadcast.target_type === 'CONSTITUENCY' && (
                 <div>
-                  <label htmlFor="select-broadcast-constituency" style={labelStyle}>Select constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span></label>
-                  <select name="target_constituency" id="select-broadcast-constituency"
-                    style={{ ...fieldStyle, appearance: 'none' as const, opacity: !selectedRegionId ? 0.45 : 1 }}
+                  <label htmlFor="select-broadcast-constituency" style={labelStyle}>
+                    Select constituency <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+                  </label>
+                  <select
+                    name="target_constituency"
+                    id="select-broadcast-constituency"
+                    style={{
+                      ...fieldStyle,
+                      appearance: 'none' as const,
+                      opacity: !selectedRegionId ? 0.45 : 1,
+                    }}
                     disabled={!selectedRegionId}
                     value={newBroadcast.target_value}
-                    onChange={e => {
+                    onChange={(e) => {
                       if (e.target.value === 'ALL_IN_REGION') {
-                        const region = fullRegions.find(r => r.id === selectedRegionId)
+                        const region = fullRegions.find((r) => r.id === selectedRegionId)
                         if (region) {
-                          setNewBroadcast({ ...newBroadcast, target_type: 'REGION', target_value: region.name })
+                          setNewBroadcast({
+                            ...newBroadcast,
+                            target_type: 'REGION',
+                            target_value: region.name,
+                          })
                           toast.info(`Elevated to Regional target: ${region.name}`)
                         }
                       } else {
@@ -247,14 +369,17 @@ export default function NewBroadcast() {
                       }
                     }}
                   >
-                    <option value="">{!selectedRegionId ? 'Select region first' : 'Select constituency'}</option>
+                    <option value="">
+                      {!selectedRegionId ? 'Select region first' : 'Select constituency'}
+                    </option>
                     <option value="ALL_IN_REGION">All in region</option>
                     {allConstituencies
-                      .filter(c => c.region_id === selectedRegionId)
+                      .filter((c) => c.region_id === selectedRegionId)
                       .map((c, idx) => (
-                        <option key={idx} value={c.name}>{c.name}</option>
-                      ))
-                    }
+                        <option key={idx} value={c.name}>
+                          {c.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
               )}
@@ -266,7 +391,13 @@ export default function NewBroadcast() {
             <label id="label-broadcast-message" style={labelStyle}>
               Broadcast message <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
-            <div style={{ border: '1px solid hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
+            <div
+              style={{
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 4,
+                overflow: 'hidden',
+              }}
+            >
               <Editor
                 aria-labelledby="label-broadcast-message"
                 apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
@@ -275,24 +406,51 @@ export default function NewBroadcast() {
                 init={{
                   height: 380,
                   menubar: false,
-                  plugins: ['advlist', 'autolink', 'lists', 'link', 'charmap', 'preview', 'searchreplace', 'visualblocks', 'code', 'insertdatetime', 'table', 'wordcount'],
-                  toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat | link | help',
-                  content_style: "body { font-family: 'Public Sans', sans-serif; font-size:14px; } p { margin-bottom: 1em; }",
+                  plugins: [
+                    'advlist',
+                    'autolink',
+                    'lists',
+                    'link',
+                    'charmap',
+                    'preview',
+                    'searchreplace',
+                    'visualblocks',
+                    'code',
+                    'insertdatetime',
+                    'table',
+                    'wordcount',
+                  ],
+                  toolbar:
+                    'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat | link | help',
+                  content_style:
+                    "body { font-family: 'Public Sans', sans-serif; font-size:14px; } p { margin-bottom: 1em; }",
                   skin: 'oxide',
                   placeholder: 'Compose your administrative directive with rich formatting...',
                   branding: false,
                   statusbar: false,
                 }}
-                onEditorChange={content => setNewBroadcast(prev => ({ ...prev, content }))}
+                onEditorChange={(content) => setNewBroadcast((prev) => ({ ...prev, content }))}
               />
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '14px 18px', borderTop: '1px solid hsl(var(--border))', display: 'flex', gap: 10, justifyContent: 'flex-end', background: 'hsl(var(--container-low))', borderRadius: '0 0 6px 6px' }}>
+        <div
+          style={{
+            padding: '14px 18px',
+            borderTop: '1px solid hsl(var(--border))',
+            display: 'flex',
+            gap: 10,
+            justifyContent: 'flex-end',
+            background: 'hsl(var(--container-low))',
+            borderRadius: '0 0 6px 6px',
+          }}
+        >
           <Link to="/admin/broadcasts">
-            <button type="button" className="btn btn-outline btn-sm">Cancel</button>
+            <button type="button" className="btn btn-outline btn-sm">
+              Cancel
+            </button>
           </Link>
           <button
             className="btn btn-dest"
@@ -309,19 +467,69 @@ export default function NewBroadcast() {
       </div>
 
       {/* Preview info */}
-      <div style={{ marginTop: 14, maxWidth: 900, padding: '14px 18px', border: '1px solid hsl(var(--border))', borderRadius: 6, background: 'hsl(var(--container-low))', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-        <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}>{channelIconName(newBroadcast.channel)}</span>
+      <div
+        style={{
+          marginTop: 14,
+          maxWidth: 900,
+          padding: '14px 18px',
+          border: '1px solid hsl(var(--border))',
+          borderRadius: 6,
+          background: 'hsl(var(--container-low))',
+          display: 'flex',
+          gap: 12,
+          alignItems: 'flex-start',
+        }}
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: 'hsl(var(--border))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 18, color: 'hsl(var(--on-surface-muted))' }}
+          >
+            {channelIconName(newBroadcast.channel)}
+          </span>
         </div>
         <div>
-          <b style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12, display: 'block', marginBottom: 3 }}>Broadcast preview</b>
-          <p style={{ margin: 0, fontSize: 11.5, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.55, fontFamily: "'Public Sans', sans-serif", fontWeight: 700 }}>
-            Sending to {newBroadcast.target_type === 'ALL' ? 'all movement members' : `targeted ${newBroadcast.target_type.toLowerCase()} segments`} via {newBroadcast.channel}.{' '}
-            Estimated delivery to ~42,500 members. Rich content is supported on {newBroadcast.channel === 'SMS' ? 'smartphone links' : 'this channel'}.
+          <b
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 800,
+              fontSize: 12,
+              display: 'block',
+              marginBottom: 3,
+            }}
+          >
+            Broadcast preview
+          </b>
+          <p
+            style={{
+              margin: 0,
+              fontSize: 11.5,
+              color: 'hsl(var(--on-surface-muted))',
+              lineHeight: 1.55,
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 700,
+            }}
+          >
+            Sending to{' '}
+            {newBroadcast.target_type === 'ALL'
+              ? 'all movement members'
+              : `targeted ${newBroadcast.target_type.toLowerCase()} segments`}{' '}
+            via {newBroadcast.channel}. Estimated delivery to ~42,500 members. Rich content is
+            supported on {newBroadcast.channel === 'SMS' ? 'smartphone links' : 'this channel'}.
           </p>
         </div>
       </div>
-
     </div>
   )
 }

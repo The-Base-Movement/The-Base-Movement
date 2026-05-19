@@ -679,7 +679,7 @@ export default function ChaptersManagement() {
   }
 
   return (
-    <div className="main animate-in fade-in duration-500">
+    <div className="main">
       {/* Top bar */}
       <div className="top" style={{ marginBottom: 20 }}>
         <div>

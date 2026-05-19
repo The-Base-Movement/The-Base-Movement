@@ -298,12 +298,35 @@ export default function GroundGameCommand() {
   if (loading) {
     return (
       <div
-        className="main flex items-center justify-center"
-        style={{ minHeight: 'calc(100vh - 3.5rem)' }}
+        className="main"
+        style={{
+          minHeight: 'calc(100vh - 3.5rem)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-          <p className="text-[11px] font-extrabold text-primary uppercase tracking-[.06em] animate-pulse">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+          <div
+            className="animate-spin"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              border: '2px solid hsl(var(--border))',
+              borderTopColor: 'hsl(var(--primary))',
+            }}
+          />
+          <p
+            style={{
+              fontSize: 11,
+              fontWeight: 800,
+              color: 'hsl(var(--primary))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
             Initializing ground game protocols…
           </p>
         </div>
@@ -312,7 +335,7 @@ export default function GroundGameCommand() {
   }
 
   return (
-    <div className="main animate-in fade-in duration-500">
+    <div className="main">
       {/* Header */}
       <div className="top">
         <div>

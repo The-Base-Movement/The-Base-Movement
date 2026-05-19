@@ -613,7 +613,7 @@ export default function AdminAuthors() {
                                 >
                                   {author.name}
                                 </b>
-                                <span className="text-[10px] font-bold opacity-50">
+                                <span style={{ fontSize: 10, fontWeight: 800, opacity: 0.5 }}>
                                   {author.id.substring(0, 8)}
                                 </span>
                               </div>

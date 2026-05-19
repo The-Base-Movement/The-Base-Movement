@@ -446,7 +446,7 @@ export default function MediaLibrary() {
               }}
             >
               {filteredFiles.map((url, idx) => (
-                <div key={idx} className="group" style={{ position: 'relative' }}>
+                <div key={idx} className="media-card" style={{ position: 'relative' }}>
                   <div
                     style={{
                       aspectRatio: '1',
@@ -471,7 +471,7 @@ export default function MediaLibrary() {
                       crossOrigin="anonymous"
                     />
                     <div
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="media-overlay"
                       style={{
                         position: 'absolute',
                         inset: 0,
