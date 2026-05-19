@@ -408,7 +408,7 @@ export default function GroundGameCommand() {
       </div>
 
       {/* KPI Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
+      <div className="kpis">
         <TacticalKPI
           label="Field Operations"
           value={canvassersOnline > 0 ? canvassersOnline : '—'}

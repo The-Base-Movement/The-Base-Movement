@@ -534,16 +534,14 @@ export default function ChaptersManagement() {
         return
       }
       await supabase.from('chapter_poll_candidates').delete().eq('poll_id', editingPollId)
-      await supabase
-        .from('chapter_poll_candidates')
-        .insert(
-          pollCandidates.map((c) => ({
-            poll_id: editingPollId,
-            name: c.name,
-            position: c.position || null,
-            avatar_url: c.avatar_url || null,
-          }))
-        )
+      await supabase.from('chapter_poll_candidates').insert(
+        pollCandidates.map((c) => ({
+          poll_id: editingPollId,
+          name: c.name,
+          position: c.position || null,
+          avatar_url: c.avatar_url || null,
+        }))
+      )
       setIsCreatingPoll(false)
       toast.success('Poll updated.')
       setShowPollModal(false)
@@ -565,16 +563,14 @@ export default function ChaptersManagement() {
         setIsCreatingPoll(false)
         return
       }
-      const { error: candError } = await supabase
-        .from('chapter_poll_candidates')
-        .insert(
-          pollCandidates.map((c) => ({
-            poll_id: poll.id,
-            name: c.name,
-            position: c.position || null,
-            avatar_url: c.avatar_url || null,
-          }))
-        )
+      const { error: candError } = await supabase.from('chapter_poll_candidates').insert(
+        pollCandidates.map((c) => ({
+          poll_id: poll.id,
+          name: c.name,
+          position: c.position || null,
+          avatar_url: c.avatar_url || null,
+        }))
+      )
       setIsCreatingPoll(false)
       if (candError) {
         toast.error('Poll created but failed to add candidates.')
@@ -725,7 +721,7 @@ export default function ChaptersManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div className="kpis">
         <TacticalKPI label="Total chapters" value={chapters.length} description="Registered hubs" />
         <TacticalKPI
           label="Total members"

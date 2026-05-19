@@ -556,7 +556,7 @@ export default function MembersList() {
       </div>
 
       {/* KPI Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
+      <div className="kpis">
         <TacticalKPI
           label="Intelligence"
           value={isLoading ? '—' : stats.total.toLocaleString()}
@@ -2042,17 +2042,15 @@ export default function MembersList() {
                               }}
                             >
                               {(memberDonations.length > 0
-                                ? memberDonations
-                                    .slice(-12)
-                                    .map((d, i, arr) => ({
-                                      h: Math.max(
-                                        8,
-                                        Math.round(
-                                          (d.amount / Math.max(...arr.map((x) => x.amount))) * 100
-                                        )
-                                      ),
-                                      last: i === arr.length - 1,
-                                    }))
+                                ? memberDonations.slice(-12).map((d, i, arr) => ({
+                                    h: Math.max(
+                                      8,
+                                      Math.round(
+                                        (d.amount / Math.max(...arr.map((x) => x.amount))) * 100
+                                      )
+                                    ),
+                                    last: i === arr.length - 1,
+                                  }))
                                 : barHeights.map((h, i) => ({ h, last: i === 11 }))
                               ).map(({ h, last }, i) => (
                                 <div
@@ -2642,17 +2640,13 @@ export default function MembersList() {
                         }}
                       >
                         {(memberDonations.length > 0
-                          ? memberDonations
-                              .slice(-12)
-                              .map((d, i, arr) => ({
-                                h: Math.max(
-                                  8,
-                                  Math.round(
-                                    (d.amount / Math.max(...arr.map((x) => x.amount))) * 100
-                                  )
-                                ),
-                                last: i === arr.length - 1,
-                              }))
+                          ? memberDonations.slice(-12).map((d, i, arr) => ({
+                              h: Math.max(
+                                8,
+                                Math.round((d.amount / Math.max(...arr.map((x) => x.amount))) * 100)
+                              ),
+                              last: i === arr.length - 1,
+                            }))
                           : [20, 35, 25, 40, 60, 45, 55, 70, 62, 80, 72, 95].map((h, i) => ({
                               h,
                               last: i === 11,

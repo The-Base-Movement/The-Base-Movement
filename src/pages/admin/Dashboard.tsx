@@ -5,29 +5,33 @@ import { adminService } from '@/services/adminService'
 import { tacticalService } from '@/services/tacticalService'
 import { toast } from 'sonner'
 
-import type { 
-  AuditLogEntry, 
-  RegionalStat, 
-  PendingVerification,
-  Broadcast
-} from '@/types/admin'
+import type { AuditLogEntry, RegionalStat, PendingVerification, Broadcast } from '@/types/admin'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 
-
-
-
 // KPI Component matching the handoff stats.html spec
-function KPI({ label, value, delta, variant, description }: { label: string, value: string, delta?: string, variant: 'r' | 'g' | 'k' | 'gr', description?: string }) {
+function KPI({
+  label,
+  value,
+  delta,
+  variant,
+  description,
+}: {
+  label: string
+  value: string
+  delta?: string
+  variant: 'r' | 'g' | 'k' | 'gr'
+  description?: string
+}) {
   const isDown = delta?.toLowerCase().includes('down')
   const colorMap: Record<string, 'red' | 'gold' | 'black' | 'green'> = {
-    'r': 'red',
-    'g': 'gold',
-    'k': 'black',
-    'gr': 'green'
+    r: 'red',
+    g: 'gold',
+    k: 'black',
+    gr: 'green',
   }
-  
+
   return (
-    <TacticalKPI 
+    <TacticalKPI
       label={label}
       value={value}
       delta={delta}
@@ -38,32 +42,37 @@ function KPI({ label, value, delta, variant, description }: { label: string, val
   )
 }
 
-
-
 export default function AdminDashboard() {
   const [pendingVerifications, setPendingVerifications] = useState<PendingVerification[]>([])
   const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [globalStats, setGlobalStats] = useState<{ label: string, value: string, change: string }[]>([])
+  const [globalStats, setGlobalStats] = useState<
+    { label: string; value: string; change: string }[]
+  >([])
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([])
   const navigate = useNavigate()
   const [isExporting, setIsExporting] = useState(false)
-  
+
   // Broadcast State
   const [broadcast, setBroadcast] = useState({
     title: 'Eastern region jobs program — first cohort begins Monday',
-    content: 'Patriots — the first 600 youth begin paid apprenticeships across 14 districts of the Eastern region this Monday.',
+    content:
+      'Patriots — the first 600 youth begin paid apprenticeships across 14 districts of the Eastern region this Monday.',
     target_type: 'REGION' as Broadcast['target_type'],
     target_value: 'Eastern',
     priority: 'Normal' as Broadcast['priority'],
-    channel: 'In-app' as Broadcast['channel']
+    channel: 'In-app' as Broadcast['channel'],
   })
   const [isSending, setIsSending] = useState(false)
 
   // Targeting Data
   const [regions, setRegions] = useState<{ id: number; name: string }[]>([])
-  const [constituencies, setConstituencies] = useState<{ id: number; name: string; region_id: number }[]>([])
-  const [diasporaChapters, setDiasporaChapters] = useState<{ id: string; name: string; country: string }[]>([])
+  const [constituencies, setConstituencies] = useState<
+    { id: number; name: string; region_id: number }[]
+  >([])
+  const [diasporaChapters, setDiasporaChapters] = useState<
+    { id: string; name: string; country: string }[]
+  >([])
   const [selectedRegionId, setSelectedRegionId] = useState<number | null>(null)
 
   useEffect(() => {
@@ -77,7 +86,7 @@ export default function AdminDashboard() {
           adminService.getGhanaRegions(),
           adminService.getGhanaConstituencies(),
           adminService.getDiasporaChapters(),
-          adminService.getRegionalStats()
+          adminService.getRegionalStats(),
         ])
         setGlobalStats(stats)
         setAuditLogs(audit)
@@ -95,11 +104,9 @@ export default function AdminDashboard() {
     fetchData()
   }, [])
 
-
-
   const handleSendBroadcast = async () => {
     if (!broadcast.title || !broadcast.content) {
-      toast.error("Please provide both a headline and message content.")
+      toast.error('Please provide both a headline and message content.')
       return
     }
 
@@ -112,18 +119,18 @@ export default function AdminDashboard() {
         target_value: broadcast.target_value,
         priority: broadcast.priority,
         channel: broadcast.channel,
-        status: 'Sent'
+        status: 'Sent',
       })
 
       if (success) {
         toast.success(`Message sent to targeted ${broadcast.target_type.toLowerCase()} audience.`)
         // Reset form or keep for next? Let's clear content but keep target for speed
-        setBroadcast(prev => ({ ...prev, content: '' }))
+        setBroadcast((prev) => ({ ...prev, content: '' }))
       } else {
         throw new Error('Service response failed')
       }
     } catch {
-      toast.error("Strategic communication layer encountered an error.")
+      toast.error('Strategic communication layer encountered an error.')
     } finally {
       setIsSending(false)
     }
@@ -131,57 +138,54 @@ export default function AdminDashboard() {
 
   const handleExport = async () => {
     if (regionalStats.length === 0) {
-      toast.error("There is no regional data to export at this time.")
+      toast.error('There is no regional data to export at this time.')
       return
     }
 
     setIsExporting(true)
-    toast.info("Aggregating regional performance telemetry...")
-    
+    toast.info('Aggregating regional performance telemetry...')
+
     try {
       // Aggregate real regional data
       const headers = ['Region', 'Member Count', 'Chapters', 'Performance Status', 'Activity Level']
-      const rows = regionalStats.map(r => [
+      const rows = regionalStats.map((r) => [
         r.region,
         r.memberCount,
         r.chapters,
         r.performance,
-        r.memberCount > 1000 ? 'Peak' : r.memberCount > 100 ? 'High' : 'Normal'
+        r.memberCount > 1000 ? 'Peak' : r.memberCount > 100 ? 'High' : 'Normal',
       ])
 
       const csvContent = [
         headers.join(','),
-        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
       ].join('\n')
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
-      
+
       const timestamp = new Date().toISOString().split('T')[0]
       a.setAttribute('href', url)
       a.setAttribute('download', `base_regional_performance_${timestamp}.csv`)
       a.style.display = 'none'
-      
+
       document.body.appendChild(a)
       a.click()
-      
+
       setTimeout(() => {
         document.body.removeChild(a)
         window.URL.revokeObjectURL(url)
       }, 100)
 
       setIsExporting(false)
-      toast.success("The regional performance report has been successfully generated.")
+      toast.success('The regional performance report has been successfully generated.')
     } catch (error) {
       console.error('[DASHBOARD] Export failure:', error)
       setIsExporting(false)
-      toast.error("A critical error occurred during data aggregation.")
+      toast.error('A critical error occurred during data aggregation.')
     }
   }
-
-
-
 
   return (
     <div className="main">
@@ -196,26 +200,23 @@ export default function AdminDashboard() {
           </div>
         </div>
         <div className="actions">
-          <button 
-            className="btn btn-outline btn-sm"
-            onClick={handleExport}
-            disabled={isExporting}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>file_download</span>
+          <button className="btn btn-outline btn-sm" onClick={handleExport} disabled={isExporting}>
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>
+              file_download
+            </span>
             {isExporting ? 'Exporting...' : 'Export'}
           </button>
-          <button 
-            className="btn btn-dest btn-sm"
-            onClick={() => navigate('/admin/broadcasts')}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>notifications_active</span>
+          <button className="btn btn-dest btn-sm" onClick={() => navigate('/admin/broadcasts')}>
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>
+              notifications_active
+            </span>
             Send broadcast
           </button>
         </div>
       </div>
 
       {/* KPI strip */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-[14px] mb-[18px]">
+      <div className="kpis">
         {isLoading ? (
           <>
             <div className="card red animate-pulse h-48 bg-white" />
@@ -227,32 +228,53 @@ export default function AdminDashboard() {
           <>
             {globalStats.length > 0 ? (
               globalStats.map((stat, idx) => (
-                <KPI 
+                <KPI
                   key={stat.label}
                   variant={idx === 0 ? 'r' : idx === 1 ? 'g' : idx === 2 ? 'k' : 'gr'}
                   label={stat.label}
                   value={stat.value}
                   delta={stat.change}
                   description={
-                    idx === 0 ? "Total verified citizens registered across the national movement database." :
-                    idx === 1 ? "Strategic financial inflows from contributions and official merchandise sales." :
-                    idx === 2 ? "Member applications currently in the queue for administrative identity verification." :
-                    "Administrators and field coordinators currently active in the Command Center."
+                    idx === 0
+                      ? 'Total verified citizens registered across the national movement database.'
+                      : idx === 1
+                        ? 'Strategic financial inflows from contributions and official merchandise sales.'
+                        : idx === 2
+                          ? 'Member applications currently in the queue for administrative identity verification.'
+                          : 'Administrators and field coordinators currently active in the Command Center.'
                   }
                 />
               ))
             ) : (
               <>
-                <KPI 
-                  variant="r" 
-                  label="Verifications pending" 
-                  value={pendingVerifications.length.toString()} 
-                  delta="Syncing..." 
+                <KPI
+                  variant="r"
+                  label="Verifications pending"
+                  value={pendingVerifications.length.toString()}
+                  delta="Syncing..."
                   description="Member applications currently in the queue for administrative identity verification."
                 />
-                <KPI variant="g" label="Patriots" value="--" delta="--" description="Total verified citizens registered across the national movement database." />
-                <KPI variant="k" label="Logistics" value="--" delta="--" description="Order fulfillment and logistics asset distribution status." />
-                <KPI variant="gr" label="Field" value="--" delta="--" description="Administrators and field coordinators currently active in the Command Center." />
+                <KPI
+                  variant="g"
+                  label="Patriots"
+                  value="--"
+                  delta="--"
+                  description="Total verified citizens registered across the national movement database."
+                />
+                <KPI
+                  variant="k"
+                  label="Logistics"
+                  value="--"
+                  delta="--"
+                  description="Order fulfillment and logistics asset distribution status."
+                />
+                <KPI
+                  variant="gr"
+                  label="Field"
+                  value="--"
+                  delta="--"
+                  description="Administrators and field coordinators currently active in the Command Center."
+                />
               </>
             )}
           </>
@@ -260,113 +282,165 @@ export default function AdminDashboard() {
       </div>
 
       <div className="twocol">
-        
         {/* Verification queue */}
         <div className="panel">
           <div className="ph">
             <div>
               <h3>ID verification queue</h3>
-              <div className="meta">{pendingVerifications.length} pending · sorted by oldest first</div>
+              <div className="meta">
+                {pendingVerifications.length} pending · sorted by oldest first
+              </div>
             </div>
-            <button className="btn btn-outline btn-sm" onClick={() => navigate('/admin/verification')}>View all</button>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => navigate('/admin/verification')}
+            >
+              View all
+            </button>
           </div>
           <div style={{ overflowX: 'auto' }}>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Member</th>
-                <th>Reg. no.</th>
-                <th>Region</th>
-                <th>Submitted</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {pendingVerifications.slice(0, 5).map((member) => (
-                <tr key={member.id}>
-                  <td>
-                    <div className="who">
-                      <div className="w-8 h-8 rounded-full bg-muted/10 flex items-center justify-center text-micro font-bold">
-                        {member.name[0]}
-                      </div>
-                      <div>
-                        <b>{member.name}</b>
-                        <span>{member.phone}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span className="reg">{member.id.slice(0, 8).toUpperCase()}</span></td>
-                  <td>{member.chapter || member.region}</td>
-                  <td>{new Date(member.submitted).toLocaleDateString()}</td>
-                  <td>
-                    <span className={cn("pill", (member.status === 'Processing' || member.status === 'In Review') ? "pill-warn" : "pill-ok")}>
-                      {member.status}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="row-actions">
-                      <button className="ico ok" onClick={() => navigate(`/admin/verification?id=${member.id}`)}>
-                        <span className="material-symbols-outlined">check</span>
-                      </button>
-                      <button className="ico no" onClick={async () => { await adminService.verifyMember(member.id, false); setPendingVerifications(prev => prev.filter(m => m.id !== member.id)) }}>
-                        <span className="material-symbols-outlined">close</span>
-                      </button>
-                      <button className="ico" onClick={() => navigate(`/admin/verification?id=${member.id}`)}>
-                        <span className="material-symbols-outlined">visibility</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {pendingVerifications.length === 0 && (
+            <table className="table">
+              <thead>
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-on-surface-muted text-tiny italic font-bold">
-                    All verifications complete. Operational baseline maintained.
-                  </td>
+                  <th>Member</th>
+                  <th>Reg. no.</th>
+                  <th>Region</th>
+                  <th>Submitted</th>
+                  <th>Status</th>
+                  <th></th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {pendingVerifications.slice(0, 5).map((member) => (
+                  <tr key={member.id}>
+                    <td>
+                      <div className="who">
+                        <div className="w-8 h-8 rounded-full bg-muted/10 flex items-center justify-center text-micro font-bold">
+                          {member.name[0]}
+                        </div>
+                        <div>
+                          <b>{member.name}</b>
+                          <span>{member.phone}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="reg">{member.id.slice(0, 8).toUpperCase()}</span>
+                    </td>
+                    <td>{member.chapter || member.region}</td>
+                    <td>{new Date(member.submitted).toLocaleDateString()}</td>
+                    <td>
+                      <span
+                        className={cn(
+                          'pill',
+                          member.status === 'Processing' || member.status === 'In Review'
+                            ? 'pill-warn'
+                            : 'pill-ok'
+                        )}
+                      >
+                        {member.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="row-actions">
+                        <button
+                          className="ico ok"
+                          onClick={() => navigate(`/admin/verification?id=${member.id}`)}
+                        >
+                          <span className="material-symbols-outlined">check</span>
+                        </button>
+                        <button
+                          className="ico no"
+                          onClick={async () => {
+                            await adminService.verifyMember(member.id, false)
+                            setPendingVerifications((prev) =>
+                              prev.filter((m) => m.id !== member.id)
+                            )
+                          }}
+                        >
+                          <span className="material-symbols-outlined">close</span>
+                        </button>
+                        <button
+                          className="ico"
+                          onClick={() => navigate(`/admin/verification?id=${member.id}`)}
+                        >
+                          <span className="material-symbols-outlined">visibility</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {pendingVerifications.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center py-8 text-on-surface-muted text-tiny italic font-bold"
+                    >
+                      All verifications complete. Operational baseline maintained.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 
         {/* Right column: composer + log */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          
           {/* Broadcast composer */}
           <div className="panel compose">
             <div className="ph">
               <h3>New broadcast</h3>
               <span className="pill pill-mute">Mission Control</span>
             </div>
-            
+
             <div className="field">
-              <label htmlFor="input-b97fc0" className="lbl">Headline</label>
-              <input name="name-b97fc0" id="input-b97fc0" 
-                className="title" 
+              <label htmlFor="input-b97fc0" className="lbl">
+                Headline
+              </label>
+              <input
+                name="name-b97fc0"
+                id="input-b97fc0"
+                className="title"
                 value={broadcast.title}
                 onChange={(e) => setBroadcast({ ...broadcast, title: e.target.value })}
                 placeholder="Mobilization directive..."
               />
             </div>
-            
+
             <div className="field">
-              <label htmlFor="textarea-daf71f" className="lbl">Message</label>
-              <textarea name="name-daf71f" id="textarea-daf71f" 
+              <label htmlFor="textarea-daf71f" className="lbl">
+                Message
+              </label>
+              <textarea
+                name="name-daf71f"
+                id="textarea-daf71f"
                 value={broadcast.content}
                 onChange={(e) => setBroadcast({ ...broadcast, content: e.target.value })}
                 placeholder="Tactical update content..."
                 style={{ minHeight: '80px' }}
               />
             </div>
-            
+
             <div className="field">
-              <label htmlFor="select-50d2d6" className="lbl">Target Audience</label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
-                <select name="name-50d2d6" id="select-50d2d6" 
-                  className="reg" 
-                  style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))', width: '100%' }}
+              <label htmlFor="select-50d2d6" className="lbl">
+                Target Audience
+              </label>
+              <div
+                style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}
+              >
+                <select
+                  name="name-50d2d6"
+                  id="select-50d2d6"
+                  className="reg"
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    fontSize: '11px',
+                    padding: '4px 8px',
+                    color: 'hsl(var(--on-surface))',
+                    width: '100%',
+                  }}
                   value={broadcast.target_type}
                   onChange={(e) => {
                     const type = e.target.value as Broadcast['target_type']
@@ -379,19 +453,31 @@ export default function AdminDashboard() {
                   <option value="CONSTITUENCY">Constituency Targeting</option>
                   <option value="DIASPORA">Diaspora Chapters</option>
                 </select>
-                
+
                 {broadcast.target_type === 'REGION' && (
                   <>
-                    <label htmlFor="select-e1e9ef" style={{ display: 'none' }}>Target Region</label>
-                    <select name="name-e1e9ef" id="select-e1e9ef" 
+                    <label htmlFor="select-e1e9ef" style={{ display: 'none' }}>
+                      Target Region
+                    </label>
+                    <select
+                      name="name-e1e9ef"
+                      id="select-e1e9ef"
                       className="reg"
                       value={broadcast.target_value}
                       onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))' }}
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid var(--border)',
+                        fontSize: '11px',
+                        padding: '4px 8px',
+                        color: 'hsl(var(--on-surface))',
+                      }}
                     >
                       <option value="ALL">Select Region...</option>
-                      {regions.map(r => (
-                        <option key={r.id} value={r.name}>{r.name}</option>
+                      {regions.map((r) => (
+                        <option key={r.id} value={r.name}>
+                          {r.name}
+                        </option>
                       ))}
                     </select>
                   </>
@@ -399,8 +485,12 @@ export default function AdminDashboard() {
 
                 {broadcast.target_type === 'CONSTITUENCY' && (
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <label htmlFor="select-dac9b9" style={{ display: 'none' }}>Filter Region</label>
-                    <select name="selectedRegionId || ''" id="select-dac9b9" 
+                    <label htmlFor="select-dac9b9" style={{ display: 'none' }}>
+                      Filter Region
+                    </label>
+                    <select
+                      name="selectedRegionId || ''"
+                      id="select-dac9b9"
                       className="reg"
                       value={selectedRegionId || ''}
                       onChange={(e) => {
@@ -408,27 +498,49 @@ export default function AdminDashboard() {
                         setSelectedRegionId(id)
                         setBroadcast({ ...broadcast, target_value: 'ALL' })
                       }}
-                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))', flex: 1 }}
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid var(--border)',
+                        fontSize: '11px',
+                        padding: '4px 8px',
+                        color: 'hsl(var(--on-surface))',
+                        flex: 1,
+                      }}
                     >
                       <option value="">Filter by Region...</option>
-                      {regions.map(r => (
-                        <option key={r.id} value={r.id}>{r.name}</option>
+                      {regions.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
                       ))}
                     </select>
 
-                    <label htmlFor="select-81066f" style={{ display: 'none' }}>Target Constituency</label>
-                    <select name="name-81066f" id="select-81066f" 
+                    <label htmlFor="select-81066f" style={{ display: 'none' }}>
+                      Target Constituency
+                    </label>
+                    <select
+                      name="name-81066f"
+                      id="select-81066f"
                       className="reg"
                       value={broadcast.target_value}
                       onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))', flex: 2 }}
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid var(--border)',
+                        fontSize: '11px',
+                        padding: '4px 8px',
+                        color: 'hsl(var(--on-surface))',
+                        flex: 2,
+                      }}
                       disabled={!selectedRegionId}
                     >
                       <option value="ALL">Select Constituency...</option>
                       {constituencies
-                        .filter(c => !selectedRegionId || c.region_id === selectedRegionId)
-                        .map(c => (
-                          <option key={c.id} value={c.name}>{c.name}</option>
+                        .filter((c) => !selectedRegionId || c.region_id === selectedRegionId)
+                        .map((c) => (
+                          <option key={c.id} value={c.name}>
+                            {c.name}
+                          </option>
                         ))}
                     </select>
                   </div>
@@ -436,16 +548,28 @@ export default function AdminDashboard() {
 
                 {broadcast.target_type === 'DIASPORA' && (
                   <>
-                    <label htmlFor="select-ab1a39" style={{ display: 'none' }}>Target Diaspora Chapter</label>
-                    <select name="name-ab1a39" id="select-ab1a39" 
+                    <label htmlFor="select-ab1a39" style={{ display: 'none' }}>
+                      Target Diaspora Chapter
+                    </label>
+                    <select
+                      name="name-ab1a39"
+                      id="select-ab1a39"
                       className="reg"
                       value={broadcast.target_value}
                       onChange={(e) => setBroadcast({ ...broadcast, target_value: e.target.value })}
-                      style={{ background: 'transparent', border: '1px solid var(--border)', fontSize: '11px', padding: '4px 8px', color: 'hsl(var(--on-surface))' }}
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid var(--border)',
+                        fontSize: '11px',
+                        padding: '4px 8px',
+                        color: 'hsl(var(--on-surface))',
+                      }}
                     >
                       <option value="ALL">All Diaspora Chapters</option>
-                      {diasporaChapters.map(c => (
-                        <option key={c.id} value={c.name}>{c.name} ({c.country})</option>
+                      {diasporaChapters.map((c) => (
+                        <option key={c.id} value={c.name}>
+                          {c.name} ({c.country})
+                        </option>
                       ))}
                     </select>
                   </>
@@ -455,24 +579,58 @@ export default function AdminDashboard() {
 
             <div className="toolbar">
               <div className="left">
-                <label htmlFor="select-b728c8" style={{ display: 'none' }}>Broadcast Priority</label>
-                <select name="name-b728c8" id="select-b728c8" 
+                <label htmlFor="select-b728c8" style={{ display: 'none' }}>
+                  Broadcast Priority
+                </label>
+                <select
+                  name="name-b728c8"
+                  id="select-b728c8"
                   className="reg"
                   value={broadcast.priority}
-                  onChange={(e) => setBroadcast({ ...broadcast, priority: e.target.value as Broadcast['priority'] })}
-                  style={{ background: 'transparent', border: 'none', fontSize: '10px', color: 'hsl(var(--on-surface-muted))', cursor: 'pointer' }}
+                  onChange={(e) =>
+                    setBroadcast({
+                      ...broadcast,
+                      priority: e.target.value as Broadcast['priority'],
+                    })
+                  }
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    fontSize: '10px',
+                    color: 'hsl(var(--on-surface-muted))',
+                    cursor: 'pointer',
+                  }}
                 >
                   <option value="Normal">Normal</option>
                   <option value="High">High</option>
                   <option value="Urgent">URGENT</option>
                 </select>
-                <div style={{ width: '1px', height: '12px', background: 'hsl(var(--border))', margin: '0 8px' }} />
-                <label htmlFor="select-0f0d2a" style={{ display: 'none' }}>Communication Channel</label>
-                <select name="name-0f0d2a" id="select-0f0d2a" 
+                <div
+                  style={{
+                    width: '1px',
+                    height: '12px',
+                    background: 'hsl(var(--border))',
+                    margin: '0 8px',
+                  }}
+                />
+                <label htmlFor="select-0f0d2a" style={{ display: 'none' }}>
+                  Communication Channel
+                </label>
+                <select
+                  name="name-0f0d2a"
+                  id="select-0f0d2a"
                   className="reg"
                   value={broadcast.channel}
-                  onChange={(e) => setBroadcast({ ...broadcast, channel: e.target.value as Broadcast['channel'] })}
-                  style={{ background: 'transparent', border: 'none', fontSize: '10px', color: 'hsl(var(--on-surface-muted))', cursor: 'pointer' }}
+                  onChange={(e) =>
+                    setBroadcast({ ...broadcast, channel: e.target.value as Broadcast['channel'] })
+                  }
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    fontSize: '10px',
+                    color: 'hsl(var(--on-surface-muted))',
+                    cursor: 'pointer',
+                  }}
                 >
                   <option value="In-app">In-App</option>
                   <option value="SMS">SMS</option>
@@ -481,8 +639,8 @@ export default function AdminDashboard() {
                 </select>
               </div>
               <div style={{ display: 'flex', gap: '6px' }}>
-                <button 
-                  className="btn btn-dest btn-sm" 
+                <button
+                  className="btn btn-dest btn-sm"
                   disabled={isSending}
                   onClick={handleSendBroadcast}
                 >
@@ -502,17 +660,28 @@ export default function AdminDashboard() {
               {auditLogs.slice(0, 4).map((log) => (
                 <div key={log.id} className="log-row">
                   <span className="stamp">
-                    {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(log.timestamp).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </span>
                   <div className="body">
-                    <p><b>{log.adminName.split(' ')[0]}</b> {log.action.toLowerCase().replace('_', ' ')}</p>
+                    <p>
+                      <b>{log.adminName.split(' ')[0]}</b>{' '}
+                      {log.action.toLowerCase().replace('_', ' ')}
+                    </p>
                     <span>{log.resource}</span>
                   </div>
-                  <span className={cn(
-                    "tag",
-                    log.action.includes('CREATE') ? "create" : 
-                    log.action.includes('DELETE') ? "delete" : "edit"
-                  )}>
+                  <span
+                    className={cn(
+                      'tag',
+                      log.action.includes('CREATE')
+                        ? 'create'
+                        : log.action.includes('DELETE')
+                          ? 'delete'
+                          : 'edit'
+                    )}
+                  >
                     {log.action.split('_')[0]}
                   </span>
                 </div>
@@ -524,10 +693,8 @@ export default function AdminDashboard() {
               )}
             </div>
           </div>
-
         </div>
       </div>
     </div>
   )
 }
-
