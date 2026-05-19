@@ -10,7 +10,6 @@ import type {
   GrowthTrend,
   Broadcast,
 } from '@/types/admin'
-import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
@@ -50,8 +49,13 @@ function LiveClock() {
 
   return (
     <span
-      className="font-extrabold text-[13px] tabular-nums tracking-[.04em]"
-      style={{ color: 'hsl(var(--accent))' }}
+      style={{
+        fontWeight: 800,
+        fontSize: 13,
+        fontVariantNumeric: 'tabular-nums',
+        letterSpacing: '.04em',
+        color: 'hsl(var(--accent))',
+      }}
     >
       {display} GMT
     </span>
@@ -409,28 +413,54 @@ export default function WarRoomCommand() {
         </div>
 
         {/* ── 3-column grid: Map · Table · Feed ── */}
-        <div className="war-room-main-grid mb-[12px]">
+        <div className="war-room-main-grid" style={{ marginBottom: 12 }}>
           {/* Map panel */}
           <div
-            className="rounded-[6px] overflow-hidden flex flex-col h-full"
-            style={{ background: 'rgba(17,22,18,.5)', border: '1px solid #1c221e' }}
+            style={{
+              borderRadius: 6,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              background: 'rgba(17,22,18,.5)',
+              border: '1px solid #1c221e',
+            }}
           >
             <div
-              className="px-4 py-3 flex justify-between items-center"
-              style={{ borderBottom: '1px solid #1c221e' }}
+              style={{
+                padding: '10px 16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '1px solid #1c221e',
+              }}
             >
-              <h3 className="font-extrabold text-[12.5px] text-white">Ghana · live ground game</h3>
-              <span className="text-[10px] font-bold" style={{ color: 'rgba(255,255,255,.4)' }}>
+              <h3
+                style={{
+                  fontWeight: 800,
+                  fontSize: 12.5,
+                  color: 'white',
+                  margin: 0,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                Ghana · live ground game
+              </h3>
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.4)' }}>
                 {regionalStats.length} regions tracked
               </span>
             </div>
             <div
-              className="relative flex-1 min-h-[320px] sm:min-h-[450px]"
-              style={{ background: 'radial-gradient(ellipse at center, #1c2620 0%, #0a0d0b 70%)' }}
+              style={{
+                position: 'relative',
+                flex: 1,
+                minHeight: 450,
+                background: 'radial-gradient(ellipse at center, #1c2620 0%, #0a0d0b 70%)',
+              }}
             >
               <svg
                 viewBox="0 0 400 500"
-                className="w-full h-full"
+                style={{ width: '100%', height: '100%' }}
                 preserveAspectRatio="xMidYMid meet"
                 stroke="#ffffff11"
                 strokeWidth="0.5"
@@ -516,7 +546,7 @@ export default function WarRoomCommand() {
                         id={r.id}
                         d={r.d}
                         fill={fillColor}
-                        className="transition-all duration-300 cursor-crosshair hover:fill-white/20"
+                        className="war-room-district"
                         onMouseEnter={() =>
                           setHoveredRegion(
                             stat || {
@@ -569,26 +599,52 @@ export default function WarRoomCommand() {
                     return (
                       <div
                         key={r.region}
-                        className="absolute"
-                        style={{ left: coords.x, top: coords.y, transform: 'translate(-50%,-50%)' }}
+                        style={{
+                          position: 'absolute',
+                          left: coords.x,
+                          top: coords.y,
+                          transform: 'translate(-50%,-50%)',
+                        }}
                       >
-                        <div className="relative">
+                        <div style={{ position: 'relative' }}>
                           <div
-                            className="w-[8px] h-[8px] rounded-full absolute"
                             style={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: '50%',
+                              position: 'absolute',
                               background: color,
                               boxShadow: `0 0 0 2px rgba(0,0,0,.6), 0 0 12px ${color}`,
                             }}
                           />
                           {r.performance === 'Low' && (
                             <div
-                              className="absolute rounded-full border border-current animate-ping"
-                              style={{ inset: -8, color: color, opacity: 0.6 }}
+                              className="animate-ping"
+                              style={{
+                                position: 'absolute',
+                                borderRadius: '50%',
+                                border: '1px solid currentColor',
+                                inset: -8,
+                                color: color,
+                                opacity: 0.6,
+                              }}
                             />
                           )}
                           <div
-                            className="absolute left-[12px] top-[-10px] text-white text-[8px] font-extrabold whitespace-nowrap px-1.5 py-0.5 rounded-[2px] border"
-                            style={{ background: 'rgba(0,0,0,.8)', borderColor: '#1c221e' }}
+                            style={{
+                              position: 'absolute',
+                              left: 12,
+                              top: -10,
+                              color: 'white',
+                              fontSize: 8,
+                              fontWeight: 800,
+                              whiteSpace: 'nowrap',
+                              padding: '2px 6px',
+                              borderRadius: 2,
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              background: 'rgba(0,0,0,.8)',
+                              borderColor: '#1c221e',
+                            }}
                           >
                             <span style={{ color }}>{r.region}</span> ·{' '}
                             {r.memberCount.toLocaleString()}
@@ -601,32 +657,57 @@ export default function WarRoomCommand() {
 
               {/* Legend */}
               <div
-                className="absolute bottom-3 left-3 right-3 flex gap-[14px] px-3 py-[10px] text-[9.5px] font-extrabold rounded-[4px] border"
                 style={{
+                  position: 'absolute',
+                  bottom: 12,
+                  left: 12,
+                  right: 12,
+                  display: 'flex',
+                  gap: 14,
+                  padding: '10px 12px',
+                  fontSize: 9.5,
+                  fontWeight: 800,
+                  borderRadius: 4,
+                  border: '1px solid rgba(255,255,255,0.1)',
                   color: 'rgba(255,255,255,.7)',
                   background: 'rgba(0,0,0,.6)',
                   borderColor: '#1c221e',
                   backdropFilter: 'blur(8px)',
                 }}
               >
-                <span className="flex items-center gap-[5px]">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <span
-                    className="w-2 h-2 rounded-full inline-block"
-                    style={{ background: 'hsl(var(--primary))' }}
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      background: 'hsl(var(--primary))',
+                    }}
                   />
                   Active
                 </span>
-                <span className="flex items-center gap-[5px]">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <span
-                    className="w-2 h-2 rounded-full inline-block"
-                    style={{ background: 'hsl(var(--accent))' }}
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      background: 'hsl(var(--accent))',
+                    }}
                   />
                   Below target
                 </span>
-                <span className="flex items-center gap-[5px]">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <span
-                    className="w-2 h-2 rounded-full inline-block"
-                    style={{ background: 'hsl(var(--destructive))' }}
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      background: 'hsl(var(--destructive))',
+                    }}
                   />
                   Alert
                 </span>
@@ -634,26 +715,69 @@ export default function WarRoomCommand() {
 
               {/* Hover Tooltip */}
               {hoveredRegion && (
-                <div className="absolute top-4 right-4 p-3 rounded-[6px] border border-white/10 bg-black/80 backdrop-blur-md z-50 pointer-events-none min-w-[140px]">
-                  <div className="text-[10px] font-bold text-white/40 mb-1">
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    padding: 12,
+                    borderRadius: 6,
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'rgba(0,0,0,0.8)',
+                    zIndex: 50,
+                    pointerEvents: 'none',
+                    minWidth: 140,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: 'rgba(255,255,255,0.4)',
+                      marginBottom: 4,
+                    }}
+                  >
                     {hoveredRegion.region}
                   </div>
-                  <div className="text-[16px] font-extrabold text-white mb-2 leading-none">
+                  <div
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 800,
+                      color: 'white',
+                      marginBottom: 8,
+                      lineHeight: 1,
+                    }}
+                  >
                     {hoveredRegion.memberCount.toLocaleString()}{' '}
-                    <span className="text-[10px] font-bold text-white/40">patriots</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>
+                      patriots
+                    </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 border-t border-white/5 pt-2">
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: 8,
+                      borderTop: '1px solid rgba(255,255,255,0.05)',
+                      paddingTop: 8,
+                    }}
+                  >
                     <div>
-                      <div className="text-[8px] font-bold text-white/30">Chapters</div>
-                      <div className="text-[11px] font-extrabold text-white">
+                      <div style={{ fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>
+                        Chapters
+                      </div>
+                      <div style={{ fontSize: 11, fontWeight: 800, color: 'white' }}>
                         {hoveredRegion.chapters}
                       </div>
                     </div>
                     <div>
-                      <div className="text-[8px] font-bold text-white/30">Pulse</div>
+                      <div style={{ fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>
+                        Pulse
+                      </div>
                       <div
-                        className="text-[11px] font-extrabold"
                         style={{
+                          fontSize: 11,
+                          fontWeight: 800,
                           color:
                             hoveredRegion.performance === 'High'
                               ? 'hsl(var(--primary))'
@@ -673,28 +797,44 @@ export default function WarRoomCommand() {
 
           {/* Regional table */}
           <div
-            className="rounded-[6px] overflow-hidden flex flex-col h-full"
-            style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
+            style={{
+              borderRadius: 6,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              background: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
+            }}
           >
             <div
-              className="px-4 py-3 flex justify-between items-center"
-              style={{ borderBottom: '1px solid hsl(var(--border))' }}
+              style={{
+                padding: '10px 16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
             >
               <h3
-                className="font-extrabold text-[12.5px]"
-                style={{ color: 'hsl(var(--on-surface))' }}
+                style={{
+                  fontWeight: 800,
+                  fontSize: 12.5,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
               >
                 Regions · pace to goal
               </h3>
               <span
-                className="text-[10px] font-bold"
-                style={{ color: 'hsl(var(--on-surface-muted))' }}
+                style={{ fontSize: 10, fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}
               >
                 Ytd
               </span>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-[11.5px]" style={{ borderCollapse: 'collapse' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', fontSize: 11.5, borderCollapse: 'collapse' }}>
                 <thead>
                   <tr
                     style={{
@@ -703,20 +843,34 @@ export default function WarRoomCommand() {
                     }}
                   >
                     <th
-                      className="text-left px-4 py-2 text-[10px] font-extrabold"
-                      style={{ color: 'hsl(var(--on-surface-muted))' }}
+                      style={{
+                        textAlign: 'left',
+                        padding: '6px 16px',
+                        fontSize: 10,
+                        fontWeight: 800,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
                     >
                       Region
                     </th>
                     <th
-                      className="text-right px-4 py-2 text-[10px] font-extrabold"
-                      style={{ color: 'hsl(var(--on-surface-muted))' }}
+                      style={{
+                        textAlign: 'right',
+                        padding: '6px 16px',
+                        fontSize: 10,
+                        fontWeight: 800,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
                     >
                       Members
                     </th>
                     <th
-                      className="px-4 py-2 text-[10px] font-extrabold"
-                      style={{ color: 'hsl(var(--on-surface-muted))' }}
+                      style={{
+                        padding: '6px 16px',
+                        fontSize: 10,
+                        fontWeight: 800,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
                     >
                       % goal
                     </th>
@@ -740,25 +894,39 @@ export default function WarRoomCommand() {
                         }}
                       >
                         <td
-                          className="px-4 py-2 font-extrabold"
-                          style={{ color: 'hsl(var(--on-surface))' }}
+                          style={{
+                            padding: '6px 16px',
+                            fontWeight: 800,
+                            color: 'hsl(var(--on-surface))',
+                          }}
                         >
                           {r.region}
                         </td>
                         <td
-                          className="px-4 py-2 text-right font-extrabold tabular-nums"
-                          style={{ color: 'hsl(var(--on-surface))' }}
+                          style={{
+                            padding: '6px 16px',
+                            textAlign: 'right',
+                            fontWeight: 800,
+                            fontVariantNumeric: 'tabular-nums',
+                            color: 'hsl(var(--on-surface))',
+                          }}
                         >
                           {r.memberCount.toLocaleString()}
                         </td>
-                        <td className="px-4 py-2">
+                        <td style={{ padding: '6px 16px' }}>
                           <div
-                            className="w-20 h-1 rounded-full overflow-hidden"
-                            style={{ background: 'hsl(var(--border))' }}
+                            style={{
+                              width: 80,
+                              height: 4,
+                              borderRadius: 9999,
+                              overflow: 'hidden',
+                              background: 'hsl(var(--border))',
+                            }}
                           >
                             <div
-                              className="h-full rounded-full"
                               style={{
+                                height: '100%',
+                                borderRadius: 9999,
                                 width: `${Math.min(100, Math.floor((r.memberCount / 5000) * 100))}%`,
                                 background:
                                   r.performance === 'High'
@@ -780,43 +948,84 @@ export default function WarRoomCommand() {
 
           {/* Activity stream */}
           <div
-            className="rounded-[6px] overflow-hidden flex flex-col h-full"
-            style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
+            style={{
+              borderRadius: 6,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              background: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
+            }}
           >
             <div
-              className="flex border-b shrink-0"
-              style={{ background: 'hsl(var(--container-low))', borderColor: 'hsl(var(--border))' }}
+              style={{
+                display: 'flex',
+                borderBottom: '1px solid hsl(var(--border))',
+                flexShrink: 0,
+                background: 'hsl(var(--container-low))',
+              }}
             >
               <button
                 onClick={() => setActiveTab('activity')}
-                className={cn(
-                  'px-4 py-3 text-[11px] font-bold transition-all border-b-2',
-                  activeTab === 'activity'
-                    ? 'text-primary border-primary bg-primary/5'
-                    : 'text-on-surface-muted border-transparent hover:text-on-surface'
-                )}
+                style={{
+                  padding: '10px 16px',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  border: 'none',
+                  borderBottom: `2px solid ${activeTab === 'activity' ? 'hsl(var(--primary))' : 'transparent'}`,
+                  background:
+                    activeTab === 'activity' ? 'hsl(var(--container-low))' : 'transparent',
+                  color:
+                    activeTab === 'activity'
+                      ? 'hsl(var(--primary))'
+                      : 'hsl(var(--on-surface-muted))',
+                  cursor: 'pointer',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
               >
                 Tactical stream
               </button>
               <button
                 onClick={() => setActiveTab('intelligence')}
-                className={cn(
-                  'px-4 py-3 text-[11px] font-bold transition-all border-b-2',
-                  activeTab === 'intelligence'
-                    ? 'text-primary border-primary bg-primary/5'
-                    : 'text-on-surface-muted border-transparent hover:text-on-surface'
-                )}
+                style={{
+                  padding: '10px 16px',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  border: 'none',
+                  borderBottom: `2px solid ${activeTab === 'intelligence' ? 'hsl(var(--primary))' : 'transparent'}`,
+                  background:
+                    activeTab === 'intelligence' ? 'hsl(var(--container-low))' : 'transparent',
+                  color:
+                    activeTab === 'intelligence'
+                      ? 'hsl(var(--primary))'
+                      : 'hsl(var(--on-surface-muted))',
+                  cursor: 'pointer',
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
               >
                 Intelligence center
               </button>
             </div>
-            <div className="overflow-y-auto flex-1 px-4 sidebar-scroll">
+            <div
+              className="sidebar-scroll"
+              style={{ overflowY: 'auto', flex: 1, padding: '0 16px' }}
+            >
               {(
                 activeTab === 'activity'
                   ? directives.length === 0 && broadcasts.length === 0
                   : incidents.length === 0 && narratives.length === 0
               ) ? (
-                <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '48px 0',
+                    gap: 12,
+                  }}
+                >
                   <span
                     className="material-symbols-outlined"
                     style={{ fontSize: 32, color: 'hsl(var(--primary))' }}
@@ -824,8 +1033,11 @@ export default function WarRoomCommand() {
                     check_circle
                   </span>
                   <p
-                    className="text-[10.5px] font-bold"
-                    style={{ color: 'hsl(var(--on-surface-muted))' }}
+                    style={{
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
                   >
                     Sector clear
                   </p>
@@ -837,12 +1049,24 @@ export default function WarRoomCommand() {
                       {directives.slice(0, 10).map((dir) => (
                         <div
                           key={dir.id}
-                          className="flex gap-[10px] py-[11px]"
-                          style={{ borderBottom: '1px solid hsl(var(--border))' }}
+                          style={{
+                            display: 'flex',
+                            gap: 10,
+                            padding: '11px 0',
+                            borderBottom: '1px solid hsl(var(--border))',
+                          }}
                         >
                           <div
-                            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                            style={{ background: 'hsl(var(--primary))' }}
+                            style={{
+                              width: 28,
+                              height: 28,
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                              background: 'hsl(var(--primary))',
+                            }}
                           >
                             <span
                               className="material-symbols-outlined"
@@ -851,21 +1075,24 @@ export default function WarRoomCommand() {
                               bolt
                             </span>
                           </div>
-                          <div className="flex-1 min-w-0">
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <p
-                              className="text-[11.5px] leading-[1.45]"
-                              style={{ color: 'hsl(var(--on-surface))' }}
+                              style={{
+                                fontSize: 11.5,
+                                lineHeight: 1.45,
+                                color: 'hsl(var(--on-surface))',
+                              }}
                             >
-                              <b
-                                className="font-extrabold"
-                                style={{ color: 'hsl(var(--on-surface))' }}
-                              >
+                              <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
                                 {dir.title}
                               </b>
                             </p>
                             <span
-                              className="text-[9.5px] font-bold"
-                              style={{ color: 'hsl(var(--on-surface-muted))' }}
+                              style={{
+                                fontSize: 9.5,
+                                fontWeight: 700,
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
                             >
                               {dir.target_region} · {dir.priority.toLowerCase()}
                             </span>
@@ -875,12 +1102,22 @@ export default function WarRoomCommand() {
                       {broadcasts.slice(0, 10).map((b) => (
                         <div
                           key={b.id}
-                          className="flex gap-[10px] py-[11px]"
-                          style={{ borderBottom: '1px solid hsl(var(--border))' }}
+                          style={{
+                            display: 'flex',
+                            gap: 10,
+                            padding: '11px 0',
+                            borderBottom: '1px solid hsl(var(--border))',
+                          }}
                         >
                           <div
-                            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
                             style={{
+                              width: 28,
+                              height: 28,
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
                               background:
                                 b.priority === 'Urgent'
                                   ? 'hsl(var(--destructive))'
@@ -894,21 +1131,24 @@ export default function WarRoomCommand() {
                               campaign
                             </span>
                           </div>
-                          <div className="flex-1 min-w-0">
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <p
-                              className="text-[11.5px] leading-[1.45]"
-                              style={{ color: 'hsl(var(--on-surface))' }}
+                              style={{
+                                fontSize: 11.5,
+                                lineHeight: 1.45,
+                                color: 'hsl(var(--on-surface))',
+                              }}
                             >
-                              <b
-                                className="font-extrabold"
-                                style={{ color: 'hsl(var(--on-surface))' }}
-                              >
+                              <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
                                 {b.title}
                               </b>
                             </p>
                             <span
-                              className="text-[9.5px] font-bold"
-                              style={{ color: 'hsl(var(--on-surface-muted))' }}
+                              style={{
+                                fontSize: 9.5,
+                                fontWeight: 700,
+                                color: 'hsl(var(--on-surface-muted))',
+                              }}
                             >
                               {b.target_type === 'ALL' ? 'National' : b.target_value} ·{' '}
                               {formatGhanaTime(b.created_at, {
@@ -927,12 +1167,22 @@ export default function WarRoomCommand() {
                       {incidents.map((inc) => (
                         <div
                           key={inc.id}
-                          className="flex gap-[10px] py-[11px]"
-                          style={{ borderBottom: '1px solid hsl(var(--border))' }}
+                          style={{
+                            display: 'flex',
+                            gap: 10,
+                            padding: '11px 0',
+                            borderBottom: '1px solid hsl(var(--border))',
+                          }}
                         >
                           <div
-                            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
                             style={{
+                              width: 28,
+                              height: 28,
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
                               background:
                                 inc.severity === 'DEFCON1' || inc.severity === 'SEVERE'
                                   ? 'hsl(var(--destructive))'
@@ -946,23 +1196,31 @@ export default function WarRoomCommand() {
                               warning
                             </span>
                           </div>
-                          <div className="flex-1 min-w-0">
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <p
-                              className="text-[11.5px] leading-[1.45]"
-                              style={{ color: 'hsl(var(--on-surface))' }}
+                              style={{
+                                fontSize: 11.5,
+                                lineHeight: 1.45,
+                                color: 'hsl(var(--on-surface))',
+                              }}
                             >
-                              <b
-                                className="font-extrabold"
-                                style={{ color: 'hsl(var(--on-surface))' }}
-                              >
+                              <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
                                 {inc.region}
                               </b>{' '}
                               — {inc.incident_type.replace(/_/g, ' ').toLowerCase()}
                             </p>
-                            <div className="flex items-center gap-2 mt-0.5">
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                marginTop: 2,
+                              }}
+                            >
                               <span
-                                className="text-[9.5px] font-bold"
                                 style={{
+                                  fontSize: 9.5,
+                                  fontWeight: 700,
                                   color:
                                     inc.status === 'RESOLVED'
                                       ? 'hsl(var(--primary))'
@@ -994,12 +1252,24 @@ export default function WarRoomCommand() {
                       {narratives.slice(0, 5).map((nar) => (
                         <div
                           key={nar.id}
-                          className="flex gap-[10px] py-[11px]"
-                          style={{ borderBottom: '1px solid hsl(var(--border))' }}
+                          style={{
+                            display: 'flex',
+                            gap: 10,
+                            padding: '11px 0',
+                            borderBottom: '1px solid hsl(var(--border))',
+                          }}
                         >
                           <div
-                            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                            style={{ background: 'hsl(var(--accent))' }}
+                            style={{
+                              width: 28,
+                              height: 28,
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                              background: 'hsl(var(--accent))',
+                            }}
                           >
                             <span
                               className="material-symbols-outlined"
@@ -1008,22 +1278,25 @@ export default function WarRoomCommand() {
                               chat
                             </span>
                           </div>
-                          <div className="flex-1 min-w-0">
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <p
-                              className="text-[11.5px] leading-[1.45]"
-                              style={{ color: 'hsl(var(--on-surface))' }}
+                              style={{
+                                fontSize: 11.5,
+                                lineHeight: 1.45,
+                                color: 'hsl(var(--on-surface))',
+                              }}
                             >
-                              <b
-                                className="font-extrabold"
-                                style={{ color: 'hsl(var(--on-surface))' }}
-                              >
+                              <b style={{ fontWeight: 800, color: 'hsl(var(--on-surface))' }}>
                                 {nar.target_platform}
                               </b>{' '}
                               — digital directive
                             </p>
                             <span
-                              className="text-[9.5px] font-bold uppercase tracking-[.04em]"
                               style={{
+                                fontSize: 9.5,
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '.04em',
                                 color:
                                   nar.dispatch_status === 'DEPLOYED'
                                     ? 'hsl(var(--primary))'
@@ -1096,7 +1369,11 @@ export default function WarRoomCommand() {
               </span>
             </div>
             <div style={{ height: 200, padding: 16, position: 'relative' }}>
-              <svg viewBox="0 0 600 180" className="w-full h-full" preserveAspectRatio="none">
+              <svg
+                viewBox="0 0 600 180"
+                style={{ width: '100%', height: '100%' }}
+                preserveAspectRatio="none"
+              >
                 <defs>
                   <linearGradient id="gp" x1="0" x2="0" y1="0" y2="1">
                     <stop offset="0%" stopColor="rgba(206,17,38,.4)" />
@@ -1187,7 +1464,11 @@ export default function WarRoomCommand() {
               </span>
             </div>
             <div style={{ height: 200, padding: 16, position: 'relative' }}>
-              <svg viewBox="0 0 600 180" className="w-full h-full" preserveAspectRatio="none">
+              <svg
+                viewBox="0 0 600 180"
+                style={{ width: '100%', height: '100%' }}
+                preserveAspectRatio="none"
+              >
                 <g fill="hsl(var(--accent))">
                   {growthTrends.map((t, i) => {
                     const h = (t.count / Math.max(...growthTrends.map((x) => x.count), 1)) * 150
@@ -1563,39 +1844,99 @@ export default function WarRoomCommand() {
 
       {/* ── Compliance Report Modal ── */}
       {reportData && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.8)',
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+        >
           <div
-            className="rounded-lg w-full max-w-4xl max-h-[80vh] flex flex-col shadow-2xl"
-            style={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
+            style={{
+              borderRadius: 8,
+              width: '100%',
+              maxWidth: 896,
+              maxHeight: '80vh',
+              display: 'flex',
+              flexDirection: 'column',
+              background: 'hsl(var(--background))',
+              border: '1px solid hsl(var(--border))',
+            }}
           >
             <div
-              className="px-6 py-4 flex justify-between items-center"
-              style={{ borderBottom: '1px solid hsl(var(--border))' }}
+              style={{
+                padding: '16px 24px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '1px solid hsl(var(--border))',
+              }}
             >
               <div>
-                <h3 className="font-extrabold text-lg" style={{ color: 'hsl(var(--on-surface))' }}>
+                <h3
+                  style={{
+                    fontWeight: 800,
+                    fontSize: 18,
+                    color: 'hsl(var(--on-surface))',
+                    margin: 0,
+                    fontFamily: "'Public Sans', sans-serif",
+                  }}
+                >
                   National Compliance Report
                 </h3>
-                <p className="text-xs font-bold" style={{ color: 'hsl(var(--on-surface-muted))' }}>
+                <p
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: 'hsl(var(--on-surface-muted))',
+                    margin: 0,
+                  }}
+                >
                   Generated: {new Date().toLocaleString()}
                 </p>
               </div>
               <button
                 onClick={() => setReportData(null)}
-                className="transition-colors"
-                style={{ color: 'hsl(var(--on-surface-muted))' }}
+                style={{
+                  color: 'hsl(var(--on-surface-muted))',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 4,
+                }}
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
-            <div className="p-6 overflow-y-auto font-mono text-sm">
-              <pre className="bg-black/5 p-4 rounded border border-black/10 text-emerald-700 leading-relaxed overflow-x-auto">
+            <div style={{ padding: 24, overflowY: 'auto', fontFamily: 'monospace', fontSize: 14 }}>
+              <pre
+                style={{
+                  background: 'rgba(0,0,0,0.05)',
+                  padding: 16,
+                  borderRadius: 4,
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  color: '#047857',
+                  lineHeight: 1.75,
+                  overflowX: 'auto',
+                  margin: 0,
+                }}
+              >
                 {JSON.stringify(JSON.parse(reportData), null, 2)}
               </pre>
             </div>
             <div
-              className="px-6 py-4 flex justify-end gap-3"
-              style={{ borderTop: '1px solid hsl(var(--border))' }}
+              style={{
+                padding: '16px 24px',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 12,
+                borderTop: '1px solid hsl(var(--border))',
+              }}
             >
               <button
                 className="btn btn-outline"

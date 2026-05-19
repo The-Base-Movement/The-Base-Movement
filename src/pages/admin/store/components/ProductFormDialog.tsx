@@ -86,7 +86,7 @@ export function ProductFormDialog({
       }}
     >
       <div
-        className="panel animate-in zoom-in-95 duration-200"
+        className="panel"
         style={{
           width: '100%',
           maxWidth: 500,

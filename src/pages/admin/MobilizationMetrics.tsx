@@ -308,7 +308,7 @@ export default function MobilizationMetrics() {
             </span>
           </div>
           {/* Desktop table */}
-          <div className="hidden md:block" style={{ overflowX: 'auto' }}>
+          <div className="desktop-only" style={{ overflowX: 'auto' }}>
             <table className="table">
               <thead>
                 <tr>
@@ -422,7 +422,7 @@ export default function MobilizationMetrics() {
             </table>
           </div>
           {/* Mobile card list */}
-          <div className="md:hidden" style={{ borderTop: '1px solid hsl(var(--border))' }}>
+          <div className="mobile-only" style={{ borderTop: '1px solid hsl(var(--border))' }}>
             {filteredLeaderboard.length === 0 ? (
               <div
                 style={{

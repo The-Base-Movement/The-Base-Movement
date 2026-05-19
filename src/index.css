@@ -682,6 +682,15 @@
   gap: 18px;
 }
 
+/* War Room district map paths */
+.war-room-district {
+  transition: fill 0.3s;
+  cursor: crosshair;
+}
+.war-room-district:hover {
+  fill: rgba(255, 255, 255, 0.2);
+}
+
 /* War Room 3-col main grid — collapses to 1 col on mobile, 3 on desktop */
 .war-room-main-grid {
   display: grid;
