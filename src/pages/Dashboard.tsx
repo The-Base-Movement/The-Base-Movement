@@ -47,7 +47,7 @@ export default function Dashboard() {
       if (liveMember) {
         // Save regNo for next time
         localStorage.setItem('userRegNo', liveMember.id)
-        
+
         setMember({
           full_name: liveMember.name,
           registration_number: liveMember.id,
@@ -55,17 +55,20 @@ export default function Dashboard() {
           constituency: liveMember.constituency,
           chapter: liveMember.chapter || 'Central Chapter',
           joined_date: liveMember.joined || '30 Mar 2025',
-          status: (liveMember.status === 'Active' || liveMember.status === 'Approved') ? 'Verified' : 'Pending',
+          status:
+            liveMember.status === 'Active' || liveMember.status === 'Approved'
+              ? 'Verified'
+              : 'Pending',
           avatar_url: liveMember.avatarUrl,
           platform: liveMember.platform,
-          gender: liveMember.gender
+          gender: liveMember.gender,
         })
 
         // Fetch additional stats
         try {
           const [donations, rank] = await Promise.all([
             donationService.getMemberDonationStats(liveMember.phone),
-            gamificationService.getMemberRank(liveMember.authId || liveMember.id)
+            gamificationService.getMemberRank(liveMember.authId || liveMember.id),
           ])
           setContributionStats({ total: donations.total, lastMonth: donations.lastMonth })
           setRankInfo({ rank: rank.rank, delta: rank.delta })
@@ -80,27 +83,76 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="font-bold text-on-surface/40 tracking-tight text-tiny animate-pulse">Synchronizing tactical data...</p>
+      <div
+        style={{
+          width: '100%',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+          <div
+            className="animate-spin"
+            style={{
+              width: 48,
+              height: 48,
+              border: '4px solid hsl(var(--border))',
+              borderTopColor: 'hsl(var(--primary))',
+              borderRadius: '50%',
+            }}
+          />
+          <p
+            className="animate-pulse"
+            style={{
+              fontWeight: 700,
+              color: 'hsl(var(--on-surface-muted))',
+              fontSize: 10,
+              letterSpacing: '0.04em',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            Synchronizing tactical data...
+          </p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="main animate-in fade-in duration-700">
+    <div className="main">
       {/* Welcome */}
       <div style={{ marginBottom: 24 }}>
-        <span style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 10, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Welcome back</span>
-        <h2 style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 28, color: 'hsl(var(--on-surface))', margin: '4px 0 0', lineHeight: 1, letterSpacing: '-0.01em' }}>
+        <span
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 700,
+            fontSize: 10,
+            color: 'hsl(var(--on-surface-muted))',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+          }}
+        >
+          Welcome back
+        </span>
+        <h2
+          style={{
+            fontFamily: "'Public Sans', sans-serif",
+            fontWeight: 800,
+            fontSize: 28,
+            color: 'hsl(var(--on-surface))',
+            margin: '4px 0 0',
+            lineHeight: 1,
+            letterSpacing: '-0.01em',
+          }}
+        >
           Akwaaba, {member?.full_name?.split(' ')[0] || 'Kwesi'} 👋
         </h2>
       </div>
 
       {/* Stat Tiles */}
-      <StatCards 
+      <StatCards
         memberStatus={member?.status || 'Verified'}
         memberSince={member?.joined_date || '14 mo.'}
         contributionYTD={contributionStats}
@@ -108,9 +160,17 @@ export default function Dashboard() {
       />
 
       {/* Hero row: membership card + quick actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-[20px] mb-[20px] items-start">
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1.2fr 1fr',
+          gap: 20,
+          marginBottom: 20,
+          alignItems: 'start',
+        }}
+      >
         {member && (
-          <MembershipCard 
+          <MembershipCard
             userName={member.full_name}
             userRegNo={member.registration_number}
             region={member.region}
@@ -127,12 +187,44 @@ export default function Dashboard() {
       </div>
 
       {/* Lower row: feed + journey */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-[20px]">
-        <div className="bg-white border border-border rounded-[4px] p-6 feed">
-          <h3 className="font-meta text-[14px] font-extrabold tracking-tight text-on-surface mb-[20px] flex items-center justify-between">
+      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 20 }}>
+        <div className="panel feed" style={{ padding: 24 }}>
+          <h3
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontSize: 14,
+              fontWeight: 800,
+              letterSpacing: '-0.01em',
+              color: 'hsl(var(--on-surface))',
+              marginBottom: 20,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
             Live contribution feed
-            <span className="live flex items-center gap-1.5 text-[10px] font-extrabold text-destructive uppercase tracking-[.06em] font-meta">
-              <i className="w-1.5 h-1.5 bg-destructive rounded-full animate-pulse" />
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 10,
+                fontWeight: 800,
+                color: 'hsl(var(--destructive))',
+                textTransform: 'uppercase',
+                letterSpacing: '.06em',
+              }}
+            >
+              <i
+                className="animate-pulse"
+                style={{
+                  width: 6,
+                  height: 6,
+                  background: 'hsl(var(--destructive))',
+                  borderRadius: '50%',
+                  display: 'inline-block',
+                }}
+              />
               Live
             </span>
           </h3>
@@ -141,10 +233,14 @@ export default function Dashboard() {
         <MovementJourney />
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .main { min-width: 0; padding-bottom: 40px; }
         .feed h3 { font-family: 'Public Sans', sans-serif; }
-      ` }} />
+      `,
+        }}
+      />
     </div>
   )
 }
