@@ -60,19 +60,21 @@ class DonationService {
       country: d.country,
       receiptUrl: d.receipt_url,
       campaignId: d.campaign_id,
-      memberId: d.member_id
+      memberId: d.member_id,
     }))
   }
 
-  async getMobilizationLedger(limit: number = 20): Promise<{
-    id: string
-    chapter: string
-    type: 'Allocation' | 'Expenditure'
-    amount: string
-    description: string
-    category: string
-    date: string
-  }[]> {
+  async getMobilizationLedger(limit: number = 20): Promise<
+    {
+      id: string
+      chapter: string
+      type: 'Allocation' | 'Expenditure'
+      amount: string
+      description: string
+      category: string
+      date: string
+    }[]
+  > {
     const { data, error } = await supabase
       .from('mobilization_ledger')
       .select('*')
@@ -84,25 +86,108 @@ class DonationService {
       return []
     }
 
-    return (data || []).map(d => ({
+    return (data || []).map((d) => ({
       id: d.id.substring(0, 8).toUpperCase(),
       chapter: d.chapter,
       type: d.transaction_type,
       amount: `₵ ${Number(d.amount).toLocaleString()}`,
       description: d.description,
       category: d.category,
-      date: new Date(d.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      date: new Date(d.timestamp).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }),
     }))
+  }
+
+  async getAllSpendingEntries(): Promise<
+    {
+      id: string
+      chapter: string
+      amount: number
+      description: string
+      category: string
+      timestamp: string
+    }[]
+  > {
+    const { data, error } = await supabase
+      .from('mobilization_ledger')
+      .select('id, chapter, amount, description, category, timestamp')
+      .order('timestamp', { ascending: false })
+
+    if (error) {
+      console.warn('[DATABASE] Failed to fetch spending entries:', error)
+      return []
+    }
+    return data || []
+  }
+
+  async addSpendingEntry(entry: {
+    chapter: string
+    amount: number
+    description: string
+    category: string
+    timestamp: string
+  }): Promise<boolean> {
+    const user = await authService.getUser()
+    const { error } = await supabase.from('mobilization_ledger').insert({
+      chapter: entry.chapter,
+      transaction_type: 'Expenditure',
+      amount: entry.amount,
+      description: entry.description,
+      category: entry.category,
+      timestamp: entry.timestamp,
+      created_by: user?.id ?? null,
+    })
+
+    if (error) {
+      console.error('[DATABASE] Failed to add spending entry:', error)
+      return false
+    }
+    return true
+  }
+
+  async updateSpendingEntry(
+    id: string,
+    updates: {
+      chapter?: string
+      amount?: number
+      description?: string
+      category?: string
+      timestamp?: string
+    }
+  ): Promise<boolean> {
+    const { error } = await supabase.from('mobilization_ledger').update(updates).eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to update spending entry:', error)
+      return false
+    }
+    return true
+  }
+
+  async deleteSpendingEntry(id: string): Promise<boolean> {
+    const { error } = await supabase.from('mobilization_ledger').delete().eq('id', id)
+
+    if (error) {
+      console.error('[DATABASE] Failed to delete spending entry:', error)
+      return false
+    }
+    return true
   }
 
   async getPendingDonations(): Promise<DonationDetail[]> {
     return this.getDonations('Pending')
   }
 
-  async getDonationStats(): Promise<{ totalContributions: number, pendingCount: number, approvedAmount: number, flaggedCount: number }> {
-    const { data, error } = await supabase
-      .from('donations')
-      .select('amount, status')
+  async getDonationStats(): Promise<{
+    totalContributions: number
+    pendingCount: number
+    approvedAmount: number
+    flaggedCount: number
+  }> {
+    const { data, error } = await supabase.from('donations').select('amount, status')
 
     if (error || !data) {
       return { totalContributions: 0, pendingCount: 0, approvedAmount: 0, flaggedCount: 0 }
@@ -110,13 +195,19 @@ class DonationService {
 
     return {
       totalContributions: data.length,
-      pendingCount: data.filter(d => d.status === 'Pending').length,
-      approvedAmount: data.filter(d => d.status === 'Verified').reduce((sum, d) => sum + Number(d.amount), 0),
-      flaggedCount: data.filter(d => d.status === 'Rejected').length // We'll map Rejected to Flagged for now
+      pendingCount: data.filter((d) => d.status === 'Pending').length,
+      approvedAmount: data
+        .filter((d) => d.status === 'Verified')
+        .reduce((sum, d) => sum + Number(d.amount), 0),
+      flaggedCount: data.filter((d) => d.status === 'Rejected').length, // We'll map Rejected to Flagged for now
     }
   }
 
-  async verifyDonation(donationId: string, status: 'Verified' | 'Rejected', notes: string = ''): Promise<boolean> {
+  async verifyDonation(
+    donationId: string,
+    status: 'Verified' | 'Rejected',
+    notes: string = ''
+  ): Promise<boolean> {
     const user = await authService.getUser()
     if (!user) return false
 
@@ -124,7 +215,7 @@ class DonationService {
       donation_id: donationId,
       admin_uid: user.id,
       verification_status: status,
-      notes: notes
+      notes: notes,
     })
 
     if (error) {
@@ -169,10 +260,10 @@ class DonationService {
       campaignTitle: d.donation_campaigns?.title,
       fullName: d.show_on_dashboard ? d.full_name : 'Anonymous Patriot',
       phone: '', // Redacted for public feed
-      country: '', 
+      country: '',
       receiptUrl: '',
       campaignId: '',
-      memberId: ''
+      memberId: '',
     }))
   }
 
@@ -188,7 +279,7 @@ class DonationService {
       return []
     }
 
-    return (data || []).map(d => ({
+    return (data || []).map((d) => ({
       id: d.id,
       date: d.created_at,
       amount: d.amount.toString(),
@@ -201,7 +292,7 @@ class DonationService {
       country: d.country,
       receiptUrl: d.receipt_url,
       campaignId: d.campaign_id,
-      memberId: d.member_id
+      memberId: d.member_id,
     }))
   }
 
@@ -215,7 +306,7 @@ class DonationService {
           event: 'INSERT',
           schema: 'public',
           table: 'donations',
-          filter: 'status=eq.Verified'
+          filter: 'status=eq.Verified',
         },
         async (payload) => {
           const { data, error } = await supabase
@@ -238,7 +329,7 @@ class DonationService {
               country: '',
               receiptUrl: '',
               campaignId: '',
-              memberId: ''
+              memberId: '',
             })
           }
         }
@@ -249,7 +340,7 @@ class DonationService {
           event: 'UPDATE',
           schema: 'public',
           table: 'donations',
-          filter: 'status=eq.Verified'
+          filter: 'status=eq.Verified',
         },
         async (payload) => {
           // If a donation was updated to 'Verified'
@@ -273,7 +364,7 @@ class DonationService {
               country: '',
               receiptUrl: '',
               campaignId: '',
-              memberId: ''
+              memberId: '',
             })
           }
         }
@@ -281,7 +372,9 @@ class DonationService {
       .subscribe()
   }
 
-  async getMemberDonationStats(phone: string): Promise<{ total: number; count: number; lastMonth: number }> {
+  async getMemberDonationStats(
+    phone: string
+  ): Promise<{ total: number; count: number; lastMonth: number }> {
     const { data, error } = await supabase
       .from('donations')
       .select('amount, created_at')
@@ -293,15 +386,18 @@ class DonationService {
     const now = new Date()
     const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
 
-    const stats = data.reduce((acc, d) => {
-      const amt = Number(d.amount)
-      acc.total += amt
-      acc.count += 1
-      if (new Date(d.created_at) >= oneMonthAgo) {
-        acc.lastMonth += amt
-      }
-      return acc
-    }, { total: 0, count: 0, lastMonth: 0 })
+    const stats = data.reduce(
+      (acc, d) => {
+        const amt = Number(d.amount)
+        acc.total += amt
+        acc.count += 1
+        if (new Date(d.created_at) >= oneMonthAgo) {
+          acc.lastMonth += amt
+        }
+        return acc
+      },
+      { total: 0, count: 0, lastMonth: 0 }
+    )
 
     return stats
   }

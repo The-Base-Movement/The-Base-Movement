@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { authService } from '@/services/authService'
 import { adminService } from '@/services/adminService'
 import { toast } from 'sonner'
@@ -12,6 +12,8 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = (location.state as { from?: Location })?.from?.pathname || '/dashboard'
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,23 +21,24 @@ export default function Login() {
 
     try {
       await authService.login(email, password)
-      
+
       const user = authService.getUser()
       if (user) {
         localStorage.setItem('isLoggedIn', 'true')
         localStorage.setItem('userName', user.user_metadata?.full_name || 'Patriot')
-        if (user.user_metadata?.avatar_url) localStorage.setItem('userAvatar', user.user_metadata.avatar_url)
-        
+        if (user.user_metadata?.avatar_url)
+          localStorage.setItem('userAvatar', user.user_metadata.avatar_url)
+
         // Proactively fetch and store regNo
         const profile = await adminService.getMemberProfileByAuthId(user.id)
         if (profile) {
           localStorage.setItem('userRegNo', profile.id)
         }
       }
-      
+
       window.dispatchEvent(new Event('storage'))
       toast.success('Welcome back, patriot!')
-      navigate('/dashboard')
+      navigate(from, { replace: true })
     } catch (error) {
       console.error('Login error:', error)
       toast.error(error instanceof Error ? error.message : 'Invalid credentials. Please try again.')
@@ -46,7 +49,7 @@ export default function Login() {
 
   return (
     <main className="bg-container-low min-h-screen flex items-center justify-center py-12 px-4">
-      <SEO 
+      <SEO
         title="Member Sign In"
         description="Secure access to the The Base Movement platform. Manage your membership, connect with your chapter, and participate in feedback."
         canonical="/login"
@@ -75,7 +78,9 @@ export default function Login() {
                 <span className="text-[10.5px] font-[800] text-on-surface-muted uppercase tracking-[.06em] block">
                   Email or Phone
                 </span>
-                <input name="email" id="input-80a9bc" 
+                <input
+                  name="email"
+                  id="input-80a9bc"
                   type="text"
                   className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                   value={email}
@@ -94,7 +99,9 @@ export default function Login() {
                     Forgot password?
                   </Link>
                 </div>
-                <input name="password" id="input-936899" 
+                <input
+                  name="password"
+                  id="input-936899"
                   type="password"
                   className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
                   value={password}
@@ -105,7 +112,13 @@ export default function Login() {
               </div>
 
               <div className="flex items-center gap-2 pt-1 pb-2">
-                <input name="name-769aef" type="checkbox" id="remember" className="w-4 h-4 accent-primary" defaultChecked />
+                <input
+                  name="name-769aef"
+                  type="checkbox"
+                  id="remember"
+                  className="w-4 h-4 accent-primary"
+                  defaultChecked
+                />
                 <label htmlFor="remember" className="text-[11.5px] font-[700] text-on-surface">
                   Keep me signed in
                 </label>
@@ -118,11 +131,20 @@ export default function Login() {
               >
                 {isLoading ? (
                   <>
-                    <span className="material-symbols-outlined" style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}>progress_activity</span> Authenticating…
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}
+                    >
+                      progress_activity
+                    </span>{' '}
+                    Authenticating…
                   </>
                 ) : (
                   <>
-                    Sign in <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
+                    Sign in{' '}
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      arrow_forward
+                    </span>
                   </>
                 )}
               </button>

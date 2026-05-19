@@ -9,93 +9,234 @@ interface AuditModalProps {
   onContribute: () => void
 }
 
+function maskName(fullName: string): string {
+  if (!fullName || fullName.toLowerCase() === 'anonymous patriot') return 'Anonymous'
+  const parts = fullName.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0]
+  return `${parts[0]} ${parts[parts.length - 1][0]}.`
+}
+
 export function AuditModal({
   isOpen,
   onClose,
   publicHistory,
   contributionsCount,
   onDownload,
-  onContribute
+  onContribute,
 }: AuditModalProps) {
   if (!isOpen) return null
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <div 
-        style={{ position: 'absolute', inset: 0, background: 'hsla(var(--on-surface-rgb), 0.6)', backdropFilter: 'blur(8px)' }} 
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+      }}
+    >
+      <div
+        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }}
         onClick={onClose}
-      ></div>
-      <div style={{ 
-        position: 'relative', 
-        width: '100%', 
-        maxWidth: 896, 
-        background: '#fff', 
-        border: '1px solid hsl(var(--border))', 
-        boxShadow: 'var(--shadow-xl)', 
-        overflow: 'hidden', 
-        borderRadius: 4, 
-        display: 'flex', 
-        flexDirection: 'column', 
-        maxHeight: '85vh' 
-      }}>
-        <div style={{ 
-          padding: 32, 
-          borderBottom: '1px solid hsl(var(--border))', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between', 
-          background: '#fff', 
-          position: 'sticky', 
-          top: 0, 
-          zIndex: 10 
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--primary))' }}>vital_signs</span>
-            <h3 style={{ fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.02em', fontSize: 20, lineHeight: 1, margin: 0 }}>Capital deployment ledger</h3>
+      />
+
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: 860,
+          background: '#fff',
+          border: '1px solid hsl(var(--border))',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.14)',
+          overflow: 'hidden',
+          borderRadius: 6,
+          display: 'flex',
+          flexDirection: 'column',
+          maxHeight: '88vh',
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            padding: '14px 20px',
+            borderBottom: '1px solid hsl(var(--border))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: '#fff',
+            position: 'sticky',
+            top: 0,
+            zIndex: 10,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
+            >
+              vital_signs
+            </span>
+            <div>
+              <h3
+                style={{
+                  fontWeight: 800,
+                  color: 'hsl(var(--on-surface))',
+                  fontFamily: "'Public Sans', sans-serif",
+                  letterSpacing: '-0.02em',
+                  fontSize: 15,
+                  margin: 0,
+                }}
+              >
+                Capital deployment ledger
+              </h3>
+              <p
+                style={{
+                  fontSize: 11,
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontWeight: 500,
+                  margin: 0,
+                }}
+              >
+                Verified contributions · {contributionsCount} records
+              </p>
+            </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             style={{
-              width: 44, height: 44, borderRadius: 4, border: 'none', background: 'transparent', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'hsl(var(--on-surface-muted))', transition: 'all 0.2s ease'
+              width: 36,
+              height: 36,
+              borderRadius: 4,
+              border: '1px solid hsl(var(--border))',
+              background: '#fff',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'hsl(var(--on-surface-muted))',
             }}
-            className="hover:bg-destructive/10 hover:text-destructive"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>close</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+              close
+            </span>
           </button>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: 0 }}>
+        {/* Table */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
           {publicHistory.length > 0 ? (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: 'hsl(var(--container-low))', borderBottom: '1px solid hsl(var(--border))' }}>
-                  <th style={{ padding: 24, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left' }}>Contributor</th>
-                  <th style={{ padding: 24, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left' }}>Capital</th>
-                  <th style={{ padding: 24, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left' }}>Cell</th>
-                  <th style={{ padding: 24, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'right' }}>Verification</th>
+                <tr
+                  style={{
+                    background: 'hsl(var(--container-low))',
+                    borderBottom: '1px solid hsl(var(--border))',
+                    position: 'sticky',
+                    top: 0,
+                  }}
+                >
+                  {['Contributor', 'Campaign', 'Amount', 'Status'].map((h, i) => (
+                    <th
+                      key={h}
+                      style={{
+                        padding: '9px 16px',
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: 'hsl(var(--on-surface-muted))',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        textAlign: i === 2 || i === 3 ? 'right' : 'left',
+                        whiteSpace: 'nowrap',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {publicHistory.map((item, idx) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid hsla(var(--border), 0.5)' }} className="hover:bg-stone-50">
-                    <td style={{ padding: 24 }}>
-                      <p style={{ fontSize: 14, fontWeight: 800, color: 'hsl(var(--on-surface))', margin: 0, letterSpacing: '-0.01em' }}>{item.fullName}</p>
-                      <p style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 700, marginTop: 4, margin: 0 }}>{item.date}</p>
-                    </td>
-                    <td style={{ padding: 24 }}>
-                      <p style={{ fontSize: 14, fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", margin: 0 }}>
-                        {item.amount.includes('₵') ? item.amount : `₵${item.amount.replace(/GHS/i, '').trim()}`}
+                  <tr key={idx} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+                    <td style={{ padding: '10px 16px' }}>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: 'hsl(var(--on-surface))',
+                          margin: 0,
+                        }}
+                      >
+                        {maskName(item.fullName)}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: 10,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 500,
+                          margin: '2px 0 0',
+                        }}
+                      >
+                        {item.date}
                       </p>
                     </td>
-                    <td style={{ padding: 24 }}>
-                      <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', margin: 0 }}>{item.campaignTitle || 'Strategic Fund'}</p>
+                    <td style={{ padding: '10px 16px' }}>
+                      <p
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 500,
+                          color: 'hsl(var(--on-surface-muted))',
+                          margin: 0,
+                          maxWidth: 200,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {item.campaignTitle || 'Strategic Fund'}
+                      </p>
                     </td>
-                    <td style={{ padding: 24, textAlign: 'right' }}>
-                      <span style={{ 
-                        display: 'inline-flex', alignItems: 'center', gap: 8, padding: '4px 12px', borderRadius: 2,
-                        fontSize: 10, fontWeight: 900, textTransform: 'uppercase', background: 'hsla(var(--primary), 0.08)', color: 'hsl(var(--primary))'
-                      }}>
+                    <td style={{ padding: '10px 16px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 800,
+                          color: 'hsl(var(--on-surface))',
+                          fontFamily: "'Public Sans', sans-serif",
+                          margin: 0,
+                        }}
+                      >
+                        {item.amount.includes('₵')
+                          ? item.amount
+                          : `₵${item.amount.replace(/GHS/i, '').trim()}`}
+                      </p>
+                    </td>
+                    <td style={{ padding: '10px 16px', textAlign: 'right' }}>
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 5,
+                          padding: '3px 9px',
+                          borderRadius: 3,
+                          fontSize: 10,
+                          fontWeight: 600,
+                          background: 'hsla(var(--primary), 0.08)',
+                          color: 'hsl(var(--primary))',
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 5,
+                            height: 5,
+                            borderRadius: '50%',
+                            background: 'hsl(var(--primary))',
+                            display: 'block',
+                          }}
+                        />
                         Verified
                       </span>
                     </td>
@@ -104,42 +245,83 @@ export function AuditModal({
               </tbody>
             </table>
           ) : (
-            <div style={{ padding: '128px 32px', textAlign: 'center', background: 'hsl(var(--container-low))' }}>
-              <div style={{ 
-                width: 80, height: 80, background: '#fff', border: '1px solid hsl(var(--border))', 
-                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px' 
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--border))' }}>vital_signs</span>
-              </div>
-              <h4 style={{ fontSize: 20, fontWeight: 900, color: 'hsl(var(--on-surface))', marginBottom: 12, fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.01em' }}>Deployment records inactive</h4>
-              <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', maxWidth: 384, margin: '0 auto 32px', fontWeight: 700, lineHeight: 1.5 }}>
-                No capital deployment detected for this session. Support the movement cells to build a technically robust Ghana.
+            <div style={{ padding: '64px 32px', textAlign: 'center' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: 40,
+                  color: 'hsl(var(--border))',
+                  display: 'block',
+                  marginBottom: 16,
+                }}
+              >
+                vital_signs
+              </span>
+              <h4
+                style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: 'hsl(var(--on-surface))',
+                  marginBottom: 8,
+                  fontFamily: "'Public Sans', sans-serif",
+                }}
+              >
+                No records yet
+              </h4>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontWeight: 500,
+                  maxWidth: 320,
+                  margin: '0 auto',
+                }}
+              >
+                Verified contributions will appear here as members mobilise.
               </p>
             </div>
           )}
         </div>
 
-        <div style={{ 
-          padding: 32, 
-          borderTop: '1px solid hsl(var(--border))', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between', 
-          background: 'hsl(var(--container-low))', 
-          position: 'sticky', 
-          bottom: 0, 
-          zIndex: 10 
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'hsl(var(--primary))', boxShadow: '0 0 8px hsl(var(--primary))' }}></span>
-            {contributionsCount} Deployment records secured
+        {/* Footer */}
+        <div
+          style={{
+            padding: '12px 20px',
+            borderTop: '1px solid hsl(var(--border))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'hsl(var(--container-low))',
+            gap: 12,
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: '50%',
+                background: 'hsl(var(--primary))',
+                flexShrink: 0,
+              }}
+            />
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>
+              {contributionsCount} verified deployment records
+            </span>
           </div>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <button onClick={onDownload} className="btn btn-outline" style={{ height: 48, padding: '0 24px', fontSize: 12 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>download</span> Download audit
+          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+            <button onClick={onDownload} className="btn btn-outline btn-sm">
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                download
+              </span>
+              Download
             </button>
-            <button onClick={onContribute} className="btn btn-primary" style={{ height: 48, padding: '0 32px', fontSize: 12 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>favorite</span> Contribute
+            <button onClick={onContribute} className="btn btn-primary btn-sm">
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                favorite
+              </span>
+              Contribute
             </button>
           </div>
         </div>

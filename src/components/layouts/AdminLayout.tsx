@@ -16,6 +16,7 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     Overview: true,
     Members: true,
+    Finance: true,
     Logistics: true,
     Field: true,
     Content: true,
@@ -189,17 +190,29 @@ export default function AdminLayout({ children }: { children?: React.ReactNode }
           permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
         },
         {
-          to: '/admin/donations',
-          icon: 'payments',
-          label: 'Contribution desk',
-          pill: pendingDonationsCount > 0 ? pendingDonationsCount.toString() : undefined,
-          permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
-        },
-        {
           to: '/admin/leadership',
           icon: 'shield',
           label: 'Leadership hub',
           permission: { action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' },
+        },
+      ],
+    },
+    {
+      label: 'Finance',
+      icon: 'account_balance_wallet',
+      items: [
+        {
+          to: '/admin/donations',
+          icon: 'payments',
+          label: 'Donations',
+          pill: pendingDonationsCount > 0 ? pendingDonationsCount.toString() : undefined,
+          permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
+        },
+        {
+          to: '/admin/spending-ledger',
+          icon: 'receipt_long',
+          label: 'Expenses',
+          permission: { action: 'MANAGE_DONATIONS', resource: 'DONATIONS' },
         },
       ],
     },

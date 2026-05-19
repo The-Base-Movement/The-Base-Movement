@@ -14,27 +14,35 @@ import { SecuritySettingsTab } from './settings/components/SecuritySettingsTab'
 import { ButtonCustomizerTab } from './settings/components/ButtonCustomizerTab'
 import { AuditLogTab } from './settings/components/AuditLogTab'
 
-type InterfaceDensity = 'Comfortable' | 'Compact' | 'High Density';
+type InterfaceDensity = 'Comfortable' | 'Compact' | 'High Density'
 type SettingsTab = 'profile' | 'roles' | 'system' | 'movement' | 'security' | 'buttons' | 'audit'
 
 interface SupabaseAuthWithMFA {
   mfa: {
-    listFactors: () => Promise<{ data: { all: Factor[] }, error: AuthError | null }>;
-    enroll: (params: { factorType: 'totp' }) => Promise<{ data: { id: string, totp: { qr_code: string } }, error: AuthError | null }>;
-    challenge: (params: { factorId: string }) => Promise<{ data: { id: string }, error: AuthError | null }>;
-    verify: (params: { factorId: string, challengeId: string, code: string }) => Promise<{ data: { session: Session | null, user: User | null }, error: AuthError | null }>;
-    unenroll: (params: { factorId: string }) => Promise<{ error: AuthError | null }>;
-  };
+    listFactors: () => Promise<{ data: { all: Factor[] }; error: AuthError | null }>
+    enroll: (params: {
+      factorType: 'totp'
+    }) => Promise<{ data: { id: string; totp: { qr_code: string } }; error: AuthError | null }>
+    challenge: (params: {
+      factorId: string
+    }) => Promise<{ data: { id: string }; error: AuthError | null }>
+    verify: (params: {
+      factorId: string
+      challengeId: string
+      code: string
+    }) => Promise<{ data: { session: Session | null; user: User | null }; error: AuthError | null }>
+    unenroll: (params: { factorId: string }) => Promise<{ error: AuthError | null }>
+  }
 }
 
 const tabs: { id: SettingsTab; label: string; icon: string }[] = [
-  { id: 'profile',  label: 'My Profile',    icon: 'person' },
-  { id: 'roles',    label: 'Admin Roles',   icon: 'shield' },
-  { id: 'system',   label: 'Preferences',   icon: 'tune' },
+  { id: 'profile', label: 'My Profile', icon: 'person' },
+  { id: 'roles', label: 'Admin Roles', icon: 'shield' },
+  { id: 'system', label: 'Preferences', icon: 'tune' },
   { id: 'movement', label: 'Movement Info', icon: 'campaign' },
-  { id: 'security', label: 'Security',      icon: 'lock' },
-  { id: 'buttons',  label: 'Buttons',       icon: 'ads_click' },
-  { id: 'audit',    label: 'Audit Log',     icon: 'history' },
+  { id: 'security', label: 'Security', icon: 'lock' },
+  { id: 'buttons', label: 'Buttons', icon: 'ads_click' },
+  { id: 'audit', label: 'Audit Log', icon: 'history' },
 ]
 
 export default function AdminSettings() {
@@ -52,7 +60,7 @@ export default function AdminSettings() {
   const [mfaFactors, setMfaFactors] = useState<Factor[]>([])
   const [showMfaDialog, setShowMfaDialog] = useState(false)
   const [mfaStep, setMfaStep] = useState<'qr' | 'verify'>('qr')
-  const [mfaEnrollData, setMfaEnrollData] = useState<{ id: string, qr: string } | null>(null)
+  const [mfaEnrollData, setMfaEnrollData] = useState<{ id: string; qr: string } | null>(null)
   const [mfaCode, setMfaCode] = useState('')
   const [interfaceDensity, setInterfaceDensity] = useState<InterfaceDensity>(
     (localStorage.getItem('admin_interface_density') as InterfaceDensity) || 'Comfortable'
@@ -62,10 +70,15 @@ export default function AdminSettings() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [profileForm, setProfileForm] = useState({
-    fullName: '', email: '', phone: '', avatarUrl: ''
+    fullName: '',
+    email: '',
+    phone: '',
+    avatarUrl: '',
   })
   const [passwordForm, setPasswordForm] = useState({
-    currentPassword: '', newPassword: '', confirmPassword: ''
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   })
 
   useEffect(() => {
@@ -78,7 +91,7 @@ export default function AdminSettings() {
           fullName: data?.name || user.user_metadata?.full_name || '',
           email: data?.email || user.email || '',
           phone: data?.phone || user.user_metadata?.phone || '',
-          avatarUrl: user.user_metadata?.avatar_url || ''
+          avatarUrl: user.user_metadata?.avatar_url || '',
         })
       }
       try {
@@ -86,18 +99,23 @@ export default function AdminSettings() {
         setAuditLogs(logs)
         const settings = await adminService.getSiteSettings()
         const loaded = settings as Record<string, unknown>
-        if (loaded.button_inactive_tab_bg_color === '0 0% 100%' && loaded.button_inactive_tab_text_color === '0 0% 100%') {
+        if (
+          loaded.button_inactive_tab_bg_color === '0 0% 100%' &&
+          loaded.button_inactive_tab_text_color === '0 0% 100%'
+        ) {
           loaded.button_inactive_tab_text_color = '156 100% 21%'
         }
         setSiteSettings({
           button_primary_text_color: '0 0% 100%',
           button_gold_text_color: '220 15% 15%',
           button_destructive_text_color: '0 0% 100%',
+          button_active_tab_bg_color: '',
           button_inactive_tab_bg_color: '0 0% 100%',
           button_inactive_tab_text_color: '156 100% 21%',
           button_border_radius: '0.125rem',
           button_font_weight: '700',
-          ...loaded
+          button_neon_enabled: false,
+          ...loaded,
         })
       } catch (err) {
         console.error('[SETTINGS] Failed to synchronize audit telemetry:', err)
@@ -109,7 +127,9 @@ export default function AdminSettings() {
 
   useEffect(() => {
     const fetchMfa = async () => {
-      const { data, error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.listFactors()
+      const { data, error } = await (
+        supabase.auth as unknown as SupabaseAuthWithMFA
+      ).mfa.listFactors()
       if (!error && data) setMfaFactors(data.all || [])
     }
     fetchMfa()
@@ -117,7 +137,9 @@ export default function AdminSettings() {
 
   const handleStartMfaEnroll = async () => {
     try {
-      const { data, error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.enroll({ factorType: 'totp' })
+      const { data, error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.enroll({
+        factorType: 'totp',
+      })
       if (error) throw error
       setMfaEnrollData({ id: data.id, qr: data.totp.qr_code })
       setMfaStep('qr')
@@ -134,7 +156,11 @@ export default function AdminSettings() {
       const auth = supabase.auth as unknown as SupabaseAuthWithMFA
       const challenge = await auth.mfa.challenge({ factorId: mfaEnrollData.id })
       if (challenge.error) throw challenge.error
-      const verify = await auth.mfa.verify({ factorId: mfaEnrollData.id, challengeId: challenge.data.id, code: mfaCode })
+      const verify = await auth.mfa.verify({
+        factorId: mfaEnrollData.id,
+        challengeId: challenge.data.id,
+        code: mfaCode,
+      })
       if (verify.error) throw verify.error
       toast.success('MFA successfully enabled!')
       setShowMfaDialog(false)
@@ -148,9 +174,12 @@ export default function AdminSettings() {
   }
 
   const handleUnenrollMfa = async (factorId: string) => {
-    if (!confirm('Are you sure you want to disable MFA? This will reduce your account security.')) return
+    if (!confirm('Are you sure you want to disable MFA? This will reduce your account security.'))
+      return
     try {
-      const { error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.unenroll({ factorId })
+      const { error } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.unenroll({
+        factorId,
+      })
       if (error) throw error
       toast.success('MFA disabled')
       const { data } = await (supabase.auth as unknown as SupabaseAuthWithMFA).mfa.listFactors()
@@ -165,7 +194,10 @@ export default function AdminSettings() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 2 * 1024 * 1024) { toast.error('Image must be less than 2MB'); return }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image must be less than 2MB')
+      return
+    }
     setIsUploading(true)
     const toastId = toast.loading('Uploading avatar…')
     try {
@@ -176,7 +208,7 @@ export default function AdminSettings() {
       const { error } = await adminService.uploadAvatar(fileName, file)
       if (error) throw error
       const publicUrl = adminService.getAvatarPublicUrl(fileName)
-      setProfileForm(prev => ({ ...prev, avatarUrl: publicUrl }))
+      setProfileForm((prev) => ({ ...prev, avatarUrl: publicUrl }))
       toast.success('Avatar uploaded. Remember to save your profile changes.', { id: toastId })
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : 'Upload failed', { id: toastId })
@@ -185,13 +217,14 @@ export default function AdminSettings() {
     }
   }
 
-  const filteredLogs = auditLogs.filter(log => {
+  const filteredLogs = auditLogs.filter((log) => {
     const matchesSearch =
       log.action.toLowerCase().includes(auditSearch.toLowerCase()) ||
       log.resource.toLowerCase().includes(auditSearch.toLowerCase()) ||
       log.adminName.toLowerCase().includes(auditSearch.toLowerCase())
     const matchesStatus = auditFilter === 'All Status' || log.status === auditFilter
-    const matchesResource = auditResourceFilter === 'All Resources' || log.resource.includes(auditResourceFilter)
+    const matchesResource =
+      auditResourceFilter === 'All Resources' || log.resource.includes(auditResourceFilter)
     return matchesSearch && matchesStatus && matchesResource
   })
 
@@ -201,15 +234,26 @@ export default function AdminSettings() {
     try {
       const user = authService.getUser()
       if (!user) throw new Error('Not authenticated')
-      await authService.updateProfile({ full_name: profileForm.fullName, avatar_url: profileForm.avatarUrl, phone: profileForm.phone })
+      await authService.updateProfile({
+        full_name: profileForm.fullName,
+        avatar_url: profileForm.avatarUrl,
+        phone: profileForm.phone,
+      })
       const { error: dbError } = await adminService.updatePublicUserProfile(user.id, {
-        full_name: profileForm.fullName, avatar_url: profileForm.avatarUrl, phone_number: profileForm.phone
+        full_name: profileForm.fullName,
+        avatar_url: profileForm.avatarUrl,
+        phone_number: profileForm.phone,
       })
       if (dbError) throw dbError
       const updatedData = await adminService.getAdminData(user.id)
       if (updatedData) {
         setAdminData(updatedData)
-        setProfileForm(prev => ({ ...prev, fullName: updatedData.name, phone: updatedData.phone || '', avatarUrl: updatedData.avatarUrl || '' }))
+        setProfileForm((prev) => ({
+          ...prev,
+          fullName: updatedData.name,
+          phone: updatedData.phone || '',
+          avatarUrl: updatedData.avatarUrl || '',
+        }))
       }
       toast.success('Profile updated successfully', { id: toastId })
     } catch (error: unknown) {
@@ -221,7 +265,8 @@ export default function AdminSettings() {
 
   const handleUpdatePassword = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast.error('Passwords do not match'); return
+      toast.error('Passwords do not match')
+      return
     }
     setIsSaving(true)
     try {
@@ -236,16 +281,27 @@ export default function AdminSettings() {
   }
 
   const handleExportLogs = () => {
-    if (auditLogs.length === 0) { toast.error('No administrative logs available for export'); return }
+    if (auditLogs.length === 0) {
+      toast.error('No administrative logs available for export')
+      return
+    }
     const toastId = toast.loading('Preparing movement audit report…')
     try {
       const headers = ['Timestamp', 'Officer', 'Action', 'Resource', 'Status', 'Technical Details']
-      const rows = auditLogs.map(log => [
+      const rows = auditLogs.map((log) => [
         new Date(log.timestamp).toLocaleString(),
-        log.adminName, log.action, log.resource, log.status,
-        log.details ? JSON.stringify(log.details).replace(/"/g, '""') : 'N/A'
+        log.adminName,
+        log.action,
+        log.resource,
+        log.status,
+        log.details ? JSON.stringify(log.details).replace(/"/g, '""') : 'N/A',
       ])
-      const csvContent = [headers.join(','), ...rows.map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(','))].join('\n')
+      const csvContent = [
+        headers.join(','),
+        ...rows.map((row) =>
+          row.map((cell) => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(',')
+        ),
+      ].join('\n')
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
@@ -255,7 +311,10 @@ export default function AdminSettings() {
       link.style.visibility = 'hidden'
       document.body.appendChild(link)
       link.click()
-      setTimeout(() => { document.body.removeChild(link); URL.revokeObjectURL(url) }, 100)
+      setTimeout(() => {
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+      }, 100)
       toast.success('Movement audit report exported successfully', { id: toastId })
     } catch (error) {
       console.error('[SETTINGS] Critical export failure:', error)
@@ -268,16 +327,27 @@ export default function AdminSettings() {
     const toastId = toast.loading('Syncing button architecture…')
     try {
       const settingsToUpdate = [
-        'button_border_radius', 'button_font_weight', 'button_neon_enabled',
-        'button_primary_text_color', 'button_gold_text_color', 'button_destructive_text_color',
-        'button_active_tab_bg_color', 'button_active_tab_text_color',
-        'button_inactive_tab_bg_color', 'button_inactive_tab_text_color'
+        'button_border_radius',
+        'button_font_weight',
+        'button_neon_enabled',
+        'button_primary_text_color',
+        'button_gold_text_color',
+        'button_destructive_text_color',
+        'button_active_tab_bg_color',
+        'button_inactive_tab_bg_color',
+        'button_inactive_tab_text_color',
       ]
-      await Promise.all(settingsToUpdate.map(key => adminService.updateSiteSetting(key, siteSettings[key])))
+      await Promise.all(
+        settingsToUpdate
+          .filter((key) => siteSettings[key] !== undefined)
+          .map((key) => adminService.updateSiteSetting(key, siteSettings[key]))
+      )
       window.dispatchEvent(new CustomEvent('site_settings_updated'))
       toast.success('Button architecture synchronized', { id: toastId })
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to update button telemetry', { id: toastId })
+      toast.error(err instanceof Error ? err.message : 'Failed to update button telemetry', {
+        id: toastId,
+      })
     } finally {
       setIsSaving(false)
     }
@@ -285,46 +355,78 @@ export default function AdminSettings() {
 
   return (
     <div className="main" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
       {/* Page header */}
       <div className="top" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
         <div>
           <div className="crumbs">System · Configuration</div>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>settings</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+              settings
+            </span>
             System settings
           </h2>
-          <div style={{ marginTop: 10, marginBottom: 4 }}><div className="bl"><div /><div /><div /></div></div>
-          <p style={{ fontFamily: "'Public Sans', sans-serif", fontWeight: 700, fontSize: 12.5, color: 'hsl(var(--on-surface-muted))', marginTop: 6, marginBottom: 0 }}>
+          <div style={{ marginTop: 10, marginBottom: 4 }}>
+            <div className="bl">
+              <div />
+              <div />
+              <div />
+            </div>
+          </div>
+          <p
+            style={{
+              fontFamily: "'Public Sans', sans-serif",
+              fontWeight: 700,
+              fontSize: 12.5,
+              color: 'hsl(var(--on-surface-muted))',
+              marginTop: 6,
+              marginBottom: 0,
+            }}
+          >
             Manage your administrative identity and platform configuration.
           </p>
         </div>
       </div>
 
       <div className="settings-outer">
-
         {/* Tab navigation */}
         <nav className="settings-tabs">
-          {tabs.map(tab => {
+          {tabs.map((tab) => {
             const isActive = activeTab === tab.id
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
                   padding: '10px 14px',
                   background: isActive ? 'hsl(var(--primary))' : 'transparent',
                   color: isActive ? '#fff' : 'hsl(var(--on-surface-muted))',
-                  border: 'none', borderRadius: 4, cursor: 'pointer',
-                  fontFamily: "'Public Sans', sans-serif", fontWeight: 800, fontSize: 12,
-                  whiteSpace: 'nowrap', transition: 'all 0.15s',
-                  width: '100%', justifyContent: 'flex-start',
+                  border: 'none',
+                  borderRadius: 4,
+                  cursor: 'pointer',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 800,
+                  fontSize: 12,
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.15s',
+                  width: '100%',
+                  justifyContent: 'flex-start',
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>{tab.icon}</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  {tab.icon}
+                </span>
                 {tab.label}
-                {isActive && <span className="material-symbols-outlined" style={{ fontSize: 14, marginLeft: 'auto', opacity: 0.5 }}>chevron_right</span>}
+                {isActive && (
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 14, marginLeft: 'auto', opacity: 0.5 }}
+                  >
+                    chevron_right
+                  </span>
+                )}
               </button>
             )
           })}
@@ -334,39 +436,71 @@ export default function AdminSettings() {
         <div style={{ flex: 1, minWidth: 0 }}>
           {activeTab === 'profile' && (
             <ProfileSettingsTab
-              profileForm={profileForm} setProfileForm={setProfileForm}
-              isUploading={isUploading} isSaving={isSaving} adminData={adminData}
-              fileInputRef={fileInputRef} handleAvatarClick={handleAvatarClick}
-              handleFileChange={handleFileChange} handleSaveProfile={handleSaveProfile}
+              profileForm={profileForm}
+              setProfileForm={setProfileForm}
+              isUploading={isUploading}
+              isSaving={isSaving}
+              adminData={adminData}
+              fileInputRef={fileInputRef}
+              handleAvatarClick={handleAvatarClick}
+              handleFileChange={handleFileChange}
+              handleSaveProfile={handleSaveProfile}
             />
           )}
           {activeTab === 'roles' && <RolesManagementTab />}
           {activeTab === 'system' && (
-            <SystemPreferencesTab interfaceDensity={interfaceDensity} setInterfaceDensity={setInterfaceDensity} toast={toast} />
+            <SystemPreferencesTab
+              interfaceDensity={interfaceDensity}
+              setInterfaceDensity={setInterfaceDensity}
+              toast={toast}
+            />
           )}
           {activeTab === 'movement' && (
-            <MovementInfoTab siteSettings={siteSettings} setSiteSettings={setSiteSettings} isSaving={isSaving} setIsSaving={setIsSaving} toast={toast} />
+            <MovementInfoTab
+              siteSettings={siteSettings}
+              setSiteSettings={setSiteSettings}
+              isSaving={isSaving}
+              setIsSaving={setIsSaving}
+              toast={toast}
+            />
           )}
           {activeTab === 'buttons' && (
-            <ButtonCustomizerTab siteSettings={siteSettings} setSiteSettings={setSiteSettings} isSaving={isSaving} handleSave={handleSaveButtonSettings} />
+            <ButtonCustomizerTab
+              siteSettings={siteSettings}
+              setSiteSettings={setSiteSettings}
+              isSaving={isSaving}
+              handleSave={handleSaveButtonSettings}
+            />
           )}
           {activeTab === 'security' && (
             <SecuritySettingsTab
-              passwordForm={passwordForm} setPasswordForm={setPasswordForm}
-              isSaving={isSaving} handleUpdatePassword={handleUpdatePassword}
-              mfaFactors={mfaFactors} handleStartMfaEnroll={handleStartMfaEnroll}
-              handleUnenrollMfa={handleUnenrollMfa} showMfaDialog={showMfaDialog}
-              setShowMfaDialog={setShowMfaDialog} mfaStep={mfaStep} setMfaStep={setMfaStep}
-              mfaEnrollData={mfaEnrollData} mfaCode={mfaCode} setMfaCode={setMfaCode}
+              passwordForm={passwordForm}
+              setPasswordForm={setPasswordForm}
+              isSaving={isSaving}
+              handleUpdatePassword={handleUpdatePassword}
+              mfaFactors={mfaFactors}
+              handleStartMfaEnroll={handleStartMfaEnroll}
+              handleUnenrollMfa={handleUnenrollMfa}
+              showMfaDialog={showMfaDialog}
+              setShowMfaDialog={setShowMfaDialog}
+              mfaStep={mfaStep}
+              setMfaStep={setMfaStep}
+              mfaEnrollData={mfaEnrollData}
+              mfaCode={mfaCode}
+              setMfaCode={setMfaCode}
               handleVerifyMfa={handleVerifyMfa}
             />
           )}
           {activeTab === 'audit' && (
             <AuditLogTab
-              auditSearch={auditSearch} setAuditSearch={setAuditSearch}
-              auditFilter={auditFilter} setAuditFilter={setAuditFilter}
-              auditResourceFilter={auditResourceFilter} setAuditResourceFilter={setAuditResourceFilter}
-              filteredLogs={filteredLogs} handleExportLogs={handleExportLogs}
+              auditSearch={auditSearch}
+              setAuditSearch={setAuditSearch}
+              auditFilter={auditFilter}
+              setAuditFilter={setAuditFilter}
+              auditResourceFilter={auditResourceFilter}
+              setAuditResourceFilter={setAuditResourceFilter}
+              filteredLogs={filteredLogs}
+              handleExportLogs={handleExportLogs}
             />
           )}
         </div>

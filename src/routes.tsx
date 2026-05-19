@@ -4,6 +4,7 @@ import WithChapters from './components/WithChapters'
 import Home from './pages/Home'
 import PublicLayout from './components/PublicLayout'
 import DashboardLayout from './components/DashboardLayout'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
@@ -55,6 +56,7 @@ const AdminAuthors = lazy(() => import('./pages/admin/authors'))
 const AdminMediaLibrary = lazy(() => import('./pages/admin/MediaLibrary'))
 const AdminLeadershipHub = lazy(() => import('./pages/admin/LeadershipHub'))
 const AdminDonations = lazy(() => import('./pages/admin/DonationVerification'))
+const AdminSpendingLedger = lazy(() => import('./pages/admin/SpendingLedger'))
 const AdminAdministrators = lazy(() => import('./pages/admin/Administrators'))
 const AdminBroadcasts = lazy(() => import('./pages/admin/Broadcasts'))
 const AdminNewBroadcast = lazy(() => import('./pages/admin/NewBroadcast'))
@@ -99,34 +101,42 @@ export const routes: RouteObject[] = [
     element: <RegistrationFormPreview />,
   },
   {
-    element: <DashboardLayout />,
+    element: <ProtectedRoute />,
     children: [
-      { path: '/dashboard', element: <Dashboard /> },
-      { path: '/dashboard/blog', element: <Blog /> },
-      { path: '/dashboard/blog/:id', element: <BlogPost /> },
-      { path: '/dashboard/agenda', element: <OurAgenda /> },
-      { path: '/dashboard/impact', element: <Impact /> },
-      { path: '/dashboard/polls', element: <Polls /> },
-      { element: <WithChapters />, children: [
-        { path: '/dashboard/chapters', element: <Chapters /> },
-        { path: '/dashboard/chapters/:slug', element: <ChapterDetails /> },
-      ]},
-      { path: '/dashboard/store', element: <Store /> },
-      { path: '/dashboard/store/product/:slug', element: <ProductDetails /> },
-      { path: '/dashboard/store/cart', element: <Cart /> },
-      { path: '/dashboard/store/wishlist', element: <Wishlist /> },
-      { path: '/dashboard/store/checkout', element: <Checkout /> },
-      { path: '/dashboard/store/summary', element: <OrderSummary /> },
-      { path: '/dashboard/feedback', element: <FeedbackHub /> },
-      { path: '/dashboard/canvass', element: <CanvasserClipboard /> },
-      { path: '/dashboard/chapter-hub', element: <ChapterHub /> },
-      { path: '/dashboard/chapter-hub/:chapterId', element: <ChapterHub /> },
-      { path: '/dashboard/donate', element: <Donate /> },
-      { path: '/dashboard/contact', element: <Contact /> },
-      { path: '/dashboard/members', element: <Members /> },
-      { path: '/dashboard/privacy', element: <Privacy /> },
-      { path: '/dashboard/terms', element: <Terms /> },
-      { path: '/dashboard/settings', element: <ProfileSettings /> },
+      {
+        element: <DashboardLayout />,
+        children: [
+          { path: '/dashboard', element: <Dashboard /> },
+          { path: '/dashboard/blog', element: <Blog /> },
+          { path: '/dashboard/blog/:id', element: <BlogPost /> },
+          { path: '/dashboard/agenda', element: <OurAgenda /> },
+          { path: '/dashboard/impact', element: <Impact /> },
+          { path: '/dashboard/polls', element: <Polls /> },
+          {
+            element: <WithChapters />,
+            children: [
+              { path: '/dashboard/chapters', element: <Chapters /> },
+              { path: '/dashboard/chapters/:slug', element: <ChapterDetails /> },
+            ],
+          },
+          { path: '/dashboard/store', element: <Store /> },
+          { path: '/dashboard/store/product/:slug', element: <ProductDetails /> },
+          { path: '/dashboard/store/cart', element: <Cart /> },
+          { path: '/dashboard/store/wishlist', element: <Wishlist /> },
+          { path: '/dashboard/store/checkout', element: <Checkout /> },
+          { path: '/dashboard/store/summary', element: <OrderSummary /> },
+          { path: '/dashboard/feedback', element: <FeedbackHub /> },
+          { path: '/dashboard/canvass', element: <CanvasserClipboard /> },
+          { path: '/dashboard/chapter-hub', element: <ChapterHub /> },
+          { path: '/dashboard/chapter-hub/:chapterId', element: <ChapterHub /> },
+          { path: '/dashboard/donate', element: <Donate /> },
+          { path: '/dashboard/contact', element: <Contact /> },
+          { path: '/dashboard/members', element: <Members /> },
+          { path: '/dashboard/privacy', element: <Privacy /> },
+          { path: '/dashboard/terms', element: <Terms /> },
+          { path: '/dashboard/settings', element: <ProfileSettings /> },
+        ],
+      },
     ],
   },
   {
@@ -147,12 +157,14 @@ export const routes: RouteObject[] = [
       { path: '/admin/deploy', element: <AdminDeployMission /> },
       { path: '/admin/polling-stations', element: <AdminPollingStations /> },
       { path: '/admin/donations', element: <AdminDonations /> },
+      { path: '/admin/spending-ledger', element: <AdminSpendingLedger /> },
       { path: '/admin/priorities', element: <AdminStrategicPriorities /> },
       { path: '/admin/members', element: <AdminMembers /> },
       { path: '/admin/verification', element: <AdminMemberVerification /> },
-      { element: <WithChapters />, children: [
-        { path: '/admin/chapters', element: <AdminChapters /> },
-      ]},
+      {
+        element: <WithChapters />,
+        children: [{ path: '/admin/chapters', element: <AdminChapters /> }],
+      },
       { path: '/admin/polls', element: <AdminPolls /> },
       { path: '/admin/store', element: <AdminStore /> },
       { path: '/admin/settings', element: <AdminSettings /> },
@@ -187,9 +199,7 @@ export const routes: RouteObject[] = [
       { path: '/store/summary', element: <OrderSummary /> },
       { path: '/impact', element: <Impact /> },
       { path: '/polls', element: <Polls /> },
-      { element: <WithChapters />, children: [
-        { path: '/chapters', element: <Chapters /> },
-      ]},
+      { element: <WithChapters />, children: [{ path: '/chapters', element: <Chapters /> }] },
       { path: '/privacy', element: <Privacy /> },
       { path: '/terms', element: <Terms /> },
       { path: '/press', element: <Press /> },

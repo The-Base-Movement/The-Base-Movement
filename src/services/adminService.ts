@@ -13,12 +13,12 @@ import { pollService } from './pollService'
 import { auditService } from './auditService'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import type { Product } from '@/types/product'
-import type { 
-  Member, 
-  Region, 
-  Chapter, 
+import type {
+  Member,
+  Region,
+  Chapter,
   Country,
-  Poll, 
+  Poll,
   InventoryItem,
   DonationCampaign,
   DonationDetail,
@@ -71,31 +71,71 @@ import type {
   MemberDonation,
   MemberPollVote,
   MemberSession,
-  MemberNote
+  MemberNote,
 } from '@/types/admin'
 
 // Re-export all types so consumers can import from either location
 export type {
-  Member, Region, Chapter, Country, Poll, PollOption, InventoryItem,
-  DonationCampaign, DonationDetail,
-  FieldEvent, MobilizationLedger, RegionalStat, Milestone,
-  FieldDirective, FieldReport, ChapterApplication, Achievement,
-  LogisticsVelocity, InventoryAlert, MemberFeedback, SentimentIntelligence,
-  ImpactProjection, RapidResponseDirective, CrisisIncident, MediaCounterNarrative,
-  VoterRegistration, CanvassingCampaign, CanvasserLog, GOTVTransportRequest,
-  FieldAction, RallyAttendance, ChapterLeaderboard, LeaderboardEntry,
-  MovementPulse, GrowthTrend, PendingVerification, ActivityLog,
-  PollStats, Order, OrderStats, OrderItem, BlogPost, ResourceRequest,
-  LogisticsAuditEntry, AuditLogEntry, AdminRole, AdminPermission,
-  SentimentStat, Broadcast, Notification, AdminUser, PressRelease, MediaKitAsset, GlobalSearchResult,
-  User, MemberDonation, MemberPollVote, MemberSession, MemberNote
+  Member,
+  Region,
+  Chapter,
+  Country,
+  Poll,
+  PollOption,
+  InventoryItem,
+  DonationCampaign,
+  DonationDetail,
+  FieldEvent,
+  MobilizationLedger,
+  RegionalStat,
+  Milestone,
+  FieldDirective,
+  FieldReport,
+  ChapterApplication,
+  Achievement,
+  LogisticsVelocity,
+  InventoryAlert,
+  MemberFeedback,
+  SentimentIntelligence,
+  ImpactProjection,
+  RapidResponseDirective,
+  CrisisIncident,
+  MediaCounterNarrative,
+  VoterRegistration,
+  CanvassingCampaign,
+  CanvasserLog,
+  GOTVTransportRequest,
+  FieldAction,
+  RallyAttendance,
+  ChapterLeaderboard,
+  LeaderboardEntry,
+  MovementPulse,
+  GrowthTrend,
+  PendingVerification,
+  ActivityLog,
+  PollStats,
+  Order,
+  OrderStats,
+  OrderItem,
+  BlogPost,
+  ResourceRequest,
+  LogisticsAuditEntry,
+  AuditLogEntry,
+  AdminRole,
+  AdminPermission,
+  SentimentStat,
+  Broadcast,
+  Notification,
+  AdminUser,
+  PressRelease,
+  MediaKitAsset,
+  GlobalSearchResult,
+  User,
+  MemberDonation,
+  MemberPollVote,
+  MemberSession,
+  MemberNote,
 } from '@/types/admin'
-
-
-
-
-
-
 
 class AdminService {
   private static instance: AdminService
@@ -112,8 +152,11 @@ class AdminService {
 
   async initialize(): Promise<AdminUser | null> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser()
+
       if (authError || !user) {
         this.currentUser = null
         return null
@@ -129,14 +172,11 @@ class AdminService {
     }
   }
 
-
-
   public can(action: AdminPermission['action'], resource: AdminPermission['resource']): boolean {
-
     if (!authService.isAuthenticated()) return false
     if (!this.currentUser) return false
     if (this.currentUser.role === 'SUPER_ADMIN' || this.currentUser.role === 'FOUNDER') return true
-    return this.currentUser.permissions.some(p => p.action === action && p.resource === resource)
+    return this.currentUser.permissions.some((p) => p.action === action && p.resource === resource)
   }
 
   public getCurrentUser(): AdminUser | null {
@@ -146,8 +186,8 @@ class AdminService {
 
   // --- Audit Log ---
   async logAction(
-    action: string, 
-    resource: string, 
+    action: string,
+    resource: string,
     status: 'Success' | 'Failure' | 'Warning' = 'Success',
     details?: Record<string, unknown>
   ): Promise<void> {
@@ -155,16 +195,24 @@ class AdminService {
   }
 
   // --- Member Operations ---
-  
+
   async getMembers(): Promise<Member[]> {
     return memberService.getMembers()
   }
 
-  async getMembersPaginated(page: number, pageSize: number, searchTerm?: string, registrationSource?: string): Promise<{ data: Member[], totalCount: number }> {
+  async getMembersPaginated(
+    page: number,
+    pageSize: number,
+    searchTerm?: string,
+    registrationSource?: string
+  ): Promise<{ data: Member[]; totalCount: number }> {
     return memberService.getMembersPaginated(page, pageSize, searchTerm, registrationSource)
   }
 
-  async searchMembers(query: string, searchType: 'name' | 'id' | 'phone' = 'name'): Promise<Member[]> {
+  async searchMembers(
+    query: string,
+    searchType: 'name' | 'id' | 'phone' = 'name'
+  ): Promise<Member[]> {
     return memberService.searchMembers(query, searchType)
   }
 
@@ -172,10 +220,12 @@ class AdminService {
     return memberService.getAdministrators()
   }
 
-  async provisionAdministrator(id: string, role: AdminRole, permissions: AdminPermission[]): Promise<boolean> {
-    const { error } = await supabase
-      .from('admins')
-      .insert([{ id, role, permissions }])
+  async provisionAdministrator(
+    id: string,
+    role: AdminRole,
+    permissions: AdminPermission[]
+  ): Promise<boolean> {
+    const { error } = await supabase.from('admins').insert([{ id, role, permissions }])
 
     if (error) {
       console.error('[ADMIN SERVICE] Provisioning failed:', error)
@@ -187,10 +237,7 @@ class AdminService {
   }
 
   async revokeAdministrator(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('admins')
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from('admins').delete().eq('id', id)
 
     if (error) {
       console.error('[ADMIN SERVICE] Revocation failed:', error)
@@ -209,7 +256,11 @@ class AdminService {
     return memberService.getMemberProfileByAuthId(authId)
   }
 
-  async getGrowthStats(): Promise<{ joined_last_hour: number; joined_last_24h: number; joined_last_7d: number }> {
+  async getGrowthStats(): Promise<{
+    joined_last_hour: number
+    joined_last_24h: number
+    joined_last_7d: number
+  }> {
     return memberService.getGrowthStats()
   }
 
@@ -224,9 +275,9 @@ class AdminService {
   async registerMember(data: User): Promise<{ data: boolean; error: PostgrestError | null }> {
     const result = await memberService.registerMember(data)
     if (!result.error) {
-      await this.logAction('MEMBER_REGISTER', `MEMBERS/${data.registration_number}`, 'Success', { 
+      await this.logAction('MEMBER_REGISTER', `MEMBERS/${data.registration_number}`, 'Success', {
         name: data.full_name,
-        regNo: data.registration_number 
+        regNo: data.registration_number,
       })
     }
     return result
@@ -244,21 +295,22 @@ class AdminService {
       return []
     }
 
-    return (data || []).map(d => ({
+    return (data || []).map((d) => ({
       id: d.id,
       amount: d.amount,
       method: d.payment_method || 'N/A',
       ref: d.reference || 'N/A',
       date: d.created_at,
       cleared: d.cleared || false,
-      label: d.description || 'Contribution'
+      label: d.description || 'Contribution',
     }))
   }
 
   async getMemberPollVotes(authId: string): Promise<MemberPollVote[]> {
     const { data, error } = await supabase
       .from('poll_votes')
-      .select(`
+      .select(
+        `
         id,
         created_at,
         polls (
@@ -268,8 +320,9 @@ class AdminService {
         poll_options (
           label
         )
-      `)
-      .eq('user_id', authId) 
+      `
+      )
+      .eq('user_id', authId)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -289,12 +342,12 @@ class AdminService {
       } | null
     }
 
-    return (data as unknown as PollVoteJoined[] || []).map((v) => ({
+    return ((data as unknown as PollVoteJoined[]) || []).map((v) => ({
       id: v.id,
       pollTitle: v.polls?.title || 'Unknown Poll',
       pollNumber: v.polls?.poll_number || 0,
       choice: v.poll_options?.label || 'Unknown',
-      date: v.created_at
+      date: v.created_at,
     }))
   }
 
@@ -310,13 +363,13 @@ class AdminService {
       return []
     }
 
-    return (data || []).map(s => ({
+    return (data || []).map((s) => ({
       id: s.id,
       device: s.device_name || 'Unknown Device',
       location: s.location || 'Unknown Location',
       ip: s.ip_address || 'N/A',
       date: s.created_at,
-      current: s.is_current || false
+      current: s.is_current || false,
     }))
   }
 
@@ -332,26 +385,33 @@ class AdminService {
       return []
     }
 
-    return (data || []).map(n => ({
+    return (data || []).map((n) => ({
       id: n.id,
       author: n.author_name || 'System',
       role: n.author_role || 'Admin',
       content: n.content,
       date: n.created_at,
-      isSystem: n.is_system || false
+      isSystem: n.is_system || false,
     }))
   }
 
-  async addMemberNote(authId: string, authorName: string, authorRole: string, content: string): Promise<MemberNote | null> {
+  async addMemberNote(
+    authId: string,
+    authorName: string,
+    authorRole: string,
+    content: string
+  ): Promise<MemberNote | null> {
     const { data, error } = await supabase
       .from('member_notes')
-      .insert([{
-        member_id: authId,
-        author_name: authorName,
-        author_role: authorRole,
-        content,
-        is_system: false
-      }])
+      .insert([
+        {
+          member_id: authId,
+          author_name: authorName,
+          author_role: authorRole,
+          content,
+          is_system: false,
+        },
+      ])
       .select()
       .single()
 
@@ -366,7 +426,7 @@ class AdminService {
       role: data.author_role,
       content: data.content,
       date: data.created_at,
-      isSystem: data.is_system
+      isSystem: data.is_system,
     }
   }
 
@@ -374,7 +434,12 @@ class AdminService {
     return memberService.getPendingVerifications()
   }
 
-  async verifyMember(id: string, approve: boolean, reason?: string, chapterName?: string): Promise<boolean> {
+  async verifyMember(
+    id: string,
+    approve: boolean,
+    reason?: string,
+    chapterName?: string
+  ): Promise<boolean> {
     const success = await memberService.verifyMember(id, approve, reason, chapterName)
     if (success) {
       await this.logAction(
@@ -436,24 +501,42 @@ class AdminService {
     return chapterService.incrementChapterMemberCount(chapterName)
   }
 
-  async addChapterLeader(chapterId: string, leader: { name: string, role: string, imageUrl?: string }): Promise<boolean> {
+  async addChapterLeader(
+    chapterId: string,
+    leader: { name: string; role: string; imageUrl?: string }
+  ): Promise<boolean> {
     const success = await chapterService.addChapterLeader(chapterId, leader)
     if (success) {
-      await this.logAction('CHAPTER_LEADER_ADD', `CHAPTERS/${chapterId}/LEADERS`, 'Success', { leader: leader.name, role: leader.role })
+      await this.logAction('CHAPTER_LEADER_ADD', `CHAPTERS/${chapterId}/LEADERS`, 'Success', {
+        leader: leader.name,
+        role: leader.role,
+      })
     }
     return success
   }
 
-  async removeChapterLeader(chapterId: string, leaderId: string, leaderName: string): Promise<boolean> {
+  async removeChapterLeader(
+    chapterId: string,
+    leaderId: string,
+    leaderName: string
+  ): Promise<boolean> {
     const success = await chapterService.removeChapterLeader(leaderId)
     if (success) {
-      await this.logAction('CHAPTER_LEADER_REMOVE', `CHAPTERS/${chapterId}/LEADERS/${leaderName}`, 'Warning')
+      await this.logAction(
+        'CHAPTER_LEADER_REMOVE',
+        `CHAPTERS/${chapterId}/LEADERS/${leaderName}`,
+        'Warning'
+      )
     }
     return success
   }
 
   async getUserChapter(authId: string): Promise<string | null> {
-    const { data } = await supabase.from('users').select('chapter, full_name').eq('id', authId).maybeSingle()
+    const { data } = await supabase
+      .from('users')
+      .select('chapter, full_name')
+      .eq('id', authId)
+      .maybeSingle()
     if (data?.chapter) return data.chapter
     // Fall back: check if this user is the named leader of a chapter
     if (data?.full_name) {
@@ -489,17 +572,17 @@ class AdminService {
     let query = supabase
       .from('donation_campaigns')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (status) {
       query = query.eq('status', status)
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
 
     if (error) {
-      console.warn('[DATABASE] Failed to fetch campaigns:', error);
-      return [];
+      console.warn('[DATABASE] Failed to fetch campaigns:', error)
+      return []
     }
 
     interface DBCampaign {
@@ -521,27 +604,27 @@ class AdminService {
       raisedAmount: Number(c.raised_amount),
       endDate: c.end_date,
       status: c.status,
-      imageUrl: c.image_url
-    }));
+      imageUrl: c.image_url,
+    }))
   }
 
-  async createDonationCampaign(campaign: Omit<DonationCampaign, 'id' | 'raisedAmount'>): Promise<boolean> {
-    const { error } = await supabase
-      .from('donation_campaigns')
-      .insert({
-        title: campaign.title,
-        description: campaign.description,
-        target_amount: campaign.targetAmount,
-        end_date: campaign.endDate,
-        status: campaign.status,
-        image_url: campaign.imageUrl
-      })
-    
+  async createDonationCampaign(
+    campaign: Omit<DonationCampaign, 'id' | 'raisedAmount'>
+  ): Promise<boolean> {
+    const { error } = await supabase.from('donation_campaigns').insert({
+      title: campaign.title,
+      description: campaign.description,
+      target_amount: campaign.targetAmount,
+      end_date: campaign.endDate,
+      status: campaign.status,
+      image_url: campaign.imageUrl,
+    })
+
     if (error) {
       console.error('[DATABASE] Failed to create campaign:', error)
       return false
     }
-    
+
     await this.logAction('CAMPAIGN_CREATE', `CAMPAIGNS/${campaign.title}`, 'Success')
     return true
   }
@@ -555,36 +638,28 @@ class AdminService {
     if (campaign.status) updates.status = campaign.status
     if (campaign.imageUrl) updates.image_url = campaign.imageUrl
 
-    const { error } = await supabase
-      .from('donation_campaigns')
-      .update(updates)
-      .eq('id', id)
-    
+    const { error } = await supabase.from('donation_campaigns').update(updates).eq('id', id)
+
     if (error) {
       console.error('[DATABASE] Failed to update campaign:', error)
       return false
     }
-    
+
     await this.logAction('CAMPAIGN_UPDATE', `CAMPAIGNS/${id}`, 'Success')
     return true
   }
 
   async deleteDonationCampaign(id: string, title: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('donation_campaigns')
-      .delete()
-      .eq('id', id)
-    
+    const { error } = await supabase.from('donation_campaigns').delete().eq('id', id)
+
     if (error) {
       console.error('[DATABASE] Failed to delete campaign:', error)
       return false
     }
-    
+
     await this.logAction('CAMPAIGN_DELETE', `CAMPAIGNS/${title}`, 'Warning')
     return true
   }
-
-
 
   async submitDonation(donationData: {
     fullName: string
@@ -596,27 +671,31 @@ class AdminService {
     memberId?: string | null
     campaignId?: string | null
   }): Promise<boolean> {
-    const { error } = await supabase
-      .from('donations')
-      .insert({
-        full_name: donationData.fullName,
-        phone: donationData.phone,
-        amount: parseFloat(donationData.amount),
-        country: donationData.country,
-        payment_method: donationData.paymentMethod || 'MTN MoMo',
-        show_on_dashboard: donationData.showOnDashboard,
-        member_id: donationData.memberId || null,
-        campaign_id: donationData.campaignId || null
-      });
+    const { error } = await supabase.from('donations').insert({
+      full_name: donationData.fullName,
+      phone: donationData.phone,
+      amount: parseFloat(donationData.amount),
+      country: donationData.country,
+      payment_method: donationData.paymentMethod || 'MTN MoMo',
+      show_on_dashboard: donationData.showOnDashboard,
+      member_id: donationData.memberId || null,
+      campaign_id: donationData.campaignId || null,
+    })
 
     if (error) {
-      console.error('[DATABASE] Donation submission failed:', error);
-      return false;
+      console.error('[DATABASE] Donation submission failed:', error)
+      return false
     }
-    return true;
+    return true
   }
 
-  async createPoll(poll: { question: string, region: string, status: string, endDate: string, options: string[] }): Promise<boolean> {
+  async createPoll(poll: {
+    question: string
+    region: string
+    status: string
+    endDate: string
+    options: string[]
+  }): Promise<boolean> {
     const pollId = await pollService.createPoll(poll)
     if (pollId) {
       await this.logAction('CREATE_POLL', `POLLS/${pollId}`, 'Success', { question: poll.question })
@@ -640,8 +719,6 @@ class AdminService {
   async getPollStats(): Promise<PollStats> {
     return pollService.getPollStats()
   }
-
-
 
   // --- Store Operations ---
 
@@ -687,98 +764,76 @@ class AdminService {
     return logisticsService.getResourceRequests()
   }
 
-  async updateResourceRequestStatus(id: string, status: ResourceRequest['status']): Promise<boolean> {
+  async updateResourceRequestStatus(
+    id: string,
+    status: ResourceRequest['status']
+  ): Promise<boolean> {
     const success = await logisticsService.updateResourceRequestStatus(id, status)
     if (success) {
-      this.logAction(`RESOURCE_REQUEST_${status.toUpperCase()}`, `REQ-${id.substring(0,8)}`, 'Success')
+      this.logAction(
+        `RESOURCE_REQUEST_${status.toUpperCase()}`,
+        `REQ-${id.substring(0, 8)}`,
+        'Success'
+      )
     }
     return success
   }
 
-
   // --- Analytics ---
   async getPublicStats(): Promise<{
-    members: number;
-    chapters: number;
-    regions: number;
-    diaspora: number;
-    membersDelta: string;
-    chaptersDelta: string;
-    diasporaDelta: string;
+    members: number
+    chapters: number
+    regions: number
+    diaspora: number
+    membersDelta: string
+    chaptersDelta: string
+    diasporaDelta: string
   }> {
     try {
-      const thirtyDaysAgo = new Date()
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-      const dateStr = thirtyDaysAgo.toISOString()
-
-      const [
-        membersTotal, 
-        chaptersTotal, 
-        chaptersRes, 
-        diasporaTotal,
-        membersNew,
-        chaptersNew,
-        diasporaNew,
-        regionsRes
-      ] = await Promise.all([
-        supabase.from('users').select('*', { count: 'exact', head: true }).eq('verification_status', 'Verified'),
+      const [membersTotal, chaptersTotal, diasporaTotal, regionsTotal] = await Promise.all([
+        supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true })
+          .in('status', ['Active', 'Approved']),
         supabase.from('chapters').select('*', { count: 'exact', head: true }),
-        supabase.from('chapters').select('region, city_or_region').eq('country', 'Ghana'),
-        supabase.from('users').select('*', { count: 'exact', head: true }).neq('country', 'Ghana').eq('verification_status', 'Verified'),
-        supabase.from('users').select('*', { count: 'exact', head: true }).eq('verification_status', 'Verified').gt('created_at', dateStr),
-        supabase.from('chapters').select('*', { count: 'exact', head: true }).gt('created_at', dateStr),
-        supabase.from('users').select('*', { count: 'exact', head: true }).neq('country', 'Ghana').eq('verification_status', 'Verified').gt('created_at', dateStr),
-        supabase.from('ghana_regions').select('name')
-      ]);
-
-      // List of official regions for matching from database
-      const ghanaRegions = (regionsRes.data || []).map(r => r.name);
-
-      // Count how many unique official regions have at least one chapter
-      const uniqueRegionsCount = new Set(
-        (chaptersRes.data || [])
-          .map(c => (c.region || c.city_or_region || '').trim())
-          .filter(val => {
-            if (!val) return false;
-            // Check if it matches any official region from the database (case-insensitive)
-            return ghanaRegions.some(r => r.toLowerCase() === val.toLowerCase());
-          })
-          .map(val => val.toLowerCase()) // Normalize for the Set
-      ).size;
-      
-      const mCount = membersTotal.count || 0;
-      const cCount = chaptersTotal.count || 0;
-      const dCount = diasporaTotal.count || 0;
-      
-      const mNew = membersNew.count || 0;
-      const cNew = chaptersNew.count || 0;
-      const dNew = diasporaNew.count || 0;
+        supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true })
+          .eq('platform', 'DIASPORA')
+          .in('status', ['Active', 'Approved']),
+        supabase.from('ghana_regions').select('*', { count: 'exact', head: true }),
+      ])
 
       return {
-        members: mCount,
-        chapters: cCount,
-        regions: uniqueRegionsCount,
-        diaspora: dCount,
-        membersDelta: mNew > 0 ? `+${mNew} this month` : 'Steady growth',
-        chaptersDelta: cNew > 0 ? `+${cNew} this month` : 'Growing nationwide',
-        diasporaDelta: dNew > 0 ? `+${dNew} new members` : 'Global network'
-      };
+        members: membersTotal.count || 0,
+        chapters: chaptersTotal.count || 0,
+        regions: regionsTotal.count || 16,
+        diaspora: diasporaTotal.count || 0,
+        membersDelta: 'Steady growth',
+        chaptersDelta: 'Growing nationwide',
+        diasporaDelta: 'Global network',
+      }
     } catch (error) {
-      console.warn('[ADMIN SERVICE] Failed to fetch public stats:', error);
-      return { 
-        members: 0, chapters: 0, regions: 0, diaspora: 0,
-        membersDelta: '...', chaptersDelta: '...', diasporaDelta: '...'
-      };
+      console.warn('[ADMIN SERVICE] Failed to fetch public stats:', error)
+      return {
+        members: 0,
+        chapters: 0,
+        regions: 0,
+        diaspora: 0,
+        membersDelta: '...',
+        chaptersDelta: '...',
+        diasporaDelta: '...',
+      }
     }
   }
 
-  async getGlobalStats(): Promise<{ label: string, value: string, change: string }[]> {
+  async getGlobalStats(): Promise<{ label: string; value: string; change: string }[]> {
     const [usersRes, chaptersRes, ordersRes] = await Promise.all([
       supabase.from('users').select('*', { count: 'exact', head: true }),
       supabase.from('chapters').select('*', { count: 'exact', head: true }),
-      supabase.from('store_orders').select('*', { count: 'exact', head: true })
+      supabase.from('store_orders').select('*', { count: 'exact', head: true }),
     ])
-    
+
     const usersCount = usersRes.count || 0
     const chaptersCount = chaptersRes.count || 0
     const ordersCount = ordersRes.count || 0
@@ -786,17 +841,20 @@ class AdminService {
     return [
       { label: 'Total Membership', value: usersCount.toLocaleString(), change: '+12.4%' },
       { label: 'Regional Chapters', value: chaptersCount.toString(), change: '+4.2%' },
-      { label: 'Member Engagement', value: `${Math.round((usersCount / 5000) * 100)}%`, change: '+2.1%' },
-      { label: 'Merch Orders', value: ordersCount.toLocaleString(), change: '+15.8%' }
+      {
+        label: 'Member Engagement',
+        value: `${Math.round((usersCount / 5000) * 100)}%`,
+        change: '+2.1%',
+      },
+      { label: 'Merch Orders', value: ordersCount.toLocaleString(), change: '+15.8%' },
     ]
   }
-
 
   async getRegions(): Promise<Region[]> {
     return logisticsService.getRegions()
   }
 
-  async getConstituencies(): Promise<{ data: { name: string, region_id: number }[] }> {
+  async getConstituencies(): Promise<{ data: { name: string; region_id: number }[] }> {
     return logisticsService.getConstituencies()
   }
 
@@ -809,13 +867,14 @@ class AdminService {
   }
 
   // --- Storage Operations ---
-  async uploadAvatar(fileName: string, blob: Blob): Promise<{ data: { path: string } | null, error: Error | null }> {
-    return supabase.storage
-      .from('avatars')
-      .upload(fileName, blob, { 
-        upsert: true,
-        contentType: blob.type || 'image/jpeg'
-      })
+  async uploadAvatar(
+    fileName: string,
+    blob: Blob
+  ): Promise<{ data: { path: string } | null; error: Error | null }> {
+    return supabase.storage.from('avatars').upload(fileName, blob, {
+      upsert: true,
+      contentType: blob.type || 'image/jpeg',
+    })
   }
 
   /**
@@ -827,29 +886,30 @@ class AdminService {
   }
 
   getAvatarPublicUrl(fileName: string): string {
-    const { data } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(fileName)
+    const { data } = supabase.storage.from('avatars').getPublicUrl(fileName)
     return data.publicUrl
   }
 
-  async uploadBrandingAsset(fileName: string, blob: Blob): Promise<{ data: { path: string } | null, error: Error | null }> {
-    return supabase.storage
-      .from('branding')
-      .upload(fileName, blob, { upsert: true })
+  async uploadBrandingAsset(
+    fileName: string,
+    blob: Blob
+  ): Promise<{ data: { path: string } | null; error: Error | null }> {
+    return supabase.storage.from('branding').upload(fileName, blob, { upsert: true })
   }
 
   getBrandingAssetUrl(fileName: string): string {
-    const { data } = supabase.storage
-      .from('branding')
-      .getPublicUrl(fileName)
+    const { data } = supabase.storage.from('branding').getPublicUrl(fileName)
     return data.publicUrl
   }
 
   async deleteConstituency(id: string, regionName: string, conName: string): Promise<boolean> {
     const success = await logisticsService.deleteConstituency(id)
     if (success) {
-      await this.logAction('CONSTITUENCY_DELETE', `REGIONS/${regionName}/CONSTITUENCIES/${conName}`, 'Warning')
+      await this.logAction(
+        'CONSTITUENCY_DELETE',
+        `REGIONS/${regionName}/CONSTITUENCIES/${conName}`,
+        'Warning'
+      )
     }
     return success
   }
@@ -868,43 +928,52 @@ class AdminService {
 
   async createConstituency(regionId: string, regionName: string, name: string): Promise<boolean> {
     const success = await logisticsService.createConstituency(regionId, name)
-    if (success) await this.logAction('CONSTITUENCY_CREATE', `REGIONS/${regionName}/CONSTITUENCIES/${name}`, 'Success')
+    if (success)
+      await this.logAction(
+        'CONSTITUENCY_CREATE',
+        `REGIONS/${regionName}/CONSTITUENCIES/${name}`,
+        'Success'
+      )
     return success
   }
 
   async updateConstituency(id: string, regionName: string, name: string): Promise<boolean> {
     const success = await logisticsService.updateConstituency(id, name)
-    if (success) await this.logAction('CONSTITUENCY_UPDATE', `REGIONS/${regionName}/CONSTITUENCIES/${name}`, 'Success')
+    if (success)
+      await this.logAction(
+        'CONSTITUENCY_UPDATE',
+        `REGIONS/${regionName}/CONSTITUENCIES/${name}`,
+        'Success'
+      )
     return success
   }
 
   async getRegionalStats(): Promise<RegionalStat[]> {
-    const [regions, chapters] = await Promise.all([
-      this.getRegions(),
-      this.getChapters()
-    ])
+    const [regions, chapters] = await Promise.all([this.getRegions(), this.getChapters()])
 
-    return regions.map(r => {
-      const regionalChapters = chapters.filter(c => c.city_or_region === r.name)
+    return regions.map((r) => {
+      const regionalChapters = chapters.filter((c) => c.city_or_region === r.name)
       const totalMembers = regionalChapters.reduce((sum, c) => sum + c.member_count, 0)
-      
+
       return {
         region: r.name,
         memberCount: totalMembers,
         chapters: regionalChapters.length,
         activePolls: 0,
         performance: totalMembers > 1000 ? 'High' : totalMembers > 500 ? 'Medium' : 'Low',
-        color: totalMembers > 1000 ? 'var(--brand-green)' : totalMembers > 500 ? 'var(--brand-gold)' : 'var(--brand-red)'
+        color:
+          totalMembers > 1000
+            ? 'var(--brand-green)'
+            : totalMembers > 500
+              ? 'var(--brand-gold)'
+              : 'var(--brand-red)',
       }
     })
   }
 
   async getGrowthTrends(): Promise<GrowthTrend[]> {
     // Note:membership_growth_view needs to be created in Supabase or handled as a table
-    const { data, error } = await supabase
-      .from('membership_growth_view')
-      .select('*')
-      .limit(12)
+    const { data, error } = await supabase.from('membership_growth_view').select('*').limit(12)
 
     if (error) {
       console.warn('[DATABASE] Growth trends fetch failed:', error)
@@ -915,15 +984,14 @@ class AdminService {
 
   async getSentimentAnalysis(): Promise<SentimentStat[]> {
     const chapters = await this.getChapters()
-    return chapters.slice(0, 4).map(c => ({
+    return chapters.slice(0, 4).map((c) => ({
       topic: `${c.name} Mobilization`,
       score: Math.min(Math.round((c.member_count / 500) * 100), 100),
       trend: c.member_count > 100 ? 'Up' : 'Stable',
       sentiment: c.member_count > 200 ? 'Positive' : 'Neutral',
-      color: c.member_count > 200 ? 'var(--brand-green)' : 'var(--brand-gold)'
+      color: c.member_count > 200 ? 'var(--brand-green)' : 'var(--brand-gold)',
     }))
   }
-
 
   async getSystemAuditLogs(): Promise<AuditLogEntry[]> {
     return auditService.getSystemAuditLogs()
@@ -981,7 +1049,9 @@ class AdminService {
     return contentService.getPressReleases()
   }
 
-  async createPressRelease(release: Omit<PressRelease, 'id' | 'createdAt' | 'updatedAt'>): Promise<boolean> {
+  async createPressRelease(
+    release: Omit<PressRelease, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<boolean> {
     const success = await contentService.createPressRelease(release)
     if (success) {
       await this.logAction('PRESS_CREATE', `PRESS/${release.slug}`, 'Success')
@@ -997,12 +1067,12 @@ class AdminService {
     return chapterService.getChapterApplications()
   }
 
-  async submitChapterApplication(application: { 
-    proposed_chapter_name: string; 
-    region: string; 
-    constituency: string; 
-    vision_statement: string;
-    experience_summary?: string;
+  async submitChapterApplication(application: {
+    proposed_chapter_name: string
+    region: string
+    constituency: string
+    vision_statement: string
+    experience_summary?: string
   }): Promise<boolean> {
     return chapterService.submitChapterApplication(application)
   }
@@ -1031,14 +1101,27 @@ class AdminService {
     return donationService.getPendingDonations()
   }
 
-  async getDonationStats(): Promise<{ totalContributions: number, pendingCount: number, approvedAmount: number, flaggedCount: number }> {
+  async getDonationStats(): Promise<{
+    totalContributions: number
+    pendingCount: number
+    approvedAmount: number
+    flaggedCount: number
+  }> {
     return donationService.getDonationStats()
   }
 
-  async verifyDonation(donationId: string, status: 'Verified' | 'Rejected', notes: string = ''): Promise<boolean> {
+  async verifyDonation(
+    donationId: string,
+    status: 'Verified' | 'Rejected',
+    notes: string = ''
+  ): Promise<boolean> {
     const success = await donationService.verifyDonation(donationId, status, notes)
     if (success) {
-      await this.logAction('DONATION_VERIFY', `DONATIONS/${donationId}`, status === 'Verified' ? 'Success' : 'Warning')
+      await this.logAction(
+        'DONATION_VERIFY',
+        `DONATIONS/${donationId}`,
+        status === 'Verified' ? 'Success' : 'Warning'
+      )
     }
     return success
   }
@@ -1047,11 +1130,11 @@ class AdminService {
     return donationService.subscribeToPublicDonations(callback)
   }
 
-
   async getAdminData(userId: string): Promise<AdminUser | null> {
     const { data, error } = await supabase
       .from('admins')
-      .select(`
+      .select(
+        `
         *,
         users!admins_id_fkey (
           full_name,
@@ -1059,15 +1142,16 @@ class AdminService {
           phone_number,
           avatar_url
         )
-      `)
+      `
+      )
       .eq('id', userId)
-      .maybeSingle();
+      .maybeSingle()
 
     if (error) {
-      console.error('[DATABASE] Error fetching admin data:', error);
-      return null;
+      console.error('[DATABASE] Error fetching admin data:', error)
+      return null
     }
-    if (!data) return null;
+    if (!data) return null
 
     interface DBAdminResponse {
       id: string
@@ -1082,68 +1166,71 @@ class AdminService {
         can_manage_donations?: boolean
       }
       assigned_region: string | null
-      users: {
-        full_name: string
-        email: string
-        phone_number: string
-        avatar_url: string
-      } | {
-        full_name: string
-        email: string
-        phone_number: string
-        avatar_url: string
-      }[] | null
+      users:
+        | {
+            full_name: string
+            email: string
+            phone_number: string
+            avatar_url: string
+          }
+        | {
+            full_name: string
+            email: string
+            phone_number: string
+            avatar_url: string
+          }[]
+        | null
     }
 
-    const admin = data as unknown as DBAdminResponse;
-    const userProfile = (Array.isArray(admin.users) ? admin.users[0] : admin.users) as { 
-      full_name: string; 
-      email: string; 
-      phone_number: string; 
-      avatar_url: string; 
-    } | null;
+    const admin = data as unknown as DBAdminResponse
+    const userProfile = (Array.isArray(admin.users) ? admin.users[0] : admin.users) as {
+      full_name: string
+      email: string
+      phone_number: string
+      avatar_url: string
+    } | null
 
     // Map database JSON permissions to the AdminPermission[] format
-    const dbPermissions = admin.permissions || {};
-    const permissions: AdminPermission[] = [];
+    const dbPermissions = admin.permissions || {}
+    const permissions: AdminPermission[] = []
 
     if (dbPermissions.can_manage_members) {
-      permissions.push({ action: 'VERIFY_MEMBER', resource: 'MEMBERS' });
+      permissions.push({ action: 'VERIFY_MEMBER', resource: 'MEMBERS' })
     }
     if (dbPermissions.can_manage_chapters) {
-      permissions.push({ action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' });
+      permissions.push({ action: 'MANAGE_CHAPTER', resource: 'CHAPTERS' })
     }
     if (dbPermissions.can_manage_polls) {
-      permissions.push({ action: 'MANAGE_POLLS', resource: 'POLLS' });
+      permissions.push({ action: 'MANAGE_POLLS', resource: 'POLLS' })
     }
     if (dbPermissions.can_manage_store) {
-      permissions.push({ action: 'MANAGE_INVENTORY', resource: 'STORE' });
+      permissions.push({ action: 'MANAGE_INVENTORY', resource: 'STORE' })
     }
     if (dbPermissions.can_view_audit_logs) {
-      permissions.push({ action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' });
+      permissions.push({ action: 'VIEW_AUDIT_LOGS', resource: 'SYSTEM' })
     }
     if (dbPermissions.can_post_blog) {
-      permissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' });
+      permissions.push({ action: 'MANAGE_BLOGS', resource: 'BLOGS' })
     }
     if (dbPermissions.can_manage_donations) {
-      permissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' });
+      permissions.push({ action: 'MANAGE_DONATIONS', resource: 'DONATIONS' })
     }
 
     // Normalize role string to match AdminRole type exactly
-    let role: AdminRole = 'VERIFIER';
-    const dbRole = admin.role?.toUpperCase() || '';
-    if (dbRole.includes('FOUNDER')) role = 'FOUNDER';
-    else if (dbRole.includes('ORGANIZER')) role = 'ORGANIZER';
-    else if (dbRole.includes('SUPER')) role = 'SUPER_ADMIN';
-    else if (dbRole.includes('CHIEF_EDITOR')) role = 'CHIEF_EDITOR';
-    else if (dbRole.includes('SENIOR_EDITOR')) role = 'SENIOR_EDITOR';
-    else if (dbRole.includes('REGIONAL')) role = 'REGIONAL_DIRECTOR';
-    else if (dbRole.includes('LEADER') || dbRole.includes('CONSTITUENCY')) role = 'CONSTITUENCY_LEAD';
-    else if (dbRole.includes('JUNIOR_EDITOR')) role = 'JUNIOR_EDITOR';
-    else if (dbRole.includes('REGIONAL_CORRESPONDENT')) role = 'REGIONAL_CORRESPONDENT';
-    else if (dbRole.includes('EDITOR')) role = 'EDITOR';
-    else if (dbRole.includes('VERIFIER')) role = 'VERIFIER';
-
+    let role: AdminRole = 'VERIFIER'
+    const dbRole = admin.role?.toUpperCase() || ''
+    if (dbRole.includes('FOUNDER')) role = 'FOUNDER'
+    else if (dbRole.includes('ORGANIZER')) role = 'ORGANIZER'
+    else if (dbRole.includes('SUPER')) role = 'SUPER_ADMIN'
+    else if (dbRole.includes('CHIEF_EDITOR')) role = 'CHIEF_EDITOR'
+    else if (dbRole.includes('SENIOR_EDITOR')) role = 'SENIOR_EDITOR'
+    else if (dbRole.includes('REGIONAL')) role = 'REGIONAL_DIRECTOR'
+    else if (dbRole.includes('LEADER') || dbRole.includes('CONSTITUENCY'))
+      role = 'CONSTITUENCY_LEAD'
+    else if (dbRole.includes('JUNIOR_EDITOR')) role = 'JUNIOR_EDITOR'
+    else if (dbRole.includes('REGIONAL_CORRESPONDENT')) role = 'REGIONAL_CORRESPONDENT'
+    else if (dbRole.includes('EDITOR')) role = 'EDITOR'
+    else if (dbRole.includes('VERIFIER')) role = 'VERIFIER'
 
     return {
       id: admin.id,
@@ -1153,74 +1240,70 @@ class AdminService {
       assigned_region: admin.assigned_region,
       permissions,
       phone: userProfile?.phone_number || '',
-      avatarUrl: userProfile?.avatar_url || ''
-    } as AdminUser;
+      avatarUrl: userProfile?.avatar_url || '',
+    } as AdminUser
   }
 
-
-
-
-
-
-  async updateAdminData(userId: string, updates: { 
-    role?: AdminRole; 
-    permissions?: AdminPermission[]; 
-    assigned_region?: string | null;
-  }) {
-    const { error } = await supabase
-      .from('admins')
-      .update(updates)
-      .eq('id', userId);
+  async updateAdminData(
+    userId: string,
+    updates: {
+      role?: AdminRole
+      permissions?: AdminPermission[]
+      assigned_region?: string | null
+    }
+  ) {
+    const { error } = await supabase.from('admins').update(updates).eq('id', userId)
 
     if (error) {
-      throw new Error(error.message || 'Failed to update admin data');
+      throw new Error(error.message || 'Failed to update admin data')
     }
   }
 
-  async updatePublicUserProfile(userId: string, updates: {
-    full_name?: string;
-    avatar_url?: string;
-    phone_number?: string;
-  }) {
-    return supabase
-      .from('users')
-      .update(updates)
-      .eq('id', userId);
+  async updatePublicUserProfile(
+    userId: string,
+    updates: {
+      full_name?: string
+      avatar_url?: string
+      phone_number?: string
+    }
+  ) {
+    return supabase.from('users').update(updates).eq('id', userId)
   }
-
 
   async getWishlist(userId: string): Promise<Product[]> {
     interface StoreInventoryDbRow {
-      id: string;
-      name: string;
-      slug: string | null;
-      category: string;
-      price_ghs: number;
-      stock_quantity: number;
-      image_url: string | null;
-      description: string | null;
-      rating: number | null;
-      reviews: number | null;
-      sizes: string[] | null;
-      colors: string[] | null;
+      id: string
+      name: string
+      slug: string | null
+      category: string
+      price_ghs: number
+      stock_quantity: number
+      image_url: string | null
+      description: string | null
+      rating: number | null
+      reviews: number | null
+      sizes: string[] | null
+      colors: string[] | null
     }
 
     const { data, error } = await supabase
       .from('wishlist')
-      .select(`
+      .select(
+        `
         id,
         product_id,
         store_inventory (*)
-      `)
-      .eq('user_id', userId);
+      `
+      )
+      .eq('user_id', userId)
 
     if (error || !data) {
-      console.error('[DATABASE] Error fetching wishlist:', error);
-      return [];
+      console.error('[DATABASE] Error fetching wishlist:', error)
+      return []
     }
 
-    return data.map(item => {
-      const i = item.store_inventory as unknown as StoreInventoryDbRow;
+    return data.map((item) => {
+      const i = item.store_inventory as unknown as StoreInventoryDbRow
       return {
         id: i.id,
         name: i.name,
@@ -1229,26 +1312,29 @@ class AdminService {
         price: `GH₵ ${Number(i.price_ghs).toLocaleString()}`,
         stock: i.stock_quantity,
         status: i.stock_quantity > 10 ? 'Stable' : i.stock_quantity > 0 ? 'Low Stock' : 'Critical',
-        image: i.image_url || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop',
+        image:
+          i.image_url ||
+          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop',
         description: i.description || '',
         rating: i.rating || 4.8,
         reviews: i.reviews || 0,
         sizes: i.sizes || ['S', 'M', 'L', 'XL'],
-        colors: i.colors || ['Standard']
-      };
-    });
+        colors: i.colors || ['Standard'],
+      }
+    })
   }
 
   async addToWishlist(userId: string, productId: string): Promise<boolean> {
     const { error } = await supabase
       .from('wishlist')
-      .insert({ user_id: userId, product_id: productId });
+      .insert({ user_id: userId, product_id: productId })
 
-    if (error && error.code !== '23505') { // Ignore unique constraint violation
-      console.error('[DATABASE] Error adding to wishlist:', error);
-      return false;
+    if (error && error.code !== '23505') {
+      // Ignore unique constraint violation
+      console.error('[DATABASE] Error adding to wishlist:', error)
+      return false
     }
-    return true;
+    return true
   }
 
   async removeFromWishlist(userId: string, productId: string): Promise<boolean> {
@@ -1256,13 +1342,13 @@ class AdminService {
       .from('wishlist')
       .delete()
       .eq('user_id', userId)
-      .eq('product_id', productId);
+      .eq('product_id', productId)
 
     if (error) {
-      console.error('[DATABASE] Error removing from wishlist:', error);
-      return false;
+      console.error('[DATABASE] Error removing from wishlist:', error)
+      return false
     }
-    return true;
+    return true
   }
 
   // --- Communication Engine (Field Mobilization) ---
@@ -1271,10 +1357,14 @@ class AdminService {
     return tacticalService.getBroadcasts()
   }
 
-  async sendBroadcast(broadcast: Omit<Broadcast, 'id' | 'created_at' | 'sender_id'>): Promise<boolean> {
+  async sendBroadcast(
+    broadcast: Omit<Broadcast, 'id' | 'created_at' | 'sender_id'>
+  ): Promise<boolean> {
     const success = await tacticalService.sendBroadcast(broadcast)
     if (success) {
-      await this.logAction('SEND_BROADCAST', `TARGET/${broadcast.target_type}`, 'Success', { title: broadcast.title })
+      await this.logAction('SEND_BROADCAST', `TARGET/${broadcast.target_type}`, 'Success', {
+        title: broadcast.title,
+      })
     } else {
       await this.logAction('SEND_BROADCAST', `TARGET/${broadcast.target_type}`, 'Failure')
     }
@@ -1289,7 +1379,7 @@ class AdminService {
     return tacticalService.markNotificationRead(id)
   }
 
-  async getBroadcastMetrics(broadcastId: string): Promise<{ total: number, read: number }> {
+  async getBroadcastMetrics(broadcastId: string): Promise<{ total: number; read: number }> {
     return tacticalService.getBroadcastMetrics(broadcastId)
   }
 
@@ -1336,38 +1426,42 @@ class AdminService {
     const totalMembers = count || 0
     const avgDailyGrowth = Math.max(1, growth.joined_last_7d / 7)
 
-    return milestones.map(m => {
+    return milestones.map((m) => {
       if (m.status !== 'Completed' && m.target_members && m.target_members > totalMembers) {
         const remaining = m.target_members - totalMembers
         // Ensure a more realistic minimum growth floor for forecasting
         const realisticGrowth = Math.max(5, avgDailyGrowth)
         const daysToTarget = Math.ceil(remaining / realisticGrowth)
-        
+
         // Cap the forecast at a reasonable horizon (e.g., 1 year) to avoid extreme dates
         const maxDays = 365
         const actualDays = Math.min(daysToTarget, maxDays)
-        
+
         const forecast = new Date()
         forecast.setDate(forecast.getDate() + actualDays)
         return { ...m, forecasted_date: forecast.toISOString().split('T')[0] }
       }
       return m
     })
-
   }
 
-  async verifyMemberID(memberId: string): Promise<{ confidence: number, matches: string[], flagged: boolean }> {
+  async verifyMemberID(
+    memberId: string
+  ): Promise<{ confidence: number; matches: string[]; flagged: boolean }> {
     return tacticalService.verifyMemberID(memberId)
   }
 
   async generateComplianceReport(region = 'National'): Promise<string> {
-    console.log(`[AUDIT-GEN] Generating ${region} compliance report...`)
-    
+    console.warn(`[AUDIT-GEN] Generating ${region} compliance report...`)
+
     try {
       // 1. Fetch Member Metrics
       let membersQuery = supabase.from('users').select('*', { count: 'exact', head: true })
-      let approvedQuery = supabase.from('users').select('*', { count: 'exact', head: true }).eq('verification_status', 'Approved')
-      
+      let approvedQuery = supabase
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+        .eq('verification_status', 'Approved')
+
       if (region !== 'National') {
         membersQuery = membersQuery.eq('region', region)
         approvedQuery = approvedQuery.eq('region', region)
@@ -1376,9 +1470,8 @@ class AdminService {
       const [totalRes, approvedRes] = await Promise.all([membersQuery, approvedQuery])
       const totalMembers = totalRes.count || 0
       const approvedMembers = approvedRes.count || 0
-      const verificationAccuracy = totalMembers > 0 
-        ? ((approvedMembers / totalMembers) * 100).toFixed(1) + '%' 
-        : '100%'
+      const verificationAccuracy =
+        totalMembers > 0 ? ((approvedMembers / totalMembers) * 100).toFixed(1) + '%' : '100%'
 
       // 2. Fetch Logistics Latency (Simulated from orders if data exists)
       const { data: orders } = await supabase
@@ -1390,7 +1483,7 @@ class AdminService {
 
       let avgLatency = '4.2 days' // Fallback
       if (orders && orders.length > 0) {
-        const latencies = orders.map(o => {
+        const latencies = orders.map((o) => {
           const start = new Date(o.dispatched_at).getTime()
           const end = new Date(o.delivered_at).getTime()
           return (end - start) / (1000 * 60 * 60 * 24) // days
@@ -1405,9 +1498,13 @@ class AdminService {
         sentimentQuery = sentimentQuery.eq('region', region)
       }
       const { data: sentimentData } = await sentimentQuery
-      const sentimentIndex = sentimentData && sentimentData.length > 0
-        ? (sentimentData.reduce((acc, curr) => acc + Number(curr.avg_sentiment), 0) / sentimentData.length).toFixed(0) + '%'
-        : '78%'
+      const sentimentIndex =
+        sentimentData && sentimentData.length > 0
+          ? (
+              sentimentData.reduce((acc, curr) => acc + Number(curr.avg_sentiment), 0) /
+              sentimentData.length
+            ).toFixed(0) + '%'
+          : '78%'
 
       // 4. Recent Audit Logs
       const { data: logs } = await supabase
@@ -1423,14 +1520,15 @@ class AdminService {
           total_members: totalMembers,
           verification_accuracy: verificationAccuracy,
           avg_logistics_latency: avgLatency,
-          sentiment_index: sentimentIndex
+          sentiment_index: sentimentIndex,
         },
-        audit_logs: logs?.map(l => ({
-          id: l.id.substring(0, 8).toUpperCase(),
-          action: l.action,
-          status: l.status,
-          admin: l.admin_id ? `ADMIN-${l.admin_id.substring(0, 5)}` : 'SYSTEM'
-        })) || []
+        audit_logs:
+          logs?.map((l) => ({
+            id: l.id.substring(0, 8).toUpperCase(),
+            action: l.action,
+            status: l.status,
+            admin: l.admin_id ? `ADMIN-${l.admin_id.substring(0, 5)}` : 'SYSTEM',
+          })) || [],
       }
 
       return JSON.stringify(reportData, null, 2)
@@ -1450,11 +1548,40 @@ class AdminService {
     return donationService.getMobilizationLedger(limit)
   }
 
+  async getAllSpendingEntries() {
+    return donationService.getAllSpendingEntries()
+  }
+
+  async addSpendingEntry(entry: {
+    chapter: string
+    amount: number
+    description: string
+    category: string
+    timestamp: string
+  }) {
+    return donationService.addSpendingEntry(entry)
+  }
+
+  async updateSpendingEntry(
+    id: string,
+    updates: {
+      chapter?: string
+      amount?: number
+      description?: string
+      category?: string
+      timestamp?: string
+    }
+  ) {
+    return donationService.updateSpendingEntry(id, updates)
+  }
+
+  async deleteSpendingEntry(id: string) {
+    return donationService.deleteSpendingEntry(id)
+  }
+
   async getMemberDonationsByPhone(phone: string): Promise<DonationDetail[]> {
     return donationService.getMemberDonations(phone)
   }
-
-
 
   async getOrders(limit?: number): Promise<Order[]> {
     return logisticsService.getOrders(limit)
@@ -1468,18 +1595,12 @@ class AdminService {
     return logisticsService.getOrderStats()
   }
 
-  async updateOrderStatus(
-    orderId: string,
-    status: Order['status']
-  ): Promise<boolean> {
+  async updateOrderStatus(orderId: string, status: Order['status']): Promise<boolean> {
     const success = await logisticsService.updateOrderStatus(orderId, status)
     if (success) {
-      await this.logAction(
-        'ORDER_UPDATE',
-        `ORDERS/${orderId}`,
-        'Success',
-        { message: `Status updated to ${status}` }
-      )
+      await this.logAction('ORDER_UPDATE', `ORDERS/${orderId}`, 'Success', {
+        message: `Status updated to ${status}`,
+      })
     }
     return success
   }
@@ -1598,10 +1719,14 @@ class AdminService {
     return intelligenceService.getRapidResponseDirectives()
   }
 
-  async createRapidResponseDirective(directive: Omit<RapidResponseDirective, 'id' | 'created_at'>): Promise<boolean> {
+  async createRapidResponseDirective(
+    directive: Omit<RapidResponseDirective, 'id' | 'created_at'>
+  ): Promise<boolean> {
     const success = await intelligenceService.createRapidResponseDirective(directive)
     if (success) {
-      await this.logAction('CREATE_RAPID_DIRECTIVE', `DIRECTIVES/${directive.title}`, 'Success', { title: directive.title })
+      await this.logAction('CREATE_RAPID_DIRECTIVE', `DIRECTIVES/${directive.title}`, 'Success', {
+        title: directive.title,
+      })
     }
     return success
   }
@@ -1622,7 +1747,10 @@ class AdminService {
     return intelligenceService.getMediaCounterNarratives(crisisId)
   }
 
-  async updateMediaCounterNarrative(id: string, status: MediaCounterNarrative['dispatch_status']): Promise<boolean> {
+  async updateMediaCounterNarrative(
+    id: string,
+    status: MediaCounterNarrative['dispatch_status']
+  ): Promise<boolean> {
     const success = await intelligenceService.updateMediaCounterNarrative(id, status)
     if (success) {
       await this.logAction('NARRATIVE_UPDATE', `STRIKES/${id}`, 'Success', { status })
@@ -1636,22 +1764,39 @@ class AdminService {
     return intelligenceService.getVoterRegistrations()
   }
 
-  async getMembersWithConstituency(): Promise<Array<{
-    id: string
-    full_name: string
-    registration_number: string
-    constituency: string
-    region: string | null
-    chapter: string | null
-    polling_station_id: string | null
-    registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER' | null
-  }>> {
+  async getMembersWithConstituency(): Promise<
+    Array<{
+      id: string
+      full_name: string
+      registration_number: string
+      constituency: string
+      region: string | null
+      chapter: string | null
+      polling_station_id: string | null
+      registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER' | null
+    }>
+  > {
     const [{ data: members }, { data: voterRows }] = await Promise.all([
-      supabase.from('users').select('id, full_name, registration_number, constituency, region, chapter').not('constituency', 'is', null).neq('constituency', '').neq('constituency', 'Constituency pending'),
-      supabase.from('voter_registrations').select('user_id, polling_station_id, registration_status')
+      supabase
+        .from('users')
+        .select('id, full_name, registration_number, constituency, region, chapter')
+        .not('constituency', 'is', null)
+        .neq('constituency', '')
+        .neq('constituency', 'Constituency pending'),
+      supabase
+        .from('voter_registrations')
+        .select('user_id, polling_station_id, registration_status'),
     ])
-    const voterMap: Record<string, { polling_station_id: string | null; registration_status: string }> = {}
-    ;(voterRows || []).forEach((v) => { voterMap[v.user_id as string] = v as { polling_station_id: string | null; registration_status: string } })
+    const voterMap: Record<
+      string,
+      { polling_station_id: string | null; registration_status: string }
+    > = {}
+    ;(voterRows || []).forEach((v) => {
+      voterMap[v.user_id as string] = v as {
+        polling_station_id: string | null
+        registration_status: string
+      }
+    })
     return (members || []).map((m) => ({
       id: m.id as string,
       full_name: (m.full_name as string) || 'Unknown',
@@ -1660,33 +1805,57 @@ class AdminService {
       region: (m.region as string | null) || null,
       chapter: (m.chapter as string | null) || null,
       polling_station_id: (voterMap[m.id as string]?.polling_station_id as string | null) ?? null,
-      registration_status: (voterMap[m.id as string]?.registration_status as 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER' | null) ?? null,
+      registration_status:
+        (voterMap[m.id as string]?.registration_status as
+          | 'UNVERIFIED'
+          | 'IN_PROGRESS'
+          | 'VERIFIED_VOTER'
+          | null) ?? null,
     }))
   }
 
-  async getVoterRegistrationsWithMembers(): Promise<Array<{
-    id: string
-    user_id: string
-    registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER'
-    polling_station_id: string | null
-    member_name: string
-    registration_number: string
-    chapter: string | null
-    constituency: string | null
-    region: string | null
-    created_at: string
-  }>> {
+  async getVoterRegistrationsWithMembers(): Promise<
+    Array<{
+      id: string
+      user_id: string
+      registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER'
+      polling_station_id: string | null
+      member_name: string
+      registration_number: string
+      chapter: string | null
+      constituency: string | null
+      region: string | null
+      created_at: string
+    }>
+  > {
     const { data: rows, error } = await supabase
       .from('voter_registrations')
       .select('id, user_id, registration_status, polling_station_id, created_at')
       .order('created_at', { ascending: false })
-    if (error) { console.error('[DATABASE] getVoterRegistrationsWithMembers failed:', error); return [] }
+    if (error) {
+      console.error('[DATABASE] getVoterRegistrationsWithMembers failed:', error)
+      return []
+    }
     if (!rows?.length) return []
-    const userIds = [...new Set(rows.map(r => r.user_id as string).filter(Boolean))]
-    const { data: users } = await supabase.from('users').select('id, full_name, registration_number, chapter, constituency, region').in('id', userIds)
-    const userMap: Record<string, { full_name: string; registration_number: string; chapter: string | null; constituency: string | null; region: string | null }> = {}
-    ;(users || []).forEach(u => { userMap[u.id as string] = u as typeof userMap[string] })
-    return rows.map(r => ({
+    const userIds = [...new Set(rows.map((r) => r.user_id as string).filter(Boolean))]
+    const { data: users } = await supabase
+      .from('users')
+      .select('id, full_name, registration_number, chapter, constituency, region')
+      .in('id', userIds)
+    const userMap: Record<
+      string,
+      {
+        full_name: string
+        registration_number: string
+        chapter: string | null
+        constituency: string | null
+        region: string | null
+      }
+    > = {}
+    ;(users || []).forEach((u) => {
+      userMap[u.id as string] = u as (typeof userMap)[string]
+    })
+    return rows.map((r) => ({
       id: r.id as string,
       user_id: r.user_id as string,
       registration_status: r.registration_status as 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER',
@@ -1702,106 +1871,192 @@ class AdminService {
 
   // --- Field Agents ---
 
-  async getFieldAgents(): Promise<Array<{
-    id: string; member_id: string; member_name: string; registration_number: string
-    constituency: string; region: string | null; status: 'active' | 'inactive'
-    notes: string | null; created_at: string
-  }>> {
+  async getFieldAgents(): Promise<
+    Array<{
+      id: string
+      member_id: string
+      member_name: string
+      registration_number: string
+      constituency: string
+      region: string | null
+      status: 'active' | 'inactive'
+      notes: string | null
+      created_at: string
+    }>
+  > {
     const { data: rows, error } = await supabase
       .from('field_agent_assignments')
       .select('id, member_id, constituency, region, status, notes, created_at')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
-    if (error) { console.error('[DATABASE] getFieldAgents failed:', error); return [] }
+    if (error) {
+      console.error('[DATABASE] getFieldAgents failed:', error)
+      return []
+    }
     if (!rows?.length) return []
-    const memberIds = rows.map(r => r.member_id as string)
-    const { data: users } = await supabase.from('users').select('id, full_name, registration_number').in('id', memberIds)
+    const memberIds = rows.map((r) => r.member_id as string)
+    const { data: users } = await supabase
+      .from('users')
+      .select('id, full_name, registration_number')
+      .in('id', memberIds)
     const userMap: Record<string, { full_name: string; registration_number: string }> = {}
-    ;(users || []).forEach(u => { userMap[u.id as string] = u as typeof userMap[string] })
-    return rows.map(r => ({
-      id: r.id as string, member_id: r.member_id as string,
+    ;(users || []).forEach((u) => {
+      userMap[u.id as string] = u as (typeof userMap)[string]
+    })
+    return rows.map((r) => ({
+      id: r.id as string,
+      member_id: r.member_id as string,
       member_name: userMap[r.member_id as string]?.full_name || 'Unknown',
       registration_number: userMap[r.member_id as string]?.registration_number || '',
-      constituency: r.constituency as string, region: (r.region as string | null) || null,
+      constituency: r.constituency as string,
+      region: (r.region as string | null) || null,
       status: r.status as 'active' | 'inactive',
-      notes: (r.notes as string | null) || null, created_at: r.created_at as string,
+      notes: (r.notes as string | null) || null,
+      created_at: r.created_at as string,
     }))
   }
 
-  async appointFieldAgent(memberId: string, constituency: string, region?: string, notes?: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser()
-    const { error } = await supabase.from('field_agent_assignments').upsert({
-      member_id: memberId, constituency, region: region || null,
-      status: 'active', assigned_by: user?.id || null, notes: notes || null,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'member_id,constituency' })
-    if (error) { console.error('[DATABASE] appointFieldAgent failed:', error); return false }
+  async appointFieldAgent(
+    memberId: string,
+    constituency: string,
+    region?: string,
+    notes?: string
+  ): Promise<boolean> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    const { error } = await supabase.from('field_agent_assignments').upsert(
+      {
+        member_id: memberId,
+        constituency,
+        region: region || null,
+        status: 'active',
+        assigned_by: user?.id || null,
+        notes: notes || null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'member_id,constituency' }
+    )
+    if (error) {
+      console.error('[DATABASE] appointFieldAgent failed:', error)
+      return false
+    }
     return true
   }
 
   async removeFieldAgent(assignmentId: string): Promise<boolean> {
     const { error } = await supabase.from('field_agent_assignments').delete().eq('id', assignmentId)
-    if (error) { console.error('[DATABASE] removeFieldAgent failed:', error); return false }
+    if (error) {
+      console.error('[DATABASE] removeFieldAgent failed:', error)
+      return false
+    }
     return true
   }
 
   // --- Polling Station Agents ---
 
-  async getPollingStationAgents(): Promise<Array<{
-    id: string; member_id: string; member_name: string; registration_number: string
-    polling_station_id: string; constituency: string | null; region: string | null
-    status: 'assigned' | 'confirmed' | 'deployed' | 'stood_down'
-    notes: string | null; created_at: string
-  }>> {
+  async getPollingStationAgents(): Promise<
+    Array<{
+      id: string
+      member_id: string
+      member_name: string
+      registration_number: string
+      polling_station_id: string
+      constituency: string | null
+      region: string | null
+      status: 'assigned' | 'confirmed' | 'deployed' | 'stood_down'
+      notes: string | null
+      created_at: string
+    }>
+  > {
     const { data: rows, error } = await supabase
       .from('polling_station_agents')
       .select('id, member_id, polling_station_id, constituency, region, status, notes, created_at')
       .order('created_at', { ascending: false })
-    if (error) { console.error('[DATABASE] getPollingStationAgents failed:', error); return [] }
+    if (error) {
+      console.error('[DATABASE] getPollingStationAgents failed:', error)
+      return []
+    }
     if (!rows?.length) return []
-    const memberIds = rows.map(r => r.member_id as string)
-    const { data: users } = await supabase.from('users').select('id, full_name, registration_number').in('id', memberIds)
+    const memberIds = rows.map((r) => r.member_id as string)
+    const { data: users } = await supabase
+      .from('users')
+      .select('id, full_name, registration_number')
+      .in('id', memberIds)
     const userMap: Record<string, { full_name: string; registration_number: string }> = {}
-    ;(users || []).forEach(u => { userMap[u.id as string] = u as typeof userMap[string] })
-    return rows.map(r => ({
-      id: r.id as string, member_id: r.member_id as string,
+    ;(users || []).forEach((u) => {
+      userMap[u.id as string] = u as (typeof userMap)[string]
+    })
+    return rows.map((r) => ({
+      id: r.id as string,
+      member_id: r.member_id as string,
       member_name: userMap[r.member_id as string]?.full_name || 'Unknown',
       registration_number: userMap[r.member_id as string]?.registration_number || '',
       polling_station_id: r.polling_station_id as string,
       constituency: (r.constituency as string | null) || null,
       region: (r.region as string | null) || null,
       status: r.status as 'assigned' | 'confirmed' | 'deployed' | 'stood_down',
-      notes: (r.notes as string | null) || null, created_at: r.created_at as string,
+      notes: (r.notes as string | null) || null,
+      created_at: r.created_at as string,
     }))
   }
 
-  async appointPollingStationAgent(memberId: string, pollingStationId: string, constituency?: string, region?: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser()
-    const { error } = await supabase.from('polling_station_agents').upsert({
-      member_id: memberId, polling_station_id: pollingStationId,
-      constituency: constituency || null, region: region || null,
-      status: 'assigned', assigned_by: user?.id || null,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'member_id,polling_station_id' })
-    if (error) { console.error('[DATABASE] appointPollingStationAgent failed:', error); return false }
+  async appointPollingStationAgent(
+    memberId: string,
+    pollingStationId: string,
+    constituency?: string,
+    region?: string
+  ): Promise<boolean> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    const { error } = await supabase.from('polling_station_agents').upsert(
+      {
+        member_id: memberId,
+        polling_station_id: pollingStationId,
+        constituency: constituency || null,
+        region: region || null,
+        status: 'assigned',
+        assigned_by: user?.id || null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'member_id,polling_station_id' }
+    )
+    if (error) {
+      console.error('[DATABASE] appointPollingStationAgent failed:', error)
+      return false
+    }
     return true
   }
 
-  async updatePollingStationAgentStatus(agentId: string, status: 'assigned' | 'confirmed' | 'deployed' | 'stood_down'): Promise<boolean> {
-    const { error } = await supabase.from('polling_station_agents')
-      .update({ status, updated_at: new Date().toISOString() }).eq('id', agentId)
-    if (error) { console.error('[DATABASE] updatePollingStationAgentStatus failed:', error); return false }
+  async updatePollingStationAgentStatus(
+    agentId: string,
+    status: 'assigned' | 'confirmed' | 'deployed' | 'stood_down'
+  ): Promise<boolean> {
+    const { error } = await supabase
+      .from('polling_station_agents')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', agentId)
+    if (error) {
+      console.error('[DATABASE] updatePollingStationAgentStatus failed:', error)
+      return false
+    }
     return true
   }
 
   async removePollingStationAgent(agentId: string): Promise<boolean> {
     const { error } = await supabase.from('polling_station_agents').delete().eq('id', agentId)
-    if (error) { console.error('[DATABASE] removePollingStationAgent failed:', error); return false }
+    if (error) {
+      console.error('[DATABASE] removePollingStationAgent failed:', error)
+      return false
+    }
     return true
   }
 
   async getMyVoterRegistration(): Promise<VoterRegistration | null> {
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) return null
     const { data } = await supabase
       .from('voter_registrations')
@@ -1812,28 +2067,39 @@ class AdminService {
   }
 
   async submitVoterRegistration(pollingStationCode: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) return false
     const { data: existing } = await supabase
       .from('voter_registrations')
       .select('id')
       .eq('user_id', user.id)
       .maybeSingle()
-    const payload = { polling_station_id: pollingStationCode.trim().toUpperCase(), registration_status: 'IN_PROGRESS' }
+    const payload = {
+      polling_station_id: pollingStationCode.trim().toUpperCase(),
+      registration_status: 'IN_PROGRESS',
+    }
     if (existing) {
-      const { error } = await supabase.from('voter_registrations').update(payload).eq('id', existing.id)
+      const { error } = await supabase
+        .from('voter_registrations')
+        .update(payload)
+        .eq('id', existing.id)
       return !error
     }
-    const { error } = await supabase.from('voter_registrations').insert({ user_id: user.id, ...payload })
+    const { error } = await supabase
+      .from('voter_registrations')
+      .insert({ user_id: user.id, ...payload })
     return !error
   }
 
-  async getPollingStations(region: string, constituency: string, search?: string): Promise<{ code: string; name: string; constituency: string }[]> {
+  async getPollingStations(
+    region: string,
+    constituency: string,
+    search?: string
+  ): Promise<{ code: string; name: string; constituency: string }[]> {
     if (!search?.trim() && !region) return []
-    let query = supabase
-      .from('polling_stations')
-      .select('code, name, constituency')
-      .limit(25)
+    let query = supabase.from('polling_stations').select('code, name, constituency').limit(25)
     // Region is reliable (all 16 match exactly after normalization)
     if (region) query = query.ilike('region', region)
     // Constituency as secondary filter — ilike handles case differences
@@ -1842,10 +2108,13 @@ class AdminService {
       query = query.or(`code.ilike.%${search}%,name.ilike.%${search}%`)
     }
     const { data, error } = await query.order('name', { ascending: true })
-    if (error) { console.error('[DATABASE] getPollingStations failed:', error); return [] }
+    if (error) {
+      console.error('[DATABASE] getPollingStations failed:', error)
+      return []
+    }
     // If constituency filter returned nothing, retry with region only
     if ((data || []).length === 0 && constituency && search?.trim()) {
-      let q2 = supabase
+      const q2 = supabase
         .from('polling_stations')
         .select('code, name, constituency')
         .ilike('region', region)
@@ -1864,7 +2133,17 @@ class AdminService {
     region?: string,
     constituency?: string,
     search?: string
-  ): Promise<{ data: { code: string; name: string; community: string; constituency: string; region: string; member_count: number }[]; totalCount: number }> {
+  ): Promise<{
+    data: {
+      code: string
+      name: string
+      community: string
+      constituency: string
+      region: string
+      member_count: number
+    }[]
+    totalCount: number
+  }> {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
@@ -1884,41 +2163,56 @@ class AdminService {
       .order('community', { ascending: true })
       .range(from, to)
 
-    if (error) { console.error('[DATABASE] getPollingStationsPaginated failed:', error); return { data: [], totalCount: 0 } }
+    if (error) {
+      console.error('[DATABASE] getPollingStationsPaginated failed:', error)
+      return { data: [], totalCount: 0 }
+    }
 
-    const codes = (data || []).map(s => s.code)
-    const { data: regRows } = codes.length > 0
-      ? await supabase.from('voter_registrations').select('polling_station_id').in('polling_station_id', codes)
-      : { data: [] }
+    const codes = (data || []).map((s) => s.code)
+    const { data: regRows } =
+      codes.length > 0
+        ? await supabase
+            .from('voter_registrations')
+            .select('polling_station_id')
+            .in('polling_station_id', codes)
+        : { data: [] }
 
     const countMap: Record<string, number> = {}
-    ;(regRows || []).forEach(r => {
+    ;(regRows || []).forEach((r) => {
       const id = r.polling_station_id as string
       countMap[id] = (countMap[id] || 0) + 1
     })
 
     return {
-      data: (data || []).map(s => ({
+      data: (data || []).map((s) => ({
         code: s.code as string,
         name: s.name as string,
         community: s.community as string,
         constituency: s.constituency as string,
         region: s.region as string,
-        member_count: countMap[s.code as string] || 0
+        member_count: countMap[s.code as string] || 0,
       })),
-      totalCount: count || 0
+      totalCount: count || 0,
     }
   }
 
-  async getPollingStationStats(): Promise<{ total: number; regions: number; constituencies: number; withMembers: number }> {
+  async getPollingStationStats(): Promise<{
+    total: number
+    regions: number
+    constituencies: number
+    withMembers: number
+  }> {
     const [statsRes, membersRes] = await Promise.all([
       supabase.from('polling_stations').select('region, constituency', { count: 'exact' }),
-      supabase.from('voter_registrations').select('polling_station_id').not('polling_station_id', 'is', null)
+      supabase
+        .from('voter_registrations')
+        .select('polling_station_id')
+        .not('polling_station_id', 'is', null),
     ])
     const total = statsRes.count || 0
-    const regions = new Set((statsRes.data || []).map(r => r.region)).size
-    const constituencies = new Set((statsRes.data || []).map(r => r.constituency)).size
-    const withMembers = new Set((membersRes.data || []).map(r => r.polling_station_id)).size
+    const regions = new Set((statsRes.data || []).map((r) => r.region)).size
+    const constituencies = new Set((statsRes.data || []).map((r) => r.constituency)).size
+    const withMembers = new Set((membersRes.data || []).map((r) => r.polling_station_id)).size
     return { total, regions, constituencies, withMembers }
   }
 
@@ -1934,7 +2228,10 @@ class AdminService {
     return intelligenceService.getGOTVTransportRequests()
   }
 
-  async updateTransportRequest(requestId: string, status: GOTVTransportRequest['status']): Promise<boolean> {
+  async updateTransportRequest(
+    requestId: string,
+    status: GOTVTransportRequest['status']
+  ): Promise<boolean> {
     const success = await intelligenceService.updateTransportRequest(requestId, status)
     if (success) {
       await this.logAction('TRANSPORT_UPDATE', `TRANSPORT/${requestId}`, 'Success', { status })
@@ -1942,18 +2239,22 @@ class AdminService {
     return success
   }
 
-  async getGhanaRegions(): Promise<{ id: string, name: string }[]> {
+  async getGhanaRegions(): Promise<{ id: string; name: string }[]> {
     return intelligenceService.getGhanaRegions()
   }
 
-  async getGhanaConstituencies(regionId?: string): Promise<{ id: string, region_id: string, name: string }[]> {
+  async getGhanaConstituencies(
+    regionId?: string
+  ): Promise<{ id: string; region_id: string; name: string }[]> {
     return intelligenceService.getGhanaConstituencies(regionId)
   }
 
   async createCanvassingCampaign(campaign: Partial<CanvassingCampaign>): Promise<boolean> {
     const success = await intelligenceService.createCanvassingCampaign(campaign)
     if (success) {
-      await this.logAction('CREATE_CAMPAIGN', `CAMPAIGNS/${campaign.title}`, 'Success', { title: campaign.title })
+      await this.logAction('CREATE_CAMPAIGN', `CAMPAIGNS/${campaign.title}`, 'Success', {
+        title: campaign.title,
+      })
     }
     return success
   }
@@ -1965,7 +2266,7 @@ class AdminService {
       const { error } = await supabase
         .from('newsletter_subscribers')
         .upsert({ email, status: 'Active' }, { onConflict: 'email' })
-      
+
       if (error) throw error
       return true
     } catch (error) {
@@ -1974,12 +2275,16 @@ class AdminService {
     }
   }
 
-  async submitContactForm(submission: { name: string, email: string, subject?: string, message: string, metadata?: unknown }): Promise<boolean> {
+  async submitContactForm(submission: {
+    name: string
+    email: string
+    subject?: string
+    message: string
+    metadata?: unknown
+  }): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert([submission])
-      
+      const { error } = await supabase.from('contact_submissions').insert([submission])
+
       if (error) throw error
       return true
     } catch (error) {
@@ -1990,16 +2295,17 @@ class AdminService {
 
   async getSiteSettings(): Promise<Record<string, unknown>> {
     try {
-      const { data, error } = await supabase
-        .from('site_settings')
-        .select('key, value')
-      
+      const { data, error } = await supabase.from('site_settings').select('key, value')
+
       if (error) throw error
-      
-      return (data || []).reduce((acc, curr) => ({
-        ...acc,
-        [curr.key]: curr.value
-      }), {})
+
+      return (data || []).reduce(
+        (acc, curr) => ({
+          ...acc,
+          [curr.key]: curr.value,
+        }),
+        {}
+      )
     } catch (error) {
       console.error('[DATABASE] Failed to fetch site settings:', error)
       return {}
@@ -2011,7 +2317,7 @@ class AdminService {
       const { error } = await supabase
         .from('site_settings')
         .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' })
-      
+
       if (error) throw error
       return true
     } catch (error) {
@@ -2023,16 +2329,12 @@ class AdminService {
   subscribeToSiteSettings(callback: () => void) {
     const channel = supabase
       .channel('public:site_settings')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'site_settings' },
-        () => {
-          console.log('[BRANDING] Realtime update detected')
-          callback()
-        }
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, () => {
+        console.warn('[BRANDING] Realtime update detected')
+        callback()
+      })
       .subscribe()
-    
+
     return channel
   }
 
@@ -2061,66 +2363,80 @@ class AdminService {
     try {
       const [members, blogPosts, chapters, products, authors] = await Promise.all([
         this.searchMembers(query),
-        supabase.from('blog_posts').select('id, title, slug').ilike('title', `%${query}%`).is('deleted_at', null).limit(5),
+        supabase
+          .from('blog_posts')
+          .select('id, title, slug')
+          .ilike('title', `%${query}%`)
+          .is('deleted_at', null)
+          .limit(5),
         supabase.from('chapters').select('id, name').ilike('name', `%${query}%`).limit(5),
-        supabase.from('store_inventory').select('id, name, slug').ilike('name', `%${query}%`).limit(5),
-        supabase.from('authors').select('id, name, role').ilike('name', `%${query}%`).is('deleted_at', null).limit(5)
+        supabase
+          .from('store_inventory')
+          .select('id, name, slug')
+          .ilike('name', `%${query}%`)
+          .limit(5),
+        supabase
+          .from('authors')
+          .select('id, name, role')
+          .ilike('name', `%${query}%`)
+          .is('deleted_at', null)
+          .limit(5),
       ])
 
       const results: GlobalSearchResult[] = []
 
       // Map members
-      members.forEach(m => {
+      members.forEach((m) => {
         results.push({
           type: 'Member',
           title: m.name,
           subtitle: `${m.id} · ${m.region}`,
           id: m.id,
-          to: `/admin/members?search=${m.id}`
+          to: `/admin/members?search=${m.id}`,
         })
       })
 
       // Map blog posts
-      blogPosts.data?.forEach(p => {
+      blogPosts.data?.forEach((p) => {
         results.push({
           type: 'Article',
           title: p.title,
           subtitle: 'Editorial Update',
           id: p.id,
-          to: `/admin/blogs?edit=${p.id}`
+          to: `/admin/blogs?edit=${p.id}`,
         })
       })
 
       // Map chapters
-      chapters.data?.forEach(c => {
+      chapters.data?.forEach((c) => {
         results.push({
           type: 'Chapter',
           title: c.name,
           subtitle: 'Regional Mobilization Hub',
           id: c.id,
-          to: `/admin/chapters?id=${c.id}`
+          to: `/admin/chapters?id=${c.id}`,
         })
       })
 
       // Map products
-      products.data?.forEach(p => {
+      products.data?.forEach((p) => {
         results.push({
           type: 'Product',
           title: p.name,
           subtitle: 'Movement Supply',
           id: p.id,
-          to: `/admin/store?id=${p.id}`
+          to: `/admin/store?id=${p.id}`,
         })
       })
 
       // Map authors
-      authors.data?.forEach(a => {
+      authors.data?.forEach((a) => {
         results.push({
           type: 'Author',
           title: a.name,
           subtitle: a.role || 'Contributor',
           id: a.id,
-          to: `/admin/authors?view=${a.id}`
+          to: `/admin/authors?view=${a.id}`,
         })
       })
 

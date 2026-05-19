@@ -3,6 +3,55 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { adminService } from '@/services/adminService'
 import type { DonationDetail } from '@/types/admin'
 
+function maskName(fullName: string): string {
+  if (!fullName || fullName.toLowerCase() === 'anonymous patriot') return 'Anonymous Patriot'
+  const parts = fullName.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0]
+  return `${parts[0]} ${parts[parts.length - 1][0]}.`
+}
+
+const AVATAR_COLORS = [
+  ['#e8f5e9', 'hsl(var(--primary))'],
+  ['#fff8e1', '#b08800'],
+  ['#fce4ec', '#c62828'],
+  ['#e3f2fd', '#1565c0'],
+  ['#f3e5f5', '#6a1b9a'],
+]
+
+function InitialAvatar({ name }: { name: string }) {
+  const isAnon = name.toLowerCase().includes('anonymous')
+  const initial = isAnon ? '?' : name.trim()[0]?.toUpperCase() || '?'
+  const hash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  const [bg, color] = AVATAR_COLORS[hash % AVATAR_COLORS.length]
+  return (
+    <div
+      style={{
+        width: 36,
+        height: 36,
+        flexShrink: 0,
+        borderRadius: '50%',
+        background: bg,
+        border: `1.5px solid ${color}22`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {isAnon ? (
+        <span className="material-symbols-outlined" style={{ fontSize: 18, color }}>
+          shield_person
+        </span>
+      ) : (
+        <span
+          style={{ fontSize: 14, fontWeight: 800, color, fontFamily: "'Public Sans', sans-serif" }}
+        >
+          {initial}
+        </span>
+      )}
+    </div>
+  )
+}
+
 export function LiveContributionFeed() {
   const [donations, setDonations] = useState<DonationDetail[]>([])
   const [loading, setLoading] = useState(true)
@@ -25,9 +74,9 @@ export function LiveContributionFeed() {
 
     // Subscribe to real-time updates via central service
     const subscription = adminService.subscribeToPublicDonations((newDonation) => {
-      setDonations(prev => {
+      setDonations((prev) => {
         // Prevent duplicates in case of race conditions
-        if (prev.some(d => d.id === newDonation.id)) return prev
+        if (prev.some((d) => d.id === newDonation.id)) return prev
         return [newDonation, ...prev.slice(0, 14)]
       })
 
@@ -48,7 +97,16 @@ export function LiveContributionFeed() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} style={{ height: 64, background: 'hsl(var(--container-low))', border: '1px solid hsl(var(--border))', borderRadius: 4 }} className="animate-pulse" />
+          <div
+            key={i}
+            style={{
+              height: 64,
+              background: 'hsl(var(--container-low))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 4,
+            }}
+            className="animate-pulse"
+          />
         ))}
       </div>
     )
@@ -56,24 +114,107 @@ export function LiveContributionFeed() {
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ position: 'relative' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--primary))' }}>vital_signs</span>
-            <span style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, background: 'hsl(var(--primary))', borderRadius: '50%' }} className="animate-ping"></span>
-            <span style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, background: 'hsl(var(--primary))', borderRadius: '50%' }}></span>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 16,
+          gap: 12,
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 20, color: 'hsl(var(--primary))' }}
+            >
+              vital_signs
+            </span>
+            <span
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: 7,
+                height: 7,
+                background: 'hsl(var(--primary))',
+                borderRadius: '50%',
+              }}
+              className="animate-ping"
+            />
+            <span
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: 7,
+                height: 7,
+                background: 'hsl(var(--primary))',
+                borderRadius: '50%',
+              }}
+            />
           </div>
-          <h3 style={{ fontSize: 16, fontWeight: 900, color: 'hsl(var(--on-surface))', fontFamily: "'Public Sans', sans-serif", letterSpacing: '-0.01em', margin: 0, textTransform: 'lowercase' }}>global deployment feed</h3>
+          <h3
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: 'hsl(var(--on-surface))',
+              fontFamily: "'Public Sans', sans-serif",
+              letterSpacing: '-0.01em',
+              margin: 0,
+            }}
+          >
+            Global deployment feed
+          </h3>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 12px', background: 'hsla(var(--primary), 0.08)', border: '1px solid hsla(var(--primary), 0.18)', borderRadius: 20 }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'hsl(var(--primary))' }}>public</span>
-          <span style={{ fontSize: 10, fontWeight: 900, color: 'hsl(var(--primary))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>live uplink active</span>
-        </div>
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '3px 10px',
+            background: 'hsla(var(--primary), 0.08)',
+            border: '1px solid hsla(var(--primary), 0.18)',
+            borderRadius: 20,
+            flexShrink: 0,
+          }}
+        >
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              background: 'hsl(var(--primary))',
+              borderRadius: '50%',
+              display: 'block',
+            }}
+          />
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              color: 'hsl(var(--primary))',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Live
+          </span>
+        </span>
       </div>
 
-      <div 
+      <div
         ref={feedRef}
-        style={{ display: 'flex', flexDirection: 'column', gap: 12, maxHeight: 600, overflowY: 'auto', paddingRight: 8 }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+          maxHeight: 480,
+          overflowY: 'auto',
+          paddingRight: 4,
+        }}
         className="custom-scrollbar"
       >
         <AnimatePresence initial={false}>
@@ -83,84 +224,123 @@ export function LiveContributionFeed() {
               initial={{ opacity: 0, x: -20, height: 0 }}
               animate={{ opacity: 1, x: 0, height: 'auto' }}
               exit={{ opacity: 0, x: 20, height: 0 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
             >
-              <div style={{ 
-                padding: 20, 
-                background: '#fff', 
-                border: '1px solid hsl(var(--border))', 
-                borderRadius: 4, 
-                position: 'relative', 
-                overflow: 'hidden',
-                transition: 'all 0.3s ease'
-              }} className="hover:border-primary/50 hover:shadow-xl">
-                {/* Accent */}
-                <div style={{ 
-                  position: 'absolute', top: 0, right: 0, width: 128, height: 128, 
-                  background: 'hsla(var(--primary), 0.05)', marginRight: -64, marginTop: -64, 
-                  filter: 'blur(40px)', pointerEvents: 'none' 
-                }}></div>
-                
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 10 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{ 
-                      width: 48, height: 48, background: 'hsl(var(--container-low))', 
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                      borderRadius: 4, border: '1px solid hsl(var(--border))' 
-                    }}>
-                      {donation.fullName !== 'anonymous patriot' ? (
-                        <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsla(var(--primary), 0.6)' }}>public</span>
-                      ) : (
-                        <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsla(var(--on-surface-muted), 0.4)' }}>shield_person</span>
-                      )}
-                    </div>
-                    <div>
-                      <p style={{ 
-                        fontSize: 13, fontWeight: 800, color: 'hsl(var(--on-surface))', 
-                        margin: 0, textTransform: 'lowercase', lineHeight: 1.2, fontFamily: "'Public Sans', sans-serif"
-                      }}>
-                        {donation.fullName}
-                      </p>
-                      <p style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 4 }}>
-                        mobilizing <span style={{ color: 'hsl(var(--primary))' }}>{donation.campaignTitle || 'strategic fund'}</span>
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontSize: 16, fontWeight: 900, color: 'hsl(var(--on-surface))', margin: 0, fontFamily: "'Public Sans', sans-serif" }}>
-                      ₵ {Number(donation.amount).toLocaleString()}
+              <div
+                style={{
+                  padding: '11px 14px',
+                  background: '#fff',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+                  <InitialAvatar name={donation.fullName} />
+                  <div style={{ minWidth: 0 }}>
+                    <p
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: 'hsl(var(--on-surface))',
+                        margin: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      {maskName(donation.fullName)}
                     </p>
-                    <p style={{ 
-                      fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 900, 
-                      marginTop: 4, background: 'hsl(var(--container-low))', padding: '2px 8px', borderRadius: 20, display: 'inline-block' 
-                    }}>
-                      {new Date(donation.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <p
+                      style={{
+                        fontSize: 11,
+                        color: 'hsl(var(--primary))',
+                        fontWeight: 500,
+                        margin: '1px 0 0',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {donation.campaignTitle || 'Strategic fund'}
                     </p>
                   </div>
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <p
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 800,
+                      color: 'hsl(var(--on-surface))',
+                      margin: 0,
+                      fontFamily: "'Public Sans', sans-serif",
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    ₵ {Number(donation.amount).toLocaleString()}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 10,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontWeight: 500,
+                      margin: '2px 0 0',
+                    }}
+                  >
+                    {new Date(donation.date).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
                 </div>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
-        
+
         {donations.length === 0 && (
-          <div style={{ padding: 80, textAlign: 'center', border: '1px dashed hsl(var(--border))', borderRadius: 4 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--border))', marginBottom: 16 }}>sensors_off</span>
-            <p style={{ fontSize: 11, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', textTransform: 'uppercase', letterSpacing: '0.1em' }}>awaiting mobilization uplink...</p>
+          <div
+            style={{
+              padding: '48px 24px',
+              textAlign: 'center',
+              border: '1px dashed hsl(var(--border))',
+              borderRadius: 4,
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{
+                fontSize: 36,
+                color: 'hsl(var(--border))',
+                display: 'block',
+                marginBottom: 12,
+              }}
+            >
+              sensors_off
+            </span>
+            <p style={{ fontSize: 12, fontWeight: 500, color: 'hsl(var(--on-surface-muted))' }}>
+              No contributions yet — be the first to mobilise.
+            </p>
           </div>
         )}
       </div>
-      
-      <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: 10, fontWeight: 800, color: 'hsl(var(--on-surface-muted))', fontStyle: 'italic', margin: 0 }}>
-          * immutable strategic ledger. redacted entries respect patriot privacy.
+
+      <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid hsl(var(--border))' }}>
+        <p
+          style={{
+            fontSize: 10,
+            fontWeight: 500,
+            color: 'hsl(var(--on-surface-muted))',
+            fontStyle: 'italic',
+            margin: 0,
+          }}
+        >
+          Names are partially redacted to protect contributor privacy.
         </p>
-        <div style={{ display: 'flex', gap: 4 }}>
-          <div style={{ width: 4, height: 4, background: 'hsl(var(--primary))', borderRadius: '50%' }}></div>
-          <div style={{ width: 4, height: 4, background: 'hsla(var(--primary), 0.4)', borderRadius: '50%' }}></div>
-          <div style={{ width: 4, height: 4, background: 'hsla(var(--primary), 0.2)', borderRadius: '50%' }}></div>
-        </div>
       </div>
     </div>
   )

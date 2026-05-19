@@ -6,11 +6,23 @@
       "mcp__supabase__list_edge_functions",
       "mcp__supabase__list_tables",
       "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); rows=json.loads\\(data[0]['text']\\)['result']; tables={}; [tables.setdefault\\(r['table_name'],[]\\).append\\(r\\) for r in rows]; [print\\(f\\\\\"\\\\n=== {t} ===\\\\\"\\) or [print\\(f\\\\\"  {c['ordinal_position']:2}. {c['column_name']:40} {c['data_type']:30} nullable={c['is_nullable']} default={c['column_default']}\\\\\"\\) for c in cols] for t,cols in sorted\\(tables.items\\(\\)\\)]\")",
-      "Bash(python *)"
+      "Bash(python *)",
+      "mcp__perplexity-web__search_advanced",
+      "Bash(npx playwright *)",
+      "mcp__perplexity-web__search",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")",
+      "Bash(xargs grep -l \"RLS\\\\|rls\\\\|row.level.security\")",
+      "Bash(grep -i \"\\\\.env\\\\.\\\\|\\\\.env$\")",
+      "Bash(npx husky *)",
+      "Bash(Get-Content *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npm list *)",
+      "Bash(git rm *)",
+      "Bash(Remove-Item -Recurse -Force graphify-out, tsconfig.test.tsbuildinfo, .vite-react-ssg-temp, scratch, prerender-debug.log, stats.html -ErrorAction SilentlyContinue)",
+      "Bash(Write-Output \"done\")",
+      "Bash(git commit *)"
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "supabase"
-  ]
+  "enabledMcpjsonServers": ["supabase"]
 }
