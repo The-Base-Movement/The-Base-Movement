@@ -59,28 +59,14 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (!id.includes('node_modules')) return
+            // Only split libs that are truly self-contained with no React deps.
+            // Everything else goes into one vendor chunk to prevent cross-chunk
+            // circular reference errors at runtime.
             if (id.includes('@tinymce')) return 'vendor-editor'
             if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf'
             if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-'))
               return 'vendor-charts'
-            if (id.includes('lucide-react')) return 'vendor-icons'
-            if (id.includes('@radix-ui')) return 'vendor-radix'
             if (id.includes('@supabase')) return 'vendor-supabase'
-            if (id.includes('@tanstack')) return 'vendor-query'
-            // Keep all React-dependent runtime libs in one chunk to prevent
-            // "cannot access before initialization" cross-chunk reference errors.
-            if (
-              id.includes('react-dom') ||
-              id.includes('react-router') ||
-              id.includes('/react/') ||
-              id.includes('/react-is/') ||
-              id.includes('framer-motion') ||
-              id.includes('/sonner/') ||
-              id.includes('/scheduler/')
-            )
-              return 'vendor-react'
-            if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('/zod/'))
-              return 'vendor-forms'
             return 'vendor'
           },
         },
