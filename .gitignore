@@ -30,3 +30,14 @@ dist-ssr
 stats.html
 .superpowers/
 
+# Dev tooling artifacts
+graphify-out/
+.vite-react-ssg-temp/
+scratch/
+autofix_inputs*.mjs
+find_inputs*.mjs
+find_inputs*.js
+build_log.txt
+run_semantic.py
+tsconfig.*.tsbuildinfo
+
