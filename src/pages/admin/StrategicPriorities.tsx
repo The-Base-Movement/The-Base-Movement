@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
-import { DeleteConfirmationModal } from '@/components/admin/DeleteConfirmationModal'
 import { adminService } from '@/services/adminService'
 import type { DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
+import { useDeleteModal } from '@/hooks/useDeleteModal'
 
 export default function StrategicPriorities() {
   const [campaigns, setCampaigns] = useState<DonationCampaign[]>([])
@@ -15,8 +15,7 @@ export default function StrategicPriorities() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
   const [showMobileFilter, setShowMobileFilter] = useState(false)
-  const [priorityToDelete, setPriorityToDelete] = useState<DonationCampaign | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const { openDelete, modal } = useDeleteModal()
 
   // Form State
   const [formData, setFormData] = useState<Omit<DonationCampaign, 'id' | 'raisedAmount'>>({
@@ -95,27 +94,19 @@ export default function StrategicPriorities() {
   }
 
   const handleDelete = (campaign: DonationCampaign) => {
-    setPriorityToDelete(campaign)
-  }
-
-  const handleConfirmedDelete = async () => {
-    if (!priorityToDelete) return
-    setIsDeleting(true)
-    try {
-      const success = await adminService.deleteDonationCampaign(priorityToDelete.id, priorityToDelete.title)
-      if (success) {
-        toast.success('Priority decommissioned.')
-        fetchCampaigns()
-      } else {
-        toast.error('Decommissioning failed.')
-      }
-    } catch (err) {
-      console.error('[STRATEGIC PRIORITIES] Decommissioning failed:', err)
-      toast.error('Operational error during decommissioning.')
-    } finally {
-      setIsDeleting(false)
-      setPriorityToDelete(null)
-    }
+    openDelete({
+      itemName: campaign.title,
+      title: 'Decommission Strategic Priority',
+      description: 'Are you sure you want to decommission this strategic priority? This action is immutable.',
+      isPermanent: true,
+      successMessage: 'Priority decommissioned.',
+      errorMessage: 'Decommissioning failed.',
+      onConfirm: async () => {
+        const success = await adminService.deleteDonationCampaign(campaign.id, campaign.title)
+        if (success) fetchCampaigns()
+        return success
+      },
+    })
   }
 
   const filteredCampaigns = campaigns.filter(
@@ -1369,20 +1360,12 @@ export default function StrategicPriorities() {
                   </button>
                 </div>
               </form>
+            </div>
           </div>,
           document.body
         )}
 
-      <DeleteConfirmationModal
-        isOpen={!!priorityToDelete}
-        onClose={() => setPriorityToDelete(null)}
-        onConfirm={handleConfirmedDelete}
-        title="Decommission Strategic Priority"
-        description="Are you sure you want to decommission this strategic priority? This action is immutable."
-        itemName={priorityToDelete?.title || ''}
-        isLoading={isDeleting}
-        isPermanent={true}
-      />
+      {modal}
     </div>
   )
 }
