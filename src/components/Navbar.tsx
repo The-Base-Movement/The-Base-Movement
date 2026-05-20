@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: 'Updates', publicPath: '/blog', dashPath: '/dashboard/blog' },
   { label: 'Polls', publicPath: '/polls', dashPath: '/dashboard/polls' },
   { label: 'The Plan', publicPath: '/our-agenda', dashPath: '/dashboard/agenda' },
+  { label: 'Leadership', publicPath: '/officers', dashPath: '/officers' },
   { label: 'Chapters', publicPath: '/chapters', dashPath: '/dashboard/chapters' },
   { label: 'Supplies', publicPath: '/store', dashPath: '/dashboard/store' },
   { label: 'Donate', publicPath: '/donate', dashPath: '/dashboard/donate' },
