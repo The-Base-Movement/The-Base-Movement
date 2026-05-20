@@ -53,6 +53,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
     onPlatformChange,
     onIdScan,
     onInputChange,
+    onPasswordToggle,
     onAgreedChange,
     onCropChange,
     onCropComplete,
