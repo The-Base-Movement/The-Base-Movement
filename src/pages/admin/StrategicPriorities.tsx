@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { adminService } from '@/services/adminService'
+import { contentService } from '@/services/contentService'
 import type { DonationCampaign } from '@/types/admin'
 import { toast } from 'sonner'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
@@ -16,6 +17,8 @@ export default function StrategicPriorities() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
   const [showMobileFilter, setShowMobileFilter] = useState(false)
   const { openDelete, modal } = useDeleteModal()
+  const [imageUploadMode, setImageUploadMode] = useState<'url' | 'upload'>('upload')
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
 
   // Form State
   const [formData, setFormData] = useState<Omit<DonationCampaign, 'id' | 'raisedAmount'>>({
@@ -107,6 +110,27 @@ export default function StrategicPriorities() {
         return success
       },
     })
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploadingImage(true)
+    try {
+      const url = await contentService.uploadImage(file, 'priorities')
+      if (url) {
+        setFormData((prev) => ({ ...prev, imageUrl: url }))
+        toast.success('Priority image uploaded successfully.')
+      } else {
+        toast.error('Failed to upload priority image.')
+      }
+    } catch (err) {
+      console.error('[STRATEGIC PRIORITIES] Image upload failed:', err)
+      toast.error('Operational error during image upload.')
+    } finally {
+      setIsUploadingImage(false)
+    }
   }
 
   const filteredCampaigns = campaigns.filter(
@@ -1279,40 +1303,167 @@ export default function StrategicPriorities() {
                         <option value="Closed">Mission Completed</option>
                       </select>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      <label
-                        htmlFor="input-195764"
-                        style={{
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 700,
-                          fontSize: 12,
-                          color: 'hsl(var(--on-surface-muted))',
-                        }}
-                      >
-                        Visual URL (optional)
-                      </label>
-                      <input
-                        aria-label="https://"
-                        name="name-195764"
-                        id="input-195764"
-                        type="url"
-                        placeholder="https://..."
-                        style={{
-                          width: '100%',
-                          height: 48,
-                          background: 'hsl(var(--container-low))',
-                          border: 'none',
-                          borderBottom: '2px solid hsl(var(--border))',
-                          padding: '0 16px',
-                          fontFamily: "'Public Sans', sans-serif",
-                          fontWeight: 800,
-                          fontSize: 14,
-                          outline: 'none',
-                          color: 'hsl(var(--on-surface))',
-                        }}
-                        value={formData.imageUrl}
-                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span
+                          style={{
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 700,
+                            fontSize: 12,
+                            color: 'hsl(var(--on-surface-muted))',
+                          }}
+                        >
+                          Visual Asset
+                        </span>
+                        <div style={{ display: 'flex', background: 'hsl(var(--container-low))', borderRadius: 4, padding: 2 }}>
+                          <button
+                            type="button"
+                            onClick={() => setImageUploadMode('upload')}
+                            style={{
+                              border: 'none',
+                              background: imageUploadMode === 'upload' ? 'hsl(var(--on-surface))' : 'transparent',
+                              color: imageUploadMode === 'upload' ? '#fff' : 'hsl(var(--on-surface-muted))',
+                              fontSize: 11,
+                              fontWeight: 800,
+                              padding: '4px 8px',
+                              borderRadius: 3,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 4,
+                            }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>cloud_upload</span>
+                            Upload Image
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setImageUploadMode('url')}
+                            style={{
+                              border: 'none',
+                              background: imageUploadMode === 'url' ? 'hsl(var(--on-surface))' : 'transparent',
+                              color: imageUploadMode === 'url' ? '#fff' : 'hsl(var(--on-surface-muted))',
+                              fontSize: 11,
+                              fontWeight: 800,
+                              padding: '4px 8px',
+                              borderRadius: 3,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 4,
+                            }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>link</span>
+                            Image URL
+                          </button>
+                        </div>
+                      </div>
+
+                      {imageUploadMode === 'url' ? (
+                        <input
+                          aria-label="https://"
+                          type="url"
+                          placeholder="https://..."
+                          style={{
+                            width: '100%',
+                            height: 48,
+                            background: 'hsl(var(--container-low))',
+                            border: 'none',
+                            borderBottom: '2px solid hsl(var(--border))',
+                            padding: '0 16px',
+                            fontFamily: "'Public Sans', sans-serif",
+                            fontWeight: 800,
+                            fontSize: 14,
+                            outline: 'none',
+                            color: 'hsl(var(--on-surface))',
+                          }}
+                          value={formData.imageUrl}
+                          onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                        />
+                      ) : (
+                        <div style={{ position: 'relative' }}>
+                          {isUploadingImage ? (
+                            <div
+                              style={{
+                                height: 80,
+                                background: 'hsl(var(--container-low))',
+                                border: '1px dashed hsl(var(--border))',
+                                borderRadius: 4,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 10,
+                              }}
+                            >
+                              <span className="material-symbols-outlined animate-spin" style={{ color: 'hsl(var(--accent))' }}>sync</span>
+                              <span style={{ fontSize: 12, fontWeight: 700, color: 'hsl(var(--on-surface-muted))' }}>Uploading media to priorities archive...</span>
+                            </div>
+                          ) : formData.imageUrl ? (
+                            <div
+                              style={{
+                                background: 'hsl(var(--container-low))',
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: 4,
+                                padding: 10,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 12,
+                              }}
+                            >
+                              <img
+                                src={formData.imageUrl}
+                                alt="Priority Preview"
+                                style={{
+                                  width: 60,
+                                  height: 40,
+                                  objectFit: 'cover',
+                                  borderRadius: 4,
+                                  border: '1px solid hsl(var(--border))',
+                                }}
+                              />
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: 'hsl(var(--on-surface))', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {formData.imageUrl.split('/').pop()}
+                                </p>
+                                <span style={{ fontSize: 10, color: 'hsl(var(--accent))', fontWeight: 700 }}>Active priority visual</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                                className="btn btn-dest btn-sm"
+                                style={{ width: 34, height: 34, padding: 0, justifyContent: 'center' }}
+                              >
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                              </button>
+                            </div>
+                          ) : (
+                            <label
+                              style={{
+                                height: 80,
+                                background: 'hsl(var(--container-low))',
+                                border: '1px dashed hsl(var(--border))',
+                                borderRadius: 4,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                              }}
+                            >
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                style={{ display: 'none' }}
+                              />
+                              <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'hsl(var(--on-surface-muted))', marginBottom: 4 }}>cloud_upload</span>
+                              <span style={{ fontSize: 12, fontWeight: 800, color: 'hsl(var(--on-surface))' }}>Ingest priority media asset</span>
+                              <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))', fontWeight: 600, marginTop: 2 }}>Max size 5MB • priorities category</span>
+                            </label>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
